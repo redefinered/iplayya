@@ -4,20 +4,27 @@
   "private": true,
   "scripts": {
     "android": "npx react-native run-android",
-    "ios": "npx react-native run-ios",
+    "ios": "npx react-native run-ios --simulator='iPhone SE (2nd generation)'",
+    "ios:device": "npx react-native run-ios --device 'Red’s iPhone SE'",
     "start": "npx react-native start",
+    "cleanstart": "watchman watch-del-all && rm -rf node_modules && yarn install && yarn start --reset-cache & rm -rf ~/tmp/metro-*",
     "test": "jest",
+    "pod:install": "npx pod-install ios",
     "lint": "eslint ."
   },
   "dependencies": {
+    "lodash": "^4.17.20",
     "react": "16.13.1",
-    "react-native": "0.63.2"
+    "react-native": "0.63.2",
+    "react-native-paper": "^4.2.0",
+    "react-native-vector-icons": "^7.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
     "@babel/runtime": "^7.8.4",
     "@react-native-community/eslint-config": "^1.1.0",
     "babel-jest": "^25.1.0",
+    "babel-plugin-module-resolver": "^4.0.0",
     "eslint": "^6.5.1",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.59.0",
