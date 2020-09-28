@@ -7,16 +7,23 @@
     "ios": "npx react-native run-ios --simulator='iPhone SE (2nd generation)'",
     "ios:device": "npx react-native run-ios --device 'Red’s iPhone SE'",
     "start": "npx react-native start",
-    "cleanstart": "watchman watch-del-all && rm -rf node_modules && yarn install && yarn start --reset-cache & rm -rf ~/tmp/metro-*",
+    "start:reset-cache": "npx react-native start --reset-cache",
+    "start:clean": "watchman watch-del-all && rm -rf node_modules && yarn install && yarn start --reset-cache & rm -rf ~/tmp/metro-*",
     "test": "jest",
-    "pod:install": "npx pod-install ios",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "pod:install": "npx pod-install"
   },
   "dependencies": {
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/native": "^5.7.4",
     "lodash": "^4.17.20",
     "react": "16.13.1",
     "react-native": "0.63.2",
+    "react-native-gesture-handler": "^1.8.0",
     "react-native-paper": "^4.2.0",
+    "react-native-reanimated": "^1.13.0",
+    "react-native-safe-area-context": "^3.1.8",
+    "react-native-screens": "^2.11.0",
     "react-native-vector-icons": "^7.1.0"
   },
   "devDependencies": {
