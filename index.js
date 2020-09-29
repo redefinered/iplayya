@@ -6,12 +6,18 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import App from './App';
 import { name as appName } from './app.json';
 
-export default function Main() {
+import ReduxContainer from './redux.container';
+
+const Main = () => {
   return (
-    <PaperProvider>
-      <App />
-    </PaperProvider>
+    <ReduxContainer>
+      <PaperProvider>
+        <App />
+      </PaperProvider>
+    </ReduxContainer>
   );
-}
+};
+
+export default Main;
 
 AppRegistry.registerComponent(appName, () => Main);
