@@ -1,14 +1,32 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import Home from 'screens/home.screen';
+import { connect } from 'react-redux';
+import { createStructureSelector } from 'reselect';
+import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
 
-const App = () => {
+import HomeScreen from 'screens/home/home.screen';
+import OnBoardingScreen from 'screens/onboarding/onboarding.screen';
+
+const Stack = createStackNavigator();
+
+const App = ({ currentUser }) => {
+  if (!currentUser) return <OnBoardingScreen />;
   return (
     <NavigationContainer>
-      <Home />
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: null }} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-export default App;
+App.propTypes = {
+  currentUser: PropTypes.object
+};
+
+const mapStateToProps = createStructureSelector({ currentUser: selectCurrentUser });
+
+export default connect(mapStateToProps)(App);
