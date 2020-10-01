@@ -4,7 +4,8 @@ import { Types } from './auth.actions';
 const INITIAL_STATE = {
   error: null,
   isFetching: false,
-  currentUser: null,
+  // currentUser: null,
+  currentUser: { name: 'Red De Guzman' },
   portalAddress: null
 };
 
@@ -38,6 +39,12 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       portalAddress
+    };
+  },
+  [Types.SIGN_OUT]: (state) => {
+    return {
+      ...state,
+      currentUser: null
     };
   },
   [Types.PURGE_STORE]: (state) => {

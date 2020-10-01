@@ -1,11 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, SafeAreaView, Dimensions } from 'react-native';
-import OnBoarding from 'screens/onboarding/onboarding.screen';
-
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { selectCurrentUser, selectPortalAddress } from 'modules/ducks/auth/auth.selectors';
+import { SafeAreaView, Dimensions } from 'react-native';
 
 import Video from 'react-native-video';
 
@@ -30,27 +25,28 @@ class Home extends React.Component {
   };
 
   render() {
-    const { portalAddress } = this.props;
-    if (portalAddress) {
-      return (
-        <SafeAreaView>
-          <Text>Video</Text>
-          <Video
-            controls={true}
-            fullscreen
-            source={{ uri: 'http://37.187.174.33:2080/914/video.m3u8' }} // Can be a URL or a local file.
-            ref={(ref) => {
-              this.player = ref;
-            }} // Store reference
-            onBuffer={this.handleVideoError} // Callback when remote video is buffering
-            onError={this.handleVideoBuffering} // Callback when video cannot be loaded
-            style={{ width: Dimensions.get('window').width, height: 200, backgroundColor: 'black' }}
-          />
-        </SafeAreaView>
-      );
-    } else {
-      return <OnBoarding />;
-    }
+    const uri = 'http://195.181.160.220:2080/9/video.m3u8';
+    const type = 'm3u8';
+
+    return (
+      <SafeAreaView>
+        <Video
+          fullscreen
+          controls
+          source={{ type, uri }}
+          ref={(ref) => {
+            this.player = ref;
+          }} // Store reference
+          onBuffer={this.handleVideoBuffering} // Callback when remote video is buffering
+          onError={this.handleVideoError} // Callback when video cannot be loaded
+          style={{
+            width: Dimensions.get('window').width,
+            height: 200,
+            backgroundColor: 'black'
+          }}
+        />
+      </SafeAreaView>
+    );
   }
 }
 
@@ -60,9 +56,4 @@ Home.propTypes = {
   helloAction: PropTypes.func
 };
 
-const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser,
-  portalAddress: selectPortalAddress
-});
-
-export default connect(mapStateToProps)(Home);
+export default Home;

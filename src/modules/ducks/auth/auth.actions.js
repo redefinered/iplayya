@@ -5,6 +5,7 @@ const { Types, Creators } = createActions({
   helloSuccess: ['data'],
   helloFailure: ['error'],
   setPortalAddress: ['data'],
+  signOut: [],
   purgeStore: [] // for development
 });
 

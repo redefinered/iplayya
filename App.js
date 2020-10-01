@@ -1,32 +1,75 @@
+/* eslint-disable react/display-name */
+/* eslint-disable react/prop-types */
+
+import 'react-native-gesture-handler';
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
-import { connect } from 'react-redux';
-import { createStructureSelector } from 'reselect';
-import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
-
 import HomeScreen from 'screens/home/home.screen';
 import OnBoardingScreen from 'screens/onboarding/onboarding.screen';
 
+import { View } from 'react-native';
+import { Colors, IconButton } from 'react-native-paper';
+
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { Creators } from 'modules/ducks/auth/auth.actions';
+import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
+
 const Stack = createStackNavigator();
 
-const App = ({ currentUser }) => {
+const HeaderActions = ({ signOutAction }) => {
+  return (
+    <View style={{ flexDirection: 'row' }}>
+      <IconButton
+        icon="account-circle-outline"
+        color={Colors.blue500}
+        size={30}
+        onPress={() => console.log('Pressed')}
+      />
+      <IconButton
+        icon="logout-variant"
+        color={Colors.red500}
+        size={30}
+        onPress={() => signOutAction()}
+      />
+    </View>
+  );
+};
+
+const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
+  // React.useEffect(() => {
+  //   purgeStoreAction();
+  // }, []);
+
+  const handleSignOut = () => {
+    purgeStoreAction();
+    signOutAction();
+  };
+
   if (!currentUser) return <OnBoardingScreen />;
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} options={{ title: null }} />
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
+            title: 'Welcome'
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-App.propTypes = {
-  currentUser: PropTypes.object
+const mapStateToProps = createStructuredSelector({ currentUser: selectCurrentUser });
+
+const actions = {
+  purgeStoreAction: Creators.purgeStore,
+  signOutAction: Creators.signOut
 };
 
-const mapStateToProps = createStructureSelector({ currentUser: selectCurrentUser });
-
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps, actions)(App);
