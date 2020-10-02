@@ -25,7 +25,10 @@ class Home extends React.Component {
   };
 
   render() {
-    const uri = 'http://195.181.160.220:2080/9/video.m3u8';
+    const channels = [
+      { name: 'ESPN', uri: 'http://195.181.160.220:2080/12/video.m3u8' },
+      { name: 'xxx', url: 'http://37.187.174.33:2080/1/video.m3u8' }
+    ];
     const type = 'm3u8';
 
     return (
@@ -33,7 +36,7 @@ class Home extends React.Component {
         <Video
           fullscreen
           controls
-          source={{ type, uri }}
+          source={{ type, uri: channels[0].uri }}
           ref={(ref) => {
             this.player = ref;
           }} // Store reference
