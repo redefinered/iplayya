@@ -6,11 +6,12 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from 'screens/home/home.screen';
-import OnBoardingScreen from 'screens/onboarding/onboarding.screen';
 
 import { View } from 'react-native';
 import { Colors, IconButton } from 'react-native-paper';
+
+import HomeScreen from 'screens/home/home.screen';
+import SignInScreen from 'screens/sign-in/sign-in.screen';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -48,7 +49,7 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
     signOutAction();
   };
 
-  if (!currentUser) return <OnBoardingScreen />;
+  if (!currentUser) return <SignInScreen />;
   return (
     <NavigationContainer>
       <Stack.Navigator>

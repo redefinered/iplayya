@@ -8,10 +8,10 @@ import ReduxContainer from './redux.container';
 
 const theme = {
   ...DefaultTheme,
-  roundness: 2,
+  roundness: 8,
   colors: {
     ...DefaultTheme.colors,
-    primary: 'tomato',
+    primary: '#E34398',
     accent: 'yellow'
   }
 };
