@@ -6,7 +6,7 @@ const TextInput = ({ style, ...otherProps }) => (
   <RNPTextInput
     mode="outlined"
     onChangeText={(text) => console.log(text)}
-    style={{ marginBottom: 19, ...style }}
+    style={{ marginBottom: 10, ...style }}
     {...otherProps}
   />
 );
