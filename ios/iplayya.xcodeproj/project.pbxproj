@@ -19,6 +19,7 @@
 		57948AFE76733A9F607021E8 /* libPods-iplayya-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 85062F1527518D782EF51FCC /* libPods-iplayya-tvOS.a */; };
 		78570F6251FB3CF266329383 /* libPods-iplayya-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AE74DD2B42F1DE8E0DD65D4B /* libPods-iplayya-tvOSTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A51D42B225346857008DFE2C /* iplayyaicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A51D42B125346857008DFE2C /* iplayyaicons.ttf */; };
 		F206DDB9751E4A6490B97C7D /* libPods-iplayya.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = iplayya/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		85062F1527518D782EF51FCC /* libPods-iplayya-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D6BF0917B55C720B5291F4A /* Pods-iplayya-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-iplayya-tvOSTests/Pods-iplayya-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		A51D42B125346857008DFE2C /* iplayyaicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = iplayyaicons.ttf; sourceTree = "<group>"; };
 		AE74DD2B42F1DE8E0DD65D4B /* libPods-iplayya-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8C43496C174EFA0BDAC2DFC /* Pods-iplayya.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya.debug.xcconfig"; path = "Target Support Files/Pods-iplayya/Pods-iplayya.debug.xcconfig"; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				A51D42B025346826008DFE2C /* Fonts */,
 				13B07FAE1A68108700A75B9A /* iplayya */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* iplayyaTests */,
@@ -195,6 +198,14 @@
 				9D6BF0917B55C720B5291F4A /* Pods-iplayya-tvOSTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		A51D42B025346826008DFE2C /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				A51D42B125346857008DFE2C /* iplayyaicons.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -342,6 +353,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				A51D42B225346857008DFE2C /* iplayyaicons.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
