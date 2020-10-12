@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/no-unescaped-entities */
 
 import React from 'react';
@@ -10,7 +11,7 @@ import ContentWrap from 'components/content-wrap.component';
 
 import styles from './sign-in.styles';
 
-const SignInScreen = () => (
+const SignInScreen = ({ navigation }) => (
   <ScreenContainer>
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.logo}>
@@ -31,7 +32,7 @@ const SignInScreen = () => (
       <View style={styles.signUp}>
         <Text style={{ color: 'white' }}>
           Don't you have an account yet?{' '}
-          <Text onPress={() => console.log('test')} style={styles.signUpText}>
+          <Text onPress={() => navigation.navigate('SignUp')} style={styles.signUpText}>
             Sign-up
           </Text>
         </Text>

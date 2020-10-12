@@ -4,8 +4,8 @@ import { Types } from './auth.actions';
 const INITIAL_STATE = {
   error: null,
   isFetching: false,
-  currentUser: null,
-  // currentUser: { name: 'Red De Guzman' },
+  // currentUser: null,
+  currentUser: { name: 'Red De Guzman' },
   portalAddress: null
 };
 

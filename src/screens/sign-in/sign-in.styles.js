@@ -9,6 +9,6 @@ export default StyleSheet.create({
   forgotPasswordText: { color: 'white', alignSelf: 'center' },
   signUp: { flex: 2, alignItems: 'center' },
   signUpText: { color: '#E34398' },
-  help: { flex: 1 },
-  helpText: { color: 'white', alignSelf: 'center' }
+  helpText: { color: 'white', alignSelf: 'center' },
+  help: { flex: 1, alignItems: 'center' }
 });

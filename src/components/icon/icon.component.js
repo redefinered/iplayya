@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text } from 'react-native';
-
-const fontsMap = {
-  'video-settings': String.fromCharCode(0xe834)
-};
+import fontsMap from './fonts-map';
 
 const Icon = ({ name, size: fontSize, style, ...otherProps }) => (
   <Text style={{ fontFamily: 'iplayyaicons', fontSize, ...style }} {...otherProps}>
