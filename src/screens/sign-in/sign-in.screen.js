@@ -3,7 +3,7 @@
 
 import React from 'react';
 import ScreenContainer from 'components/screen-container.component';
-import { View, Pressable, KeyboardAvoidingView } from 'react-native';
+import { View, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
 import Logo from 'images/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
@@ -15,10 +15,16 @@ import styles from './sign-in.styles';
 
 const SignInScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [isolatedInputs, setIsolatedInputs] = React.useState(false);
+
+  console.log({ isolatedInputs });
   console.log({ navigation });
   return (
     <ScreenContainer>
-      <KeyboardAvoidingView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
         <View style={styles.logo}>
           <Logo />
         </View>
@@ -27,10 +33,12 @@ const SignInScreen = ({ navigation }) => {
           <TextInput
             autoFocus
             autoCapitalize="none"
-            clearButtonMode="always"
+            clearButtonMode="while-editing"
             autoCompleteType="email"
             style={styles.textInput}
             placeholder="email"
+            onFocus={() => setIsolatedInputs(true)}
+            onBlur={() => setIsolatedInputs(false)}
           />
           <View style={{ position: 'relative' }}>
             <TextInput
@@ -38,7 +46,11 @@ const SignInScreen = ({ navigation }) => {
               style={styles.textInput}
               placeholder="password"
               secureTextEntry={!showPassword}
-              onBlur={() => setShowPassword(false)}
+              onFocus={() => setIsolatedInputs(true)}
+              onBlur={() => {
+                setShowPassword(false);
+                setIsolatedInputs(false);
+              }}
             />
             <Pressable
               onPress={() => setShowPassword(!showPassword)}
@@ -55,8 +67,8 @@ const SignInScreen = ({ navigation }) => {
           </Pressable>
         </ContentWrap>
 
-        <View style={styles.signUp}>
-          <Text>
+        <View style={{ ...styles.signUp }}>
+          <Text style={{ display: isolatedInputs ? 'none' : 'flex' }}>
             Don't you have an account yet?{' '}
             <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
               Sign-up
@@ -65,7 +77,7 @@ const SignInScreen = ({ navigation }) => {
         </View>
 
         <Pressable style={styles.help}>
-          <Text style={styles.signUpText}>Need help?</Text>
+          <Text style={{ ...styles.signUpText, display: isolatedInputs ? 'none' : 'flex' }}>Need help?</Text>
         </Pressable>
       </KeyboardAvoidingView>
     </ScreenContainer>

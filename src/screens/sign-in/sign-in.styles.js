@@ -4,10 +4,7 @@ export default StyleSheet.create({
   container: { flex: 1 },
   logo: { flex: 3, alignItems: 'center', justifyContent: 'center' },
   form: { flex: 6 },
-  textInput: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    color: 'white'
-  },
+  textInput: { backgroundColor: 'rgba(255,255,255,0.1)' },
   loginButton: { marginTop: 6 },
   forgotPassword: { padding: 15, marginTop: 10 },
   forgotPasswordText: { alignSelf: 'center' },
