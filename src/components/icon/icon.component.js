@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text } from 'react-native';
+import { Text } from 'react-native-paper';
 import fontsMap from './fonts-map';
 
 const Icon = ({ name, size: fontSize, style, ...otherProps }) => (
