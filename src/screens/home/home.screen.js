@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, Dimensions, View, StyleSheet } from 'react-native';
@@ -7,7 +8,7 @@ import Slider from '@react-native-community/slider';
 
 import Icon from 'components/icon/icon.component';
 import mapx from 'components/icon/fonts-map';
-import { ceil } from 'react-native-reanimated';
+import Button from 'components/button/button.component';
 
 console.log({ mapx });
 
@@ -66,6 +67,13 @@ class Home extends React.Component {
 
     return (
       <SafeAreaView>
+        <Button
+          onPress={() => {
+            this.props.navigation.navigate('SignUpScreen');
+          }}
+        >
+          Sign Up
+        </Button>
         <Slider
           style={{ width: Dimensions.get('window').width, height: 40 }}
           onValueChange={(iconSize) => this.setState({ iconSize })}

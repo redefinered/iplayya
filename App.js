@@ -9,6 +9,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { View } from 'react-native';
 import { Colors, IconButton } from 'react-native-paper';
+import HeaderBackImage from 'components/header-back-image/header-back-image.component';
+import Icon from 'components/icon/icon.component';
 
 import HomeScreen from 'screens/home/home.screen';
 import SignInScreen from 'screens/sign-in/sign-in.screen';
@@ -19,9 +21,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
 
-// import { Text } from 'react-native';
-import Icon from 'components/icon/icon.component';
-// import BackImage from 'images/back.svg';
+import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
 
@@ -62,19 +62,19 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
   };
 
   // simulate logged-in state
-  // currentUser = { name: 'Red' };
+  currentUser = { name: 'Red' };
 
   if (!currentUser) return <SignInScreen />;
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SignUpScreen" screenOptions={{ headerTransparent: true }}>
+      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerTransparent: true }}>
         <Stack.Screen
           name="Home"
           component={HomeScreen}
           options={{
             headerShown: false,
             headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
-            title: 'Welcome',
+            title: 'Home',
             headerBackImage: () => <Icon name="video-settings" style={{ color: 'red' }} size={40} />
           }}
         />
@@ -82,17 +82,22 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
           name="SignUpScreen"
           component={SignUpScreen}
           options={{
-            title: 'Sign-up',
+            title: 'Sign Up',
+            headerBackTitleVisible: false,
             headerTintColor: 'white',
-            headerBackImage: () => <Icon name="video-settings" style={{ color: 'white' }} size={40} />,
-            // headerLeft: (props) => <HeaderBackButton backImage {...props} />,
-            // headerStyle: { backgroundColor: 'transparent', position: 'absolute', borderWidth: 0 },
-            headerRight: () => (
-              <View style={{ marginRight: 15 }}>
-                <Icon name="video-settings" style={{ color: 'white' }} size={40} />
-              </View>
-            ),
-            headerRightContainerStyle: { backgroundColor: 'transparent' }
+            headerStyle: { height: headerHeight },
+            headerLeftContainerStyle: {
+              paddingLeft: 15,
+              justifyContent: 'flex-end'
+            },
+            headerTitleContainerStyle: { paddingTop: 30 },
+            headerBackImage: () => <HeaderBackImage />,
+            // headerRight: () => (
+            //   <View style={styles.headerButtonContainer}>
+            //     <Icon name="video-settings" style={{ color: 'white' }} size={16} />
+            //   </View>
+            // ),
+            headerRightContainerStyle: styles.headerRightContainerStyle
           }}
         />
       </Stack.Navigator>
@@ -101,6 +106,21 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
 };
 
 const mapStateToProps = createStructuredSelector({ currentUser: selectCurrentUser });
+
+const styles = {
+  headerRightContainerStyle: {
+    paddingRight: 15,
+    justifyContent: 'flex-end'
+  },
+  headerButtonContainer: {
+    width: 44,
+    height: 44,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+};
 
 const actions = {
   purgeStoreAction: Creators.purgeStore,
