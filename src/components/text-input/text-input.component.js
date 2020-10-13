@@ -7,6 +7,7 @@ const TextInput = ({ style, ...otherProps }) => (
     mode="outlined"
     onChangeText={(text) => console.log(text)}
     style={{ marginBottom: 10, ...style }}
+    placeholderTextColor="rbga(255,255,255,0.5)"
     {...otherProps}
   />
 );
