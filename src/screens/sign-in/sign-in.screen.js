@@ -37,7 +37,7 @@ const SignInScreen = ({ navigation }) => {
             onFocus={() => setIsolatedInputs(true)}
             onBlur={() => setIsolatedInputs(false)}
           />
-          <View style={{ position: 'relative' }}>
+          <View style={styles.passwordInputContainer}>
             <TextInput
               autoCapitalize="none"
               style={styles.textInput}
@@ -51,19 +51,12 @@ const SignInScreen = ({ navigation }) => {
             />
             <Pressable
               onPress={() => setShowPassword(!showPassword)}
-              style={{
-                position: 'absolute',
-                right: 10,
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-                width: 40
-              }}
+              style={styles.showToggleContainer}
             >
               <Icon
                 name={showPassword ? 'close' : 'eye'}
                 size={showPassword ? 25 : 40}
-                style={{ color: 'rgba(255,255,255,0.5)' }}
+                style={styles.showToggleIcon}
               />
             </Pressable>
           </View>

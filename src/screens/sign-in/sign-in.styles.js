@@ -11,5 +11,15 @@ export default StyleSheet.create({
   signUp: { flex: 2, alignItems: 'center' },
   signUpText: { color: '#E34398' },
   helpText: { alignSelf: 'center' },
-  help: { flex: 1, alignItems: 'center' }
+  help: { flex: 1, alignItems: 'center' },
+  showToggleContainer: {
+    position: 'absolute',
+    right: 10,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40
+  },
+  showToggleIcon: { color: 'rgba(255,255,255,0.5)' },
+  passwordInputContainer: { position: 'relative' }
 });
