@@ -15,6 +15,7 @@ import Icon from 'components/icon/icon.component';
 import HomeScreen from 'screens/home/home.screen';
 import SignInScreen from 'screens/sign-in/sign-in.screen';
 import SignUpScreen from 'screens/sign-up/sign-up.screen';
+import AddIptvScreen from 'screens/add-iptv/add-iptv.screen';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -67,7 +68,22 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
   if (!currentUser) return <SignInScreen />;
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerTransparent: true }}>
+      <Stack.Navigator
+        initialRouteName="AddIptvScreen"
+        screenOptions={{
+          headerTransparent: true,
+          headerTintColor: 'white',
+          headerBackTitleVisible: false,
+          headerBackImage: () => <HeaderBackImage />,
+          headerStyle: { height: headerHeight },
+          headerTitleContainerStyle: { paddingTop: 30 },
+          headerLeftContainerStyle: {
+            paddingLeft: 15,
+            justifyContent: 'flex-end'
+          },
+          headerRightContainerStyle: styles.headerRightContainerStyle
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={HomeScreen}
@@ -79,25 +95,20 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
           }}
         />
         <Stack.Screen
+          name="AddIptvScreen"
+          component={AddIptvScreen}
+          options={{ title: 'Add IPTV' }}
+        />
+        <Stack.Screen
           name="SignUpScreen"
           component={SignUpScreen}
           options={{
-            title: 'Sign Up',
-            headerBackTitleVisible: false,
-            headerTintColor: 'white',
-            headerStyle: { height: headerHeight },
-            headerLeftContainerStyle: {
-              paddingLeft: 15,
-              justifyContent: 'flex-end'
-            },
-            headerTitleContainerStyle: { paddingTop: 30 },
-            headerBackImage: () => <HeaderBackImage />,
+            title: 'Sign Up'
             // headerRight: () => (
             //   <View style={styles.headerButtonContainer}>
             //     <Icon name="video-settings" style={{ color: 'white' }} size={16} />
             //   </View>
             // ),
-            headerRightContainerStyle: styles.headerRightContainerStyle
           }}
         />
       </Stack.Navigator>

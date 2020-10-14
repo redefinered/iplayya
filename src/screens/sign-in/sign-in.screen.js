@@ -51,9 +51,20 @@ const SignInScreen = ({ navigation }) => {
             />
             <Pressable
               onPress={() => setShowPassword(!showPassword)}
-              style={{ position: 'absolute', right: 10, height: '100%', justifyContent: 'center' }}
+              style={{
+                position: 'absolute',
+                right: 10,
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 40
+              }}
             >
-              <Icon name="eye" size={40} />
+              <Icon
+                name={showPassword ? 'close' : 'eye'}
+                size={showPassword ? 25 : 40}
+                style={{ color: 'rgba(255,255,255,0.5)' }}
+              />
             </Pressable>
           </View>
           <Button mode="contained" style={styles.loginButton}>
