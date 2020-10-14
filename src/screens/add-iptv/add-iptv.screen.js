@@ -1,15 +1,18 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, View, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import Button from 'components/button/button.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
 import { useHeaderHeight } from '@react-navigation/stack';
-import { ScrollView } from 'react-native-gesture-handler';
+
+import styles from './add-iptv.styles';
 
 const AddIptvScreen = () => {
+  const [modalVisible, setModalVisible] = React.useState(false);
   const headerHeight = useHeaderHeight();
   return (
     <ScreenContainer>
@@ -17,36 +20,26 @@ const AddIptvScreen = () => {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ContentWrap
-          style={{
-            flex: 1,
-            justifyContent: 'space-between',
-            paddingTop: headerHeight
-          }}
-        >
+        <ContentWrap style={{ paddingTop: headerHeight, ...styles.content }}>
           <ScrollView>
             <View>
               <TextInput style={styles.textInput} placeholder="IPTV provider name" />
               <TextInput style={styles.textInput} placeholder="Portal address" />
               <TextInput style={styles.textInput} placeholder="Username" />
               <PasswordInput style={styles.textInput} />
-              <Button style={{ marginBottom: 30, marginTop: 15 }} mode="contained">
+              <Button style={styles.submit} mode="contained" onPress={() => setModalVisible(true)}>
                 Add IPTV
               </Button>
             </View>
-            <Pressable style={{ alignItems: 'center', paddingBottom: 50 }}>
+            <Pressable style={styles.skip}>
               <Text>Skip for now</Text>
             </Pressable>
           </ScrollView>
         </ContentWrap>
       </KeyboardAvoidingView>
+      <AlertModal showAction={setModalVisible} visible={modalVisible} />
     </ScreenContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  textInput: { backgroundColor: 'rgba(255,255,255,0.1)' }
-});
 
 export default AddIptvScreen;
