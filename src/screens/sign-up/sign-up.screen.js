@@ -8,9 +8,9 @@ import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import Button from 'components/button/button.component';
 import ContentWrap from 'components/content-wrap.component';
-
-import { StyleSheet } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
+
+import styles from './sign-up.styles';
 
 const SignUpScreen = () => {
   const headerHeight = useHeaderHeight();
@@ -21,23 +21,23 @@ const SignUpScreen = () => {
         style={styles.container}
       >
         <ScrollView>
-          <ContentWrap style={{ flex: 1, paddingTop: headerHeight }}>
+          <ContentWrap style={{ ...styles.content, paddingTop: headerHeight }}>
             <TextInput style={styles.textInput} placeholder="First name" />
             <TextInput style={styles.textInput} placeholder="Last name" />
             <TextInput style={styles.textInput} placeholder="Username" />
             <TextInput style={styles.textInput} placeholder="Email" />
             <PasswordInput style={styles.textInput} />
-            <Text style={{ textAlign: 'center', marginTop: 10, marginBottom: 20 }}>
+            <Text style={styles.agreement}>
               By tapping Sign Up, you agree to our{' '}
               <Text
-                style={{ color: '#E34398' }}
+                style={styles.agreementLink}
                 onPress={() => console.log('show sign-up component')}
               >
                 Terms
               </Text>
               .
             </Text>
-            <Button style={{ marginBottom: 30 }} mode="contained">
+            <Button style={styles.submit} mode="contained">
               Sign Up
             </Button>
           </ContentWrap>
@@ -46,10 +46,5 @@ const SignUpScreen = () => {
     </ScreenContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  textInput: { backgroundColor: 'rgba(255,255,255,0.1)' }
-});
 
 export default SignUpScreen;
