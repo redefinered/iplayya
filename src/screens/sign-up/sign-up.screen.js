@@ -5,6 +5,7 @@ import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
+import PasswordInput from 'components/password-input/password-input.component';
 import Button from 'components/button/button.component';
 import ContentWrap from 'components/content-wrap.component';
 
@@ -25,9 +26,7 @@ const SignUpScreen = () => {
             <TextInput style={styles.textInput} placeholder="Last name" />
             <TextInput style={styles.textInput} placeholder="Username" />
             <TextInput style={styles.textInput} placeholder="Email" />
-            <TextInput style={styles.textInput} placeholder="Email" />
-            <TextInput style={styles.textInput} placeholder="Email" />
-            <TextInput style={styles.textInput} placeholder="password" secureTextEntry />
+            <PasswordInput style={styles.textInput} />
             <Text style={{ textAlign: 'center', marginTop: 10, marginBottom: 20 }}>
               By tapping Sign Up, you agree to our{' '}
               <Text

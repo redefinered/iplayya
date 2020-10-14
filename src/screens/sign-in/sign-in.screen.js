@@ -11,18 +11,12 @@ import Button from 'components/button/button.component';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 
-// import SignUpModal from 'components/sign-up/sign-up.component';
-
 import styles from './sign-in.styles';
 
 const SignInScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isolatedInputs, setIsolatedInputs] = React.useState(false);
 
-  // const [showSignUpModal, setShowSignUpModal] = React.useState(false);
-
-  // console.log({ isolatedInputs });
-  // console.log({ navigation });
   return (
     <ScreenContainer>
       <KeyboardAvoidingView
@@ -35,7 +29,6 @@ const SignInScreen = ({ navigation }) => {
 
         <ContentWrap style={styles.form}>
           <TextInput
-            // autoFocus
             autoCapitalize="none"
             clearButtonMode="while-editing"
             autoCompleteType="email"
