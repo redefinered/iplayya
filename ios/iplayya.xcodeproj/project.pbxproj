@@ -19,6 +19,10 @@
 		57948AFE76733A9F607021E8 /* libPods-iplayya-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 85062F1527518D782EF51FCC /* libPods-iplayya-tvOS.a */; };
 		78570F6251FB3CF266329383 /* libPods-iplayya-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AE74DD2B42F1DE8E0DD65D4B /* libPods-iplayya-tvOSTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A5134F672537F9ED001D38E9 /* NotoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5134F632537F9ED001D38E9 /* NotoSans-Bold.ttf */; };
+		A5134F682537F9ED001D38E9 /* NotoSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5134F642537F9ED001D38E9 /* NotoSans-BoldItalic.ttf */; };
+		A5134F692537F9ED001D38E9 /* NotoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5134F652537F9ED001D38E9 /* NotoSans-Regular.ttf */; };
+		A5134F6A2537F9ED001D38E9 /* NotoSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5134F662537F9ED001D38E9 /* NotoSans-Italic.ttf */; };
 		A51D42B225346857008DFE2C /* iplayyaicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A51D42B125346857008DFE2C /* iplayyaicons.ttf */; };
 		F206DDB9751E4A6490B97C7D /* libPods-iplayya.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */; };
 /* End PBXBuildFile section */
@@ -60,6 +64,10 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = iplayya/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		85062F1527518D782EF51FCC /* libPods-iplayya-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D6BF0917B55C720B5291F4A /* Pods-iplayya-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-iplayya-tvOSTests/Pods-iplayya-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		A5134F632537F9ED001D38E9 /* NotoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Bold.ttf"; sourceTree = "<group>"; };
+		A5134F642537F9ED001D38E9 /* NotoSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-BoldItalic.ttf"; sourceTree = "<group>"; };
+		A5134F652537F9ED001D38E9 /* NotoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Regular.ttf"; sourceTree = "<group>"; };
+		A5134F662537F9ED001D38E9 /* NotoSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Italic.ttf"; sourceTree = "<group>"; };
 		A51D42B125346857008DFE2C /* iplayyaicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = iplayyaicons.ttf; sourceTree = "<group>"; };
 		AE74DD2B42F1DE8E0DD65D4B /* libPods-iplayya-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -203,6 +211,10 @@
 		A51D42B025346826008DFE2C /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				A5134F632537F9ED001D38E9 /* NotoSans-Bold.ttf */,
+				A5134F642537F9ED001D38E9 /* NotoSans-BoldItalic.ttf */,
+				A5134F662537F9ED001D38E9 /* NotoSans-Italic.ttf */,
+				A5134F652537F9ED001D38E9 /* NotoSans-Regular.ttf */,
 				A51D42B125346857008DFE2C /* iplayyaicons.ttf */,
 			);
 			path = Fonts;
@@ -351,7 +363,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A5134F692537F9ED001D38E9 /* NotoSans-Regular.ttf in Resources */,
+				A5134F672537F9ED001D38E9 /* NotoSans-Bold.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				A5134F682537F9ED001D38E9 /* NotoSans-BoldItalic.ttf in Resources */,
+				A5134F6A2537F9ED001D38E9 /* NotoSans-Italic.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				A51D42B225346857008DFE2C /* iplayyaicons.ttf in Resources */,
 			);
