@@ -8,7 +8,7 @@ import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 
-import WithHeaderPush from 'components/with-header-push/with-header-push.component';
+import withHeaderPush from 'components/with-header-push/with-header-push.component';
 // import { useHeaderHeight } from '@react-navigation/stack';
 
 const styles = StyleSheet.create({
@@ -33,4 +33,4 @@ const ForgotPasswordScreen = () => {
  * wrapped with HOC WithHeaderPush to apply the style that pushes
  * the main container down the amount of space the header takes
  */
-export default WithHeaderPush(ForgotPasswordScreen);
+export default withHeaderPush(ForgotPasswordScreen);

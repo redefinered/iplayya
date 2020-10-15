@@ -10,7 +10,7 @@ import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import Loader from 'components/loader.component';
 
-import WithFormWrap from 'components/with-form-wrap/with-form-wrap.component';
+import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 
 import styles from './add-iptv.styles';
 
@@ -44,4 +44,4 @@ const AddIptvScreen = ({ isFething }) => {
   );
 };
 
-export default WithFormWrap(AddIptvScreen);
+export default withFormWrap(AddIptvScreen);
