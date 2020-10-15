@@ -16,6 +16,7 @@ import HomeScreen from 'screens/home/home.screen';
 import SignInScreen from 'screens/sign-in/sign-in.screen';
 import SignUpScreen from 'screens/sign-up/sign-up.screen';
 import AddIptvScreen from 'screens/add-iptv/add-iptv.screen';
+import ForgotPasswordScreen from 'screens/forgot-password/forgot-password.screen';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -69,13 +70,14 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="AddIptvScreen"
+        initialRouteName="Home"
         screenOptions={{
           headerTransparent: true,
           headerTintColor: 'white',
           headerBackTitleVisible: false,
           headerBackImage: () => <HeaderBackImage />,
           headerStyle: { height: headerHeight },
+          headerTitleStyle: { fontSize: 24 },
           headerTitleContainerStyle: { paddingTop: 30 },
           headerLeftContainerStyle: {
             paddingLeft: 15,
@@ -110,6 +112,11 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
             //   </View>
             // ),
           }}
+        />
+        <Stack.Screen
+          name="ForgotPasswordScreen"
+          component={ForgotPasswordScreen}
+          options={{ title: 'Forgot Password' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
