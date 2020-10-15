@@ -7,7 +7,7 @@ import Icon from 'components/icon/icon.component';
 
 import styles from './alert-modal.styles';
 
-const AlertModal = ({ visible, showAction }) => {
+const AlertModal = ({ visible, showAction, message }) => {
   return (
     <Modal animationType="slide" visible={visible} transparent style={{ backgroundColor: 'red' }}>
       <Pressable onPress={() => showAction(false)} style={styles.container}>
@@ -17,9 +17,7 @@ const AlertModal = ({ visible, showAction }) => {
               <Icon name="alert" size={60} style={styles.icon} />
             </View>
             <View style={styles.textWrap}>
-              <Text style={styles.text}>
-                Oops! Your credentials is not valid. Call your IPTV provider for assistance.
-              </Text>
+              <Text style={styles.text}>{message}</Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>
@@ -34,8 +32,9 @@ const AlertModal = ({ visible, showAction }) => {
 };
 
 AlertModal.propTypes = {
-  visible: PropTypes.bool,
-  showAction: PropTypes.func
+  visible: PropTypes.bool.isRequired,
+  showAction: PropTypes.func.isRequired,
+  message: PropTypes.string.isRequired
 };
 
 export default AlertModal;
