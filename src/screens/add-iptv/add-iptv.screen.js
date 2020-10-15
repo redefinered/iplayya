@@ -36,6 +36,7 @@ const AddIptvScreen = ({ isFething }) => {
         </ScrollView>
       </ContentWrap>
       <AlertModal
+        variant="danger"
         message="Oops! Your credentials is not valid. Call your IPTV provider for assistance."
         showAction={setModalVisible}
         visible={modalVisible}

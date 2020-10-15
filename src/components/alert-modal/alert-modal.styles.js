@@ -8,6 +8,6 @@ export default StyleSheet.create({
   icon: { color: '#FF5050' },
   textWrap: { flex: 1, justifyContent: 'center', paddingRight: 30 },
   text: { fontSize: 17, lineHeight: 20, color: 'rgba(13, 17, 29, 0.7)' },
-  buttonContainer: { paddingBottom: 40 },
+  buttonContainer: { paddingBottom: 20 },
   button: { fontSize: 17, fontWeight: '700' }
 });
