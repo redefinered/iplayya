@@ -9,6 +9,7 @@ import Slider from '@react-native-community/slider';
 import Icon from 'components/icon/icon.component';
 import mapx from 'components/icon/fonts-map';
 import Button from 'components/button/button.component';
+import ContentWrap from 'components/content-wrap.component';
 
 console.log({ mapx });
 
@@ -67,26 +68,30 @@ class Home extends React.Component {
 
     return (
       <SafeAreaView>
-        <Button
-          onPress={() => {
-            this.props.navigation.navigate('SignUpScreen');
-          }}
-        >
-          Sign Up
-        </Button>
-        <Slider
-          style={{ width: Dimensions.get('window').width, height: 40 }}
-          onValueChange={(iconSize) => this.setState({ iconSize })}
-          minimumValue={15}
-          maximumValue={100}
-          minimumTrackTintColor="#FFFFFF"
-          maximumTrackTintColor="#000000"
-        />
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          {Object.keys(mapx).map((key) => (
-            <Icon key={key} name={key} style={styles.icon} size={iconSize} />
-          ))}
-        </View>
+        <ContentWrap>
+          <Slider
+            style={{ width: Dimensions.get('window').width, height: 40 }}
+            onValueChange={(iconSize) => this.setState({ iconSize })}
+            minimumValue={15}
+            maximumValue={100}
+            minimumTrackTintColor="#FFFFFF"
+            maximumTrackTintColor="#000000"
+          />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            {Object.keys(mapx).map((key) => (
+              <Icon key={key} name={key} style={styles.icon} size={iconSize} />
+            ))}
+          </View>
+          <Button
+            style={{ marginTop: 30 }}
+            mode="contained"
+            onPress={() => {
+              this.props.navigation.navigate('ForgotPasswordScreen');
+            }}
+          >
+            Click
+          </Button>
+        </ContentWrap>
       </SafeAreaView>
     );
   }
