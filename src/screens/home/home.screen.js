@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SafeAreaView, Dimensions, View, StyleSheet } from 'react-native';
+import { SafeAreaView, Dimensions, View, ScrollView, StyleSheet } from 'react-native';
 
 // import Video from 'react-native-video';
 import Slider from '@react-native-community/slider';
@@ -70,18 +70,20 @@ class Home extends React.Component {
       <SafeAreaView>
         <ContentWrap>
           <Slider
-            style={{ width: Dimensions.get('window').width, height: 40 }}
+            style={{ width: Dimensions.get('window').width - 30, height: 40 }}
             onValueChange={(iconSize) => this.setState({ iconSize })}
             minimumValue={15}
             maximumValue={100}
             minimumTrackTintColor="#FFFFFF"
             maximumTrackTintColor="#000000"
           />
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {Object.keys(mapx).map((key) => (
-              <Icon key={key} name={key} style={styles.icon} size={iconSize} />
-            ))}
-          </View>
+          <ScrollView>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              {Object.keys(mapx).map((key) => (
+                <Icon key={key} name={key} style={styles.icon} size={iconSize} />
+              ))}
+            </View>
+          </ScrollView>
           <Button
             style={{ marginTop: 30 }}
             mode="contained"
