@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 }
 });
 
-export default function WithFormWrap(WrappedComponent) {
+export default function withFormWrap(WrappedComponent) {
   const FormWrap = () => {
     const headerHeight = useHeaderHeight();
     return (
