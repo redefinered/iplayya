@@ -40,4 +40,4 @@ const ResetPasswordScreen = () => {
   );
 };
 
-export default withHeaderPush(ResetPasswordScreen);
+export default withHeaderPush(ResetPasswordScreen, { backgroundType: 'solid' });
