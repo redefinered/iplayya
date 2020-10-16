@@ -71,7 +71,7 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="ResetPasswordScreen"
+        initialRouteName="Home"
         screenOptions={{
           headerTransparent: true,
           headerTintColor: 'white',
@@ -88,13 +88,11 @@ const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
         }}
       >
         <Stack.Screen
-          name="Home"
+          name="HomeScreen"
           component={HomeScreen}
           options={{
-            headerShown: false,
-            headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
-            title: 'Home',
-            headerBackImage: () => <Icon name="video-settings" style={{ color: 'red' }} size={40} />
+            // headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
+            title: 'iPlayya'
           }}
         />
         <Stack.Screen

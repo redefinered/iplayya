@@ -1,17 +1,11 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SafeAreaView, Dimensions, View, ScrollView, StyleSheet } from 'react-native';
 
-// import Video from 'react-native-video';
-import Slider from '@react-native-community/slider';
-
-import Icon from 'components/icon/icon.component';
-import mapx from 'components/icon/fonts-map';
-import Button from 'components/button/button.component';
 import ContentWrap from 'components/content-wrap.component';
+import withHeaderPush from 'components/with-header-push/with-header-push.component';
 
-console.log({ mapx });
+import HomeMenu from 'components/home-menu/home-menu.component';
 
 // const VideoX = () => (
 //   <Video
@@ -56,7 +50,7 @@ class Home extends React.Component {
   };
 
   render() {
-    const { iconSize } = this.state;
+    // const { iconSize } = this.state;
     // console.log(Math.ceil(iconSize));
     // const channels = [
     //   { name: 'ESPN', uri: 'http://195.181.160.220:2080/9/video.m3u8' },
@@ -67,44 +61,12 @@ class Home extends React.Component {
     // const type = 'm3u8';
 
     return (
-      <SafeAreaView>
-        <ContentWrap>
-          <Slider
-            style={{ width: Dimensions.get('window').width - 30, height: 40 }}
-            onValueChange={(iconSize) => this.setState({ iconSize })}
-            minimumValue={15}
-            maximumValue={100}
-            minimumTrackTintColor="#FFFFFF"
-            maximumTrackTintColor="#000000"
-          />
-          <ScrollView>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              {Object.keys(mapx).map((key) => (
-                <Icon key={key} name={key} style={styles.icon} size={iconSize} />
-              ))}
-            </View>
-          </ScrollView>
-          <Button
-            style={{ marginTop: 30 }}
-            mode="contained"
-            onPress={() => {
-              this.props.navigation.navigate('ForgotPasswordScreen');
-            }}
-          >
-            Click
-          </Button>
-        </ContentWrap>
-      </SafeAreaView>
+      <ContentWrap>
+        <HomeMenu />
+      </ContentWrap>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  icon: {
-    color: 'red',
-    margin: 5
-  }
-});
 
 Home.propTypes = {
   currentUser: PropTypes.object,
@@ -112,4 +74,4 @@ Home.propTypes = {
   helloAction: PropTypes.func
 };
 
-export default Home;
+export default withHeaderPush(Home, { backgroundType: 'image' });
