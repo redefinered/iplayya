@@ -1,21 +1,69 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, SafeAreaView } from 'react-native';
+import { StatusBar, SafeAreaView, View, ImageBackground, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { withTheme } from 'react-native-paper';
 
-const ScreenContainer = ({ children }) => {
+/**
+ * Wraps a screen with React Fragment and background
+ * @param {string} backgroundType: can either be solid, image, or gradient. default is gradient
+ */
+const ScreenContainer = ({
+  children,
+  backgroundType,
+  gradientTypeColors,
+  theme: {
+    iplayya: { colors }
+  }
+}) => {
+  const containerWithBackground = () => {
+    if (backgroundType === 'solid') {
+      return (
+        <View style={{ flex: 1, backgroundColor: colors.goodnight }}>
+          <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
+        </View>
+      );
+    }
+    if (backgroundType === 'image') {
+      return (
+        <ImageBackground
+          imageStyle={{
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height
+          }}
+          style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
+          source={require('images/Home_BG.png')}
+        >
+          <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
+        </ImageBackground>
+      );
+    }
+    return (
+      <LinearGradient style={{ flex: 1 }} colors={gradientTypeColors}>
+        <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
+      </LinearGradient>
+    );
+  };
+
   return (
     <React.Fragment>
       <StatusBar barStyle="light-content" />
-      <LinearGradient style={{ flex: 1 }} colors={['#2D1449', '#0D0637']}>
-        <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
-      </LinearGradient>
+      {containerWithBackground()}
     </React.Fragment>
   );
 };
 
-ScreenContainer.propTypes = {
-  children: PropTypes.any.isRequired
+ScreenContainer.defaultProps = {
+  backgroundType: 'gradient',
+  gradientTypeColors: ['#2D1449', '#0D0637']
 };
 
-export default ScreenContainer;
+ScreenContainer.propTypes = {
+  children: PropTypes.any.isRequired,
+  backgroundType: PropTypes.string,
+  gradientTypeColors: PropTypes.array
+};
+
+export default withTheme(ScreenContainer);
