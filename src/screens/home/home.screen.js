@@ -28,45 +28,50 @@ import HomeMenu from 'components/home-menu/home-menu.component';
 //   />
 // );
 
-class Home extends React.Component {
-  constructor(props) {
-    super(props);
+const Home = () => {
+  return (
+    <ContentWrap>
+      <HomeMenu />
+    </ContentWrap>
+  );
+};
 
-    this.state = {
-      videoError: null,
-      videoBuffering: false,
-      iconSize: 15
-    };
-  }
+// class Home extends React.Component {
+//   constructor(props) {
+//     super(props);
 
-  handleVideoError = () => {
-    // this.setState({ videoError: 'Error loading the video' });
-    console.log('Error loading the video');
-  };
+//     this.state = {
+//       videoError: null,
+//       videoBuffering: false,
+//       iconSize: 15
+//     };
+//   }
 
-  handleVideoBuffering = () => {
-    // this.setState({ videoBuffering: true });
-    console.log('buffering...');
-  };
+//   handleVideoError = () => {
+//     // this.setState({ videoError: 'Error loading the video' });
+//     console.log('Error loading the video');
+//   };
 
-  render() {
-    // const { iconSize } = this.state;
-    // console.log(Math.ceil(iconSize));
-    // const channels = [
-    //   { name: 'ESPN', uri: 'http://195.181.160.220:2080/9/video.m3u8' },
-    //   { name: 'Avengers', uri: 'http://195.181.160.220:2080/9/video.m3u8' },
-    //   { name: 'Startrek', uri: 'http://89.187.191.201/1492026922/StarTrek.mp4' },
-    //   { name: 'xxx', url: 'http://37.187.174.33:2080/1/video.m3u8' }
-    // ];
-    // const type = 'm3u8';
+//   handleVideoBuffering = () => {
+//     // this.setState({ videoBuffering: true });
+//     console.log('buffering...');
+//   };
 
-    return (
-      <ContentWrap>
-        <HomeMenu />
-      </ContentWrap>
-    );
-  }
-}
+//   render() {
+//     // const { iconSize } = this.state;
+//     // console.log(Math.ceil(iconSize));
+//     // const channels = [
+//     //   { name: 'ESPN', uri: 'http://195.181.160.220:2080/9/video.m3u8' },
+//     //   { name: 'Avengers', uri: 'http://195.181.160.220:2080/9/video.m3u8' },
+//     //   { name: 'Startrek', uri: 'http://89.187.191.201/1492026922/StarTrek.mp4' },
+//     //   { name: 'xxx', url: 'http://37.187.174.33:2080/1/video.m3u8' }
+//     // ];
+//     // const type = 'm3u8';
+
+//     return (
+//     );
+//   }
+// }
 
 Home.propTypes = {
   currentUser: PropTypes.object,

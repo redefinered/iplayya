@@ -6,18 +6,21 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { View } from 'react-native';
-import { Colors, IconButton } from 'react-native-paper';
+// import { View } from 'react-native';
+// import { Colors, IconButton } from 'react-native-paper';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
-import Icon from 'components/icon/icon.component';
+// import Icon from 'components/icon/icon.component';
 
 import HomeScreen from 'screens/home/home.screen';
 import SignInScreen from 'screens/sign-in/sign-in.screen';
 import SignUpScreen from 'screens/sign-up/sign-up.screen';
-import AddIptvScreen from 'screens/add-iptv/add-iptv.screen';
+// import AddIptvScreen from 'screens/add-iptv/add-iptv.screen';
 import ForgotPasswordScreen from 'screens/forgot-password/forgot-password.screen';
 import ResetPasswordScreen from 'screens/reset-password/reset-password.screen';
+import IptvScreen from 'screens/iptv/iptv.screen';
+import AccountScreen from 'screens/account/account.screen';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -26,104 +29,198 @@ import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
 
 import { headerHeight } from 'common/values';
 
+import TabBarIcon from 'components/tabbar-icon/tabbar-icon.component';
+
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-const HeaderActions = ({ signOutAction }) => {
-  return (
-    <View style={{ flexDirection: 'row' }}>
-      <IconButton
-        icon="account-circle-outline"
-        color={Colors.blue500}
-        size={30}
-        onPress={() => console.log('Pressed')}
-      />
-      <IconButton
-        icon="logout-variant"
-        color={Colors.red500}
-        size={30}
-        onPress={() => signOutAction()}
-      />
-      <IconButton
-        style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-        icon="camera"
-        color={Colors.white}
-        size={20}
-        onPress={() => console.log('Pressed')}
-      />
-    </View>
-  );
-};
+// const HeaderActions = ({ signOutAction }) => {
+//   return (
+//     <View style={{ flexDirection: 'row' }}>
+// <IconButton
+//   icon="account-circle-outline"
+//   color={Colors.blue500}
+//   size={30}
+//   onPress={() => console.log('Pressed')}
+// />
+//       <IconButton
+//         icon="logout-variant"
+//         color={Colors.red500}
+//         size={30}
+//         onPress={() => signOutAction()}
+//       />
+//       <IconButton
+//         style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+//         icon="camera"
+//         color={Colors.white}
+//         size={20}
+//         onPress={() => console.log('Pressed')}
+//       />
+//     </View>
+//   );
+// };
 
-const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
-  // React.useEffect(() => {
-  //   purgeStoreAction();
-  // }, []);
-
-  const handleSignOut = () => {
-    purgeStoreAction();
-    signOutAction();
-  };
-
+const App = ({ currentUser }) => {
   // simulate logged-in state
   currentUser = { name: 'Red' };
 
   if (!currentUser) return <SignInScreen />;
+  // return (
+  //   <NavigationContainer>
+  //     <Stack.Navigator
+  //       initialRouteName="Home"
+  //       screenOptions={{
+  //         headerTransparent: true,
+  //         headerTintColor: 'white',
+  //         headerBackTitleVisible: false,
+  //         headerBackImage: () => <HeaderBackImage />,
+  //         headerStyle: { height: headerHeight },
+  //         headerTitleStyle: { fontSize: 24 },
+  //         headerTitleContainerStyle: { paddingTop: 30 },
+  //         headerLeftContainerStyle: {
+  //           paddingLeft: 15,
+  //           justifyContent: 'flex-end'
+  //         },
+  //         headerRightContainerStyle: styles.headerRightContainerStyle
+  //       }}
+  //     >
+  //       <Stack.Screen
+  //         name="HomeScreen"
+  //         component={HomeScreen}
+  //         options={{
+  //           // headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
+  //           title: 'iPlayya'
+  //         }}
+  //       />
+  //       <Stack.Screen
+  //         name="AddIptvScreen"
+  //         component={AddIptvScreen}
+  //         options={{ title: 'Add IPTV' }}
+  //       />
+  //       <Stack.Screen
+  //         name="SignUpScreen"
+  //         component={SignUpScreen}
+  //         options={{
+  //           title: 'Sign Up'
+  //           // headerRight: () => (
+  //           //   <View style={styles.headerButtonContainer}>
+  //           //     <Icon name="video-settings" style={{ color: 'white' }} size={16} />
+  //           //   </View>
+  //           // ),
+  //         }}
+  //       />
+  //       <Stack.Screen
+  //         name="ForgotPasswordScreen"
+  //         component={ForgotPasswordScreen}
+  //         options={{ title: 'Forgot Password' }}
+  //       />
+  //       <Stack.Screen
+  //         name="ResetPasswordScreen"
+  //         component={ResetPasswordScreen}
+  //         options={{ title: 'Reset Password' }}
+  //       />
+  //     </Stack.Navigator>
+  //   </NavigationContainer>
+  // );
+
   return (
     <NavigationContainer>
-      <Stack.Navigator
+      <Tab.Navigator
         initialRouteName="Home"
-        screenOptions={{
-          headerTransparent: true,
-          headerTintColor: 'white',
-          headerBackTitleVisible: false,
-          headerBackImage: () => <HeaderBackImage />,
-          headerStyle: { height: headerHeight },
-          headerTitleStyle: { fontSize: 24 },
-          headerTitleContainerStyle: { paddingTop: 30 },
-          headerLeftContainerStyle: {
-            paddingLeft: 15,
-            justifyContent: 'flex-end'
+        tabBarOptions={{
+          showLabel: false,
+          tabStyle: {
+            backgroundColor: 'red',
+            marginHorizontal: 50
           },
-          headerRightContainerStyle: styles.headerRightContainerStyle
+          style: {
+            backgroundColor: 'transparent',
+            borderTopWidth: 0,
+            position: 'absolute',
+            left: 50,
+            right: 50,
+            bottom: 50
+          }
         }}
       >
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
+        <Tab.Screen
+          name="IptvScreen"
+          component={IptvScreen}
+          options={{ tabBarIcon: () => <TabBarIcon name="iptv" /> }}
+          tabPress={() => console.log('test')}
+        />
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
           options={{
-            // headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
-            title: 'iPlayya'
+            tabBarIcon: ({ focused }) => {
+              console.log({ focused });
+              const name = focused ? 'iplayya' : 'account';
+              // use different image states instead of icon. e.g. iplayya, iplayya-active
+              return <TabBarIcon focused={focused} name={name} />;
+            }
           }}
         />
-        <Stack.Screen
-          name="AddIptvScreen"
-          component={AddIptvScreen}
-          options={{ title: 'Add IPTV' }}
+        <Tab.Screen
+          name="AccountScreen"
+          component={AccountScreen}
+          options={{ tabBarIcon: () => <TabBarIcon name="account" /> }}
         />
-        <Stack.Screen
-          name="SignUpScreen"
-          component={SignUpScreen}
-          options={{
-            title: 'Sign Up'
-            // headerRight: () => (
-            //   <View style={styles.headerButtonContainer}>
-            //     <Icon name="video-settings" style={{ color: 'white' }} size={16} />
-            //   </View>
-            // ),
-          }}
-        />
-        <Stack.Screen
-          name="ForgotPasswordScreen"
-          component={ForgotPasswordScreen}
-          options={{ title: 'Forgot Password' }}
-        />
-        <Stack.Screen
-          name="ResetPasswordScreen"
-          component={ResetPasswordScreen}
-          options={{ title: 'Reset Password' }}
-        />
-      </Stack.Navigator>
+      </Tab.Navigator>
     </NavigationContainer>
+  );
+};
+
+const HomeStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerTransparent: true,
+        headerTintColor: 'white',
+        headerBackTitleVisible: false,
+        headerBackImage: () => <HeaderBackImage />,
+        headerStyle: { height: headerHeight },
+        headerTitleStyle: { fontSize: 24 },
+        headerTitleContainerStyle: { paddingTop: 30 },
+        headerLeftContainerStyle: {
+          paddingLeft: 15,
+          justifyContent: 'flex-end'
+        },
+        headerRightContainerStyle: styles.headerRightContainerStyle
+      }}
+    >
+      <Stack.Screen
+        name="HomeScreen"
+        component={HomeScreen}
+        options={{
+          // headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
+          title: 'iPlayya'
+        }}
+      />
+      <Stack.Screen
+        name="SignUpScreen"
+        component={SignUpScreen}
+        options={{
+          title: 'Sign Up'
+          // headerRight: () => (
+          //   <View style={styles.headerButtonContainer}>
+          //     <Icon name="video-settings" style={{ color: 'white' }} size={16} />
+          //   </View>
+          // ),
+        }}
+      />
+      <Stack.Screen
+        name="ForgotPasswordScreen"
+        component={ForgotPasswordScreen}
+        options={{ title: 'Forgot Password' }}
+      />
+      <Stack.Screen
+        name="ResetPasswordScreen"
+        component={ResetPasswordScreen}
+        options={{ title: 'Reset Password' }}
+      />
+    </Stack.Navigator>
   );
 };
 
