@@ -10,7 +10,7 @@ export default function withHeaderPush(WrappedComponent, options = {}) {
     const headerHeight = useHeaderHeight();
     return (
       <ScreenContainer backgroundType={backgroundType} gradientTypeColors={gradientTypeColors}>
-        <View style={{ paddingTop: headerHeight }}>
+        <View style={{ flex: 1, paddingTop: headerHeight }}>
           <WrappedComponent />
         </View>
       </ScreenContainer>
