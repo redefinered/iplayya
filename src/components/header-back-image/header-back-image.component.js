@@ -4,7 +4,7 @@ import Icon from 'components/icon/icon.component';
 
 const HeaderBackImage = () => (
   <View style={styles.backButtonContainer}>
-    <Icon name="chevron-left" style={{ color: 'white' }} size={16} />
+    <Icon name="chevron-left" style={{ color: 'white' }} size={24} />
   </View>
 );
 
