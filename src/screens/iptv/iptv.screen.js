@@ -1,23 +1,31 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
+import IptvItem from 'components/iptv-item/iptv-item.component';
 import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, withTheme } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectProviders } from 'modules/ducks/iptv/iptv.selectors';
 
 import NoProvider from 'images/no_provider.svg';
+import providersMock from './providers.mock';
 
 const IptvScreen = ({ providers }) => {
-  if (providers.length)
+  console.log({ providers });
+  if (providersMock.length)
     return (
       <ContentWrap>
-        <Text>ITPV Screen</Text>
+        {providersMock.map(({ id, name, username }) => (
+          <IptvItem key={id} name={name} username={username} />
+        ))}
       </ContentWrap>
     );
 
@@ -47,4 +55,6 @@ IptvScreen.propTypes = {
 
 const mapStateToProps = createStructuredSelector({ providers: selectProviders });
 
-export default withHeaderPush(connect(mapStateToProps)(IptvScreen));
+// export default withHeaderPush(withTheme(connect(mapStateToProps)(IptvScreen)));
+
+export default compose(withHeaderPush, withTheme, connect(mapStateToProps))(IptvScreen);

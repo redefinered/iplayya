@@ -23,7 +23,6 @@ import { selectHideTabs } from 'modules/ducks/nav/nav.selectors';
 const Tab = createBottomTabNavigator();
 
 const HomeTabs = ({ hideTabs }) => {
-  console.log({ hideTabs });
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -40,7 +39,6 @@ const HomeTabs = ({ hideTabs }) => {
           left: 50,
           right: 50,
           bottom: hideTabs ? -200 : 50
-          // bottom: 50
         }
       }}
     >
