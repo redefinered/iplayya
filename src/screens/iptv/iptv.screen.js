@@ -14,7 +14,6 @@ import { selectProviders } from 'modules/ducks/iptv/iptv.selectors';
 import NoProvider from 'images/no_provider.svg';
 
 const IptvScreen = ({ providers }) => {
-  console.log({ providers });
   if (providers.length)
     return (
       <ContentWrap>

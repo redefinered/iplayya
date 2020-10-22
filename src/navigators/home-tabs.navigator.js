@@ -2,7 +2,6 @@
 /* eslint-disable react/display-name */
 
 import React from 'react';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
 
 import HomeIcon from 'images/tab-icons/home.svg';
 import HomeIconActive from 'images/tab-icons/home_active.svg';
@@ -17,55 +16,65 @@ import IptvStack from 'navigators/iptv-stack.navigator';
 import HomeStack from 'navigators/home-stack.navigator';
 import AccountStack from 'navigators/account-stack.navigator';
 
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { selectHideTabs } from 'modules/ducks/nav/nav.selectors';
+
 const Tab = createBottomTabNavigator();
 
-const HomeTabs = () => (
-  <Tab.Navigator
-    initialRouteName="Home"
-    tabBarOptions={{
-      showLabel: false,
-      tabStyle: {
-        backgroundColor: 'red',
-        marginHorizontal: 50
-      },
-      style: {
-        backgroundColor: 'transparent',
-        borderTopWidth: 0,
-        position: 'absolute',
-        left: 50,
-        right: 50,
-        bottom: 50
-      }
-    }}
-  >
-    <Tab.Screen
-      name="IPTV"
-      component={IptvStack}
-      options={{
-        tabBarIcon: ({ focused }) => {
-          return focused ? <IptvIconActive /> : <IptvIcon />;
+const HomeTabs = ({ hideTabs }) => {
+  console.log({ hideTabs });
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      tabBarOptions={{
+        showLabel: false,
+        tabStyle: {
+          backgroundColor: 'red',
+          marginHorizontal: 50
+        },
+        style: {
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          position: 'absolute',
+          left: 50,
+          right: 50,
+          bottom: hideTabs ? -200 : 50
+          // bottom: 50
         }
       }}
-    />
-    <Tab.Screen
-      name="Home"
-      component={HomeStack}
-      options={{
-        tabBarIcon: ({ focused }) => {
-          return focused ? <HomeIconActive /> : <HomeIcon />;
-        }
-      }}
-    />
-    <Tab.Screen
-      name="Account"
-      component={AccountStack}
-      options={{
-        tabBarIcon: ({ focused }) => {
-          return focused ? <AccountIconActive /> : <AccountIcon />;
-        }
-      }}
-    />
-  </Tab.Navigator>
-);
+    >
+      <Tab.Screen
+        name="IPTV"
+        component={IptvStack}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return focused ? <IptvIconActive /> : <IptvIcon />;
+          }
+        }}
+      />
+      <Tab.Screen
+        name="Home"
+        component={HomeStack}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return focused ? <HomeIconActive /> : <HomeIcon />;
+          }
+        }}
+      />
+      <Tab.Screen
+        name="Account"
+        component={AccountStack}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return focused ? <AccountIconActive /> : <AccountIcon />;
+          }
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
-export default HomeTabs;
+const mapStateToProps = createStructuredSelector({ hideTabs: selectHideTabs });
+
+export default connect(mapStateToProps)(HomeTabs);

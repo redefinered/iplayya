@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 
 import React from 'react';
@@ -12,10 +13,19 @@ import AddIptvScreen from 'screens/add-iptv/add-iptv.screen';
 
 import { headerHeight } from 'common/values';
 
+import { Creators } from 'modules/ducks/nav/nav.actions';
+import { connect } from 'react-redux';
+
 const Stack = createStackNavigator();
 
-const IptvStack = () => {
+const IptvStack = ({ setBottomTabsVisibleAction }) => {
   const navigation = useNavigation();
+
+  const onAddButtonPress = () => {
+    navigation.navigate('AddIptvScreen');
+    // setBottomTabsVisibleAction({ hideTabs: true });
+  };
+
   return (
     <Stack.Navigator
       screenOptions={{
@@ -42,17 +52,22 @@ const IptvStack = () => {
               <View style={styles.headerButtonContainer}>
                 <Icon name="search" size={24} />
               </View>
-              <Pressable
-                onPress={() => navigation.navigate('AddIptvScreen')}
-                style={styles.headerButtonContainer}
-              >
+              <Pressable onPress={() => onAddButtonPress()} style={styles.headerButtonContainer}>
                 <Icon name="add" size={24} />
               </Pressable>
             </View>
           )
         }}
       />
-      <Stack.Screen name="AddIptvScreen" component={AddIptvScreen} />
+      <Stack.Screen
+        name="AddIptvScreen"
+        component={AddIptvScreen}
+        options={{ title: 'Add IPTV' }}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
     </Stack.Navigator>
   );
 };
@@ -73,4 +88,8 @@ const styles = StyleSheet.create({
   }
 });
 
-export default IptvStack;
+const actions = {
+  setBottomTabsVisibleAction: Creators.setBottomTabsVisible
+};
+
+export default connect(null, actions)(IptvStack);
