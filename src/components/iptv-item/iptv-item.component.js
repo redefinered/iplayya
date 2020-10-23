@@ -5,6 +5,8 @@ import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import MinistraThumbnail from 'images/providers/ministra.svg';
 
+import styles from './iptv-item.styles';
+
 const IptvItem = ({
   name,
   username,
@@ -12,18 +14,10 @@ const IptvItem = ({
   theme: {
     roundness,
     iplayya: { colors }
-  }
+  },
+  showActions
 }) => (
-  <View
-    style={{
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.white10,
-      paddingHorizontal: 15,
-      marginBottom: 10,
-      borderRadius: roundness
-    }}
-  >
+  <View style={{ backgroundColor: colors.white10, borderRadius: roundness, ...styles.container }}>
     {thumbnail && (
       <View style={{ flex: 2, alignItems: 'center' }}>
         <MinistraThumbnail />
@@ -35,25 +29,16 @@ const IptvItem = ({
         flex: thumbnail ? 11 : 9,
         paddingHorizontal: thumbnail ? 10 : 0,
         paddingRight: thumbnail ? 0 : 10,
-        paddingVertical: 15
+        paddingVertical: 20
       }}
     >
-      <Text style={{ fontSize: 14, fontWeight: 'bold', lineHeight: 19, marginBottom: 3 }}>
-        {name}
-      </Text>
+      <Text style={styles.name}>{name}</Text>
       <Text
-        style={{ fontSize: 12, lineHeight: 16, color: colors.white50 }}
+        style={{ color: colors.white50, ...styles.username }}
       >{`Logged in as ${username}`}</Text>
     </Pressable>
-    <View style={{ flex: 1 }}>
-      <Pressable
-        onPress={() => console.log('more options')}
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
+    <View style={styles.iconContainer}>
+      <Pressable onPress={() => showActions(true)} style={styles.icon}>
         <Icon name="more" size={24} />
       </Pressable>
     </View>
@@ -64,7 +49,8 @@ IptvItem.propTypes = {
   name: PropTypes.string.isRequired,
   username: PropTypes.string,
   thumbnail: PropTypes.string, // an svg component that is imported
-  theme: PropTypes.object
+  theme: PropTypes.object,
+  showActions: PropTypes.func
 };
 
 export default withTheme(IptvItem);
