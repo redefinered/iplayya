@@ -21,7 +21,7 @@ const AlertModal = ({ visible, showAction, message, confirmText, variant }) => {
       break;
   }
   return (
-    <Modal animationType="slide" visible={visible} transparent style={{ backgroundColor: 'red' }}>
+    <Modal animationType="slide" visible={visible} transparent>
       <Pressable onPress={() => showAction(false)} style={styles.container}>
         <View style={styles.contentWrap}>
           <View style={styles.content}>
