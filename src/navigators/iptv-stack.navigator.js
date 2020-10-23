@@ -9,7 +9,7 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import Icon from 'components/icon/icon.component.js';
 
 import IptvScreen from 'screens/iptv/iptv.screen';
-import AddIptvScreen from 'screens/add-iptv/add-iptv.screen';
+import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 
 import { headerHeight } from 'common/values';
 
