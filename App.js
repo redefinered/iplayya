@@ -5,62 +5,24 @@ import 'react-native-gesture-handler';
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from 'screens/home/home.screen';
-import OnBoardingScreen from 'screens/onboarding/onboarding.screen';
 
-import { View } from 'react-native';
-import { Colors, IconButton } from 'react-native-paper';
+import SignInScreen from 'screens/sign-in/sign-in.screen';
+import HomeTabs from 'navigators/home-tabs.navigator';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
 
-const Stack = createStackNavigator();
+const App = ({ currentUser }) => {
+  // simulate logged-in state
+  currentUser = { name: 'Red' };
 
-const HeaderActions = ({ signOutAction }) => {
-  return (
-    <View style={{ flexDirection: 'row' }}>
-      <IconButton
-        icon="account-circle-outline"
-        color={Colors.blue500}
-        size={30}
-        onPress={() => console.log('Pressed')}
-      />
-      <IconButton
-        icon="logout-variant"
-        color={Colors.red500}
-        size={30}
-        onPress={() => signOutAction()}
-      />
-    </View>
-  );
-};
+  if (!currentUser) return <SignInScreen />;
 
-const App = ({ currentUser, signOutAction, purgeStoreAction }) => {
-  // React.useEffect(() => {
-  //   purgeStoreAction();
-  // }, []);
-
-  const handleSignOut = () => {
-    purgeStoreAction();
-    signOutAction();
-  };
-
-  if (!currentUser) return <OnBoardingScreen />;
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            headerRight: () => <HeaderActions signOutAction={handleSignOut} />,
-            title: 'Welcome'
-          }}
-        />
-      </Stack.Navigator>
+      <HomeTabs />
     </NavigationContainer>
   );
 };
