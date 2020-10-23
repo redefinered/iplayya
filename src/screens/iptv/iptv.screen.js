@@ -6,6 +6,7 @@ import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import IptvItem from 'components/iptv-item/iptv-item.component';
+import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { View } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
@@ -20,12 +21,15 @@ import providersMock from './providers.mock';
 
 const IptvScreen = ({ providers }) => {
   console.log({ providers });
+  const [actionSheetVisible, setActionSheetVisible] = React.useState(true);
+
   if (providersMock.length)
     return (
       <ContentWrap>
         {providersMock.map(({ id, name, username }) => (
-          <IptvItem key={id} name={name} username={username} />
+          <IptvItem key={id} name={name} username={username} showActions={setActionSheetVisible} />
         ))}
+        <ActionSheet visible={actionSheetVisible} showAction={setActionSheetVisible} />
       </ContentWrap>
     );
 
