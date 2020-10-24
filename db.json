@@ -8,5 +8,12 @@
       "lastname": "Wick",
       "email": "johnwick101@example.com"
     }
+  ],
+  "auth": [
+    {
+      "id": 1,
+      "email": "johnwick101@example.com",
+      "password": "!qwe1234"
+    }
   ]
 }
