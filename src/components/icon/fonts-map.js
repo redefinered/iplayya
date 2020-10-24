@@ -8,7 +8,7 @@ export default {
   caption: String.fromCharCode(0xe806),
   'cast-connected': String.fromCharCode(0xe807),
   cast: String.fromCharCode(0xe808),
-  'change-pass': String.fromCharCode(0xe809),
+  'change-password': String.fromCharCode(0xe809),
   'chevron-left': String.fromCharCode(0xe80a),
   'circular-pause': String.fromCharCode(0xe80b),
   'circular-play': String.fromCharCode(0xe80c),
