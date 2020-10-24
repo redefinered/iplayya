@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 
@@ -14,9 +15,10 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
 
-const App = ({ currentUser }) => {
-  // simulate logged-in state
-  currentUser = { name: 'Red' };
+const App = ({ currentUser, purgeStoreAction }) => {
+  // React.useEffect(() => {
+  //   purgeStoreAction();
+  // }, []);
 
   if (!currentUser) return <SignInScreen />;
 
@@ -27,7 +29,9 @@ const App = ({ currentUser }) => {
   );
 };
 
-const mapStateToProps = createStructuredSelector({ currentUser: selectCurrentUser });
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser
+});
 
 const actions = {
   purgeStoreAction: Creators.purgeStore,
