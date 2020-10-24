@@ -6,6 +6,9 @@ const { Types, Creators } = createActions({
   helloFailure: ['error'],
   setPortalAddress: ['data'],
   signOut: [],
+  signIn: ['data'],
+  signInSuccess: ['data'],
+  signInFailure: ['error'],
   purgeStore: [] // for development
 });
 
