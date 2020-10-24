@@ -61,4 +61,4 @@ const mapStateToProps = createStructuredSelector({ providers: selectProviders })
 
 // export default withHeaderPush(withTheme(connect(mapStateToProps)(IptvScreen)));
 
-export default compose(withHeaderPush, withTheme, connect(mapStateToProps))(IptvScreen);
+export default compose(withHeaderPush, connect(mapStateToProps), withTheme)(IptvScreen);

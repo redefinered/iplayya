@@ -4,6 +4,5 @@ import { createSelector } from 'reselect';
 const selectIptv = (state) => state.iptv;
 
 export const selectProviders = createSelector([selectIptv], ({ providers }) => {
-  console.log({ providers });
   return providers;
 });
