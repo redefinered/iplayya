@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ContentWrap from 'components/content-wrap.component';
-import { View, Image, ScrollView, Pressable, Dimensions, ImageBackground } from 'react-native';
+import { View, Image, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { Title, Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 // import withHeaderPush from 'components/with-header-push/with-header-push.component';
