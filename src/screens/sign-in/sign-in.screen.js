@@ -15,7 +15,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectIsFetching } from 'modules/ducks/auth/auth.selectors';
+import { selectIsFetching, selectError } from 'modules/ducks/auth/auth.selectors';
 
 import withLoader from 'components/with-loader.component';
 import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
@@ -23,92 +23,118 @@ import withScreenContainer from 'components/with-screen-container/with-screen-co
 import styles from './sign-in.styles';
 
 // eslint-disable-next-line no-unused-vars
-const SignInScreen = ({ signInAction }) => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [isolatedInputs, setIsolatedInputs] = React.useState(false);
+class SignInScreen extends React.Component {
+  state = {
+    username: '',
+    password: '',
+    isolatedInputs: false,
+    showPassword: false
+  };
 
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <View style={styles.logo}>
-        <Logo />
-      </View>
+  handleChangeText = ({ name, text }) => {
+    this.setState({ [name]: text });
+  };
 
-      <ContentWrap style={styles.form}>
-        <TextInput
-          autoCapitalize="none"
-          clearButtonMode="while-editing"
-          autoCompleteType="email"
-          style={styles.textInput}
-          placeholder="email"
-          onFocus={() => setIsolatedInputs(true)}
-          onBlur={() => setIsolatedInputs(false)}
-        />
-        <View style={styles.passwordInputContainer}>
-          <TextInput
-            autoCapitalize="none"
-            style={styles.textInput}
-            placeholder="password"
-            secureTextEntry={!showPassword}
-            onFocus={() => setIsolatedInputs(true)}
-            onBlur={() => {
-              setShowPassword(false);
-              setIsolatedInputs(false);
-            }}
-          />
-          <Pressable
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.showToggleContainer}
-          >
-            <Icon
-              name={showPassword ? 'close' : 'eye'}
-              size={showPassword ? 25 : 40}
-              style={styles.showToggleIcon}
-            />
-          </Pressable>
+  handleLoginSubmit = () => {
+    const { username, password } = this.state;
+    const { signInAction } = this.props;
+    signInAction({ username, password });
+  };
+
+  render() {
+    const { showPassword, isolatedInputs, username, password } = this.state;
+
+    return (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
+        <View style={styles.logo}>
+          <Logo />
         </View>
-        <Button mode="contained" style={styles.loginButton} onPress={() => signInAction()}>
-          Login
-        </Button>
-        <Pressable
-          onPress={() => console.log('ForgotPasswordScreen')}
-          style={styles.forgotPassword}
-        >
-          <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
-        </Pressable>
-      </ContentWrap>
+        <ContentWrap style={styles.form}>
+          <TextInput
+            name="username"
+            handleChangeText={this.handleChangeText}
+            value={username}
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
+            autoCompleteType="email"
+            style={styles.textInput}
+            placeholder="email"
+            onFocus={() => this.setState({ isolatedInputs: true })}
+            onBlur={() => this.setState({ isolatedInputs: false })}
+          />
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              name="password"
+              handleChangeText={this.handleChangeText}
+              value={password}
+              autoCapitalize="none"
+              style={styles.textInput}
+              placeholder="password"
+              secureTextEntry={!showPassword}
+              onFocus={() => this.setState({ isolatedInputs: true })}
+              onBlur={() => this.setState({ isolatedInputs: false, showPassword: false })}
+            />
+            <Pressable
+              onPress={() => this.setState({ showPassword: !showPassword })}
+              style={styles.showToggleContainer}
+            >
+              <Icon
+                name={showPassword ? 'close' : 'eye'}
+                size={showPassword ? 25 : 40}
+                style={styles.showToggleIcon}
+              />
+            </Pressable>
+          </View>
+          {this.props.error && <Text>{this.props.error}</Text>}
+          <Button
+            mode="contained"
+            style={styles.loginButton}
+            onPress={() => this.handleLoginSubmit()}
+          >
+            Login
+          </Button>
+          <Pressable
+            onPress={() => console.log('ForgotPasswordScreen')}
+            style={styles.forgotPassword}
+          >
+            <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
+          </Pressable>
+        </ContentWrap>
 
-      <View style={{ ...styles.signUp }}>
-        <Text style={{ display: isolatedInputs ? 'none' : 'flex' }}>
-          Don't you have an account yet?{' '}
-          <Text onPress={() => console.log('SignUpScreen')} style={styles.signUpText}>
-            Sign-up
+        <View style={{ ...styles.signUp }}>
+          <Text style={{ display: isolatedInputs ? 'none' : 'flex' }}>
+            Don't you have an account yet?{' '}
+            <Text onPress={() => console.log('SignUpScreen')} style={styles.signUpText}>
+              Sign-up
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      <Pressable style={styles.help}>
-        <Text style={{ ...styles.signUpText, display: isolatedInputs ? 'none' : 'flex' }}>
-          Need help?
-        </Text>
-      </Pressable>
-    </KeyboardAvoidingView>
-  );
-};
+        <Pressable style={styles.help}>
+          <Text style={{ ...styles.signUpText, display: isolatedInputs ? 'none' : 'flex' }}>
+            Need help?
+          </Text>
+        </Pressable>
+      </KeyboardAvoidingView>
+    );
+  }
+}
 
 SignInScreen.propTypes = {
   signInAction: PropTypes.func
 };
 
-const mapStateToProps = createStructuredSelector({ isFetching: selectIsFetching });
+const mapStateToProps = createStructuredSelector({
+  isFetching: selectIsFetching,
+  error: selectError
+});
 
 const actions = {
   signInAction: Creators.signIn
 };
-
-// export default withLoader(connect(mapStateToProps, actions)(SignInScreen));
 
 export default compose(
   withScreenContainer,

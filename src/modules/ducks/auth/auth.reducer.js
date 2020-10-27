@@ -5,41 +5,10 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   currentUser: null,
-  portalAddress: null
+  isLoggedIn: false
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.HELLO]: (state) => {
-    return {
-      ...state,
-      error: null,
-      isFetching: true
-    };
-  },
-  [Types.HELLO_SUCCESS]: (state, action) => {
-    const { name } = action.data;
-    return {
-      ...state,
-      error: null,
-      isFetching: false,
-      name
-    };
-  },
-  [Types.HELLO_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      error: action.error,
-      isFetching: false,
-      name: null
-    };
-  },
-  [Types.SET_PORTAL_ADDRESS]: (state, action) => {
-    const { portalAddress } = action.data;
-    return {
-      ...state,
-      portalAddress
-    };
-  },
   [Types.SIGN_IN]: (state) => {
     return {
       ...state,
@@ -47,13 +16,12 @@ export default createReducer(INITIAL_STATE, {
       isFetching: true
     };
   },
-  [Types.SIGN_IN_SUCCESS]: (state, action) => {
-    const { currentUser } = action.data;
+  [Types.SIGN_IN_SUCCESS]: (state) => {
     return {
       ...state,
       error: null,
       isFetching: false,
-      currentUser
+      isLoggedIn: true
     };
   },
   [Types.SIGN_IN_FAILURE]: (state, action) => {
@@ -61,6 +29,27 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: action.error,
       isFetching: false,
+      isLoggedIn: false
+    };
+  },
+  [Types.GET_PROFILE]: (state) => {
+    return {
+      ...state
+    };
+  },
+  [Types.GET_PROFILE_SUCCESS]: (state, action) => {
+    const { currentUser } = action.data;
+    return {
+      ...state,
+      isLoggedIn: false,
+      currentUser
+    };
+  },
+  [Types.GET_PROFILE_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isLoggedIn: false,
+      error: action.error,
       currentUser: null
     };
   },
@@ -70,9 +59,23 @@ export default createReducer(INITIAL_STATE, {
       currentUser: null
     };
   },
+  [Types.SIGN_OUT_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isLoggedIn: false
+    };
+  },
+  [Types.SIGN_OUT_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isLoggedIn: false,
+      error: action.error
+    };
+  },
   [Types.PURGE_STORE]: (state) => {
     return {
-      ...state
+      ...state,
+      ...INITIAL_STATE
     };
   }
 });

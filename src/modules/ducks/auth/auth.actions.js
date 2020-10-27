@@ -1,14 +1,15 @@
 import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions({
-  hello: ['data'],
-  helloSuccess: ['data'],
-  helloFailure: ['error'],
-  setPortalAddress: ['data'],
-  signOut: [],
   signIn: ['data'],
-  signInSuccess: ['data'],
+  signInSuccess: [],
   signInFailure: ['error'],
+  signOut: [],
+  signOutSuccess: [],
+  signOutFailure: ['error'],
+  getProfile: [],
+  getProfileSuccess: ['data'],
+  getProfileFailure: ['error'],
   purgeStore: [] // for development
 });
 
