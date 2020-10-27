@@ -6,6 +6,7 @@ import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import Icon from 'components/icon/icon.component';
 import { Text, withTheme } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -28,6 +29,7 @@ const styles = StyleSheet.create({
 
 const AccountScreen = ({ currentUser, signOutAction, theme }) => {
   console.log({ currentUser });
+  const navigation = useNavigation();
   return (
     <ContentWrap>
       {
@@ -59,7 +61,7 @@ const AccountScreen = ({ currentUser, signOutAction, theme }) => {
           >
             {currentUser.email}
           </Text>
-          <Pressable>
+          <Pressable onPress={() => navigation.navigate('Profile')}>
             <Text
               style={{
                 fontSize: 14,

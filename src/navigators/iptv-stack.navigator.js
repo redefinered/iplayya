@@ -13,8 +13,8 @@ import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 
 import { headerHeight } from 'common/values';
 
-import { Creators } from 'modules/ducks/nav/nav.actions';
 import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/nav/nav.actions';
 
 const Stack = createStackNavigator();
 

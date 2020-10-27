@@ -21,7 +21,8 @@ import providersMock from './providers.mock';
 
 const IptvScreen = ({ providers }) => {
   console.log({ providers });
-  const [actionSheetVisible, setActionSheetVisible] = React.useState(true);
+
+  const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
 
   if (providersMock.length)
     return (
