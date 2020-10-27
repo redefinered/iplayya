@@ -23,9 +23,7 @@ import withScreenContainer from 'components/with-screen-container/with-screen-co
 import styles from './sign-in.styles';
 
 // eslint-disable-next-line no-unused-vars
-const SignInScreen = (props) => {
-  const { navigation, signInAction } = props;
-  console.log(props);
+const SignInScreen = ({ signInAction }) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [isolatedInputs, setIsolatedInputs] = React.useState(false);
 
@@ -74,7 +72,10 @@ const SignInScreen = (props) => {
         <Button mode="contained" style={styles.loginButton} onPress={() => signInAction()}>
           Login
         </Button>
-        <Pressable style={styles.forgotPassword}>
+        <Pressable
+          onPress={() => console.log('ForgotPasswordScreen')}
+          style={styles.forgotPassword}
+        >
           <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
         </Pressable>
       </ContentWrap>
@@ -82,7 +83,7 @@ const SignInScreen = (props) => {
       <View style={{ ...styles.signUp }}>
         <Text style={{ display: isolatedInputs ? 'none' : 'flex' }}>
           Don't you have an account yet?{' '}
-          <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
+          <Text onPress={() => console.log('SignUpScreen')} style={styles.signUpText}>
             Sign-up
           </Text>
         </Text>
