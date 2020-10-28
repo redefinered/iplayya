@@ -4,8 +4,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
+import withLoader from 'components/with-loader.component';
 import Icon from 'components/icon/icon.component';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import { compose } from 'redux';
@@ -13,9 +15,14 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { selectCurrentUser } from 'modules/ducks/profile/profile.selectors';
+import { selectCurrentUser, selectError } from 'modules/ducks/profile/profile.selectors';
+import {
+  selectError as selectAuthError,
+  selectIsFetching as selectAuthIsFetching
+} from 'modules/ducks/auth/auth.selectors';
 
 import { View, Image, Pressable, StyleSheet } from 'react-native';
+import { selectIsFetching } from 'modules/ducks/profile/profile.selectors';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -28,16 +35,33 @@ const styles = StyleSheet.create({
   }
 });
 
-const AccountScreen = ({ currentUser, signOutAction, theme, getProfileAction }) => {
+const AccountScreen = ({
+  currentUser,
+  signOutAction,
+  getProfileAction,
+  error,
+  authError,
+  authIsFetching
+}) => {
+  const theme = useTheme();
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    if (authError !== null) {
+      setModalVisible(true);
+    }
+    if (error !== null) {
+      setModalVisible(true);
+    }
+  }, [authError, error]);
+
   // console.log({ currentUser });
   const navigation = useNavigation();
 
   React.useEffect(() => {
     getProfileAction();
   }, [currentUser]);
-
-  // add error here
-  // if (!error) return <Text>Working...</Text>;
 
   if (!currentUser) return <Text>Working...</Text>;
 
@@ -59,8 +83,9 @@ const AccountScreen = ({ currentUser, signOutAction, theme, getProfileAction }) 
           />
         </View>
         <View style={{ paddingLeft: 15 }}>
+          {/* {currentUser} */}
           <Text style={{ fontSize: 20, fontWeight: 'bold', lineHeight: 27, marginBottom: 2 }}>
-            {currentUser.displayName}
+            {currentUser.name}
           </Text>
           <Text
             style={{
@@ -72,7 +97,7 @@ const AccountScreen = ({ currentUser, signOutAction, theme, getProfileAction }) 
           >
             {currentUser.email}
           </Text>
-          <Pressable onPress={() => navigation.navigate('Profile')}>
+          <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
             <Text
               style={{
                 fontSize: 14,
@@ -138,10 +163,26 @@ const AccountScreen = ({ currentUser, signOutAction, theme, getProfileAction }) 
             <Icon name="logout" size={24} />
           </View>
           <View>
-            <Text style={{ fontSize: 16, lineHeight: 22 }}>Logout</Text>
+            <Text style={{ fontSize: 16, lineHeight: 22 }}>
+              {authIsFetching ? 'Processing...' : 'Logout'}
+            </Text>
           </View>
         </Pressable>
       </View>
+      <AlertModal
+        variant="danger"
+        message={error}
+        showAction={setModalVisible}
+        visible={modalVisible}
+        confirmText="Retry"
+      />
+      <AlertModal
+        variant="danger"
+        message={authError}
+        showAction={setModalVisible}
+        visible={modalVisible}
+        confirmText="Retry"
+      />
     </ContentWrap>
   );
 };
@@ -157,6 +198,16 @@ const actions = {
   signOutAction: Creators.signOut
 };
 
-const mapStateToProps = createStructuredSelector({ currentUser: selectCurrentUser });
+const mapStateToProps = createStructuredSelector({
+  isFetching: selectIsFetching, // this is required when using withLoader HOC
+  authIsFetching: selectAuthIsFetching,
+  currentUser: selectCurrentUser,
+  error: selectError,
+  authError: selectAuthError
+});
 
-export default compose(withHeaderPush, withTheme, connect(mapStateToProps, actions))(AccountScreen);
+export default compose(
+  withHeaderPush,
+  connect(mapStateToProps, actions),
+  withLoader
+)(AccountScreen);
