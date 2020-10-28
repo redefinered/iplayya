@@ -19,7 +19,7 @@ const AddIptvScreen = ({ isFething }) => {
   return (
     <React.Fragment>
       {isFething && <Loader size="large" />}
-      <ContentWrap style={styles.content}>
+      <ContentWrap>
         <ScrollView>
           <View>
             <TextInput style={styles.textInput} placeholder="IPTV provider name" />
