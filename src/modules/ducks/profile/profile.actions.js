@@ -4,7 +4,8 @@ const { Types, Creators } = createActions(
   {
     getProfile: [],
     getProfileSuccess: ['data'],
-    getProfileFailure: ['error']
+    getProfileFailure: ['error'],
+    removeCurrentUser: []
   },
   { prefix: '@Profile/' }
 );

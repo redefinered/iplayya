@@ -33,19 +33,22 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.SIGN_OUT]: (state) => {
     return {
-      ...state
+      ...state,
+      error: null,
+      isFetching: true
     };
   },
   [Types.SIGN_OUT_SUCCESS]: (state) => {
     return {
       ...state,
+      isFetching: false,
       isLoggedIn: false
     };
   },
   [Types.SIGN_OUT_FAILURE]: (state, action) => {
     return {
       ...state,
-      isLoggedIn: false,
+      isFetching: false,
       error: action.error
     };
   },
