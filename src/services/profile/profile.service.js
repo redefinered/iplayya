@@ -9,12 +9,17 @@ export const getProfile = async () => {
           me {
             name
             email
+            username
+            phone
+            birth_date
+            gender
           }
         }
       `
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

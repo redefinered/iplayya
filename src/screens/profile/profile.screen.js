@@ -11,7 +11,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
+import { selectCurrentUser } from 'modules/ducks/profile/profile.selectors';
 import { createStructuredSelector } from 'reselect';
 
 import { StyleSheet } from 'react-native';
@@ -35,7 +35,16 @@ const ProfileScreen = ({
     iplayya: { colors }
   }
 }) => {
-  const { firstname, lastname, username } = currentUser;
+  const { name, username, ...otherFields } = currentUser;
+
+  const fields = [
+    { key: 'email', icon: 'email' },
+    { key: 'phone', icon: 'phone' },
+    { key: 'birth_date', icon: 'birthday' },
+    { key: 'gender', icon: 'account' }
+  ];
+
+  console.log({ currentUser, x: username.length });
   return (
     <LinearGradient style={{ flex: 1 }} colors={['#2D1449', '#0D0637']}>
       <ImageBackground
@@ -55,12 +64,14 @@ const ProfileScreen = ({
               }}
             />
           </View>
-          <Title
-            style={{ fontSize: 24, lineHeight: 33, fontWeight: 'bold', marginBottom: 10 }}
-          >{`${firstname} ${lastname}`}</Title>
-          <Text
-            style={{ fontSize: 16, lineHeight: 22, color: colors.white80 }}
-          >{`@${username}`}</Text>
+          <Title style={{ fontSize: 24, lineHeight: 33, fontWeight: 'bold', marginBottom: 10 }}>
+            {name}
+          </Title>
+          {username.length > 0 ? (
+            <Text
+              style={{ fontSize: 16, lineHeight: 22, color: colors.white80 }}
+            >{`@${username}`}</Text>
+          ) : null}
         </View>
         <View style={styles.bodyContainer}>
           <View style={{ backgroundColor: colors.vibrantpussy, alignItems: 'center', padding: 15 }}>
@@ -76,38 +87,20 @@ const ProfileScreen = ({
       </ImageBackground>
       <ScrollView>
         <ContentWrap style={{ paddingTop: 20 }}>
-          <Pressable style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="email" size={24} />
-            </View>
-            <View>
-              <Text style={{ fontSize: 16, lineHeight: 22 }}>{currentUser.email}</Text>
-            </View>
-          </Pressable>
-          <Pressable style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="phone" size={24} />
-            </View>
-            <View>
-              <Text style={{ fontSize: 16, lineHeight: 22 }}>(+xx) xxxx xxxxxx</Text>
-            </View>
-          </Pressable>
-          <Pressable style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="birthday" size={24} />
-            </View>
-            <View>
-              <Text style={{ fontSize: 16, lineHeight: 22 }}>mm/dd/yy</Text>
-            </View>
-          </Pressable>
-          <Pressable style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="account" size={24} />
-            </View>
-            <View>
-              <Text style={{ fontSize: 16, lineHeight: 22 }}>n/s</Text>
-            </View>
-          </Pressable>
+          {fields.map(({ key, icon }) => {
+            if (otherFields[key]) {
+              return (
+                <Pressable key={key} style={styles.settingItem}>
+                  <View style={styles.iconContainer}>
+                    <Icon name={icon} size={24} />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 16, lineHeight: 22 }}>{otherFields[key]}</Text>
+                  </View>
+                </Pressable>
+              );
+            }
+          })}
         </ContentWrap>
       </ScrollView>
     </LinearGradient>
