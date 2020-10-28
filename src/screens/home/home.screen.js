@@ -6,6 +6,7 @@ import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 
 import HomeMenu from 'components/home-menu/home-menu.component';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // const VideoX = () => (
 //   <Video
@@ -29,6 +30,14 @@ import HomeMenu from 'components/home-menu/home-menu.component';
 // );
 
 const Home = () => {
+  const getToken = async () => {
+    const token = await AsyncStorage.getItem('token');
+    console.log({ token });
+  };
+  React.useEffect(() => {
+    getToken();
+  }, []);
+  // console.log({ x: window.localStorage.getItem('token') });
   return (
     <ContentWrap>
       <HomeMenu />

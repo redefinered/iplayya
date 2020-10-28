@@ -12,7 +12,8 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
-import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+import { selectCurrentUser } from 'modules/ducks/profile/profile.selectors';
 
 import { View, Image, Pressable, StyleSheet } from 'react-native';
 
@@ -27,9 +28,19 @@ const styles = StyleSheet.create({
   }
 });
 
-const AccountScreen = ({ currentUser, signOutAction, theme }) => {
-  console.log({ currentUser });
+const AccountScreen = ({ currentUser, signOutAction, theme, getProfileAction }) => {
+  // console.log({ currentUser });
   const navigation = useNavigation();
+
+  React.useEffect(() => {
+    getProfileAction();
+  }, [currentUser]);
+
+  // add error here
+  // if (!error) return <Text>Working...</Text>;
+
+  if (!currentUser) return <Text>Working...</Text>;
+
   return (
     <ContentWrap>
       {
@@ -136,10 +147,13 @@ const AccountScreen = ({ currentUser, signOutAction, theme }) => {
 };
 
 AccountScreen.propTypes = {
-  signOutAction: PropTypes.func
+  signOutAction: PropTypes.func,
+  getProfileAction: PropTypes.func,
+  currentUser: PropTypes.object
 };
 
 const actions = {
+  getProfileAction: ProfileCreators.getProfile,
   signOutAction: Creators.signOut
 };
 

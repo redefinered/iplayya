@@ -15,12 +15,17 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectProviders } from 'modules/ducks/iptv/iptv.selectors';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 
 import NoProvider from 'images/no_provider.svg';
 import providersMock from './providers.mock';
 
-const IptvScreen = ({ providers }) => {
+const IptvScreen = ({ providers, getMoviesAction }) => {
   console.log({ providers });
+
+  React.useEffect(() => {
+    getMoviesAction({ first: 10, page: 1 });
+  }, []);
 
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
 
@@ -60,6 +65,10 @@ IptvScreen.propTypes = {
 
 const mapStateToProps = createStructuredSelector({ providers: selectProviders });
 
+const actions = {
+  getMoviesAction: Creators.getMovies
+};
+
 // export default withHeaderPush(withTheme(connect(mapStateToProps)(IptvScreen)));
 
-export default compose(withHeaderPush, connect(mapStateToProps), withTheme)(IptvScreen);
+export default compose(withHeaderPush, connect(mapStateToProps, actions), withTheme)(IptvScreen);
