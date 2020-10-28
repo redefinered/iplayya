@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import AccountScreen from 'screens/account/account.screen';
 import ProfileScreen from 'screens/profile/profile.screen';
+import EditProfileScreen from 'screens/edit-profile/edit-profile.screen';
 import Icon from 'components/icon/icon.component';
 
 import { connect } from 'react-redux';
@@ -33,27 +34,32 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
       headerRightContainerStyle: styles.headerRightContainerStyle
     }}
   >
-    <Stack.Screen name="Account" component={AccountScreen} />
+    <Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'Account' }} />
     <Stack.Screen
-      name="Profile"
+      name="ProfileScreen"
       component={ProfileScreen}
-      options={{
+      options={({ navigation }) => ({
         title: null,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
             <Pressable
-              onPress={() => console.log('go to edit profile screen')}
+              onPress={() => navigation.navigate('EditProfileScreen')}
               style={styles.headerButtonContainer}
             >
               <Icon name="edit" size={24} />
             </Pressable>
           </View>
         )
-      }}
+      })}
       listeners={{
         focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
         beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
       }}
+    />
+    <Stack.Screen
+      name="EditProfileScreen"
+      component={EditProfileScreen}
+      options={{ title: 'Edit Profile' }}
     />
   </Stack.Navigator>
 );
