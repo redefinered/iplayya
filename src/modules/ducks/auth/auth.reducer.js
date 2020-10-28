@@ -4,7 +4,6 @@ import { Types } from './auth.actions';
 const INITIAL_STATE = {
   error: null,
   isFetching: false,
-  currentUser: null,
   isLoggedIn: false
 };
 
@@ -32,31 +31,9 @@ export default createReducer(INITIAL_STATE, {
       isLoggedIn: false
     };
   },
-  [Types.GET_PROFILE]: (state) => {
-    return {
-      ...state
-    };
-  },
-  [Types.GET_PROFILE_SUCCESS]: (state, action) => {
-    const { currentUser } = action.data;
-    return {
-      ...state,
-      isLoggedIn: false,
-      currentUser
-    };
-  },
-  [Types.GET_PROFILE_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      isLoggedIn: false,
-      error: action.error,
-      currentUser: null
-    };
-  },
   [Types.SIGN_OUT]: (state) => {
     return {
-      ...state,
-      currentUser: null
+      ...state
     };
   },
   [Types.SIGN_OUT_SUCCESS]: (state) => {

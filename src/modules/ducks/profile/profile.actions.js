@@ -2,9 +2,11 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    setBottomTabsVisible: ['data']
+    getProfile: [],
+    getProfileSuccess: ['data'],
+    getProfileFailure: ['error']
   },
-  { prefix: '@Nav/' }
+  { prefix: '@Profile/' }
 );
 
 export { Types, Creators };

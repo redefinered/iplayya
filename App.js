@@ -13,14 +13,14 @@ import HomeTabs from 'navigators/home-tabs.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
-import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors';
+import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 
-const App = ({ currentUser, purgeStoreAction }) => {
+const App = ({ isLoggedIn, purgeStoreAction }) => {
   // React.useEffect(() => {
   //   purgeStoreAction();
   // }, []);
 
-  if (!currentUser) return <SignInScreen />;
+  if (!isLoggedIn) return <SignInScreen />;
 
   return (
     <NavigationContainer>
@@ -30,7 +30,7 @@ const App = ({ currentUser, purgeStoreAction }) => {
 };
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  isLoggedIn: selectIsLoggedIn
 });
 
 const actions = {

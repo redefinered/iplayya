@@ -2,9 +2,11 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    setBottomTabsVisible: ['data']
+    getMovies: ['data'],
+    getMoviesSuccess: ['data'],
+    getMoviesFailure: ['error']
   },
-  { prefix: '@Nav/' }
+  { prefix: '@Movies/' }
 );
 
 export { Types, Creators };

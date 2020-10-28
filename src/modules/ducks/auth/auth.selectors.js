@@ -11,8 +11,3 @@ export const selectIsLoggedIn = createSelector([selectAuth], ({ isLoggedIn }) =>
 export const selectIsFetching = createSelector([selectAuth], ({ isFetching }) => isFetching);
 
 export const selectError = createSelector([selectAuth], ({ error }) => error);
-
-export const selectPortalAddress = createSelector(
-  [selectAuth],
-  ({ portalAddress }) => portalAddress
-);
