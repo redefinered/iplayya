@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/display-name */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -13,12 +11,18 @@ import HomeTabs from 'navigators/home-tabs.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 
-const App = ({ isLoggedIn, purgeStoreAction }) => {
-  // React.useEffect(() => {
-  //   purgeStoreAction();
-  // }, []);
+// eslint-disable-next-line no-unused-vars
+const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStoreAction }) => {
+  React.useEffect(() => {
+    // signOutAction(); // manual signout for debugging
+    // purgeStoreAction(); // manual state purge for debugging
+
+    // makes sure main tab navigation is always visible on application mount
+    setBottomTabsVisibleAction(true);
+  }, []);
 
   if (!isLoggedIn) return <SignInScreen />;
 
@@ -34,8 +38,9 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  purgeStoreAction: Creators.purgeStore,
-  signOutAction: Creators.signOut
+  purgeStoreAction: Creators.purgeStore, // for development and debugging
+  signOutAction: Creators.signOut,
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
 export default connect(mapStateToProps, actions)(App);
