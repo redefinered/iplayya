@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -29,14 +30,16 @@ import AsyncStorage from '@react-native-community/async-storage';
 //   />
 // );
 
-const Home = () => {
-  const getToken = async () => {
-    const token = await AsyncStorage.getItem('token');
-    console.log({ token });
-  };
-  React.useEffect(() => {
-    getToken();
-  }, []);
+// eslint-disable-next-line no-unused-vars
+const Home = ({ navigation }) => {
+  // const getToken = async () => {
+  //   const token = await AsyncStorage.getItem('token');
+  //   return token;
+  // };
+  // React.useEffect(() => {
+  //   const token = getToken();
+  //   if (!token) navigation.relace('SignInScreen');
+  // }, []);
   // console.log({ x: window.localStorage.getItem('token') });
   return (
     <ContentWrap>

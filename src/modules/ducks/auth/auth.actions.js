@@ -2,6 +2,7 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    register: ['data'],
     signIn: ['data'],
     signInSuccess: [],
     signInFailure: ['error'],

@@ -7,9 +7,6 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import { headerHeight } from 'common/values';
 
 import HomeScreen from 'screens/home/home.screen';
-import SignUpScreen from 'screens/sign-up/sign-up.screen';
-import ForgotPasswordScreen from 'screens/forgot-password/forgot-password.screen';
-import ResetPasswordScreen from 'screens/reset-password/reset-password.screen';
 
 const Stack = createStackNavigator();
 
@@ -37,23 +34,6 @@ const HomeStack = () => (
       options={{
         title: 'iPlayya'
       }}
-    />
-    <Stack.Screen
-      name="SignUpScreen"
-      component={SignUpScreen}
-      options={{
-        title: 'Sign Up'
-      }}
-    />
-    <Stack.Screen
-      name="ForgotPasswordScreen"
-      component={ForgotPasswordScreen}
-      options={{ title: 'Forgot Password' }}
-    />
-    <Stack.Screen
-      name="ResetPasswordScreen"
-      component={ResetPasswordScreen}
-      options={{ title: 'Reset Password' }}
     />
   </Stack.Navigator>
 );

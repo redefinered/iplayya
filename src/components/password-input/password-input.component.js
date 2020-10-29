@@ -5,7 +5,7 @@ import { View, Pressable } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 
-const PasswordInput = ({ style, ...otherProps }) => {
+const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
   const [showText, setShowText] = React.useState(false);
   return (
     <View style={{ position: 'relative' }}>
@@ -13,7 +13,7 @@ const PasswordInput = ({ style, ...otherProps }) => {
         mode="outlined"
         autoCapitalize="none"
         placeholder="password"
-        onChangeText={(text) => console.log(text)}
+        onChangeText={(text) => handleChangeText(text, name)}
         style={{ marginBottom: 10, ...style }}
         secureTextEntry={!showText}
         placeholderTextColor="rgba(255,255,255,0.5)"

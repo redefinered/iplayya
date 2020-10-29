@@ -8,6 +8,13 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.REGISTER]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true
+    };
+  },
   [Types.SIGN_IN]: (state) => {
     return {
       ...state,

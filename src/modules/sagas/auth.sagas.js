@@ -1,10 +1,29 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { signIn, getProfile, signOut } from 'services/auth/auth.service';
+import { register, signIn, getProfile, signOut } from 'services/auth/auth.service';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
+export function* registerRequest(action) {
+  const { ...input } = action.data;
+  try {
+    const {
+      register: {
+        status,
+        tokens: { access_token }
+      }
+    } = yield call(register, input);
+
+    // not sure if this is necessary
+    if (status !== 'SUCCESS') throw new Error('Something went wrong during registration process');
+
+    yield AsyncStorage.setItem('access_token', access_token);
+    yield put(Creators.signInSuccess());
+  } catch (error) {
+    yield put(Creators.signInFailure(error.message));
+  }
+}
 export function* signInRequest(action) {
   const { username, password } = action.data;
   try {
@@ -41,6 +60,7 @@ export function* getProfileRequest() {
 }
 
 export default function* authSagas() {
+  yield takeLatest(Types.REGISTER, registerRequest);
   yield takeLatest(Types.SIGN_IN, signInRequest);
   yield takeLatest(Types.GET_PROFILE, getProfileRequest);
   yield takeLatest(Types.SIGN_OUT, signOutRequest);

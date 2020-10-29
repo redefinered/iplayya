@@ -5,7 +5,7 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
-import SignInScreen from 'screens/sign-in/sign-in.screen';
+import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import HomeTabs from 'navigators/home-tabs.navigator';
 
 import { connect } from 'react-redux';
@@ -24,7 +24,12 @@ const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStore
     setBottomTabsVisibleAction(true);
   }, []);
 
-  if (!isLoggedIn) return <SignInScreen />;
+  if (!isLoggedIn)
+    return (
+      <NavigationContainer>
+        <OnboardingStack />
+      </NavigationContainer>
+    );
 
   return (
     <NavigationContainer>

@@ -1,4 +1,6 @@
-import { createStore, applyMiddleware } from 'redux';
+/* eslint-disable no-undef */
+
+import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
@@ -18,7 +20,10 @@ if (process.env.NODE_ENV === 'development') {
   middlewares.push(logger);
 }
 
-export const store = createStore(rootReducer, applyMiddleware(...middlewares));
+// add Redux devtools
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(...middlewares)));
 
 sagaMiddleware.run(rootSaga);
 

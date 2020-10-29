@@ -31,7 +31,7 @@ class SignInScreen extends React.Component {
     showPassword: false
   };
 
-  handleChangeText = ({ name, text }) => {
+  handleChangeText = (text, name) => {
     this.setState({ [name]: text });
   };
 
@@ -43,6 +43,9 @@ class SignInScreen extends React.Component {
 
   render() {
     const { showPassword, isolatedInputs, username, password } = this.state;
+    const { navigation } = this.props;
+
+    if (this.props.error) console.log({ errorxxx: this.props.error });
 
     return (
       <KeyboardAvoidingView
@@ -107,7 +110,7 @@ class SignInScreen extends React.Component {
         <View style={{ ...styles.signUp }}>
           <Text style={{ display: isolatedInputs ? 'none' : 'flex' }}>
             Don't you have an account yet?{' '}
-            <Text onPress={() => console.log('SignUpScreen')} style={styles.signUpText}>
+            <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
               Sign-up
             </Text>
           </Text>
@@ -137,7 +140,7 @@ const actions = {
 };
 
 export default compose(
-  withScreenContainer,
   connect(mapStateToProps, actions),
+  withScreenContainer(),
   withLoader
 )(SignInScreen);
