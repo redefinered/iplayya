@@ -14,6 +14,8 @@ import { Creators } from 'modules/ducks/auth/auth.actions';
 
 import styles from './sign-up.styles';
 
+import { isValidEmail, isValidName, isValidPassword } from 'common/validate';
+
 class SignUpScreen extends React.Component {
   state = {
     first_name: '',
@@ -21,81 +23,148 @@ class SignUpScreen extends React.Component {
     username: '',
     email: '',
     password: '',
-    password_confirmation: ''
+    password_confirmation: '',
+    valid: true,
+    errors: [
+      { key: 'first_name', val: false },
+      { key: 'last_name', val: false },
+      { key: 'username', val: false },
+      { key: 'email', val: false },
+      { key: 'password', val: false },
+      { key: 'password_confirmation', val: false }
+    ]
   };
 
   handleChange = (value, name) => {
     this.setState({ [name]: value });
   };
 
-  handleSubmit = () => {
-    const { first_name, last_name, ...rest } = this.state;
+  setError = (stateError, field, val) => {
+    const index = stateError.findIndex(({ key }) => key === field);
+    stateError[index].val = val;
+    this.setState({ errors: stateError });
+  };
 
-    // console.log({ validEmail: isValidEmail(input.email) });
-    if (!first_name.length) return;
-    if (!last_name.length) return;
-    if (!rest.username.length) return;
-    if (!rest.email.length) return;
-    if (!rest.password.length) return;
-    if (!rest.password_confirmation.length) return;
+  handleSubmit = () => {
+    const { errors: stateError, valid, ...rest } = this.state;
+
+    // just to remove valid from user registration fields XD
+    console.log({ valid });
+
+    if (!isValidName(rest.first_name)) {
+      this.setError(stateError, 'first_name', true);
+    } else {
+      this.setError(stateError, 'first_name', false);
+    }
+
+    if (!isValidName(rest.last_name)) {
+      this.setError(stateError, 'last_name', true);
+    } else {
+      this.setError(stateError, 'last_name', false);
+    }
+
+    if (!isValidName(rest.username)) {
+      this.setError(stateError, 'username', true);
+    } else {
+      this.setError(stateError, 'username', false);
+    }
+
+    if (!isValidEmail(rest.email)) {
+      this.setError(stateError, 'email', true);
+    } else {
+      this.setError(stateError, 'email', false);
+    }
+    if (!isValidPassword(rest.password)) {
+      this.setError(stateError, 'password', true);
+    } else {
+      this.setError(stateError, 'password', false);
+    }
+
+    if (rest.password_confirmation !== rest.password) {
+      this.setError(stateError, 'password_confirmation', true);
+    } else {
+      this.setError(stateError, 'password_confirmation', false);
+    }
+
+    const withError = stateError.find(({ val }) => val === true);
+    if (typeof withError !== 'undefined') {
+      return this.setState({ valid: false });
+    } else {
+      this.setState({ valid: true });
+    }
+
+    console.log('no errors! submit.');
 
     this.props.registerAction({
-      name: `${first_name} ${last_name}`,
-      first_name,
-      last_name,
+      name: `${rest.first_name} ${rest.last_name}`,
       ...rest
     });
   };
 
   render() {
-    const { first_name, last_name, username, email, password, password_confirmation } = this.state;
+    const { errors, valid, ...mainFields } = this.state;
+
+    let stateError = {};
+
+    errors.map(({ key, val }) => {
+      Object.assign(stateError, { [key]: val });
+    });
+
     return (
       <ContentWrap style={styles.content}>
         <TextInput
-          value={first_name}
+          value={mainFields.first_name}
           style={styles.textInput}
           name="first_name"
           placeholder="First name"
           handleChangeText={this.handleChange}
+          error={stateError.first_name}
         />
         <TextInput
           autoCapitalize="words"
-          value={last_name}
+          value={mainFields.last_name}
           style={styles.textInput}
           name="last_name"
           placeholder="Last name"
           handleChangeText={this.handleChange}
+          error={stateError.last_name}
         />
         <TextInput
           autoCapitalize="none"
-          value={username}
+          value={mainFields.username}
           style={styles.textInput}
           name="username"
           placeholder="Username"
           handleChangeText={this.handleChange}
+          error={stateError.username}
         />
         <TextInput
           autoCapitalize="none"
-          value={email}
+          value={mainFields.email}
           style={styles.textInput}
           name="email"
           placeholder="Email"
           handleChangeText={this.handleChange}
+          error={stateError.email}
         />
         <PasswordInput
-          value={password}
+          value={mainFields.password}
           style={styles.textInput}
           name="password"
           placeholder="Password"
           handleChangeText={this.handleChange}
+          error={stateError.password}
         />
         <PasswordInput
-          value={password_confirmation}
+          value={mainFields.password_confirmation}
           style={styles.textInput}
           name="password_confirmation"
           placeholder="Confirm password"
           handleChangeText={this.handleChange}
+          error={stateError.password_confirmation}
         />
+
+        {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
 
         <Text style={styles.agreement}>
           By tapping Sign Up, you agree to our{' '}

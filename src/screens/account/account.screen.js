@@ -169,20 +169,24 @@ const AccountScreen = ({
           </View>
         </Pressable>
       </View>
-      <AlertModal
-        variant="danger"
-        message={error}
-        showAction={setModalVisible}
-        visible={modalVisible}
-        confirmText="Retry"
-      />
-      <AlertModal
-        variant="danger"
-        message={authError}
-        showAction={setModalVisible}
-        visible={modalVisible}
-        confirmText="Retry"
-      />
+      {error || authError ? (
+        <React.Fragment>
+          <AlertModal
+            variant="danger"
+            message={error}
+            showAction={setModalVisible}
+            visible={modalVisible}
+            confirmText="Retry"
+          />
+          <AlertModal
+            variant="danger"
+            message={authError}
+            showAction={setModalVisible}
+            visible={modalVisible}
+            confirmText="Retry"
+          />
+        </React.Fragment>
+      ) : null}
     </ContentWrap>
   );
 };

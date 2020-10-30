@@ -28,6 +28,10 @@ export const signIn = async (username, password) => {
   } catch (error) {
     // const message = processError(error, error.graphQLErrors);
     // throw new Error(message);
+    console.log({ error });
+    if (error.message === 'Authentication exception') {
+      throw new Error(error.graphQLErrors[0].extensions.reason);
+    }
     throw new Error(error);
   }
 };
