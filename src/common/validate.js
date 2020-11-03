@@ -10,6 +10,13 @@ export const isValidState = (value) => {
   );
 };
 
+export const isValidUsername = (value) => {
+  return checkRegularExpression(
+    /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+    value
+  );
+};
+
 export const isValidZipCode = (value) => {
   return checkRegularExpression(/(^\d{5}$)|(^\d{5}-\d{4}$)/, value);
 };

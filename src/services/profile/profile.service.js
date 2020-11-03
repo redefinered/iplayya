@@ -7,6 +7,7 @@ export const getProfile = async () => {
       query: gql`
         {
           me {
+            id
             name
             email
             username

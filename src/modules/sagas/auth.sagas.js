@@ -19,9 +19,9 @@ export function* registerRequest(action) {
     if (status !== 'SUCCESS') throw new Error('Something went wrong during registration process');
 
     yield AsyncStorage.setItem('access_token', access_token);
-    yield put(Creators.signInSuccess());
+    yield put(Creators.registerSuccess());
   } catch (error) {
-    yield put(Creators.signInFailure(error.message));
+    yield put(Creators.registerFailure(error.message));
   }
 }
 export function* signInRequest(action) {

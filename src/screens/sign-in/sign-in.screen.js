@@ -15,7 +15,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectIsFetching, selectError } from 'modules/ducks/auth/auth.selectors';
+import { selectIsFetching, selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
 
 import withLoader from 'components/with-loader.component';
 import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
@@ -56,6 +56,7 @@ class SignInScreen extends React.Component {
           <Logo />
         </View>
         <ContentWrap style={styles.form}>
+          {this.props.signedUp && <Text>Sign-up Success! Please sign in</Text>}
           <TextInput
             name="username"
             handleChangeText={this.handleChangeText}
@@ -100,7 +101,7 @@ class SignInScreen extends React.Component {
             Login
           </Button>
           <Pressable
-            onPress={() => console.log('ForgotPasswordScreen')}
+            onPress={() => navigation.navigate('ForgotPasswordScreen')}
             style={styles.forgotPassword}
           >
             <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
@@ -132,7 +133,8 @@ SignInScreen.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
-  error: selectError
+  error: selectError,
+  signedUp: selectSignedUp
 });
 
 const actions = {

@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable react/prop-types */
+
 import React from 'react';
 import ScreenContainer from 'components/screen-container.component';
 

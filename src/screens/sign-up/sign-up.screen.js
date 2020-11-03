@@ -11,10 +11,12 @@ import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
+import { createStructuredSelector } from 'reselect';
+import { selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
 
 import styles from './sign-up.styles';
 
-import { isValidEmail, isValidName, isValidPassword } from 'common/validate';
+import { isValidEmail, isValidName, isValidUsername, isValidPassword } from 'common/validate';
 
 class SignUpScreen extends React.Component {
   state = {
@@ -34,6 +36,10 @@ class SignUpScreen extends React.Component {
       { key: 'password_confirmation', val: false }
     ]
   };
+
+  componentDidMount() {
+    this.props.registerStartAction();
+  }
 
   handleChange = (value, name) => {
     this.setState({ [name]: value });
@@ -63,7 +69,7 @@ class SignUpScreen extends React.Component {
       this.setError(stateError, 'last_name', false);
     }
 
-    if (!isValidName(rest.username)) {
+    if (!isValidUsername(rest.username)) {
       this.setError(stateError, 'username', true);
     } else {
       this.setError(stateError, 'username', false);
@@ -100,6 +106,13 @@ class SignUpScreen extends React.Component {
       ...rest
     });
   };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.signedUp !== this.props.signedUp) {
+      const { navigation, signedUp } = this.props;
+      if (signedUp) navigation.goBack();
+    }
+  }
 
   render() {
     const { errors, valid, ...mainFields } = this.state;
@@ -165,6 +178,7 @@ class SignUpScreen extends React.Component {
         />
 
         {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
+        {this.props.error && <Text>{this.props.error}</Text>}
 
         <Text style={styles.agreement}>
           By tapping Sign Up, you agree to our{' '}
@@ -182,7 +196,10 @@ class SignUpScreen extends React.Component {
 }
 
 const actions = {
+  registerStartAction: Creators.registerStart,
   registerAction: Creators.register
 };
 
-export default compose(withFormWrap, connect(null, actions))(SignUpScreen);
+const mapStateToProps = createStructuredSelector({ error: selectError, signedUp: selectSignedUp });
+
+export default compose(withFormWrap(), connect(mapStateToProps, actions))(SignUpScreen);
