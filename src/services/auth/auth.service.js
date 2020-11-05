@@ -51,7 +51,7 @@ export const register = async (form) => {
           }
         }
       `,
-      variables: { input: { ...input } }
+      variables: { input }
     });
     return data;
   } catch ({ graphQLErrors }) {
@@ -63,6 +63,26 @@ export const register = async (form) => {
     } = graphQLErrors[0];
     if (validation['input.password']) throw new Error(validation['input.password']);
     throw new Error(validation['input.email']);
+  }
+};
+
+export const getPasswordResetLink = async (form) => {
+  const { ...input } = form;
+  try {
+    const { data } = await clientWithoutAuthLink.mutate({
+      mutation: gql`
+        mutation FORGOT_PASSWORD($input: ForgotPasswordInput!) {
+          forgotPassword(input: $input) {
+            status
+            message
+          }
+        }
+      `,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
   }
 };
 

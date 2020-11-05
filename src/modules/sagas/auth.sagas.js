@@ -1,7 +1,13 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { register, signIn, getProfile, signOut } from 'services/auth/auth.service';
+import {
+  register,
+  signIn,
+  getPasswordResetLink,
+  getProfile,
+  signOut
+} from 'services/auth/auth.service';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -38,6 +44,18 @@ export function* signInRequest(action) {
   }
 }
 
+export function* getPasswordResetLinkRequest(action) {
+  const { ...input } = action.data;
+  try {
+    const {
+      forgotPassword: { status, message }
+    } = yield call(getPasswordResetLink, input);
+    yield put(Creators.getPasswordResetLinkSuccess({ pwResetLinkMessage: { status, message } }));
+  } catch (error) {
+    yield put(Creators.getPasswordResetLinkFailure(error.message));
+  }
+}
+
 export function* signOutRequest() {
   try {
     yield call(signOut);
@@ -62,6 +80,7 @@ export function* getProfileRequest() {
 export default function* authSagas() {
   yield takeLatest(Types.REGISTER, registerRequest);
   yield takeLatest(Types.SIGN_IN, signInRequest);
+  yield takeLatest(Types.GET_PASSWORD_RESET_LINK, getPasswordResetLinkRequest);
   yield takeLatest(Types.GET_PROFILE, getProfileRequest);
   yield takeLatest(Types.SIGN_OUT, signOutRequest);
 }

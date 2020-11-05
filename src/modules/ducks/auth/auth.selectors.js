@@ -13,3 +13,8 @@ export const selectIsFetching = createSelector([selectAuth], ({ isFetching }) =>
 export const selectError = createSelector([selectAuth], ({ error }) => error);
 
 export const selectSignedUp = createSelector([selectAuth], ({ signedUp }) => signedUp);
+
+export const selectPwResetLinkMessage = createSelector(
+  [selectAuth],
+  ({ pwResetLinkMessage }) => pwResetLinkMessage
+);

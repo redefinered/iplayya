@@ -5,7 +5,8 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   isLoggedIn: false,
-  signedUp: false
+  signedUp: false,
+  pwResetLinkMessage: null
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -60,6 +61,39 @@ export default createReducer(INITIAL_STATE, {
       error: action.error,
       isFetching: false,
       isLoggedIn: false
+    };
+  },
+  [Types.GET_PASSWORD_RESET_LINK_START]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      pwResetLinkMessage: null
+    };
+  },
+  [Types.GET_PASSWORD_RESET_LINK]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true,
+      pwResetLinkMessage: null
+    };
+  },
+  [Types.GET_PASSWORD_RESET_LINK_SUCCESS]: (state, action) => {
+    const { pwResetLinkMessage } = action.data;
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      pwResetLinkMessage
+    };
+  },
+  [Types.GET_PASSWORD_RESET_LINK_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      error: action.error,
+      isFetching: false,
+      pwResetLinkMessage: null
     };
   },
   [Types.SIGN_OUT]: (state) => {
