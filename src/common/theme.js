@@ -52,7 +52,8 @@ export default {
     ...DefaultTheme.colors,
     primary: '#E34398',
     accent: 'yellow',
-    text: 'white'
+    text: 'white',
+    disabled: '#B4166A'
   },
   iplayya: {
     colors: {
@@ -77,6 +78,11 @@ export default {
       white50: 'rgba(255,255,255,0.5)',
       white25: 'rgba(255,255,255,0.25)',
       white10: 'rgba(255,255,255,0.1)'
+    },
+    bodyp: {
+      fontSize: 14,
+      lineHeight: 19,
+      marginBottom: 15
     }
   }
 };
