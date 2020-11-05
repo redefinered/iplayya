@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
@@ -10,11 +11,17 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 
+// import { compose } from 'redux';
+// import { connect } from 'react-redux';
+// import { createStructuredSelector } from 'reselect';
+// import { selectPwResetLinkMessage } from 'modules/ducks/auth/auth.selectors';
+
 const styles = StyleSheet.create({
   textInput: { backgroundColor: 'rgba(255,255,255,0.1)' }
 });
 
-const ResetPasswordScreen = () => {
+const ResetPasswordScreen = ({ route }) => {
+  console.log({ route });
   const [modalVisible, setModalVisible] = React.useState(false);
 
   return (
@@ -40,4 +47,4 @@ const ResetPasswordScreen = () => {
   );
 };
 
-export default withHeaderPush(ResetPasswordScreen, { backgroundType: 'solid' });
+export default withHeaderPush()(ResetPasswordScreen);
