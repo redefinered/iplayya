@@ -104,3 +104,30 @@ export const signOut = async () => {
     throw new Error(error);
   }
 };
+
+export const resetPassword = async (form) => {
+  const { ...input } = form;
+  try {
+    const { data } = await clientWithoutAuthLink.mutate({
+      mutation: gql`
+        mutation RESET_PASSWORD($input: NewPasswordWithCodeInput!) {
+          updateForgottenPassword(input: $input) {
+            status
+            message
+          }
+        }
+      `,
+      variables: { input }
+    });
+    return data;
+  } catch ({ graphQLErrors }) {
+    console.log({ graphQLErrors });
+    // throw new Error(error);
+
+    const {
+      extensions: { errors }
+    } = graphQLErrors[0];
+    if (errors.token) throw new Error(errors.token);
+    throw new Error({ graphQLErrors });
+  }
+};

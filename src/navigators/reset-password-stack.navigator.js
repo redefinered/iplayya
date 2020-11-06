@@ -17,8 +17,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const ResetPasswordStack = ({ passwordResetParams }) => {
-  console.log({ passwordResetParams });
+const ResetPasswordStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{

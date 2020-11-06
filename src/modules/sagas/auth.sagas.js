@@ -10,6 +10,7 @@ import {
 } from 'services/auth/auth.service';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import { resetPassword } from 'services/auth/auth.service';
 
 export function* registerRequest(action) {
   const { ...input } = action.data;
@@ -56,6 +57,16 @@ export function* getPasswordResetLinkRequest(action) {
   }
 }
 
+export function* resetPasswordRequest(action) {
+  const { ...input } = action.data;
+  try {
+    const { updateForgottenPassword } = yield call(resetPassword, input);
+    yield put(Creators.resetPasswordSuccess({ updateForgottenPassword }));
+  } catch (error) {
+    yield put(Creators.resetPasswordFailure(error.message));
+  }
+}
+
 export function* signOutRequest() {
   try {
     yield call(signOut);
@@ -81,6 +92,7 @@ export default function* authSagas() {
   yield takeLatest(Types.REGISTER, registerRequest);
   yield takeLatest(Types.SIGN_IN, signInRequest);
   yield takeLatest(Types.GET_PASSWORD_RESET_LINK, getPasswordResetLinkRequest);
+  yield takeLatest(Types.RESET_PASSWORD, resetPasswordRequest);
   yield takeLatest(Types.GET_PROFILE, getProfileRequest);
   yield takeLatest(Types.SIGN_OUT, signOutRequest);
 }

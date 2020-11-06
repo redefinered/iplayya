@@ -14,13 +14,25 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
-import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
+import {
+  selectIsLoggedIn,
+  selectResetPasswordParams,
+  selectPasswordUpdated
+} from 'modules/ducks/auth/auth.selectors';
 
 import { Linking } from 'react-native';
 
 // eslint-disable-next-line no-unused-vars
-const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStoreAction }) => {
-  const [passwordResetParams, setPasswordResetParams] = React.useState(null);
+const App = ({
+  isLoggedIn,
+  setBottomTabsVisibleAction,
+  resetPasswordStartAction,
+  resetPasswordParams,
+  passwordUpdated,
+  signOutAction,
+  purgeStoreAction
+}) => {
+  const [redirectToResetPassword, setRedirectToResetPassword] = React.useState(false);
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
@@ -37,14 +49,18 @@ const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStore
         params[match[1]] = match[2];
       }
 
-      setPasswordResetParams(params);
+      // set data required to reset password
+      resetPasswordStartAction({ params });
+
+      // redirects app to reset-password screen
+      setRedirectToResetPassword(true);
     });
   }, []);
 
-  if (passwordResetParams)
+  if (!passwordUpdated)
     return (
       <NavigationContainer>
-        <ResetPasswordStack passwordResetParams={passwordResetParams} />
+        <ResetPasswordStack />
       </NavigationContainer>
     );
 
@@ -63,13 +79,16 @@ const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStore
 };
 
 const mapStateToProps = createStructuredSelector({
-  isLoggedIn: selectIsLoggedIn
+  isLoggedIn: selectIsLoggedIn,
+  resetPasswordParams: selectResetPasswordParams,
+  passwordUpdated: selectPasswordUpdated
 });
 
 const actions = {
   purgeStoreAction: Creators.purgeStore, // for development and debugging
   signOutAction: Creators.signOut,
-  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
+  resetPasswordStartAction: Creators.resetPasswordStart
 };
 
 export default connect(mapStateToProps, actions)(App);

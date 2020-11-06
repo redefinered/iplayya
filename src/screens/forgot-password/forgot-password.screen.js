@@ -24,7 +24,8 @@ const ForgotPasswordScreen = ({
   navigation,
   pwResetLinkMessage,
   getPasswordResetLinkAction,
-  getPasswordResetLinkStartAction
+  getPasswordResetLinkStartAction,
+  clearResetPasswordParamsAction
 }) => {
   const [email, setEmail] = React.useState('');
   const [screenError, setScreenError] = React.useState(null);
@@ -41,6 +42,7 @@ const ForgotPasswordScreen = ({
 
   React.useEffect(() => {
     getPasswordResetLinkStartAction();
+    clearResetPasswordParamsAction();
   }, []);
 
   React.useEffect(() => {
@@ -79,10 +81,10 @@ const mapStateToProps = createStructuredSelector({
   pwResetLinkMessage: selectPwResetLinkMessage
 });
 
-export default compose(
-  withHeaderPush(),
-  connect(mapStateToProps, {
-    getPasswordResetLinkStartAction: Creators.getPasswordResetLinkStart,
-    getPasswordResetLinkAction: Creators.getPasswordResetLink
-  })
-)(ForgotPasswordScreen);
+const actions = {
+  getPasswordResetLinkStartAction: Creators.getPasswordResetLinkStart,
+  getPasswordResetLinkAction: Creators.getPasswordResetLink,
+  clearResetPasswordParamsAction: Creators.clearResetPasswordParams
+};
+
+export default compose(withHeaderPush(), connect(mapStateToProps, actions))(ForgotPasswordScreen);

@@ -9,16 +9,13 @@ const { Types, Creators } = createActions(
     signIn: ['data'],
     signInSuccess: [],
     signInFailure: ['error'],
-    getPasswordResetLinkStart: [],
-    getPasswordResetLink: ['data'],
-    getPasswordResetLinkSuccess: ['data'],
-    getPasswordResetLinkFailure: ['error'],
     signOut: [],
     signOutSuccess: [],
     signOutFailure: ['error'],
     getProfile: [],
     getProfileSuccess: ['data'],
     getProfileFailure: ['error'],
+    clearResetPasswordParams: [],
     purgeStore: [] // for development
   },
   { prefix: '@Auth/' }
