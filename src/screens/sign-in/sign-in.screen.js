@@ -45,7 +45,7 @@ class SignInScreen extends React.Component {
     const { showPassword, isolatedInputs, username, password } = this.state;
     const { navigation } = this.props;
 
-    if (this.props.error) console.log({ errorxxx: this.props.error });
+    // if (this.props.error) console.log({ errorxxx: this.props.error });
 
     return (
       <KeyboardAvoidingView

@@ -8,7 +8,6 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import SignInScreen from 'screens/sign-in/sign-in.screen';
 import SignUpScreen from 'screens/sign-up/sign-up.screen';
 import ForgotPasswordScreen from 'screens/forgot-password/forgot-password.screen';
-// import ResetPasswordScreen from 'screens/reset-password/reset-password.screen';
 import EmailSuccessScreen from 'screens/email-success/email-success.screen';
 import { headerHeight } from 'common/values';
 
@@ -21,8 +20,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const OnboardingStack = ({ passwordResetParams }) => {
-  console.log({ passwordResetParams });
+const OnboardingStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{

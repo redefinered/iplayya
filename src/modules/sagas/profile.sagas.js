@@ -1,6 +1,6 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/profile/profile.actions';
-import { getProfile } from 'services/profile/profile.service';
+import { getProfile } from 'services/profile.service';
 
 export function* getProfileRequest() {
   try {

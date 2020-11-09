@@ -13,7 +13,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectPwResetLinkMessage, selectError } from 'modules/ducks/auth/auth.selectors';
+import { selectError, selectGetLinkResponse } from 'modules/ducks/password/password.selectors';
 
 const styles = StyleSheet.create({
   textInput: { backgroundColor: 'rgba(255,255,255,0.1)' }
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 const ForgotPasswordScreen = ({
   error,
   navigation,
-  pwResetLinkMessage,
+  getLinkResponse,
   getPasswordResetLinkAction,
   getPasswordResetLinkStartAction,
   clearResetPasswordParamsAction
@@ -46,13 +46,13 @@ const ForgotPasswordScreen = ({
   }, []);
 
   React.useEffect(() => {
-    if (!pwResetLinkMessage) return;
-    const { status, message } = pwResetLinkMessage;
+    if (!getLinkResponse) return;
+    const { status, message } = getLinkResponse;
     if (status === 'EMAIL_NOT_SENT') {
       return setScreenError(message);
     }
     return navigation.navigate('EmailSuccessScreen');
-  }, [pwResetLinkMessage]);
+  }, [getLinkResponse]);
 
   return (
     <ContentWrap style={{ paddingTop: 30 }}>
@@ -78,7 +78,7 @@ const ForgotPasswordScreen = ({
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  pwResetLinkMessage: selectPwResetLinkMessage
+  getLinkResponse: selectGetLinkResponse
 });
 
 const actions = {

@@ -1,6 +1,6 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/movies/movies.actions';
-import { getMovies } from 'services/movies/movies.service';
+import { getMovies } from 'services/movies.service';
 
 export function* getMoviesRequest(action) {
   const { first, page } = action.data;

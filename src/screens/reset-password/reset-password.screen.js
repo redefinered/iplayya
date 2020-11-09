@@ -16,12 +16,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
-import {
-  selectError,
-  selectIsFetching,
-  selectResetPasswordParams,
-  selectResetMessage
-} from 'modules/ducks/auth/auth.selectors';
+import { selectError, selectIsFetching } from 'modules/ducks/auth/auth.selectors';
 
 import { isValidPassword } from 'common/validate';
 
@@ -58,7 +53,7 @@ class ResetPasswordScreen extends React.Component {
   handleSubmit = () => {
     const { password, password_confirmation, errors } = this.state;
     const {
-      resetPasswordParams: { email, token },
+      updateParams: { email, token },
       resetPasswordAction
     } = this.props;
 
@@ -87,12 +82,12 @@ class ResetPasswordScreen extends React.Component {
   componentDidUpdate = (prevProps, prevState) => {
     if (prevProps === this.props) return;
     if (prevState === this.state) return;
-    const { resetMessage } = this.props;
-    console.log({ resetMessage });
-    if (resetMessage !== null) {
-      if (typeof resetMessage === 'undefined') return;
+    const { selectUpdateResponse } = this.props;
+    console.log({ selectUpdateResponse });
+    if (selectUpdateResponse !== null) {
+      if (typeof selectUpdateResponse === 'undefined') return;
       const {
-        resetMessage: { status, message }
+        selectUpdateResponse: { status, message }
       } = this.props;
       if (status === 'PASSWORD_UPDATED') {
         this.setState({ modalVisible: true });
@@ -156,8 +151,6 @@ class ResetPasswordScreen extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  resetPasswordParams: selectResetPasswordParams,
-  resetMessage: selectResetMessage,
   error: selectError,
   isFetching: selectIsFetching
 });
