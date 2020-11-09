@@ -7,7 +7,7 @@ import Icon from 'components/icon/icon.component';
 
 import styles from './alert-modal.styles';
 
-const AlertModal = ({ visible, showAction, message, confirmText, variant }) => {
+const AlertModal = ({ visible, confirmText, confirmAction, hideAction, message, variant }) => {
   let iconName = '';
   let color = '';
   switch (variant) {
@@ -22,7 +22,7 @@ const AlertModal = ({ visible, showAction, message, confirmText, variant }) => {
   }
   return (
     <Modal animationType="slide" visible={visible} transparent>
-      <Pressable onPress={() => showAction(false)} style={styles.container}>
+      <Pressable onPress={() => hideAction()} style={styles.container}>
         <View style={styles.contentWrap}>
           <View style={styles.content}>
             <View style={styles.iconWrap}>
@@ -33,7 +33,7 @@ const AlertModal = ({ visible, showAction, message, confirmText, variant }) => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <Button labelStyle={styles.button} onPress={() => showAction(false)}>
+            <Button labelStyle={styles.button} onPress={() => confirmAction()}>
               {confirmText}
             </Button>
           </View>
@@ -45,8 +45,9 @@ const AlertModal = ({ visible, showAction, message, confirmText, variant }) => {
 
 AlertModal.propTypes = {
   visible: PropTypes.bool.isRequired,
-  showAction: PropTypes.func.isRequired,
   confirmText: PropTypes.string,
+  confirmAction: PropTypes.func,
+  hideAction: PropTypes.func,
   message: PropTypes.string.isRequired,
   variant: PropTypes.string
 };
