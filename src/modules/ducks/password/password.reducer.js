@@ -5,32 +5,33 @@ const INITIAL_STATE = {
   error: null,
   isFething: false,
   updateParams: null,
-  updated: false
+  updated: false,
+  updateResponse: null,
+  getLinkResponse: null
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.GET_LINK_START]: (state) => {
-    return {
-      ...state,
-      pwResetLinkMessage: null,
-      passwordUpdated: false,
-      updatingPassword: true
-    };
-  },
+  // [Types.GET_LINK_START]: (state) => {
+  //   return {
+  //     ...state,
+  //     update
+  //   };
+  // },
   [Types.GET_LINK]: (state) => {
     return {
       ...state,
       error: null,
-      isFetching: true
+      isFetching: true,
+      getLinkResponse: null
     };
   },
   [Types.GET_LINK_SUCCESS]: (state, action) => {
-    const { pwResetLinkMessage } = action.data;
+    const { forgotPassword: getLinkResponse } = action.data;
     return {
       ...state,
       error: null,
       isFetching: false,
-      pwResetLinkMessage
+      getLinkResponse
     };
   },
   [Types.GET_LINK_FAILURE]: (state, action) => {
@@ -38,24 +39,22 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: action.error,
       isFetching: false,
-      pwResetLinkMessage: null
+      getLinkResponse: null
     };
   },
-  [Types.CLEAR_UPDATE_PARAMS]: (state) => {
+  // [Types.CLEAR_UPDATE_PARAMS]: (state) => {
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: false,
+  //     resetPasswordParams: null
+  //   };
+  // },
+  [Types.UPDATE_START]: (state) => {
+    // const { params } = action.data;
     return {
       ...state,
-      error: null,
-      isFetching: false,
-      resetPasswordParams: null
-    };
-  },
-  [Types.UPDATE_START]: (state, action) => {
-    const { params } = action.data;
-    return {
-      ...state,
-      resetMessage: null,
-      resetPasswordParams: params,
-      updatingPassword: true
+      updated: false
     };
   },
   [Types.UPDATE]: (state) => {
@@ -66,14 +65,13 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.UPDATE_SUCCESS]: (state, action) => {
-    const { updateForgottenPassword: resetMessage } = action.data;
+    const { updateForgottenPassword: updateResponse } = action.data;
     return {
       ...state,
       error: null,
       isFetching: false,
-      passwordUpdated: true,
-      updatingPassword: false,
-      resetMessage
+      updated: true,
+      updateResponse
     };
   },
   [Types.UPDATE_FAILURE]: (state, action) => {
@@ -81,9 +79,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: action.error,
       isFetching: false,
-      passwordUpdated: false,
-      resetMessage: null,
-      updatingPassword: true
+      updated: false,
+      updateResponse: null
     };
   }
 });

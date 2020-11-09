@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -12,33 +11,28 @@ import HomeTabs from 'navigators/home-tabs.navigator';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/auth/auth.actions';
-import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
-import {
-  selectIsLoggedIn,
-  selectResetPasswordParams,
-  selectPasswordUpdated
-} from 'modules/ducks/auth/auth.selectors';
+import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
+import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
+import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
+import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 
 import { Linking } from 'react-native';
 
 // eslint-disable-next-line no-unused-vars
 const App = ({
   isLoggedIn,
-  setBottomTabsVisibleAction,
-  resetPasswordStartAction,
-  resetPasswordParams,
-  passwordUpdated,
-  signOutAction,
-  purgeStoreAction
+  updatePasswordStartAction,
+  passwordUpdateParams
+  // signOutAction,
+  // purgeStoreAction
 }) => {
-  const [redirectToResetPassword, setRedirectToResetPassword] = React.useState(false);
+  // const [redirectToResetPassword, setRedirectToResetPassword] = React.useState(false);
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
 
     // makes sure main tab navigation is always visible on application mount
-    setBottomTabsVisibleAction(true);
+    // setBottomTabsVisibleAction(true);
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
@@ -50,14 +44,16 @@ const App = ({
       }
 
       // set data required to reset password
-      resetPasswordStartAction({ params });
+      updatePasswordStartAction({ params });
 
       // redirects app to reset-password screen
-      setRedirectToResetPassword(true);
+      // setRedirectToResetPassword(true);
     });
   }, []);
 
-  if (!passwordUpdated)
+  // return <Text>asdasdas</Text>;
+
+  if (passwordUpdateParams)
     return (
       <NavigationContainer>
         <ResetPasswordStack />
@@ -80,15 +76,13 @@ const App = ({
 
 const mapStateToProps = createStructuredSelector({
   isLoggedIn: selectIsLoggedIn,
-  resetPasswordParams: selectResetPasswordParams,
-  passwordUpdated: selectPasswordUpdated
+  passwordUpdateParams: selectPasswordUpdateParams
 });
 
 const actions = {
-  purgeStoreAction: Creators.purgeStore, // for development and debugging
-  signOutAction: Creators.signOut,
-  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
-  resetPasswordStartAction: Creators.resetPasswordStart
+  purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
+  signOutAction: AuthActionCreators.signOut,
+  updatePasswordStartAction: PasswordActionCreators.updateStart
 };
 
 export default connect(mapStateToProps, actions)(App);

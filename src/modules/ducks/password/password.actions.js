@@ -1,6 +1,6 @@
 import { createActions } from 'reduxsauce';
 
-const { Types, Actions } = createActions(
+const { Types, Creators } = createActions(
   {
     getLinkStart: [],
     getLink: ['data'],
@@ -14,4 +14,4 @@ const { Types, Actions } = createActions(
   { prefix: '@Password/' }
 );
 
-export { Types, Actions };
+export { Types, Creators };
