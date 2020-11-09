@@ -10,11 +10,11 @@ export default function withScreenLoader(WrappedComponent) {
     return (
       <React.Fragment>
         <Modal animationType="none" transparent visible={isFetching}>
-          <View style={{ flex: 1, justifyContent: 'center' }}>
+          <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <ActivityIndicator color={theme.colors.primary} size="large" />
           </View>
         </Modal>
-        <WrappedComponent {...otherProps} />
+        <WrappedComponent isFetching={isFetching} {...otherProps} />
       </React.Fragment>
     );
   };
