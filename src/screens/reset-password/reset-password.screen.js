@@ -14,9 +14,14 @@ import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/auth/auth.actions';
+import { Creators } from 'modules/ducks/password/password.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectError, selectIsFetching } from 'modules/ducks/auth/auth.selectors';
+import {
+  selectError,
+  selectIsFetching,
+  selectUpdateParams,
+  selectUpdated
+} from 'modules/ducks/password/password.selectors';
 
 import { isValidPassword } from 'common/validate';
 
@@ -52,9 +57,10 @@ class ResetPasswordScreen extends React.Component {
 
   handleSubmit = () => {
     const { password, password_confirmation, errors } = this.state;
+
     const {
       updateParams: { email, token },
-      resetPasswordAction
+      updatePasswordAction
     } = this.props;
 
     if (!isValidPassword(password)) {
@@ -76,28 +82,22 @@ class ResetPasswordScreen extends React.Component {
       this.setState({ valid: true });
     }
 
-    resetPasswordAction({ email, token, password, password_confirmation });
+    updatePasswordAction({ email, token, password, password_confirmation });
   };
 
-  componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps === this.props) return;
-    if (prevState === this.state) return;
-    const { selectUpdateResponse } = this.props;
-    console.log({ selectUpdateResponse });
-    if (selectUpdateResponse !== null) {
-      if (typeof selectUpdateResponse === 'undefined') return;
-      const {
-        selectUpdateResponse: { status, message }
-      } = this.props;
-      if (status === 'PASSWORD_UPDATED') {
+  componentDidUpdate(prevProps) {
+    if (prevProps.updated !== this.props.updated) {
+      const { updated } = this.props;
+      console.log({ updated });
+      if (updated) {
         this.setState({ modalVisible: true });
       }
     }
-  };
+  }
 
-  handleModalAction = (value) => {
-    this.setState({ modalVisible: value }, () => {
-      this.props.clearResetPasswordParamsAction();
+  handleModalConfirm = () => {
+    this.setState({ modalVisible: false }, () => {
+      this.props.resetUpdateParamsAction();
     });
   };
 
@@ -109,6 +109,8 @@ class ResetPasswordScreen extends React.Component {
     errors.map(({ key, val }) => {
       Object.assign(stateError, { [key]: val });
     });
+
+    console.log({ modalVisible });
 
     return (
       <React.Fragment>
@@ -137,13 +139,17 @@ class ResetPasswordScreen extends React.Component {
           <Button onPress={() => this.handleSubmit()} mode="contained">
             Reset
           </Button>
+          {this.props.updated === false ? (
+            <Button onPress={() => this.props.resetUpdateParamsAction()}>Start over</Button>
+          ) : null}
         </ContentWrap>
+
         <AlertModal
           variant="success"
           message="You can now use your new password to login to your account."
-          showAction={this.handleModalAction}
-          visible={modalVisible}
           confirmText="Login"
+          confirmAction={this.handleModalConfirm}
+          visible={modalVisible}
         />
       </React.Fragment>
     );
@@ -152,12 +158,15 @@ class ResetPasswordScreen extends React.Component {
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching
+  isFetching: selectIsFetching,
+  updateParams: selectUpdateParams,
+  updated: selectUpdated
 });
 
 const actions = {
-  clearResetPasswordParamsAction: Creators.clearResetPasswordParams,
-  resetPasswordAction: Creators.resetPassword
+  // clearResetPasswordParamsAction: Creators.clearResetPasswordParams,
+  resetUpdateParamsAction: Creators.resetUpdateParams,
+  updatePasswordAction: Creators.update
 };
 
 export default compose(

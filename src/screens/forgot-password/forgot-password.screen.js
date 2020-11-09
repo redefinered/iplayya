@@ -8,12 +8,17 @@ import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/auth/auth.actions';
+import { Creators } from 'modules/ducks/password/password.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectError, selectGetLinkResponse } from 'modules/ducks/password/password.selectors';
+import {
+  selectError,
+  selectIsFetching,
+  selectGetLinkResponse
+} from 'modules/ducks/password/password.selectors';
 
 const styles = StyleSheet.create({
   textInput: { backgroundColor: 'rgba(255,255,255,0.1)' }
@@ -23,12 +28,16 @@ const ForgotPasswordScreen = ({
   error,
   navigation,
   getLinkResponse,
-  getPasswordResetLinkAction,
-  getPasswordResetLinkStartAction,
-  clearResetPasswordParamsAction
+  getLinkAction,
+  getLinkStartAction
 }) => {
   const [email, setEmail] = React.useState('');
   const [screenError, setScreenError] = React.useState(null);
+
+  React.useEffect(() => {
+    // clear get link response
+    getLinkStartAction();
+  }, []);
 
   // eslint-disable-next-line no-unused-vars
   const handleChange = (text, name) => {
@@ -37,13 +46,8 @@ const ForgotPasswordScreen = ({
   };
 
   const handleSend = () => {
-    getPasswordResetLinkAction({ email });
+    getLinkAction({ email });
   };
-
-  React.useEffect(() => {
-    getPasswordResetLinkStartAction();
-    clearResetPasswordParamsAction();
-  }, []);
 
   React.useEffect(() => {
     if (!getLinkResponse) return;
@@ -51,7 +55,7 @@ const ForgotPasswordScreen = ({
     if (status === 'EMAIL_NOT_SENT') {
       return setScreenError(message);
     }
-    return navigation.navigate('EmailSuccessScreen');
+    return navigation.navigate('EmailSuccessScreen', { email });
   }, [getLinkResponse]);
 
   return (
@@ -78,13 +82,18 @@ const ForgotPasswordScreen = ({
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
+  isFetching: selectIsFetching,
   getLinkResponse: selectGetLinkResponse
 });
 
 const actions = {
-  getPasswordResetLinkStartAction: Creators.getPasswordResetLinkStart,
-  getPasswordResetLinkAction: Creators.getPasswordResetLink,
-  clearResetPasswordParamsAction: Creators.clearResetPasswordParams
+  getLinkAction: Creators.getLink,
+  getLinkStartAction: Creators.getLinkStart,
+  updateStartAction: Creators.updateStart
 };
 
-export default compose(withHeaderPush(), connect(mapStateToProps, actions))(ForgotPasswordScreen);
+export default compose(
+  withHeaderPush(),
+  connect(mapStateToProps, actions),
+  withLoader
+)(ForgotPasswordScreen);

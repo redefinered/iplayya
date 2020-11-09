@@ -71,4 +71,4 @@ const actions = {
 
 // export default withHeaderPush(withTheme(connect(mapStateToProps)(IptvScreen)));
 
-export default compose(withHeaderPush, connect(mapStateToProps, actions), withTheme)(IptvScreen);
+export default compose(withHeaderPush(), connect(mapStateToProps, actions), withTheme)(IptvScreen);

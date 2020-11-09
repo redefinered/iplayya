@@ -211,7 +211,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export default compose(
-  withHeaderPush,
+  withHeaderPush(),
   connect(mapStateToProps, actions),
   withLoader
 )(AccountScreen);

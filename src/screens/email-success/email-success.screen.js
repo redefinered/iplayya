@@ -10,7 +10,13 @@ import ContentWrap from 'components/content-wrap.component';
 
 import { compose } from 'redux';
 
-const EmailSuccessScreen = ({ theme, navigation }) => {
+const EmailSuccessScreen = ({
+  theme,
+  navigation,
+  route: {
+    params: { email }
+  }
+}) => {
   const [counter, setCounter] = React.useState(60);
   const [enableResend, setEnableResend] = React.useState(false);
 
@@ -41,7 +47,6 @@ const EmailSuccessScreen = ({ theme, navigation }) => {
     navigation.goBack();
   };
 
-  console.log(enableResend);
   return (
     <ContentWrap style={{ flex: 1, paddingBottom: 30 }}>
       <View style={{ flex: 10, justifyContent: 'center', alignItems: 'center' }}>
@@ -49,7 +54,7 @@ const EmailSuccessScreen = ({ theme, navigation }) => {
         <Title style={{ ...styles.text }}>Email Sent</Title>
         <Text style={{ ...styles.text, ...bodyp, marginBottom: 30 }}>
           An instruction on how to reset your password has been sent to your email. Please check
-          your email <Text style={{ color: colors.vibrantpussy }}>user@email.com</Text>
+          your email <Text style={{ color: colors.vibrantpussy }}>{email}</Text>
         </Text>
         <Text style={{ ...bodyp, ...styles.text }}>
           Didn’t received email?{' '}
