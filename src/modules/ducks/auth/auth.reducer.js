@@ -5,12 +5,7 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   isLoggedIn: false,
-  signedUp: false,
-  pwResetLinkMessage: null,
-  resetPasswordParams: null,
-  updatingPassword: false,
-  passwordUpdated: false,
-  resetMessage: null // will define if password is updated
+  signedUp: false
 };
 
 export default createReducer(INITIAL_STATE, {
