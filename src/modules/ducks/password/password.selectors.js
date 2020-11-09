@@ -20,3 +20,5 @@ export const selectUpdateResponse = createSelector(
   [passwordState],
   ({ updateResponse }) => updateResponse
 );
+
+export const selectUpdated = createSelector([passwordState], ({ updated }) => updated);

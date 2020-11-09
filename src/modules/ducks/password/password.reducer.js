@@ -3,20 +3,21 @@ import { Types } from './password.actions';
 
 const INITIAL_STATE = {
   error: null,
-  isFething: false,
+  isFetching: false,
   updateParams: null,
-  updated: false,
+  updated: null,
   updateResponse: null,
   getLinkResponse: null
 };
 
 export default createReducer(INITIAL_STATE, {
-  // [Types.GET_LINK_START]: (state) => {
-  //   return {
-  //     ...state,
-  //     update
-  //   };
-  // },
+  [Types.GET_LINK_START]: (state) => {
+    return {
+      ...state,
+      error: null,
+      getLinkResponse: null
+    };
+  },
   [Types.GET_LINK]: (state) => {
     return {
       ...state,
@@ -42,19 +43,13 @@ export default createReducer(INITIAL_STATE, {
       getLinkResponse: null
     };
   },
-  // [Types.CLEAR_UPDATE_PARAMS]: (state) => {
-  //   return {
-  //     ...state,
-  //     error: null,
-  //     isFetching: false,
-  //     resetPasswordParams: null
-  //   };
-  // },
-  [Types.UPDATE_START]: (state) => {
-    // const { params } = action.data;
+  [Types.UPDATE_START]: (state, action) => {
+    const { params: updateParams } = action.data;
     return {
       ...state,
-      updated: false
+      error: null,
+      updated: null,
+      updateParams
     };
   },
   [Types.UPDATE]: (state) => {
@@ -81,6 +76,13 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       updated: false,
       updateResponse: null
+    };
+  },
+  [Types.RESET_UPDATE_PARAMS]: (state) => {
+    return {
+      ...state,
+      error: null,
+      updateParams: null
     };
   }
 });

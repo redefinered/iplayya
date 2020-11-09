@@ -5,12 +5,10 @@ import { getLink, update } from 'services/password.service';
 export function* getLinkRequest(action) {
   const { ...input } = action.data;
   try {
-    const {
-      forgotPassword: { status, message }
-    } = yield call(getLink, input);
-    yield put(Creators.getPasswordResetLinkSuccess({ pwResetLinkMessage: { status, message } }));
+    const { forgotPassword } = yield call(getLink, input);
+    yield put(Creators.getLinkSuccess({ forgotPassword }));
   } catch (error) {
-    yield put(Creators.getPasswordResetLinkFailure(error.message));
+    yield put(Creators.getLinkFailure(error.message));
   }
 }
 
@@ -18,9 +16,9 @@ export function* updateRequest(action) {
   const { ...input } = action.data;
   try {
     const { updateForgottenPassword } = yield call(update, input);
-    yield put(Creators.resetPasswordSuccess({ updateForgottenPassword }));
+    yield put(Creators.updateSuccess({ updateForgottenPassword }));
   } catch (error) {
-    yield put(Creators.resetPasswordFailure(error.message));
+    yield put(Creators.updateFailure(error.message));
   }
 }
 
