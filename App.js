@@ -26,13 +26,9 @@ const App = ({
   // signOutAction,
   // purgeStoreAction
 }) => {
-  // const [redirectToResetPassword, setRedirectToResetPassword] = React.useState(false);
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
-
-    // makes sure main tab navigation is always visible on application mount
-    // setBottomTabsVisibleAction(true);
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
@@ -45,14 +41,12 @@ const App = ({
 
       // set data required to reset password
       updatePasswordStartAction({ params });
-
-      // redirects app to reset-password screen
-      // setRedirectToResetPassword(true);
     });
   }, []);
 
   // return <Text>asdasdas</Text>;
 
+  console.log({ passwordUpdateParams });
   if (passwordUpdateParams)
     return (
       <NavigationContainer>
