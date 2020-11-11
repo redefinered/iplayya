@@ -1,15 +1,15 @@
 import { createSelector } from 'reselect';
 
-const selectAuth = (state) => state.auth;
+const authState = (state) => state.auth;
 
-export const selectCurrentUser = createSelector([selectAuth], ({ currentUser }) => {
-  return currentUser;
-});
+export const selectCurrentUser = createSelector([authState], ({ currentUser }) => currentUser);
 
-export const selectIsLoggedIn = createSelector([selectAuth], ({ isLoggedIn }) => isLoggedIn);
+export const selectIsLoggedIn = createSelector([authState], ({ isLoggedIn }) => isLoggedIn);
 
-export const selectIsFetching = createSelector([selectAuth], ({ isFetching }) => isFetching);
+export const selectIsFetching = createSelector([authState], ({ isFetching }) => isFetching);
 
-export const selectError = createSelector([selectAuth], ({ error }) => error);
+export const selectError = createSelector([authState], ({ error }) => error);
 
-export const selectSignedUp = createSelector([selectAuth], ({ signedUp }) => signedUp);
+export const selectSignedUp = createSelector([authState], ({ signedUp }) => signedUp);
+
+export const selectCurrentUserId = createSelector([authState], ({ currentUser }) => currentUser.id);

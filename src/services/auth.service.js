@@ -18,6 +18,10 @@ export const signIn = async (username, password) => {
         mutation LOGIN($input: LoginInput!) {
           login(input: $input) {
             access_token
+            user {
+              id
+              username
+            }
           }
         }
       `,

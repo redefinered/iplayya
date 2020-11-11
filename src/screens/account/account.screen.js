@@ -15,14 +15,18 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { selectCurrentUser, selectError } from 'modules/ducks/profile/profile.selectors';
+import {
+  selectProfile,
+  selectIsFetching,
+  selectError as selectProfileError
+} from 'modules/ducks/profile/profile.selectors';
 import {
   selectError as selectAuthError,
-  selectIsFetching as selectAuthIsFetching
+  selectIsFetching as selectAuthIsFetching,
+  selectCurrentUserId
 } from 'modules/ducks/auth/auth.selectors';
 
 import { View, Image, Pressable, StyleSheet } from 'react-native';
-import { selectIsFetching } from 'modules/ducks/profile/profile.selectors';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -36,34 +40,59 @@ const styles = StyleSheet.create({
 });
 
 const AccountScreen = ({
-  currentUser,
+  profile,
   signOutAction,
   getProfileAction,
-  error,
+  profileError,
+  isFetching,
   authError,
-  authIsFetching
+  authIsFetching,
+  currentUserId
 }) => {
   const theme = useTheme();
 
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
+  const [profileErrorVisible, setProfileErrorVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (authError !== null) {
-      setModalVisible(true);
+      setAuthErrorVisible(true);
     }
-    if (error !== null) {
-      setModalVisible(true);
+    if (profileError !== null) {
+      setProfileErrorVisible(true);
     }
-  }, [authError, error]);
+  }, []);
 
-  // console.log({ currentUser });
+  // console.log({ profile });
   const navigation = useNavigation();
 
   React.useEffect(() => {
+    if (!profile) {
+      getProfileAction();
+      return;
+    }
+    // fixes an issue where previous user profile is being loaded from cache
+    if (currentUserId === profile.id) return;
     getProfileAction();
-  }, [currentUser]);
+  }, [currentUserId, profile]);
 
-  if (!currentUser) return <Text>Working...</Text>;
+  if (profileError) return <Text>{profileError}</Text>;
+
+  // console.log({ authError })
+
+  const handleRetry = () => {
+    setAuthErrorVisible(false);
+  };
+
+  const handleProfileErrorConfirmAction = () => {
+    setProfileErrorVisible(false);
+  };
+
+  const handleHideProfileAlert = () => {
+    setProfileErrorVisible(false);
+  };
+
+  if (isFetching || !profile) return <Text style={{ padding: 15 }}>Working...</Text>;
 
   return (
     <ContentWrap>
@@ -83,9 +112,9 @@ const AccountScreen = ({
           />
         </View>
         <View style={{ paddingLeft: 15 }}>
-          {/* {currentUser} */}
+          {/* {profile} */}
           <Text style={{ fontSize: 20, fontWeight: 'bold', lineHeight: 27, marginBottom: 2 }}>
-            {currentUser.name}
+            {profile.name}
           </Text>
           <Text
             style={{
@@ -95,7 +124,7 @@ const AccountScreen = ({
               marginBottom: 8
             }}
           >
-            {currentUser.email}
+            {profile.email}
           </Text>
           <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
             <Text
@@ -169,21 +198,24 @@ const AccountScreen = ({
           </View>
         </Pressable>
       </View>
-      {error || authError ? (
+      {profileError && (
+        <AlertModal
+          variant="danger"
+          message={profileError}
+          visible={profileErrorVisible}
+          hideAction={handleHideProfileAlert}
+          confirmText="Retry"
+          confirmAction={handleProfileErrorConfirmAction}
+        />
+      )}
+      {authError ? (
         <React.Fragment>
           <AlertModal
             variant="danger"
-            message={error}
-            showAction={setModalVisible}
-            visible={modalVisible}
-            confirmText="Retry"
-          />
-          <AlertModal
-            variant="danger"
             message={authError}
-            showAction={setModalVisible}
-            visible={modalVisible}
+            visible={authErrorVisible}
             confirmText="Retry"
+            confirmAction={handleRetry}
           />
         </React.Fragment>
       ) : null}
@@ -194,20 +226,21 @@ const AccountScreen = ({
 AccountScreen.propTypes = {
   signOutAction: PropTypes.func,
   getProfileAction: PropTypes.func,
-  currentUser: PropTypes.object
+  profile: PropTypes.object
 };
 
 const actions = {
-  getProfileAction: ProfileCreators.getProfile,
+  getProfileAction: ProfileCreators.get,
   signOutAction: Creators.signOut
 };
 
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching, // this is required when using withLoader HOC
   authIsFetching: selectAuthIsFetching,
-  currentUser: selectCurrentUser,
-  error: selectError,
-  authError: selectAuthError
+  profile: selectProfile,
+  profileError: selectProfileError,
+  authError: selectAuthError,
+  currentUserId: selectCurrentUserId
 });
 
 export default compose(

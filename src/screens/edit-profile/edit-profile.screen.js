@@ -7,46 +7,185 @@ import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
-import AlertModal from 'components/alert-modal/alert-modal.component';
+// import AlertModal from 'components/alert-modal/alert-modal.component';
 import Loader from 'components/loader.component';
 
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/profile/profile.actions';
+import {
+  selectError,
+  selectIsFetching,
+  selectProfile,
+  selectUpdated
+} from 'modules/ducks/profile/profile.selectors';
+import { createStructuredSelector } from 'reselect';
+
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
+import withLoader from 'components/with-loader.component';
 
 import styles from './edit-profile.styles';
 
-const EditProfileScreen = ({ isFething }) => {
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [invalid, setInvalid] = React.useState(false);
+import { isValidName, isValidUsername, isValidPhone } from 'common/validate';
 
-  return (
-    <React.Fragment>
-      {isFething && <Loader size="large" />}
-      <ContentWrap>
-        <ScrollView>
-          <View>
-            <TextInput style={styles.textInput} placeholder="Full name" />
-            <TextInput style={styles.textInput} placeholder="Last name" />
-            <TextInput style={styles.textInput} placeholder="Username" />
-            <TextInput style={styles.textInput} placeholder="Email" />
-            <TextInput style={styles.textInput} placeholder="(+44) xxxx xxxxxx" />
-            <TextInput style={styles.textInput} placeholder="mm/dd/yy" />
+class EditProfileScreen extends React.Component {
+  constructor(props) {
+    super(props);
 
-            {invalid && <Text>Please fill required fields</Text>}
+    const { name, last_name, username, email, phone, gender } = props.profile;
 
-            <Button style={styles.submit} mode="contained">
-              Save
-            </Button>
-          </View>
-        </ScrollView>
-      </ContentWrap>
-      <AlertModal
-        variant="danger"
-        message="Are you sure you want to go back? Changes will not be saved."
-        showAction={setModalVisible}
-        visible={modalVisible}
-      />
-    </React.Fragment>
-  );
-};
+    this.state = {
+      valid: true,
+      name,
+      last_name,
+      username,
+      phone,
+      gender,
+      errors: [
+        { key: 'name', val: false },
+        { key: 'last_name', val: false },
+        { key: 'username', val: false },
+        { key: 'phone', val: false },
+        { key: 'gender', val: false }
+      ]
+    };
+  }
 
-export default withFormWrap(EditProfileScreen);
+  componentDidMount() {
+    this.props.updateStartAction();
+  }
+
+  handleChange = (text, name) => {
+    this.setState({ [name]: text });
+  };
+
+  setError = (stateError, field, val) => {
+    const index = stateError.findIndex(({ key }) => key === field);
+    stateError[index].val = val;
+    this.setState({ errors: stateError });
+  };
+
+  handleSubmit = () => {
+    const {
+      updateAction,
+      profile: { id }
+    } = this.props;
+
+    const { errors, valid, ...formdata } = this.state;
+
+    console.log({ formdata });
+
+    if (!isValidName(formdata.name)) {
+      this.setError(errors, 'name', true);
+    } else {
+      this.setError(errors, 'name', false);
+    }
+
+    if (!isValidName(formdata.last_name)) {
+      this.setError(errors, 'last_name', true);
+    } else {
+      this.setError(errors, 'last_name', false);
+    }
+
+    if (!isValidUsername(formdata.username)) {
+      this.setError(errors, 'username', true);
+    } else {
+      this.setError(errors, 'username', false);
+    }
+
+    if (!isValidPhone(formdata.phone)) {
+      this.setError(errors, 'phone', true);
+    } else {
+      this.setError(errors, 'phone', false);
+    }
+
+    // updateAction
+    updateAction({ id, ...formdata });
+  };
+
+  componentDidUpdate() {
+    if (this.props.updated) this.props.navigation.goBack();
+  }
+
+  render() {
+    const { isFetching, profile } = this.props;
+    const { valid, showModal, ...form } = this.state;
+
+    return (
+      <React.Fragment>
+        {isFetching && <Loader size="large" />}
+        <ContentWrap>
+          <ScrollView>
+            <View>
+              <TextInput
+                name="name"
+                value={form.name}
+                style={styles.textInput}
+                placeholder="Full name"
+                handleChangeText={this.handleChange}
+              />
+              <TextInput
+                name="last_name"
+                value={form.last_name}
+                style={styles.textInput}
+                placeholder="Last name"
+                handleChangeText={this.handleChange}
+              />
+              <TextInput
+                name="username"
+                value={form.username}
+                style={styles.textInput}
+                placeholder="Username"
+                handleChangeText={this.handleChange}
+              />
+              <TextInput
+                disabled
+                name="email"
+                value={profile.email}
+                style={styles.textInput}
+                placeholder="Email"
+                handleChangeText={this.handleChange}
+              />
+              <TextInput
+                name="phone"
+                value={form.phone}
+                style={styles.textInput}
+                placeholder="(+44) xxxx xxxxxx"
+                handleChangeText={this.handleChange}
+              />
+              <TextInput
+                name="gender"
+                value={form.gender}
+                style={styles.textInput}
+                placeholder="mm/dd/yy"
+                handleChangeText={this.handleChange}
+              />
+
+              {!valid && <Text>Please fill required fields</Text>}
+
+              <Button onPress={() => this.handleSubmit()} style={styles.submit} mode="contained">
+                Save
+              </Button>
+            </View>
+          </ScrollView>
+        </ContentWrap>
+      </React.Fragment>
+    );
+  }
+}
+
+const actions = { updateStartAction: Creators.updateStart, updateAction: Creators.update };
+
+const mapStateToProps = createStructuredSelector({
+  profile: selectProfile,
+  error: selectError,
+  isFetching: selectIsFetching,
+  updated: selectUpdated
+});
+
+// export default withFormWrap()(EditProfileScreen);
+export default compose(
+  withFormWrap(),
+  connect(mapStateToProps, actions),
+  withLoader
+)(EditProfileScreen);

@@ -53,7 +53,7 @@ export default {
     primary: '#E34398',
     accent: 'yellow',
     text: 'white',
-    disabled: '#B4166A'
+    disabled: 'rgba(255,255,255,0.10)' // white10
   },
   iplayya: {
     colors: {

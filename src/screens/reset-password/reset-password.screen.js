@@ -110,8 +110,6 @@ class ResetPasswordScreen extends React.Component {
       Object.assign(stateError, { [key]: val });
     });
 
-    console.log({ modalVisible });
-
     return (
       <React.Fragment>
         <ContentWrap style={{ paddingTop: 30 }}>

@@ -80,6 +80,7 @@ class SignUpScreen extends React.Component {
     } else {
       this.setError(stateError, 'email', false);
     }
+    
     if (!isValidPassword(rest.password)) {
       this.setError(stateError, 'password', true);
     } else {

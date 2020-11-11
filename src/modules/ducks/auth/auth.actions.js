@@ -7,7 +7,7 @@ const { Types, Creators } = createActions(
     registerSuccess: [],
     registerFailure: ['error'],
     signIn: ['data'],
-    signInSuccess: [],
+    signInSuccess: ['data'],
     signInFailure: ['error'],
     signOut: [],
     signOutSuccess: [],

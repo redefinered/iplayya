@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -18,13 +19,12 @@ import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/
 
 import { Linking } from 'react-native';
 
-// eslint-disable-next-line no-unused-vars
 const App = ({
+  purgeStoreAction,
+  signOutAction,
   isLoggedIn,
   updatePasswordStartAction,
   passwordUpdateParams
-  // signOutAction,
-  // purgeStoreAction
 }) => {
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
@@ -44,9 +44,6 @@ const App = ({
     });
   }, []);
 
-  // return <Text>asdasdas</Text>;
-
-  console.log({ passwordUpdateParams });
   if (passwordUpdateParams)
     return (
       <NavigationContainer>

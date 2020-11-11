@@ -28,11 +28,11 @@ export function* signInRequest(action) {
   const { username, password } = action.data;
   try {
     const {
-      login: { access_token }
+      login: { access_token, user }
     } = yield call(signIn, username, password);
     yield AsyncStorage.setItem('access_token', access_token);
     // const currentUser = yield call(signIn);
-    yield put(Creators.signInSuccess());
+    yield put(Creators.signInSuccess({ user }));
   } catch (error) {
     yield put(Creators.signInFailure(error.message));
   }
