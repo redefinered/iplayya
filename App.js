@@ -9,13 +9,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
 import HomeTabs from 'navigators/home-tabs.navigator';
+import IptvStack from 'navigators/iptv-stack.navigator';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
+import { selectProviders } from 'modules/ducks/provider/provider.selectors';
+import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
 import { Linking } from 'react-native';
 
@@ -24,7 +28,10 @@ const App = ({
   signOutAction,
   isLoggedIn,
   updatePasswordStartAction,
-  passwordUpdateParams
+  passwordUpdateParams,
+  providers,
+  skippedProviderAdd,
+  getProfileAction
 }) => {
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
@@ -44,6 +51,12 @@ const App = ({
     });
   }, []);
 
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      getProfileAction();
+    }
+  }, [isLoggedIn]);
+
   if (passwordUpdateParams)
     return (
       <NavigationContainer>
@@ -58,6 +71,16 @@ const App = ({
       </NavigationContainer>
     );
 
+  // if there is no provider show IPTV stack instead of home stack
+  if (typeof providers !== 'undefined') {
+    if (!providers.length && !skippedProviderAdd)
+      return (
+        <NavigationContainer>
+          <IptvStack />
+        </NavigationContainer>
+      );
+  }
+
   return (
     <NavigationContainer>
       <HomeTabs />
@@ -67,13 +90,16 @@ const App = ({
 
 const mapStateToProps = createStructuredSelector({
   isLoggedIn: selectIsLoggedIn,
-  passwordUpdateParams: selectPasswordUpdateParams
+  passwordUpdateParams: selectPasswordUpdateParams,
+  providers: selectProviders,
+  skippedProviderAdd: selectSkippedProviderAdd
 });
 
 const actions = {
   purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
-  updatePasswordStartAction: PasswordActionCreators.updateStart
+  updatePasswordStartAction: PasswordActionCreators.updateStart,
+  getProfileAction: ProfileCreators.get
 };
 
 export default connect(mapStateToProps, actions)(App);
