@@ -4,7 +4,6 @@
 import React from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useNavigation } from '@react-navigation/native';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import Icon from 'components/icon/icon.component.js';
 
@@ -15,19 +14,30 @@ import { headerHeight } from 'common/values';
 
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/nav/nav.actions';
+import { createStructuredSelector } from 'reselect';
+import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
+import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 
 const Stack = createStackNavigator();
 
-const IptvStack = ({ setBottomTabsVisibleAction }) => {
-  const navigation = useNavigation();
+const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }) => {
+  const [initialRoute, setInitialRoute] = React.useState('IPTV');
 
-  const onAddButtonPress = () => {
-    navigation.navigate('AddIptvScreen');
-    // setBottomTabsVisibleAction({ hideTabs: true });
-  };
+  React.useEffect(() => {
+    setBottomTabsVisibleAction({ hideTabs: false });
+  }, []);
 
+  React.useEffect(() => {
+    if (!providers.length) {
+      setInitialRoute('AddIptvScreen');
+    }
+    if (skippedProviderAdd) {
+      setInitialRoute('IPTV');
+    }
+  }, [providers, skippedProviderAdd]);
   return (
     <Stack.Navigator
+      initialRouteName={initialRoute}
       screenOptions={{
         headerTransparent: true,
         headerTintColor: 'white',
@@ -46,18 +56,21 @@ const IptvStack = ({ setBottomTabsVisibleAction }) => {
       <Stack.Screen
         name="IPTV"
         component={IptvScreen}
-        options={{
+        options={({ navigation }) => ({
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
               <View style={styles.headerButtonContainer}>
                 <Icon name="search" size={24} />
               </View>
-              <Pressable onPress={() => onAddButtonPress()} style={styles.headerButtonContainer}>
+              <Pressable
+                onPress={() => navigation.navigate('AddIptvScreen')}
+                style={styles.headerButtonContainer}
+              >
                 <Icon name="add" size={24} />
               </Pressable>
             </View>
           )
-        }}
+        })}
       />
       <Stack.Screen
         name="AddIptvScreen"
@@ -92,4 +105,9 @@ const actions = {
   setBottomTabsVisibleAction: Creators.setBottomTabsVisible
 };
 
-export default connect(null, actions)(IptvStack);
+const mapStateToProps = createStructuredSelector({
+  skippedProviderAdd: selectSkippedProviderAdd,
+  providers: selectProviders
+});
+
+export default connect(mapStateToProps, actions)(IptvStack);
