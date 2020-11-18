@@ -52,10 +52,8 @@ class SignUpScreen extends React.Component {
   };
 
   handleSubmit = () => {
+    // eslint-disable-next-line no-unused-vars
     const { errors: stateError, valid, ...rest } = this.state;
-
-    // just to remove valid from user registration fields XD
-    console.log({ valid });
 
     if (!isValidName(rest.first_name)) {
       this.setError(stateError, 'first_name', true);
@@ -80,7 +78,7 @@ class SignUpScreen extends React.Component {
     } else {
       this.setError(stateError, 'email', false);
     }
-    
+
     if (!isValidPassword(rest.password)) {
       this.setError(stateError, 'password', true);
     } else {
