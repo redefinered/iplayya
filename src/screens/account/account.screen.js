@@ -27,6 +27,7 @@ import {
 } from 'modules/ducks/auth/auth.selectors';
 
 import { View, Image, Pressable, StyleSheet } from 'react-native';
+import Button from 'components/button/button.component';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -76,7 +77,13 @@ const AccountScreen = ({
     getProfileAction();
   }, [currentUserId, profile]);
 
-  if (profileError) return <Text>{profileError}</Text>;
+  if (profileError)
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <Text style={{ padding: 15 }}>{profileError}</Text>
+        <Button onPress={() => getProfileAction()}>Retry</Button>
+      </View>
+    );
 
   // console.log({ authError })
 
