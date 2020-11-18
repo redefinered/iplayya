@@ -63,6 +63,7 @@ class SignInScreen extends React.Component {
             value={username}
             autoCapitalize="none"
             clearButtonMode="while-editing"
+            keyboardType="email-address"
             autoCompleteType="email"
             style={styles.textInput}
             placeholder="email"
