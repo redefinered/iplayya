@@ -16,6 +16,7 @@ const { Types, Creators } = createActions(
     getProfileSuccess: ['data'],
     getProfileFailure: ['error'],
     clearResetPasswordParams: [],
+    reset: [],
     purgeStore: [] // for development
   },
   { prefix: '@Auth/' }

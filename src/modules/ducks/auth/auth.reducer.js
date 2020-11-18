@@ -5,8 +5,7 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   isLoggedIn: false,
-  signedUp: false,
-  currentUser: null
+  signedUp: false
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -47,14 +46,12 @@ export default createReducer(INITIAL_STATE, {
       signedUp: false
     };
   },
-  [Types.SIGN_IN_SUCCESS]: (state, action) => {
-    const { user: currentUser } = action.data;
+  [Types.SIGN_IN_SUCCESS]: (state) => {
     return {
       ...state,
       error: null,
       isFetching: false,
-      isLoggedIn: true,
-      currentUser
+      isLoggedIn: true
     };
   },
   [Types.SIGN_IN_FAILURE]: (state, action) => {
@@ -62,8 +59,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: action.error,
       isFetching: false,
-      isLoggedIn: false,
-      currentUser: null
+      isLoggedIn: false
     };
   },
   [Types.SIGN_OUT]: (state) => {
@@ -87,7 +83,7 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
-  [Types.PURGE_STORE]: (state) => {
+  [Types.RESET]: (state) => {
     return {
       ...state,
       ...INITIAL_STATE
