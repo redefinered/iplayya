@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-const profileState = (state) => state.profile;
+export const profileState = (state) => state.profile;
 
 export const selectProfile = createSelector([profileState], ({ profile }) => profile);
 
