@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -7,42 +8,113 @@ import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import IptvItem from 'components/iptv-item/iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
-import { View } from 'react-native';
+import SnackBar from 'components/snackbar/snackbar.component';
+import { View, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectProviders } from 'modules/ducks/iptv/iptv.selectors';
-import { Creators } from 'modules/ducks/movies/movies.actions';
+import {
+  selectError,
+  selectIsFetching,
+  selectProviders,
+  selectCreated,
+  selectDeleted
+} from 'modules/ducks/provider/provider.selectors';
 
 import NoProvider from 'images/no_provider.svg';
-import providersMock from './providers.mock';
+// import providersMock from './providers.mock';
 
-const IptvScreen = ({ providers, getMoviesAction }) => {
+const IptvScreen = ({
+  navigation,
+  error,
+  providers,
+  created,
+  getProfileAction,
+  deleteAction,
+  deleted
+}) => {
   console.log({ providers });
+  const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
+  const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
+  const [selected, setSelected] = React.useState(null);
 
   React.useEffect(() => {
-    getMoviesAction({ first: 10, page: 1 });
-  }, []);
+    if (created) handleAddProviderSuccess();
+    if (deleted) handleProviderDeleteSuccess();
+    // hide the snackbar in 3 sec
+    hideSnackBar();
+  }, [created, deleted]);
 
-  const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
+  const handleAddProviderSuccess = () => {
+    setShowSuccessMessage(true);
+    getProfileAction();
+  };
 
-  if (providersMock.length)
+  const handleProviderDeleteSuccess = () => {
+    getProfileAction();
+  };
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 3000);
+  };
+
+  const handleDelete = ({ selected }) => {
+    deleteAction({ id: selected });
+  };
+
+  const handleEdit = ({ selected }) => {
+    console.log({ selected });
+  };
+
+  const handleItemPress = (id) => {
+    setActionSheetVisible(true);
+    setSelected(id);
+  };
+  // const data = providers.map((p) => ({ id, name, username }))
+
+  const hideActionSheet = () => {
+    setActionSheetVisible(false);
+  };
+
+  const actions = [
+    { key: 'edit', icon: 'edit', title: 'Edit', onPress: handleEdit, data: { selected } },
+    { key: 'delete', icon: 'delete', title: 'Delete', onPress: handleDelete, data: { selected } }
+  ];
+
+  if (providers.length)
     return (
       <ContentWrap>
-        {providersMock.map(({ id, name, username }) => (
-          <IptvItem key={id} name={name} username={username} showActions={setActionSheetVisible} />
-        ))}
-        <ActionSheet visible={actionSheetVisible} showAction={setActionSheetVisible} />
+        <View style={{ paddingBottom: 120 }}>
+          {error && <Text>{error}</Text>}
+          <ScrollView>
+            {providers.map(({ id, name, username }) => (
+              <IptvItem
+                key={id}
+                id={id}
+                name={name || 'No Provider Name'}
+                username={username}
+                onActionPress={handleItemPress}
+              />
+            ))}
+          </ScrollView>
+        </View>
+        <SnackBar visible={showSuccessMessage} message="Changes saved successfully" />
+        <ActionSheet visible={actionSheetVisible} actions={actions} hideAction={hideActionSheet} />
       </ContentWrap>
     );
 
-  return <NoProviders />;
+  return <NoProviders navigation={navigation} />;
 };
 
-const NoProviders = () => (
+const NoProviders = ({ navigation }) => (
   <View
     style={{
       flex: 1,
@@ -55,7 +127,9 @@ const NoProviders = () => (
     <Spacer />
     <Text style={{ fontSize: 24 }}>No providers yet</Text>
     <Spacer />
-    <Button>Tap to add you IPTV Provider</Button>
+    <Button onPress={() => navigation.replace('AddIptvScreen')}>
+      Tap to add you IPTV Provider
+    </Button>
   </View>
 );
 
@@ -63,12 +137,22 @@ IptvScreen.propTypes = {
   providers: PropTypes.array
 };
 
-const mapStateToProps = createStructuredSelector({ providers: selectProviders });
-
 const actions = {
-  getMoviesAction: Creators.getMovies
+  getProfileAction: ProfileCreators.get,
+  deleteAction: ProviderCreators.delete
 };
 
-// export default withHeaderPush(withTheme(connect(mapStateToProps)(IptvScreen)));
+const mapStateToProps = createStructuredSelector({
+  error: selectError,
+  isFetching: selectIsFetching,
+  created: selectCreated,
+  deleted: selectDeleted,
+  providers: selectProviders
+});
 
-export default compose(withHeaderPush(), connect(mapStateToProps, actions), withTheme)(IptvScreen);
+export default compose(
+  withHeaderPush(),
+  connect(mapStateToProps, actions),
+  withLoader,
+  withTheme
+)(IptvScreen);
