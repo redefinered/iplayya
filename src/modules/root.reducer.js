@@ -3,10 +3,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
+import userReducer from './ducks/user/user.reducer';
 import passwordReducer from './ducks/password/password.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
-import iptvReducer from './ducks/iptv/iptv.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
+import providerReducer from './ducks/provider/provider.reducer';
 
 export const persistConfig = {
   key: 'primary',
@@ -16,10 +17,11 @@ export const persistConfig = {
 const rootReducer = persistCombineReducers(persistConfig, {
   nav: navReducer,
   auth: authReducer,
+  user: userReducer,
   password: passwordReducer,
-  iptv: iptvReducer,
   profile: profileReducer,
-  movies: moviesReducer
+  movies: moviesReducer,
+  provider: providerReducer
 });
 
 export default (state, action) => {
