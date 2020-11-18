@@ -25,7 +25,7 @@ const Tab = createBottomTabNavigator();
 const HomeTabs = ({ hideTabs }) => {
   return (
     <Tab.Navigator
-      initialRouteName="Account"
+      initialRouteName="Home"
       tabBarOptions={{
         showLabel: false,
         tabStyle: {
