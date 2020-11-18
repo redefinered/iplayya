@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
@@ -15,7 +16,8 @@ const IptvItem = ({
     roundness,
     iplayya: { colors }
   },
-  showActions
+  onActionPress,
+  id
 }) => (
   <View style={{ backgroundColor: colors.white10, borderRadius: roundness, ...styles.container }}>
     {thumbnail && (
@@ -38,7 +40,7 @@ const IptvItem = ({
       >{`Logged in as ${username}`}</Text>
     </Pressable>
     <View style={styles.iconContainer}>
-      <Pressable onPress={() => showActions(true)} style={styles.icon}>
+      <Pressable onPress={() => onActionPress(id)} style={styles.icon}>
         <Icon name="more" size={24} />
       </Pressable>
     </View>
