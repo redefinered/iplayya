@@ -3,7 +3,6 @@ import { gql } from '@apollo/client';
 export const GET_PROFILE = gql`
   query GET_PROFILE {
     me {
-      id
       name
       email
       username
@@ -12,6 +11,12 @@ export const GET_PROFILE = gql`
       phone
       birth_date
       gender
+      providers {
+        id
+        name
+        username
+        created_at
+      }
     }
   }
 `;
