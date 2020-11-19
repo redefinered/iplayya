@@ -170,7 +170,10 @@ const AccountScreen = ({
             <Text style={{ fontSize: 16, lineHeight: 22 }}>Change Password</Text>
           </View>
         </Pressable>
-        <Pressable style={styles.settingItem}>
+        <Pressable
+          style={styles.settingItem}
+          onPress={() => navigation.navigate('PlaybackSettings')}
+        >
           <View style={styles.iconContainer}>
             <Icon name="video-settings" size={24} />
           </View>

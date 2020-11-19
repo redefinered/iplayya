@@ -25,5 +25,35 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.SKIP_PROVIDER_ADD]: (state) => {
     return { ...state, skippedProviderAdd: true };
+  },
+  [Types.UPDATE_PLAYBACK_SETTINGS_START]: (state) => {
+    return {
+      ...state,
+      error: null,
+      updated: null
+    };
+  },
+  [Types.UPDATE_PLAYBACK_SETTINGS]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true
+    };
+  },
+  [Types.UPDATE_PLAYBACK_SETTINGS_SUCCESS]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      updated: true
+    };
+  },
+  [Types.UPDATE_PLAYBACK_SETTINGS_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      error: action.error,
+      isFetching: false,
+      updated: false
+    };
   }
 });

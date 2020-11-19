@@ -4,7 +4,10 @@ const { Types, Creators } = createActions(
   {
     setCurrentUser: ['data'],
     removeCurrentUser: [],
-    skipProviderAdd: []
+    skipProviderAdd: [],
+    updatePlaybackSettings: ['data'],
+    updatePlaybackSettingsSuccess: [],
+    updatePlaybackSettingsFailure: ['error']
   },
   { prefix: '@User/' }
 );

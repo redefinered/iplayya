@@ -45,12 +45,12 @@ export const deleteOne = async (id) => {
   }
 };
 
-export const update = async (args) => {
-  console.log({ args });
+export const update = async (input) => {
+  // console.log({ args });
   try {
     const { data } = await client.mutate({
       mutation: UPDATE_PROVIDER,
-      variables: { input: args },
+      variables: { input },
       refetchQueries: [{ query: GET_PROFILE }],
       awaitRefetchQueries: true
     });
