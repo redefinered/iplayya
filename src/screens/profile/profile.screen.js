@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import ContentWrap from 'components/content-wrap.component';
 import { View, Image, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { Title, Text, withTheme } from 'react-native-paper';
@@ -60,7 +60,7 @@ const ProfileScreen = ({
     }, 3000);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (updated) {
       // show snackbar after update
       setShowSnackbar(true);

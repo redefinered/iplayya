@@ -8,6 +8,14 @@ export const CREATE_PROVIDER = gql`
   }
 `;
 
+export const UPDATE_PROVIDER = gql`
+  mutation UPDATE_PROVIDER($input: updateUserProviderInput) {
+    updateUserProvider(input: $input) {
+      id
+    }
+  }
+`;
+
 export const DELETE_PROVIDER = gql`
   mutation DELETE_PROVIDER($id: ID!) {
     deleteUserProvider(id: $id) {

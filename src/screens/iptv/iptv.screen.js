@@ -24,6 +24,7 @@ import {
   selectIsFetching,
   selectProviders,
   selectCreated,
+  selectUpdated,
   selectDeleted
 } from 'modules/ducks/provider/provider.selectors';
 
@@ -35,21 +36,23 @@ const IptvScreen = ({
   error,
   providers,
   created,
+  updated,
+  deleted,
   getProfileAction,
   deleteAction,
-  deleted
+  deteteStartAction
 }) => {
-  console.log({ providers });
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
 
   React.useEffect(() => {
     if (created) handleAddProviderSuccess();
+    if (updated) handleAddProviderSuccess();
     if (deleted) handleProviderDeleteSuccess();
     // hide the snackbar in 3 sec
     hideSnackBar();
-  }, [created, deleted]);
+  }, [created, updated, deleted]);
 
   const handleAddProviderSuccess = () => {
     setShowSuccessMessage(true);
@@ -67,11 +70,16 @@ const IptvScreen = ({
   };
 
   const handleDelete = ({ selected }) => {
+    deteteStartAction();
     deleteAction({ id: selected });
+    setActionSheetVisible(false);
   };
 
   const handleEdit = ({ selected }) => {
-    console.log({ selected });
+    const provider = providers.find((p) => p.id === selected);
+    // console.log({ provider });
+    navigation.navigate('EditIptvScreen', { provider });
+    setActionSheetVisible(false);
   };
 
   const handleItemPress = (id) => {
@@ -139,6 +147,7 @@ IptvScreen.propTypes = {
 
 const actions = {
   getProfileAction: ProfileCreators.get,
+  deteteStartAction: ProviderCreators.deleteStart,
   deleteAction: ProviderCreators.delete
 };
 
@@ -146,6 +155,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   created: selectCreated,
+  updated: selectUpdated,
   deleted: selectDeleted,
   providers: selectProviders
 });

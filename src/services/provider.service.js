@@ -45,17 +45,17 @@ export const deleteOne = async (id) => {
   }
 };
 
-// export const update = async (args) => {
-//   console.log({ args });
-//   try {
-//     const { data } = await client.mutate({
-//       mutation: UPDATE_PROVIDER,
-//       variables: { ...args },
-//       refetchQueries: [{ query: GET_PROFILE }],
-//       awaitRefetchQueries: true
-//     });
-//     return data;
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// };
+export const update = async (args) => {
+  console.log({ args });
+  try {
+    const { data } = await client.mutate({
+      mutation: UPDATE_PROVIDER,
+      variables: { input: args },
+      refetchQueries: [{ query: GET_PROFILE }],
+      awaitRefetchQueries: true
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

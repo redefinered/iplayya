@@ -5,13 +5,16 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   created: null,
-  createdId: null
+  createdId: null,
+  updated: null,
+  deleted: null
 };
 
 export default createReducer(INITIAL_STATE, {
   [Types.CREATE_START]: (state) => {
     return {
       ...state,
+      error: null,
       created: null,
       createdId: null
     };
@@ -44,9 +47,40 @@ export default createReducer(INITIAL_STATE, {
       createdId: null
     };
   },
+  [Types.UPDATE_START]: (state) => {
+    return {
+      ...state,
+      error: null,
+      updated: null
+    };
+  },
+  [Types.UPDATE]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true
+    };
+  },
+  [Types.UPDATE_SUCCESS]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      updated: true
+    };
+  },
+  [Types.UPDATE_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      error: action.error,
+      isFetching: false,
+      updated: false
+    };
+  },
   [Types.DELETE_START]: (state) => {
     return {
       ...state,
+      error: null,
       deleted: null
     };
   },

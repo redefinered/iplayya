@@ -9,6 +9,7 @@ import Icon from 'components/icon/icon.component.js';
 
 import IptvScreen from 'screens/iptv/iptv.screen';
 import AddIptvScreen from 'screens/iptv/add-iptv.screen';
+import EditIptvScreen from 'screens/iptv/edit-iptv.screen';
 
 import { headerHeight } from 'common/values';
 
@@ -76,6 +77,15 @@ const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }
         name="AddIptvScreen"
         component={AddIptvScreen}
         options={{ title: 'Add IPTV' }}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="EditIptvScreen"
+        component={EditIptvScreen}
+        options={{ title: 'Edit IPTV' }}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })

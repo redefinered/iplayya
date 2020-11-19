@@ -99,6 +99,19 @@ class EditProfileScreen extends React.Component {
       this.setError(errors, 'phone', false);
     }
 
+    if (formdata.gender === '') {
+      this.setError(errors, 'phone', true);
+    } else {
+      this.setError(errors, 'phone', false);
+    }
+
+    const withError = errors.find(({ val }) => val === true);
+    if (typeof withError !== 'undefined') {
+      return this.setState({ valid: false });
+    } else {
+      this.setState({ valid: true });
+    }
+
     // updateAction
     updateAction({ id, ...formdata });
   };
@@ -109,7 +122,13 @@ class EditProfileScreen extends React.Component {
 
   render() {
     const { isFetching, profile } = this.props;
-    const { valid, showModal, ...form } = this.state;
+    const { errors, valid, showModal, ...form } = this.state;
+
+    let stateError = {};
+
+    errors.map(({ key, val }) => {
+      Object.assign(stateError, { [key]: val });
+    });
 
     return (
       <React.Fragment>
@@ -123,6 +142,7 @@ class EditProfileScreen extends React.Component {
                 style={styles.textInput}
                 placeholder="Full name"
                 handleChangeText={this.handleChange}
+                error={stateError.name}
               />
               <TextInput
                 name="last_name"
@@ -130,6 +150,7 @@ class EditProfileScreen extends React.Component {
                 style={styles.textInput}
                 placeholder="Last name"
                 handleChangeText={this.handleChange}
+                error={stateError.last_name}
               />
               <TextInput
                 name="username"
@@ -137,14 +158,7 @@ class EditProfileScreen extends React.Component {
                 style={styles.textInput}
                 placeholder="Username"
                 handleChangeText={this.handleChange}
-              />
-              <TextInput
-                disabled
-                name="email"
-                value={profile.email}
-                style={styles.textInput}
-                placeholder="Email"
-                handleChangeText={this.handleChange}
+                error={stateError.username}
               />
               <TextInput
                 name="phone"
@@ -152,16 +166,19 @@ class EditProfileScreen extends React.Component {
                 style={styles.textInput}
                 placeholder="(+44) xxxx xxxxxx"
                 handleChangeText={this.handleChange}
+                error={stateError.phone}
               />
               <TextInput
                 name="gender"
                 value={form.gender}
                 style={styles.textInput}
-                placeholder="mm/dd/yy"
+                placeholder="gender"
                 handleChangeText={this.handleChange}
+                error={stateError.gender}
               />
 
-              {!valid && <Text>Please fill required fields</Text>}
+              {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
+              {this.props.error && <Text>{this.props.error}</Text>}
 
               <Button onPress={() => this.handleSubmit()} style={styles.submit} mode="contained">
                 Save

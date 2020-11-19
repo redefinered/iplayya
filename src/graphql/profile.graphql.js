@@ -15,6 +15,8 @@ export const GET_PROFILE = gql`
         id
         name
         username
+        password
+        portal_address
         created_at
       }
     }

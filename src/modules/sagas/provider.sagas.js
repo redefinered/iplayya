@@ -1,6 +1,10 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/provider/provider.actions';
-import { create as createProvider, deleteOne as deleteProvider } from 'services/provider.service';
+import {
+  create as createProvider,
+  update as updateProvider,
+  deleteOne as deleteProvider
+} from 'services/provider.service';
 
 export function* createRequest(action) {
   const { input } = action.data;
@@ -13,8 +17,15 @@ export function* createRequest(action) {
   }
 }
 
-export function* updateRequest() {
-  yield console.log('update request here');
+export function* updateRequest(action) {
+  const { input: args } = action.data;
+  try {
+    const { updateUserProvider } = yield call(updateProvider, args);
+    console.log({ updateUserProvider });
+    yield put(Creators.updateSuccess());
+  } catch (error) {
+    yield put(Creators.updateFailure(error.message));
+  }
 }
 
 export function* deleteRequest(action) {

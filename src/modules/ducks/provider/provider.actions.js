@@ -15,7 +15,7 @@ const { Types, Creators } = createActions(
     createSuccess: ['data'],
     createFailure: ['error'],
     updateStart: [],
-    update: [],
+    update: ['data'],
     updateSuccess: ['data'],
     updateFailure: ['error'],
     deleteStart: [],
