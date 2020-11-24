@@ -131,15 +131,16 @@ class SignUpScreen extends React.Component {
           placeholder="First name"
           handleChangeText={this.handleChange}
           error={stateError.first_name}
+          autoCapitalize="words"
         />
         <TextInput
-          autoCapitalize="words"
           value={mainFields.last_name}
           style={styles.textInput}
           name="last_name"
           placeholder="Last name"
           handleChangeText={this.handleChange}
           error={stateError.last_name}
+          autoCapitalize="words"
         />
         <TextInput
           autoCapitalize="none"
