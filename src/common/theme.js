@@ -51,7 +51,7 @@ export default {
   colors: {
     ...DefaultTheme.colors,
     primary: '#E34398',
-    accent: 'yellow',
+    accent: '#E34398',
     text: 'white',
     disabled: 'rgba(255,255,255,0.10)' // white10
   },
