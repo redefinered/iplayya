@@ -25,8 +25,9 @@ import {
   selectIsFetching as selectAuthIsFetching,
   selectCurrentUserId
 } from 'modules/ducks/auth/auth.selectors';
+import { selectUpdated } from 'modules/ducks/user/user.selectors';
 
-import { View, Image, Pressable, StyleSheet } from 'react-native';
+import { View, Image, Pressable, StyleSheet, Dimensions } from 'react-native';
 import Button from 'components/button/button.component';
 
 const styles = StyleSheet.create({
@@ -48,7 +49,8 @@ const AccountScreen = ({
   isFetching,
   authError,
   authIsFetching,
-  currentUserId
+  currentUserId,
+  userUpdated
 }) => {
   const theme = useTheme();
 
@@ -76,6 +78,12 @@ const AccountScreen = ({
     if (currentUserId === profile.id) return;
     getProfileAction();
   }, [currentUserId, profile]);
+
+  React.useEffect(() => {
+    if (userUpdated) {
+      getProfileAction();
+    }
+  }, [userUpdated]);
 
   if (profileError)
     return (
@@ -118,17 +126,23 @@ const AccountScreen = ({
             source={require('images/placeholder.jpg')}
           />
         </View>
-        <View style={{ paddingLeft: 15 }}>
+        <View
+          style={{
+            paddingHorizontal: 15,
+            width: Dimensions.get('window').width - 100 // 100 is the 15 space left and 85 image width
+          }}
+        >
           {/* {profile} */}
           <Text style={{ fontSize: 20, fontWeight: 'bold', lineHeight: 27, marginBottom: 2 }}>
             {profile.name}
           </Text>
           <Text
+            numberOfLines={1}
             style={{
               fontSize: 14,
               lineHeight: 19,
-              color: theme.iplayya.colors.white50,
-              marginBottom: 8
+              marginBottom: 8,
+              paddingRight: 15
             }}
           >
             {profile.email}
@@ -250,7 +264,8 @@ const mapStateToProps = createStructuredSelector({
   profile: selectProfile,
   profileError: selectProfileError,
   authError: selectAuthError,
-  currentUserId: selectCurrentUserId
+  currentUserId: selectCurrentUserId,
+  userUpdated: selectUpdated
 });
 
 export default compose(

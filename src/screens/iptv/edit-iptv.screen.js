@@ -55,6 +55,7 @@ class EditIptvScreen extends React.Component {
   componentDidMount() {
     // resets provider create state
     this.props.updateStartAction();
+    this.props.createStartAction();
   }
 
   handleChange = (text, name) => {
@@ -191,6 +192,7 @@ class EditIptvScreen extends React.Component {
 
 const actions = {
   updateStartAction: Creators.updateStart,
+  createStartAction: Creators.createStart,
   updateAction: Creators.update
 };
 

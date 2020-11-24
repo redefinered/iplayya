@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 export const GET_PROFILE = gql`
   query GET_PROFILE {
     me {
+      id
       name
       email
       username
@@ -18,6 +19,19 @@ export const GET_PROFILE = gql`
         password
         portal_address
         created_at
+      }
+      playback {
+        id
+        user_id
+        language
+        subtitle
+        video_quality
+        is_autoplay_video
+        is_autoplay_next_ep
+        is_show_video_info
+        is_always_show_caption
+        created_at
+        updated_at
       }
     }
   }

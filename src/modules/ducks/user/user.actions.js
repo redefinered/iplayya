@@ -5,6 +5,7 @@ const { Types, Creators } = createActions(
     setCurrentUser: ['data'],
     removeCurrentUser: [],
     skipProviderAdd: [],
+    updatePlaybackSettingsStart: [],
     updatePlaybackSettings: ['data'],
     updatePlaybackSettingsSuccess: [],
     updatePlaybackSettingsFailure: ['error']

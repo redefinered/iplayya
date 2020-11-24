@@ -6,7 +6,8 @@ const INITIAL_STATE = {
   isFetching: false,
   currentUser: null,
   skippedProviderAdd: false,
-  completedOnboarding: false
+  completedOnboarding: false,
+  updated: null
 };
 
 export default createReducer(INITIAL_STATE, {
