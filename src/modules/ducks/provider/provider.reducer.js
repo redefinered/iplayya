@@ -7,7 +7,8 @@ const INITIAL_STATE = {
   created: null,
   createdId: null,
   updated: null,
-  deleted: null
+  deleted: null,
+  currentProvider: null
 };
 
 export default createReducer(INITIAL_STATE, {

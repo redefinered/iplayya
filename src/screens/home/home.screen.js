@@ -14,11 +14,12 @@ import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 
-const Home = ({ setBottomTabsVisibleAction, completedOnboarding }) => {
+const Home = ({ navigation, completedOnboarding, setBottomTabsVisibleAction }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
+
   React.useEffect(() => {
     // makes sure main tab navigation is always visible on application mount
-    setBottomTabsVisibleAction(true);
+    setBottomTabsVisibleAction({ hideTabs: false });
   });
 
   React.useEffect(() => {
@@ -35,7 +36,7 @@ const Home = ({ setBottomTabsVisibleAction, completedOnboarding }) => {
 
   return (
     <ContentWrap>
-      <HomeMenu />
+      <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
     </ContentWrap>
   );

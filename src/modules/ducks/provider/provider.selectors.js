@@ -30,3 +30,8 @@ export const selectCreated = createSelector([providerState], ({ created }) => cr
 export const selectUpdated = createSelector([providerState], ({ updated }) => updated);
 
 export const selectDeleted = createSelector([providerState], ({ deleted }) => deleted);
+
+export const selectCurrentProvider = createSelector(
+  [providerState],
+  ({ currentProvider }) => currentProvider
+);

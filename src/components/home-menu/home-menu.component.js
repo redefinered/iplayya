@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -7,7 +9,7 @@ import Iplay from 'images/btn_iplay.svg';
 import Imusic from 'images/btn_imusic.svg';
 import Imovie from 'images/btn_imovie.svg';
 
-const HomeMenu = () => {
+const HomeMenu = ({ navigation }) => {
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
       <Pressable style={styles.menuitem}>
@@ -16,7 +18,7 @@ const HomeMenu = () => {
         </View>
         <Text style={styles.label}>iTV</Text>
       </Pressable>
-      <Pressable style={styles.menuitem}>
+      <Pressable style={styles.menuitem} onPress={() => navigation.replace('ImovieScreen')}>
         <View style={styles.iconwrap}>
           <Imovie />
         </View>
