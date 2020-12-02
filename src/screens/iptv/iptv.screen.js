@@ -28,7 +28,7 @@ import {
   selectDeleted
 } from 'modules/ducks/provider/provider.selectors';
 
-import NoProvider from 'images/no_provider.svg';
+import NoProvider from 'assets/no_provider.svg';
 // import providersMock from './providers.mock';
 
 const IptvScreen = ({

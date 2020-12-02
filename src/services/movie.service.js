@@ -1,8 +1,7 @@
 import client from 'apollo/client';
 import { GET_MOVIE, GET_MOVIES } from 'graphql/movie.graphql';
 
-export const getOne = async (args) => {
-  const { id } = args;
+export const getOne = async (id) => {
   try {
     const { data } = await client.query({
       query: GET_MOVIE,

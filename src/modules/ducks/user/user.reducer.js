@@ -56,5 +56,11 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       updated: false
     };
+  },
+  [Types.HIDE_WELCOME_DIALOG]: (state) => {
+    return {
+      ...state,
+      completedOnboarding: true
+    };
   }
 });

@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
-import Logo from 'images/logo.svg';
+import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 import ContentWrap from 'components/content-wrap.component';

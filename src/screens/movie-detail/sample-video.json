@@ -1,0 +1,18 @@
+{
+  "title": "The Wolf of Wall Street",
+  "description": "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.",
+  "category": "Adventure",
+  "director": "Martin Scorsese",
+  "actors": "Leonardo DiCaprio, Jonah Hill, Margot Robbie.",
+  "year": "2013",
+  "time": "180",
+  "country": "USA",
+  "age_rating": "18+",
+  "rating_mpaa": "R",
+  "rating_imdb": "8.1999998092651",
+  "rating_kinopoisk": "7.8740000724792",
+  "is_hd": true,
+  "is_censored": false,
+  "rtsp_url": "ffmpeg http://212.102.38.19:80/13774202158/the-wolf-of-wall-street.mp4",
+  "is_favorite": null
+}

@@ -3,11 +3,11 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import Itv from 'images/btn_itv.svg';
-import Iradio from 'images/btn_iradio.svg';
-import Iplay from 'images/btn_iplay.svg';
-import Imusic from 'images/btn_imusic.svg';
-import Imovie from 'images/btn_imovie.svg';
+import Itv from 'assets/btn_itv.svg';
+import Iradio from 'assets/btn_iradio.svg';
+import Iplay from 'assets/btn_iplay.svg';
+import Imusic from 'assets/btn_imusic.svg';
+import Imovie from 'assets/btn_imovie.svg';
 
 const HomeMenu = ({ navigation }) => {
   return (

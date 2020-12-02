@@ -123,7 +123,7 @@ const AccountScreen = ({
               borderRadius: 42.5,
               resizeMode: 'contain'
             }}
-            source={require('images/placeholder.jpg')}
+            source={require('assets/placeholder.jpg')}
           />
         </View>
         <View

@@ -4,7 +4,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Button from 'components/button/button.component';
 import { Title, Text, withTheme } from 'react-native-paper';
-import EmailSentSvg from 'images/email_sent.svg';
+import EmailSentSvg from 'assets/email_sent.svg';
 import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 

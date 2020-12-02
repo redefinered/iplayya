@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import MinistraThumbnail from 'images/providers/ministra.svg';
+import MinistraThumbnail from 'assets/providers/ministra.svg';
 
 import styles from './iptv-item.styles';
 

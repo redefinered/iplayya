@@ -79,11 +79,11 @@ class EditIptvScreen extends React.Component {
       this.setError(stateError, 'name', false);
     }
 
-    if (!isValidWebsite(input.portal_address)) {
-      this.setError(stateError, 'portal_address', true);
-    } else {
-      this.setError(stateError, 'portal_address', false);
-    }
+    // if (!isValidWebsite(input.portal_address)) {
+    //   this.setError(stateError, 'portal_address', true);
+    // } else {
+    //   this.setError(stateError, 'portal_address', false);
+    // }
 
     if (!isValidUsername(input.username)) {
       this.setError(stateError, 'username', true);

@@ -23,6 +23,8 @@ import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
 import { Linking } from 'react-native';
 
+import AsyncStorage from '@react-native-community/async-storage';
+
 const App = ({
   purgeStoreAction,
   signOutAction,
@@ -33,9 +35,16 @@ const App = ({
   skippedProviderAdd,
   getProfileAction
 }) => {
+  const getToken = async () => {
+    const token = await AsyncStorage.getItem('access_token');
+    console.log(token);
+  };
+
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
+
+    getToken();
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,

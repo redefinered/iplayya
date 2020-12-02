@@ -80,13 +80,13 @@ const ProfileScreen = ({
     <LinearGradient style={{ flex: 1 }} colors={['#2D1449', '#0D0637']}>
       <ImageBackground
         blurRadius={50}
-        source={require('images/placeholder.jpg')}
+        source={require('assets/placeholder.jpg')}
         style={{ paddingTop: headerHeight + 10 }}
       >
         <View style={styles.headerContainer}>
           <View style={{ width: 140, marginBottom: 17 }}>
             <Image
-              source={require('images/placeholder.jpg')}
+              source={require('assets/placeholder.jpg')}
               style={{
                 width: 140,
                 height: 140,
