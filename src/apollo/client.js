@@ -5,7 +5,8 @@ import { setContext } from '@apollo/client/link/context';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const httpLink = createHttpLink({
-  uri: 'https://iplayya.herokuapp.com/graphql'
+  uri: 'http://ns375513.ip-37-187-174.eu/graphql'
+  // uri_old: 'https://iplayya.herokuapp.com/graphql'
 });
 
 const authLink = setContext(async (_, { headers }) => {
