@@ -6,6 +6,7 @@ const { Types, Creators } = createActions(
     register: ['data'],
     registerSuccess: [],
     registerFailure: ['error'],
+    signInStart: [],
     signIn: ['data'],
     signInSuccess: ['data'],
     signInFailure: ['error'],

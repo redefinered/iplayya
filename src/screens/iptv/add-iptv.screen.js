@@ -36,7 +36,6 @@ class AddIptvScreen extends React.Component {
     portal_address: '',
     username: '',
     password: '',
-    is_active: null,
     valid: true,
     errors: [
       { key: 'name', val: false },

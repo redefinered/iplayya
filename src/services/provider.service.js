@@ -16,12 +16,10 @@ export const get = async () => {
 };
 
 export const create = async (args) => {
-  console.log({ args });
-  const input = Object.assign(args, { is_active: true });
   try {
     const { data } = await client.mutate({
       mutation: CREATE_PROVIDER,
-      variables: { input },
+      variables: { input: args },
       refetchQueries: [{ query: GET_PROFILE }],
       awaitRefetchQueries: true
     });

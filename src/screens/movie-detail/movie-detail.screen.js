@@ -2,8 +2,10 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable, ImageBackground, Dimensions } from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Dimensions } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
+import Video from 'react-native-video';
+import VideoControls from 'components/video-controls/video-controls.component';
 import { Text } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
@@ -11,18 +13,17 @@ import Icon from 'components/icon/icon.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { Creators as MovieActionCreators } from 'modules/ducks/movie/movie.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectError, selectIsFetching } from 'modules/ducks/movie/movie.selectors';
-import Video from 'react-native-video';
+import { urlEncodeTitle } from './movie-detail.utils';
+import { createFontFormat } from 'utils';
 
 import video from './sample-video.json';
 
-function createFontFormat(fontSize, lineHeight) {
-  return { fontSize, lineHeight };
-}
+const MovieDetailScreen = ({ theme, playbackStartAction, updatePlaybackInfoAction }) => {
+  const [showControls, setShowControls] = React.useState(true);
 
-const MovieDetailScreen = ({ theme }) => {
-  // eslint-disable-next-line no-unused-vars
   const {
     title,
     year,
@@ -36,16 +37,13 @@ const MovieDetailScreen = ({ theme }) => {
     ...otherFields
   } = video;
 
+  React.useEffect(() => {
+    playbackStartAction();
+  }, []);
+
   const [paused, setPaused] = React.useState(true);
 
   let player = React.useRef(null);
-
-  console.log({ x: rtsp_url.split(' ') });
-
-  const urlEncodeTitle = (title) => {
-    const strsplit = title.split();
-    return strsplit.join('+');
-  };
 
   const onBuffer = () => {
     console.log('buffer callback');
@@ -59,23 +57,23 @@ const MovieDetailScreen = ({ theme }) => {
     console.log({ event });
   };
 
+  const handleProgress = (playbackInfo) => {
+    // console.log({ playbackInfo });
+    updatePlaybackInfoAction({ playbackInfo });
+  };
+
+  const handleTogglePlay = () => {
+    setPaused(!paused);
+  };
+
+  const toggleControlVisible = () => {
+    setShowControls(!showControls);
+  };
+
   return (
     <View>
-      {/* banner */}
+      {/* Player */}
       <View>
-        {/* <ImageBackground
-          imageStyle={{ width: Dimensions.get('window').width, height: 211 }}
-          style={{
-            width: '100%',
-            height: 211,
-            marginBottom: 10,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-          source={{ url: `https://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}` }}
-        >
-          <Icon name="circular-play" size={70} />
-        </ImageBackground> */}
         <View
           style={{
             width: '100%',
@@ -87,6 +85,7 @@ const MovieDetailScreen = ({ theme }) => {
         >
           <Video
             paused={paused}
+            onProgress={handleProgress}
             // controls
             fullscreenOrientation="landscape"
             source={{ uri: rtsp_url.split(' ')[1] }}
@@ -96,11 +95,12 @@ const MovieDetailScreen = ({ theme }) => {
             poster={`https://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`}
             style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
           />
-          {paused && (
-            <Pressable style={{ position: 'absolute' }} onPress={() => setPaused(false)}>
-              <Icon name="circular-play" size={70} />
-            </Pressable>
-          )}
+          <VideoControls
+            paused={paused}
+            togglePlay={handleTogglePlay}
+            style={{ position: 'absolute' }}
+            visible={showControls}
+          />
         </View>
         <ContentWrap>
           <Text
@@ -115,6 +115,9 @@ const MovieDetailScreen = ({ theme }) => {
       {/* content */}
       <ScrollView style={{ height: 300 }}>
         <ContentWrap>
+          <Pressable onPress={() => toggleControlVisible()}>
+            <Text>toggle control</Text>
+          </Pressable>
           <Text
             style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
           >{`${title} (${year})`}</Text>
@@ -163,12 +166,24 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 42,
     justifyContent: 'center'
+  },
+  controls: {
+    position: 'absolute'
   }
 });
+
+const actions = {
+  playbackStartAction: MovieActionCreators.playbackStart,
+  updatePlaybackInfoAction: MovieActionCreators.updatePlaybackInfo
+};
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching
 });
 
-export default compose(withHeaderPush(), connect(mapStateToProps), withTheme)(MovieDetailScreen);
+export default compose(
+  withHeaderPush(),
+  connect(mapStateToProps, actions),
+  withTheme
+)(MovieDetailScreen);

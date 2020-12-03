@@ -7,7 +7,9 @@ const { Types, Creators } = createActions(
     getOneFailure: ['error'],
     get: ['data'],
     getSuccess: ['data'],
-    getFailure: ['error']
+    getFailure: ['error'],
+    playbackStart: [],
+    updatePlaybackInfo: ['data']
   },
   { prefix: '@Movie/' }
 );

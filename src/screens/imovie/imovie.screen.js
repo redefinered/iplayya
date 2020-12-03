@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -19,7 +20,9 @@ import {
   selectIsFetching,
   selectPaginatorInfo
 } from 'modules/ducks/movie/movie.selectors';
+
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Button from 'components/button/button.component';
 
 const ImovieScreen = ({
   navigation,
@@ -28,9 +31,9 @@ const ImovieScreen = ({
   getMoviesAction,
   paginatorInfo: { limit, pageNumber }
 }) => {
-  React.useEffect(() => {
-    getMoviesAction({ limit, pageNumber });
-  }, []);
+  // React.useEffect(() => {
+  //   getMoviesAction({ limit, pageNumber });
+  // }, []);
 
   const urlEncodeTitle = (title) => {
     const strsplit = title.split();
@@ -127,6 +130,9 @@ const ImovieScreen = ({
       ) : (
         <ContentWrap>
           <Text>No movies found</Text>
+          <Button mode="contained" onPress={() => navigation.navigate('MovieDetailScreen')}>
+            <Text>test</Text>
+          </Button>
         </ContentWrap>
       )}
 

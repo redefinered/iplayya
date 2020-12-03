@@ -38,6 +38,13 @@ export default createReducer(INITIAL_STATE, {
       signedUp: false
     };
   },
+  [Types.SIGN_IN_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      isLoggedIn: false
+    };
+  },
   [Types.SIGN_IN]: (state) => {
     return {
       ...state,

@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   error: null,
   movie: null,
   movies: [],
+  playbackInfo: null,
   paginatorInfo: {
     limit: null,
     pageNumber: null
@@ -35,6 +36,19 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error
+    };
+  },
+  [Types.PLAYBACK_START]: (state) => {
+    return {
+      ...state,
+      playbackInfo: null
+    };
+  },
+  [Types.UPDATE_PLAYBACK_INFO]: (state, action) => {
+    const { playbackInfo } = action.data;
+    return {
+      ...state,
+      playbackInfo
     };
   }
 });

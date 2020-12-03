@@ -17,3 +17,15 @@ export const selectPaginatorInfo = createSelector(
   [movieState],
   ({ paginatorInfo }) => paginatorInfo
 );
+
+export const selectPlaybackInfo = createSelector([movieState], ({ playbackInfo }) => playbackInfo);
+
+export const selectSeekableDuration = createSelector([movieState], ({ playbackInfo }) => {
+  if (!playbackInfo) return;
+  return Math.floor(playbackInfo.seekableDuration);
+});
+
+export const selectCurrentTime = createSelector([movieState], ({ playbackInfo }) => {
+  if (!playbackInfo) return;
+  return Math.floor(playbackInfo.currentTime);
+});

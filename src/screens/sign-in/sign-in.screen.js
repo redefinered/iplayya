@@ -31,6 +31,10 @@ class SignInScreen extends React.Component {
     showPassword: false
   };
 
+  componentDidMount() {
+    this.props.signInStartAction();
+  }
+
   handleChangeText = (text, name) => {
     this.setState({ [name]: text });
   };
@@ -139,6 +143,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  signInStartAction: Creators.signInStart,
   signInAction: Creators.signIn
 };
 

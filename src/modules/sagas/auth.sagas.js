@@ -60,8 +60,13 @@ export function* getProfileRequest() {
   }
 }
 
+export function* signInStartRequest() {
+  yield AsyncStorage.removeItem('access_token');
+}
+
 export default function* authSagas() {
   yield takeLatest(Types.REGISTER, registerRequest);
+  yield takeLatest(Types.SIGN_IN_START, signInStartRequest);
   yield takeLatest(Types.SIGN_IN, signInRequest);
   yield takeLatest(Types.GET_PROFILE, getProfileRequest);
   yield takeLatest(Types.SIGN_OUT, signOutRequest);
