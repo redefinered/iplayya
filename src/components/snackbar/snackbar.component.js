@@ -6,26 +6,14 @@ import Icon from 'components/icon/icon.component';
 
 import styles from './snackbar.styles';
 
-const AlertModal = ({ visible, message, variant }) => {
-  let iconName = '';
-  let color = '';
-  switch (variant) {
-    case 'success':
-      iconName = 'success';
-      color = '#13BD38';
-      break;
-    case 'danger':
-      iconName = 'alert';
-      color = '#FF5050';
-      break;
-  }
+const SnackBar = ({ visible, message, iconName, iconColor }) => {
   return (
     <Modal animationType="slide" visible={visible} transparent>
       <View style={styles.container}>
         <View style={styles.contentWrap}>
           <View style={styles.content}>
             <View style={styles.iconWrap}>
-              <Icon name={iconName} size={50} style={{ color }} />
+              <Icon name={iconName} size={50} style={{ color: iconColor }} />
             </View>
             <View style={styles.textWrap}>
               <Text style={styles.text}>{message}</Text>
@@ -37,15 +25,17 @@ const AlertModal = ({ visible, message, variant }) => {
   );
 };
 
-AlertModal.propTypes = {
+SnackBar.propTypes = {
   visible: PropTypes.bool.isRequired,
   hideAction: PropTypes.func,
   message: PropTypes.string.isRequired,
-  variant: PropTypes.string
+  iconName: PropTypes.string,
+  iconColor: PropTypes.string
 };
 
-AlertModal.defaultProps = {
-  variant: 'success'
+SnackBar.defaultProps = {
+  iconName: 'success',
+  iconColor: '#13BD38'
 };
 
-export default AlertModal;
+export default SnackBar;

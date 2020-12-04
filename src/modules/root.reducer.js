@@ -7,6 +7,7 @@ import userReducer from './ducks/user/user.reducer';
 import passwordReducer from './ducks/password/password.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
 import movieReducer from './ducks/movie/movie.reducer';
+import radioReducer from './ducks/radio/radio.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
 
 export const persistConfig = {
@@ -21,6 +22,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   password: passwordReducer,
   profile: profileReducer,
   movie: movieReducer,
+  radio: radioReducer,
   provider: providerReducer
 });
 

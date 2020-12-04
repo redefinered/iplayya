@@ -1,23 +1,37 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Pressable, View } from 'react-native';
+import { withTheme } from 'react-native-paper';
 import { Text } from 'react-native-paper';
 import Button from 'components/button/button.component';
 import Icon from 'components/icon/icon.component';
 
 import styles from './alert-modal.styles';
 
-const AlertModal = ({ visible, confirmText, confirmAction, hideAction, message, variant }) => {
-  let iconName = '';
-  let color = '';
+const AlertModal = ({
+  theme,
+  visible,
+  confirmText,
+  confirmAction,
+  hideAction,
+  message,
+  variant,
+  ...otherProps
+}) => {
+  let { iconName, iconColor } = otherProps;
+
   switch (variant) {
     case 'success':
       iconName = 'success';
-      color = '#13BD38';
+      iconColor = '#13BD38';
       break;
     case 'danger':
       iconName = 'alert';
-      color = '#FF5050';
+      iconColor = '#FF5050';
+      break;
+    case null:
+      iconName = iconName || null;
+      iconColor = iconColor || null;
       break;
   }
   return (
@@ -26,13 +40,19 @@ const AlertModal = ({ visible, confirmText, confirmAction, hideAction, message, 
         <View style={styles.contentWrap}>
           <View style={styles.content}>
             <View style={styles.iconWrap}>
-              <Icon name={iconName} size={50} style={{ color }} />
+              <Icon name={iconName} size={50} style={{ color: iconColor }} />
             </View>
             <View style={styles.textWrap}>
               <Text style={styles.text}>{message}</Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>
+            <Button
+              labelStyle={{ ...styles.button, color: theme.iplayya.colors.black50 }}
+              onPress={() => confirmAction()}
+            >
+              Cancel
+            </Button>
             <Button labelStyle={styles.button} onPress={() => confirmAction()}>
               {confirmText}
             </Button>
@@ -44,6 +64,7 @@ const AlertModal = ({ visible, confirmText, confirmAction, hideAction, message, 
 };
 
 AlertModal.propTypes = {
+  theme: PropTypes.object,
   visible: PropTypes.bool.isRequired,
   confirmText: PropTypes.string,
   confirmAction: PropTypes.func,
@@ -53,8 +74,7 @@ AlertModal.propTypes = {
 };
 
 AlertModal.defaultProps = {
-  variant: 'success',
   confirmText: 'Got it'
 };
 
-export default AlertModal;
+export default withTheme(AlertModal);

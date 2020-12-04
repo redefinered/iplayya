@@ -71,6 +71,7 @@ export default {
       black70: 'rgba(13, 17, 29, 0.7)',
       black50: 'rgba(13, 17, 29, 0.5)',
       black25: 'rgba(13, 17, 29, 0.25)',
+      black10: 'rgba(13, 17, 29, 0.1)',
       white100: '#FFFFFF',
       white90: 'rgba(255,255,255,0.9)',
       white80: 'rgba(255,255,255,0.8)',

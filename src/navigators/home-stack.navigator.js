@@ -9,6 +9,7 @@ import Icon from 'components/icon/icon.component.js';
 
 import HomeScreen from 'screens/home/home.screen';
 import ImovieScreen from 'screens/imovie/imovie.screen';
+import IradioScreen from 'screens/iradio/iradio.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 
 import { connect } from 'react-redux';
@@ -49,6 +50,25 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
       // eslint-disable-next-line no-unused-vars
       options={({ navigation }) => ({
         title: 'iMovie',
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <Pressable style={styles.headerButtonContainer}>
+              <Icon name="search" size={24} />
+            </Pressable>
+          </View>
+        )
+      })}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="IradioScreen"
+      component={IradioScreen}
+      // eslint-disable-next-line no-unused-vars
+      options={({ navigation }) => ({
+        title: 'iRadio',
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
             <Pressable style={styles.headerButtonContainer}>

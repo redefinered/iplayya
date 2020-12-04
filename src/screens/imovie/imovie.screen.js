@@ -24,21 +24,52 @@ import {
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Button from 'components/button/button.component';
 
+const dummydata = [
+  {
+    id: 1,
+    title: 'Movie Number One'
+  },
+  {
+    id: 2,
+    title: 'Another Sample Movie'
+  },
+  {
+    id: 3,
+    title: 'Lorem Ipsum Reloaded'
+  },
+  {
+    id: 4,
+    title: 'The Dark Example'
+  },
+  {
+    id: 5,
+    title: 'John Weak 5'
+  },
+  {
+    id: 6,
+    title: 'The Past and The Furriest 8'
+  }
+];
+
 const ImovieScreen = ({
   navigation,
   error,
-  movies,
   getMoviesAction,
-  paginatorInfo: { limit, pageNumber }
+  paginatorInfo: { limit, pageNumber },
+  ...otherprops
 }) => {
   // React.useEffect(() => {
   //   getMoviesAction({ limit, pageNumber });
   // }, []);
 
+  let { movies } = otherprops;
+
   const urlEncodeTitle = (title) => {
     const strsplit = title.split();
     return strsplit.join('+');
   };
+
+  movies = movies.length ? movies : dummydata;
 
   console.log({ movies });
 

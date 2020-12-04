@@ -29,7 +29,7 @@ import {
 } from 'modules/ducks/provider/provider.selectors';
 
 import NoProvider from 'assets/no_provider.svg';
-// import providersMock from './providers.mock';
+import providersMock from './providers.mock';
 
 const IptvScreen = ({
   navigation,
@@ -97,13 +97,13 @@ const IptvScreen = ({
     { key: 'delete', icon: 'delete', title: 'Delete', onPress: handleDelete, data: { selected } }
   ];
 
-  if (providers.length)
+  if (providersMock.length)
     return (
       <ContentWrap>
         <View style={{ paddingBottom: 120 }}>
           {error && <Text>{error}</Text>}
           <ScrollView>
-            {providers.map(({ id, name, username }) => (
+            {providersMock.map(({ id, name, username }) => (
               <IptvItem
                 key={id}
                 id={id}
@@ -115,7 +115,7 @@ const IptvScreen = ({
           </ScrollView>
         </View>
         <SnackBar visible={showSuccessMessage} message="Changes saved successfully" />
-        <ActionSheet visible={actionSheetVisible} actions={actions} hideAction={hideActionSheet} />
+        <ActionSheet visible={true} actions={actions} hideAction={hideActionSheet} />
       </ContentWrap>
     );
 

@@ -30,7 +30,7 @@ const HomeMenu = ({ navigation }) => {
         </View>
         <Text style={styles.label}>iPlay</Text>
       </Pressable>
-      <Pressable style={styles.menuitem}>
+      <Pressable style={styles.menuitem} onPress={() => navigation.replace('IradioScreen')}>
         <View style={styles.iconwrap}>
           <Iradio />
         </View>
