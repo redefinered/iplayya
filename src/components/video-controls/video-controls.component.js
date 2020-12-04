@@ -36,29 +36,29 @@ const VideoControls = ({
 }) => {
   // console.log({ playbackInfo });
   const [timeRemaining, setTimeRemaining] = React.useState(0);
-  const [fadeAnimValue, setFadeAnimValue] = React.useState(0);
+  // const [fadeAnimValue, setFadeAnimValue] = React.useState(0);
 
-  const fadeAnim = React.useRef(new Animated.Value(fadeAnimValue)).current;
+  // const fadeAnim = React.useRef(new Animated.Value(fadeAnimValue)).current;
 
   /**
    * WIP: show/hide controls
    * if animation does not work, remove it and be simple!
    */
-  React.useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 800
-    }).start();
-  }, [fadeAnim]);
+  // React.useEffect(() => {
+  //   Animated.timing(fadeAnim, {
+  //     toValue: 1,
+  //     duration: 800
+  //   }).start();
+  // }, [fadeAnim]);
 
-  React.useEffect(() => {
-    console.log({ visible });
-    if (visible) {
-      setFadeAnimValue(1);
-    } else {
-      setFadeAnimValue(0);
-    }
-  }, [visible]);
+  // React.useEffect(() => {
+  //   console.log({ visible });
+  //   if (visible) {
+  //     setFadeAnimValue(1);
+  //   } else {
+  //     setFadeAnimValue(0);
+  //   }
+  // }, [visible]);
 
   // console.log(timeRemaining);
 
@@ -72,7 +72,7 @@ const VideoControls = ({
   // console.log(currentTime);
 
   return (
-    <Animated.View style={{ ...styles.controls, ...style, opacity: fadeAnim }}>
+    <Animated.View style={{ ...styles.controls, ...style, opacity: 1 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>S1 E1</Text>
         <Pressable>

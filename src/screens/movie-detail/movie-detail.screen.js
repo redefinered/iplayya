@@ -6,7 +6,7 @@ import { View, ScrollView, StyleSheet, Pressable, Dimensions } from 'react-nativ
 import ContentWrap from 'components/content-wrap.component';
 import Video from 'react-native-video';
 import VideoControls from 'components/video-controls/video-controls.component';
-import { Text } from 'react-native-paper';
+import { Text, List } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
@@ -115,9 +115,9 @@ const MovieDetailScreen = ({ theme, playbackStartAction, updatePlaybackInfoActio
       {/* content */}
       <ScrollView style={{ height: 300 }}>
         <ContentWrap>
-          <Pressable onPress={() => toggleControlVisible()}>
+          {/* <Pressable onPress={() => toggleControlVisible()}>
             <Text>toggle control</Text>
-          </Pressable>
+          </Pressable> */}
           <Text
             style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
           >{`${title} (${year})`}</Text>
@@ -128,14 +128,30 @@ const MovieDetailScreen = ({ theme, playbackStartAction, updatePlaybackInfoActio
             </Text>
             {director}
           </Text>
-          {Object.keys(otherFields).map((key) => (
-            <Text key={key} style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
-              <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
-                {key}{' '}
-              </Text>
-              {otherFields[key]}
-            </Text>
-          ))}
+          <List.Section>
+            <List.Accordion
+              title="Read more"
+              style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+              titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+            >
+              {Object.keys(otherFields).map((key) => (
+                <List.Item
+                  key={key}
+                  title={
+                    <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
+                      <Text
+                        style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}
+                      >
+                        {key}{' '}
+                      </Text>
+                      {otherFields[key]}
+                    </Text>
+                  }
+                />
+              ))}
+            </List.Accordion>
+          </List.Section>
+
           <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
             <View style={styles.iconContainer}>
               <Icon name="circular-play" size={24} />
