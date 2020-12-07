@@ -50,7 +50,8 @@ const AccountScreen = ({
   authError,
   authIsFetching,
   currentUserId,
-  userUpdated
+  userUpdated,
+  purgeStoreAction
 }) => {
   const theme = useTheme();
 
@@ -90,6 +91,7 @@ const AccountScreen = ({
       <View style={{ alignItems: 'center' }}>
         <Text style={{ padding: 15 }}>{profileError}</Text>
         <Button onPress={() => getProfileAction()}>Retry</Button>
+        <Button onPress={() => purgeStoreAction()}>Purge store</Button>
       </View>
     );
 
@@ -254,6 +256,7 @@ AccountScreen.propTypes = {
 };
 
 const actions = {
+  purgeStoreAction: Creators.purgeStore, // for testing
   getProfileAction: ProfileCreators.get,
   signOutAction: Creators.signOut
 };

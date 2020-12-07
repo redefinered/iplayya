@@ -29,7 +29,6 @@ import {
 } from 'modules/ducks/provider/provider.selectors';
 
 import NoProvider from 'assets/no_provider.svg';
-import providersMock from './providers.mock';
 
 const IptvScreen = ({
   navigation,
@@ -97,13 +96,13 @@ const IptvScreen = ({
     { key: 'delete', icon: 'delete', title: 'Delete', onPress: handleDelete, data: { selected } }
   ];
 
-  if (providersMock.length)
+  if (providers.length)
     return (
       <ContentWrap>
         <View style={{ paddingBottom: 120 }}>
           {error && <Text>{error}</Text>}
           <ScrollView>
-            {providersMock.map(({ id, name, username }) => (
+            {providers.map(({ id, name, username }) => (
               <IptvItem
                 key={id}
                 id={id}

@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { View, ScrollView, Image, Pressable, StyleSheet, Dimensions } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Text } from 'react-native-paper';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import Icon from 'components/icon/icon.component';
@@ -25,8 +26,6 @@ import {
   selectPaginatorInfo
 } from 'modules/ducks/movie/movie.selectors';
 
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import Button from 'components/button/button.component';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 
 const dummydata = [

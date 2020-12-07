@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
 import { profileState } from 'modules/ducks/profile/profile.selectors';
 
+import providersMock from 'screens/iptv/providers.mock';
+
 export const providerState = (state) => state.provider;
 
 export const selectError = createSelector([providerState], ({ error }) => error);
@@ -15,9 +17,13 @@ export const selectIsFetching = createSelector(
   }
 );
 
+// eslint-disable-next-line no-unused-vars
 export const selectProviders = createSelector([profileState], ({ profile }) => {
-  if (!profile) return []; // return an empty array to avoid breaking the app
-  return profile.providers;
+  // if (!profile) return []; // return an empty array to avoid breaking the app
+  // return profile.providers;
+
+  // add dummy providers while API is broken
+  return providersMock;
 });
 
 export const selectSkipProviderAdd = createSelector(

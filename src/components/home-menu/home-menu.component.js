@@ -36,7 +36,7 @@ const HomeMenu = ({ navigation }) => {
         </View>
         <Text style={styles.label}>iRadio</Text>
       </Pressable>
-      <Pressable style={styles.menuitem}>
+      <Pressable style={styles.menuitem} onPress={() => navigation.replace('ImusicScreen')}>
         <View style={styles.iconwrap}>
           <Imusic />
         </View>
