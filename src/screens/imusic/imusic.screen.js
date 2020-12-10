@@ -34,6 +34,13 @@ const ImusicScreen = ({ navigation, theme }) => {
     }
   };
 
+  // hide checkboxes when there is no selected item
+  React.useEffect(() => {
+    if (selectedItems.length === 0) {
+      setActivateCheckboxes(false);
+    }
+  }, [selectedItems]);
+
   React.useEffect(() => {
     if (selectAll) {
       let collection = library.map(({ id }) => {
