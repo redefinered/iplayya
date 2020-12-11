@@ -4,8 +4,10 @@ import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import AsyncStorage from '@react-native-community/async-storage';
 
+const GRAPHQL_ENDPOINT = 'http://ns375513.ip-37-187-174.eu/graphql';
+
 const httpLink = createHttpLink({
-  uri: 'http://ns375513.ip-37-187-174.eu/graphql'
+  uri: GRAPHQL_ENDPOINT
   // uri_old: 'https://iplayya.herokuapp.com/graphql'
 });
 
@@ -27,7 +29,7 @@ const client = new ApolloClient({
 });
 
 export const clientWithoutAuthLink = new ApolloClient({
-  uri: 'https://iplayya.herokuapp.com/graphql',
+  uri: GRAPHQL_ENDPOINT,
   cache: new InMemoryCache()
 });
 
