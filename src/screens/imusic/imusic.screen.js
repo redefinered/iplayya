@@ -1,8 +1,11 @@
+/* eslint-disable no-unused-vars */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Pressable, Image } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import NowPlaying from 'components/now-playing/now-playing.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import Button from 'components/button/button.component';
@@ -20,17 +23,21 @@ const ImusicScreen = ({ navigation, theme }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
+  const [nowPlaying, setNowPlaying] = React.useState(null);
 
   const handleSelectItem = (item) => {
-    if (!activateCheckboxes) return;
-
-    const newItems = selectedItems;
-    const index = selectedItems.findIndex((i) => i === item);
-    if (index >= 0) {
-      newItems.splice(index, 1);
-      setSelectedItems([...newItems]);
+    if (activateCheckboxes) {
+      const newItems = selectedItems;
+      const index = selectedItems.findIndex((i) => i === item);
+      if (index >= 0) {
+        newItems.splice(index, 1);
+        setSelectedItems([...newItems]);
+      } else {
+        setSelectedItems([item, ...selectedItems]);
+      }
     } else {
-      setSelectedItems([item, ...selectedItems]);
+      let playing = library.find(({ id }) => id === item);
+      setNowPlaying(playing);
     }
   };
 
@@ -165,36 +172,36 @@ const ImusicScreen = ({ navigation, theme }) => {
         </View>
       )}
 
-      {/* this element pushes the content so the bottom nav does not go over the content */}
-      <View style={{ paddingBottom: 100 }} />
+      {!activateCheckboxes ? (
+        <React.Fragment>
+          {/* this element pushes the content so the bottom nav does not go over the content */}
+          <View style={{ paddingBottom: 100 }} />
 
-      {/* <View>
-
-      </View> */}
-
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          backgroundColor: '#202530',
-          borderTopRightRadius: 24,
-          borderTopLeftRadius: 24,
-          paddingHorizontal: 30,
-          paddingTop: 15,
-          paddingBottom: 30,
-          position: 'absolute',
-          width: '100%',
-          bottom: 0
-        }}
-      >
-        <TouchableWithoutFeedback
-          onPress={() => navigation.replace('HomeScreen')}
-          style={{ alignItems: 'center' }}
-        >
-          <Icon name="iplayya" size={40} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-        </TouchableWithoutFeedback>
-      </View>
+          <View style={{ position: 'absolute', width: '100%', bottom: 0 }}>
+            {nowPlaying && <NowPlaying selected={nowPlaying} />}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                backgroundColor: '#202530',
+                borderTopRightRadius: !nowPlaying ? 24 : 0,
+                borderTopLeftRadius: !nowPlaying ? 24 : 0,
+                paddingHorizontal: 30,
+                paddingTop: 15,
+                paddingBottom: 30
+              }}
+            >
+              <TouchableWithoutFeedback
+                onPress={() => navigation.replace('HomeScreen')}
+                style={{ alignItems: 'center' }}
+              >
+                <Icon name="iplayya" size={40} />
+                <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+        </React.Fragment>
+      ) : null}
     </View>
   );
 };
