@@ -3,7 +3,8 @@ import { View } from 'react-native';
 import ScreenContainer from 'components/screen-container.component';
 import { useHeaderHeight } from '@react-navigation/stack';
 
-const withHeaderPush = (backgroundType, gradientTypeColors) => (WrappedComponent) => {
+const withHeaderPush = (options = {}) => (WrappedComponent) => {
+  const { backgroundType, gradientTypeColors } = options;
   const headerPush = (props) => {
     const headerHeight = useHeaderHeight();
     return (

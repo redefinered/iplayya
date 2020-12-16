@@ -112,7 +112,7 @@ const ImusicScreen = ({ navigation, theme }) => {
             </React.Fragment>
           )}
 
-          {library.map(({ id, title, artist, thumbnail }) => (
+          {library.map(({ id, title, artist, thumbnails }) => (
             <Pressable
               key={id}
               onLongPress={() => handleLongPress(id)}
@@ -130,7 +130,7 @@ const ImusicScreen = ({ navigation, theme }) => {
                   <Image
                     style={{ width: 60, height: 60, borderRadius: 8, marginRight: 15 }}
                     source={{
-                      url: thumbnail
+                      url: thumbnails.small
                     }}
                   />
                   <View>
@@ -178,7 +178,7 @@ const ImusicScreen = ({ navigation, theme }) => {
           <View style={{ paddingBottom: 100 }} />
 
           <View style={{ position: 'absolute', width: '100%', bottom: 0 }}>
-            {nowPlaying && <NowPlaying selected={nowPlaying} />}
+            {nowPlaying && <NowPlaying selected={nowPlaying} navigation={navigation} />}
             <View
               style={{
                 flexDirection: 'row',
@@ -217,4 +217,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default compose(withHeaderPush('solid'), withTheme)(ImusicScreen);
+export default compose(withHeaderPush({ backgroundType: 'solid' }), withTheme)(ImusicScreen);

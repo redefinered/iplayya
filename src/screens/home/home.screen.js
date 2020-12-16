@@ -56,4 +56,7 @@ const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
 };
 
-export default compose(withHeaderPush(), connect(mapStateToProps, actions))(Home);
+export default compose(
+  withHeaderPush({ backgroundType: 'image' }),
+  connect(mapStateToProps, actions)
+)(Home);

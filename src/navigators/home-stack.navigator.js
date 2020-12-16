@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import Icon from 'components/icon/icon.component.js';
 
@@ -12,6 +12,7 @@ import ImovieScreen from 'screens/imovie/imovie.screen';
 import IradioScreen from 'screens/iradio/iradio.screen';
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
+import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
@@ -122,6 +123,20 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
           </View>
         )
       })}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="MusicPlayerScreen"
+      component={MusicPlayerScreen}
+      // eslint-disable-next-line no-unused-vars
+      options={{
+        title: null,
+        headerBackImage: () => <HeaderBackImage vertical />,
+        ...TransitionPresets.ModalSlideFromBottomIOS
+      }}
       listeners={{
         focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
         beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })

@@ -3,18 +3,30 @@
     "id": "1",
     "title": "Pusong Bato",
     "artist": "Benj Jr.",
-    "thumbnail": "https://via.placeholder.com/60x60.png"
+    "thumbnails": {
+      "small": "https://via.placeholder.com/60x60.png",
+      "medium": "https://via.placeholder.com/120x120.png",
+      "large": "https://via.placeholder.com/220x220.png"
+    }
   },
   {
     "id": "2",
     "title": "Once You Go Black",
     "artist": "Red",
-    "thumbnail": "https://via.placeholder.com/60x60.png"
+    "thumbnails": {
+      "small": "https://via.placeholder.com/60x60.png",
+      "medium": "https://via.placeholder.com/120x120.png",
+      "large": "https://via.placeholder.com/220x220.png"
+    }
   },
   {
     "id": "3",
     "title": "Ipagpatawad Mo",
     "artist": "Mr. Bean",
-    "thumbnail": "https://via.placeholder.com/60x60.png"
+    "thumbnails": {
+      "small": "https://via.placeholder.com/60x60.png",
+      "medium": "https://via.placeholder.com/120x120.png",
+      "large": "https://via.placeholder.com/220x220.png"
+    }
   }
 ]

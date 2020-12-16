@@ -1,16 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, Pressable, Dimensions } from 'react-native';
+import { View, Image, Pressable } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
 import PausedAnimationPlaceholder from 'assets/paused-animation-placeholder.svg';
 import { createFontFormat } from 'utils';
 
-const NowPlaying = ({ theme, selected: { title, artist, thumbnail } }) => {
+const NowPlaying = ({ navigation, theme, selected: { id, title, artist, thumbnails } }) => {
   const [paused, setPaused] = React.useState(true);
   return (
-    <View
+    <Pressable
+      onPress={() => navigation.navigate('MusicPlayerScreen', { id })}
       style={{
         backgroundColor: '#202530',
         borderBottomWidth: 1,
@@ -27,7 +28,7 @@ const NowPlaying = ({ theme, selected: { title, artist, thumbnail } }) => {
           <Image
             style={{ width: 60, height: 60, borderRadius: 8, marginRight: 15 }}
             source={{
-              url: thumbnail
+              url: thumbnails.small
             }}
           />
           <View>
@@ -60,11 +61,12 @@ const NowPlaying = ({ theme, selected: { title, artist, thumbnail } }) => {
           </Pressable>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
 NowPlaying.propTypes = {
+  navigation: PropTypes.object.isRequired,
   theme: PropTypes.object,
   selected: PropTypes.object.isRequired
 };

@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 import Icon from 'components/icon/icon.component';
 
-const HeaderBackImage = () => (
+const HeaderBackImage = ({ vertical }) => (
   <View style={styles.backButtonContainer}>
-    <Icon name="chevron-left" style={{ color: 'white' }} size={24} />
+    <Icon name={vertical ? 'caret-down' : 'arrow-left'} style={{ color: 'white' }} size={24} />
   </View>
 );
 
@@ -18,5 +19,13 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   }
 });
+
+HeaderBackImage.defaultProps = {
+  vertical: false
+};
+
+HeaderBackImage.propTypes = {
+  vertical: PropTypes.bool
+};
 
 export default HeaderBackImage;
