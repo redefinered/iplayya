@@ -13,7 +13,7 @@ export const getOne = async (id) => {
   }
 };
 
-export const get = async (args) => {
+export const getMovies = async (args) => {
   const { limit, pageNumber } = args;
   try {
     const { data } = await client.query({

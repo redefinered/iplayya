@@ -37,6 +37,7 @@ const App = ({
 }) => {
   const getToken = async () => {
     const token = await AsyncStorage.getItem('access_token');
+    console.log({ token });
   };
 
   React.useEffect(() => {

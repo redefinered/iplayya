@@ -51,16 +51,12 @@ const dummydata = [
   }
 ];
 
-const ImovieScreen = ({
-  navigation,
-  error,
-  getMoviesAction,
-  paginatorInfo: { limit, pageNumber },
-  ...otherprops
-}) => {
-  // React.useEffect(() => {
-  //   getMoviesAction({ limit, pageNumber });
-  // }, []);
+const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...otherprops }) => {
+  const { limit, pageNumber } = paginatorInfo;
+  console.log({ paginatorInfo });
+  React.useEffect(() => {
+    getMoviesAction({ limit, pageNumber });
+  }, []);
 
   let { movies } = otherprops;
 
@@ -216,7 +212,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  getMoviesAction: MovieActionCreators.get,
+  getMoviesAction: MovieActionCreators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
 };
 

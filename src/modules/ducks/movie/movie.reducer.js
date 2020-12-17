@@ -8,20 +8,20 @@ const INITIAL_STATE = {
   movies: [],
   playbackInfo: {},
   paginatorInfo: {
-    limit: null,
-    pageNumber: null
+    limit: 10,
+    pageNumber: 1
   }
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.GET]: (state) => {
+  [Types.GET_MOVIES]: (state) => {
     return {
       ...state,
       isFetching: true,
       error: null
     };
   },
-  [Types.GET_SUCCESS]: (state, action) => {
+  [Types.GET_MOVIES_SUCCESS]: (state, action) => {
     const { movies } = action.data;
 
     return {
@@ -31,7 +31,7 @@ export default createReducer(INITIAL_STATE, {
       movies
     };
   },
-  [Types.GET_FAILURE]: (state, action) => {
+  [Types.GET_MOVIES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
