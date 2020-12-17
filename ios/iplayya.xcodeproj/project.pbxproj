@@ -24,7 +24,7 @@
 		A5134F682537F9ED001D38E9 /* NotoSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5134F642537F9ED001D38E9 /* NotoSans-BoldItalic.ttf */; };
 		A5134F692537F9ED001D38E9 /* NotoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5134F652537F9ED001D38E9 /* NotoSans-Regular.ttf */; };
 		A5134F6A2537F9ED001D38E9 /* NotoSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5134F662537F9ED001D38E9 /* NotoSans-Italic.ttf */; };
-		A5D321492581EEA10037797A /* iplayyaicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5D321482581EEA10037797A /* iplayyaicons.ttf */; };
+		A59D933F258A1D8700E2D0D3 /* iplayyaicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A59D933E258A1D8700E2D0D3 /* iplayyaicons.ttf */; };
 		F206DDB9751E4A6490B97C7D /* libPods-iplayya.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */; };
 /* End PBXBuildFile section */
 
@@ -70,7 +70,7 @@
 		A5134F642537F9ED001D38E9 /* NotoSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-BoldItalic.ttf"; sourceTree = "<group>"; };
 		A5134F652537F9ED001D38E9 /* NotoSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Regular.ttf"; sourceTree = "<group>"; };
 		A5134F662537F9ED001D38E9 /* NotoSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Italic.ttf"; sourceTree = "<group>"; };
-		A5D321482581EEA10037797A /* iplayyaicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = iplayyaicons.ttf; sourceTree = "<group>"; };
+		A59D933E258A1D8700E2D0D3 /* iplayyaicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = iplayyaicons.ttf; path = "../../../../Work/Deluge/iPlayya/fontello-2035ac49/font/iplayyaicons.ttf"; sourceTree = "<group>"; };
 		AE74DD2B42F1DE8E0DD65D4B /* libPods-iplayya-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8C43496C174EFA0BDAC2DFC /* Pods-iplayya.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya.debug.xcconfig"; path = "Target Support Files/Pods-iplayya/Pods-iplayya.debug.xcconfig"; sourceTree = "<group>"; };
@@ -214,8 +214,8 @@
 		A51D42B025346826008DFE2C /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				A5D321482581EEA10037797A /* iplayyaicons.ttf */,
 				A5134F632537F9ED001D38E9 /* NotoSans-Bold.ttf */,
+				A59D933E258A1D8700E2D0D3 /* iplayyaicons.ttf */,
 				A5134F642537F9ED001D38E9 /* NotoSans-BoldItalic.ttf */,
 				A5134F662537F9ED001D38E9 /* NotoSans-Italic.ttf */,
 				A5134F652537F9ED001D38E9 /* NotoSans-Regular.ttf */,
@@ -367,7 +367,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5134F692537F9ED001D38E9 /* NotoSans-Regular.ttf in Resources */,
-				A5D321492581EEA10037797A /* iplayyaicons.ttf in Resources */,
+				A59D933F258A1D8700E2D0D3 /* iplayyaicons.ttf in Resources */,
 				A5134F672537F9ED001D38E9 /* NotoSans-Bold.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				A5134F682537F9ED001D38E9 /* NotoSans-BoldItalic.ttf in Resources */,
