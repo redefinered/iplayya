@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   error: null,
   movie: null,
   movies: [],
-  playbackInfo: null,
+  playbackInfo: {},
   paginatorInfo: {
     limit: null,
     pageNumber: null

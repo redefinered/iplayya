@@ -2,10 +2,9 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
-import Video from 'react-native-video';
-import VideoControls from 'components/video-controls/video-controls.component';
+import VideoPlayer from 'components/video-player/video-player.component';
 import { Text, List } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
@@ -16,58 +15,33 @@ import { connect } from 'react-redux';
 import { Creators as MovieActionCreators } from 'modules/ducks/movie/movie.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectError, selectIsFetching } from 'modules/ducks/movie/movie.selectors';
-import { urlEncodeTitle } from './movie-detail.utils';
 import { createFontFormat } from 'utils';
 
-import video from './sample-video.json';
+import { data } from './sample-video.json';
 
-const MovieDetailScreen = ({ theme, playbackStartAction, updatePlaybackInfoAction }) => {
-  const [showControls, setShowControls] = React.useState(true);
+const {
+  title,
+  year,
+  description,
+  time,
+  rating_mpaa,
+  age_rating,
+  category,
+  director,
+  rtsp_url,
+  thumbnail,
+  ...otherFields
+} = data.video;
 
-  const {
-    title,
-    year,
-    description,
-    // time,
-    rating_mpaa,
-    age_rating,
-    category,
-    director,
-    rtsp_url,
-    ...otherFields
-  } = video;
+const MovieDetailScreen = ({ theme, playbackStartAction }) => {
+  const [paused, setPaused] = React.useState(true);
 
   React.useEffect(() => {
     playbackStartAction();
   }, []);
 
-  const [paused, setPaused] = React.useState(true);
-
-  let player = React.useRef(null);
-
-  const onBuffer = () => {
-    console.log('buffer callback');
-  };
-
-  const videoError = () => {
-    console.log('video error');
-  };
-
-  const handlePlaybackResume = (event) => {
-    console.log({ event });
-  };
-
-  const handleProgress = (playbackInfo) => {
-    // console.log({ playbackInfo });
-    updatePlaybackInfoAction({ playbackInfo });
-  };
-
   const handleTogglePlay = () => {
     setPaused(!paused);
-  };
-
-  const toggleControlVisible = () => {
-    setShowControls(!showControls);
   };
 
   return (
@@ -83,23 +57,12 @@ const MovieDetailScreen = ({ theme, playbackStartAction, updatePlaybackInfoActio
             alignItems: 'center'
           }}
         >
-          <Video
+          <VideoPlayer
             paused={paused}
-            onProgress={handleProgress}
-            // controls
-            fullscreenOrientation="landscape"
-            source={{ uri: rtsp_url.split(' ')[1] }}
-            ref={player}
-            onBuffer={() => onBuffer()}
-            onError={() => videoError()}
-            poster={`https://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`}
-            style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
-          />
-          <VideoControls
-            paused={paused}
+            source={rtsp_url.split(' ')[1]}
+            thumbnail={thumbnail}
+            title={title}
             togglePlay={handleTogglePlay}
-            style={{ position: 'absolute' }}
-            visible={showControls}
           />
         </View>
         <ContentWrap>
@@ -108,7 +71,7 @@ const MovieDetailScreen = ({ theme, playbackStartAction, updatePlaybackInfoActio
               ...createFontFormat(12, 16),
               color: theme.iplayya.colors.white50
             }}
-          >{`${year}, 1h 55m | ${rating_mpaa}-${age_rating}, ${category}`}</Text>
+          >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
         </ContentWrap>
       </View>
 

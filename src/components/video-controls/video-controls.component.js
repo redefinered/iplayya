@@ -25,56 +25,31 @@ function toDateTime(secs) {
 }
 
 const VideoControls = ({
-  // playbackInfo,
+  title,
+  playbackInfo,
   seekableDuration,
   currentTime,
   style,
   theme,
   togglePlay,
+  toggleFullscreen,
   paused,
   visible
 }) => {
-  // console.log({ playbackInfo });
   const [timeRemaining, setTimeRemaining] = React.useState(0);
-  // const [fadeAnimValue, setFadeAnimValue] = React.useState(0);
 
-  // const fadeAnim = React.useRef(new Animated.Value(fadeAnimValue)).current;
-
-  /**
-   * WIP: show/hide controls
-   * if animation does not work, remove it and be simple!
-   */
-  // React.useEffect(() => {
-  //   Animated.timing(fadeAnim, {
-  //     toValue: 1,
-  //     duration: 800
-  //   }).start();
-  // }, [fadeAnim]);
-
-  // React.useEffect(() => {
-  //   console.log({ visible });
-  //   if (visible) {
-  //     setFadeAnimValue(1);
-  //   } else {
-  //     setFadeAnimValue(0);
-  //   }
-  // }, [visible]);
-
-  // console.log(timeRemaining);
+  console.log({ playbackInfo });
 
   React.useEffect(() => {
     setTimeRemaining(seekableDuration - currentTime);
   }, [currentTime]);
 
-  // video playback information
-  // const { seekableDuration } = playbackInfo;
-
-  // console.log(currentTime);
+  console.log({ timeRemaining, seekableDuration, currentTime });
 
   return (
-    <Animated.View style={{ ...styles.controls, ...style, opacity: 1 }}>
+    <Animated.View style={{ ...styles.controls, ...style, opacity: visible ? 1 : 0 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>S1 E1</Text>
+        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{title}</Text>
         <Pressable>
           <Icon name="screen-cast" size={25} />
         </Pressable>
@@ -113,10 +88,10 @@ const VideoControls = ({
               <Icon name="caption" size={25} style={{ marginRight: 10 }} />
             </Pressable>
             <Pressable>
-              <Icon name="video-settings" size={25} />
+              <Icon name="video-quality" size={25} />
             </Pressable>
           </View>
-          <Pressable>
+          <Pressable onPress={() => toggleFullscreen()}>
             <Icon name="fullscreen" size={25} />
           </Pressable>
         </View>
@@ -125,7 +100,7 @@ const VideoControls = ({
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ flex: 1.5 }}>
             <Text style={{ ...createFontFormat(10, 14) }}>
-              {moment(toDateTime(currentTime)).format('H:m:s')}
+              {moment(toDateTime(currentTime)).format('H:mm:ss')}
             </Text>
           </View>
           <View style={{ flex: 9 }}>
@@ -140,7 +115,7 @@ const VideoControls = ({
           </View>
           <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
             <Text style={{ ...createFontFormat(10, 14) }}>
-              {moment(toDateTime(timeRemaining)).format('H:m:s')}
+              {moment(toDateTime(timeRemaining)).format('H:mm:ss')}
             </Text>
           </View>
         </View>
@@ -159,6 +134,7 @@ const styles = StyleSheet.create({
 });
 
 VideoControls.propTypes = {
+  title: PropTypes.string,
   theme: PropTypes.object,
   playbackInfo: PropTypes.object,
   style: PropTypes.object,
