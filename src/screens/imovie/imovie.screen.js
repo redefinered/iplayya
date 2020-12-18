@@ -54,9 +54,10 @@ const dummydata = [
 const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...otherprops }) => {
   const { limit, pageNumber } = paginatorInfo;
   console.log({ paginatorInfo });
-  React.useEffect(() => {
-    getMoviesAction({ limit, pageNumber });
-  }, []);
+
+  // React.useEffect(() => {
+  //   getMoviesAction({ limit, pageNumber });
+  // }, []);
 
   let { movies } = otherprops;
 

@@ -11,6 +11,7 @@ import HomeScreen from 'screens/home/home.screen';
 import ImovieScreen from 'screens/imovie/imovie.screen';
 import IradioScreen from 'screens/iradio/iradio.screen';
 import ImusicScreen from 'screens/imusic/imusic.screen';
+import IplayScreen from 'screens/iplay/iplay.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
@@ -43,7 +44,8 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
       name="HomeScreen"
       component={HomeScreen}
       options={{
-        title: 'iPlayya'
+        title: 'iPlayya',
+        animationEnabled: false
       }}
     />
     <Stack.Screen
@@ -52,6 +54,7 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
       // eslint-disable-next-line no-unused-vars
       options={({ navigation }) => ({
         title: 'iMovie',
+        animationEnabled: false,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
             <Pressable style={styles.headerButtonContainer}>
@@ -96,6 +99,7 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
       // eslint-disable-next-line no-unused-vars
       options={({ navigation }) => ({
         title: 'iRadio',
+        animationEnabled: false,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
             <Pressable style={styles.headerButtonContainer}>
@@ -115,6 +119,27 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
       // eslint-disable-next-line no-unused-vars
       options={({ navigation }) => ({
         title: 'iMusic',
+        animationEnabled: false,
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <Pressable style={styles.headerButtonContainer}>
+              <Icon name="search" size={24} />
+            </Pressable>
+          </View>
+        )
+      })}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="IplayScreen"
+      component={IplayScreen}
+      // eslint-disable-next-line no-unused-vars
+      options={({ navigation }) => ({
+        title: 'iPlay',
+        animationEnabled: false,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
             <Pressable style={styles.headerButtonContainer}>

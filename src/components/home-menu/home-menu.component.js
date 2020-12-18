@@ -24,7 +24,7 @@ const HomeMenu = ({ navigation }) => {
         </View>
         <Text style={styles.label}>iMovie</Text>
       </Pressable>
-      <Pressable style={styles.menuitem}>
+      <Pressable style={styles.menuitem} onPress={() => navigation.replace('IplayScreen')}>
         <View style={styles.iconwrap}>
           <Iplay />
         </View>
