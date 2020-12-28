@@ -12,8 +12,8 @@ export default StyleSheet.create({
   buttonContainer: {
     paddingBottom: 20,
     paddingHorizontal: 40,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: 'row'
+    // justifyContent: 'space-between'
   },
   button: { fontSize: 17, fontWeight: '700' }
 });

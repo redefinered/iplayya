@@ -13,6 +13,7 @@ const AlertModal = ({
   visible,
   confirmText,
   confirmAction,
+  onCancel,
   hideAction,
   message,
   variant,
@@ -27,6 +28,10 @@ const AlertModal = ({
       break;
     case 'danger':
       iconName = 'alert';
+      iconColor = '#FF5050';
+      break;
+    case 'confirmation':
+      iconName = 'unfavorite';
       iconColor = '#FF5050';
       break;
     case null:
@@ -47,15 +52,26 @@ const AlertModal = ({
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <Button
-              labelStyle={{ ...styles.button, color: theme.iplayya.colors.black50 }}
-              onPress={() => confirmAction()}
-            >
-              Cancel
-            </Button>
-            <Button labelStyle={styles.button} onPress={() => confirmAction()}>
-              {confirmText}
-            </Button>
+            {onCancel && (
+              <View style={{ flex: 12 }}>
+                <Button
+                  style={{ width: '100%', textAlign: 'center' }}
+                  labelStyle={{ ...styles.button, color: theme.iplayya.colors.black50 }}
+                  onPress={() => onCancel()}
+                >
+                  Cancel
+                </Button>
+              </View>
+            )}
+            <View style={{ flex: 12 }}>
+              <Button
+                style={{ width: '100%', textAlign: 'center' }}
+                labelStyle={styles.button}
+                onPress={() => confirmAction()}
+              >
+                {confirmText}
+              </Button>
+            </View>
           </View>
         </View>
       </Pressable>
@@ -68,6 +84,7 @@ AlertModal.propTypes = {
   visible: PropTypes.bool.isRequired,
   confirmText: PropTypes.string,
   confirmAction: PropTypes.func,
+  onCancel: PropTypes.func,
   hideAction: PropTypes.func,
   message: PropTypes.string.isRequired,
   variant: PropTypes.string

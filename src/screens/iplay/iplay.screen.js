@@ -11,6 +11,7 @@ import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import EmptyLibrary from 'assets/iplay-empty-lib.svg';
 
@@ -23,6 +24,11 @@ const IplayScreen = ({ navigation, theme }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
+  const [alertMessageVisible, setAlertMessageVisible] = React.useState(false);
+  const [deleteMessage, setDeleteMessage] = React.useState('');
+  const [videoErrorVisible, setVideoErrorVisible] = React.useState(true);
+
+  console.log({ selectedItems, library });
 
   const handleSelectItem = (item) => {
     const newItems = selectedItems;
@@ -39,6 +45,12 @@ const IplayScreen = ({ navigation, theme }) => {
   React.useEffect(() => {
     if (selectedItems.length === 0) {
       setActivateCheckboxes(false);
+    }
+
+    if (selectedItems.length === library.length) {
+      setDeleteMessage('Are you sure you want to delete all videos in your library list?');
+    } else {
+      setDeleteMessage('Are you sure you want to delete these videos in your library?');
     }
   }, [selectedItems]);
 
@@ -60,6 +72,28 @@ const IplayScreen = ({ navigation, theme }) => {
   const handleLongPress = (id) => {
     setSelectedItems([id]);
     setActivateCheckboxes(true);
+  };
+
+  const handleShowAlertMessage = () => {
+    setAlertMessageVisible(true);
+  };
+
+  const handleHideAlertMessage = () => {
+    setAlertMessageVisible(false);
+  };
+
+  const handleConfirmAction = () => {
+    console.log('confirm delete');
+    setAlertMessageVisible(false);
+  };
+
+  const handleVideoErrorRetry = () => {
+    console.log('confirm action');
+    setVideoErrorVisible(false);
+  };
+
+  const handleHideVideoError = () => {
+    setVideoErrorVisible(false);
   };
 
   return (
@@ -88,10 +122,13 @@ const IplayScreen = ({ navigation, theme }) => {
                   justifyContent: 'space-between'
                 }}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Pressable
+                  onPress={() => handleShowAlertMessage()}
+                  style={{ flexDirection: 'row', alignItems: 'center' }}
+                >
                   <Icon name="delete" size={24} style={{ marginRight: 10 }} />
                   <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
-                </View>
+                </Pressable>
                 <Pressable
                   onPress={() => handleSelectAll()}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
@@ -185,6 +222,24 @@ const IplayScreen = ({ navigation, theme }) => {
           </View>
         </View>
       </React.Fragment>
+
+      <AlertModal
+        visible={alertMessageVisible}
+        hideAction={handleHideAlertMessage}
+        confirmText="Delete"
+        confirmAction={handleConfirmAction}
+        onCancel={handleHideAlertMessage}
+        message={deleteMessage}
+        variant="confirmation"
+      />
+      <AlertModal
+        visible={videoErrorVisible}
+        hideAction={handleHideVideoError}
+        confirmText="Retry"
+        confirmAction={handleVideoErrorRetry}
+        message="The audio file is not supported, please select .mp3 or .mp4 format."
+        variant="danger"
+      />
     </View>
   );
 };
