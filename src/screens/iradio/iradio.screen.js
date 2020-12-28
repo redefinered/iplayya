@@ -24,7 +24,7 @@ import {
   selectError,
   selectIsFetching,
   selectPaginatorInfo
-} from 'modules/ducks/movie/movie.selectors';
+} from 'modules/ducks/radio/radio.selectors';
 
 import { createFontFormat, urlEncodeTitle } from 'utils';
 
