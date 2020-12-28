@@ -23,31 +23,44 @@ import {
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Button from 'components/button/button.component';
+import { urlEncodeTitle } from 'utils';
 
 const dummydata = [
   {
     id: 1,
-    title: 'Movie Number One'
+    title: 'Movie Number One',
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('Movie Number One')}`
   },
   {
     id: 2,
-    title: 'Another Sample Movie'
+    title: 'Another Sample Movie',
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
+      'Another Sample Movie'
+    )}`
   },
   {
     id: 3,
-    title: 'Lorem Ipsum Reloaded'
+    title: 'Lorem Ipsum Reloaded',
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
+      'Lorem Ipsum Reloaded'
+    )}`
   },
   {
     id: 4,
-    title: 'The Dark Example'
+    title: 'The Dark Example',
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('The Dark Example')}`
   },
   {
     id: 5,
-    title: 'John Weak 5'
+    title: 'John Weak 5',
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('John Weak 5')}`
   },
   {
     id: 6,
-    title: 'The Past and The Furriest 8'
+    title: 'The Past and The Furriest 8',
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
+      'The Past and The Furriest 8'
+    )}`
   }
 ];
 
@@ -97,18 +110,13 @@ const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...ot
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, title }) => (
+                {featuredItems.map(({ id, title, thumbnail: url }) => (
                   <Pressable
                     onPress={() => handleMovieSelect(id)}
                     key={id}
                     style={{ marginRight: 10 }}
                   >
-                    <Image
-                      style={{ width: 336, height: 190, borderRadius: 8 }}
-                      source={{
-                        url: `https://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
-                      }}
-                    />
+                    <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url }} />
                   </Pressable>
                 ))}
               </ScrollView>
@@ -120,14 +128,9 @@ const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...ot
                 <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>New Releases</Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, title }) => (
+                {featuredItems.map(({ id, title, thumbnail: url }) => (
                   <Pressable key={id} style={{ marginRight: 10 }}>
-                    <Image
-                      style={{ width: 115, height: 170, borderRadius: 8 }}
-                      source={{
-                        url: `https://via.placeholder.com/115x170.png?text=${urlEncodeTitle(title)}`
-                      }}
-                    />
+                    <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
                   </Pressable>
                 ))}
               </ScrollView>
@@ -141,14 +144,9 @@ const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...ot
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, title }) => (
+                {featuredItems.map(({ id, title, thumbnail: url }) => (
                   <Pressable key={id} style={{ marginRight: 10 }}>
-                    <Image
-                      style={{ width: 115, height: 170, borderRadius: 8 }}
-                      source={{
-                        url: `https://via.placeholder.com/115x170.png?text=${urlEncodeTitle(title)}`
-                      }}
-                    />
+                    <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
                   </Pressable>
                 ))}
               </ScrollView>
