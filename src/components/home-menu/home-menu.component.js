@@ -8,6 +8,7 @@ import Iradio from 'assets/btn_iradio.svg';
 import Iplay from 'assets/btn_iplay.svg';
 import Imusic from 'assets/btn_imusic.svg';
 import Imovie from 'assets/btn_imovie.svg';
+import Isports from 'assets/btn_isports.svg';
 
 const HomeMenu = ({ navigation }) => {
   return (
@@ -23,6 +24,12 @@ const HomeMenu = ({ navigation }) => {
           <Imovie />
         </View>
         <Text style={styles.label}>iMovie</Text>
+      </Pressable>
+      <Pressable style={styles.menuitem} onPress={() => navigation.replace('IsportsScreen')}>
+        <View style={styles.iconwrap}>
+          <Isports />
+        </View>
+        <Text style={styles.label}>iSports</Text>
       </Pressable>
       <Pressable style={styles.menuitem} onPress={() => navigation.replace('IplayScreen')}>
         <View style={styles.iconwrap}>

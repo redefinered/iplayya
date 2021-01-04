@@ -1,10 +1,10 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
 import { View, ScrollView, Image, Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import ItemPreview from 'components/item-preview/item-preview.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
@@ -64,20 +64,8 @@ const dummydata = [
   }
 ];
 
-const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...otherprops }) => {
-  const { limit, pageNumber } = paginatorInfo;
-  console.log({ paginatorInfo });
-
-  // React.useEffect(() => {
-  //   getMoviesAction({ limit, pageNumber });
-  // }, []);
-
+const ImovieScreen = ({ navigation, error, ...otherprops }) => {
   let { movies } = otherprops;
-
-  const urlEncodeTitle = (title) => {
-    const strsplit = title.split();
-    return strsplit.join('+');
-  };
 
   movies = movies.length ? movies : dummydata;
 
@@ -94,6 +82,7 @@ const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...ot
   const featuredItems = movies.slice(0, 5);
 
   const handleMovieSelect = (videoId) => {
+    console.log('aasdasd');
     navigation.navigate('MovieDetailScreen', { videoId });
   };
 
@@ -110,14 +99,20 @@ const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...ot
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, title, thumbnail: url }) => (
-                  <Pressable
-                    onPress={() => handleMovieSelect(id)}
+                {featuredItems.map(({ id, ...itemProps }) => (
+                  // <Pressable
+                  //   onPress={() => handleMovieSelect(id)}
+                  //   key={id}
+                  //   style={{ marginRight: 10 }}
+                  // >
+                  //   <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url }} />
+                  // </Pressable>
+                  <ItemPreview
                     key={id}
-                    style={{ marginRight: 10 }}
-                  >
-                    <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url }} />
-                  </Pressable>
+                    variant="image"
+                    onSelect={handleMovieSelect}
+                    {...itemProps}
+                  />
                 ))}
               </ScrollView>
             </View>
@@ -128,7 +123,7 @@ const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...ot
                 <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>New Releases</Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, title, thumbnail: url }) => (
+                {featuredItems.map(({ id, thumbnail: url }) => (
                   <Pressable key={id} style={{ marginRight: 10 }}>
                     <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
                   </Pressable>
@@ -144,7 +139,7 @@ const ImovieScreen = ({ navigation, error, getMoviesAction, paginatorInfo, ...ot
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, title, thumbnail: url }) => (
+                {featuredItems.map(({ id, thumbnail: url }) => (
                   <Pressable key={id} style={{ marginRight: 10 }}>
                     <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
                   </Pressable>

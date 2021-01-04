@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions } from 'react-native';
@@ -63,14 +65,14 @@ const VideoPlayer = ({
         }
         style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
       />
-      <VideoControls
+      {/* <VideoControls
         title={title}
         paused={paused}
         togglePlay={togglePlay}
         toggleFullscreen={handleFullscreenToggle}
         style={{ position: 'absolute' }}
         visible={showControls}
-      />
+      /> */}
     </React.Fragment>
   );
 };

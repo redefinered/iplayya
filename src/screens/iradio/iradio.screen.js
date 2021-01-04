@@ -12,6 +12,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
+// import ItemPreviewListItem from 'components/item-preview-list-item/item-preview-list-item.component';
 import theme from 'common/theme';
 
 import { compose } from 'redux';
@@ -32,32 +33,44 @@ const dummydata = [
   {
     id: 1,
     title: 'Station Number One',
-    favorite: true
+    favorite: true,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('Station Number One')}`
   },
   {
     id: 2,
     title: 'Another Sample Station',
-    favorite: true
+    favorite: true,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
+      'Another Sample Station'
+    )}`
   },
   {
     id: 3,
     title: 'Lorem Ipsum Podcast',
-    favorite: false
+    favorite: false,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
+      'Lorem Ipsum Podcast'
+    )}`
   },
   {
     id: 4,
     title: 'The Dark Radio',
-    favorite: false
+    favorite: false,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('The Dark Radio')}`
   },
   {
     id: 5,
     title: 'John Weak Radio',
-    favorite: false
+    favorite: false,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('John Weak Radio')}`
   },
   {
     id: 6,
     title: 'The Past and The Furriest 8',
-    favorite: false
+    favorite: false,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
+      'The Past and The Furriest 8'
+    )}`
   }
 ];
 
@@ -65,17 +78,31 @@ const dummyfavs = [
   {
     id: 1,
     title: 'Station Number One',
-    favorite: true
+    favorite: true,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('Station Number One')}`
   },
   {
     id: 2,
     title: 'Another Sample Station',
-    favorite: true
+    favorite: true,
+    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
+      'Another Sample Station'
+    )}`
   }
 ];
 
 const RadioStationsTab = () => {
   const [showSnackBar, setShowSnackBar] = React.useState(false);
+  const [favorited, setFavorited] = React.useState('');
+
+  /**
+   * TODO: This is temporary, make it so this function calls to addChannelToFavorites
+   * @param {string} title title property of the selected item to add to favorites
+   */
+  const handleAddToFavorites = (title) => {
+    setFavorited(title);
+    setShowSnackBar(true);
+  };
 
   const hideSnackBar = () => {
     setTimeout(() => {
@@ -87,7 +114,7 @@ const RadioStationsTab = () => {
     if (showSnackBar) hideSnackBar();
   }, [showSnackBar]);
 
-  return dummydata.map(({ id, title, favorite }) => (
+  return dummydata.map(({ id, title, favorite, thumbnail: url }) => (
     <React.Fragment key={id}>
       <ContentWrap
         style={{
@@ -100,14 +127,12 @@ const RadioStationsTab = () => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image
             style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-            source={{
-              url: `https://via.placeholder.com/60x60.png?text=${urlEncodeTitle(title)}`
-            }}
+            source={{ url }}
           />
           <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{title}</Text>
         </View>
         <View>
-          <Pressable onPress={() => setShowSnackBar(true)}>
+          <Pressable onPress={() => handleAddToFavorites(title)}>
             <Icon
               name="heart-solid"
               size={24}
@@ -118,7 +143,7 @@ const RadioStationsTab = () => {
       </ContentWrap>
       <SnackBar
         visible={showSnackBar}
-        message="BBC Radio 1  Added to your favorite list"
+        message={`${favorited} is added to your favorites list`}
         iconName="heart-solid"
         iconColor="#FF5050"
       />
@@ -143,7 +168,7 @@ const FavoritesTab = (props) => {
           <Image
             style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
             source={{
-              url: `https://via.placeholder.com/60x60.png?text=${urlEncodeTitle(title)}`
+              url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(title)}`
             }}
           />
           <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{title}</Text>
@@ -236,7 +261,7 @@ const IradioScreen = ({
                     <Image
                       style={{ width: 240, height: 133, borderRadius: 8 }}
                       source={{
-                        url: `https://via.placeholder.com/240x133.png?text=${urlEncodeTitle(title)}`
+                        url: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle(title)}`
                       }}
                     />
                     <View
