@@ -9,7 +9,7 @@ import Spacer from 'components/spacer.component';
 
 const spacer = 20;
 
-const ItemPreviewListItem = ({
+const ListItemChanel = ({
   id,
   onSelect,
   onRightActionPress,
@@ -135,8 +135,8 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
   );
 };
 
-ItemPreviewListItem.propTypes = {
-  id: PropTypes.string,
+ListItemChanel.propTypes = {
+  id: PropTypes.any,
   title: PropTypes.string,
   isFavorite: PropTypes.bool,
   full: PropTypes.bool,
@@ -144,4 +144,4 @@ ItemPreviewListItem.propTypes = {
   onRightActionPress: PropTypes.func
 };
 
-export default ItemPreviewListItem;
+export default ListItemChanel;
