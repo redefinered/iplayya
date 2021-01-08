@@ -11,6 +11,17 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.RESET]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      currentUser: null,
+      skippedProviderAdd: false,
+      completedOnboarding: false,
+      updated: null
+    };
+  },
   [Types.SET_CURRENT_USER]: (state, action) => {
     const { user: currentUser } = action.data;
     return {
