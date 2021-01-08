@@ -87,11 +87,17 @@ class PlaybackSettings extends React.Component {
   };
 
   handleLanguageSelect = (language) => {
-    this.setState({ language: language.label, hasUnsavedChanges: true });
+    this.setState({
+      language: language ? language.label : 'Select one',
+      hasUnsavedChanges: true
+    });
   };
 
   handleSubtitleSelect = (language) => {
-    this.setState({ subtitle: language.label, hasUnsavedChanges: true });
+    this.setState({
+      subtitle: language ? language.label : 'Select one',
+      hasUnsavedChanges: true
+    });
   };
 
   handleVideoQualitySelect = (video_quality) => {
