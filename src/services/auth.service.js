@@ -63,11 +63,14 @@ export const register = async (form) => {
 
     if (error.graphQLErrors) {
       const { graphQLErrors } = error;
-      const {
-        extensions: { validation }
-      } = graphQLErrors[0];
-      if (validation['input.password']) throw new Error(validation['input.password']);
-      throw new Error(validation['input.email']);
+      if (graphQLErrors.length) {
+        const {
+          extensions: { validation }
+        } = graphQLErrors[0];
+        if (validation['input.password']) throw new Error(validation['input.password']);
+        throw new Error(validation['input.email']);
+      }
+      throw new Error(error);
     }
 
     throw new Error(error);
