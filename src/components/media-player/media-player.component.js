@@ -11,7 +11,7 @@ import { Creators as MovieActionCreators } from 'modules/ducks/movie/movie.actio
 
 import { urlEncodeTitle } from 'utils';
 
-const VideoPlayer = ({
+const MediaPlayer = ({
   updatePlaybackInfoAction,
   source,
   thumbnail,
@@ -65,19 +65,19 @@ const VideoPlayer = ({
         }
         style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
       />
-      {/* <VideoControls
+      <VideoControls
         title={title}
         paused={paused}
         togglePlay={togglePlay}
         toggleFullscreen={handleFullscreenToggle}
         style={{ position: 'absolute' }}
         visible={showControls}
-      /> */}
+      />
     </React.Fragment>
   );
 };
 
-VideoPlayer.propTypes = {
+MediaPlayer.propTypes = {
   title: PropTypes.string,
   source: PropTypes.string,
   thumbnail: PropTypes.string,
@@ -90,4 +90,4 @@ const actions = {
   updatePlaybackInfoAction: MovieActionCreators.updatePlaybackInfo
 };
 
-export default connect(null, actions)(VideoPlayer);
+export default connect(null, actions)(MediaPlayer);
