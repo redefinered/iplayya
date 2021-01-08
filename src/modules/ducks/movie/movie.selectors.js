@@ -21,11 +21,13 @@ export const selectPaginatorInfo = createSelector(
 export const selectPlaybackInfo = createSelector([movieState], ({ playbackInfo }) => playbackInfo);
 
 export const selectSeekableDuration = createSelector([movieState], ({ playbackInfo }) => {
-  if (!playbackInfo) return 98 * 60;
+  if (!playbackInfo) return 0;
+  if (typeof playbackInfo.seekableDuration === 'undefined') return 0;
   return Math.floor(playbackInfo.seekableDuration);
 });
 
 export const selectCurrentTime = createSelector([movieState], ({ playbackInfo }) => {
   if (!playbackInfo) return 0;
+  if (typeof playbackInfo.currentTime === 'undefined') return 0;
   return Math.floor(playbackInfo.currentTime);
 });
