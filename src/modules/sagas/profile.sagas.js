@@ -12,9 +12,10 @@ export function* getRequest() {
 }
 
 export function* updateRequest(action) {
-  const { ...args } = action.data;
+  const { ...input } = action.data;
+  console.log({ input });
   try {
-    const { updateUserProfile } = yield call(updateProfile, args);
+    const { updateUserProfile } = yield call(updateProfile, input);
     yield put(Creators.updateSuccess({ updateResponse: updateUserProfile }));
   } catch (error) {
     yield put(Creators.updateFailure(error.message));
