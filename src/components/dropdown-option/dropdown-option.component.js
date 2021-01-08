@@ -26,7 +26,7 @@ const DropdownOption = ({ theme, choices, optionLabel, onSelect, currentValue })
     <View style={styles.settingItem}>
       <Text style={{ fontSize: 16, lineHeight: 22 }}>{optionLabel}</Text>
       <List.Accordion
-        title={selected.label}
+        title={selected ? selected.label : 'Select one'}
         style={{ paddingLeft: 0, paddingRight: 0 }}
         titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
         expanded={expanded}
