@@ -22,8 +22,7 @@ import {
 } from 'modules/ducks/profile/profile.selectors';
 import {
   selectError as selectAuthError,
-  selectIsFetching as selectAuthIsFetching,
-  selectCurrentUserId
+  selectIsFetching as selectAuthIsFetching
 } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdated } from 'modules/ducks/user/user.selectors';
 
@@ -267,7 +266,6 @@ const mapStateToProps = createStructuredSelector({
   profile: selectProfile,
   profileError: selectProfileError,
   authError: selectAuthError,
-  currentUserId: selectCurrentUserId,
   userUpdated: selectUpdated
 });
 

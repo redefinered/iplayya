@@ -26,7 +26,6 @@ function toDateTime(secs) {
 
 const VideoControls = ({
   title,
-  playbackInfo,
   seekableDuration,
   currentTime,
   style,
@@ -38,13 +37,11 @@ const VideoControls = ({
 }) => {
   const [timeRemaining, setTimeRemaining] = React.useState(0);
 
-  console.log({ playbackInfo });
-
   React.useEffect(() => {
     setTimeRemaining(seekableDuration - currentTime);
   }, [currentTime]);
 
-  console.log({ timeRemaining, seekableDuration, currentTime });
+  // console.log({ playbackInfo, timeRemaining, seekableDuration, currentTime });
 
   return (
     <Animated.View style={{ ...styles.controls, ...style, opacity: visible ? 1 : 0 }}>
