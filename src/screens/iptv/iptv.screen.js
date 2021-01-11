@@ -16,6 +16,7 @@ import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
 import { createStructuredSelector } from 'reselect';
@@ -25,7 +26,8 @@ import {
   selectProviders,
   selectCreated,
   selectUpdated,
-  selectDeleted
+  selectDeleted,
+  selectSkipProviderAdd
 } from 'modules/ducks/provider/provider.selectors';
 
 import NoProvider from 'assets/no_provider.svg';
@@ -37,13 +39,20 @@ const IptvScreen = ({
   created,
   updated,
   deleted,
+  setProviderAction,
   getProfileAction,
   deleteAction,
-  deteteStartAction
+  deteteStartAction,
+  skipped
 }) => {
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
+
+  // redirect to add provider if there is 0 provider or if adding is not skipped
+  React.useEffect(() => {
+    if (providers.length === 0 && !skipped) navigation.replace('AddIptvScreen');
+  }, [providers]);
 
   React.useEffect(() => {
     if (created) handleAddProviderSuccess();
@@ -52,6 +61,10 @@ const IptvScreen = ({
     // hide the snackbar in 3 sec
     hideSnackBar();
   }, [created, updated, deleted]);
+
+  const handleProviderSelect = (id) => {
+    setProviderAction(id);
+  };
 
   const handleAddProviderSuccess = () => {
     setShowSuccessMessage(true);
@@ -106,6 +119,7 @@ const IptvScreen = ({
               <IptvItem
                 key={id}
                 id={id}
+                onSelect={handleProviderSelect}
                 name={name || 'No Provider Name'}
                 username={username}
                 onActionPress={handleItemPress}
@@ -114,7 +128,7 @@ const IptvScreen = ({
           </ScrollView>
         </View>
         <SnackBar visible={showSuccessMessage} message="Changes saved successfully" />
-        <ActionSheet visible={true} actions={actions} hideAction={hideActionSheet} />
+        <ActionSheet visible={actionSheetVisible} actions={actions} hideAction={hideActionSheet} />
       </ContentWrap>
     );
 
@@ -134,7 +148,7 @@ const NoProviders = ({ navigation }) => (
     <Spacer />
     <Text style={{ fontSize: 24 }}>No providers yet</Text>
     <Spacer />
-    <Button onPress={() => navigation.replace('AddIptvScreen')}>
+    <Button onPress={() => navigation.navigate('AddIptvScreen')}>
       Tap to add you IPTV Provider
     </Button>
   </View>
@@ -145,6 +159,7 @@ IptvScreen.propTypes = {
 };
 
 const actions = {
+  setProviderAction: UserCreators.setProvider,
   getProfileAction: ProfileCreators.get,
   deteteStartAction: ProviderCreators.deleteStart,
   deleteAction: ProviderCreators.delete
@@ -156,7 +171,8 @@ const mapStateToProps = createStructuredSelector({
   created: selectCreated,
   updated: selectUpdated,
   deleted: selectDeleted,
-  providers: selectProviders
+  providers: selectProviders,
+  skipped: selectSkipProviderAdd
 });
 
 export default compose(
