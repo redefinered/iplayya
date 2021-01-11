@@ -159,6 +159,7 @@ class EditProfileScreen extends React.Component {
                 placeholder="Username"
                 handleChangeText={this.handleChange}
                 error={stateError.username}
+                autoCapitalize="none"
               />
               <TextInput
                 name="phone"

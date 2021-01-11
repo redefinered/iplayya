@@ -1,6 +1,7 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { register, signIn, getProfile, signOut } from 'services/auth.service';
 
 import AsyncStorage from '@react-native-community/async-storage';
@@ -30,6 +31,7 @@ export function* signInRequest(action) {
     const {
       login: { access_token, user }
     } = yield call(signIn, username, password);
+    console.log({ access_token });
     yield AsyncStorage.setItem('access_token', access_token);
     // const currentUser = yield call(signIn);
     yield put(Creators.signInSuccess());
@@ -43,9 +45,22 @@ export function* signOutRequest() {
   try {
     yield call(signOut);
     yield put(Creators.reset());
+
+    // remove access token
     yield AsyncStorage.removeItem('access_token');
+
+    // check token
+    // const token = yield AsyncStorage.getItem('access_token');
+    // console.log({ token });
+
     yield put(Creators.signOutSuccess());
+
+    // remove current user and profile
     yield put(UserCreators.removeCurrentUser());
+    yield put(ProfileCreators.removeProfile());
+
+    // clear user specific settings
+    yield put(UserCreators.reset());
   } catch (error) {
     yield put(Creators.signOutFailure(`Sign-out error: ${error.message}`));
   }

@@ -71,7 +71,7 @@ export default createReducer(INITIAL_STATE, {
       updated: false
     };
   },
-  [Types.REMOVE_CURRENT_USER]: (state) => {
+  [Types.REMOVE_PROFILE]: (state) => {
     return { ...state, profile: null };
   }
 });

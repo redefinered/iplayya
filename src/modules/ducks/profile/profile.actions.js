@@ -10,7 +10,7 @@ const { Types, Creators } = createActions(
     update: ['data'],
     updateSuccess: ['data'],
     updateFailure: ['error'],
-    removeCurrentUser: []
+    removeProfile: []
   },
   { prefix: '@Profile/' }
 );
