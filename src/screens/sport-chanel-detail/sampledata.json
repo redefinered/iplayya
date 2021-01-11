@@ -1,0 +1,148 @@
+{
+  "data": {
+    "radios": [
+      {
+        "id": "33",
+        "name": "BBC 1Xtra",
+        "number": "33",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1xtra_mf_p",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "31",
+        "name": "BBC Asian Network",
+        "number": "31",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_asianet_mf_p",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "39",
+        "name": "BBC Coventry and Warwickshire",
+        "number": "39",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_lrwmcandw_mf_p?",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "43",
+        "name": "BBC Essex",
+        "number": "43",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_lressex_mf_p?",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "46",
+        "name": "BBC Hereford/Worcester",
+        "number": "46",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_lrhandw_mf_p?",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "54",
+        "name": "BBC London 94.9",
+        "number": "54",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_lrldn_mf_p?",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "57",
+        "name": "BBC Newcastle",
+        "number": "57",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_lrnewc_mf_p?",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "1",
+        "name": "BBC Radio 1",
+        "number": "1",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "2",
+        "name": "BBC Radio 2",
+        "number": "2",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      },
+      {
+        "id": "3",
+        "name": "BBC Radio 3",
+        "number": "3",
+        "cmd": "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio3_mf_p",
+        "count": "0",
+        "volume_correction": "0",
+        "enable_monitoring": "0",
+        "monitoring_status": "1",
+        "monitoring_status_updated": null,
+        "is_favorite": false
+      }
+    ]
+  },
+  "programs": [
+    {
+      "id": "1",
+      "title": "Euro Sports Fight Club",
+      "time": "3:00 PM"
+    },
+    {
+      "id": "2",
+      "title": "Impact!",
+      "time": "$:00 PM"
+    },
+    {
+      "id": "3",
+      "title": "This week in WWE",
+      "time": "5:30 PM"
+    },
+    {
+      "id": "4",
+      "title": "Euro Sports WWE",
+      "time": "6:00 PM"
+    }
+  ]
+}
