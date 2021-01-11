@@ -4,7 +4,7 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
-import VideoPlayer from 'components/video-player/video-player.component';
+import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
@@ -57,7 +57,7 @@ const MovieDetailScreen = ({ theme, playbackStartAction }) => {
             alignItems: 'center'
           }}
         >
-          <VideoPlayer
+          <MediaPlayer
             paused={paused}
             source={rtsp_url.split(' ')[1]}
             thumbnail={thumbnail}
