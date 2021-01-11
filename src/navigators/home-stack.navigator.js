@@ -15,6 +15,7 @@ import IplayScreen from 'screens/iplay/iplay.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
+import SportChanelDetailScreen from 'screens/sport-chanel-detail/sport-chanel-detail.screen';
 
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
@@ -169,6 +170,30 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
           </View>
         )
       })}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="SportChanelDetailScreen"
+      component={SportChanelDetailScreen}
+      // eslint-disable-next-line no-unused-vars
+      options={(props) => {
+        return {
+          title: null,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable style={styles.headerButtonContainer}>
+                <Icon name="heart-solid" size={24} />
+              </Pressable>
+              <Pressable style={styles.headerButtonContainer}>
+                <Icon name="download" size={24} />
+              </Pressable>
+            </View>
+          )
+        };
+      }}
       listeners={{
         focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
         beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
