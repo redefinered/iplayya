@@ -23,3 +23,11 @@ export const DELETE_PROVIDER = gql`
     }
   }
 `;
+
+export const SET_PROVIDER = gql`
+  mutation SET_PROVIDER($input: setAsDefaultProviderInput) {
+    setAsDefaultProvider(input: $input) {
+      id
+    }
+  }
+`;
