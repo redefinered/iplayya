@@ -7,7 +7,10 @@ const INITIAL_STATE = {
   currentUser: null,
   skippedProviderAdd: false,
   completedOnboarding: false,
-  updated: null
+  updated: null,
+
+  // selected provider where all content will come from
+  provider: null
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -20,6 +23,29 @@ export default createReducer(INITIAL_STATE, {
       skippedProviderAdd: false,
       completedOnboarding: false,
       updated: null
+    };
+  },
+  [Types.SET_PROVIDER]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true
+    };
+  },
+  [Types.SET_PROVIDER_SUCCESS]: (state, action) => {
+    const { id: provider } = action;
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      provider
+    };
+  },
+  [Types.SET_PROVIDER_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
     };
   },
   [Types.SET_CURRENT_USER]: (state, action) => {

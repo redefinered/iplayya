@@ -3,6 +3,9 @@ import { createActions } from 'reduxsauce';
 const { Types, Creators } = createActions(
   {
     reset: [],
+    setProvider: ['id'],
+    setProviderSuccess: ['id'],
+    setProviderFailure: ['error'],
     setCurrentUser: ['data'],
     hideWelcomeDialog: [],
     removeCurrentUser: [],
