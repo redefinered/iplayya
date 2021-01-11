@@ -36,7 +36,6 @@ SelectorPills.defaultProps = {
 };
 
 const Pill = ({ id, label, selected, onSelect }) => {
-  console.log({ label });
   const theme = useTheme();
   return (
     <Pressable

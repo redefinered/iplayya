@@ -14,7 +14,6 @@ export const urlEncodeTitle = (title) => {
  * @param {number} numberDays the number of days to generate
  */
 export const generateDatesFromToday = (numberDays = 7) => {
-  console.log(numberDays);
   let dates = [];
 
   for (let i = 0; i < numberDays; i++) {
