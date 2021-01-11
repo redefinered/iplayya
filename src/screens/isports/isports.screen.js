@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import Button from 'components/button/button.component';
+import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
@@ -23,9 +26,8 @@ import {
   selectPaginatorInfo
 } from 'modules/ducks/movie/movie.selectors';
 
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import Button from 'components/button/button.component';
-import { urlEncodeTitle, createFontFormat } from 'utils';
+import { urlEncodeTitle } from 'utils';
+import Spacer from 'components/spacer.component';
 
 const dummydata = [
   {
@@ -87,21 +89,48 @@ const dummydata = [
 const categories = [
   {
     id: '1',
-    name: 'All Sports'
+    label: 'All Sports',
+    name: 'all'
   },
   {
     id: '2',
-    name: 'Football'
+    label: 'Football',
+    name: 'football'
   },
   {
     id: '3',
-    name: 'Baseball'
+    label: 'Baseball',
+    name: 'baseball'
   },
   {
     id: '4',
-    name: 'Basketball'
+    label: 'Basketball',
+    name: 'basketball'
   }
 ];
+
+// const dates = [
+//   {
+//     id: '1',
+//     label: 'All Sports',
+//     name: 'all'
+//   },
+//   {
+//     id: '2',
+//     label: 'Football',
+//     name: 'football'
+//   },
+//   {
+//     id: '3',
+//     label: 'Baseball',
+//     name: 'baseball'
+//   },
+//   {
+//     id: '4',
+//     label: 'Basketball',
+//     name: 'basketball'
+//   }
+// ];
 
 const favorites = [
   {
@@ -114,8 +143,7 @@ const favorites = [
   }
 ];
 
-const IsportsScreen = ({ navigation, error, paginatorInfo, ...otherprops }) => {
-  console.log({ paginatorInfo });
+const IsportsScreen = ({ navigation, error, ...otherprops }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('1');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
@@ -155,8 +183,7 @@ const IsportsScreen = ({ navigation, error, paginatorInfo, ...otherprops }) => {
 
   const handleItemSelect = (videoId) => {
     // navigate to chanel details screen with `id` parameter
-    console.log({ videoId });
-    // navigation.navigate('MovieDetailScreen', { videoId });
+    navigation.navigate('SportChanelDetailScreen', { videoId });
   };
 
   const onCategorySelect = (id) => {
@@ -165,17 +192,8 @@ const IsportsScreen = ({ navigation, error, paginatorInfo, ...otherprops }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView horizontal style={{ paddingHorizontal: 15 }}>
-        {categories.map(({ id, ...itemProps }) => (
-          <CategoryPill
-            key={id}
-            id={id}
-            {...itemProps}
-            onSelect={onCategorySelect}
-            selected={selectedCategory}
-          />
-        ))}
-      </ScrollView>
+      <SelectorPills data={categories} onSelect={onCategorySelect} selected={selectedCategory} />
+      <Spacer />
       {movies.length ? (
         <React.Fragment>
           <ScrollView>
@@ -261,33 +279,6 @@ const IsportsScreen = ({ navigation, error, paginatorInfo, ...otherprops }) => {
       />
     </View>
   );
-};
-
-const CategoryPill = ({ id, name, selected, onSelect }) => {
-  console.log({ selected, id });
-  const theme = useTheme();
-  return (
-    <Pressable
-      key={id}
-      onPress={() => onSelect(id)}
-      style={{
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        backgroundColor:
-          selected === id ? theme.iplayya.colors.vibrantpussy : theme.iplayya.colors.white25,
-        height: 34,
-        borderRadius: 34,
-        marginRight: 10,
-        marginBottom: 30
-      }}
-    >
-      <Text style={{ ...createFontFormat(12, 16) }}>{name}</Text>
-    </Pressable>
-  );
-};
-
-CategoryPill.defaultProps = {
-  selected: '1'
 };
 
 const styles = StyleSheet.create({

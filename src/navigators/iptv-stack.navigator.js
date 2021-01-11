@@ -58,6 +58,7 @@ const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }
         name="IPTV"
         component={IptvScreen}
         options={({ navigation }) => ({
+          animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
               <View style={styles.headerButtonContainer}>
@@ -76,7 +77,7 @@ const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }
       <Stack.Screen
         name="AddIptvScreen"
         component={AddIptvScreen}
-        options={{ title: 'Add IPTV' }}
+        options={{ title: 'Add IPTV', animationEnabled: false }}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
