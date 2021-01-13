@@ -4,9 +4,13 @@ import { Text, useTheme } from 'react-native-paper';
 import { Pressable, StyleSheet, Image, View } from 'react-native';
 import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
-import { createFontFormat } from 'utils';
+import { createFontFormat, urlEncodeTitle } from 'utils';
 
-const ItemPreview = ({ id, title, chanel, date, thumbnail: url, onSelect, variant }) => {
+const ItemPreview = ({ id, title, chanel, date, thumbnail, onSelect, variant }) => {
+  let url =
+    thumbnail !== '' || thumbnail !== 'N/A'
+      ? thumbnail
+      : `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`;
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const [isNotificationActive, setIsNotificationActive] = React.useState(true);
