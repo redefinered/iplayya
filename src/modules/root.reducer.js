@@ -6,7 +6,7 @@ import authReducer from './ducks/auth/auth.reducer';
 import userReducer from './ducks/user/user.reducer';
 import passwordReducer from './ducks/password/password.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
-import movieReducer from './ducks/movie/movie.reducer';
+import moviesReducer from './ducks/movies/movies.reducer';
 import radioReducer from './ducks/radio/radio.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
 
@@ -21,7 +21,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   user: userReducer,
   password: passwordReducer,
   profile: profileReducer,
-  movie: movieReducer,
+  movies: moviesReducer,
   radio: radioReducer,
   provider: providerReducer
 });
