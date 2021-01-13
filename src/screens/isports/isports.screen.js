@@ -18,13 +18,13 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators as MovieActionCreators } from 'modules/ducks/movie/movie.actions';
-import { selectMovies } from 'modules/ducks/movie/movie.selectors';
+import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
+import { selectMovies } from 'modules/ducks/movies/movies.selectors';
 import {
   selectError,
   selectIsFetching,
   selectPaginatorInfo
-} from 'modules/ducks/movie/movie.selectors';
+} from 'modules/ducks/movies/movies.selectors';
 
 import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
@@ -295,7 +295,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  getMoviesAction: MovieActionCreators.getMovies,
+  getMoviesAction: MoviesActionCreators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
 };
 

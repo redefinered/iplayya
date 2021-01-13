@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { takeLatest, put, call } from 'redux-saga/effects';
-import { Types, Creators } from 'modules/ducks/movie/movie.actions';
+import { Types, Creators } from 'modules/ducks/movies/movies.actions';
 import { getMovies as getSomeMovies } from 'services/movie.service';
 
 export function* getMovies(action) {

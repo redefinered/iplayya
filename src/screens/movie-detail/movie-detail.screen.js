@@ -12,9 +12,9 @@ import Icon from 'components/icon/icon.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators as MovieActionCreators } from 'modules/ducks/movie/movie.actions';
+import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectError, selectIsFetching } from 'modules/ducks/movie/movie.selectors';
+import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
 import { createFontFormat } from 'utils';
 
 import { data } from './sample-video.json';
@@ -152,8 +152,8 @@ const styles = StyleSheet.create({
 });
 
 const actions = {
-  playbackStartAction: MovieActionCreators.playbackStart,
-  updatePlaybackInfoAction: MovieActionCreators.updatePlaybackInfo
+  playbackStartAction: MoviesActionCreators.playbackStart,
+  updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
 };
 
 const mapStateToProps = createStructuredSelector({

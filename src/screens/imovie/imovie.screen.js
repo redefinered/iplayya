@@ -13,63 +13,36 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators as MovieActionCreators } from 'modules/ducks/movie/movie.actions';
-import { selectMovies } from 'modules/ducks/movie/movie.selectors';
+import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
+import { selectMovies, selectCategoriesOf } from 'modules/ducks/movies/movies.selectors';
 import {
   selectError,
   selectIsFetching,
   selectPaginatorInfo
-} from 'modules/ducks/movie/movie.selectors';
+} from 'modules/ducks/movies/movies.selectors';
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Button from 'components/button/button.component';
 import { urlEncodeTitle } from 'utils';
 
-const dummydata = [
-  {
-    id: 1,
-    title: 'Movie Number One',
-    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('Movie Number One')}`
-  },
-  {
-    id: 2,
-    title: 'Another Sample Movie',
-    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
-      'Another Sample Movie'
-    )}`
-  },
-  {
-    id: 3,
-    title: 'Lorem Ipsum Reloaded',
-    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
-      'Lorem Ipsum Reloaded'
-    )}`
-  },
-  {
-    id: 4,
-    title: 'The Dark Example',
-    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('The Dark Example')}`
-  },
-  {
-    id: 5,
-    title: 'John Weak 5',
-    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle('John Weak 5')}`
-  },
-  {
-    id: 6,
-    title: 'The Past and The Furriest 8',
-    thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
-      'The Past and The Furriest 8'
-    )}`
-  }
-];
+const ImovieScreen = ({ navigation, error, categories, getMoviesByCategoriesAction, ...rest }) => {
+  let movies = rest.movies.map(({ thumbnail, ...rest }) => {
+    return {
+      thumbnail:
+        thumbnail === '' || thumbnail === 'N/A'
+          ? `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(rest.title)}`
+          : thumbnail,
+      ...rest
+    };
+  });
 
-const ImovieScreen = ({ navigation, error, ...otherprops }) => {
-  let { movies } = otherprops;
+  React.useEffect(() => {
+    let categoriesIds = categories.map(({ id }) => id);
 
-  movies = movies.length ? movies : dummydata;
-
-  console.log({ movies });
+    // the argument for this function should be in the shape of videoRequestByGenre input
+    // of videoByCategory query of pur graphql API
+    getMoviesByCategoriesAction({ categories: categoriesIds });
+  }, [categories, getMoviesByCategoriesAction]);
 
   if (error) {
     <Text>{error}</Text>;
@@ -123,7 +96,7 @@ const ImovieScreen = ({ navigation, error, ...otherprops }) => {
                 <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>New Releases</Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, thumbnail: url }) => (
+                {movies.map(({ id, thumbnail: url }) => (
                   <Pressable key={id} style={{ marginRight: 10 }}>
                     <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
                   </Pressable>
@@ -139,7 +112,7 @@ const ImovieScreen = ({ navigation, error, ...otherprops }) => {
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, thumbnail: url }) => (
+                {movies.map(({ id, thumbnail: url }) => (
                   <Pressable key={id} style={{ marginRight: 10 }}>
                     <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
                   </Pressable>
@@ -202,11 +175,12 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   movies: selectMovies,
-  paginatorInfo: selectPaginatorInfo
+  paginatorInfo: selectPaginatorInfo,
+  categories: selectCategoriesOf('movies')
 });
 
 const actions = {
-  getMoviesAction: MovieActionCreators.getMovies,
+  getMoviesByCategoriesAction: MoviesCreators.getMoviesByCategories,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
 };
 
