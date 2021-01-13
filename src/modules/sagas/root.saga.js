@@ -4,7 +4,7 @@ import userSagas from './user.sagas';
 import passwordSagas from './password.sagas';
 import profileSagas from './profile.sagas';
 import providerSagas from './provider.sagas';
-import movieSagas from './movie.sagas';
+import movieSagas from './movies.sagas';
 
 export default function* rootSaga() {
   yield all([
