@@ -6,15 +6,25 @@ const INITIAL_STATE = {
   error: null,
   categories: [],
   movie: null,
+
+  // movies is going to be a collection of movies grouped into categories
   movies: [],
+
+  // information about currently playing movie
   playbackInfo: {},
-  paginatorInfo: {
-    limit: 10,
-    pageNumber: 1
-  }
+
+  // paginators for movies sections in the main imovie screen
+  paginatorInfo: []
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SETUP_PAGINATOR_INFO]: (state, action) => {
+    const { paginatorInfo } = action;
+    return {
+      ...state,
+      paginatorInfo
+    };
+  },
   [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
     const { categories } = action.data;
     return {

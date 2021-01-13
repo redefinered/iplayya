@@ -28,7 +28,6 @@ export const getCategories = async () => {
     const { data } = await client.query({
       query: GET_CATEGORIES
     });
-    console.log({ datax: data });
     return data;
   } catch (error) {
     throw new Error(error);

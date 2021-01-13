@@ -24,8 +24,16 @@ import {
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import Button from 'components/button/button.component';
 import { urlEncodeTitle } from 'utils';
+import { setupPaginator } from './imovie.utils';
 
-const ImovieScreen = ({ navigation, error, categories, getMoviesByCategoriesAction, ...rest }) => {
+const ImovieScreen = ({
+  navigation,
+  error,
+  categories,
+  getMoviesByCategoriesAction,
+  setupPaginatorInfoAction,
+  ...rest
+}) => {
   let movies = rest.movies.map(({ thumbnail, ...rest }) => {
     return {
       thumbnail:
@@ -35,6 +43,12 @@ const ImovieScreen = ({ navigation, error, categories, getMoviesByCategoriesActi
       ...rest
     };
   });
+
+  // setup paginator info on load
+  React.useEffect(() => {
+    const paginator = setupPaginator(categories);
+    setupPaginatorInfoAction(paginator);
+  }, []);
 
   React.useEffect(() => {
     let categoriesIds = categories.map(({ id }) => id);
@@ -55,7 +69,6 @@ const ImovieScreen = ({ navigation, error, categories, getMoviesByCategoriesActi
   const featuredItems = movies.slice(0, 5);
 
   const handleMovieSelect = (videoId) => {
-    console.log('aasdasd');
     navigation.navigate('MovieDetailScreen', { videoId });
   };
 
@@ -73,13 +86,6 @@ const ImovieScreen = ({ navigation, error, categories, getMoviesByCategoriesActi
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
                 {featuredItems.map(({ id, ...itemProps }) => (
-                  // <Pressable
-                  //   onPress={() => handleMovieSelect(id)}
-                  //   key={id}
-                  //   style={{ marginRight: 10 }}
-                  // >
-                  //   <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url }} />
-                  // </Pressable>
                   <ItemPreview
                     key={id}
                     variant="image"
@@ -181,7 +187,8 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   getMoviesByCategoriesAction: MoviesCreators.getMoviesByCategories,
-  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
+  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
+  setupPaginatorInfoAction: MoviesCreators.setupPaginatorInfo
 };
 
 export default compose(

@@ -32,13 +32,14 @@ export function* signInRequest(action) {
     const {
       login: { access_token, user }
     } = yield call(signIn, username, password);
-    console.log({ access_token });
+    // console.log({ access_token });
 
     // save access token to local storage for graphql client
     yield AsyncStorage.setItem('access_token', access_token);
 
     // get categories after login
     const { categories } = yield call(getCategories);
+
     yield put(MoviesCreators.getCategoriesSuccess({ categories }));
     yield put(UserCreators.setCurrentUser({ user }));
 

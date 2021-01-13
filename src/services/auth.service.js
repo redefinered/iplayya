@@ -27,7 +27,6 @@ export const signIn = async (username, password) => {
       `,
       variables: { input: { username, password } }
     });
-    console.log({ data });
     return data;
   } catch (error) {
     // const message = processError(error, error.graphQLErrors);
