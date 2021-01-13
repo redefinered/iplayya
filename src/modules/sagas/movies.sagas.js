@@ -1,18 +1,24 @@
 /* eslint-disable prettier/prettier */
-import { takeLatest, put, call } from 'redux-saga/effects';
+import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/movies/movies.actions';
 import { getMoviesByCategories } from 'services/movies.service';
 
-// export function* getMoviesRequest(action) {
-//   const { categories, paginatorInfo } = action.data;
-//   try {
-//     // collection is an array of objects with category and content prop
-//     let colletion = [];
-//     const { videoByCategory}
-//   } catch (error) {
+export function* getMoviesRequest(action) {
+  const { paginatorInfo } = action;
+  try {
+    const videos = yield all(
+      paginatorInfo.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
+    );
 
-//   }
-// }
+    const movies = videos.map(({ videoByCategory }) => {
+      return { category: videoByCategory[0].category, videos: videoByCategory };
+    });
+
+    yield put(Creators.getMoviesSuccess(movies));
+  } catch (error) {
+    yield put(Creators.getMoviesFailure(error.message));
+  }
+}
 
 export function* getMoviesByCategoriesRequest(action) {
   const { input } = action;
@@ -26,6 +32,6 @@ export function* getMoviesByCategoriesRequest(action) {
 }
 
 export default function* movieSagas() {
-  // yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
+  yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
   yield takeLatest(Types.GET_MOVIES_BY_CATEGORIES, getMoviesByCategoriesRequest);
 }

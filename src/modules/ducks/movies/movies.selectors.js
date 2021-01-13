@@ -49,6 +49,10 @@ export const selectCategoriesOf = (type) =>
     return collection;
   });
 
-// export const categoriesOf = createSelector([moviesState], ({ movies }) => {
-//   console.log({ movies });
-// });
+const selectMoviesForFilter = ({ movies: { movies } }, props) => {
+  return movies.find(({ category }) => category === props.id);
+};
+
+export const selectMoviesByCategory = createSelector([selectMoviesForFilter], (movies) => {
+  return movies;
+});

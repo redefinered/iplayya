@@ -18,6 +18,33 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  // get movies and update paginator i.e. increment pageNumber
+  [Types.GET_MOVIES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_MOVIES_SUCCESS]: (state, action) => {
+    const { movies } = action;
+
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      movies
+    };
+  },
+  [Types.GET_MOVIES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  // setup paginator info
   [Types.SETUP_PAGINATOR_INFO]: (state, action) => {
     const { paginatorInfo } = action;
     return {
@@ -25,6 +52,8 @@ export default createReducer(INITIAL_STATE, {
       paginatorInfo
     };
   },
+
+  // get all categories
   [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
     const { categories } = action.data;
     return {
@@ -32,6 +61,8 @@ export default createReducer(INITIAL_STATE, {
       categories
     };
   },
+
+  // not sure if I need this
   [Types.GET_MOVIES_BY_CATEGORIES]: (state) => {
     return {
       ...state,
@@ -56,6 +87,7 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
   [Types.PLAYBACK_START]: (state) => {
     return {
       ...state,

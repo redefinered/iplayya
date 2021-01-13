@@ -5,7 +5,7 @@ const { Types, Creators } = createActions(
     setupPaginatorInfo: ['paginatorInfo'],
 
     // get movies for each movie category when user opens imovie screen
-    getMovies: ['categories'],
+    getMovies: ['paginatorInfo'],
     getMoviesSuccess: ['movies'],
     getMoviesFailure: ['error'],
 
@@ -22,7 +22,7 @@ const { Types, Creators } = createActions(
     playbackStart: [],
     updatePlaybackInfo: ['data']
   },
-  { prefix: '@Movie/' }
+  { prefix: '@Movies/' }
 );
 
 export { Types, Creators };
