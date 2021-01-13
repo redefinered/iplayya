@@ -1,9 +1,10 @@
 import { createReducer } from 'reduxsauce';
-import { Types } from './movie.actions';
+import { Types } from './movies.actions';
 
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
+  categories: [],
   movie: null,
   movies: [],
   playbackInfo: {},
@@ -14,15 +15,22 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.GET_MOVIES]: (state) => {
+  [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
+    const { categories } = action.data;
+    return {
+      ...state,
+      categories
+    };
+  },
+  [Types.GET_MOVIES_BY_CATEGORIES]: (state) => {
     return {
       ...state,
       isFetching: true,
       error: null
     };
   },
-  [Types.GET_MOVIES_SUCCESS]: (state, action) => {
-    const { movies } = action.data;
+  [Types.GET_MOVIES_BY_CATEGORIES_SUCCESS]: (state, action) => {
+    const { movies } = action;
 
     return {
       ...state,
@@ -31,7 +39,7 @@ export default createReducer(INITIAL_STATE, {
       movies
     };
   },
-  [Types.GET_MOVIES_FAILURE]: (state, action) => {
+  [Types.GET_MOVIES_BY_CATEGORIES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,

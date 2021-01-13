@@ -2,12 +2,10 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    getMovie: ['data'],
-    getMovieSuccess: ['data'],
-    getMovieFailure: ['error'],
-    getMovies: ['data'],
-    getMoviesSuccess: ['data'],
-    getMoviesFailure: ['error'],
+    getCategoriesSuccess: ['data'],
+    getMoviesByCategories: ['input'],
+    getMoviesByCategoriesSuccess: ['movies'],
+    getMoviesByCategoriesFailure: ['error'],
     playbackStart: [],
     updatePlaybackInfo: ['data']
   },
