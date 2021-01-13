@@ -7,7 +7,7 @@ import Video from 'react-native-video';
 import VideoControls from 'components/video-controls/video-controls.component';
 
 import { connect } from 'react-redux';
-import { Creators as MovieActionCreators } from 'modules/ducks/movie/movie.actions';
+import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
 
 import { urlEncodeTitle } from 'utils';
 
@@ -87,7 +87,7 @@ MediaPlayer.propTypes = {
 };
 
 const actions = {
-  updatePlaybackInfoAction: MovieActionCreators.updatePlaybackInfo
+  updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
 };
 
 export default connect(null, actions)(MediaPlayer);
