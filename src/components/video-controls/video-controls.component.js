@@ -14,7 +14,7 @@ import {
   selectPlaybackInfo,
   selectSeekableDuration,
   selectCurrentTime
-} from 'modules/ducks/movie/movie.selectors';
+} from 'modules/ducks/movies/movies.selectors';
 
 import { createFontFormat } from 'utils';
 
