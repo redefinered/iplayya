@@ -2,8 +2,9 @@ import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
 import { register, signIn, getProfile, signOut } from 'services/auth.service';
-
+import { getCategories } from 'services/movies.service';
 import AsyncStorage from '@react-native-community/async-storage';
 
 export function* registerRequest(action) {
@@ -32,10 +33,16 @@ export function* signInRequest(action) {
       login: { access_token, user }
     } = yield call(signIn, username, password);
     console.log({ access_token });
+
+    // save access token to local storage for graphql client
     yield AsyncStorage.setItem('access_token', access_token);
-    // const currentUser = yield call(signIn);
-    yield put(Creators.signInSuccess());
+
+    // get categories after login
+    const { categories } = yield call(getCategories);
+    yield put(MoviesCreators.getCategoriesSuccess({ categories }));
     yield put(UserCreators.setCurrentUser({ user }));
+
+    yield put(Creators.signInSuccess());
   } catch (error) {
     yield put(Creators.signInFailure(error.message));
   }
