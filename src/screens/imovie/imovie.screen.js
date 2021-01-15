@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
+// eslint-disable-next-line no-unused-vars
 import { View, ScrollView, Image, Pressable, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
@@ -23,7 +24,7 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import Button from 'components/button/button.component';
+// import Button from 'components/button/button.component';
 import { urlEncodeTitle } from 'utils';
 import { setupPaginator } from './imovie.utils';
 
@@ -116,7 +117,7 @@ const ImovieScreen = ({
             ))}
 
             {/* continue watching */}
-            <View style={{ marginBottom: 30, paddingBottom: 100 }}>
+            {/* <View style={{ marginBottom: 30, paddingBottom: 100 }}>
               <ContentWrap>
                 <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
                   Continue watching
@@ -129,7 +130,7 @@ const ImovieScreen = ({
                   </Pressable>
                 ))}
               </ScrollView>
-            </View>
+            </View> */}
           </ScrollView>
         </React.Fragment>
       ) : (
