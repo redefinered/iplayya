@@ -22,6 +22,8 @@ const MediaPlayer = ({
   const [showControls, setShowControls] = React.useState(true);
   const [fullscreen, setFullscreen] = React.useState(false);
 
+  let timer = null;
+
   let player = React.useRef(null);
 
   const handleFullscreenToggle = () => {
@@ -37,14 +39,23 @@ const MediaPlayer = ({
   };
 
   const handleProgress = (playbackInfo) => {
-    // console.log({ playbackInfo });
-    setShowControls(false);
     updatePlaybackInfoAction({ playbackInfo });
   };
 
-  // const toggleControlVisible = () => {
-  //   setShowControls(!showControls);
-  // };
+  const hideControls = (duration = 5) => {
+    return setTimeout(() => {
+      setShowControls(false);
+    }, duration * 1000);
+  };
+
+  React.useEffect(() => {
+    if (paused) {
+      clearTimeout(timer);
+      setShowControls(true);
+    } else {
+      timer = hideControls(10);
+    }
+  }, [paused]);
 
   return (
     <React.Fragment>
@@ -67,8 +78,8 @@ const MediaPlayer = ({
       />
       <VideoControls
         title={title}
-        paused={paused}
         togglePlay={togglePlay}
+        paused={paused}
         toggleFullscreen={handleFullscreenToggle}
         style={{ position: 'absolute' }}
         visible={showControls}
