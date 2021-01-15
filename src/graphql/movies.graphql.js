@@ -20,3 +20,30 @@ export const GET_MOVIES_BY_CATEGORIES = gql`
     }
   }
 `;
+
+export const GET_MOVIE = gql`
+  query GET_MOVIE($input: videoRequestById) {
+    video(input: $input) {
+      id
+      title
+      description
+      category
+      director
+      actors
+      year
+      time
+      country
+      age_rating
+      rating_mpaa
+      rating_imdb
+      rating_kinopoisk
+      is_hd
+      is_censored
+      rtsp_url
+      is_favorite
+      thumbnail
+      cast
+      is_favorite
+    }
+  }
+`;

@@ -7,6 +7,7 @@ export const selectError = createSelector([moviesState], ({ error }) => error);
 export const selectIsFetching = createSelector([moviesState], ({ isFetching }) => isFetching);
 
 export const selectMovies = createSelector([moviesState], ({ movies }) => movies);
+export const selectMovie = createSelector([moviesState], ({ movie }) => movie);
 
 export const selectFeatured = createSelector([moviesState], ({ movies }) => {
   if (!movies.length) return;
@@ -27,7 +28,7 @@ export const selectSeekableDuration = createSelector([moviesState], ({ playbackI
 });
 
 export const selectCurrentTime = createSelector([moviesState], ({ playbackInfo }) => {
-  console.log({ playbackInfo });
+  // console.log({ playbackInfo });
   if (!playbackInfo) return 0;
   if (typeof playbackInfo.currentTime === 'undefined') return 0;
   return Math.floor(playbackInfo.currentTime);

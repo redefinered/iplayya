@@ -4,6 +4,11 @@ const { Types, Creators } = createActions(
   {
     setupPaginatorInfo: ['paginatorInfo'],
 
+    getMovieStart: [],
+    getMovie: ['videoId'],
+    getMovieSuccess: ['movie'],
+    getMovieFailure: ['error'],
+
     // get movies for each movie category when user opens imovie screen
     getMovies: ['paginatorInfo'],
     getMoviesSuccess: ['movies'],

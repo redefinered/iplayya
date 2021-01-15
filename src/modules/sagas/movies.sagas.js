@@ -1,7 +1,17 @@
 /* eslint-disable prettier/prettier */
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/movies/movies.actions';
-import { getMoviesByCategories } from 'services/movies.service';
+import { getMovie, getMoviesByCategories } from 'services/movies.service';
+
+export function* getMovieRequest(action) {
+  const { videoId } = action;
+  try {
+    const { video: movie } = yield call(getMovie, { videoId });
+    yield put(Creators.getMovieSuccess(movie));
+  } catch (error) {
+    yield put(Creators.getMovieFailure(error.message));
+  }
+}
 
 export function* getMoviesRequest(action) {
   const { paginatorInfo } = action;
@@ -32,6 +42,7 @@ export function* getMoviesByCategoriesRequest(action) {
 }
 
 export default function* movieSagas() {
+  yield takeLatest(Types.GET_MOVIE, getMovieRequest);
   yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
   yield takeLatest(Types.GET_MOVIES_BY_CATEGORIES, getMoviesByCategoriesRequest);
 }

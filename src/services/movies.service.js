@@ -1,20 +1,10 @@
 import client from 'apollo/client';
-import {
-  GET_FEATURED_MOVIES,
-  GET_CATEGORIES,
-  GET_MOVIES_BY_CATEGORIES
-} from 'graphql/movies.graphql';
+import { GET_MOVIE, GET_CATEGORIES, GET_MOVIES_BY_CATEGORIES } from 'graphql/movies.graphql';
 
-/**
- * TEMPORARY: we use `movies` query for now since there is no query
- * for featured movies yet
- * @param {object} input the input object that is the argument for
- * graphql query `movies`
- */
-export const getFeaturedMovies = async (input) => {
+export const getMovie = async (input) => {
   try {
     const { data } = await client.query({
-      query: GET_FEATURED_MOVIES,
+      query: GET_MOVIE,
       variables: { input }
     });
     return data;

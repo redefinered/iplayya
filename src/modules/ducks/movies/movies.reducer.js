@@ -18,6 +18,39 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.GET_MOVIE_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      movie: null
+    };
+  },
+  [Types.GET_MOVIE]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_MOVIE_SUCCESS]: (state, action) => {
+    const { movie } = action;
+
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      movie
+    };
+  },
+  [Types.GET_MOVIE_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
   // get movies and update paginator i.e. increment pageNumber
   [Types.GET_MOVIES]: (state) => {
     return {
