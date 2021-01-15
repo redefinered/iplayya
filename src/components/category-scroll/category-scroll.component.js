@@ -20,8 +20,6 @@ const CategoryScroll = ({ id, movies: { videos }, onSelect }) => {
     };
   });
 
-  console.log({ movies });
-
   return (
     <View style={{ marginBottom: 30 }}>
       <ContentWrap>
@@ -29,7 +27,7 @@ const CategoryScroll = ({ id, movies: { videos }, onSelect }) => {
       </ContentWrap>
       <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
         {movies.map(({ id, thumbnail: url }) => (
-          <Pressable key={id} style={{ marginRight: 10 }} onPress={() => onSelect()}>
+          <Pressable key={id} style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
             <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
           </Pressable>
         ))}
@@ -40,7 +38,7 @@ const CategoryScroll = ({ id, movies: { videos }, onSelect }) => {
 
 CategoryScroll.propTypes = {
   id: PropTypes.string,
-  movies: PropTypes.array,
+  movies: PropTypes.object,
   onSelect: PropTypes.func
 };
 
