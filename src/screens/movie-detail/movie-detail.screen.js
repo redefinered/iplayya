@@ -9,46 +9,64 @@ import { Text, List } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
+import { selectError, selectIsFetching, selectMovie } from 'modules/ducks/movies/movies.selectors';
 import { createFontFormat } from 'utils';
 
-import { data } from './sample-video.json';
-
-const {
-  title,
-  year,
-  description,
-  time,
-  rating_mpaa,
-  age_rating,
-  category,
-  director,
-  rtsp_url,
-  thumbnail,
-  ...otherFields
-} = data.video;
-
-const MovieDetailScreen = ({ theme, playbackStartAction }) => {
+const MovieDetailScreen = ({
+  movie,
+  theme,
+  playbackStartAction,
+  getMovieAction,
+  getMovieStartAction,
+  route: {
+    params: { videoId }
+  }
+}) => {
   const [paused, setPaused] = React.useState(true);
 
   React.useEffect(() => {
     playbackStartAction();
+    getMovieStartAction();
+    getMovieAction(videoId);
   }, []);
 
   const handleTogglePlay = () => {
     setPaused(!paused);
   };
 
+  if (!movie)
+    return (
+      <ContentWrap>
+        <Text>Wait lang beh...</Text>
+      </ContentWrap>
+    );
+
+  const {
+    title,
+    year,
+    description,
+    time,
+    rating_mpaa,
+    age_rating,
+    category,
+    director,
+    rtsp_url,
+    thumbnail,
+    ...otherFields
+  } = movie;
+
   return (
     <View>
       {/* Player */}
       <View>
-        <View
+        <Pressable
+          onPress={() => handleTogglePlay()}
           style={{
             width: '100%',
             height: 211,
@@ -64,7 +82,7 @@ const MovieDetailScreen = ({ theme, playbackStartAction }) => {
             title={title}
             togglePlay={handleTogglePlay}
           />
-        </View>
+        </Pressable>
         <ContentWrap>
           <Text
             style={{
@@ -100,8 +118,9 @@ const MovieDetailScreen = ({ theme, playbackStartAction }) => {
               {Object.keys(otherFields).map((key) => (
                 <List.Item
                   key={key}
+                  titleStyle={{ marginBottom: -10 }}
                   title={
-                    <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
+                    <Text style={{ ...createFontFormat(14, 20) }}>
                       <Text
                         style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}
                       >
@@ -152,17 +171,21 @@ const styles = StyleSheet.create({
 });
 
 const actions = {
-  playbackStartAction: MoviesActionCreators.playbackStart,
-  updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
+  getMovieAction: Creators.getMovie,
+  getMovieStartAction: Creators.getMovieStart,
+  playbackStartAction: Creators.playbackStart,
+  updatePlaybackInfoAction: Creators.updatePlaybackInfo
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching
+  isFetching: selectIsFetching,
+  movie: selectMovie
 });
 
 export default compose(
   withHeaderPush(),
   connect(mapStateToProps, actions),
+  withLoader,
   withTheme
 )(MovieDetailScreen);
