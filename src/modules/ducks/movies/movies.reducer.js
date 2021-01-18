@@ -1,5 +1,6 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
+import { updateMoviesState, updatePaginatorInfo } from './movies.utils';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -104,13 +105,16 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_MOVIES_BY_CATEGORIES_SUCCESS]: (state, action) => {
-    const { movies } = action;
+    const { newMovies, nextPaginator } = action.data;
+    const movies = updateMoviesState(state, newMovies);
+    const paginatorInfo = updatePaginatorInfo(state, newMovies, nextPaginator);
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      movies
+      movies,
+      paginatorInfo
     };
   },
   [Types.GET_MOVIES_BY_CATEGORIES_FAILURE]: (state, action) => {

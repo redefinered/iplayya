@@ -113,7 +113,7 @@ const ImovieScreen = ({
             </View> */}
 
             {movies.map(({ category }) => (
-              <CategoryScroll id={category} key={category} onSelect={handleMovieSelect} />
+              <CategoryScroll key={category} category={category} onSelect={handleMovieSelect} />
             ))}
 
             {/* continue watching */}

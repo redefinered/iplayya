@@ -51,9 +51,16 @@ export const selectCategoriesOf = (type) =>
   });
 
 const selectMoviesForFilter = ({ movies: { movies } }, props) => {
-  return movies.find(({ category }) => category === props.id);
+  return movies.find(({ category }) => category === props.category);
 };
 
-export const selectMoviesByCategory = createSelector([selectMoviesForFilter], (movies) => {
-  return movies;
-});
+export const selectMoviesByCategory = createSelector([selectMoviesForFilter], (movies) => movies);
+
+const selectPaginatorInfoForFilter = ({ movies: { paginatorInfo } }, props) => {
+  return paginatorInfo.find(({ title }) => title === props.category);
+};
+
+export const selectPaginatorOfCategory = createSelector(
+  [selectPaginatorInfoForFilter],
+  (paginatorInfo) => paginatorInfo
+);

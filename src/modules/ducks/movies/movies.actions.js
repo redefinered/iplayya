@@ -21,7 +21,7 @@ const { Types, Creators } = createActions(
      * can be used to get one or multiple categories
      */
     getMoviesByCategories: ['input'],
-    getMoviesByCategoriesSuccess: ['movies'],
+    getMoviesByCategoriesSuccess: ['data'],
     getMoviesByCategoriesFailure: ['error'],
 
     playbackStart: [],

@@ -31,11 +31,19 @@ export function* getMoviesRequest(action) {
 }
 
 export function* getMoviesByCategoriesRequest(action) {
-  const { input } = action;
+  const {
+    input: { pageNumber, limit, categories }
+  } = action;
+
+  // increment the pageNumber property of the input in each request
+  let nextPageInput = { pageNumber: pageNumber + 1, limit, categories };
 
   try {
-    const { videoByCategory: movies } = yield call(getMoviesByCategories, { input });
-    yield put(Creators.getMoviesByCategoriesSuccess(movies));
+    const { videoByCategory: newMovies } = yield call(getMoviesByCategories, {
+      input: nextPageInput
+    });
+    console.log({ nextPageInput });
+    yield put(Creators.getMoviesByCategoriesSuccess({ newMovies, nextPaginator: nextPageInput }));
   } catch (error) {
     yield put(Creators.getMoviesByCategoriesFailure(error.message));
   }
