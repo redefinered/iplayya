@@ -70,8 +70,8 @@ export default {
   unfavorite: String.fromCharCode(hex('E840')),
   'video-quality': String.fromCharCode(hex('E841')),
   'volume-off': String.fromCharCode(hex('E842')),
-  volume: String.fromCharCode(hex('E843')),
-  watch: String.fromCharCode(hex('E844')),
+  watch: String.fromCharCode(hex('E843')),
+  volume: String.fromCharCode(hex('E844')),
   redo: String.fromCharCode(hex('E845')),
   'rotate-left': String.fromCharCode(hex('E846')),
   'rotate-right': String.fromCharCode(hex('E847'))
