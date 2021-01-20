@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, Pressable, StyleSheet, View, Animated } from 'react-native';
+import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
@@ -24,48 +24,52 @@ function toDateTime(secs) {
   return t;
 }
 
-const VideoControls = ({
-  title,
-  seekableDuration,
-  currentTime,
-  style,
-  theme,
-  togglePlay,
-  toggleFullscreen,
-  paused,
-  visible
-}) => {
+const VideoControls = ({ theme, ...controlProps }) => {
   const [timeRemaining, setTimeRemaining] = React.useState(0);
 
   React.useEffect(() => {
-    setTimeRemaining(seekableDuration - currentTime);
-  }, [currentTime]);
+    setTimeRemaining(controlProps.seekableDuration - controlProps.currentTime);
+  }, [controlProps.currentTime]);
 
   // console.log({ playbackInfo, timeRemaining, seekableDuration, currentTime });
 
   return (
-    <Animated.View style={{ ...styles.controls, ...style, opacity: visible ? 1 : 0 }}>
+    <View
+      style={{ ...styles.controls, ...controlProps.style, opacity: controlProps.visible ? 1 : 0 }}
+    >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{title}</Text>
+        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
+          {controlProps.loading ? 'loading...' : controlProps.title}
+        </Text>
         <Pressable>
-          <Icon name="screen-cast" size={25} />
+          <Icon name="screencast" size={25} />
         </Pressable>
       </View>
-
-      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-        <Pressable>
-          <Icon name="previous" size={35} style={{ color: theme.iplayya.colors.white25 }} />
-        </Pressable>
-        <Pressable onPress={() => togglePlay()}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 10
+        }}
+      >
+        {controlProps.multipleMedia ? (
+          <Pressable>
+            <Icon name="previous" size={35} style={{ color: theme.iplayya.colors.white25 }} />
+          </Pressable>
+        ) : null}
+        <Pressable onPress={() => controlProps.togglePlay()}>
           <Icon
-            name={paused ? 'circular-play' : 'circular-pause'}
+            name={controlProps.paused ? 'circular-play' : 'circular-pause'}
             size={60}
             style={{ marginHorizontal: 20 }}
           />
         </Pressable>
-        <Pressable>
-          <Icon name="next" size={35} />
-        </Pressable>
+        {controlProps.multipleMedia ? (
+          <Pressable>
+            <Icon name="next" size={35} />
+          </Pressable>
+        ) : null}
       </View>
 
       <View>
@@ -74,21 +78,25 @@ const VideoControls = ({
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            marginBottom: 10
+            marginBottom: 20
           }}
         >
           <View style={{ flexDirection: 'row' }}>
-            <Pressable>
-              <Icon name="volume" size={25} style={{ marginRight: 10 }} />
+            <Pressable onPress={() => controlProps.toggleVolumeSliderVisible()}>
+              <Icon
+                name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
+                size={25}
+                style={{ marginRight: 15 }}
+              />
             </Pressable>
-            <Pressable>
-              <Icon name="caption" size={25} style={{ marginRight: 10 }} />
-            </Pressable>
+            {/* <Pressable>
+              <Icon name="caption" size={25} style={{ marginRight: 15 }} />
+            </Pressable> */}
             <Pressable>
               <Icon name="video-quality" size={25} />
             </Pressable>
           </View>
-          <Pressable onPress={() => toggleFullscreen()}>
+          <Pressable onPress={() => controlProps.toggleFullscreen()}>
             <Icon name="fullscreen" size={25} />
           </Pressable>
         </View>
@@ -97,27 +105,28 @@ const VideoControls = ({
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ flex: 1.5 }}>
             <Text style={{ ...createFontFormat(10, 14) }}>
-              {moment(toDateTime(currentTime)).format('H:mm:ss')}
+              {moment(toDateTime(controlProps.currentTime)).format('H:mm:ss')}
             </Text>
           </View>
           <View style={{ flex: 9 }}>
             <Slider
-              value={currentTime}
+              value={controlProps.currentTime}
+              onSlidingComplete={(value) => controlProps.setCurrentTime(value)}
               style={{ width: '100%', height: 10 }}
               minimumValue={0}
-              maximumValue={seekableDuration}
+              maximumValue={controlProps.seekableDuration}
               minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
               maximumTrackTintColor="white"
             />
           </View>
           <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
             <Text style={{ ...createFontFormat(10, 14) }}>
-              {moment(toDateTime(timeRemaining)).format('H:mm:ss')}
+              {`-${moment(toDateTime(timeRemaining)).format('H:mm:ss')}`}
             </Text>
           </View>
         </View>
       </View>
-    </Animated.View>
+    </View>
   );
 };
 
@@ -126,17 +135,25 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width,
     height: 211,
     padding: 10,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    zIndex: 99
   }
 });
 
 VideoControls.propTypes = {
   title: PropTypes.string,
+  volume: PropTypes.number,
   theme: PropTypes.object,
   playbackInfo: PropTypes.object,
   style: PropTypes.object,
   togglePlay: PropTypes.func.isRequired,
-  paused: PropTypes.bool.isRequired
+  paused: PropTypes.bool.isRequired,
+  multipleMedia: PropTypes.bool,
+  toggleVolumeSliderVisible: PropTypes.func
+};
+
+VideoControls.defaultProps = {
+  multipleMedia: false
 };
 
 const mapStateToProps = createStructuredSelector({

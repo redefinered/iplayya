@@ -31,6 +31,7 @@ import { setupPaginator } from './imovie.utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 
 const ImovieScreen = ({
+  getMoviesStartAction,
   navigation,
   error,
   categories,
@@ -51,14 +52,20 @@ const ImovieScreen = ({
 
   // setup paginator info on load
   React.useEffect(() => {
-    const paginator = setupPaginator(categories);
-    setupPaginatorInfoAction(paginator);
+    getMoviesStartAction();
   }, []);
+
+  React.useEffect(() => {
+    if (!paginatorInfo.length) {
+      const paginator = setupPaginator(categories);
+      setupPaginatorInfoAction(paginator);
+    }
+  }, [paginatorInfo]);
 
   // get movies on mount
   React.useEffect(() => {
     getMoviesAction(paginatorInfo);
-  }, []);
+  }, [paginatorInfo]);
 
   if (error) {
     <Text>{error}</Text>;
@@ -189,6 +196,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  getMoviesStartAction: MoviesCreators.getMoviesStart,
   getMoviesAction: MoviesCreators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   setupPaginatorInfoAction: MoviesCreators.setupPaginatorInfo

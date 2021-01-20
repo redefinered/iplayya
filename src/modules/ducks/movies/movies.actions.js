@@ -10,6 +10,7 @@ const { Types, Creators } = createActions(
     getMovieFailure: ['error'],
 
     // get movies for each movie category when user opens imovie screen
+    getMoviesStart: [],
     getMovies: ['paginatorInfo'],
     getMoviesSuccess: ['movies'],
     getMoviesFailure: ['error'],
@@ -25,7 +26,9 @@ const { Types, Creators } = createActions(
     getMoviesByCategoriesFailure: ['error'],
 
     playbackStart: [],
-    updatePlaybackInfo: ['data']
+    updatePlaybackInfo: ['data'],
+
+    addVideoToContinueWatching: ['data']
   },
   { prefix: '@Movies/' }
 );

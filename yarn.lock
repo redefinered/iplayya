@@ -6768,6 +6768,10 @@ react-is@^16.12.0, react-is@^16.13.0, react-is@^16.7.0, react-is@^16.8.1, react-
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+"react-native-anchor-point@https://github.com/redefinered/react-native-anchor-point.git":
+  version "1.0.1"
+  resolved "https://github.com/redefinered/react-native-anchor-point.git#4d64db83bd55fe54702c37e59b20d39281a7e31e"
+
 react-native-gesture-handler@^1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.8.0.tgz#18f61f51da50320f938957b0ee79bc58f47449dc"
@@ -7263,6 +7267,11 @@ rimraf@~2.2.6:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
   integrity sha1-5Dm+Kq7jJzIZUnMPmaiSnk/FBYI=
+
+rn-vertical-slider@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/rn-vertical-slider/-/rn-vertical-slider-2.0.2.tgz#8e37d85fcfa984e8391a9af7b3f1f140cb3d9ddc"
+  integrity sha512-wCQVrFAJ8p1gIwf5mGsLMlBhmVlMbK5WK/CRd0CM4+u7R7OfM7AiozVIpSLCBHfUFMK5A1HiyNWcyPhVMAeK6w==
 
 rsvp@^4.8.4:
   version "4.8.5"

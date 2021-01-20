@@ -24,6 +24,7 @@ import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 import { Linking } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import VerticalSlider from 'rn-vertical-slider';
 
 const App = ({
   purgeStoreAction,

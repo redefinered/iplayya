@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Dimensions, Modal } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
@@ -15,10 +15,16 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectError, selectIsFetching, selectMovie } from 'modules/ducks/movies/movies.selectors';
+import {
+  selectError,
+  selectIsFetching,
+  selectMovie,
+  selectPlaybackInfo
+} from 'modules/ducks/movies/movies.selectors';
 import { createFontFormat } from 'utils';
 
 const MovieDetailScreen = ({
+  playbackInfo,
   movie,
   theme,
   playbackStartAction,
@@ -29,6 +35,7 @@ const MovieDetailScreen = ({
   }
 }) => {
   const [paused, setPaused] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     playbackStartAction();
@@ -37,6 +44,7 @@ const MovieDetailScreen = ({
   }, []);
 
   const handleTogglePlay = () => {
+    setLoading(true);
     setPaused(!paused);
   };
 
@@ -61,6 +69,8 @@ const MovieDetailScreen = ({
     ...otherFields
   } = movie;
 
+  // console.log({ rtsp_url, playbackInfo });
+
   return (
     <View>
       {/* Player */}
@@ -81,6 +91,8 @@ const MovieDetailScreen = ({
             thumbnail={thumbnail}
             title={title}
             togglePlay={handleTogglePlay}
+            loading={loading}
+            setLoading={setLoading}
           />
         </Pressable>
         <ContentWrap>
@@ -180,7 +192,8 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  movie: selectMovie
+  movie: selectMovie,
+  playbackInfo: selectPlaybackInfo
 });
 
 export default compose(
