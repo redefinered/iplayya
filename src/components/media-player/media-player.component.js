@@ -5,15 +5,12 @@ import PropTypes from 'prop-types';
 import { Dimensions, View, Modal, Animated } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
 import Video from 'react-native-video';
+import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
-
 import { connect } from 'react-redux';
 import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
-
 import VerticalSlider from 'rn-vertical-slider';
-
 import { urlEncodeTitle } from 'utils';
-
 import { withAnchorPoint } from 'react-native-anchor-point';
 
 const MediaPlayer = ({
@@ -28,10 +25,10 @@ const MediaPlayer = ({
 }) => {
   const theme = useTheme();
   const [showControls, setShowControls] = React.useState(true);
-  const [fullscreen, setFullscreen] = React.useState(false);
+  const [fullscreen, setFullscreen] = React.useState(true);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [volume, setVolume] = React.useState(0.75);
-  const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
+  const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(true);
 
   let timer = null;
 
@@ -75,23 +72,41 @@ const MediaPlayer = ({
 
   const transformStyles = () => {
     let transform = {
-      transform: [{ perspective: 400 }, { rotateX: '90deg' }]
+      transform: [{ rotateX: '90deg' }]
     };
-    return withAnchorPoint(transform, { x: 0, y: 0 }, { width: '100%', height: '100%' });
+    return withAnchorPoint(transform, { x: 0.5, y: 0 }, { width: '100%', height: '100%' });
   };
+
+  if (fullscreen)
+    return (
+      <FullScreenPlayer
+        currentTime={currentTime}
+        paused={paused}
+        handleProgress={handleProgress}
+        source={source}
+        player={player}
+        volume={volume}
+        thumbnail={thumbnail}
+        onBuffer={onBuffer}
+        videoError={videoError}
+        volumeSliderVisible={volumeSliderVisible}
+        setVolume={setVolume}
+        loading={loading}
+        title={title}
+        togglePlay={togglePlay}
+        handleFullscreenToggle={handleFullscreenToggle}
+        showControls={showControls}
+        setCurrentTime={setCurrentTime}
+        toggleVolumeSliderVisible={toggleVolumeSliderVisible}
+      />
+    );
 
   return (
     <View style={{ position: 'relative' }}>
-      <Modal>
-        <Animated.View style={[{ backgroundColor: 'red' }, transformStyles()]}>
-          <Text>Asda</Text>
-        </Animated.View>
-      </Modal>
       {/* video */}
       <Video
         currentTime={currentTime}
         paused={paused}
-        fullscreen={fullscreen}
         onProgress={handleProgress}
         // controls
         fullscreenOrientation="landscape"
