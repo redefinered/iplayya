@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1",
+    "name": "airplay-and-bluetooth",
+    "label": "AirPlay & Bluetooth devices"
+  },
+  {
+    "id": "2",
+    "name": "living-room-smart-tv",
+    "label": "Living Room Smart TV"
+  },
+  {
+    "id": "3",
+    "name": "bedroom-smart-tv",
+    "label": "Bedroom Smart TV"
+  },
+  {
+    "id": "4",
+    "name": "ultra-hd-tv",
+    "label": "4k Ultra HD TV"
+  }
+]

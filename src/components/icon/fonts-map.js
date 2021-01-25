@@ -74,5 +74,7 @@ export default {
   volume: String.fromCharCode(hex('E844')),
   redo: String.fromCharCode(hex('E845')),
   'rotate-left': String.fromCharCode(hex('E846')),
-  'rotate-right': String.fromCharCode(hex('E847'))
+  'rotate-right': String.fromCharCode(hex('E847')),
+  airplay: String.fromCharCode(hex('E848')),
+  'device-connect': String.fromCharCode(hex('E849'))
 };

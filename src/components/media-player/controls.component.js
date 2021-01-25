@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
@@ -41,7 +40,7 @@ const VideoControls = ({ theme, ...controlProps }) => {
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
           {controlProps.loading ? 'loading...' : controlProps.title}
         </Text>
-        <Pressable>
+        <Pressable onPress={() => controlProps.toggleCastOptions()}>
           <Icon name="screencast" size={25} />
         </Pressable>
       </View>
@@ -92,7 +91,7 @@ const VideoControls = ({ theme, ...controlProps }) => {
             {/* <Pressable>
               <Icon name="caption" size={25} style={{ marginRight: 15 }} />
             </Pressable> */}
-            <Pressable>
+            <Pressable onPress={() => controlProps.toggleVideoOptions()}>
               <Icon name="video-quality" size={25} />
             </Pressable>
           </View>
@@ -149,7 +148,9 @@ VideoControls.propTypes = {
   togglePlay: PropTypes.func.isRequired,
   paused: PropTypes.bool.isRequired,
   multipleMedia: PropTypes.bool,
-  toggleVolumeSliderVisible: PropTypes.func
+  toggleVolumeSliderVisible: PropTypes.func,
+  toggleCastOptions: PropTypes.func,
+  toggleVideoOptions: PropTypes.func
 };
 
 VideoControls.defaultProps = {
