@@ -28,7 +28,7 @@ const MediaPlayer = ({
 }) => {
   const theme = useTheme();
   const [showControls, setShowControls] = React.useState(false);
-  const [fullscreen, setFullscreen] = React.useState(false);
+  const [fullscreen, setFullscreen] = React.useState(true);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [volume, setVolume] = React.useState(0.75);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
@@ -128,6 +128,16 @@ const MediaPlayer = ({
         showControls={showControls}
         setCurrentTime={setCurrentTime}
         toggleVolumeSliderVisible={toggleVolumeSliderVisible}
+        toggleCastOptions={handleToggleCastOptions}
+        toggleVideoOptions={handleToggleVideoOptions}
+        screencastOption={screencastOption}
+        handleSelectScreencastOption={handleSelectScreencastOption}
+        setScreencastActiveState={setScreencastActiveState}
+        showCastOptions={showCastOptions}
+        showVideoOptions={showVideoOptions}
+        handleSelectResolution={handleSelectResolution}
+        setActiveState={setActiveState}
+        resolution={resolution}
       />
     );
 

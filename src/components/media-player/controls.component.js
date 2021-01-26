@@ -5,10 +5,11 @@ import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
 import moment from 'moment';
-
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import resolutions from './video-resolutions.json';
+import castOptions from './screencast-options.json';
 import {
   selectPlaybackInfo,
   selectSeekableDuration,
@@ -32,16 +33,115 @@ const VideoControls = ({ theme, ...controlProps }) => {
 
   // console.log({ playbackInfo, timeRemaining, seekableDuration, currentTime });
 
+  const screencastOptions = () => {
+    if (controlProps.showCastOptions) {
+      return castOptions.map(({ id, name, label }) => (
+        <Pressable
+          key={id}
+          onPressIn={() => controlProps.setScreencastActiveState(name)}
+          onPress={() => controlProps.handleSelectScreencastOption(name)}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 50,
+            backgroundColor:
+              controlProps.screencastActiveState === name
+                ? theme.iplayya.colors.white10
+                : 'transparent',
+            paddingHorizontal: 15
+          }}
+        >
+          <View style={{ flex: 1.5 }}>
+            <Icon name="airplay" size={20} />
+          </View>
+          <View style={{ flex: 10.5, paddingLeft: 15 }}>
+            <Text
+              style={{
+                color:
+                  controlProps.screencastOption === name
+                    ? theme.iplayya.colors.vibrantpussy
+                    : theme.colors.text,
+                ...createFontFormat(16, 22)
+              }}
+            >
+              {label}
+            </Text>
+          </View>
+        </Pressable>
+      ));
+    }
+  };
+
+  const videoSettings = () => {
+    if (controlProps.showVideoOptions) {
+      return resolutions.map(({ id, name, label }) => (
+        <Pressable
+          key={id}
+          onPressIn={() => controlProps.setActiveState(name)}
+          onPress={() => controlProps.handleSelectResolution(name)}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 50,
+            backgroundColor:
+              controlProps.resolution === name ? theme.iplayya.colors.white10 : 'transparent',
+            paddingHorizontal: 15
+          }}
+        >
+          <View style={{ flex: 1.5 }}>
+            <Icon name="airplay" size={20} />
+          </View>
+          <View style={{ flex: 10.5, paddingLeft: 15 }}>
+            <Text
+              style={{
+                color:
+                  controlProps.screencastOption === name
+                    ? theme.iplayya.colors.vibrantpussy
+                    : theme.colors.text,
+                ...createFontFormat(16, 22)
+              }}
+            >
+              {label}
+            </Text>
+          </View>
+        </Pressable>
+      ));
+    }
+  };
+
   return (
     <View
       style={{ ...styles.controls, ...controlProps.style, opacity: controlProps.visible ? 1 : 0 }}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'relative',
+          zIndex: 101
+        }}
+      >
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
           {controlProps.loading ? 'loading...' : controlProps.title}
         </Text>
-        <Pressable onPress={() => controlProps.toggleCastOptions()}>
+        <Pressable
+          onPress={() => controlProps.toggleCastOptions()}
+          style={{ position: 'relative' }}
+        >
           <Icon name="screencast" size={25} />
+
+          <View
+            style={{
+              backgroundColor: '#202530',
+              width: 250,
+              position: 'absolute',
+              top: '100%',
+              right: 0
+            }}
+          >
+            {screencastOptions()}
+          </View>
         </Pressable>
       </View>
       <View
@@ -49,7 +149,9 @@ const VideoControls = ({ theme, ...controlProps }) => {
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 10
+          marginTop: 10,
+          position: 'relative',
+          zIndex: 100
         }}
       >
         {controlProps.multipleMedia ? (
@@ -71,7 +173,7 @@ const VideoControls = ({ theme, ...controlProps }) => {
         ) : null}
       </View>
 
-      <View>
+      <View style={{ position: 'relative', zIndex: 101 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -93,6 +195,17 @@ const VideoControls = ({ theme, ...controlProps }) => {
             </Pressable> */}
             <Pressable onPress={() => controlProps.toggleVideoOptions()}>
               <Icon name="video-quality" size={25} />
+              <View
+                style={{
+                  backgroundColor: '#202530',
+                  width: 250,
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: 0
+                }}
+              >
+                {videoSettings()}
+              </View>
             </Pressable>
           </View>
           <Pressable onPress={() => controlProps.toggleFullscreen()}>
@@ -150,7 +263,8 @@ VideoControls.propTypes = {
   multipleMedia: PropTypes.bool,
   toggleVolumeSliderVisible: PropTypes.func,
   toggleCastOptions: PropTypes.func,
-  toggleVideoOptions: PropTypes.func
+  toggleVideoOptions: PropTypes.func,
+  showCastOptions: PropTypes.bool
 };
 
 VideoControls.defaultProps = {

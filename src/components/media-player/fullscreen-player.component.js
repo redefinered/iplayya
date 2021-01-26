@@ -32,7 +32,17 @@ const FullScreenPlayer = (props) => {
     handleFullscreenToggle,
     showControls,
     setCurrentTime,
-    toggleVolumeSliderVisible
+    toggleVolumeSliderVisible,
+    toggleCastOptions,
+    toggleVideoOptions,
+    screencastOption,
+    handleSelectScreencastOption,
+    setScreencastActiveState,
+    showCastOptions,
+    showVideoOptions,
+    handleSelectResolution,
+    setActiveState,
+    resolution
   } = props;
 
   const theme = useTheme();
@@ -104,16 +114,25 @@ const FullScreenPlayer = (props) => {
             togglePlay={togglePlay}
             paused={paused}
             toggleFullscreen={handleFullscreenToggle}
-            style={{
-              position: 'absolute',
-              zIndex: 100,
-              // backgroundColor: 'red',
-              width: HEIGHT,
-              height: WIDTH
-            }}
             visible={showControls}
             setCurrentTime={setCurrentTime}
             toggleVolumeSliderVisible={toggleVolumeSliderVisible}
+            toggleCastOptions={toggleCastOptions}
+            toggleVideoOptions={toggleVideoOptions}
+            screencastOption={screencastOption}
+            handleSelectScreencastOption={handleSelectScreencastOption}
+            setScreencastActiveState={setScreencastActiveState}
+            showCastOptions={showCastOptions}
+            showVideoOptions={showVideoOptions}
+            handleSelectResolution={handleSelectResolution}
+            setActiveState={setActiveState}
+            resolution={resolution}
+            style={{
+              position: 'absolute',
+              zIndex: 100,
+              width: HEIGHT,
+              height: WIDTH
+            }}
           />
         </View>
       </View>
@@ -141,7 +160,17 @@ FullScreenPlayer.propTypes = {
   handleFullscreenToggle: PropTypes.string,
   showControls: PropTypes.string,
   setCurrentTime: PropTypes.string,
-  toggleVolumeSliderVisible: PropTypes.string
+  toggleVolumeSliderVisible: PropTypes.string,
+  toggleCastOptions: PropTypes.func,
+  toggleVideoOptions: PropTypes.func,
+  screencastOption: PropTypes.string,
+  handleSelectScreencastOption: PropTypes.func,
+  setScreencastActiveState: PropTypes.func,
+  showCastOptions: PropTypes.bool,
+  showVideoOptions: PropTypes.bool,
+  handleSelectResolution: PropTypes.func,
+  setActiveState: PropTypes.func,
+  resolution: PropTypes.string
 };
 
 export default FullScreenPlayer;
