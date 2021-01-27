@@ -21,6 +21,7 @@ import {
   selectUpdated
 } from 'modules/ducks/provider/provider.selectors';
 
+// eslint-disable-next-line no-unused-vars
 import { isValidUsername, isValidWebsite, isValidPassword } from 'common/validate';
 
 import styles from './add-iptv.styles';

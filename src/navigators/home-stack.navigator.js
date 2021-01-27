@@ -9,6 +9,7 @@ import Icon from 'components/icon/icon.component.js';
 
 import HomeScreen from 'screens/home/home.screen';
 import ImovieScreen from 'screens/imovie/imovie.screen';
+import ImovieFavoritesScreen from 'screens/imovie-favorites/imovie-favorites.screen';
 import IradioScreen from 'screens/iradio/iradio.screen';
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import IplayScreen from 'screens/iplay/iplay.screen';
@@ -60,6 +61,26 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => (
       // eslint-disable-next-line no-unused-vars
       options={({ navigation }) => ({
         title: 'iMovie',
+        animationEnabled: false,
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <Pressable style={styles.headerButtonContainer}>
+              <Icon name="search" size={24} />
+            </Pressable>
+          </View>
+        )
+      })}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="ImovieFavoritesScreen"
+      component={ImovieFavoritesScreen}
+      // eslint-disable-next-line no-unused-vars
+      options={({ navigation }) => ({
+        title: 'Favorites',
         animationEnabled: false,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
