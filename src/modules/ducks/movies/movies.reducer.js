@@ -16,7 +16,10 @@ const INITIAL_STATE = {
   playbackInfo: {},
 
   // paginators for movies sections in the main imovie screen
-  paginatorInfo: []
+  paginatorInfo: [],
+
+  // if a movie is added to favorites
+  updatedFavorites: false
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -155,11 +158,20 @@ export default createReducer(INITIAL_STATE, {
       error: null
     };
   },
+  [Types.ADD_MOVIE_TO_FAVORITES_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      updatedFavorites: false
+    };
+  },
   [Types.ADD_MOVIE_TO_FAVORITES_SUCCESS]: (state) => {
     return {
       ...state,
       isFetching: false,
-      error: null
+      error: null,
+      updatedFavorites: true
     };
   },
   [Types.ADD_MOVIE_TO_FAVORITES_FAILURE]: (state, action) => {
@@ -167,7 +179,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       addedToFavorites: false,
-      error: action.error
+      error: action.error,
+      updatedFavorites: false
     };
   },
   [Types.GET_FAVORITE_MOVIES]: (state) => {

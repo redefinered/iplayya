@@ -18,23 +18,38 @@ import {
   selectError,
   selectIsFetching,
   selectMovie,
-  selectPlaybackInfo
+  selectPlaybackInfo,
+  selectUpdatedFavoritesCheck
 } from 'modules/ducks/movies/movies.selectors';
 import { createFontFormat } from 'utils';
 
 const MovieDetailScreen = ({
+  route: {
+    params: { videoId }
+  },
   playbackInfo,
   movie,
   theme,
   playbackStartAction,
   getMovieAction,
   getMovieStartAction,
-  route: {
-    params: { videoId }
-  }
+  isFavListUpdated,
+  getFavoriteMoviesAction,
+  addMovieToFavoritesStartAction
 }) => {
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
+
+  // execute getFavorites if favorites list is updated
+  React.useEffect(() => {
+    if (isFavListUpdated) {
+      getFavoriteMoviesAction();
+    }
+  }, [isFavListUpdated]);
+
+  React.useEffect(() => {
+    addMovieToFavoritesStartAction();
+  }, []);
 
   React.useEffect(() => {
     playbackStartAction();
@@ -185,14 +200,17 @@ const actions = {
   getMovieAction: Creators.getMovie,
   getMovieStartAction: Creators.getMovieStart,
   playbackStartAction: Creators.playbackStart,
-  updatePlaybackInfoAction: Creators.updatePlaybackInfo
+  updatePlaybackInfoAction: Creators.updatePlaybackInfo,
+  getFavoriteMoviesAction: Creators.getFavoriteMovies,
+  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   movie: selectMovie,
-  playbackInfo: selectPlaybackInfo
+  playbackInfo: selectPlaybackInfo,
+  isFavListUpdated: selectUpdatedFavoritesCheck
 });
 
 export default compose(

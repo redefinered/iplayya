@@ -77,7 +77,7 @@ export function* addMovieToFavoritesRequest(action) {
 
 export function* getFavoriteMoviesRequest() {
   try {
-    const { favoriteVideos } = call(getFavoriteMovies);
+    const { favoriteVideos } = yield call(getFavoriteMovies);
     yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
   } catch (error) {
     yield put(Creators.getFavoriteMoviesFailure(error.message));

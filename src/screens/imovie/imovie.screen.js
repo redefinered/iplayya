@@ -38,8 +38,15 @@ const ImovieScreen = ({
   getMoviesAction,
   setupPaginatorInfoAction,
   paginatorInfo,
+  addMovieToFavoritesStartAction,
   ...rest
 }) => {
+  // reset 'added' state when adding a movie to favorites to prevent conflicts
+  React.useEffect(() => {
+    addMovieToFavoritesStartAction();
+    getMoviesStartAction();
+  }, []);
+
   let movies = rest.movies.map(({ thumbnail, ...rest }) => {
     return {
       thumbnail:
@@ -49,11 +56,6 @@ const ImovieScreen = ({
       ...rest
     };
   });
-
-  // setup paginator info on load
-  React.useEffect(() => {
-    getMoviesStartAction();
-  }, []);
 
   React.useEffect(() => {
     if (!paginatorInfo.length) {
@@ -199,7 +201,8 @@ const actions = {
   getMoviesStartAction: MoviesCreators.getMoviesStart,
   getMoviesAction: MoviesCreators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  setupPaginatorInfoAction: MoviesCreators.setupPaginatorInfo
+  setupPaginatorInfoAction: MoviesCreators.setupPaginatorInfo,
+  addMovieToFavoritesStartAction: MoviesCreators.addMovieToFavoritesStart
 };
 
 export default compose(

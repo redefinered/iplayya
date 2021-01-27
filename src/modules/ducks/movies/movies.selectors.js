@@ -69,3 +69,8 @@ export const selectFavorites = createSelector(
   [moviesState],
   ({ favoriteVideos }) => favoriteVideos
 );
+
+export const selectUpdatedFavoritesCheck = createSelector(
+  [moviesState],
+  ({ updatedFavorites }) => updatedFavorites
+);
