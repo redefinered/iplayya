@@ -19,12 +19,16 @@ import SportChanelDetailScreen from 'screens/sport-chanel-detail/sport-chanel-de
 
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
+// import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
+import { createStructuredSelector } from 'reselect';
+import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
+import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 
 import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
 
-const HomeStack = ({ setBottomTabsVisibleAction }) => (
+const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => (
   <Stack.Navigator
     initialRouteName="Home"
     screenOptions={{
@@ -74,15 +78,26 @@ const HomeStack = ({ setBottomTabsVisibleAction }) => (
       name="MovieDetailScreen"
       component={MovieDetailScreen}
       // eslint-disable-next-line no-unused-vars
-      options={(props) => {
-        console.log({ props });
+      options={({
+        route: {
+          params: { videoId }
+        }
+      }) => {
+        const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
         return {
           title: null,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
+              {/* <Pressable
+                onPress={() => addMovieToFavoritesAction(videoId)}
+                style={styles.headerButtonContainer}
+              >
                 <Icon name="heart-solid" size={24} />
-              </Pressable>
+              </Pressable> */}
+              <AddToFavoritesButton
+                videoId={parseInt(videoId)}
+                alreadyInFavorites={isInFavorites >= 0 ? true : false}
+              />
               <Pressable style={styles.headerButtonContainer}>
                 <Icon name="download" size={24} />
               </Pressable>
@@ -236,4 +251,6 @@ const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
 };
 
-export default connect(null, actions)(HomeStack);
+const mapStateToProps = createStructuredSelector({ favorites: selectFavorites });
+
+export default connect(mapStateToProps, actions)(HomeStack);

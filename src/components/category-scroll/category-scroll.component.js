@@ -14,6 +14,7 @@ import {
 import { urlEncodeTitle } from 'utils';
 
 const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCategory }) => {
+  if (typeof videos === 'undefined' || videos.length === 0) return <View />;
   let movies = videos.map(({ thumbnail, ...rest }) => {
     return {
       thumbnail:

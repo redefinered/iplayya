@@ -151,7 +151,7 @@ FullScreenPlayer.propTypes = {
   updatePlaybackInfoAction: PropTypes.func,
   currentTime: PropTypes.number,
   handleProgress: PropTypes.func,
-  player: PropTypes.string,
+  player: PropTypes.object,
   volume: PropTypes.string,
   onBuffer: PropTypes.string,
   videoError: PropTypes.string,

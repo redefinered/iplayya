@@ -64,3 +64,8 @@ export const selectPaginatorOfCategory = createSelector(
   [selectPaginatorInfoForFilter],
   (paginatorInfo) => paginatorInfo
 );
+
+export const selectFavorites = createSelector(
+  [moviesState],
+  ({ favoriteVideos }) => favoriteVideos
+);

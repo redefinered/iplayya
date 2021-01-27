@@ -28,7 +28,15 @@ const { Types, Creators } = createActions(
     playbackStart: [],
     updatePlaybackInfo: ['data'],
 
-    addVideoToContinueWatching: ['data']
+    addVideoToContinueWatching: ['data'],
+
+    getFavoriteMovies: [],
+    getFavoriteMoviesSuccess: ['data'],
+    getFavoriteMoviesFailure: ['error'],
+
+    addMovieToFavorites: ['videoId'],
+    addMovieToFavoritesSuccess: [],
+    addMovieToFavoritesFailure: ['error']
   },
   { prefix: '@Movies/' }
 );

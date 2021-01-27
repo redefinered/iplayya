@@ -47,3 +47,22 @@ export const GET_MOVIE = gql`
     }
   }
 `;
+
+export const ADD_MOVIE_TO_FAVORITES = gql`
+  mutation ADD_VIDEO_TO_FAVOURITES($input: addVideoToFavoritesInput) {
+    addVideoToFavorites(input: $input) {
+      status
+      message
+    }
+  }
+`;
+
+export const GET_FAVORITE_MOVIES = gql`
+  query GET_FAVORITE_MOVIES($input: videoRequest) {
+    favoriteVideos(input: $input) {
+      id
+      title
+      thumbnail
+    }
+  }
+`;

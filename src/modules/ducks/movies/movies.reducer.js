@@ -7,6 +7,7 @@ const INITIAL_STATE = {
   error: null,
   categories: [],
   movie: null,
+  favoriteVideos: [],
 
   // movies is going to be a collection of movies grouped into categories
   movies: [],
@@ -145,6 +146,51 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       playbackInfo
+    };
+  },
+  [Types.ADD_MOVIE_TO_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.ADD_MOVIE_TO_FAVORITES_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null
+    };
+  },
+  [Types.ADD_MOVIE_TO_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      addedToFavorites: false,
+      error: action.error
+    };
+  },
+  [Types.GET_FAVORITE_MOVIES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_FAVORITE_MOVIES_SUCCESS]: (state, action) => {
+    const { favoriteVideos } = action.data;
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      favoriteVideos
+    };
+  },
+  [Types.GET_FAVORITE_MOVIES_FAILURE]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null
     };
   }
 });

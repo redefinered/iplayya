@@ -1,7 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/movies/movies.actions';
-import { getMovie, getMoviesByCategories } from 'services/movies.service';
+import {
+  getMovie,
+  getMoviesByCategories,
+  addMovieToFavorites,
+  getFavoriteMovies
+} from 'services/movies.service';
 
 export function* getMovieRequest(action) {
   const { videoId } = action;
@@ -20,11 +25,18 @@ export function* getMoviesRequest(action) {
       paginatorInfo.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
     );
 
+    const { favoriteVideos } = yield call(getFavoriteMovies);
+
     const movies = videos.map(({ videoByCategory }) => {
       return { category: videoByCategory[0].category, videos: videoByCategory };
     });
 
+    // console.log({ favoriteVideos });
+
+    // movies.unshift({ category: 'Favorites', videos: favoriteVideos });
+
     yield put(Creators.getMoviesSuccess(movies));
+    yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
   } catch (error) {
     yield put(Creators.getMoviesFailure(error.message));
   }
@@ -49,8 +61,33 @@ export function* getMoviesByCategoriesRequest(action) {
   }
 }
 
+export function* addMovieToFavoritesRequest(action) {
+  const { videoId } = action;
+  try {
+    const { addVideoToFavorites } = yield call(addMovieToFavorites, videoId);
+    if (!addMovieToFavorites) throw new Error('Failed to add video, something went wrong');
+    const { status, message } = addVideoToFavorites;
+    if (status !== 'success') throw new Error('Failed to add video, something went wrong');
+    console.log({ message });
+    yield put(Creators.addMovieToFavoritesSuccess());
+  } catch (error) {
+    yield put(Creators.addMovieToFavoritesFailure(error.message));
+  }
+}
+
+export function* getFavoriteMoviesRequest() {
+  try {
+    const { favoriteVideos } = call(getFavoriteMovies);
+    yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
+  } catch (error) {
+    yield put(Creators.getFavoriteMoviesFailure(error.message));
+  }
+}
+
 export default function* movieSagas() {
   yield takeLatest(Types.GET_MOVIE, getMovieRequest);
   yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
   yield takeLatest(Types.GET_MOVIES_BY_CATEGORIES, getMoviesByCategoriesRequest);
+  yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
+  yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
 }

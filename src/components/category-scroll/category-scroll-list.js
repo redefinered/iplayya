@@ -28,6 +28,7 @@ const CategoryScrollList = ({
   const handleOnEndReached = () => {
     // set pageNumber prop to get the next n movies
     console.log('end');
+    if (typeof paginatorOfCategory === 'undefined') return;
     const { paginator } = paginatorOfCategory;
     getMoviesByCategoriesAction(paginator);
   };
