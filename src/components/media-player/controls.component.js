@@ -16,13 +16,7 @@ import {
   selectCurrentTime
 } from 'modules/ducks/movies/movies.selectors';
 
-import { createFontFormat } from 'utils';
-
-function toDateTime(secs) {
-  var t = new Date(1970, 0, 1); // Epoch
-  t.setSeconds(secs);
-  return t;
-}
+import { createFontFormat, toDateTime } from 'utils';
 
 const VideoControls = ({ theme, ...controlProps }) => {
   const [timeRemaining, setTimeRemaining] = React.useState(0);

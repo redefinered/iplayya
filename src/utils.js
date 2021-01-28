@@ -9,6 +9,12 @@ export const urlEncodeTitle = (title) => {
   return strsplit.join('+');
 };
 
+export const toDateTime = (secs) => {
+  var t = new Date(1970, 0, 1); // Epoch
+  t.setSeconds(secs);
+  return t;
+};
+
 /**
  * Generate an array of days starting from now
  * @param {number} numberDays the number of days to generate
