@@ -19,7 +19,13 @@ const INITIAL_STATE = {
   paginatorInfo: [],
 
   // if a movie is added to favorites
-  updatedFavorites: false
+  updatedFavorites: false,
+
+  // info of items being while downloaded
+  downloads: [],
+
+  // when movie is downloading
+  downloading: false
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -205,5 +211,57 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: null
     };
+  },
+  [Types.DOWNLOAD_MOVIE]: (state, action) => {
+    const { id, title } = action.data;
+    return {
+      ...state,
+      downloading: true,
+      error: null,
+      downloadInfo: [...state.downloadInfo, { id, title }]
+    };
+  },
+  [Types.UPDATE_DOWNLOADS]: (state, action) => {
+    const { id: downloadingId, progress } = action.data;
+    const downloading = { id: downloadingId, progress, status: 'downloading' };
+    const downloads = state.downloadInfo.findIndex(({ id }) => id === downloadingId);
+    const index = downloads.findIndex(({ id }) => id === downloadingId);
+    downloads[index] = downloading;
+
+    return {
+      ...state,
+      downloading: true,
+      downloadInfo: downloads
+    };
   }
+  // [Types.DOWNLOAD_MOVIE_SUCCESS]: (state, action) => {
+  //   const { id: downloadedId, filepath } = action.data;
+  //   let download = state.downloadInfo.find(({ id }) => id === downloadedId);
+
+  //   // set status to completed
+  //   Object.assign(download, { status: 'completed', filepath });
+
+  //   // get current downloads
+  //   const downloads = state.downloadInfo;
+
+  //   // select index of item to be updated
+  //   const index = downloads.findIndex(({ id }) => id === downloadedId);
+
+  //   // replace the item at the selected index
+  //   downloads[index] = download;
+
+  //   return {
+  //     ...state,
+  //     downloading: false,
+  //     error: null,
+  //     downloadInfo: downloads
+  //   };
+  // },
+  // [Types.DOWNLOAD_MOVIE_FAILURE]: (state) => {
+  //   return {
+  //     ...state,
+  //     downloading: false,
+  //     error: null
+  //   };
+  // }
 });

@@ -5,6 +5,7 @@ export const createFontFormat = (fontSize, lineHeight) => {
 };
 
 export const urlEncodeTitle = (title) => {
+  if (!title) return;
   const strsplit = title.split(' ');
   return strsplit.join('+');
 };

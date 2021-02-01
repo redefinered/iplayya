@@ -22,6 +22,9 @@ import {
   selectUpdatedFavoritesCheck
 } from 'modules/ducks/movies/movies.selectors';
 import { createFontFormat } from 'utils';
+import RNFetchBlob from 'rn-fetch-blob';
+
+const dirs = RNFetchBlob.fs.dirs;
 
 const MovieDetailScreen = ({
   route: {
@@ -85,6 +88,21 @@ const MovieDetailScreen = ({
 
   // console.log({ rtsp_url, playbackInfo });
 
+  // const handleDownloadMovie = () => {
+  //   RNFetchBlob.config({
+  //     // add this option that makes response data to be stored as a file,
+  //     // this is much more performant.
+  //     fileCache: true
+  //   })
+  //     .fetch('GET', rtsp_url.split(' ')[1], {
+  //       //some headers ..
+  //     })
+  //     .then((res) => {
+  //       // the temp file path
+  //       console.log('The file saved to ', res.path());
+  //     });
+  // };
+
   return (
     <View>
       {/* Player */}
@@ -101,7 +119,8 @@ const MovieDetailScreen = ({
         >
           <MediaPlayer
             paused={paused}
-            source={rtsp_url.split(' ')[1]}
+            // source={rtsp_url.split(' ')[1]}
+            source={`${dirs.DocumentDir}/sample.mp4`}
             thumbnail={thumbnail}
             title={title}
             togglePlay={handleTogglePlay}

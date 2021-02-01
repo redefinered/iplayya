@@ -62,7 +62,10 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         </TouchableWithoutFeedback>
       </View>
       <View style={{ flex: 4 }}>
-        <TouchableWithoutFeedback style={{ alignItems: 'center' }}>
+        <TouchableWithoutFeedback
+          onPress={() => navigation.replace('ImovieDownloadsScreen')}
+          style={{ alignItems: 'center' }}
+        >
           <Icon name="download" size={40} style={{ color: downloadIconColor }} />
           <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Downloaded</Text>
         </TouchableWithoutFeedback>

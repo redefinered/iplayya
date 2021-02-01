@@ -6,6 +6,7 @@ import {
   getMoviesByCategories,
   addMovieToFavorites,
   getFavoriteMovies
+  // downloadMovie
 } from 'services/movies.service';
 
 export function* getMovieRequest(action) {
@@ -84,10 +85,30 @@ export function* getFavoriteMoviesRequest() {
   }
 }
 
+// export function* downloadMovieRequest(action) {
+//   const { id, title, url } = action.data;
+//   try {
+//     const task = yield call(downloadMovie, { title, url });
+//     task.cancel();
+
+//     // const res = yield task.progress({ count: 10 }, (received, total) => {
+//     //   console.log('progress', received / total);
+//     //   put(
+//     //     Creators.updateDownloadInfo({ id, status: 'downloading', title, progress: received, total })
+//     //   );
+//     // });
+//     // // yield put(Creators.updateDownloadInfo({ id, status: 'complete', filepath: res.path() }));
+//     // yield put(Creators.downloadMovieSuccess({ id, filepath: res.path() }));
+//   } catch (error) {
+//     yield put(Creators.downloadMovieFailure(error.message));
+//   }
+// }
+
 export default function* movieSagas() {
   yield takeLatest(Types.GET_MOVIE, getMovieRequest);
   yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
   yield takeLatest(Types.GET_MOVIES_BY_CATEGORIES, getMoviesByCategoriesRequest);
   yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
+  // yield takeLatest(Types.DOWNLOAD_MOVIE, downloadMovieRequest);
 }

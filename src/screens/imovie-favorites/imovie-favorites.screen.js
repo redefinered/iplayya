@@ -35,6 +35,8 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
       } else {
         setSelectedItems([item, ...selectedItems]);
       }
+    } else {
+      navigation.navigate('MovieDetailScreen', { videoId: item });
     }
   };
 
@@ -162,7 +164,7 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
         </ScrollView>
       );
     }
-    return <NoProviders theme={theme} navigation={navigation} />;
+    return <EmptyState theme={theme} navigation={navigation} />;
   };
 
   return (
@@ -173,7 +175,7 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
   );
 };
 
-const NoProviders = ({ theme, navigation }) => (
+const EmptyState = ({ theme, navigation }) => (
   <View
     style={{
       flex: 1,

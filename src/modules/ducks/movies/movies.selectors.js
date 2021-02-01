@@ -8,6 +8,15 @@ export const selectIsFetching = createSelector([moviesState], ({ isFetching }) =
 
 export const selectMovies = createSelector([moviesState], ({ movies }) => movies);
 export const selectMovie = createSelector([moviesState], ({ movie }) => movie);
+export const selectMovieUrl = createSelector([moviesState], ({ movie }) => {
+  if (!movie) return;
+  return movie.rtsp_url.split(' ')[1];
+});
+
+export const selectMovieTitle = createSelector([moviesState], ({ movie }) => {
+  if (!movie) return;
+  return movie.title;
+});
 
 export const selectFeatured = createSelector([moviesState], ({ movies }) => {
   if (!movies.length) return;
@@ -74,3 +83,8 @@ export const selectUpdatedFavoritesCheck = createSelector(
   [moviesState],
   ({ updatedFavorites }) => updatedFavorites
 );
+
+export const selectDownloads = createSelector([moviesState], ({ downloads }) => {
+  // console.log({ downloadInfo });
+  return downloads;
+});

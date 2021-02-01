@@ -37,7 +37,15 @@ const { Types, Creators } = createActions(
     addMovieToFavoritesStart: ['videoId'],
     addMovieToFavorites: ['videoId'],
     addMovieToFavoritesSuccess: [],
-    addMovieToFavoritesFailure: ['error']
+    addMovieToFavoritesFailure: ['error'],
+
+    // TODO: adds a movie to downloads page
+    downloadMovie: ['data'],
+
+    /**
+     * will have title, status, and progress property
+     */
+    updateDownloads: ['data']
   },
   { prefix: '@Movies/' }
 );
