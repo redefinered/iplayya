@@ -62,7 +62,7 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
     setSellectAll(!selectAll);
   };
 
-  console.log({ selectAll });
+  // console.log({ selectAll });
 
   const handleLongPress = (id) => {
     setSelectedItems([id]);

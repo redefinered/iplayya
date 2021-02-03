@@ -49,7 +49,9 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           style={{ alignItems: 'center' }}
         >
           <Icon name="heart-solid" size={40} style={{ color: heartIconColor }} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Favorites</Text>
+          <Text style={{ textTransform: 'uppercase', marginTop: 5, color: heartIconColor }}>
+            Favorites
+          </Text>
         </TouchableWithoutFeedback>
       </View>
       <View style={{ flex: 4 }}>
@@ -67,7 +69,9 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           style={{ alignItems: 'center' }}
         >
           <Icon name="download" size={40} style={{ color: downloadIconColor }} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Downloaded</Text>
+          <Text style={{ textTransform: 'uppercase', marginTop: 5, color: downloadIconColor }}>
+            Downloaded
+          </Text>
         </TouchableWithoutFeedback>
       </View>
     </View>

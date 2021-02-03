@@ -9,7 +9,8 @@ import {
   GET_CATEGORIES,
   GET_MOVIES_BY_CATEGORIES,
   ADD_MOVIE_TO_FAVORITES,
-  GET_FAVORITE_MOVIES
+  GET_FAVORITE_MOVIES,
+  GET_DOWNLOADS
 } from 'graphql/movies.graphql';
 
 export const getMovie = async (input) => {
@@ -65,6 +66,18 @@ export const getFavoriteMovies = async () => {
   try {
     const { data } = await client.query({
       query: GET_FAVORITE_MOVIES
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getDownloads = async (videoIds) => {
+  try {
+    const { data } = await client.query({
+      query: GET_DOWNLOADS,
+      variables: { input: { videoIds } }
     });
     return data;
   } catch (error) {

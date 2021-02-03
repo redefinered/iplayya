@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
+import { withTheme } from 'react-native-paper';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import Icon from 'components/icon/icon.component.js';
@@ -18,19 +19,23 @@ import IsportsScreen from 'screens/isports/isports.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 import SportChanelDetailScreen from 'screens/sport-chanel-detail/sport-chanel-detail.screen';
-
+import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-// import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectFavorites,
   selectMovieUrl,
-  selectMovieTitle
+  selectMovieTitle,
+  selectDownloads
 } from 'modules/ducks/movies/movies.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
+import DownloadButton from 'components/download-button/download-button.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { headerHeight } from 'common/values';
+
+let dirs = RNFetchBlob.fs.dirs;
 
 const Stack = createStackNavigator();
 
@@ -38,74 +43,91 @@ const Stack = createStackNavigator();
 const HomeStack = ({
   setBottomTabsVisibleAction,
   favorites,
-  // downloadMovieAction,
   movieUrl,
-  movieTitle
-}) => {
-  let dirs = RNFetchBlob.fs.dirs;
-  console.log({ dirs });
+  movieTitle,
+  updateDownloadsAction,
+  downloads,
 
-  const listDownloadedFiles = async () => {
+  // update downloads progress
+  updateDownloadsProgressAction
+}) => {
+  const [downloading, setDownloading] = React.useState(false);
+  const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
+
+  // eslint-disable-next-line no-unused-vars
+  const deleteFile = async (filename = null) => {
+    if (!filename) return;
+    await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
     const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
     console.log({ ls });
   };
 
   React.useEffect(() => {
-    listDownloadedFiles();
+    // does nothing if no specified filename, bitch!
+    // listDownloadedMovies();
+    deleteFile();
   }, []);
 
-  // eslint-disable-next-line no-unused-vars
-  const deleteFile = async () => {
-    await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/sample.mp4`);
-    const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
-    console.log({ ls });
+  const handleDownloadMovie = (video) => {
+    if (downloading) return;
+
+    // return if movie is already downloaded
+    if (isMovieDownloaded) {
+      console.log('already downloaded');
+      return;
+    }
+
+    // return if there is no available source to download
+    if (typeof video.url === 'undefined') {
+      console.log('no source');
+      return;
+    }
+
+    // set downloading state to true
+    setDownloading(true);
+
+    try {
+      const titlesplit = video.title.split(' ');
+      const title = titlesplit.join('_');
+      console.log(title);
+
+      const currentDownloads = downloads;
+      currentDownloads[`task_${video.videoId}`] = {
+        id: video.videoId,
+        task: RNFetchBlob.config({
+          // add this option that makes response data to be stored as a file,
+          // this is much more performant.
+          fileCache: true,
+          path: `${dirs.DocumentDir}/${video.videoId}_${title}.mp4`
+        })
+          .fetch('GET', video.url, {
+            //some headers ..
+          })
+          .progress({ count: 100 }, (received, total) => {
+            const progress = received / total;
+            updateDownloadsProgressAction({ id: video.videoId, received, total });
+            console.log('progress', progress);
+          })
+          .then((res) => {
+            // the temp file path
+            console.log('The file saved to ', res.path());
+
+            // set downloading state to false
+            setDownloading(false);
+          })
+          .catch((error) => {
+            // throw new Error(error.message);
+            console.log({ error });
+          }),
+        status: 'in-prgress'
+      };
+
+      // setDownloads(Object.assign(downloads, currentDownloads));
+      updateDownloadsAction(Object.assign(downloads, currentDownloads));
+    } catch (error) {
+      console.log(error.message);
+    }
   };
-
-  // let task = null;
-
-  const handleDownloadMovie = (id, title, url) => {
-    console.log({ id, title, url });
-    if (typeof url === 'undefined') return;
-    // downloadMovieAction({ id, title, url });
-  };
-
-  // const handleDownloadMovie = (movie) => {
-  //   setDownloading(true);
-  //   try {
-  //     task = RNFetchBlob.config({
-  //       // add this option that makes response data to be stored as a file,
-  //       // this is much more performant.
-  //       fileCache: true,
-  //       path: `${dirs.DocumentDir}/sample.mp4`
-  //     }).fetch(
-  //       'GET',
-  //       'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4',
-  //       {
-  //         //some headers ..
-  //       }
-  //     );
-
-  //     task
-  //       .progress({ count: 10 }, (received, total) => {
-  //         console.log('progress', received / total);
-  //       })
-  //       .then((res) => {
-  //         // the temp file path
-  //         console.log('The file saved to ', res.path());
-  //         setDownloading(false);
-  //       })
-  //       .catch((error) => {
-  //         throw new Error(error.message);
-  //       });
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
-  // eslint-disable-next-line no-unused-vars
-  // const cancelDownload = () => {
-  //   task.cancel();
-  // };
 
   return (
     <Stack.Navigator
@@ -203,26 +225,23 @@ const HomeStack = ({
           }
         }) => {
           const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+
           return {
-            title: null,
+            title: downloading ? 'downloading' : null,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
-                {/* <Pressable
-                  onPress={() => addMovieToFavoritesAction(videoId)}
-                  style={styles.headerButtonContainer}
-                >
-                  <Icon name="heart-solid" size={24} />
-                </Pressable> */}
                 <AddToFavoritesButton
                   videoId={parseInt(videoId)}
                   alreadyInFavorites={isInFavorites >= 0 ? true : false}
                 />
-                <Pressable
-                  onPress={() => handleDownloadMovie(videoId, movieTitle, movieUrl)}
-                  style={styles.headerButtonContainer}
-                >
-                  <Icon name="download" size={24} />
-                </Pressable>
+                <DownloadButton
+                  isMovieDownloaded={isMovieDownloaded}
+                  setIsMovieDownloaded={setIsMovieDownloaded}
+                  handleDownloadMovie={handleDownloadMovie}
+                  videoId={videoId}
+                  movieTitle={movieTitle}
+                  movieUrl={movieUrl}
+                />
               </View>
             )
           };
@@ -371,14 +390,16 @@ const styles = StyleSheet.create({
 });
 
 const actions = {
-  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
-  // downloadMovieAction: Creators.downloadMovie
+  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
+  updateDownloadsAction: MoviesActionCreators.updateDownloads,
+  updateDownloadsProgressAction: MoviesActionCreators.updateDownloadsProgress
 };
 
 const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   movieUrl: selectMovieUrl,
-  movieTitle: selectMovieTitle
+  movieTitle: selectMovieTitle,
+  downloads: selectDownloads
 });
 
-export default connect(mapStateToProps, actions)(HomeStack);
+export default compose(connect(mapStateToProps, actions), withTheme)(HomeStack);

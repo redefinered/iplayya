@@ -72,3 +72,18 @@ export const GET_FAVORITE_MOVIES = gql`
     }
   }
 `;
+
+export const GET_DOWNLOADS = gql`
+  query GET_DOWNLOADS($input: videoRequestByIds) {
+    videoByIds(input: $input) {
+      id
+      title
+      year
+      time
+      age_rating
+      rating_mpaa
+      category
+      thumbnail
+    }
+  }
+`;

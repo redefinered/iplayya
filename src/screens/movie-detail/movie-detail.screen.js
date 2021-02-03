@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Dimensions, Modal } from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
@@ -30,7 +29,6 @@ const MovieDetailScreen = ({
   route: {
     params: { videoId }
   },
-  playbackInfo,
   movie,
   theme,
   playbackStartAction,
@@ -40,8 +38,62 @@ const MovieDetailScreen = ({
   getFavoriteMoviesAction,
   addMovieToFavoritesStartAction
 }) => {
+  // console.log({ isDownloaded });
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
+  const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
+  const [source, setSource] = React.useState('');
+  const [downloadedFiles, setDownloadedFiles] = React.useState([]);
+
+  const listDownloadedFiles = async () => {
+    const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
+    setDownloadedFiles(ls);
+    // console.log({ ls });
+  };
+
+  React.useEffect(() => {
+    if (movie) {
+      const titlesplit = movie.title.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${videoId}_${title}.mp4`;
+      const file = downloadedFiles.find((file) => file === filename);
+      // set source
+      // setSource(movie.rtsp_url.split(' ')[1]);
+
+      // check if downloaded
+      if (downloadedFiles.length) {
+        if (typeof file !== 'undefined') {
+          setIsMoviedownloaded(true);
+        } else {
+          setIsMoviedownloaded(false);
+        }
+      }
+
+      // set source
+      if (isMovieDownloaded) {
+        if (typeof file !== 'undefined') {
+          setSource(`${dirs.DocumentDir}/${filename}`);
+        } else {
+          setSource(rtsp_url.split(' ')[1]);
+        }
+      }
+    }
+  }, [movie, downloadedFiles, isMovieDownloaded]);
+
+  React.useEffect(() => {
+    listDownloadedFiles();
+  }, []);
+
+  // // set source
+  // React.useEffect(() => {
+  //   const titlesplit = movie.title.split(' ');
+  //   const title = titlesplit.join('_');
+  //   const filename = `${videoId}_${title}.mp4`;
+  //   const file = downloadedFiles.find((file) => file === filename);
+
+  // }, [isMovieDownloaded]);
+
+  console.log({ isMovieDownloaded });
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -76,9 +128,7 @@ const MovieDetailScreen = ({
     title,
     year,
     description,
-    time,
     rating_mpaa,
-    age_rating,
     category,
     director,
     rtsp_url,
@@ -103,6 +153,26 @@ const MovieDetailScreen = ({
   //     });
   // };
 
+  // console.log({ source });
+
+  const renderPlayer = () => {
+    if (source) {
+      return (
+        <MediaPlayer
+          paused={paused}
+          // source={rtsp_url.split(' ')[1]}
+          // source={`${dirs.DocumentDir}/12_Angry_Men.mp4`}
+          source={source}
+          thumbnail={thumbnail}
+          title={title}
+          togglePlay={handleTogglePlay}
+          loading={loading}
+          setLoading={setLoading}
+        />
+      );
+    }
+  };
+
   return (
     <View>
       {/* Player */}
@@ -117,16 +187,7 @@ const MovieDetailScreen = ({
             alignItems: 'center'
           }}
         >
-          <MediaPlayer
-            paused={paused}
-            // source={rtsp_url.split(' ')[1]}
-            source={`${dirs.DocumentDir}/sample.mp4`}
-            thumbnail={thumbnail}
-            title={title}
-            togglePlay={handleTogglePlay}
-            loading={loading}
-            setLoading={setLoading}
-          />
+          {renderPlayer()}
         </Pressable>
         <ContentWrap>
           <Text

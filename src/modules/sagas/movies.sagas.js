@@ -5,8 +5,8 @@ import {
   getMovie,
   getMoviesByCategories,
   addMovieToFavorites,
-  getFavoriteMovies
-  // downloadMovie
+  getFavoriteMovies,
+  getDownloads
 } from 'services/movies.service';
 
 export function* getMovieRequest(action) {
@@ -85,6 +85,16 @@ export function* getFavoriteMoviesRequest() {
   }
 }
 
+export function* getDownloadsRequest(action) {
+  const { input } = action.data;
+  try {
+    const { videoByIds } = yield call(getDownloads, input);
+    yield put(Creators.getDownloadsSuccess(videoByIds));
+  } catch (error) {
+    yield put(Creators.getDownloadsFailure(error.message));
+  }
+}
+
 // export function* downloadMovieRequest(action) {
 //   const { id, title, url } = action.data;
 //   try {
@@ -110,5 +120,5 @@ export default function* movieSagas() {
   yield takeLatest(Types.GET_MOVIES_BY_CATEGORIES, getMoviesByCategoriesRequest);
   yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
-  // yield takeLatest(Types.DOWNLOAD_MOVIE, downloadMovieRequest);
+  yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
 }
