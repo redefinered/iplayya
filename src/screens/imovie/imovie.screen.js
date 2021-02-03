@@ -4,6 +4,7 @@ import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
+import Spacer from 'components/spacer.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
@@ -127,6 +128,7 @@ const ImovieScreen = ({
                 ))}
               </ScrollView>
             </View> */}
+            <Spacer size={100} />
           </ScrollView>
         </React.Fragment>
       ) : (

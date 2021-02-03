@@ -161,6 +161,7 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
               );
             }
           )}
+          <Spacer size={100} />
         </ScrollView>
       );
     }

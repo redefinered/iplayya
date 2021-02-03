@@ -43,7 +43,6 @@ export const GET_MOVIE = gql`
       is_favorite
       thumbnail
       cast
-      is_favorite
     }
   }
 `;

@@ -21,13 +21,13 @@ const DownloadItem = ({
 }) => {
   return (
     <ContentWrap>
-      <View
+      {/* <View
         style={{
           width: '100%',
           height: 1,
           backgroundColor: theme.iplayya.colors.vibrantpussy
         }}
-      />
+      /> */}
       <Pressable
         style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
         // onLongPress={() => handleLongPress(id)}

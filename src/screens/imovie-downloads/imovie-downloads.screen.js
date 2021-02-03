@@ -84,6 +84,7 @@ const ImovieDownloadsScreen = ({
               />
             );
           })}
+          <Spacer size={100} />
         </ScrollView>
       );
     return <EmptyState theme={theme} navigation={navigation} />;
