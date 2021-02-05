@@ -1,41 +1,77 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Pressable, View } from 'react-native';
+import { withTheme } from 'react-native-paper';
 import { Text } from 'react-native-paper';
 import Button from 'components/button/button.component';
 import Icon from 'components/icon/icon.component';
 
 import styles from './alert-modal.styles';
 
-const AlertModal = ({ visible, showAction, message, confirmText, variant }) => {
-  let iconName = '';
-  let color = '';
+const AlertModal = ({
+  theme,
+  visible,
+  confirmText,
+  confirmAction,
+  onCancel,
+  hideAction,
+  message,
+  variant,
+  ...otherProps
+}) => {
+  let { iconName, iconColor } = otherProps;
+
   switch (variant) {
     case 'success':
       iconName = 'success';
-      color = '#13BD38';
+      iconColor = '#13BD38';
       break;
     case 'danger':
       iconName = 'alert';
-      color = '#FF5050';
+      iconColor = '#FF5050';
+      break;
+    case 'confirmation':
+      iconName = 'unfavorite';
+      iconColor = '#FF5050';
+      break;
+    case null:
+      iconName = iconName || null;
+      iconColor = iconColor || null;
       break;
   }
   return (
     <Modal animationType="slide" visible={visible} transparent>
-      <Pressable onPress={() => showAction(false)} style={styles.container}>
+      <Pressable onPress={() => hideAction()} style={styles.container}>
         <View style={styles.contentWrap}>
           <View style={styles.content}>
             <View style={styles.iconWrap}>
-              <Icon name={iconName} size={50} style={{ color }} />
+              <Icon name={iconName} size={50} style={{ color: iconColor }} />
             </View>
             <View style={styles.textWrap}>
               <Text style={styles.text}>{message}</Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <Button labelStyle={styles.button} onPress={() => showAction(false)}>
-              {confirmText}
-            </Button>
+            {onCancel && (
+              <View style={{ flex: 12 }}>
+                <Button
+                  style={{ width: '100%', textAlign: 'center' }}
+                  labelStyle={{ ...styles.button, color: theme.iplayya.colors.black50 }}
+                  onPress={() => onCancel()}
+                >
+                  Cancel
+                </Button>
+              </View>
+            )}
+            <View style={{ flex: 12 }}>
+              <Button
+                style={{ width: '100%', textAlign: 'center' }}
+                labelStyle={styles.button}
+                onPress={() => confirmAction()}
+              >
+                {confirmText}
+              </Button>
+            </View>
           </View>
         </View>
       </Pressable>
@@ -44,16 +80,18 @@ const AlertModal = ({ visible, showAction, message, confirmText, variant }) => {
 };
 
 AlertModal.propTypes = {
+  theme: PropTypes.object,
   visible: PropTypes.bool.isRequired,
-  showAction: PropTypes.func.isRequired,
   confirmText: PropTypes.string,
+  confirmAction: PropTypes.func,
+  onCancel: PropTypes.func,
+  hideAction: PropTypes.func,
   message: PropTypes.string.isRequired,
   variant: PropTypes.string
 };
 
 AlertModal.defaultProps = {
-  variant: 'success',
   confirmText: 'Got it'
 };
 
-export default AlertModal;
+export default withTheme(AlertModal);

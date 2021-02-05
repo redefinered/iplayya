@@ -15,14 +15,19 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { selectCurrentUser, selectError } from 'modules/ducks/profile/profile.selectors';
+import {
+  selectProfile,
+  selectIsFetching,
+  selectError as selectProfileError
+} from 'modules/ducks/profile/profile.selectors';
 import {
   selectError as selectAuthError,
   selectIsFetching as selectAuthIsFetching
 } from 'modules/ducks/auth/auth.selectors';
+import { selectUpdated } from 'modules/ducks/user/user.selectors';
 
-import { View, Image, Pressable, StyleSheet } from 'react-native';
-import { selectIsFetching } from 'modules/ducks/profile/profile.selectors';
+import { View, Image, Pressable, StyleSheet, Dimensions } from 'react-native';
+import Button from 'components/button/button.component';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -36,34 +41,74 @@ const styles = StyleSheet.create({
 });
 
 const AccountScreen = ({
-  currentUser,
+  profile,
   signOutAction,
   getProfileAction,
-  error,
+  profileError,
+  isFetching,
   authError,
-  authIsFetching
+  authIsFetching,
+  currentUserId,
+  userUpdated,
+  purgeStoreAction
 }) => {
   const theme = useTheme();
 
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
+  const [profileErrorVisible, setProfileErrorVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (authError !== null) {
-      setModalVisible(true);
+      setAuthErrorVisible(true);
     }
-    if (error !== null) {
-      setModalVisible(true);
+    if (profileError !== null) {
+      setProfileErrorVisible(true);
     }
-  }, [authError, error]);
+  }, []);
 
-  // console.log({ currentUser });
+  // console.log({ profile });
   const navigation = useNavigation();
 
   React.useEffect(() => {
+    if (!profile) {
+      getProfileAction();
+      return;
+    }
+    // fixes an issue where previous user profile is being loaded from cache
+    if (currentUserId === profile.id) return;
     getProfileAction();
-  }, [currentUser]);
+  }, [currentUserId, profile]);
 
-  if (!currentUser) return <Text>Working...</Text>;
+  React.useEffect(() => {
+    if (userUpdated) {
+      getProfileAction();
+    }
+  }, [userUpdated]);
+
+  if (profileError)
+    return (
+      <View style={{ alignItems: 'center' }}>
+        <Text style={{ padding: 15 }}>{profileError}</Text>
+        <Button onPress={() => getProfileAction()}>Retry</Button>
+        <Button onPress={() => purgeStoreAction()}>Purge store</Button>
+      </View>
+    );
+
+  // console.log({ authError })
+
+  const handleRetry = () => {
+    setAuthErrorVisible(false);
+  };
+
+  const handleProfileErrorConfirmAction = () => {
+    setProfileErrorVisible(false);
+  };
+
+  const handleHideProfileAlert = () => {
+    setProfileErrorVisible(false);
+  };
+
+  if (isFetching || !profile) return <Text style={{ padding: 15 }}>Working...</Text>;
 
   return (
     <ContentWrap>
@@ -79,23 +124,29 @@ const AccountScreen = ({
               borderRadius: 42.5,
               resizeMode: 'contain'
             }}
-            source={require('images/placeholder.jpg')}
+            source={require('assets/placeholder.jpg')}
           />
         </View>
-        <View style={{ paddingLeft: 15 }}>
-          {/* {currentUser} */}
+        <View
+          style={{
+            paddingHorizontal: 15,
+            width: Dimensions.get('window').width - 100 // 100 is the 15 space left and 85 image width
+          }}
+        >
+          {/* {profile} */}
           <Text style={{ fontSize: 20, fontWeight: 'bold', lineHeight: 27, marginBottom: 2 }}>
-            {currentUser.name}
+            {profile.name}
           </Text>
           <Text
+            numberOfLines={1}
             style={{
               fontSize: 14,
               lineHeight: 19,
-              color: theme.iplayya.colors.white50,
-              marginBottom: 8
+              marginBottom: 8,
+              paddingRight: 15
             }}
           >
-            {currentUser.email}
+            {profile.email}
           </Text>
           <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
             <Text
@@ -134,7 +185,10 @@ const AccountScreen = ({
             <Text style={{ fontSize: 16, lineHeight: 22 }}>Change Password</Text>
           </View>
         </Pressable>
-        <Pressable style={styles.settingItem}>
+        <Pressable
+          style={styles.settingItem}
+          onPress={() => navigation.navigate('PlaybackSettings')}
+        >
           <View style={styles.iconContainer}>
             <Icon name="video-settings" size={24} />
           </View>
@@ -169,21 +223,24 @@ const AccountScreen = ({
           </View>
         </Pressable>
       </View>
-      {error || authError ? (
+      {profileError && (
+        <AlertModal
+          variant="danger"
+          message={profileError}
+          visible={profileErrorVisible}
+          hideAction={handleHideProfileAlert}
+          confirmText="Retry"
+          confirmAction={handleProfileErrorConfirmAction}
+        />
+      )}
+      {authError ? (
         <React.Fragment>
           <AlertModal
             variant="danger"
-            message={error}
-            showAction={setModalVisible}
-            visible={modalVisible}
-            confirmText="Retry"
-          />
-          <AlertModal
-            variant="danger"
             message={authError}
-            showAction={setModalVisible}
-            visible={modalVisible}
+            visible={authErrorVisible}
             confirmText="Retry"
+            confirmAction={handleRetry}
           />
         </React.Fragment>
       ) : null}
@@ -194,24 +251,26 @@ const AccountScreen = ({
 AccountScreen.propTypes = {
   signOutAction: PropTypes.func,
   getProfileAction: PropTypes.func,
-  currentUser: PropTypes.object
+  profile: PropTypes.object
 };
 
 const actions = {
-  getProfileAction: ProfileCreators.getProfile,
+  purgeStoreAction: Creators.purgeStore, // for testing
+  getProfileAction: ProfileCreators.get,
   signOutAction: Creators.signOut
 };
 
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching, // this is required when using withLoader HOC
   authIsFetching: selectAuthIsFetching,
-  currentUser: selectCurrentUser,
-  error: selectError,
-  authError: selectAuthError
+  profile: selectProfile,
+  profileError: selectProfileError,
+  authError: selectAuthError,
+  userUpdated: selectUpdated
 });
 
 export default compose(
-  withHeaderPush,
+  withHeaderPush(),
   connect(mapStateToProps, actions),
   withLoader
 )(AccountScreen);

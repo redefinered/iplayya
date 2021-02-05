@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
-import Logo from 'images/logo.svg';
+import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -15,7 +15,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectIsFetching, selectError } from 'modules/ducks/auth/auth.selectors';
+import { selectIsFetching, selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
 
 import withLoader from 'components/with-loader.component';
 import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
@@ -31,6 +31,10 @@ class SignInScreen extends React.Component {
     showPassword: false
   };
 
+  componentDidMount() {
+    this.props.signInStartAction();
+  }
+
   handleChangeText = (text, name) => {
     this.setState({ [name]: text });
   };
@@ -45,7 +49,7 @@ class SignInScreen extends React.Component {
     const { showPassword, isolatedInputs, username, password } = this.state;
     const { navigation } = this.props;
 
-    if (this.props.error) console.log({ errorxxx: this.props.error });
+    // if (this.props.error) console.log({ errorxxx: this.props.error });
 
     return (
       <KeyboardAvoidingView
@@ -56,12 +60,14 @@ class SignInScreen extends React.Component {
           <Logo />
         </View>
         <ContentWrap style={styles.form}>
+          {this.props.signedUp && <Text>Sign-up Success! Please sign in</Text>}
           <TextInput
             name="username"
             handleChangeText={this.handleChangeText}
             value={username}
             autoCapitalize="none"
             clearButtonMode="while-editing"
+            keyboardType="email-address"
             autoCompleteType="email"
             style={styles.textInput}
             placeholder="email"
@@ -100,7 +106,7 @@ class SignInScreen extends React.Component {
             Login
           </Button>
           <Pressable
-            onPress={() => console.log('ForgotPasswordScreen')}
+            onPress={() => navigation.navigate('ForgotPasswordScreen')}
             style={styles.forgotPassword}
           >
             <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
@@ -132,10 +138,12 @@ SignInScreen.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
-  error: selectError
+  error: selectError,
+  signedUp: selectSignedUp
 });
 
 const actions = {
+  signInStartAction: Creators.signInStart,
   signInAction: Creators.signIn
 };
 

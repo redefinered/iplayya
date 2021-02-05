@@ -3,12 +3,12 @@
 
 import React from 'react';
 
-import HomeIcon from 'images/tab-icons/home.svg';
-import HomeIconActive from 'images/tab-icons/home_active.svg';
-import AccountIcon from 'images/tab-icons/account.svg';
-import AccountIconActive from 'images/tab-icons/account_active.svg';
-import IptvIcon from 'images/tab-icons/iptv.svg';
-import IptvIconActive from 'images/tab-icons/iptv_active.svg';
+import HomeIcon from 'assets/tab-icons/home.svg';
+import HomeIconActive from 'assets/tab-icons/home_active.svg';
+import AccountIcon from 'assets/tab-icons/account.svg';
+import AccountIconActive from 'assets/tab-icons/account_active.svg';
+import IptvIcon from 'assets/tab-icons/iptv.svg';
+import IptvIconActive from 'assets/tab-icons/iptv_active.svg';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
@@ -29,8 +29,9 @@ const HomeTabs = ({ hideTabs }) => {
       tabBarOptions={{
         showLabel: false,
         tabStyle: {
-          backgroundColor: 'red',
-          marginHorizontal: 50
+          // backgroundColor: 'red',
+          // marginHorizontal: 50
+          flex: 4
         },
         style: {
           backgroundColor: 'transparent',

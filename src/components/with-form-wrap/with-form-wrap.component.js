@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import { KeyboardAvoidingView, ScrollView, StyleSheet, Platform } from 'react-native';
 import ScreenContainer from 'components/screen-container.component';
@@ -7,9 +9,10 @@ const styles = StyleSheet.create({
   container: { flex: 1 }
 });
 
-export default function withFormWrap(WrappedComponent, options = {}) {
+const withFormWrap = (options = {}) => (WrappedComponent) => {
   const { backgroundType, gradientTypeColors } = options;
-  const FormWrap = () => {
+  const formWrap = (props) => {
+    // console.log({ x: navigation });
     const headerHeight = useHeaderHeight();
     return (
       <ScreenContainer backgroundType={backgroundType} gradientTypeColors={gradientTypeColors}>
@@ -18,12 +21,14 @@ export default function withFormWrap(WrappedComponent, options = {}) {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
           <ScrollView style={{ paddingTop: headerHeight }}>
-            <WrappedComponent />
+            <WrappedComponent {...props} />
           </ScrollView>
         </KeyboardAvoidingView>
       </ScreenContainer>
     );
   };
 
-  return FormWrap;
-}
+  return formWrap;
+};
+
+export default withFormWrap;

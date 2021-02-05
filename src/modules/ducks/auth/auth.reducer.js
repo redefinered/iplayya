@@ -4,10 +4,17 @@ import { Types } from './auth.actions';
 const INITIAL_STATE = {
   error: null,
   isFetching: false,
-  isLoggedIn: false
+  isLoggedIn: false,
+  signedUp: false
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.REGISTER_START]: (state) => {
+    return {
+      ...state,
+      ...INITIAL_STATE
+    };
+  },
   [Types.REGISTER]: (state) => {
     return {
       ...state,
@@ -15,11 +22,35 @@ export default createReducer(INITIAL_STATE, {
       isFetching: true
     };
   },
+  [Types.REGISTER_SUCCESS]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      signedUp: true
+    };
+  },
+  [Types.REGISTER_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      error: action.error,
+      isFetching: false,
+      signedUp: false
+    };
+  },
+  [Types.SIGN_IN_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      isLoggedIn: false
+    };
+  },
   [Types.SIGN_IN]: (state) => {
     return {
       ...state,
       error: null,
-      isFetching: true
+      isFetching: true,
+      signedUp: false
     };
   },
   [Types.SIGN_IN_SUCCESS]: (state) => {
@@ -59,7 +90,7 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
-  [Types.PURGE_STORE]: (state) => {
+  [Types.RESET]: (state) => {
     return {
       ...state,
       ...INITIAL_STATE

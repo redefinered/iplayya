@@ -9,6 +9,11 @@ export default StyleSheet.create({
   icon: { color: '#FF5050' },
   textWrap: { flex: 1, justifyContent: 'center', paddingRight: 30 },
   text: { fontSize: 17, lineHeight: 20, color: theme.iplayya.colors.black70 },
-  buttonContainer: { paddingBottom: 20 },
+  buttonContainer: {
+    paddingBottom: 20,
+    paddingHorizontal: 40,
+    flexDirection: 'row'
+    // justifyContent: 'space-between'
+  },
   button: { fontSize: 17, fontWeight: '700' }
 });

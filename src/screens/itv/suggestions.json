@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "name": "Movie of the Week"
+    },
+    {
+      "id": "2",
+      "name": "Award-winning Movies"
+    },
+    {
+      "id": "3",
+      "name": "Hollywood Movies"
+    },
+    {
+      "id": "4",
+      "name": "Documentary Movies"
+    },
+    {
+      "id": "5",
+      "name": "Family Movies"
+    },
+    {
+      "id": "6",
+      "name": "Comedy Movies"
+    }
+  ]
+}

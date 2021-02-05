@@ -8,6 +8,7 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import AccountScreen from 'screens/account/account.screen';
 import ProfileScreen from 'screens/profile/profile.screen';
 import EditProfileScreen from 'screens/edit-profile/edit-profile.screen';
+import PlaybackSettings from 'screens/playback-settings/playback-settings.screen';
 import Icon from 'components/icon/icon.component';
 
 import { connect } from 'react-redux';
@@ -60,6 +61,15 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
       name="EditProfileScreen"
       component={EditProfileScreen}
       options={{ title: 'Edit Profile' }}
+    />
+    <Stack.Screen
+      name="PlaybackSettings"
+      component={PlaybackSettings}
+      options={{ title: 'Playback' }}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
     />
   </Stack.Navigator>
 );

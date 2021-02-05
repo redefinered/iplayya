@@ -1,11 +1,12 @@
 {
   "name": "iplayya",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha.0",
   "private": true,
   "scripts": {
     "android": "npx react-native run-android",
     "ios": "npx react-native run-ios --simulator='iPhone SE (2nd generation)'",
     "ios:iphone11": "npx react-native run-ios --simulator='iPhone 11'",
+    "ios:iphone11pro": "npx react-native run-ios --simulator='iPhone 11 Pro'",
     "ios:device": "npx react-native run-ios --device 'Red’s iPhone SE'",
     "start": "npx react-native start",
     "start:reset-cache": "yarn start --reset-cache",
@@ -13,12 +14,13 @@
     "start:mock-api": "./node_modules/.bin/json-server --watch db.json",
     "test": "jest",
     "lint": "eslint .",
-    "pod:install": "npx pod-install"
+    "pod:install": "npx pod-install",
+    "prerelease:alpha": "npm version prerelease --preid=alpha",
+    "prerelease:beta": "npm version prerelease --preid=beta"
   },
   "dependencies": {
     "@apollo/client": "^3.2.5",
-    "@react-native-async-storage/async-storage": "^1.13.1",
-    "@react-native-community/async-storage": "^1.12.0",
+    "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/slider": "^3.0.3",
     "@react-navigation/bottom-tabs": "^5.9.2",
@@ -29,8 +31,10 @@
     "appcenter-crashes": "^3.1.2",
     "axios": "^0.20.0",
     "graphql": "^15.4.0",
+    "moment": "^2.29.1",
     "react": "16.13.1",
     "react-native": "0.63.3",
+    "react-native-anchor-point": "https://github.com/redefinered/react-native-anchor-point.git",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-paper": "^4.2.0",
@@ -39,6 +43,7 @@
     "react-native-screens": "^2.11.0",
     "react-native-status-bar-height": "^2.5.0",
     "react-native-svg": "^12.1.0",
+    "react-native-tab-view": "^2.15.2",
     "react-native-vector-icons": "^7.1.0",
     "react-native-video": "^5.1.0-alpha8",
     "react-redux": "^7.2.1",
@@ -47,7 +52,9 @@
     "redux-persist": "^6.0.0",
     "redux-saga": "^1.1.3",
     "reduxsauce": "^1.2.0",
-    "reselect": "^4.0.0"
+    "reselect": "^4.0.0",
+    "rn-fetch-blob": "^0.12.0",
+    "rn-vertical-slider": "^2.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

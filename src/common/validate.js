@@ -10,6 +10,19 @@ export const isValidState = (value) => {
   );
 };
 
+// eslint-disable-next-line no-unused-vars
+export const isValidUsername = (value) => {
+  /**
+   * This regex generates error 'invalid regular expression'
+   * change to something else
+   */
+  // return checkRegularExpression(
+  //   /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+  //   value
+  // );
+  return true;
+};
+
 export const isValidZipCode = (value) => {
   return checkRegularExpression(/(^\d{5}$)|(^\d{5}-\d{4}$)/, value);
 };
@@ -25,11 +38,17 @@ export const isValidPhone = (value) => {
   return checkRegularExpression(/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/, value);
 };
 
+// eslint-disable-next-line no-unused-vars
 export const isValidWebsite = (value) => {
-  return checkRegularExpression(
-    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/, //eslint-disable-line
-    value
-  );
+  // return checkRegularExpression(
+  //   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/, //eslint-disable-line
+  //   value
+  // );
+
+  /**
+   * TODO: change regex so it checks valid IP for portal addresses
+   */
+  return true;
 };
 
 export const isValidExpirationDate = (value) => {

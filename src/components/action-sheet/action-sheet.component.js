@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Pressable, View } from 'react-native';
@@ -6,12 +8,25 @@ import Icon from 'components/icon/icon.component';
 
 import styles from './action-sheet.styles';
 
-const ActionSheet = ({ visible, showAction }) => {
+const ActionSheet = ({ visible, actions, hideAction }) => {
+  // console.log({actions})
   return (
     <Modal animationType="slide" visible={visible} transparent>
-      <Pressable style={styles.container} onPress={() => showAction(false)}>
+      <Pressable style={styles.container} onPress={() => hideAction()}>
         <View style={styles.contentWrap}>
-          <Pressable style={styles.itemContainer}>
+          {actions.map(({ key, icon, title, onPress, data }) => {
+            return (
+              <Pressable key={key} style={styles.itemContainer} onPress={() => onPress(data)}>
+                <View style={styles.iconContainer}>
+                  <Icon name={icon} style={styles.text} size={17} />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.text}>{title}</Text>
+                </View>
+              </Pressable>
+            );
+          })}
+          {/* <Pressable style={styles.itemContainer}>
             <View style={styles.iconContainer}>
               <Icon name="edit" style={styles.text} size={17} />
             </View>
@@ -26,7 +41,7 @@ const ActionSheet = ({ visible, showAction }) => {
             <View style={styles.textContainer}>
               <Text style={styles.text}>Delete</Text>
             </View>
-          </Pressable>
+          </Pressable> */}
         </View>
       </Pressable>
     </Modal>
@@ -35,7 +50,8 @@ const ActionSheet = ({ visible, showAction }) => {
 
 ActionSheet.propTypes = {
   visible: PropTypes.bool.isRequired,
-  showAction: PropTypes.func.isRequired
+  actions: PropTypes.array,
+  data: PropTypes.object
 };
 
 export default ActionSheet;

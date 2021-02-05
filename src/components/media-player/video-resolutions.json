@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "name": "4k",
+    "label": "4k"
+  },
+  {
+    "id": "2",
+    "name": "high",
+    "label": "High (HD)"
+  },
+  {
+    "id": "3",
+    "name": "medium",
+    "label": "Medium"
+  },
+  {
+    "id": "4",
+    "name": "low",
+    "label": "Low"
+  },
+  {
+    "id": "5",
+    "name": "auto",
+    "label": "Auto"
+  }
+]

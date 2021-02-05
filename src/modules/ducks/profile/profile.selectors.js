@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
 
-const selectProfile = (state) => state.profile;
+export const profileState = (state) => state.profile;
 
-export const selectCurrentUser = createSelector([selectProfile], ({ currentUser }) => {
-  return currentUser;
-});
+export const selectProfile = createSelector([profileState], ({ profile }) => profile);
 
-export const selectError = createSelector([selectProfile], ({ error }) => error);
+export const selectError = createSelector([profileState], ({ error }) => error);
 
-export const selectIsFetching = createSelector([selectProfile], ({ isFetching }) => isFetching);
+export const selectIsFetching = createSelector([profileState], ({ isFetching }) => isFetching);
+
+export const selectUpdated = createSelector([profileState], ({ updated }) => updated);

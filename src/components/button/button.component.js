@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { Button as RNPButton } from 'react-native-paper';
 
-const Button = ({ style, ...otherProps }) => (
-  <View style={{ minHeight: 64, justifyContent: 'flex-end', ...style }}>
+const Button = ({ children, style, ...otherProps }) => (
+  <View style={{ minHeight: 64, justifyContent: 'flex-end' }}>
     <RNPButton
       uppercase={false}
       labelStyle={{ fontWeight: 'bold' }}
-      style={{ paddingVertical: 10 }}
+      style={{ paddingVertical: 10, fontSize: 14, fontWeight: 19, ...style }}
       {...otherProps}
     >
-      {otherProps.children}
+      {children}
     </RNPButton>
   </View>
 );

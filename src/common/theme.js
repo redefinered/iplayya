@@ -51,8 +51,9 @@ export default {
   colors: {
     ...DefaultTheme.colors,
     primary: '#E34398',
-    accent: 'yellow',
-    text: 'white'
+    accent: '#E34398',
+    text: 'white',
+    disabled: 'rgba(255,255,255,0.10)' // white10
   },
   iplayya: {
     colors: {
@@ -70,6 +71,7 @@ export default {
       black70: 'rgba(13, 17, 29, 0.7)',
       black50: 'rgba(13, 17, 29, 0.5)',
       black25: 'rgba(13, 17, 29, 0.25)',
+      black10: 'rgba(13, 17, 29, 0.1)',
       white100: '#FFFFFF',
       white90: 'rgba(255,255,255,0.9)',
       white80: 'rgba(255,255,255,0.8)',
@@ -77,6 +79,11 @@ export default {
       white50: 'rgba(255,255,255,0.5)',
       white25: 'rgba(255,255,255,0.25)',
       white10: 'rgba(255,255,255,0.1)'
+    },
+    bodyp: {
+      fontSize: 14,
+      lineHeight: 19,
+      marginBottom: 15
     }
   }
 };

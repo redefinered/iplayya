@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -6,23 +7,65 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
+import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
 import HomeTabs from 'navigators/home-tabs.navigator';
+import IptvStack from 'navigators/iptv-stack.navigator';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/auth/auth.actions';
-import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
+import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
+import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
+import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
+import { selectProviders } from 'modules/ducks/provider/provider.selectors';
+import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
-// eslint-disable-next-line no-unused-vars
-const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStoreAction }) => {
+import { Linking } from 'react-native';
+
+import AsyncStorage from '@react-native-community/async-storage';
+import VerticalSlider from 'rn-vertical-slider';
+
+const App = ({
+  purgeStoreAction,
+  signOutAction,
+  isLoggedIn,
+  updatePasswordStartAction,
+  passwordUpdateParams,
+  providers,
+  skippedProviderAdd,
+  getProfileAction
+}) => {
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
 
-    // makes sure main tab navigation is always visible on application mount
-    setBottomTabsVisibleAction(true);
+    Linking.addEventListener('url', ({ url }) => {
+      let regex = /[?&]([^=#]+)=([^&#]*)/g,
+        params = {},
+        match;
+
+      while ((match = regex.exec(url))) {
+        params[match[1]] = match[2];
+      }
+
+      // set data required to reset password
+      updatePasswordStartAction({ params });
+    });
   }, []);
+
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      getProfileAction();
+    }
+  }, [isLoggedIn]);
+
+  if (passwordUpdateParams)
+    return (
+      <NavigationContainer>
+        <ResetPasswordStack />
+      </NavigationContainer>
+    );
 
   if (!isLoggedIn)
     return (
@@ -30,6 +73,16 @@ const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStore
         <OnboardingStack />
       </NavigationContainer>
     );
+
+  // if there is no provider show IPTV stack instead of home stack
+  if (typeof providers !== 'undefined') {
+    if (!providers.length && !skippedProviderAdd)
+      return (
+        <NavigationContainer>
+          <IptvStack />
+        </NavigationContainer>
+      );
+  }
 
   return (
     <NavigationContainer>
@@ -39,13 +92,17 @@ const App = ({ isLoggedIn, setBottomTabsVisibleAction, signOutAction, purgeStore
 };
 
 const mapStateToProps = createStructuredSelector({
-  isLoggedIn: selectIsLoggedIn
+  isLoggedIn: selectIsLoggedIn,
+  passwordUpdateParams: selectPasswordUpdateParams,
+  providers: selectProviders,
+  skippedProviderAdd: selectSkippedProviderAdd
 });
 
 const actions = {
-  purgeStoreAction: Creators.purgeStore, // for development and debugging
-  signOutAction: Creators.signOut,
-  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
+  purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
+  signOutAction: AuthActionCreators.signOut,
+  updatePasswordStartAction: PasswordActionCreators.updateStart,
+  getProfileAction: ProfileCreators.get
 };
 
 export default connect(mapStateToProps, actions)(App);

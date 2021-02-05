@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import MinistraThumbnail from 'images/providers/ministra.svg';
+import MinistraThumbnail from 'assets/providers/ministra.svg';
 
 import styles from './iptv-item.styles';
 
@@ -15,16 +16,20 @@ const IptvItem = ({
     roundness,
     iplayya: { colors }
   },
-  showActions
+  onSelect,
+  onActionPress,
+  id
 }) => (
-  <View style={{ backgroundColor: colors.white10, borderRadius: roundness, ...styles.container }}>
+  <Pressable
+    onPress={() => onSelect(id)}
+    style={{ backgroundColor: colors.white10, borderRadius: roundness, ...styles.container }}
+  >
     {thumbnail && (
       <View style={{ flex: 2, alignItems: 'center' }}>
         <MinistraThumbnail />
       </View>
     )}
-    <Pressable
-      onPress={() => console.log('select provider')}
+    <View
       style={{
         flex: thumbnail ? 11 : 9,
         paddingHorizontal: thumbnail ? 10 : 0,
@@ -36,13 +41,13 @@ const IptvItem = ({
       <Text
         style={{ color: colors.white50, ...styles.username }}
       >{`Logged in as ${username}`}</Text>
-    </Pressable>
+    </View>
     <View style={styles.iconContainer}>
-      <Pressable onPress={() => showActions(true)} style={styles.icon}>
+      <Pressable onPress={() => onActionPress(id)} style={styles.icon}>
         <Icon name="more" size={24} />
       </Pressable>
     </View>
-  </View>
+  </Pressable>
 );
 
 IptvItem.propTypes = {
@@ -50,7 +55,8 @@ IptvItem.propTypes = {
   username: PropTypes.string,
   thumbnail: PropTypes.string, // an svg component that is imported
   theme: PropTypes.object,
-  showActions: PropTypes.func
+  showActions: PropTypes.func,
+  onSelect: PropTypes.func
 };
 
 export default withTheme(IptvItem);

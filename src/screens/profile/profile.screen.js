@@ -5,15 +5,20 @@ import ContentWrap from 'components/content-wrap.component';
 import { View, Image, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { Title, Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-// import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { selectCurrentUser } from 'modules/ducks/profile/profile.selectors';
+import { Creators } from 'modules/ducks/profile/profile.actions';
+import {
+  selectProfile,
+  selectUpdated,
+  selectError,
+  selectIsFetching
+} from 'modules/ducks/profile/profile.selectors';
 import { createStructuredSelector } from 'reselect';
-
+import SnackBar from 'components/snackbar/snackbar.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
 import { StyleSheet } from 'react-native';
 import { headerHeight } from 'common/values';
 
@@ -30,12 +35,17 @@ const styles = StyleSheet.create({
 });
 
 const ProfileScreen = ({
-  currentUser,
+  startAction,
+  profile,
+  getProfileAction,
   theme: {
     iplayya: { colors }
-  }
+  },
+  updated,
+  error
 }) => {
-  const { name, username, ...otherFields } = currentUser;
+  const { name, username, ...otherFields } = profile;
+  const [showSnackBar, setShowSnackbar] = React.useState(false);
 
   const fields = [
     { key: 'email', icon: 'email' },
@@ -44,18 +54,39 @@ const ProfileScreen = ({
     { key: 'gender', icon: 'account' }
   ];
 
-  console.log({ currentUser, x: username.length });
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowSnackbar(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (updated) {
+      // show snackbar after update
+      setShowSnackbar(true);
+
+      // get updated profile
+      getProfileAction();
+
+      // reset state
+      startAction();
+
+      // hide snackbar in 3 seconds
+      hideSnackBar();
+    }
+  }, [updated]);
+
   return (
     <LinearGradient style={{ flex: 1 }} colors={['#2D1449', '#0D0637']}>
       <ImageBackground
         blurRadius={50}
-        source={require('images/placeholder.jpg')}
+        source={require('assets/placeholder.jpg')}
         style={{ paddingTop: headerHeight + 10 }}
       >
         <View style={styles.headerContainer}>
           <View style={{ width: 140, marginBottom: 17 }}>
             <Image
-              source={require('images/placeholder.jpg')}
+              source={require('assets/placeholder.jpg')}
               style={{
                 width: 140,
                 height: 140,
@@ -88,25 +119,45 @@ const ProfileScreen = ({
       <ScrollView>
         <ContentWrap style={{ paddingTop: 20 }}>
           {fields.map(({ key, icon }) => {
-            if (otherFields[key]) {
-              return (
-                <Pressable key={key} style={styles.settingItem}>
-                  <View style={styles.iconContainer}>
-                    <Icon name={icon} size={24} />
-                  </View>
-                  <View>
-                    <Text style={{ fontSize: 16, lineHeight: 22 }}>{otherFields[key]}</Text>
-                  </View>
-                </Pressable>
-              );
-            }
+            return (
+              <Pressable key={key} style={styles.settingItem}>
+                <View style={styles.iconContainer}>
+                  <Icon name={icon} size={24} />
+                </View>
+                <View>
+                  <Text style={{ fontSize: 16, lineHeight: 22 }}>
+                    {otherFields[key] ? otherFields[key] : 'N/S'}
+                  </Text>
+                </View>
+              </Pressable>
+            );
           })}
         </ContentWrap>
       </ScrollView>
+      <SnackBar visible={showSnackBar} message="Changes saved successfully" />
+      {error && (
+        <AlertModal
+          visible={error ? true : false}
+          message={error}
+          confirmText="Retry"
+          variant="danger"
+          confirmAction={() => getProfileAction()}
+        />
+      )}
     </LinearGradient>
   );
 };
 
-const mapStateToProps = createStructuredSelector({ currentUser: selectCurrentUser });
+const actions = {
+  getProfileAction: Creators.get,
+  startAction: Creators.start
+};
 
-export default compose(withTheme, connect(mapStateToProps))(ProfileScreen);
+const mapStateToProps = createStructuredSelector({
+  error: selectError,
+  isFetching: selectIsFetching,
+  profile: selectProfile,
+  updated: selectUpdated
+});
+
+export default compose(withTheme, connect(mapStateToProps, actions))(ProfileScreen);

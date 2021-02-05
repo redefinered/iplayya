@@ -2,10 +2,15 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    getProfile: [],
-    getProfileSuccess: ['data'],
-    getProfileFailure: ['error'],
-    removeCurrentUser: []
+    start: [],
+    get: [],
+    getSuccess: ['data'],
+    getFailure: ['error'],
+    updateStart: [],
+    update: ['data'],
+    updateSuccess: ['data'],
+    updateFailure: ['error'],
+    removeProfile: []
   },
   { prefix: '@Profile/' }
 );

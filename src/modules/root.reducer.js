@@ -3,9 +3,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
+import userReducer from './ducks/user/user.reducer';
+import passwordReducer from './ducks/password/password.reducer';
+import itvReducer from './ducks/itv/itv.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
-import iptvReducer from './ducks/iptv/iptv.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
+import radiosReducer from './ducks/radios/radios.reducer';
+import providerReducer from './ducks/provider/provider.reducer';
 
 export const persistConfig = {
   key: 'primary',
@@ -15,15 +19,20 @@ export const persistConfig = {
 const rootReducer = persistCombineReducers(persistConfig, {
   nav: navReducer,
   auth: authReducer,
-  iptv: iptvReducer,
+  user: userReducer,
+  password: passwordReducer,
+  itv: itvReducer,
   profile: profileReducer,
-  movies: moviesReducer
+  movies: moviesReducer,
+  radios: radiosReducer,
+  provider: providerReducer
 });
 
 export default (state, action) => {
-  if (action.type === 'PURGE_STORE') {
+  if (action.type === '@Auth/PURGE_STORE') {
     console.log('store purged!');
     AsyncStorage.removeItem('persist:primary');
+    AsyncStorage.removeItem('access_token');
     state = undefined;
   }
 

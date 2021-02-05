@@ -34,7 +34,7 @@ const ScreenContainer = ({
             height: Dimensions.get('window').height
           }}
           style={{ width: Dimensions.get('window').width, height: Dimensions.get('window').height }}
-          source={require('images/Home_BG.png')}
+          source={require('assets/Home_BG.png')}
         >
           <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
         </ImageBackground>

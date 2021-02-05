@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
+
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -6,7 +8,7 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import SignInScreen from 'screens/sign-in/sign-in.screen';
 import SignUpScreen from 'screens/sign-up/sign-up.screen';
 import ForgotPasswordScreen from 'screens/forgot-password/forgot-password.screen';
-import ResetPasswordScreen from 'screens/reset-password/reset-password.screen';
+import EmailSuccessScreen from 'screens/email-success/email-success.screen';
 import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
@@ -50,9 +52,9 @@ const OnboardingStack = () => {
         options={{ title: 'Forgot Password' }}
       />
       <Stack.Screen
-        name="ResetPasswordScreen"
-        component={ResetPasswordScreen}
-        options={{ title: 'Reset Password' }}
+        name="EmailSuccessScreen"
+        component={EmailSuccessScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

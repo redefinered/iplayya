@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Text } from 'react-native-paper';
 import fontsMap from './fonts-map';
 
-const Icon = ({ name, size: fontSize, style, ...otherProps }) => (
-  <Text style={{ fontFamily: 'iplayyaicons', fontSize, ...style }} {...otherProps}>
+const Icon = ({ name, size: fontSize, color, style, ...otherProps }) => (
+  <Text style={{ fontFamily: 'iplayyaicons', fontSize, color, ...style }} {...otherProps}>
     {fontsMap[name]}
   </Text>
 );
@@ -12,7 +12,12 @@ const Icon = ({ name, size: fontSize, style, ...otherProps }) => (
 Icon.propTypes = {
   name: PropTypes.string.isRequired,
   size: PropTypes.number,
+  color: PropTypes.string,
   style: PropTypes.object
+};
+
+Icon.defaultProps = {
+  color: '#FFFFFF'
 };
 
 export default Icon;

@@ -2,9 +2,13 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    registerStart: [],
     register: ['data'],
+    registerSuccess: [],
+    registerFailure: ['error'],
+    signInStart: [],
     signIn: ['data'],
-    signInSuccess: [],
+    signInSuccess: ['data'],
     signInFailure: ['error'],
     signOut: [],
     signOutSuccess: [],
@@ -12,6 +16,8 @@ const { Types, Creators } = createActions(
     getProfile: [],
     getProfileSuccess: ['data'],
     getProfileFailure: ['error'],
+    clearResetPasswordParams: [],
+    reset: [],
     purgeStore: [] // for development
   },
   { prefix: '@Auth/' }
