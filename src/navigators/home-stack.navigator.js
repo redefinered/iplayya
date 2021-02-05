@@ -9,6 +9,8 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import Icon from 'components/icon/icon.component.js';
 
 import HomeScreen from 'screens/home/home.screen';
+import ItvScreen from 'screens/itv/itv.screen';
+import ItvSearchScreen from 'screens/itv/itv-search.screen';
 import ImovieScreen from 'screens/imovie/imovie.screen';
 import ImovieFavoritesScreen from 'screens/imovie-favorites/imovie-favorites.screen';
 import ImovieDownloadsScreen from 'screens/imovie-downloads/imovie-downloads.screen';
@@ -154,6 +156,47 @@ const HomeStack = ({
           title: 'iPlayya',
           animationEnabled: false
         }}
+      />
+      <Stack.Screen
+        name="ItvScreen"
+        component={ItvScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={({ navigation }) => ({
+          title: 'iTV',
+          animationEnabled: false,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable
+                style={styles.headerButtonContainer}
+                onPress={() => navigation.navigate('ItvSearchScreen')}
+              >
+                <Icon name="search" size={24} />
+              </Pressable>
+            </View>
+          )
+        })}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="ItvSearchScreen"
+        component={ItvSearchScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={({ navigation }) => ({
+          title: 'Search',
+          headerLeft: null, // hide back button
+          // animationEnabled: false,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable style={styles.headerButtonContainer} onPress={() => navigation.goBack()}>
+                <Icon name="close" size={24} />
+              </Pressable>
+            </View>
+          ),
+          ...TransitionPresets.ModalSlideFromBottomIOS
+        })}
       />
       <Stack.Screen
         name="ImovieScreen"

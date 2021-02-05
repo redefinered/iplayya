@@ -12,19 +12,18 @@ import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withLoader from 'components/with-loader.component';
+import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+// import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
-import { selectMovies } from 'modules/ducks/movies/movies.selectors';
 import {
   selectError,
   selectIsFetching,
   selectPaginatorInfo
-} from 'modules/ducks/movies/movies.selectors';
+} from 'modules/ducks/itv/itv.selectors';
 
 import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
@@ -89,23 +88,23 @@ const dummydata = [
 const categories = [
   {
     id: '1',
-    label: 'All Sports',
+    label: 'All Channels',
     name: 'all'
   },
   {
     id: '2',
-    label: 'Football',
-    name: 'football'
+    label: 'UK Sports Box Office',
+    name: 'uk-sports'
   },
   {
     id: '3',
-    label: 'Baseball',
-    name: 'baseball'
+    label: 'UK HD',
+    name: 'uk-hd'
   },
   {
     id: '4',
-    label: 'Basketball',
-    name: 'basketball'
+    label: 'NBA TV',
+    name: 'nba-tv'
   }
 ];
 
@@ -143,7 +142,7 @@ const favorites = [
   }
 ];
 
-const IsportsScreen = ({ navigation, error, ...otherprops }) => {
+const ItvScreen = ({ navigation, error, ...otherprops }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('1');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
@@ -206,7 +205,7 @@ const IsportsScreen = ({ navigation, error, ...otherprops }) => {
             <View style={{ marginBottom: 30 }}>
               <ContentWrap>
                 <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                  Featured Live Sports
+                  Featured TV Channels
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
@@ -295,17 +294,17 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  movies: selectMovies,
+  // movies: selectMovies,
   paginatorInfo: selectPaginatorInfo
 });
 
 const actions = {
-  getMoviesAction: MoviesActionCreators.getMovies,
+  // getMoviesAction: MoviesActionCreators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
 };
 
 export default compose(
   withHeaderPush({ backgroundType: 'solid' }),
-  connect(mapStateToProps, actions)
-  // withLoader
-)(IsportsScreen);
+  connect(mapStateToProps, actions),
+  withLoader
+)(ItvScreen);

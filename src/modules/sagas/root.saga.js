@@ -4,14 +4,16 @@ import userSagas from './user.sagas';
 import passwordSagas from './password.sagas';
 import profileSagas from './profile.sagas';
 import providerSagas from './provider.sagas';
-import movieSagas from './movies.sagas';
+import moviesSagas from './movies.sagas';
+import radiosSagas from './radios.sagas';
 
 export default function* rootSaga() {
   yield all([
     fork(authSagas),
     fork(userSagas),
     fork(passwordSagas),
-    fork(movieSagas),
+    fork(moviesSagas),
+    fork(radiosSagas),
     fork(profileSagas),
     fork(providerSagas)
   ]);

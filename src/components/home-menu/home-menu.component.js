@@ -13,7 +13,7 @@ import Isports from 'assets/btn_isports.svg';
 const HomeMenu = ({ navigation }) => {
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
-      <Pressable style={styles.menuitem}>
+      <Pressable style={styles.menuitem} onPress={() => navigation.replace('ItvScreen')}>
         <View style={styles.iconwrap}>
           <Itv />
         </View>

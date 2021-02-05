@@ -50,6 +50,11 @@ const ImovieDownloadsScreen = ({
     const input = Object.keys(downloadsProgress).map((key) => parseInt(key));
     // console.log({ input });
     getSavedVideos();
+
+    /// TO FIX: if the downloadsProgress resets the downloads data is not going to be set
+    // so the downloads screen is going to be empty even if the downloads are actually still
+    // in the phone storage. Refactor so the downloads list is based on the files in storage
+    // instead of the downloadsProgress array in state
     getDownloadsAction({ input });
   }, []);
 

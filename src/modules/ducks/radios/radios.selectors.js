@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-export const radioState = (state) => state.radio;
+export const radioState = (state) => state.radios;
 
 export const selectError = createSelector([radioState], ({ error }) => error);
 
@@ -10,6 +10,8 @@ export const selectRadioStations = createSelector(
   [radioState],
   ({ radioStations }) => radioStations
 );
+
+export const selectFavorites = createSelector([radioState], ({ favorites }) => favorites);
 
 export const selectFeatured = createSelector([radioState], ({ radioStations }) => {
   if (!radioStations.length) return;
@@ -32,3 +34,13 @@ export const selectCurrentTime = createSelector([radioState], ({ playbackInfo })
   if (!playbackInfo) return;
   return Math.floor(playbackInfo.currentTime);
 });
+
+export const selectAddedToFavorites = createSelector(
+  [radioState],
+  ({ addedToFavorites }) => addedToFavorites
+);
+
+export const selectRemovedFromFavorites = createSelector(
+  [radioState],
+  ({ removedFromFavorites }) => removedFromFavorites
+);
