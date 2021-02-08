@@ -122,7 +122,8 @@ FavoritesTab.propTypes = {
   paginatorInfo: PropTypes.object,
   removedFromFavorites: PropTypes.string,
   getFavorites: PropTypes.func,
-  removeFromFavoritesAction: PropTypes.func
+  removeFromFavoritesAction: PropTypes.func,
+  getFavoritesAction: PropTypes.func
 };
 
 const mapStateToProps = createStructuredSelector({
