@@ -5,6 +5,7 @@ import { Text, useTheme } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 
 const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
+  // console.log({ data });
   return (
     <ScrollView horizontal style={{ paddingHorizontal: 15, marginVertical: 20 }}>
       {data.map((d) => {
@@ -63,7 +64,7 @@ Pill.propTypes = {
 };
 
 Pill.defaultProps = {
-  selected: '1'
+  selected: 'all'
 };
 
 export default SelectorPills;

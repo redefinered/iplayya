@@ -17,119 +17,18 @@ import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-// import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectPaginatorInfo
+  selectPaginatorInfo,
+  selectGenres,
+  selectChannels
 } from 'modules/ducks/itv/itv.selectors';
 
 import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
-
-const dummydata = [
-  {
-    id: 1,
-    title: 'Movie Number One',
-    chanel: 'Nickolodeon',
-    date: 'Sep 27, 2020',
-    time: '09:00 AM - 11:00 AM',
-    thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Movie Number One')}`
-  },
-  {
-    id: 2,
-    title: 'Another Sample Movie',
-    chanel: 'Nickolodeon',
-    date: 'Sep 27, 2020',
-    time: '09:00 AM - 11:00 AM',
-    thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle(
-      'Another Sample Movie'
-    )}`
-  },
-  {
-    id: 3,
-    title: 'Lorem Ipsum Reloaded',
-    chanel: 'Nickolodeon',
-    date: 'Sep 27, 2020',
-    time: '09:00 AM - 11:00 AM',
-    thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle(
-      'Lorem Ipsum Reloaded'
-    )}`
-  },
-  {
-    id: 4,
-    title: 'The Dark Example',
-    chanel: 'Nickolodeon',
-    date: 'Sep 27, 2020',
-    time: '09:00 AM - 11:00 AM',
-    thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('The Dark Example')}`
-  },
-  {
-    id: 5,
-    title: 'John Weak 5',
-    chanel: 'Nickolodeon',
-    date: 'Sep 27, 2020',
-    time: '09:00 AM - 11:00 AM',
-    thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('John Weak 5')}`
-  },
-  {
-    id: 6,
-    title: 'The Past and The Furriest 8',
-    chanel: 'Nickolodeon',
-    date: 'Sep 27, 2020',
-    time: '09:00 AM - 11:00 AM',
-    thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle(
-      'The Past and The Furriest 8'
-    )}`
-  }
-];
-
-const categories = [
-  {
-    id: '1',
-    label: 'All Channels',
-    name: 'all'
-  },
-  {
-    id: '2',
-    label: 'UK Sports Box Office',
-    name: 'uk-sports'
-  },
-  {
-    id: '3',
-    label: 'UK HD',
-    name: 'uk-hd'
-  },
-  {
-    id: '4',
-    label: 'NBA TV',
-    name: 'nba-tv'
-  }
-];
-
-// const dates = [
-//   {
-//     id: '1',
-//     label: 'All Sports',
-//     name: 'all'
-//   },
-//   {
-//     id: '2',
-//     label: 'Football',
-//     name: 'football'
-//   },
-//   {
-//     id: '3',
-//     label: 'Baseball',
-//     name: 'baseball'
-//   },
-//   {
-//     id: '4',
-//     label: 'Basketball',
-//     name: 'basketball'
-//   }
-// ];
 
 const favorites = [
   {
@@ -142,15 +41,56 @@ const favorites = [
   }
 ];
 
-const ItvScreen = ({ navigation, error, ...otherprops }) => {
-  const [selectedCategory, setSelectedCategory] = React.useState('1');
+const ItvScreen = ({
+  navigation,
+  error,
+  genres,
+  channels,
+  getGenresAction,
+  getChannelsAction,
+  paginatorInfo,
+  setPaginatorInfoAction,
+  getChannelsByCategoriesAction
+}) => {
+  const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
-  // eslint-disable-next-line no-unused-vars
-  const [data, setData] = React.useState([]);
-  let { movies } = otherprops;
+  const [genresData, setGenresData] = React.useState([]);
+  const [channelsData, setChannelsData] = React.useState([]);
 
-  movies = data.length ? data : dummydata;
+  // get genres on mount
+  React.useEffect(() => {
+    setPaginatorInfoAction({ limit: 10, pageNumber: 1 }); // for debugging
+    getGenresAction();
+  }, []);
+
+  // setup genres data
+  React.useEffect(() => {
+    if (genres.length) {
+      let data = genres.map(({ id, title }) => ({ id, title }));
+      data.unshift({ id: 'all', title: 'All channels' });
+      setGenresData(data);
+
+      // fetch data from all channels initially
+      // getChannelsAction({ ...paginatorInfo });
+    }
+  }, [genres]);
+
+  // setup channels data
+  React.useEffect(() => {
+    if (channels.length) {
+      let data = channels.map(({ id, title }) => ({
+        id,
+        title,
+        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
+      }));
+      setChannelsData(data);
+    }
+  }, [channels]);
+
+  // const handleCategorySelect = (categoryId) => {
+  //   getChannelsAction;
+  // };
 
   /**
    * TODO: This is temporary, make it so this function calls to addChannelToFavorites
@@ -175,28 +115,37 @@ const ItvScreen = ({ navigation, error, ...otherprops }) => {
     <Text>{error}</Text>;
   }
 
-  /**
-   * TEMPORARY FEATURED ITEMS
-   * change to featured category when API is ready
-   */
-  const featuredItems = movies.slice(0, 5);
-
   const handleItemSelect = (videoId) => {
     // navigate to chanel details screen with `id` parameter
     navigation.navigate('SportChanelDetailScreen', { videoId });
   };
 
   const onCategorySelect = (id) => {
+    // when changing category, reset the pagination info
+    setPaginatorInfoAction({ limit: 10, pageNumber: 1 });
+
+    // set the selected category in state
     setSelectedCategory(id);
   };
 
+  React.useEffect(() => {
+    if (selectedCategory === 'all') {
+      getChannelsAction({ ...paginatorInfo });
+    } else {
+      getChannelsByCategoriesAction({ ...paginatorInfo, categories: [parseInt(selectedCategory)] });
+    }
+  }, [selectedCategory]);
+
+  console.log({ channels });
+
   return (
     <View style={styles.container}>
-      {movies.length ? (
+      {channelsData.length ? (
         <React.Fragment>
           <ScrollView>
             <SelectorPills
-              data={categories}
+              data={genresData}
+              labelkey="title"
               onSelect={onCategorySelect}
               selected={selectedCategory}
             />
@@ -209,14 +158,14 @@ const ItvScreen = ({ navigation, error, ...otherprops }) => {
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, ...itemProps }) => (
+                {channelsData.map(({ id, ...itemProps }) => (
                   <ItemPreview onSelect={handleItemSelect} key={id} {...itemProps} />
                 ))}
               </ScrollView>
             </View>
 
             <View>
-              {featuredItems.map(({ id, ...itemProps }) => (
+              {channelsData.map(({ id, ...itemProps }) => (
                 <ListItemChanel
                   key={id}
                   id={id}
@@ -294,13 +243,17 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  // movies: selectMovies,
-  paginatorInfo: selectPaginatorInfo
+  genres: selectGenres,
+  paginatorInfo: selectPaginatorInfo,
+  channels: selectChannels
 });
 
 const actions = {
-  // getMoviesAction: MoviesActionCreators.getMovies,
-  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
+  getGenresAction: Creators.getGenres,
+  getChannelsAction: Creators.getChannels,
+  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
+  setPaginatorInfoAction: Creators.setPaginatorInfo,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories
 };
 
 export default compose(

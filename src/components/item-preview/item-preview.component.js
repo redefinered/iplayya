@@ -4,13 +4,9 @@ import { Text, useTheme } from 'react-native-paper';
 import { Pressable, StyleSheet, Image, View } from 'react-native';
 import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
-import { createFontFormat, urlEncodeTitle } from 'utils';
+import { createFontFormat } from 'utils';
 
 const ItemPreview = ({ id, title, chanel, date, thumbnail, onSelect, variant }) => {
-  let url =
-    thumbnail !== '' || thumbnail !== 'N/A'
-      ? thumbnail
-      : `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`;
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   const [isNotificationActive, setIsNotificationActive] = React.useState(true);
@@ -22,7 +18,7 @@ const ItemPreview = ({ id, title, chanel, date, thumbnail, onSelect, variant }) 
     );
   return (
     <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
-      <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={{ url }} />
+      <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={{ url: thumbnail }} />
       <Spacer size={15} />
       <View
         style={{
@@ -41,8 +37,8 @@ const ItemPreview = ({ id, title, chanel, date, thumbnail, onSelect, variant }) 
           />
         </Pressable>
       </View>
-      <Text style={styles.chanelName}>{chanel}</Text>
-      <Text style={styles.date}>{date}</Text>
+      {/* <Text style={styles.chanelName}>{chanel}</Text> */}
+      {/* <Text style={styles.date}>{date}</Text> */}
     </Pressable>
   );
 };

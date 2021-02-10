@@ -25,6 +25,7 @@ import { Linking } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import VerticalSlider from 'rn-vertical-slider';
+import { Creators } from 'modules/ducks/itv/itv.actions';
 
 const App = ({
   purgeStoreAction,
@@ -34,11 +35,13 @@ const App = ({
   passwordUpdateParams,
   providers,
   skippedProviderAdd,
-  getProfileAction
+  getProfileAction,
+  resetAction
 }) => {
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
+    // resetAction();
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
@@ -102,7 +105,8 @@ const actions = {
   purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
-  getProfileAction: ProfileCreators.get
+  getProfileAction: ProfileCreators.get,
+  resetAction: Creators.reset
 };
 
 export default connect(mapStateToProps, actions)(App);

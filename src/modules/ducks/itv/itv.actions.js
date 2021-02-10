@@ -2,9 +2,23 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    getChannels: ['paginatorInfo'],
+    /// query: GET_GENRES
+    getGenres: [],
+    getGenresSuccess: ['data'],
+    getGenresFailure: ['error'],
+
+    /// get channels
+    getChannels: ['input'],
     getChannelsSuccess: ['data'],
-    getChannelsFailure: ['error']
+    getChannelsFailure: ['error'],
+
+    getChannelsByCategories: ['input'],
+    getChannelsByCategoriesSuccess: ['data'],
+    getChannelsByCategoriesFailure: ['error'],
+
+    // misc
+    reset: [],
+    setPaginatorInfo: ['data']
   },
   { prefix: '@Itv/' }
 );
