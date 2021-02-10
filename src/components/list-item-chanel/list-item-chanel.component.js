@@ -42,6 +42,7 @@ const ListItemChanel = ({
             />
             <Content
               {...contentProps}
+              id={id}
               onRightActionPress={onRightActionPress}
               isFavorite={isFavorite}
             />
@@ -87,7 +88,7 @@ const ListItemChanel = ({
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
+const Content = ({ id, title, chanel, time, onRightActionPress, isFavorite }) => {
   const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
@@ -99,7 +100,7 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
         }}
       >
         <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
-        <Pressable onPress={() => onRightActionPress(title)}>
+        <Pressable onPress={() => onRightActionPress(id)}>
           <Icon
             name="heart-solid"
             size={24}

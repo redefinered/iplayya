@@ -13,7 +13,6 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
-
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -26,9 +25,9 @@ import {
   selectGenres,
   selectChannels
 } from 'modules/ducks/itv/itv.selectors';
-
 import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
+import uniq from 'lodash/uniq';
 
 const favorites = [
   {
@@ -54,6 +53,9 @@ const ItvScreen = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
+  const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
+  const [notifyIds, setNotifyIds] = React.useState([]);
+  const [subscribed, setSubscribed] = React.useState('');
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
@@ -75,6 +77,25 @@ const ItvScreen = ({
       // getChannelsAction({ ...paginatorInfo });
     }
   }, [genres]);
+
+  const handleSubscribeToItem = (channelId) => {
+    let index = notifyIds.findIndex((x) => x === parseInt(channelId));
+
+    if (index >= 0) return;
+
+    setNotifyIds(uniq([...notifyIds, parseInt(channelId)]));
+  };
+
+  React.useEffect(() => {
+    if (notifyIds.length) {
+      // set the subscribed variable for the snackbar
+      let latestItem = channels.find(({ id }) => parseInt(id) === notifyIds[notifyIds.length - 1]);
+      setSubscribed(latestItem.title);
+
+      setShowNotificationSnackBar(true);
+    }
+    console.log({ channels, notifyIds });
+  }, [notifyIds]);
 
   // setup channels data
   React.useEffect(() => {
@@ -105,12 +126,14 @@ const ItvScreen = ({
   const hideSnackBar = () => {
     setTimeout(() => {
       setShowSnackBar(false);
+      setShowNotificationSnackBar(false);
     }, 3000);
   };
 
   React.useEffect(() => {
     if (showSnackBar) hideSnackBar();
-  }, [showSnackBar]);
+    if (showNotificationSnackBar) hideSnackBar();
+  }, [showSnackBar, showNotificationSnackBar]);
 
   if (error) {
     <Text>{error}</Text>;
@@ -137,8 +160,6 @@ const ItvScreen = ({
     }
   }, [selectedCategory]);
 
-  console.log({ channels });
-
   return (
     <View style={styles.container}>
       {channelsData.length ? (
@@ -159,9 +180,20 @@ const ItvScreen = ({
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {channelsData.map(({ id, ...itemProps }) => (
-                  <ItemPreview onSelect={handleItemSelect} key={id} {...itemProps} />
-                ))}
+                {channelsData.map(({ id, ...itemProps }) => {
+                  let isNotificationActive =
+                    notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
+                  return (
+                    <ItemPreview
+                      id={id}
+                      onSelect={handleItemSelect}
+                      handleSubscribeToItem={handleSubscribeToItem}
+                      isNotificationActive={isNotificationActive}
+                      key={id}
+                      {...itemProps}
+                    />
+                  );
+                })}
               </ScrollView>
             </View>
 
@@ -230,6 +262,12 @@ const ItvScreen = ({
         visible={showSnackBar}
         message={`${favorited} is added to your favorites list`}
         iconName="heart-solid"
+        iconColor="#FF5050"
+      />
+      <SnackBar
+        visible={showNotificationSnackBar}
+        message={`You will now receive notifications from ${subscribed}`}
+        iconName="notifications"
         iconColor="#FF5050"
       />
     </View>

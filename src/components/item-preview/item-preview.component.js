@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, useTheme } from 'react-native-paper';
@@ -6,14 +7,24 @@ import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import { createFontFormat } from 'utils';
 
-const ItemPreview = ({ id, title, chanel, date, thumbnail, onSelect, variant }) => {
+const ItemPreview = ({
+  id,
+  title,
+  chanel,
+  date,
+  thumbnail,
+  onSelect,
+  variant,
+  handleSubscribeToItem,
+  isNotificationActive
+}) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
-  const [isNotificationActive, setIsNotificationActive] = React.useState(true);
+  // const [isNotificationActive, setIsNotificationActive] = React.useState(true);
   if (variant === 'image')
     return (
       <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
-        <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url }} />
+        <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url: thumbnail }} />
       </Pressable>
     );
   return (
@@ -29,7 +40,7 @@ const ItemPreview = ({ id, title, chanel, date, thumbnail, onSelect, variant }) 
         }}
       >
         <Text style={styles.title}>{title}</Text>
-        <Pressable>
+        <Pressable onPress={() => handleSubscribeToItem(id)}>
           <Icon
             name="notifications"
             size={24}
@@ -66,7 +77,9 @@ ItemPreview.propTypes = {
   date: PropTypes.string,
   thumbnail: PropTypes.string,
   onSelect: PropTypes.func,
-  variant: PropTypes.string
+  variant: PropTypes.string,
+  handleSubscribeToItem: PropTypes.func,
+  isNotificationActive: PropTypes.bool
 };
 
 export default ItemPreview;
