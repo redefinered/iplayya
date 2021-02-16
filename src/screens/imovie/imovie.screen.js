@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
-import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
@@ -25,6 +24,7 @@ import { setupPaginator } from './imovie.utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 
 const ImovieScreen = ({
+  isFetching,
   getMoviesStartAction,
   navigation,
   error,
@@ -63,12 +63,14 @@ const ImovieScreen = ({
     getMoviesAction(paginatorInfo);
   }, [paginatorInfo]);
 
-  if (error) {
-    <Text>{error}</Text>;
-  }
-
   const handleMovieSelect = (videoId) => {
     navigation.navigate('MovieDetailScreen', { videoId });
+  };
+
+  const renderEmpty = () => {
+    if (error) return <Text>{error}</Text>;
+    // this should only be returned if user did not subscribe to any channels
+    return <Text>no movies found</Text>;
   };
 
   return (
@@ -132,9 +134,10 @@ const ImovieScreen = ({
           </ScrollView>
         </React.Fragment>
       ) : (
-        <ContentWrap>
-          <Text>No movies found</Text>
-        </ContentWrap>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          {!isFetching ? renderEmpty() : null}
+          <Spacer size={100} />
+        </View>
       )}
 
       <ImovieBottomTabs navigation={navigation} />

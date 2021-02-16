@@ -45,7 +45,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
     >
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.replace('ImovieFavoritesScreen')}
+          onPress={() => navigation.navigate('ImovieFavoritesScreen')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="heart-solid" size={40} style={{ color: heartIconColor }} />
@@ -65,7 +65,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
       </View>
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.replace('ImovieDownloadsScreen')}
+          onPress={() => navigation.navigate('ImovieDownloadsScreen')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="download" size={40} style={{ color: downloadIconColor }} />

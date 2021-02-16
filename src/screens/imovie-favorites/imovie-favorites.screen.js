@@ -8,7 +8,6 @@ import Spacer from 'components/spacer.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
-import ImovieBottomTabs from 'screens/imovie/imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -20,7 +19,7 @@ import {
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import { createFontFormat } from 'utils';
 
-const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
+const ImovieFavoritesScreen = ({ theme, navigation, favorites }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
@@ -59,6 +58,7 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
   }, [selectAll]);
 
   const handleSelectAll = () => {
+    console.log('test');
     setSellectAll(!selectAll);
   };
 
@@ -161,7 +161,7 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
               );
             }
           )}
-          <Spacer size={100} />
+          {/* <Spacer size={100} /> */}
         </ScrollView>
       );
     }
@@ -171,7 +171,7 @@ const ImovieFavoritesScreen = ({ theme, navigation, route, favorites }) => {
   return (
     <View style={{ flex: 1 }}>
       {renderMain()}
-      <ImovieBottomTabs navigation={navigation} route={route} />
+      {/* <ImovieBottomTabs navigation={navigation} route={route} /> */}
     </View>
   );
 };
@@ -205,7 +205,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export default compose(
-  withHeaderPush(),
+  withHeaderPush({ backgroundType: 'solid' }),
   connect(mapStateToProps),
   withLoader,
   withTheme

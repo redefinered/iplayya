@@ -10,7 +10,7 @@ import IptvItem from 'components/iptv-item/iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { View, ScrollView } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
 
@@ -29,12 +29,18 @@ import {
   selectDeleted,
   selectSkipProviderAdd
 } from 'modules/ducks/provider/provider.selectors';
+import {
+  selectIsFetching as selectUserIsFetching,
+  selectError as selectUserError
+} from 'modules/ducks/user/user.selectors';
 
 import NoProvider from 'assets/no_provider.svg';
 
 const IptvScreen = ({
   navigation,
+  userIsFetching,
   error,
+  userError,
   providers,
   created,
   updated,
@@ -113,7 +119,9 @@ const IptvScreen = ({
     return (
       <ContentWrap>
         <View style={{ paddingBottom: 120 }}>
-          {error && <Text>{error}</Text>}
+          {error && <Text style={{ marginBottom: 15 }}>{error}</Text>}
+          {userError && <Text style={{ marginBottom: 15 }}>{userError}</Text>}
+          {userIsFetching && <ActivityIndicator style={{ marginBottom: 15 }} />}
           <ScrollView>
             {providers.map(({ id, name, username }) => (
               <IptvItem
@@ -168,6 +176,8 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
+  userError: selectUserError,
+  userIsFetching: selectUserIsFetching,
   created: selectCreated,
   updated: selectUpdated,
   deleted: selectDeleted,

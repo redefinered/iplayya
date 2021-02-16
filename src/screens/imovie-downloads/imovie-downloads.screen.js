@@ -2,13 +2,11 @@
 import React from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
-// import RadioButton from 'components/radio-button/radio-button.component';
 import Spacer from 'components/spacer.component';
 import NoDownloads from 'assets/downloads-empty.svg';
 import { createFontFormat } from 'utils';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
-import ImovieBottomTabs from 'screens/imovie/imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -30,7 +28,7 @@ const dirs = RNFetchBlob.fs.dirs;
 const ImovieDownloadsScreen = ({
   theme,
   navigation,
-  route,
+  // route,
   downloadsProgress,
   getDownloadsAction,
   downloadsData
@@ -89,7 +87,7 @@ const ImovieDownloadsScreen = ({
               />
             );
           })}
-          <Spacer size={100} />
+          {/* <Spacer size={100} /> */}
         </ScrollView>
       );
     return <EmptyState theme={theme} navigation={navigation} />;
@@ -98,7 +96,7 @@ const ImovieDownloadsScreen = ({
   return (
     <View style={{ flex: 1 }}>
       {renderMain()}
-      <ImovieBottomTabs navigation={navigation} route={route} />
+      {/* <ImovieBottomTabs navigation={navigation} route={route} /> */}
     </View>
   );
 };
@@ -139,7 +137,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export default compose(
-  withHeaderPush(),
+  withHeaderPush({ backgroundType: 'solid' }),
   connect(mapStateToProps, actions),
   withLoader,
   withTheme

@@ -15,11 +15,10 @@ export const GET_CHANNELS = gql`
       id
       title
       description
-      genre
-      numer
-      url
-      censored
-      hd
+      time
+      time_to
+      epgtitle
+      epgdescription
       is_favorite
     }
   }
@@ -33,6 +32,38 @@ export const GET_TV_CHANNELS_BY_CATEGORIES = gql`
       description
       numer
       genre
+    }
+  }
+`;
+
+export const ADD_TO_FAVORITES = gql`
+  mutation ADD_TO_FAVORITES($input: addIptvToFavoritesInput) {
+    addIptvToFavorites(input: $input) {
+      status
+      message
+    }
+  }
+`;
+
+export const GET_FAVORITES = gql`
+  query GET_FAVORITE_CHANNELS($input: videoRequest) {
+    favoriteIptvs(input: $input) {
+      id
+      title
+      description
+      time
+      time_to
+      epgtitle
+      epgdescription
+    }
+  }
+`;
+
+export const REMOVE_FROM_FAVORITES = gql`
+  mutation REMOVE_FROM_FAVORITES($input: addIptvToFavoritesInput) {
+    removeIptvToFavorites(input: $input) {
+      status
+      message
     }
   }
 `;

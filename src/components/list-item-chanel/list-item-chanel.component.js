@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Pressable, View, Image } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
@@ -13,8 +14,11 @@ const ListItemChanel = ({
   id,
   onSelect,
   onRightActionPress,
-  isFavorite,
+  is_favorite,
   full,
+  selected,
+  handleLongPress,
+  activateCheckboxes,
   ...contentProps
 }) => {
   const theme = useTheme();
@@ -23,6 +27,7 @@ const ListItemChanel = ({
     return (
       <ContentWrap>
         <Pressable
+          onLongPress={() => handleLongPress(id)}
           onPress={() => onSelect(id)}
           style={{
             flexDirection: 'row',
@@ -43,8 +48,10 @@ const ListItemChanel = ({
             <Content
               {...contentProps}
               id={id}
+              selected={selected}
               onRightActionPress={onRightActionPress}
-              isFavorite={isFavorite}
+              isFavorite={is_favorite}
+              activateCheckboxes={activateCheckboxes}
             />
           </View>
         </Pressable>
@@ -78,7 +85,7 @@ const ListItemChanel = ({
           <Icon
             name="heart-solid"
             size={24}
-            style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
+            style={{ color: is_favorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
           />
         </Pressable>
       </Pressable>
@@ -88,8 +95,27 @@ const ListItemChanel = ({
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({ id, title, chanel, time, onRightActionPress, isFavorite }) => {
+const Content = ({
+  id,
+  title,
+  chanel,
+  time,
+  onRightActionPress,
+  isFavorite,
+  selected,
+  activateCheckboxes
+}) => {
   const theme = useTheme();
+
+  const handleRightActionPress = () => {
+    if (isFavorite) return;
+    onRightActionPress(id);
+  };
+
+  const renderCheckbox = () => {
+    if (!activateCheckboxes) return;
+    return <RadioButton selected={selected} />;
+  };
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -100,13 +126,17 @@ const Content = ({ id, title, chanel, time, onRightActionPress, isFavorite }) =>
         }}
       >
         <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
-        <Pressable onPress={() => onRightActionPress(id)}>
-          <Icon
-            name="heart-solid"
-            size={24}
-            style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-          />
-        </Pressable>
+        {onRightActionPress ? (
+          <Pressable onPress={() => handleRightActionPress()}>
+            <Icon
+              name="heart-solid"
+              size={24}
+              style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
+            />
+          </Pressable>
+        ) : (
+          renderCheckbox()
+        )}
       </View>
       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
         {chanel}
@@ -136,13 +166,27 @@ const Content = ({ id, title, chanel, time, onRightActionPress, isFavorite }) =>
   );
 };
 
-ListItemChanel.propTypes = {
+Content.propTypes = {
+  time: PropTypes.string,
+  chanel: PropTypes.string,
   id: PropTypes.any,
   title: PropTypes.string,
   isFavorite: PropTypes.bool,
+  onRightActionPress: PropTypes.func,
+  selected: PropTypes.bool,
+  activateCheckboxes: PropTypes.bool
+};
+
+ListItemChanel.propTypes = {
+  id: PropTypes.any,
+  title: PropTypes.string,
+  is_favorite: PropTypes.bool,
   full: PropTypes.bool,
   onSelect: PropTypes.func,
-  onRightActionPress: PropTypes.func
+  onRightActionPress: PropTypes.func,
+  selected: PropTypes.bool,
+  handleLongPress: PropTypes.func,
+  activateCheckboxes: PropTypes.bool
 };
 
 export default ListItemChanel;

@@ -15,7 +15,12 @@ const INITIAL_STATE = {
 
   /// channels per category
   // changes depending on user click in itv screen
-  channels: []
+  channels: [],
+
+  addedToFavorites: false,
+  removedFromFavorites: false,
+
+  favorites: []
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -62,7 +67,9 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: null,
       channels,
-      paginatorInfo
+      paginatorInfo,
+      addedToFavorites: false,
+      removedFromFavorites: false
     };
   },
   [Types.GET_CHANNELS_FAILURE]: (state, action) => {
@@ -103,10 +110,92 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  // add to favorites
+  [Types.ADD_TO_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      addedToFavorites: true
+    };
+  },
+  [Types.ADD_TO_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  // add to favorites
+  [Types.REMOVE_FROM_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      removedFromFavorites: true
+    };
+  },
+  [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  /// get favorites
+  [Types.GET_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      addedToFavorites: false,
+      removedFromFavorites: false,
+      favorites: action.data
+    };
+  },
+  [Types.GET_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  // misc
   [Types.SET_PAGINATOR_INFO]: (state, action) => {
     return {
       ...state,
       paginatorInfo: action.data
+    };
+  },
+  [Types.RESET_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      paginatorInfo: { limit: 10, pageNumber: 1 }
     };
   },
   [Types.RESET]: () => {

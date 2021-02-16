@@ -7,7 +7,7 @@ import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import Button from 'components/button/button.component';
+// import Button from 'components/button/button.component';
 import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -23,24 +23,16 @@ import {
   selectIsFetching,
   selectPaginatorInfo,
   selectGenres,
-  selectChannels
+  selectChannels,
+  selectAddedToFavorites,
+  selectFavorites
 } from 'modules/ducks/itv/itv.selectors';
 import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
-const favorites = [
-  {
-    id: '2',
-    name: 'Football'
-  },
-  {
-    id: '3',
-    name: 'Baseball'
-  }
-];
-
 const ItvScreen = ({
+  isFetching,
   navigation,
   error,
   genres,
@@ -48,8 +40,12 @@ const ItvScreen = ({
   getGenresAction,
   getChannelsAction,
   paginatorInfo,
-  setPaginatorInfoAction,
-  getChannelsByCategoriesAction
+  resetPaginatorAction,
+  getChannelsByCategoriesAction,
+  addToFavoritesAction,
+  favorites,
+  isFavoritesUpdated,
+  getFavoritesAction
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
@@ -62,7 +58,7 @@ const ItvScreen = ({
 
   // get genres on mount
   React.useEffect(() => {
-    setPaginatorInfoAction({ limit: 10, pageNumber: 1 }); // for debugging
+    resetPaginatorAction(); // for debugging
     getGenresAction();
   }, []);
 
@@ -77,6 +73,15 @@ const ItvScreen = ({
       // getChannelsAction({ ...paginatorInfo });
     }
   }, [genres]);
+
+  // get favorites if an item is added
+  React.useEffect(() => {
+    if (isFavoritesUpdated) {
+      setShowSnackBar(true);
+      getFavoritesAction();
+      getChannelsAction({ limit: 10, pageNumber: 1 });
+    }
+  }, [isFavoritesUpdated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -94,24 +99,20 @@ const ItvScreen = ({
 
       setShowNotificationSnackBar(true);
     }
-    console.log({ channels, notifyIds });
   }, [notifyIds]);
 
   // setup channels data
   React.useEffect(() => {
     if (channels.length) {
-      let data = channels.map(({ id, title }) => ({
+      let data = channels.map(({ id, title, ...rest }) => ({
         id,
         title,
-        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
+        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
+        ...rest
       }));
       setChannelsData(data);
     }
   }, [channels]);
-
-  // const handleCategorySelect = (categoryId) => {
-  //   getChannelsAction;
-  // };
 
   /**
    * TODO: This is temporary, make it so this function calls to addChannelToFavorites
@@ -120,7 +121,8 @@ const ItvScreen = ({
   const handleAddToFavorites = (channelId) => {
     let title = channels.find(({ id }) => id === channelId).title;
     setFavorited(title);
-    setShowSnackBar(true);
+
+    addToFavoritesAction({ videoId: parseInt(channelId) });
   };
 
   const hideSnackBar = () => {
@@ -146,7 +148,7 @@ const ItvScreen = ({
 
   const onCategorySelect = (id) => {
     // when changing category, reset the pagination info
-    setPaginatorInfoAction({ limit: 10, pageNumber: 1 });
+    resetPaginatorAction();
 
     // set the selected category in state
     setSelectedCategory(id);
@@ -154,11 +156,22 @@ const ItvScreen = ({
 
   React.useEffect(() => {
     if (selectedCategory === 'all') {
-      getChannelsAction({ ...paginatorInfo });
+      // get channels with pageNumber set to 1
+      // because at this point we are not paginating
+      // we will paginate on scrollEndreached or on a "load more" button is clicked
+      getChannelsAction({ limit: 10, pageNumber: 1 });
     } else {
       getChannelsByCategoriesAction({ ...paginatorInfo, categories: [parseInt(selectedCategory)] });
     }
   }, [selectedCategory]);
+
+  // console.log({ channelsData, favorites, paginatorInfo });
+
+  const renderEmpty = () => {
+    if (error) return <Text>{error}</Text>;
+    // this should only be returned if user did not subscribe to any channels
+    return <Text>no channels found</Text>;
+  };
 
   return (
     <View style={styles.container}>
@@ -202,13 +215,8 @@ const ItvScreen = ({
                 <ListItemChanel
                   key={id}
                   id={id}
-                  onSelect={handleAddToFavorites}
+                  onSelect={handleItemSelect}
                   onRightActionPress={handleAddToFavorites}
-                  isFavorite={
-                    typeof favorites.find(({ id: fid }) => parseInt(fid) === id) !== 'undefined'
-                      ? true
-                      : false
-                  }
                   {...itemProps}
                   full
                 />
@@ -218,12 +226,10 @@ const ItvScreen = ({
           </ScrollView>
         </React.Fragment>
       ) : (
-        <ContentWrap>
-          <Text>No movies found</Text>
-          <Button mode="contained" onPress={() => navigation.navigate('MovieDetailScreen')}>
-            <Text>test</Text>
-          </Button>
-        </ContentWrap>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          {!isFetching ? renderEmpty() : null}
+          <Spacer size={100} />
+        </View>
       )}
 
       <View
@@ -241,7 +247,10 @@ const ItvScreen = ({
           bottom: 0
         }}
       >
-        <TouchableWithoutFeedback style={{ alignItems: 'center' }}>
+        <TouchableWithoutFeedback
+          style={{ alignItems: 'center' }}
+          onPress={() => navigation.navigate('ItvFavoritesScreen')}
+        >
           <Icon name="heart-solid" size={40} />
           <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Favorites</Text>
         </TouchableWithoutFeedback>
@@ -252,7 +261,10 @@ const ItvScreen = ({
           <Icon name="iplayya" size={40} />
           <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback style={{ alignItems: 'center' }}>
+        <TouchableWithoutFeedback
+          style={{ alignItems: 'center' }}
+          onPress={() => navigation.navigate('ItvDownloadsScreen')}
+        >
           <Icon name="download" size={40} />
           <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Downloaded</Text>
         </TouchableWithoutFeedback>
@@ -283,17 +295,21 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
+  favorites: selectFavorites,
   genres: selectGenres,
   paginatorInfo: selectPaginatorInfo,
-  channels: selectChannels
+  channels: selectChannels,
+  isFavoritesUpdated: selectAddedToFavorites
 });
 
 const actions = {
   getGenresAction: Creators.getGenres,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  setPaginatorInfoAction: Creators.setPaginatorInfo,
-  getChannelsByCategoriesAction: Creators.getChannelsByCategories
+  resetPaginatorAction: Creators.resetPaginator,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories,
+  getFavoritesAction: Creators.getFavorites,
+  addToFavoritesAction: Creators.addToFavorites
 };
 
 export default compose(

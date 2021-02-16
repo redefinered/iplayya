@@ -16,9 +16,23 @@ const { Types, Creators } = createActions(
     getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],
 
+    // add to favorites
+    addToFavorites: ['input'],
+    addToFavoritesSuccess: [],
+    addToFavoritesFailure: ['error'],
+
+    removeFromFavorites: ['channelIds'],
+    removeFromFavoritesSuccess: [],
+    removeFromFavoritesFailure: ['error'],
+
+    getFavorites: ['input'],
+    getFavoritesSuccess: ['data'],
+    getFavoritesFailure: ['error'],
+
     // misc
     reset: [],
-    setPaginatorInfo: ['data']
+    setPaginatorInfo: ['data'],
+    resetPaginator: []
   },
   { prefix: '@Itv/' }
 );
