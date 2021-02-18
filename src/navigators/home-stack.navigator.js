@@ -22,7 +22,7 @@ import IplayScreen from 'screens/iplay/iplay.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
-import SportChanelDetailScreen from 'screens/sport-chanel-detail/sport-chanel-detail.screen';
+import ChanelDetailScreen from 'screens/chanel-detail/chanel-detail.screen';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
@@ -423,8 +423,8 @@ const HomeStack = ({
         }}
       />
       <Stack.Screen
-        name="SportChanelDetailScreen"
-        component={SportChanelDetailScreen}
+        name="ChanelDetailScreen"
+        component={ChanelDetailScreen}
         // eslint-disable-next-line no-unused-vars
         options={(props) => {
           return {

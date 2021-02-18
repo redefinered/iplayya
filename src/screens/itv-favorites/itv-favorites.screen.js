@@ -14,6 +14,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { selectPaginatorInfo } from 'modules/ducks/itv/itv.selectors';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectFavorites,
   selectError,
@@ -36,6 +37,7 @@ const ItvFavoritesScreen = ({
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [listData, setListData] = React.useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
     getFavoritesAction({ limit: 10, pageNumber: 1 });
@@ -113,6 +115,18 @@ const ItvFavoritesScreen = ({
 
   console.log({ selectedItems });
 
+  const handleHideConfirmDeleteModal = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleConfirmDelete = () => {
+    // do delete action here
+    // console.log('delete action');
+    // setShowDeleteConfirmation(false);
+    setShowDeleteConfirmation(false);
+    handleRemoveItems();
+  };
+
   if (listData.length)
     return (
       <ScrollView>
@@ -126,7 +140,7 @@ const ItvFavoritesScreen = ({
               }}
             >
               <Pressable
-                onPress={() => handleRemoveItems()}
+                onPress={() => setShowDeleteConfirmation(true)}
                 style={{ flexDirection: 'row', alignItems: 'center' }}
               >
                 <Icon name="delete" size={24} style={{ marginRight: 10 }} />
@@ -165,6 +179,19 @@ const ItvFavoritesScreen = ({
             />
           ))}
         </View>
+        {showDeleteConfirmation && (
+          <AlertModal
+            variant="danger"
+            message={`Are you sure you want to delete ${
+              selectedItems.length > 1 ? 'these' : 'this'
+            } channel in your download list?`}
+            visible={showDeleteConfirmation}
+            onCancel={handleHideConfirmDeleteModal}
+            hideAction={handleHideConfirmDeleteModal}
+            confirmText="Delete"
+            confirmAction={handleConfirmDelete}
+          />
+        )}
       </ScrollView>
     );
 

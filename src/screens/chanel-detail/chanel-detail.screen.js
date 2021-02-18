@@ -12,13 +12,14 @@ import ProgramGuide from './program-guide.component';
 
 import { createFontFormat, urlEncodeTitle } from 'utils';
 
-const SportChanelDetail = () => {
+const ChanelDetailScreen = () => {
   const [paused, setPaused] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const isFavorite = false;
 
   // const { rtsp_url } = sampledata.data.videos.find(({ id }) => id === '24969');
-  const rtsp_url = 'ffmpeg http://212.102.38.19:80/13774202158/500Days.mp4';
+  const rtsp_url = 'ffmpeg http://195.181.160.220:2080/12/video.m3u8';
 
   const data = {
     id: 6,
@@ -32,6 +33,7 @@ const SportChanelDetail = () => {
   };
 
   const handleTogglePlay = () => {
+    setLoading(true);
     setPaused(!paused);
   };
 
@@ -57,6 +59,8 @@ const SportChanelDetail = () => {
           thumbnail={data.thumbnail}
           title={data.title}
           togglePlay={handleTogglePlay}
+          loading={loading}
+          setLoading={setLoading}
         />
       </View>
       <ScrollView>
@@ -161,4 +165,4 @@ CategoryPill.defaultProps = {
   selected: '1'
 };
 
-export default withHeaderPush({ backgroundType: 'solid' })(SportChanelDetail);
+export default withHeaderPush({ backgroundType: 'solid' })(ChanelDetailScreen);

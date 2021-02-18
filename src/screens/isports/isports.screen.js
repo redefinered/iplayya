@@ -184,7 +184,7 @@ const IsportsScreen = ({ navigation, error, ...otherprops }) => {
 
   const handleItemSelect = (videoId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('SportChanelDetailScreen', { videoId });
+    navigation.navigate('ChanelDetailScreen', { videoId });
   };
 
   const onCategorySelect = (id) => {
