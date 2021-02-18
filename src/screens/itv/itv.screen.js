@@ -43,7 +43,6 @@ const ItvScreen = ({
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
-  favorites,
   isFavoritesUpdated,
   getFavoritesAction
 }) => {
