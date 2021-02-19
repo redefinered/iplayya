@@ -1,6 +1,7 @@
 import client from 'apollo/client';
 import {
   GET_GENRES,
+  GET_CHANNEL,
   GET_CHANNELS,
   GET_TV_CHANNELS_BY_CATEGORIES,
   ADD_TO_FAVORITES,
@@ -12,6 +13,18 @@ export const getGenres = async () => {
   try {
     const { data } = await client.query({
       query: GET_GENRES
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getChannel = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_CHANNEL,
+      variables: { input }
     });
     return data;
   } catch (error) {

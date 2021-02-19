@@ -7,6 +7,10 @@ const { Types, Creators } = createActions(
     getGenresSuccess: ['data'],
     getGenresFailure: ['error'],
 
+    getChannel: ['input'],
+    getChannelSuccess: ['data'],
+    getChannelFailure: ['error'],
+
     /// get channels
     getChannels: ['input'],
     getChannelsSuccess: ['data'],

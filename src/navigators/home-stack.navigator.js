@@ -22,7 +22,7 @@ import IplayScreen from 'screens/iplay/iplay.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
-import ChanelDetailScreen from 'screens/chanel-detail/chanel-detail.screen';
+import ChanelDetailScreen from 'screens/channel-detail/channel-detail.screen';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';

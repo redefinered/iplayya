@@ -13,6 +13,7 @@ const INITIAL_STATE = {
   // random channels from getChannelsByCategory
   featuredChannels: [],
 
+  channel: null,
   /// channels per category
   // changes depending on user click in itv screen
   channels: [],
@@ -40,6 +41,28 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_GENRES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+  [Types.GET_CHANNEL]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_CHANNEL_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      channel: action.data
+    };
+  },
+  [Types.GET_CHANNEL_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,

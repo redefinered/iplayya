@@ -2,6 +2,7 @@ import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/itv/itv.actions';
 import {
   getGenres,
+  getChannel,
   getChannels,
   getChannelsByCategory,
   addToFavorites,
@@ -29,6 +30,15 @@ export function* getChannelsRequest(action) {
     yield put(Creators.getChannelsSuccess({ channels: iptvs, nextPaginatorInfo }));
   } catch (error) {
     yield put(Creators.getChannelsFailure(error.message));
+  }
+}
+
+export function* getChannelRequest(action) {
+  try {
+    const { iptv: channel } = yield call(getChannel, action.input);
+    yield put(Creators.getChannelSuccess(channel));
+  } catch (error) {
+    yield put(Creators.getChannelFailure(error.message));
   }
 }
 
@@ -84,6 +94,7 @@ export function* getFavoritesRequest(action) {
 
 export default function* itvSagas() {
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
+  yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
   yield takeLatest(Types.GET_CHANNELS, getChannelsRequest);
   yield takeLatest(Types.GET_CHANNELS_BY_CATEGORIES, getChannelsByCategoriesRequest);
   yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);

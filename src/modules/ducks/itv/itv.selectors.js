@@ -7,6 +7,7 @@ export const selectError = createSelector([itvState], ({ error }) => error);
 export const selectPaginatorInfo = createSelector([itvState], ({ paginatorInfo }) => paginatorInfo);
 export const selectGenres = createSelector([itvState], ({ genres }) => genres);
 export const selectChannels = createSelector([itvState], ({ channels }) => channels);
+export const selectChannel = createSelector([itvState], ({ channel }) => channel);
 export const selectFavorites = createSelector([itvState], ({ favorites }) => favorites);
 export const selectAddedToFavorites = createSelector(
   [itvState],

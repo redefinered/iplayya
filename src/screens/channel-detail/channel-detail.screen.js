@@ -1,7 +1,7 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { View, ScrollView, Image, Pressable } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
@@ -9,12 +9,20 @@ import Icon from 'components/icon/icon.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import ProgramGuide from './program-guide.component';
-
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
+import { createStructuredSelector } from 'reselect';
+import { selectChannel } from 'modules/ducks/itv/itv.selectors';
 
-const ChanelDetailScreen = () => {
+const ChanelDetailScreen = ({ route, getChannelAction, channel }) => {
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    getChannelAction({ videoId: route.params.videoId });
+  }, []);
 
   const isFavorite = false;
 
@@ -165,4 +173,13 @@ CategoryPill.defaultProps = {
   selected: '1'
 };
 
-export default withHeaderPush({ backgroundType: 'solid' })(ChanelDetailScreen);
+const actions = {
+  getChannelAction: Creators.getChannel
+};
+
+const mapStateToProps = createStructuredSelector({ channel: selectChannel });
+
+export default compose(
+  withHeaderPush({ backgroundType: 'solid' }),
+  connect(mapStateToProps, actions)
+)(ChanelDetailScreen);

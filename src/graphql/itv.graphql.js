@@ -9,6 +9,27 @@ export const GET_GENRES = gql`
   }
 `;
 
+export const GET_CHANNEL = gql`
+  query GET_CHANNEL($input: videoRequestById) {
+    iptv(input: $input) {
+      id
+      title
+      description
+      genre
+      numer
+      url
+      censored
+      hd
+      is_favorite
+      time
+      time_to
+      duration
+      epgtitle
+      epgdescription
+    }
+  }
+`;
+
 export const GET_CHANNELS = gql`
   query GET_CHANNELS($input: videoRequest) {
     iptvs(input: $input) {
