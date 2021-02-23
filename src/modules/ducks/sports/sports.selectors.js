@@ -1,31 +1,22 @@
 import { createSelector } from 'reselect';
 
-export const sportState = (state) => state.sport;
+export const sportsState = (state) => state.sports;
 
-export const selectError = createSelector([sportState], ({ error }) => error);
-
-export const selectIsFetching = createSelector([sportState], ({ isFetching }) => isFetching);
-
-export const selectMovies = createSelector([sportState], ({ movies }) => movies);
-
-export const selectFeatured = createSelector([sportState], ({ movies }) => {
-  if (!movies.length) return;
-  return movies[0]; // while waiting for API, select first item for now
-});
-
+export const selectIsFetching = createSelector([sportsState], ({ isFetching }) => isFetching);
+export const selectError = createSelector([sportsState], ({ error }) => error);
 export const selectPaginatorInfo = createSelector(
-  [sportState],
+  [sportsState],
   ({ paginatorInfo }) => paginatorInfo
 );
-
-export const selectPlaybackInfo = createSelector([sportState], ({ playbackInfo }) => playbackInfo);
-
-export const selectSeekableDuration = createSelector([sportState], ({ playbackInfo }) => {
-  if (!playbackInfo) return 98 * 60;
-  return Math.floor(playbackInfo.seekableDuration);
-});
-
-export const selectCurrentTime = createSelector([sportState], ({ playbackInfo }) => {
-  if (!playbackInfo) return 0;
-  return Math.floor(playbackInfo.currentTime);
-});
+export const selectGenres = createSelector([sportsState], ({ genres }) => genres);
+export const selectChannels = createSelector([sportsState], ({ channels }) => channels);
+export const selectChannel = createSelector([sportsState], ({ channel }) => channel);
+export const selectFavorites = createSelector([sportsState], ({ favorites }) => favorites);
+export const selectAddedToFavorites = createSelector(
+  [sportsState],
+  ({ addedToFavorites }) => addedToFavorites
+);
+export const selectRemovedFromFavorites = createSelector(
+  [sportsState],
+  ({ removedFromFavorites }) => removedFromFavorites
+);

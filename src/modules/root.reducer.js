@@ -8,6 +8,7 @@ import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
+import sportsReducer from './ducks/sports/sports.reducer';
 import radiosReducer from './ducks/radios/radios.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
 
@@ -24,6 +25,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   itv: itvReducer,
   profile: profileReducer,
   movies: moviesReducer,
+  sports: sportsReducer,
   radios: radiosReducer,
   provider: providerReducer
 });

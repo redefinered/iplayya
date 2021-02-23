@@ -4,51 +4,224 @@ import { Types } from './sports.actions';
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
-  movie: null,
-  movies: [],
-  playbackInfo: {},
+  genres: [],
   paginatorInfo: {
     limit: 10,
     pageNumber: 1
-  }
+  },
+
+  // random channels from getChannelsByCategory
+  featuredChannels: [],
+
+  channel: null,
+  /// channels per category
+  // changes depending on user click in itv screen
+  channels: [],
+
+  addedToFavorites: false,
+  removedFromFavorites: false,
+
+  favorites: []
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.GET_MOVIES]: (state) => {
+  [Types.GET_GENRES]: (state) => {
     return {
       ...state,
       isFetching: true,
       error: null
     };
   },
-  [Types.GET_MOVIES_SUCCESS]: (state, action) => {
-    const { movies } = action.data;
-
+  [Types.GET_GENRES_SUCCESS]: (state, action) => {
     return {
       ...state,
       isFetching: false,
       error: null,
-      movies
+      genres: action.data
     };
   },
-  [Types.GET_MOVIES_FAILURE]: (state, action) => {
+  [Types.GET_GENRES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
       error: action.error
     };
   },
-  [Types.PLAYBACK_START]: (state) => {
+  [Types.GET_CHANNEL]: (state) => {
     return {
       ...state,
-      playbackInfo: null
+      isFetching: true,
+      error: null
     };
   },
-  [Types.UPDATE_PLAYBACK_INFO]: (state, action) => {
-    const { playbackInfo } = action.data;
+  [Types.GET_CHANNEL_SUCCESS]: (state, action) => {
     return {
       ...state,
-      playbackInfo
+      isFetching: false,
+      error: null,
+      channel: action.data
     };
+  },
+  [Types.GET_CHANNEL_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+  [Types.GET_CHANNELS]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_CHANNELS_SUCCESS]: (state, action) => {
+    const { channels, nextPaginatorInfo } = action.data;
+
+    /// reference to current state paginator info object
+    const currentPaginator = state.paginatorInfo;
+
+    /// update paginator info
+    const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
+
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      channels,
+      paginatorInfo,
+      addedToFavorites: false,
+      removedFromFavorites: false
+    };
+  },
+  [Types.GET_CHANNELS_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+  [Types.GET_CHANNELS_BY_CATEGORIES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_CHANNELS_BY_CATEGORIES_SUCCESS]: (state, action) => {
+    const { channels, nextPaginatorInfo } = action.data;
+
+    /// reference to current state paginator info object
+    const currentPaginator = state.paginatorInfo;
+
+    /// update paginator info
+    const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
+
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      channels,
+      paginatorInfo
+    };
+  },
+  [Types.GET_CHANNELS_BY_CATEGORIES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  // add to favorites
+  [Types.ADD_TO_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      addedToFavorites: true
+    };
+  },
+  [Types.ADD_TO_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  // add to favorites
+  [Types.REMOVE_FROM_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      removedFromFavorites: true
+    };
+  },
+  [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  /// get favorites
+  [Types.GET_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      addedToFavorites: false,
+      removedFromFavorites: false,
+      favorites: action.data
+    };
+  },
+  [Types.GET_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  // misc
+  [Types.SET_PAGINATOR_INFO]: (state, action) => {
+    return {
+      ...state,
+      paginatorInfo: action.data
+    };
+  },
+  [Types.RESET_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      paginatorInfo: { limit: 10, pageNumber: 1 }
+    };
+  },
+  [Types.RESET]: () => {
+    return { ...INITIAL_STATE };
   }
 });

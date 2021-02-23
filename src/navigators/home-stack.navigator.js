@@ -20,6 +20,7 @@ import IradioScreen from 'screens/iradio/iradio.screen';
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import IplayScreen from 'screens/iplay/iplay.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
+import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 import ChanelDetailScreen from 'screens/channel-detail/channel-detail.screen';
@@ -59,17 +60,17 @@ const HomeStack = ({
   const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
 
   // eslint-disable-next-line no-unused-vars
-  const deleteFile = async (filename = null) => {
-    if (!filename) return;
-    await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
-    const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
-    console.log({ ls });
-  };
+  // const deleteFile = async (filename = null) => {
+  //   if (!filename) return;
+  //   await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
+  //   const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
+  //   console.log({ ls });
+  // };
 
   React.useEffect(() => {
     // does nothing if no specified filename, bitch!
     // listDownloadedMovies();
-    deleteFile();
+    // deleteFile();
   }, []);
 
   const handleDownloadMovie = (video) => {
@@ -135,7 +136,7 @@ const HomeStack = ({
 
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="HomeScreen"
       screenOptions={{
         headerTransparent: true,
         headerTintColor: 'white',
@@ -412,6 +413,29 @@ const HomeStack = ({
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
               <Pressable style={styles.headerButtonContainer}>
+                <Icon name="search" size={24} />
+              </Pressable>
+            </View>
+          )
+        })}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="IsportsFavoritesScreen"
+        component={IsportsFavoritesScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={({ navigation }) => ({
+          title: 'Favorites',
+          animationEnabled: false,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable
+                style={styles.headerButtonContainer}
+                onPress={() => navigation.navigate('ItvSearchScreen')}
+              >
                 <Icon name="search" size={24} />
               </Pressable>
             </View>

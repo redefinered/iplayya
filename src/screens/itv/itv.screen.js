@@ -112,10 +112,6 @@ const ItvScreen = ({
     }
   }, [channels]);
 
-  /**
-   * TODO: This is temporary, make it so this function calls to addChannelToFavorites
-   * @param {string} title title property of the selected item to add to favorites
-   */
   const handleAddToFavorites = (channelId) => {
     let title = channels.find(({ id }) => id === channelId).title;
     setFavorited(title);
