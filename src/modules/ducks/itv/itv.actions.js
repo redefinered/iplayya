@@ -16,6 +16,10 @@ const { Types, Creators } = createActions(
     getChannelsSuccess: ['data'],
     getChannelsFailure: ['error'],
 
+    getProgramsByChannel: ['input'],
+    getProgramsByChannelSuccess: ['data'],
+    getProgramsByChannelFailure: ['error'],
+
     getChannelsByCategories: ['input'],
     getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],

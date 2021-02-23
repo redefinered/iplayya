@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import moment from 'moment';
 
 const ProgramItem = ({ title, time }) => {
   return (
@@ -24,7 +25,7 @@ const ProgramItem = ({ title, time }) => {
           backgroundColor: 'rgba(255, 255, 255, 0.05)'
         }}
       >
-        <Text>{time}</Text>
+        <Text>{moment(time).format('h:mm A')}</Text>
       </View>
       <View style={{ flex: 8, paddingLeft: 12 }}>
         <Text>{title}</Text>

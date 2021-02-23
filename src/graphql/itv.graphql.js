@@ -88,3 +88,16 @@ export const REMOVE_FROM_FAVORITES = gql`
     }
   }
 `;
+
+export const GET_PROGRAMS_BY_CHANNEL = gql`
+  query GET_PROGRAMS_BY_CHANNEL($input: channelRequestId) {
+    getPrograms(input: $input) {
+      id
+      title
+      time
+      time_to
+      duration
+      description
+    }
+  }
+`;

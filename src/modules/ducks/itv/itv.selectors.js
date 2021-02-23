@@ -9,6 +9,7 @@ export const selectGenres = createSelector([itvState], ({ genres }) => genres);
 export const selectChannels = createSelector([itvState], ({ channels }) => channels);
 export const selectChannel = createSelector([itvState], ({ channel }) => channel);
 export const selectFavorites = createSelector([itvState], ({ favorites }) => favorites);
+export const selectPrograms = createSelector([itvState], ({ programs }) => programs);
 export const selectAddedToFavorites = createSelector(
   [itvState],
   ({ addedToFavorites }) => addedToFavorites

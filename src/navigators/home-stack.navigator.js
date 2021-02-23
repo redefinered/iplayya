@@ -21,6 +21,7 @@ import ImusicScreen from 'screens/imusic/imusic.screen';
 import IplayScreen from 'screens/iplay/iplay.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
+import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 import ChanelDetailScreen from 'screens/channel-detail/channel-detail.screen';
@@ -429,6 +430,29 @@ const HomeStack = ({
         // eslint-disable-next-line no-unused-vars
         options={({ navigation }) => ({
           title: 'Favorites',
+          animationEnabled: false,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable
+                style={styles.headerButtonContainer}
+                onPress={() => navigation.navigate('ItvSearchScreen')}
+              >
+                <Icon name="search" size={24} />
+              </Pressable>
+            </View>
+          )
+        })}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="IsportsDownloadsScreen"
+        component={IsportsDownloadsScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={({ navigation }) => ({
+          title: 'Downloads',
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>

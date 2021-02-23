@@ -8,21 +8,30 @@ import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import withLoader from 'components/with-loader.component';
 import ProgramGuide from './program-guide.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
-import { createStructuredSelector } from 'reselect';
-import { selectChannel } from 'modules/ducks/itv/itv.selectors';
 
-const ChanelDetailScreen = ({ route, getChannelAction, channel }) => {
+const ChanelDetailScreen = ({
+  route: {
+    params: { videoId: channelId }
+  },
+  channel,
+  getProgramsByChannelAction
+}) => {
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
-    getChannelAction({ videoId: route.params.videoId });
+    let date = new Date(Date.now());
+    getProgramsByChannelAction({ channelId, date: date.toISOString() });
+    // getChannelAction({ videoId: route.params.videoId });
   }, []);
+
+  console.log({ channel });
 
   const isFavorite = false;
 
@@ -99,7 +108,7 @@ const ChanelDetailScreen = ({ route, getChannelAction, channel }) => {
             <Text style={{ ...createFontFormat(16, 22) }}>Program Guide</Text>
           </ContentWrap>
 
-          <ProgramGuide />
+          <ProgramGuide channelId={channelId} />
         </View>
       </ScrollView>
     </View>
@@ -174,12 +183,11 @@ CategoryPill.defaultProps = {
 };
 
 const actions = {
-  getChannelAction: Creators.getChannel
+  getProgramsByChannelAction: Creators.getProgramsByChannel
 };
-
-const mapStateToProps = createStructuredSelector({ channel: selectChannel });
 
 export default compose(
   withHeaderPush({ backgroundType: 'solid' }),
-  connect(mapStateToProps, actions)
+  connect(null, actions),
+  withLoader
 )(ChanelDetailScreen);

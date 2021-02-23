@@ -257,7 +257,7 @@ const IsportsScreen = ({
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
           style={{ alignItems: 'center' }}
-          onPress={() => navigation.navigate('ItvDownloadsScreen')}
+          onPress={() => navigation.navigate('IsportsDownloadsScreen')}
         >
           <Icon name="download" size={40} />
           <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Downloaded</Text>

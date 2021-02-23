@@ -7,7 +7,8 @@ import {
   getChannelsByCategory,
   addToFavorites,
   removeFromFavorites,
-  getFavorites
+  getFavorites,
+  getProgramsByChannel
 } from 'services/itv.service';
 
 export function* getGenresRequest() {
@@ -92,6 +93,16 @@ export function* getFavoritesRequest(action) {
   }
 }
 
+export function* getProgramsByChannelRequest(action) {
+  const { input } = action;
+  try {
+    const { getPrograms: programs } = yield call(getProgramsByChannel, input);
+    yield put(Creators.getProgramsByChannelSuccess(programs));
+  } catch (error) {
+    yield put(Creators.getProgramsByChannelFailure(error.message));
+  }
+}
+
 export default function* itvSagas() {
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
   yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
@@ -100,4 +111,5 @@ export default function* itvSagas() {
   yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
+  yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
 }

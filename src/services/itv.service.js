@@ -6,7 +6,8 @@ import {
   GET_TV_CHANNELS_BY_CATEGORIES,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
-  GET_FAVORITES
+  GET_FAVORITES,
+  GET_PROGRAMS_BY_CHANNEL
 } from 'graphql/itv.graphql';
 
 export const getGenres = async () => {
@@ -115,6 +116,18 @@ export const getFavorites = async (input) => {
     const { data } = await client.query({
       query: GET_FAVORITES,
       variables: { input: { limit: 10, pageNumber: 1 } }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getProgramsByChannel = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_PROGRAMS_BY_CHANNEL,
+      variables: { input }
     });
     return data;
   } catch (error) {

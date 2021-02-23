@@ -18,6 +18,9 @@ const INITIAL_STATE = {
   // changes depending on user click in itv screen
   channels: [],
 
+  // programs per selected channel
+  programs: [],
+
   addedToFavorites: false,
   removedFromFavorites: false,
 
@@ -69,6 +72,9 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  /// TODO: add GET_PROGRAMS_BY_CHANNEL reducers
+
   [Types.GET_CHANNELS]: (state) => {
     return {
       ...state,
@@ -127,6 +133,30 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
+  // get programs by channel
+  [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_PROGRAMS_BY_CHANNEL_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      programs: action.data
+    };
+  },
+  [Types.GET_PROGRAMS_BY_CHANNEL_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,

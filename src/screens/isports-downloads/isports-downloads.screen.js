@@ -15,13 +15,17 @@ import ListItemItvDownloads from 'components/list-item-itv-downloads/list-item-i
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { selectPaginatorInfo } from 'modules/ducks/itv/itv.selectors';
-import { selectFavorites, selectError, selectIsFetching } from 'modules/ducks/itv/itv.selectors';
+import {
+  selectPaginatorInfo,
+  selectFavorites,
+  selectError,
+  selectIsFetching
+} from 'modules/ducks/sports/sports.selectors';
 import { createFontFormat } from 'utils';
-import { Creators } from 'modules/ducks/itv/itv.actions';
-import dummydata from './itv-downloads.dummy.json';
+import { Creators } from 'modules/ducks/sports/sports.actions';
+import dummydata from './isports-downloads.dummy.json';
 
-const ItvDownloadsScreen = ({ theme, navigation, removeFromFavoritesAction }) => {
+const IsportsDownloads = ({ theme, navigation, removeFromFavoritesAction }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
@@ -182,4 +186,4 @@ export default compose(
   connect(mapStateToProps, actions),
   withLoader,
   withTheme
-)(ItvDownloadsScreen);
+)(IsportsDownloads);
