@@ -15,20 +15,29 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 
-const ChanelDetailScreen = ({
+import RNFetchBlob from 'rn-fetch-blob';
+const dirs = RNFetchBlob.fs.dirs;
+
+const ChannelDetailScreen = ({
   route: {
-    params: { videoId: channelId }
+    params: { channelId, archived_link }
   },
   channel,
-  getProgramsByChannelAction
+  getProgramsByChannelAction,
+  getChannelAction
 }) => {
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
+  const [mediaSource, setMediaSource] = React.useState(null);
 
   React.useEffect(() => {
     let date = new Date(Date.now());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
-    // getChannelAction({ videoId: route.params.videoId });
+    getChannelAction({ videoId: channelId });
+
+    let source = `${dirs.DocumentDir}/345_4seven.m3u8`;
+    setMediaSource(source);
+    console.log({ source });
   }, []);
 
   console.log({ channel });
@@ -58,28 +67,35 @@ const ChanelDetailScreen = ({
     console.log('add to favorites');
   };
 
+  React.useEffect(() => {
+    console.log({ mediaSource });
+  }, [mediaSource]);
+
   return (
     <View>
       {/* Player */}
-      <View
-        style={{
-          width: '100%',
-          height: 211,
-          marginBottom: 10,
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <MediaPlayer
-          paused={paused}
-          source={rtsp_url.split(' ')[1]}
-          thumbnail={data.thumbnail}
-          title={data.title}
-          togglePlay={handleTogglePlay}
-          loading={loading}
-          setLoading={setLoading}
-        />
-      </View>
+      {mediaSource && (
+        <View
+          style={{
+            width: '100%',
+            height: 211,
+            marginBottom: 10,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
+          <MediaPlayer
+            paused={paused}
+            // source={rtsp_url.split(' ')[1]}
+            source={mediaSource}
+            thumbnail={data.thumbnail}
+            title={data.title}
+            togglePlay={handleTogglePlay}
+            loading={loading}
+            setLoading={setLoading}
+          />
+        </View>
+      )}
       <ScrollView>
         <ContentWrap>
           <View
@@ -183,6 +199,7 @@ CategoryPill.defaultProps = {
 };
 
 const actions = {
+  getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel
 };
 
@@ -190,4 +207,4 @@ export default compose(
   withHeaderPush({ backgroundType: 'solid' }),
   connect(null, actions),
   withLoader
-)(ChanelDetailScreen);
+)(ChannelDetailScreen);

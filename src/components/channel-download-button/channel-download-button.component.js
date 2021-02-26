@@ -6,24 +6,26 @@ import Icon from 'components/icon/icon.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import {
   selectDownloads,
-  selectMovieUrl,
-  selectMovieTitle
-} from 'modules/ducks/movies/movies.selectors';
+  selectChannelUrl,
+  selectChannelName
+} from 'modules/ducks/itv/itv.selectors';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators } from 'modules/ducks/itv/itv.actions';
 
 let dirs = RNFetchBlob.fs.dirs;
 
 const DownloadButton = ({
   theme,
-  // isMovieDownloaded,
-  // setIsMovieDownloaded,
-  // handleDownloadMovie,
-  videoId,
-  movieTitle,
-  movieUrl,
+  channelId,
+  channelName,
+  channelUrl,
+
+  // tempporary source because getChannel response does not contain
+  // the archive link
+  // eslint-disable-next-line react/prop-types
+  archived_link,
 
   downloads,
   updateDownloadsProgressAction,
@@ -31,23 +33,26 @@ const DownloadButton = ({
 }) => {
   const [files, setFiles] = React.useState([]);
   const [downloading, setDownloading] = React.useState(false);
-  const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
+  const [isChannelDownloaded, setIsChannelDownloaded] = React.useState(false);
 
   React.useEffect(() => {
+    console.log({ archived_link, channelUrl, channelName });
     checkIfMovieIsDownlowded();
   }, []);
 
-  const handleDownloadMovie = (video) => {
+  const handleDownloadChannel = (channel) => {
     if (downloading) return;
 
+    const { url, title: channelName, channelId } = channel;
+
     // return if movie is already downloaded
-    if (isMovieDownloaded) {
+    if (isChannelDownloaded) {
       console.log('already downloaded');
       return;
     }
 
     // return if there is no available source to download
-    if (typeof video.url === 'undefined') {
+    if (typeof url === 'undefined') {
       console.log('no source');
       return;
     }
@@ -56,25 +61,25 @@ const DownloadButton = ({
     setDownloading(true);
 
     try {
-      const titlesplit = video.title.split(' ');
+      const titlesplit = channelName.split(' ');
       const title = titlesplit.join('_');
       console.log(title);
 
       const currentDownloads = downloads;
-      currentDownloads[`task_${video.videoId}`] = {
-        id: video.videoId,
+      currentDownloads[`task_${channelId}`] = {
+        id: channelId,
         task: RNFetchBlob.config({
           // add this option that makes response data to be stored as a file,
           // this is much more performant.
           fileCache: true,
-          path: `${dirs.DocumentDir}/${video.videoId}_${title}.mp4`
+          path: `${dirs.DocumentDir}/${channelId}_${title}.m3u8`
         })
-          .fetch('GET', video.url, {
+          .fetch('GET', url, {
             //some headers ..
           })
           .progress({ count: 100 }, (received, total) => {
             const progress = received / total;
-            updateDownloadsProgressAction({ id: video.videoId, received, total });
+            updateDownloadsProgressAction({ id: channelId, received, total });
             console.log('progress', progress);
           })
           .then((res) => {
@@ -111,20 +116,18 @@ const DownloadButton = ({
   React.useEffect(() => {
     console.log({ files });
     if (files.length) {
-      const check = files.find((f) => f === videoId);
+      const check = files.find((f) => f === channelId);
       if (typeof check !== 'undefined') {
-        setIsMovieDownloaded(true);
+        setIsChannelDownloaded(true);
       } else {
-        setIsMovieDownloaded(false);
+        setIsChannelDownloaded(false);
       }
     }
   }, [files]);
 
-  console.log({ downloading });
-
   return (
     <Pressable
-      onPress={() => handleDownloadMovie({ videoId, title: movieTitle, url: movieUrl })}
+      onPress={() => handleDownloadChannel({ channelId, title: channelName, url: archived_link })}
       style={styles.headerButtonContainer}
     >
       {downloading ? (
@@ -133,7 +136,7 @@ const DownloadButton = ({
         <Icon
           name="download"
           size={24}
-          color={isMovieDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
+          color={isChannelDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
         />
       )}
     </Pressable>
@@ -154,12 +157,10 @@ const styles = StyleSheet.create({
 
 DownloadButton.propTypes = {
   theme: PropTypes.object,
-  isMovieDownloaded: PropTypes.bool,
-  setIsMovieDownloaded: PropTypes.func,
   handleDownloadMovie: PropTypes.func,
-  videoId: PropTypes.string,
-  movieUrl: PropTypes.string,
-  movieTitle: PropTypes.string,
+  channelId: PropTypes.string,
+  channelUrl: PropTypes.string,
+  channelName: PropTypes.string,
   downloads: PropTypes.object,
   updateDownloadsAction: PropTypes.func,
   updateDownloadsProgressAction: PropTypes.func
@@ -172,8 +173,8 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({
   downloads: selectDownloads,
-  movieUrl: selectMovieUrl,
-  movieTitle: selectMovieTitle
+  channelUrl: selectChannelUrl,
+  channelName: selectChannelName
 });
 
 export default compose(connect(mapStateToProps, actions), withTheme)(DownloadButton);

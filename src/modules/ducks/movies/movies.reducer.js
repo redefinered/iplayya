@@ -28,7 +28,7 @@ const INITIAL_STATE = {
   downloadsProgress: {},
 
   // when movie is downloading
-  downloading: false,
+  // downloading: false,
 
   // data for downloaded movies where we get properties like title, id, etc...
   downloadsData: []

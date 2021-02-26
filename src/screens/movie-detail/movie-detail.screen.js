@@ -57,8 +57,6 @@ const MovieDetailScreen = ({
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
       const file = downloadedFiles.find((file) => file === filename);
-      // set source
-      // setSource(movie.rtsp_url.split(' ')[1]);
 
       // check if downloaded
       if (downloadedFiles.length) {
@@ -68,17 +66,26 @@ const MovieDetailScreen = ({
           setIsMoviedownloaded(false);
         }
       }
-
-      // set source
-      if (isMovieDownloaded) {
-        if (typeof file !== 'undefined') {
-          setSource(`${dirs.DocumentDir}/${filename}`);
-        } else {
-          setSource(rtsp_url.split(' ')[1]);
-        }
-      }
     }
   }, [movie, downloadedFiles, isMovieDownloaded]);
+
+  React.useEffect(() => {
+    if (movie) {
+      const titlesplit = movie.title.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${videoId}_${title}.mp4`;
+      const file = downloadedFiles.find((file) => file === filename);
+
+      // set source
+      if (typeof file !== 'undefined') {
+        setSource(`${dirs.DocumentDir}/${filename}`);
+      } else {
+        setSource(rtsp_url.split(' ')[1]);
+      }
+    }
+  }, [movie, isMovieDownloaded]);
+
+  console.log({ source });
 
   React.useEffect(() => {
     listDownloadedFiles();
@@ -153,7 +160,7 @@ const MovieDetailScreen = ({
   //     });
   // };
 
-  // console.log({ source });
+  console.log({ source });
 
   const renderPlayer = () => {
     if (source) {

@@ -24,7 +24,16 @@ const INITIAL_STATE = {
   addedToFavorites: false,
   removedFromFavorites: false,
 
-  favorites: []
+  favorites: [],
+
+  // download tasks
+  downloads: {},
+
+  // downloads progress
+  downloadsProgress: {},
+
+  // data for downloaded movies where we get properties like title, id, etc...
+  downloadsData: []
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -235,6 +244,23 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error
+    };
+  },
+
+  /// downloads
+  [Types.UPDATE_DOWNLOADS]: (state, action) => {
+    return {
+      ...state,
+      downloads: action.data
+    };
+  },
+  [Types.UPDATE_DOWNLOADS_PROGRESS]: (state, action) => {
+    const { id, ...progress } = action.data;
+    const current = state.downloadsProgress;
+    current[id] = { id, ...progress };
+    return {
+      ...state,
+      downloadsProgress: current
     };
   },
 

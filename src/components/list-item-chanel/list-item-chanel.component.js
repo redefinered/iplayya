@@ -19,6 +19,7 @@ const ListItemChanel = ({
   selected,
   handleLongPress,
   activateCheckboxes,
+  archived_link,
   ...contentProps
 }) => {
   const theme = useTheme();
@@ -28,7 +29,7 @@ const ListItemChanel = ({
       <ContentWrap>
         <Pressable
           onLongPress={() => handleLongPress(id)}
-          onPress={() => onSelect(id)}
+          onPress={() => onSelect(id, archived_link)}
           style={{
             flexDirection: 'row',
             alignItems: 'center',

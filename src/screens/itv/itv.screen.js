@@ -131,13 +131,9 @@ const ItvScreen = ({
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
 
-  if (error) {
-    <Text>{error}</Text>;
-  }
-
-  const handleItemSelect = (videoId) => {
+  const handleItemSelect = (channelId, archived_link) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChanelDetailScreen', { videoId });
+    navigation.navigate('ChannelDetailScreen', { channelId, archived_link });
   };
 
   const onCategorySelect = (id) => {
@@ -171,6 +167,7 @@ const ItvScreen = ({
     <View style={styles.container}>
       {channelsData.length ? (
         <React.Fragment>
+          {error && <Text>{error}</Text>}
           <ScrollView>
             <SelectorPills
               data={genresData}

@@ -26,6 +26,7 @@ export const GET_CHANNEL = gql`
       duration
       epgtitle
       epgdescription
+      archived_link
     }
   }
 `;
@@ -41,6 +42,7 @@ export const GET_CHANNELS = gql`
       epgtitle
       epgdescription
       is_favorite
+      archived_link
     }
   }
 `;
@@ -51,8 +53,12 @@ export const GET_TV_CHANNELS_BY_CATEGORIES = gql`
       id
       title
       description
-      numer
-      genre
+      time
+      time_to
+      epgtitle
+      epgdescription
+      is_favorite
+      archived_link
     }
   }
 `;

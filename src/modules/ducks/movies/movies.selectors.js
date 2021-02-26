@@ -98,20 +98,3 @@ export const selectDownloadsProgress = createSelector(
   [moviesState],
   ({ downloadsProgress }) => downloadsProgress
 );
-
-// export const selectIsDownloaded = createSelector([moviesState], async ({ movie }) => {
-//   if (!movie) return null;
-//   const dirs = RNFetchBlob.fs.dirs;
-//   const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
-
-//   const titlesplit = movie.title.split(' ');
-//   const title = titlesplit.join('_');
-//   const filename = `${movie.id}_${title}.mp4`;
-
-//   const ls = await RNFetchBlob.fs.ls(dir);
-
-//   const isDownloaded = ls.find((file) => filename === file);
-
-//   const t = typeof isDownloaded === 'undefined' ? false : true;
-//   return t;
-// });

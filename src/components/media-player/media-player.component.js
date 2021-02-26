@@ -39,6 +39,8 @@ const MediaPlayer = ({
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
 
+  console.log({ sourcex: source });
+
   let timer = null;
 
   let player = React.useRef(null);

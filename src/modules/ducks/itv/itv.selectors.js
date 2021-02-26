@@ -18,3 +18,12 @@ export const selectRemovedFromFavorites = createSelector(
   [itvState],
   ({ removedFromFavorites }) => removedFromFavorites
 );
+export const selectDownloads = createSelector([itvState], ({ downloads }) => downloads);
+export const selectChannelName = createSelector([itvState], ({ channel }) => {
+  if (!channel) return;
+  return channel.title;
+});
+export const selectChannelUrl = createSelector([itvState], ({ channel }) => {
+  if (!channel) return;
+  return channel.archived_link;
+});

@@ -40,7 +40,11 @@ const { Types, Creators } = createActions(
     // misc
     reset: [],
     setPaginatorInfo: ['data'],
-    resetPaginator: []
+    resetPaginator: [],
+
+    /// downloads
+    updateDownloads: ['data'],
+    updateDownloadsProgress: ['data']
   },
   { prefix: '@Itv/' }
 );

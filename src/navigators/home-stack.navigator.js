@@ -7,7 +7,6 @@ import { withTheme } from 'react-native-paper';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import Icon from 'components/icon/icon.component.js';
-
 import HomeScreen from 'screens/home/home.screen';
 import ItvScreen from 'screens/itv/itv.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
@@ -24,20 +23,16 @@ import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
-import ChanelDetailScreen from 'screens/channel-detail/channel-detail.screen';
+import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
-import {
-  selectFavorites,
-  selectMovieUrl,
-  selectMovieTitle,
-  selectDownloads
-} from 'modules/ducks/movies/movies.selectors';
+import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
+import ChannelDownloadButton from 'components/channel-download-button/channel-download-button.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { headerHeight } from 'common/values';
 
@@ -45,95 +40,20 @@ let dirs = RNFetchBlob.fs.dirs;
 
 const Stack = createStackNavigator();
 
-// eslint-disable-next-line no-unused-vars
-const HomeStack = ({
-  setBottomTabsVisibleAction,
-  favorites,
-  movieUrl,
-  movieTitle,
-  updateDownloadsAction,
-  downloads,
+export const deleteFile = async (filename = null) => {
+  if (!filename) return;
+  await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
+  const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
+  console.log({ ls });
+};
 
-  // update downloads progress
-  updateDownloadsProgressAction
-}) => {
-  const [downloading, setDownloading] = React.useState(false);
-  const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
-
-  // eslint-disable-next-line no-unused-vars
-  // const deleteFile = async (filename = null) => {
-  //   if (!filename) return;
-  //   await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
-  //   const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
-  //   console.log({ ls });
-  // };
-
+const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
   React.useEffect(() => {
     // does nothing if no specified filename, bitch!
     // listDownloadedMovies();
     // deleteFile();
+    // console.log({ dirs });
   }, []);
-
-  const handleDownloadMovie = (video) => {
-    if (downloading) return;
-
-    // return if movie is already downloaded
-    if (isMovieDownloaded) {
-      console.log('already downloaded');
-      return;
-    }
-
-    // return if there is no available source to download
-    if (typeof video.url === 'undefined') {
-      console.log('no source');
-      return;
-    }
-
-    // set downloading state to true
-    setDownloading(true);
-
-    try {
-      const titlesplit = video.title.split(' ');
-      const title = titlesplit.join('_');
-      console.log(title);
-
-      const currentDownloads = downloads;
-      currentDownloads[`task_${video.videoId}`] = {
-        id: video.videoId,
-        task: RNFetchBlob.config({
-          // add this option that makes response data to be stored as a file,
-          // this is much more performant.
-          fileCache: true,
-          path: `${dirs.DocumentDir}/${video.videoId}_${title}.mp4`
-        })
-          .fetch('GET', video.url, {
-            //some headers ..
-          })
-          .progress({ count: 100 }, (received, total) => {
-            const progress = received / total;
-            updateDownloadsProgressAction({ id: video.videoId, received, total });
-            console.log('progress', progress);
-          })
-          .then((res) => {
-            // the temp file path
-            console.log('The file saved to ', res.path());
-
-            // set downloading state to false
-            setDownloading(false);
-          })
-          .catch((error) => {
-            // throw new Error(error.message);
-            console.log({ error });
-          }),
-        status: 'in-prgress'
-      };
-
-      // setDownloads(Object.assign(downloads, currentDownloads));
-      updateDownloadsAction(Object.assign(downloads, currentDownloads));
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   return (
     <Stack.Navigator
@@ -320,21 +240,14 @@ const HomeStack = ({
           const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
 
           return {
-            title: downloading ? 'downloading' : null,
+            title: null,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <AddToFavoritesButton
                   videoId={parseInt(videoId)}
                   alreadyInFavorites={isInFavorites >= 0 ? true : false}
                 />
-                <DownloadButton
-                  isMovieDownloaded={isMovieDownloaded}
-                  setIsMovieDownloaded={setIsMovieDownloaded}
-                  handleDownloadMovie={handleDownloadMovie}
-                  videoId={videoId}
-                  movieTitle={movieTitle}
-                  movieUrl={movieUrl}
-                />
+                <DownloadButton videoId={videoId} />
               </View>
             )
           };
@@ -471,10 +384,14 @@ const HomeStack = ({
         }}
       />
       <Stack.Screen
-        name="ChanelDetailScreen"
-        component={ChanelDetailScreen}
+        name="ChannelDetailScreen"
+        component={ChannelDetailScreen}
         // eslint-disable-next-line no-unused-vars
-        options={(props) => {
+        options={({
+          route: {
+            params: { channelId, archived_link }
+          }
+        }) => {
           return {
             title: null,
             headerRight: () => (
@@ -482,9 +399,7 @@ const HomeStack = ({
                 <Pressable style={styles.headerButtonContainer}>
                   <Icon name="heart-solid" size={24} />
                 </Pressable>
-                <Pressable style={styles.headerButtonContainer}>
-                  <Icon name="download" size={24} />
-                </Pressable>
+                <ChannelDownloadButton channelId={channelId} archived_link={archived_link} />
               </View>
             )
           };
@@ -535,10 +450,10 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  favorites: selectFavorites,
-  movieUrl: selectMovieUrl,
-  movieTitle: selectMovieTitle,
-  downloads: selectDownloads
+  favorites: selectFavorites
+  // movieUrl: selectMovieUrl,
+  // movieTitle: selectMovieTitle,
+  // downloads: selectDownloads
 });
 
 export default compose(connect(mapStateToProps, actions), withTheme)(HomeStack);
