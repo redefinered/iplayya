@@ -41,7 +41,7 @@ const App = ({
   React.useEffect(() => {
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
-    resetAction();
+    // resetAction();
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
