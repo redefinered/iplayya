@@ -51,15 +51,7 @@ const ChannelDetailScreen = ({
     let date = new Date(Date.now());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
-
-    listDownloadedFiles();
   }, []);
-
-  const listDownloadedFiles = async () => {
-    const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
-    setDownloadedFiles(ls);
-    console.log({ ls });
-  };
 
   React.useEffect(() => {
     if (channel) {
@@ -108,7 +100,7 @@ const ChannelDetailScreen = ({
         // setSource(`${dirs.DocumentDir}/112238_test112238.mp4`);
       }
     }
-    console.log({ isMovieDownloaded });
+    // console.log({ isMovieDownloaded });
   }, [channel, isMovieDownloaded]);
 
   // console.log({ channel });
@@ -127,8 +119,6 @@ const ChannelDetailScreen = ({
   const handleFovoritePress = () => {
     console.log('add to favorites');
   };
-
-  console.log({ isMovieDownloaded, source, channel });
 
   if (!channel) return <Text>fetching...</Text>;
 
