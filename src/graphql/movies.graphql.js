@@ -5,7 +5,6 @@ export const GET_CATEGORIES = gql`
     categories {
       id
       title
-      category_alias
     }
   }
 `;
