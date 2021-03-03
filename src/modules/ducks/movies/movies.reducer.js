@@ -117,6 +117,8 @@ export default createReducer(INITIAL_STATE, {
     const { categories } = action.data;
     return {
       ...state,
+      error: null,
+      isFetching: false,
       categories
     };
   },

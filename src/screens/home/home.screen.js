@@ -13,6 +13,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
+import { selectIsFetching } from 'modules/ducks/auth/auth.selectors';
+import withLoader from 'components/with-loader.component';
 
 const Home = ({ navigation, completedOnboarding, setBottomTabsVisibleAction }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
@@ -49,7 +51,15 @@ Home.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  completedOnboarding: selectCompletedOnboarding
+  completedOnboarding: selectCompletedOnboarding,
+
+  /**
+   * FIX BUG WHERE LOADER IS STUCK IN HOME SCREEN
+   * AFTER A SUCCESSFUL LOGIN. THIS STARTED TO HAPPEN
+   * WHEN I REMOVED CATEGORY_ALIAS IN MOVIES.GRAPHQL
+   * DUE TO API UPDATE
+   */
+  isFetching: selectIsFetching
 });
 
 const actions = {
@@ -58,5 +68,6 @@ const actions = {
 
 export default compose(
   withHeaderPush({ backgroundType: 'image' }),
-  connect(mapStateToProps, actions)
+  connect(mapStateToProps, actions),
+  withLoader
 )(Home);
