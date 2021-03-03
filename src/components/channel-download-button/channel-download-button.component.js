@@ -21,12 +21,6 @@ const DownloadButton = ({
   channelId,
 
   channelName,
-  // channelUrl,
-
-  // tempporary source because getChannel response does not contain
-  // the archive link
-  // eslint-disable-next-line react/prop-types
-  // archived_link,
 
   downloads,
   updateDownloadsProgressAction,
@@ -35,10 +29,6 @@ const DownloadButton = ({
   const [files, setFiles] = React.useState([]);
   const [downloading, setDownloading] = React.useState(false);
   const [isChannelDownloaded, setIsChannelDownloaded] = React.useState(false);
-
-  /// for testing
-  // const channelId = '112238';
-  // const channelName = 'test112238';
 
   React.useEffect(() => {
     // console.log({ archived_link, channelUrl, channelName });
@@ -142,6 +132,7 @@ const DownloadButton = ({
         })
       }
       style={styles.headerButtonContainer}
+      disabled /// disable temporarily
     >
       {downloading ? (
         <ActivityIndicator />
@@ -149,7 +140,8 @@ const DownloadButton = ({
         <Icon
           name="download"
           size={24}
-          color={isChannelDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
+          // color={isChannelDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
+          color={theme.iplayya.colors.white25} /// disable temporarily
         />
       )}
     </Pressable>
