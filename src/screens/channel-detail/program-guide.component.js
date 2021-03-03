@@ -12,7 +12,7 @@ import { selectPrograms } from 'modules/ducks/itv/itv.selectors';
 const ProgramGuide = ({ programs, getProgramsByChannelAction, channelId }) => {
   // generates an array of dates 7 days from now
   const dates = generateDatesFromToday();
-  console.log({ dates });
+  // console.log({ dates });
 
   const [selected, setSelected] = React.useState('1');
 

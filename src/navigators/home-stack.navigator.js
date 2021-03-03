@@ -51,7 +51,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
   React.useEffect(() => {
     // does nothing if no specified filename, bitch!
     // listDownloadedMovies();
-    // deleteFile();
+    deleteFile('19_12_Angry_Men.mp4');
     // console.log({ dirs });
   }, []);
 

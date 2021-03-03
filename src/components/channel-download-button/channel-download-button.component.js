@@ -19,13 +19,14 @@ let dirs = RNFetchBlob.fs.dirs;
 const DownloadButton = ({
   theme,
   channelId,
+
   channelName,
-  channelUrl,
+  // channelUrl,
 
   // tempporary source because getChannel response does not contain
   // the archive link
   // eslint-disable-next-line react/prop-types
-  archived_link,
+  // archived_link,
 
   downloads,
   updateDownloadsProgressAction,
@@ -35,8 +36,12 @@ const DownloadButton = ({
   const [downloading, setDownloading] = React.useState(false);
   const [isChannelDownloaded, setIsChannelDownloaded] = React.useState(false);
 
+  /// for testing
+  // const channelId = '112238';
+  // const channelName = 'test112238';
+
   React.useEffect(() => {
-    console.log({ archived_link, channelUrl, channelName });
+    // console.log({ archived_link, channelUrl, channelName });
     checkIfMovieIsDownlowded();
   }, []);
 
@@ -72,7 +77,8 @@ const DownloadButton = ({
           // add this option that makes response data to be stored as a file,
           // this is much more performant.
           fileCache: true,
-          path: `${dirs.DocumentDir}/${channelId}_${title}.m3u8`
+          path: `${dirs.DocumentDir}/${channelId}_${title}.mp4`
+          // path: `${dirs.DocumentDir}/video.m3u8`
         })
           .fetch('GET', url, {
             //some headers ..
@@ -114,7 +120,7 @@ const DownloadButton = ({
   };
 
   React.useEffect(() => {
-    console.log({ files });
+    // console.log({ files });
     if (files.length) {
       const check = files.find((f) => f === channelId);
       if (typeof check !== 'undefined') {
@@ -127,7 +133,14 @@ const DownloadButton = ({
 
   return (
     <Pressable
-      onPress={() => handleDownloadChannel({ channelId, title: channelName, url: archived_link })}
+      // onPress={() => handleDownloadChannel({ channelId, title: channelName, url: archived_link })}
+      onPress={() =>
+        handleDownloadChannel({
+          channelId,
+          title: channelName,
+          url: 'http://mydvr220.freeddns.org:80/85/video.m3u8'
+        })
+      }
       style={styles.headerButtonContainer}
     >
       {downloading ? (

@@ -2,11 +2,11 @@
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
-import { View, ScrollView, Image, Pressable } from 'react-native';
+import { View, ScrollView, Image, Pressable, Dimensions } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
-import MediaPlayer from 'components/media-player/media-player.component';
+// import MediaPlayer from 'components/media-player/media-player.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
 import ProgramGuide from './program-guide.component';
@@ -16,47 +16,108 @@ import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 
 import RNFetchBlob from 'rn-fetch-blob';
+import { createStructuredSelector } from 'reselect';
+import { selectIsFetching } from 'modules/ducks/itv/itv.selectors';
+import { selectChannel } from 'modules/ducks/itv/itv.selectors';
+
+import { VLCPlayer } from 'react-native-vlc-media-player';
+
 const dirs = RNFetchBlob.fs.dirs;
 
 const ChannelDetailScreen = ({
   route: {
-    params: { channelId, archived_link }
+    params: { channelId }
   },
+  isFetching,
   channel,
   getProgramsByChannelAction,
   getChannelAction
 }) => {
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-  const [mediaSource, setMediaSource] = React.useState(null);
+  const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
+  const [source, setSource] = React.useState('');
+  const [downloadedFiles, setDownloadedFiles] = React.useState([]);
+
+  /// temporary
+  const [contentData, setContentData] = React.useState(null);
+
+  // console.log({ isMovieDownloaded });
+
+  /// temporary data
+  // const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
     let date = new Date(Date.now());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
 
-    let source = `${dirs.DocumentDir}/345_4seven.m3u8`;
-    setMediaSource(source);
-    console.log({ source });
+    listDownloadedFiles();
   }, []);
 
-  console.log({ channel });
+  const listDownloadedFiles = async () => {
+    const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
+    setDownloadedFiles(ls);
+    console.log({ ls });
+  };
+
+  React.useEffect(() => {
+    if (channel) {
+      const titlesplit = channel.title.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${channelId}_${title}.m3u8`;
+      const file = downloadedFiles.find((file) => file === filename);
+
+      // check if downloaded
+      if (downloadedFiles.length) {
+        if (typeof file !== 'undefined') {
+          setIsMoviedownloaded(true);
+        } else {
+          setIsMoviedownloaded(false);
+        }
+      }
+
+      const data = {
+        id: 6,
+        title: 'Program title here',
+        chanel: channel.title,
+        date: 'Sep 27, 2020',
+        time: '09:00 AM - 11:00 AM',
+        thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
+      };
+      setContentData(data);
+    }
+  }, [channel, downloadedFiles]);
+
+  React.useEffect(() => {
+    if (channel) {
+      const { url, title: channelName } = channel;
+      const titlesplit = channelName.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${channelId}_${title}.m3u8`;
+
+      // console.log({ filename });
+
+      // set source
+      if (isMovieDownloaded) {
+        setSource(`${dirs.DocumentDir}/${filename}`);
+        // setSource(`${dirs.DocumentDir}/112238_test112238.m3u8`);
+      } else {
+        let sourceSplit = url.split(' ');
+        setSource(sourceSplit[1]);
+        // setSource(`${dirs.DocumentDir}/112238_test112238.mp4`);
+      }
+    }
+    console.log({ isMovieDownloaded });
+  }, [channel, isMovieDownloaded]);
+
+  // console.log({ channel });
 
   const isFavorite = false;
 
   // const { rtsp_url } = sampledata.data.videos.find(({ id }) => id === '24969');
-  const rtsp_url = 'ffmpeg http://195.181.160.220:2080/12/video.m3u8';
-
-  const data = {
-    id: 6,
-    title: 'The Past and The Furriest 8',
-    chanel: 'Nickolodeon',
-    date: 'Sep 27, 2020',
-    time: '09:00 AM - 11:00 AM',
-    thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle(
-      'The Past and The Furriest 8'
-    )}`
-  };
+  // const rtsp_url = 'ffmpeg http://195.181.160.220:2080/12/video.m3u8';
+  // const rtsp_url_x = 'ffmpeg http://46.4.72.215:80/1299/video.m3u8';
 
   const handleTogglePlay = () => {
     setLoading(true);
@@ -67,35 +128,47 @@ const ChannelDetailScreen = ({
     console.log('add to favorites');
   };
 
-  React.useEffect(() => {
-    console.log({ mediaSource });
-  }, [mediaSource]);
+  console.log({ isMovieDownloaded, source, channel });
+
+  if (!channel) return <Text>fetching...</Text>;
 
   return (
     <View>
       {/* Player */}
-      {mediaSource && (
-        <View
-          style={{
-            width: '100%',
-            height: 211,
-            marginBottom: 10,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          <MediaPlayer
-            paused={paused}
-            // source={rtsp_url.split(' ')[1]}
-            source={mediaSource}
-            thumbnail={data.thumbnail}
-            title={data.title}
-            togglePlay={handleTogglePlay}
-            loading={loading}
-            setLoading={setLoading}
+      <View
+        style={{
+          width: '100%',
+          height: 211,
+          marginBottom: 10,
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        {source.length ? (
+          // <MediaPlayer
+          //   type="mp4"
+          //   paused={paused}
+          //   // source={rtsp_url_x.split(' ')[1]}
+          //   // source={archived_link || rtsp_url.split(' ')[1]}
+          //   // source={rtsp_url.split(' ')[1]}
+          //   source={source}
+          //   thumbnail={data.thumbnail}
+          //   title={data.title}
+          //   togglePlay={handleTogglePlay}
+          //   loading={loading}
+          //   setLoading={setLoading}
+          // />
+          <VLCPlayer
+            style={{
+              width: Dimensions.get('window').width,
+              height: 211,
+              backgroundColor: 'black'
+            }}
+            videoAspectRatio="16:9"
+            source={{ uri: source }}
           />
-        </View>
-      )}
+        ) : null}
+      </View>
       <ScrollView>
         <ContentWrap>
           <View
@@ -110,10 +183,15 @@ const ChannelDetailScreen = ({
               <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
-                  url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(data.title)}`
+                  // url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(data.title)}`
+                  url: 'http://via.placeholder.com/60x60.png'
                 }}
               />
-              <Content {...data} onRightActionPress={handleFovoritePress} isFavorite={isFavorite} />
+              <Content
+                {...contentData}
+                onRightActionPress={handleFovoritePress}
+                isFavorite={isFavorite}
+              />
             </View>
           </View>
         </ContentWrap>
@@ -198,6 +276,11 @@ CategoryPill.defaultProps = {
   selected: '1'
 };
 
+const mapStateToProps = createStructuredSelector({
+  isFetching: selectIsFetching,
+  channel: selectChannel
+});
+
 const actions = {
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel
@@ -205,6 +288,6 @@ const actions = {
 
 export default compose(
   withHeaderPush({ backgroundType: 'solid' }),
-  connect(null, actions),
+  connect(mapStateToProps, actions),
   withLoader
 )(ChannelDetailScreen);

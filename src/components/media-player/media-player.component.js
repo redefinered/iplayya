@@ -24,7 +24,8 @@ const MediaPlayer = ({
   thumbnail,
   title,
   paused,
-  togglePlay
+  togglePlay,
+  type
 }) => {
   const theme = useTheme();
   const [showControls, setShowControls] = React.useState(false);
@@ -39,7 +40,7 @@ const MediaPlayer = ({
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
 
-  console.log({ sourcex: source });
+  console.log({ sourcex: source, type });
 
   let timer = null;
 
@@ -150,7 +151,8 @@ const MediaPlayer = ({
         currentTime={currentTime}
         paused={paused}
         onProgress={handleProgress}
-        source={{ uri: source }}
+        source={{ uri: source, type }}
+        // source={{ uri: 'http://185.152.64.163:2080/435/mpegts' }}
         ref={player}
         volume={volume}
         onBuffer={() => onBuffer()}
@@ -307,7 +309,8 @@ MediaPlayer.propTypes = {
   thumbnail: PropTypes.string,
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
-  updatePlaybackInfoAction: PropTypes.func
+  updatePlaybackInfoAction: PropTypes.func,
+  type: PropTypes.string.isRequired
 };
 
 const actions = {
