@@ -171,6 +171,7 @@ const IsportsScreen = ({
     <View style={styles.container}>
       {channelsData.length ? (
         <React.Fragment>
+          {error && <Text>{error}</Text>}
           <ScrollView>
             <SelectorPills
               data={genresData}

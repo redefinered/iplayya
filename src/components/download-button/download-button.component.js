@@ -109,7 +109,7 @@ const DownloadButton = ({
   };
 
   React.useEffect(() => {
-    console.log({ files });
+    // console.log({ files });
     if (files.length) {
       const check = files.find((f) => f === videoId);
       if (typeof check !== 'undefined') {
@@ -120,7 +120,7 @@ const DownloadButton = ({
     }
   }, [files]);
 
-  console.log({ downloading });
+  // console.log({ downloading });
 
   return (
     <Pressable

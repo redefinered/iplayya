@@ -51,12 +51,14 @@ const ImovieScreen = ({
     };
   });
 
+  console.log({ paginatorInfo, categories });
+
   React.useEffect(() => {
-    if (!paginatorInfo.length) {
+    if (categories.length) {
       const paginator = setupPaginator(categories);
       setupPaginatorInfoAction(paginator);
     }
-  }, [paginatorInfo]);
+  }, [categories]);
 
   // get movies on mount
   React.useEffect(() => {
@@ -78,39 +80,6 @@ const ImovieScreen = ({
       {movies.length ? (
         <React.Fragment>
           <ScrollView>
-            {/* featured items section */}
-            {/* <View style={{ marginBottom: 30 }}>
-              <ContentWrap>
-                <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                  Featured Movies
-                </Text>
-              </ContentWrap>
-              <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {featuredItems.map(({ id, ...itemProps }) => (
-                  <ItemPreview
-                    key={id}
-                    variant="image"
-                    onSelect={handleMovieSelect}
-                    {...itemProps}
-                  />
-                ))}
-              </ScrollView>
-            </View> */}
-
-            {/* new releases */}
-            {/* <View style={{ marginBottom: 30 }}>
-              <ContentWrap>
-                <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>New Releases</Text>
-              </ContentWrap>
-              <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {movies.map(({ id, thumbnail: url }) => (
-                  <Pressable key={id} style={{ marginRight: 10 }}>
-                    <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
-                  </Pressable>
-                ))}
-              </ScrollView>
-            </View> */}
-
             {movies.map(({ category }) => (
               <CategoryScroll key={category} category={category} onSelect={handleMovieSelect} />
             ))}

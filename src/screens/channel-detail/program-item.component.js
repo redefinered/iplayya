@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+// import Icon from 'components/icon/icon.component';
 import moment from 'moment';
 
 const ProgramItem = ({ title, time }) => {
@@ -30,7 +30,7 @@ const ProgramItem = ({ title, time }) => {
       <View style={{ flex: 8, paddingLeft: 12 }}>
         <Text>{title}</Text>
       </View>
-      <View
+      {/* <View
         style={{
           flex: 1,
           height: 50,
@@ -40,7 +40,7 @@ const ProgramItem = ({ title, time }) => {
         }}
       >
         <Icon name="download" size={24} />
-      </View>
+      </View> */}
     </View>
   );
 };

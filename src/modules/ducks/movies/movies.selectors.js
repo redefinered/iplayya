@@ -50,8 +50,9 @@ export const selectCategories = createSelector([moviesState], ({ categories }) =
 export const selectCategoriesOf = (type) =>
   createSelector([selectCategories], (categories) => {
     const collection = [];
-    categories.map(({ id, title, category_alias }) => {
-      if (type === category_alias) {
+    categories.map(({ id, title }) => {
+      let category_alias = title.split(': ')[0];
+      if (type === category_alias.toLowerCase()) {
         return collection.push({ id, title });
       }
     });

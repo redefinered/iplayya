@@ -21,6 +21,8 @@ import { selectIsFetching } from 'modules/ducks/itv/itv.selectors';
 import { selectChannel } from 'modules/ducks/itv/itv.selectors';
 
 import { VLCPlayer } from 'react-native-vlc-media-player';
+import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
+import moment from 'moment';
 
 const dirs = RNFetchBlob.fs.dirs;
 
@@ -31,7 +33,10 @@ const ChannelDetailScreen = ({
   isFetching,
   channel,
   getProgramsByChannelAction,
-  getChannelAction
+  getChannelAction,
+
+  /// the program that is playing at this moment
+  currentProgram
 }) => {
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
@@ -40,7 +45,7 @@ const ChannelDetailScreen = ({
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
   /// temporary
-  const [contentData, setContentData] = React.useState(null);
+  const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
 
   // console.log({ isMovieDownloaded });
 
@@ -68,18 +73,24 @@ const ChannelDetailScreen = ({
           setIsMoviedownloaded(false);
         }
       }
-
-      const data = {
-        id: 6,
-        title: 'Program title here',
-        chanel: channel.title,
-        date: 'Sep 27, 2020',
-        time: '09:00 AM - 11:00 AM',
-        thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
-      };
-      setContentData(data);
     }
   }, [channel, downloadedFiles]);
+
+  React.useEffect(() => {
+    if (channel && currentProgram) {
+      const { title, time, time_to } = currentProgram;
+      let startTime = new Date(time);
+      let endTime = new Date(time_to);
+      const data = {
+        id: 6,
+        title,
+        chanel: channel.title,
+        time: `${moment(startTime).format('hh:mm A')} - ${moment(endTime).format('hh:mm A')}`,
+        thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
+      };
+      setCurrentlyPlaying(data);
+    }
+  }, [channel, currentProgram]);
 
   React.useEffect(() => {
     if (channel) {
@@ -135,19 +146,6 @@ const ChannelDetailScreen = ({
         }}
       >
         {source.length ? (
-          // <MediaPlayer
-          //   type="mp4"
-          //   paused={paused}
-          //   // source={rtsp_url_x.split(' ')[1]}
-          //   // source={archived_link || rtsp_url.split(' ')[1]}
-          //   // source={rtsp_url.split(' ')[1]}
-          //   source={source}
-          //   thumbnail={data.thumbnail}
-          //   title={data.title}
-          //   togglePlay={handleTogglePlay}
-          //   loading={loading}
-          //   setLoading={setLoading}
-          // />
           <VLCPlayer
             style={{
               width: Dimensions.get('window').width,
@@ -178,7 +176,7 @@ const ChannelDetailScreen = ({
                 }}
               />
               <Content
-                {...contentData}
+                {...currentlyPlaying}
                 onRightActionPress={handleFovoritePress}
                 isFavorite={isFavorite}
               />
@@ -268,7 +266,8 @@ CategoryPill.defaultProps = {
 
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
-  channel: selectChannel
+  channel: selectChannel,
+  currentProgram: selectCurrentProgram
 });
 
 const actions = {

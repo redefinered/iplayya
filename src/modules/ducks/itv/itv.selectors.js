@@ -9,7 +9,7 @@ export const selectGenres = createSelector([itvState], ({ genres }) => genres);
 export const selectChannels = createSelector([itvState], ({ channels }) => channels);
 export const selectChannel = createSelector([itvState], ({ channel }) => channel);
 export const selectFavorites = createSelector([itvState], ({ favorites }) => favorites);
-export const selectPrograms = createSelector([itvState], ({ programs }) => programs);
+export const selectPrograms = createSelector([itvState], ({ programs }) => programs.slice(1));
 export const selectAddedToFavorites = createSelector(
   [itvState],
   ({ addedToFavorites }) => addedToFavorites
@@ -26,4 +26,9 @@ export const selectChannelName = createSelector([itvState], ({ channel }) => {
 export const selectChannelUrl = createSelector([itvState], ({ channel }) => {
   if (!channel) return;
   return channel.archived_link;
+});
+export const selectCurrentProgram = createSelector([itvState], ({ programs }) => {
+  if (!programs.length) return;
+
+  return programs[0];
 });
