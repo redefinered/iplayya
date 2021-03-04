@@ -51,8 +51,6 @@ const ImovieScreen = ({
     };
   });
 
-  console.log({ paginatorInfo, categories });
-
   React.useEffect(() => {
     if (categories.length) {
       const paginator = setupPaginator(categories);

@@ -42,7 +42,7 @@ const MovieDetailScreen = ({
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
-  const [source, setSource] = React.useState('');
+  const [source, setSource] = React.useState(null);
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
   const listDownloadedFiles = async () => {
@@ -71,20 +71,24 @@ const MovieDetailScreen = ({
 
   React.useEffect(() => {
     if (movie) {
-      const titlesplit = movie.title.split(' ');
+      const { title: movieTitle, rtsp_url } = movie;
+      const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
+
+      // console.log({ isMovieDownloaded, xxxx: rtsp_url.split(' ')[1] });
 
       // set source
       if (isMovieDownloaded) {
         setSource(`${dirs.DocumentDir}/${filename}`);
       } else {
-        setSource(rtsp_url.split(' ')[1]);
+        let src = rtsp_url.split(' ')[1];
+        console.log({ src });
+        let setsrc = typeof src === 'undefined' ? null : src;
+        setSource(setsrc);
       }
     }
   }, [movie, isMovieDownloaded]);
-
-  console.log({ source });
 
   React.useEffect(() => {
     listDownloadedFiles();
@@ -99,7 +103,7 @@ const MovieDetailScreen = ({
 
   // }, [isMovieDownloaded]);
 
-  console.log({ isMovieDownloaded });
+  // console.log({ isMovieDownloaded });
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -137,29 +141,9 @@ const MovieDetailScreen = ({
     rating_mpaa,
     category,
     director,
-    rtsp_url,
     thumbnail,
     ...otherFields
   } = movie;
-
-  // console.log({ rtsp_url, playbackInfo });
-
-  // const handleDownloadMovie = () => {
-  //   RNFetchBlob.config({
-  //     // add this option that makes response data to be stored as a file,
-  //     // this is much more performant.
-  //     fileCache: true
-  //   })
-  //     .fetch('GET', rtsp_url.split(' ')[1], {
-  //       //some headers ..
-  //     })
-  //     .then((res) => {
-  //       // the temp file path
-  //       console.log('The file saved to ', res.path());
-  //     });
-  // };
-
-  console.log({ source });
 
   const renderPlayer = () => {
     if (source) {
@@ -167,8 +151,6 @@ const MovieDetailScreen = ({
         <MediaPlayer
           type="mp4"
           paused={paused}
-          // source={rtsp_url.split(' ')[1]}
-          // source={`${dirs.DocumentDir}/12_Angry_Men.mp4`}
           source={source}
           thumbnail={thumbnail}
           title={title}
