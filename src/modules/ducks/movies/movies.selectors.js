@@ -99,3 +99,8 @@ export const selectDownloadsProgress = createSelector(
   [moviesState],
   ({ downloadsProgress }) => downloadsProgress
 );
+
+export const selectRemovedFromFavorites = createSelector(
+  [moviesState],
+  ({ removedFromFavorites }) => removedFromFavorites
+);

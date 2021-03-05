@@ -43,7 +43,8 @@ const ItvScreen = ({
   getChannelsByCategoriesAction,
   addToFavoritesAction,
   isFavoritesUpdated,
-  getFavoritesAction
+  getFavoritesAction,
+  route: { params }
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
@@ -60,6 +61,13 @@ const ItvScreen = ({
     getGenresAction();
   }, []);
 
+  React.useEffect(() => {
+    if (typeof params !== 'undefined') {
+      setSelectedCategory(params.genreId);
+      getChannelsByCategoriesAction({ categories: [parseInt(params.genreId)] });
+    }
+  }, [params]);
+
   // setup genres data
   React.useEffect(() => {
     if (genres.length) {
@@ -71,6 +79,8 @@ const ItvScreen = ({
       // getChannelsAction({ ...paginatorInfo });
     }
   }, [genres]);
+
+  console.log({ genresData, selectedCategory });
 
   // get favorites if an item is added
   React.useEffect(() => {
@@ -131,9 +141,9 @@ const ItvScreen = ({
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
 
-  const handleItemSelect = (channelId, archived_link) => {
+  const handleItemSelect = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChannelDetailScreen', { channelId, archived_link });
+    navigation.navigate('ChannelDetailScreen', { channelId });
   };
 
   const onCategorySelect = (id) => {

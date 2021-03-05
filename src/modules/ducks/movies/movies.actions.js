@@ -34,10 +34,15 @@ const { Types, Creators } = createActions(
     getFavoriteMoviesSuccess: ['data'],
     getFavoriteMoviesFailure: ['error'],
 
-    addMovieToFavoritesStart: ['videoId'],
+    addMovieToFavoritesStart: [],
     addMovieToFavorites: ['videoId'],
     addMovieToFavoritesSuccess: [],
     addMovieToFavoritesFailure: ['error'],
+
+    // remove movies from favorites
+    removeFromFavorites: ['videoIds'],
+    removeFromFavoritesSuccess: [],
+    removeFromFavoritesFailure: ['error'],
 
     /**
      * will have title, status, and progress property

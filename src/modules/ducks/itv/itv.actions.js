@@ -44,7 +44,12 @@ const { Types, Creators } = createActions(
 
     /// downloads
     updateDownloads: ['data'],
-    updateDownloadsProgress: ['data']
+    updateDownloadsProgress: ['data'],
+
+    searchStart: [],
+    search: ['input'],
+    searchSuccess: ['data'],
+    searchFailure: ['error']
   },
   { prefix: '@Itv/' }
 );

@@ -4,6 +4,7 @@ import {
   GET_CATEGORIES,
   GET_MOVIES_BY_CATEGORIES,
   ADD_MOVIE_TO_FAVORITES,
+  REMOVE_FROM_FAVORITES,
   GET_FAVORITE_MOVIES,
   GET_DOWNLOADS
 } from 'graphql/movies.graphql';
@@ -48,7 +49,21 @@ export const addMovieToFavorites = async (videoId) => {
     const { data } = await client.mutate({
       mutation: ADD_MOVIE_TO_FAVORITES,
       variables: { input: { videoId } },
-      refetchQueries: [{ query: GET_FAVORITE_MOVIES }],
+      refetchQueries: [{ query: GET_FAVORITE_MOVIES, fetchPolicy: 'network-only' }],
+      awaitRefetchQueries: true
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const removeFromFavorites = async (input) => {
+  try {
+    const { data } = await client.mutate({
+      mutation: REMOVE_FROM_FAVORITES,
+      variables: { input },
+      refetchQueries: [{ query: GET_FAVORITE_MOVIES, fetchPolicy: 'network-only' }],
       awaitRefetchQueries: true
     });
     return data;

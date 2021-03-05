@@ -107,3 +107,12 @@ export const GET_PROGRAMS_BY_CHANNEL = gql`
     }
   }
 `;
+
+export const SEARCH = gql`
+  query SEARCH_ITV($input: videoRequest) {
+    iptvs(input: $input) {
+      id
+      title
+    }
+  }
+`;

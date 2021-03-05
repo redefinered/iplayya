@@ -32,3 +32,4 @@ export const selectCurrentProgram = createSelector([itvState], ({ programs }) =>
 
   return programs[0];
 });
+export const selectSearchResults = createSelector([itvState], ({ searchResults }) => searchResults);

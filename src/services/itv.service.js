@@ -7,7 +7,8 @@ import {
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITES,
-  GET_PROGRAMS_BY_CHANNEL
+  GET_PROGRAMS_BY_CHANNEL,
+  SEARCH
 } from 'graphql/itv.graphql';
 
 export const getGenres = async () => {
@@ -65,7 +66,6 @@ export const addToFavorites = async (input) => {
       refetchQueries: [
         {
           query: GET_FAVORITES,
-          variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
@@ -92,18 +92,15 @@ export const removeFromFavorites = async (input) => {
       refetchQueries: [
         {
           query: GET_FAVORITES,
-          variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
           query: GET_CHANNELS,
-          variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         }
       ],
       awaitRefetchQueries: true
     });
-    // console.log({ data });
     return data;
   } catch (error) {
     throw new Error(error);
@@ -114,8 +111,8 @@ export const getFavorites = async (input) => {
   console.log({ getFavoritesInput: input });
   try {
     const { data } = await client.query({
-      query: GET_FAVORITES,
-      variables: { input: { limit: 10, pageNumber: 1 } }
+      query: GET_FAVORITES
+      // variables: { input: { limit: 10, pageNumber: 1 } }
     });
     return data;
   } catch (error) {
@@ -127,6 +124,18 @@ export const getProgramsByChannel = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_PROGRAMS_BY_CHANNEL,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const search = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: SEARCH,
       variables: { input }
     });
     return data;

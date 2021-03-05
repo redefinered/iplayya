@@ -85,5 +85,6 @@ export default {
       lineHeight: 19,
       marginBottom: 15
     }
-  }
+  },
+  spacing: (multiply) => 6 * multiply
 };

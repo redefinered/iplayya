@@ -16,20 +16,19 @@ const ItemPreview = ({
   onSelect,
   variant,
   handleSubscribeToItem,
-  isNotificationActive,
-  archived_link
+  isNotificationActive
 }) => {
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   // const [isNotificationActive, setIsNotificationActive] = React.useState(true);
   if (variant === 'image')
     return (
-      <Pressable onPress={() => onSelect(id, archived_link)} key={id} style={{ marginRight: 10 }}>
+      <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
         <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url: thumbnail }} />
       </Pressable>
     );
   return (
-    <Pressable onPress={() => onSelect(id, archived_link)} key={id} style={{ marginRight: 10 }}>
+    <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
       <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={{ url: thumbnail }} />
       <Spacer size={15} />
       <View

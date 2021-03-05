@@ -6,7 +6,8 @@ import {
   getMoviesByCategories,
   addMovieToFavorites,
   getFavoriteMovies,
-  getDownloads
+  getDownloads,
+  removeFromFavorites
 } from 'services/movies.service';
 
 export function* getMovieRequest(action) {
@@ -26,7 +27,7 @@ export function* getMoviesRequest(action) {
       paginatorInfo.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
     );
 
-    const { favoriteVideos } = yield call(getFavoriteMovies);
+    // const { favoriteVideos } = yield call(getFavoriteMovies);
 
     const movies = videos.map(({ videoByCategory }) => {
       return { category: videoByCategory[0].category, videos: videoByCategory };
@@ -37,7 +38,7 @@ export function* getMoviesRequest(action) {
     // movies.unshift({ category: 'Favorites', videos: favoriteVideos });
 
     yield put(Creators.getMoviesSuccess(movies));
-    yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
+    // yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
   } catch (error) {
     yield put(Creators.getMoviesFailure(error.message));
   }
@@ -95,6 +96,17 @@ export function* getDownloadsRequest(action) {
   }
 }
 
+export function* removeFromFavoritesRequest(action) {
+  const { videoIds } = action;
+  try {
+    const response = yield all(videoIds.map((id) => call(removeFromFavorites, { videoId: id })));
+    console.log({ response });
+    yield put(Creators.removeFromFavoritesSuccess());
+  } catch (error) {
+    yield put(Creators.removeFromFavoritesFailure(error.message));
+  }
+}
+
 // export function* downloadMovieRequest(action) {
 //   const { id, title, url } = action.data;
 //   try {
@@ -119,6 +131,7 @@ export default function* movieSagas() {
   yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
   yield takeLatest(Types.GET_MOVIES_BY_CATEGORIES, getMoviesByCategoriesRequest);
   yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
+  yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
   yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
 }

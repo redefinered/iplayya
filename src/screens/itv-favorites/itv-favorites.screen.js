@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { selectPaginatorInfo } from 'modules/ducks/itv/itv.selectors';
+import { Creators } from 'modules/ducks/itv/itv.actions';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
@@ -22,7 +23,6 @@ import {
   selectRemovedFromFavorites
 } from 'modules/ducks/itv/itv.selectors';
 import { urlEncodeTitle, createFontFormat } from 'utils';
-import { Creators } from 'modules/ducks/itv/itv.actions';
 
 const ItvFavoritesScreen = ({
   theme,

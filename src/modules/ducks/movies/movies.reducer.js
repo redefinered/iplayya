@@ -20,6 +20,7 @@ const INITIAL_STATE = {
 
   // if a movie is added to favorites
   updatedFavorites: false,
+  removedFromFavorites: false,
 
   // download tasks
   downloads: {},
@@ -165,6 +166,8 @@ export default createReducer(INITIAL_STATE, {
       playbackInfo
     };
   },
+
+  /// add to favorites
   [Types.ADD_MOVIE_TO_FAVORITES]: (state) => {
     return {
       ...state,
@@ -197,6 +200,31 @@ export default createReducer(INITIAL_STATE, {
       updatedFavorites: false
     };
   },
+
+  // add to favorites
+  [Types.REMOVE_FROM_FAVORITES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      removedFromFavorites: true
+    };
+  },
+  [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error
+    };
+  },
+
   [Types.GET_FAVORITE_MOVIES]: (state) => {
     return {
       ...state,
@@ -210,6 +238,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
+      removedFromFavorites: false,
       favoriteVideos
     };
   },

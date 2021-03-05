@@ -10,19 +10,41 @@ import withHeaderPush from 'components/with-header-push/with-header-push.compone
 import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
+import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectError,
   selectIsFetching,
-  selectFavorites
+  selectFavorites,
+  selectRemovedFromFavorites
 } from 'modules/ducks/movies/movies.selectors';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import { createFontFormat } from 'utils';
 
-const ImovieFavoritesScreen = ({ theme, navigation, favorites }) => {
+const ImovieFavoritesScreen = ({
+  theme,
+  navigation,
+  favorites,
+  removedFromFavorites,
+  removeFromFavoritesAction,
+  getFavoritesAction
+}) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+
+  React.useEffect(() => {
+    getFavoritesAction();
+  }, []);
+
+  React.useEffect(() => {
+    if (removedFromFavorites) {
+      getFavoritesAction();
+      setSelectedItems([]);
+    }
+  }, [removedFromFavorites]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -69,6 +91,28 @@ const ImovieFavoritesScreen = ({ theme, navigation, favorites }) => {
     setActivateCheckboxes(true);
   };
 
+  // remove items form favorites
+  const handleRemoveItems = () => {
+    if (selectedItems.length) {
+      let deleteItems = selectedItems.map((id) => parseInt(id));
+      removeFromFavoritesAction(deleteItems);
+    }
+  };
+
+  console.log({ selectedItems });
+
+  const handleHideConfirmDeleteModal = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleConfirmDelete = () => {
+    // do delete action here
+    // console.log('delete action');
+    // setShowDeleteConfirmation(false);
+    setShowDeleteConfirmation(false);
+    handleRemoveItems();
+  };
+
   const renderMain = () => {
     if (favorites.length) {
       return (
@@ -82,10 +126,13 @@ const ImovieFavoritesScreen = ({ theme, navigation, favorites }) => {
                   justifyContent: 'space-between'
                 }}
               >
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Pressable
+                  onPress={() => setShowDeleteConfirmation(true)}
+                  style={{ flexDirection: 'row', alignItems: 'center' }}
+                >
                   <Icon name="delete" size={24} style={{ marginRight: 10 }} />
                   <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
-                </View>
+                </Pressable>
                 <Pressable
                   onPress={() => handleSelectAll()}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
@@ -162,6 +209,19 @@ const ImovieFavoritesScreen = ({ theme, navigation, favorites }) => {
             }
           )}
           {/* <Spacer size={100} /> */}
+          {showDeleteConfirmation && (
+            <AlertModal
+              variant="danger"
+              message={`Are you sure you want to delete ${
+                selectedItems.length > 1 ? 'these' : 'this'
+              } channel in your download list?`}
+              visible={showDeleteConfirmation}
+              onCancel={handleHideConfirmDeleteModal}
+              hideAction={handleHideConfirmDeleteModal}
+              confirmText="Delete"
+              confirmAction={handleConfirmDelete}
+            />
+          )}
         </ScrollView>
       );
     }
@@ -201,12 +261,18 @@ const EmptyState = ({ theme, navigation }) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  favorites: selectFavorites
+  favorites: selectFavorites,
+  removedFromFavorites: selectRemovedFromFavorites
 });
+
+const actions = {
+  removeFromFavoritesAction: Creators.removeFromFavorites,
+  getFavoritesAction: Creators.getFavoriteMovies
+};
 
 export default compose(
   withHeaderPush({ backgroundType: 'solid' }),
-  connect(mapStateToProps),
+  connect(mapStateToProps, actions),
   withLoader,
   withTheme
 )(ImovieFavoritesScreen);

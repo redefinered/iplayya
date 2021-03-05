@@ -8,7 +8,8 @@ import {
   addToFavorites,
   removeFromFavorites,
   getFavorites,
-  getProgramsByChannel
+  getProgramsByChannel,
+  search
 } from 'services/itv.service';
 
 export function* getGenresRequest() {
@@ -103,6 +104,15 @@ export function* getProgramsByChannelRequest(action) {
   }
 }
 
+export function* searchRequest(action) {
+  try {
+    const { iptvs: results } = yield call(search, action.input);
+    yield put(Creators.searchSuccess(results));
+  } catch (error) {
+    yield put(Creators.searchFailure(error.message));
+  }
+}
+
 export default function* itvSagas() {
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
   yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
@@ -112,4 +122,5 @@ export default function* itvSagas() {
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
   yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
+  yield takeLatest(Types.SEARCH, searchRequest);
 }

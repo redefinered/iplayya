@@ -71,6 +71,15 @@ export const GET_FAVORITE_MOVIES = gql`
   }
 `;
 
+export const REMOVE_FROM_FAVORITES = gql`
+  mutation REMOVE_FROM_FAVORITES($input: addVideoToFavoritesInput) {
+    removeVideoToFavorites(input: $input) {
+      status
+      message
+    }
+  }
+`;
+
 export const GET_DOWNLOADS = gql`
   query GET_DOWNLOADS($input: videoRequestByIds) {
     videoByIds(input: $input) {
