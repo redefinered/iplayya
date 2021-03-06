@@ -17,11 +17,13 @@ import { createFontFormat, urlEncodeTitle } from 'utils';
 
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
-import { selectIsFetching } from 'modules/ducks/itv/itv.selectors';
-import { selectChannel } from 'modules/ducks/itv/itv.selectors';
-
+import {
+  selectError,
+  selectIsFetching,
+  selectChannel,
+  selectCurrentProgram
+} from 'modules/ducks/itv/itv.selectors';
 import { VLCPlayer } from 'react-native-vlc-media-player';
-import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
 import moment from 'moment';
 
 const dirs = RNFetchBlob.fs.dirs;
@@ -30,7 +32,7 @@ const ChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
-  isFetching,
+  error,
   channel,
   getProgramsByChannelAction,
   getChannelAction,
@@ -145,6 +147,7 @@ const ChannelDetailScreen = ({
           alignItems: 'center'
         }}
       >
+        {error && <Text style={{ color: 'red' }}>Erro: something went wrong</Text>}
         {source.length ? (
           <VLCPlayer
             style={{
@@ -265,6 +268,7 @@ CategoryPill.defaultProps = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  error: selectError,
   isFetching: selectIsFetching,
   channel: selectChannel,
   currentProgram: selectCurrentProgram

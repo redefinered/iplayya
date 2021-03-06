@@ -7,7 +7,8 @@ import {
   addMovieToFavorites,
   getFavoriteMovies,
   getDownloads,
-  removeFromFavorites
+  removeFromFavorites,
+  search
 } from 'services/movies.service';
 
 export function* getMovieRequest(action) {
@@ -126,6 +127,15 @@ export function* removeFromFavoritesRequest(action) {
 //   }
 // }
 
+export function* searchRequest(action) {
+  try {
+    const { iptvs: results } = yield call(search, action.input);
+    yield put(Creators.searchSuccess(results));
+  } catch (error) {
+    yield put(Creators.searchFailure(error.message));
+  }
+}
+
 export default function* movieSagas() {
   yield takeLatest(Types.GET_MOVIE, getMovieRequest);
   yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
@@ -134,4 +144,5 @@ export default function* movieSagas() {
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
   yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
+  yield takeLatest(Types.SEARCH, searchRequest);
 }

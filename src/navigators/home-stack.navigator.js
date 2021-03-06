@@ -13,6 +13,7 @@ import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
 import ImovieScreen from 'screens/imovie/imovie.screen';
+import ImovieSearchScreen from 'screens/imovie/imovie-search.screen';
 import ImovieFavoritesScreen from 'screens/imovie-favorites/imovie-favorites.screen';
 import ImovieDownloadsScreen from 'screens/imovie-downloads/imovie-downloads.screen';
 import IradioScreen from 'screens/iradio/iradio.screen';
@@ -168,6 +169,8 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           ...TransitionPresets.ModalSlideFromBottomIOS
         })}
       />
+
+      {/* imovie */}
       <Stack.Screen
         name="ImovieScreen"
         component={ImovieScreen}
@@ -177,7 +180,10 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
+              <Pressable
+                style={styles.headerButtonContainer}
+                onPress={() => navigation.navigate('ImovieSearchScreen')}
+              >
                 <Icon name="search" size={24} />
               </Pressable>
             </View>
@@ -187,6 +193,24 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
         }}
+      />
+      <Stack.Screen
+        name="ImovieSearchScreen"
+        component={ImovieSearchScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={({ navigation }) => ({
+          title: 'Search',
+          headerLeft: null, // hide back button
+          // animationEnabled: false,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable style={styles.headerButtonContainer} onPress={() => navigation.goBack()}>
+                <Icon name="close" size={24} />
+              </Pressable>
+            </View>
+          ),
+          ...TransitionPresets.ModalSlideFromBottomIOS
+        })}
       />
       <Stack.Screen
         name="ImovieFavoritesScreen"
@@ -257,6 +281,8 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
         }}
       />
+
+      {/* iradio */}
       <Stack.Screen
         name="IradioScreen"
         component={IradioScreen}

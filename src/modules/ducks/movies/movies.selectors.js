@@ -104,3 +104,8 @@ export const selectRemovedFromFavorites = createSelector(
   [moviesState],
   ({ removedFromFavorites }) => removedFromFavorites
 );
+
+export const selectSearchResults = createSelector(
+  [moviesState],
+  ({ searchResults }) => searchResults
+);

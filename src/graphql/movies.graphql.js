@@ -94,3 +94,12 @@ export const GET_DOWNLOADS = gql`
     }
   }
 `;
+
+export const SEARCH = gql`
+  query SEARCH_VIDEOS($input: videoRequest) {
+    videos(input: $input) {
+      id
+      title
+    }
+  }
+`;

@@ -33,6 +33,7 @@ const ImovieScreen = ({
   setupPaginatorInfoAction,
   paginatorInfo,
   addMovieToFavoritesStartAction,
+  // route: { params },
   ...rest
 }) => {
   // reset 'added' state when adding a movie to favorites to prevent conflicts
@@ -40,6 +41,12 @@ const ImovieScreen = ({
     addMovieToFavoritesStartAction();
     getMoviesStartAction();
   }, []);
+
+  // React.useEffect(() => {
+  //   if (typeof params !== 'undefined') {
+  //     getChannelsByCategoriesAction({ categories: [parseInt(params.genreId)] });
+  //   }
+  // }, [params]);
 
   let movies = rest.movies.map(({ thumbnail, ...rest }) => {
     return {

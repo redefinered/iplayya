@@ -6,7 +6,8 @@ import {
   ADD_MOVIE_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITE_MOVIES,
-  GET_DOWNLOADS
+  GET_DOWNLOADS,
+  SEARCH
 } from 'graphql/movies.graphql';
 
 export const getMovie = async (input) => {
@@ -88,6 +89,19 @@ export const getDownloads = async (videoIds) => {
     const { data } = await client.query({
       query: GET_DOWNLOADS,
       variables: { input: { videoIds } }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const search = async (input) => {
+  console.log({ input });
+  try {
+    const { data } = await client.query({
+      query: SEARCH,
+      variables: { input }
     });
     return data;
   } catch (error) {

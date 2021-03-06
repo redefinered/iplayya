@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { ActivityIndicator, Dimensions, Modal } from 'react-native';
+import { ActivityIndicator, Dimensions } from 'react-native';
 import { View } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
@@ -13,6 +13,7 @@ export default function withScreenLoader(WrappedComponent) {
           style={{
             display: isFetching ? 'flex' : 'none',
             position: 'absolute',
+            zIndex: 2,
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height
           }}
@@ -21,7 +22,9 @@ export default function withScreenLoader(WrappedComponent) {
             <ActivityIndicator color={theme.colors.primary} size="large" />
           </View>
         </View>
-        <WrappedComponent isFetching={isFetching} {...otherProps} />
+        <View style={{ flex: 1, position: 'relative', zIndex: 1 }}>
+          <WrappedComponent isFetching={isFetching} {...otherProps} />
+        </View>
       </React.Fragment>
     );
   };

@@ -54,7 +54,12 @@ const { Types, Creators } = createActions(
     getDownloadsStart: [],
     getDownloads: ['data'],
     getDownloadsSuccess: ['data'],
-    getDownloadsFailure: ['error']
+    getDownloadsFailure: ['error'],
+
+    searchStart: [],
+    search: ['input'],
+    searchSuccess: ['data'],
+    searchFailure: ['error']
   },
   { prefix: '@Movies/' }
 );
