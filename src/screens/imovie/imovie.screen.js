@@ -11,7 +11,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
   selectError,
   selectIsFetching,
@@ -33,20 +33,33 @@ const ImovieScreen = ({
   setupPaginatorInfoAction,
   paginatorInfo,
   addMovieToFavoritesStartAction,
-  // route: { params },
+  // getMoviesByCategoriesAction,
+  route: { params },
   ...rest
 }) => {
+  const [positions, setPositions] = React.useState({});
+  const [scrollOffset, setScrollOffset] = React.useState(0); /// scroll offset if a category is selected from search
   // reset 'added' state when adding a movie to favorites to prevent conflicts
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
     getMoviesStartAction();
   }, []);
 
-  // React.useEffect(() => {
-  //   if (typeof params !== 'undefined') {
-  //     getChannelsByCategoriesAction({ categories: [parseInt(params.genreId)] });
-  //   }
-  // }, [params]);
+  React.useEffect(() => {
+    if (typeof params !== 'undefined') {
+      // console.log({ params });
+
+      /// QUESTION: is this unnecessary???
+      // getMoviesByCategoriesAction({ categories: [parseInt(params.categoryId)] });
+
+      /// set scroll offset if positions are set
+      let layout = positions[params.categoryName];
+      if (typeof layout !== 'undefined') {
+        console.log({ layout });
+        setScrollOffset(layout.y);
+      }
+    }
+  }, [params, positions]);
 
   let movies = rest.movies.map(({ thumbnail, ...rest }) => {
     return {
@@ -57,6 +70,22 @@ const ImovieScreen = ({
       ...rest
     };
   });
+
+  // React.useEffect(() => {
+  //   if (movies.length) {
+  //     const refs = {};
+  //     console.log({ movies });
+  //     movies.forEach((item, index) => {
+  //       refs[index] = React.createRef();
+  //     });
+  //     console.log({ refs });
+  //     setItemRefs(refs);
+  //   }
+  // }, [movies]);
+
+  // React.useEffect(() => {
+  //   console.log({ itemRefs });
+  // }, [itemRefs]);
 
   React.useEffect(() => {
     if (categories.length) {
@@ -80,14 +109,33 @@ const ImovieScreen = ({
     return <Text>no movies found</Text>;
   };
 
+  const handleSetItemsPosition = (index, layout) => {
+    const shallow = positions;
+    const newPositions = Object.assign(shallow, { [index]: layout });
+    setPositions(newPositions);
+  };
+
+  console.log({ movies, positions });
   return (
     <View style={styles.container}>
       {movies.length ? (
         <React.Fragment>
-          <ScrollView>
-            {movies.map(({ category }) => (
-              <CategoryScroll key={category} category={category} onSelect={handleMovieSelect} />
-            ))}
+          <ScrollView contentOffset={{ y: scrollOffset }}>
+            {movies.map(({ category }) => {
+              /// TODO: add snapToOffsets to snap the scrolling to per item start for smoother user experience
+              // let split = category.split(' ');
+              // let index = split.join('_');
+              return (
+                <View
+                  key={category}
+                  onLayout={({ nativeEvent: { layout } }) =>
+                    handleSetItemsPosition(category, layout)
+                  }
+                >
+                  <CategoryScroll category={category} onSelect={handleMovieSelect} />
+                </View>
+              );
+            })}
 
             {/* continue watching */}
             {/* <View style={{ marginBottom: 30, paddingBottom: 100 }}>
@@ -134,11 +182,12 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  getMoviesStartAction: MoviesCreators.getMoviesStart,
-  getMoviesAction: MoviesCreators.getMovies,
+  getMoviesStartAction: Creators.getMoviesStart,
+  getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  setupPaginatorInfoAction: MoviesCreators.setupPaginatorInfo,
-  addMovieToFavoritesStartAction: MoviesCreators.addMovieToFavoritesStart
+  setupPaginatorInfoAction: Creators.setupPaginatorInfo,
+  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
+  getMoviesByCategoriesAction: Creators.getMoviesByCategories
 };
 
 export default compose(

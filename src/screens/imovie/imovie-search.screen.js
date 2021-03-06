@@ -56,14 +56,16 @@ const ImovieSearchScreen = ({
     searchAction({ keyword, pageNumber: 1, limit: 10 });
   }, 1300);
 
-  const handleItemPress = (channelId) => {
+  const handleItemPress = (videoId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChannelDetailScreen', { channelId });
+    navigation.navigate('MovieDetailScreen', { videoId });
   };
 
-  const handleCategoryPress = (categoryId) => {
-    navigation.navigate('ImovieScreen', { categoryId });
+  const handleCategoryPress = (categoryId, title) => {
+    navigation.navigate('ImovieScreen', { categoryId, categoryName: title });
   };
+
+  console.log({ results });
 
   const renderResult = () => {
     if (error)
@@ -131,7 +133,7 @@ const ImovieSearchScreen = ({
             </Text>
             <ScrollView>
               {categories.map(({ id, title }) => (
-                <TouchableRipple key={id} onPress={() => handleCategoryPress(id)}>
+                <TouchableRipple key={id} onPress={() => handleCategoryPress(id, title)}>
                   <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{title}</Text>
                 </TouchableRipple>
               ))}

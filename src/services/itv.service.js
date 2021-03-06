@@ -18,6 +18,8 @@ export const getGenres = async () => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -30,6 +32,7 @@ export const getChannel = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -42,6 +45,7 @@ export const getChannels = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -54,6 +58,7 @@ export const getChannelsByCategory = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -80,6 +85,7 @@ export const addToFavorites = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -103,6 +109,7 @@ export const removeFromFavorites = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -116,6 +123,7 @@ export const getFavorites = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -128,6 +136,7 @@ export const getProgramsByChannel = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -140,6 +149,7 @@ export const search = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

@@ -211,6 +211,10 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           ),
           ...TransitionPresets.ModalSlideFromBottomIOS
         })}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
       />
       <Stack.Screen
         name="ImovieFavoritesScreen"

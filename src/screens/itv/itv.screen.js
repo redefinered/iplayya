@@ -170,7 +170,7 @@ const ItvScreen = ({
   const renderEmpty = () => {
     if (error) return <Text>{error}</Text>;
     // this should only be returned if user did not subscribe to any channels
-    return <Text>no channels found</Text>;
+    return <Text>working...</Text>;
   };
 
   return (

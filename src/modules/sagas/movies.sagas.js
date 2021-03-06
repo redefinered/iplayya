@@ -129,7 +129,7 @@ export function* removeFromFavoritesRequest(action) {
 
 export function* searchRequest(action) {
   try {
-    const { iptvs: results } = yield call(search, action.input);
+    const { videos: results } = yield call(search, action.input);
     yield put(Creators.searchSuccess(results));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
