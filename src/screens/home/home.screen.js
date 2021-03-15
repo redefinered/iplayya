@@ -1,13 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-
 import HomeMenu from 'components/home-menu/home-menu.component';
 import WelcomeDialog from 'components/welcome-dialog/welcome-dialog.component';
-
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';

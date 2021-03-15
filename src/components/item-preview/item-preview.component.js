@@ -10,8 +10,6 @@ import { createFontFormat } from 'utils';
 const ItemPreview = ({
   id,
   title,
-  chanel,
-  date,
   thumbnail,
   onSelect,
   variant,
@@ -21,6 +19,8 @@ const ItemPreview = ({
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   // const [isNotificationActive, setIsNotificationActive] = React.useState(true);
+
+  console.log({ thumbnail });
   if (variant === 'image')
     return (
       <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
@@ -29,7 +29,8 @@ const ItemPreview = ({
     );
   return (
     <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
-      <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={{ url: thumbnail }} />
+      <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={thumbnail} />
+      {/* <View style={{ width: 240, height: 133, borderRadius: 8, backgroundColor: 'black' }} /> */}
       <Spacer size={15} />
       <View
         style={{
@@ -48,8 +49,6 @@ const ItemPreview = ({
           />
         </Pressable>
       </View>
-      {/* <Text style={styles.chanelName}>{chanel}</Text> */}
-      {/* <Text style={styles.date}>{date}</Text> */}
     </Pressable>
   );
 };
@@ -73,9 +72,7 @@ const styles = StyleSheet.create({
 ItemPreview.propTypes = {
   id: PropTypes.string,
   title: PropTypes.string,
-  chanel: PropTypes.string,
-  date: PropTypes.string,
-  thumbnail: PropTypes.string,
+  thumbnail: PropTypes.any,
   onSelect: PropTypes.func,
   variant: PropTypes.string,
   handleSubscribeToItem: PropTypes.func,

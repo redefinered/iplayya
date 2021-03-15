@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -29,6 +29,8 @@ import {
 import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
+
+const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvScreen = ({
   isFetching,
@@ -115,7 +117,10 @@ const ItvScreen = ({
       let data = channels.map(({ id, title, ...rest }) => ({
         id,
         title,
-        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
+        // thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
+        // thumbnail:
+        //   'https://venngage-wordpress.s3.amazonaws.com/uploads/2020/04/Curves-Twitch-Banner-Template.png',
+        thumbnail: channelplaceholder,
         ...rest
       }));
       setChannelsData(data);
@@ -200,10 +205,10 @@ const ItvScreen = ({
                   return (
                     <ItemPreview
                       id={id}
+                      key={id}
                       onSelect={handleItemSelect}
                       handleSubscribeToItem={handleSubscribeToItem}
                       isNotificationActive={isNotificationActive}
-                      key={id}
                       {...itemProps}
                     />
                   );

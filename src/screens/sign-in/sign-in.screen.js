@@ -3,7 +3,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Pressable, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import { Text } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
@@ -56,6 +56,7 @@ class SignInScreen extends React.Component {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
+        <StatusBar translucent backgroundColor="transparent" />
         <View style={styles.logo}>
           <Logo />
         </View>

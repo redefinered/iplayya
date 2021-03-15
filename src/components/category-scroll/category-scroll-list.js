@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, Image, FlatList, Platform } from 'react-native';
+import { Pressable, Image, FlatList, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selectors';
@@ -20,6 +20,14 @@ const CategoryScrollList = ({
   const renderItem = ({ item: { id, thumbnail: url } }) => (
     <Pressable style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
       <Image style={{ width: CARD_WIDTH, height: CARD_HEIGHT, borderRadius: 8 }} source={{ url }} />
+      <View
+        style={{
+          width: CARD_WIDTH,
+          height: CARD_HEIGHT,
+          borderRadius: 8,
+          backgroundColor: 'black'
+        }}
+      />
     </Pressable>
   );
 

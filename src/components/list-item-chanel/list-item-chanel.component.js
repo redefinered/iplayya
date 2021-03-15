@@ -19,10 +19,12 @@ const ListItemChanel = ({
   selected,
   handleLongPress,
   activateCheckboxes,
+  // eslint-disable-next-line react/prop-types
   archived_link,
   ...contentProps
 }) => {
   const theme = useTheme();
+  console.log({ contentProps });
 
   if (full)
     return (
@@ -40,11 +42,12 @@ const ListItemChanel = ({
           <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
             <Image
               style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-              source={{
-                url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(
-                  contentProps.title
-                )}`
-              }}
+              // source={{
+              //   url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(
+              //     contentProps.title
+              //   )}`
+              // }}
+              source={contentProps.thumbnail}
             />
             <Content
               {...contentProps}

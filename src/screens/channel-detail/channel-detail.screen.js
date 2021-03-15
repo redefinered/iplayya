@@ -152,8 +152,8 @@ const ChannelDetailScreen = ({
           <VLCPlayer
             style={{
               width: Dimensions.get('window').width,
-              height: 211,
-              backgroundColor: 'black'
+              height: 211
+              // backgroundColor: 'black'
             }}
             videoAspectRatio="16:9"
             source={{ uri: source }}
