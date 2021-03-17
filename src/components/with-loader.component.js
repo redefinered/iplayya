@@ -7,7 +7,6 @@ import { withTheme } from 'react-native-paper';
 
 export default function withScreenLoader(WrappedComponent) {
   const ScreenLoader = ({ theme, isFetching, ...otherProps }) => {
-    console.log({ isFetching });
     const renderLoader = () => {
       if (isFetching)
         return (

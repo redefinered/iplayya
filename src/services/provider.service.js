@@ -25,6 +25,7 @@ export const create = async (args) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

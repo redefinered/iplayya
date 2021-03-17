@@ -15,7 +15,9 @@ const { Types, Creators } = createActions(
     getMoviesSuccess: ['movies'],
     getMoviesFailure: ['error'],
 
+    getCategories: [],
     getCategoriesSuccess: ['data'],
+    getCategoriesFailure: ['error'],
 
     /**
      * get movies by specific categories

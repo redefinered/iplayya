@@ -92,7 +92,9 @@ class EditIptvScreen extends React.Component {
       this.setError(stateError, 'username', false);
     }
 
-    if (!isValidPassword(input.password)) {
+    /// TODO: fix password validation -- Deluge@2020! is invalid
+    // if (!isValidPassword(input.password)) {
+    if (!input.password) {
       return this.setError(stateError, 'password', true);
     } else {
       this.setError(stateError, 'password', false);

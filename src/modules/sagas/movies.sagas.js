@@ -8,8 +8,18 @@ import {
   getFavoriteMovies,
   getDownloads,
   removeFromFavorites,
-  search
+  search,
+  getCategories
 } from 'services/movies.service';
+
+export function* getCategoriesRequest() {
+  try {
+    const { categories } = yield call(getCategories);
+    yield put(Creators.getCategoriesSuccess({ categories }));
+  } catch (error) {
+    yield put(Creators.getCategoriesFailure(error.message));
+  }
+}
 
 export function* getMovieRequest(action) {
   const { videoId } = action;
@@ -145,4 +155,5 @@ export default function* movieSagas() {
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
   yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
+  yield takeLatest(Types.GET_CATEGORIES, getCategoriesRequest);
 }

@@ -30,22 +30,25 @@ export function* signInRequest(action) {
   const { username, password } = action.data;
   try {
     const {
-      login: { access_token, user }
+      login: { access_token }
     } = yield call(signIn, username, password);
-    // console.log({ access_token });
 
     // save access token to local storage for graphql client
     yield AsyncStorage.setItem('access_token', access_token);
 
-    // get categories after login
-    const { categories } = yield call(getCategories);
-
-    yield put(MoviesCreators.getCategoriesSuccess({ categories }));
-    yield put(UserCreators.setCurrentUser({ user }));
-
     yield put(Creators.signInSuccess());
   } catch (error) {
+    // console.log({ error });
     yield put(Creators.signInFailure(error.message));
+  }
+}
+
+export function* getCategoriesRequest() {
+  try {
+    const { categories } = yield call(getCategories);
+    yield put(MoviesCreators.getCategoriesSuccess({ categories }));
+  } catch (error) {
+    yield put(MoviesCreators.getCategoriesFailure(error.message));
   }
 }
 

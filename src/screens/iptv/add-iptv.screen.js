@@ -16,6 +16,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
+import { Creators as MovieCreators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -27,7 +28,7 @@ import {
 import styles from './add-iptv.styles';
 import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
-import { isValidName, isValidUsername, isValidWebsite, isValidPassword } from 'common/validate';
+import { isValidName, isValidUsername, isValidWebsite } from 'common/validate';
 
 class AddIptvScreen extends React.Component {
   state = {
@@ -54,6 +55,10 @@ class AddIptvScreen extends React.Component {
     if (prevProps.created !== this.props.created) {
       const { created, navigation } = this.props;
       if (created) {
+        /// get categories
+        this.props.getCategoriesAction();
+
+        /// exit
         navigation.replace('IPTV');
       }
     }
@@ -96,7 +101,9 @@ class AddIptvScreen extends React.Component {
       this.setError(stateError, 'username', false);
     }
 
-    if (!isValidPassword(input.password)) {
+    /// TODO: fix password validation -- Deluge@2020! is invalid
+    // if (!isValidPassword(input.password)) {
+    if (!input.password) {
       return this.setError(stateError, 'password', true);
     } else {
       this.setError(stateError, 'password', false);
@@ -113,8 +120,6 @@ class AddIptvScreen extends React.Component {
     const { errors, valid, modalVisible, ...input } = this.state;
 
     // const [modalVisible, setModalVisible] = React.useState(false);
-
-    // console.log({ providers, skippedProviderAdd })
 
     let stateError = {};
 
@@ -202,7 +207,8 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   createStartAction: ProviderCreators.createStart,
   createAction: ProviderCreators.create,
-  skipProviderAddAction: UserCreators.skipProviderAdd
+  skipProviderAddAction: UserCreators.skipProviderAdd,
+  getCategoriesAction: MovieCreators.getCategories
 };
 
 export default compose(

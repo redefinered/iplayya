@@ -20,14 +20,6 @@ const CategoryScrollList = ({
   const renderItem = ({ item: { id, thumbnail: url } }) => (
     <Pressable style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
       <Image style={{ width: CARD_WIDTH, height: CARD_HEIGHT, borderRadius: 8 }} source={{ url }} />
-      <View
-        style={{
-          width: CARD_WIDTH,
-          height: CARD_HEIGHT,
-          borderRadius: 8,
-          backgroundColor: 'black'
-        }}
-      />
     </Pressable>
   );
 
