@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -26,7 +26,7 @@ import {
   selectAddedToFavorites,
   selectFavorites
 } from 'modules/ducks/itv/itv.selectors';
-import { urlEncodeTitle } from 'utils';
+// import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
