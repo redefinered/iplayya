@@ -24,7 +24,6 @@ const ListItemChanel = ({
   ...contentProps
 }) => {
   const theme = useTheme();
-  console.log({ contentProps });
 
   if (full)
     return (

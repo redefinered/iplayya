@@ -20,7 +20,6 @@ const ItemPreview = ({
   // eslint-disable-next-line no-unused-vars
   // const [isNotificationActive, setIsNotificationActive] = React.useState(true);
 
-  console.log({ thumbnail });
   if (variant === 'image')
     return (
       <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>

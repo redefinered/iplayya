@@ -115,7 +115,6 @@ const ImovieScreen = ({
     setPositions(newPositions);
   };
 
-  console.log({ movies, positions });
   return (
     <View style={styles.container}>
       {movies.length ? (

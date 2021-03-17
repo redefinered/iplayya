@@ -82,8 +82,6 @@ const ItvScreen = ({
     }
   }, [genres]);
 
-  console.log({ genresData, selectedCategory });
-
   // get favorites if an item is added
   React.useEffect(() => {
     if (isFavoritesUpdated) {
