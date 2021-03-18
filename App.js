@@ -21,11 +21,13 @@ import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/
 import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
-import { Linking, StatusBar } from 'react-native';
+import { Linking, Platform, StatusBar } from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import VerticalSlider from 'rn-vertical-slider';
 import { Creators } from 'modules/ducks/itv/itv.actions';
+
+import SplashScreen from 'react-native-splash-screen';
 
 const App = ({
   purgeStoreAction,
@@ -39,6 +41,9 @@ const App = ({
   resetAction
 }) => {
   React.useEffect(() => {
+    /// hide splash screen
+    if (Platform.OS === 'android') SplashScreen.hide();
+
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
     // resetAction();
