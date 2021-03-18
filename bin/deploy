@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [[ "$1" != "" ]]; then
+  platform="$1"
+
+  ### always make sure to checkout to appcenter branch
+
+  # bump version prerelease
+  npm version prerelease
+
+  if [[ "$1" != "" ]]; then
+    # push to appcenter for android
+    git push appcenter appcenter
+  fi
+
+else
+  echo ERROR: platform is required
+  exit 1
+fi
