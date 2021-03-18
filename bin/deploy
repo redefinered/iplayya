@@ -5,10 +5,10 @@ if [[ "$1" != "" ]]; then
 
   ### always make sure to checkout to appcenter branch
 
-  # bump version prerelease
-  npm version prerelease
-
   if [[ "$1" == "android" ]]; then
+    # bump version prerelease
+    npm version prerelease
+
     # push to appcenter for android
     git push appcenter appcenter
   fi
