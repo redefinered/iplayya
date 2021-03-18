@@ -26,9 +26,10 @@ import {
   selectAddedToFavorites,
   selectFavorites
 } from 'modules/ducks/sports/sports.selectors';
-import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
+
+const channelplaceholder = require('assets/channel-placeholder.png');
 
 const IsportsScreen = ({
   isFetching,
@@ -105,7 +106,8 @@ const IsportsScreen = ({
       let data = channels.map(({ id, title, ...rest }) => ({
         id,
         title,
-        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
+        // thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
+        thumbnail: channelplaceholder,
         ...rest
       }));
       setChannelsData(data);
