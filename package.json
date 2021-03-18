@@ -16,7 +16,8 @@
     "lint": "eslint .",
     "pod:install": "npx pod-install",
     "prerelease:alpha": "npm version prerelease --preid=alpha",
-    "prerelease:beta": "npm version prerelease --preid=beta"
+    "prerelease:beta": "npm version prerelease --preid=beta",
+    "deploy:android": "./bin/deploy android"
   },
   "dependencies": {
     "@apollo/client": "^3.2.5",
