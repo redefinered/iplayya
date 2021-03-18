@@ -14,7 +14,7 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         autoCapitalize="none"
         placeholder="password"
         onChangeText={(text) => handleChangeText(text, name)}
-        style={{ marginBottom: 10, ...style }}
+        style={{ marginBottom: 10, ...style, position: 'relative', zIndex: 1 }}
         secureTextEntry={!showText}
         placeholderTextColor="rgba(255,255,255,0.5)"
         {...otherProps}
@@ -27,7 +27,8 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          width: 40
+          width: 40,
+          zIndex: 2
         }}
       >
         <Icon

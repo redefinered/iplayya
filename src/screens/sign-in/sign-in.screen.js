@@ -81,7 +81,11 @@ class SignInScreen extends React.Component {
               handleChangeText={this.handleChangeText}
               value={password}
               autoCapitalize="none"
-              style={styles.textInput}
+              style={{
+                ...styles.textInput,
+                position: 'relative',
+                zIndex: 1
+              }}
               placeholder="password"
               secureTextEntry={!showPassword}
               onFocus={() => this.setState({ isolatedInputs: true })}
@@ -89,7 +93,7 @@ class SignInScreen extends React.Component {
             />
             <Pressable
               onPress={() => this.setState({ showPassword: !showPassword })}
-              style={styles.showToggleContainer}
+              style={{ ...styles.showToggleContainer, zIndex: 2 }}
             >
               <Icon
                 name={showPassword ? 'close' : 'eye'}
