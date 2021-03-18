@@ -8,7 +8,7 @@ if [[ "$1" != "" ]]; then
   # bump version prerelease
   npm version prerelease
 
-  if [[ "$1" != "" ]]; then
+  if [[ "$1" == "android" ]]; then
     # push to appcenter for android
     git push appcenter appcenter
   fi
