@@ -153,10 +153,9 @@ const ItvSearchScreen = ({
         value={term}
         autoCapitalize="none"
         clearButtonMode="while-editing"
-        keyboardType="email-address"
         autoCompleteType="email"
         style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-        placeholder="Search a movie"
+        placeholder="Search a channel"
         left={
           <RNPTextInput.Icon
             name={() => {
