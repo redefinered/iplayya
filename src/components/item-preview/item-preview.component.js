@@ -23,7 +23,7 @@ const ItemPreview = ({
   if (variant === 'image')
     return (
       <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
-        <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={{ url: thumbnail }} />
+        <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={thumbnail} />
       </Pressable>
     );
   return (
