@@ -3,7 +3,7 @@
   "version": "0.0.2-alpha.0",
   "private": true,
   "scripts": {
-    "android": "npx react-native run-android --warning-mode=all",
+    "android": "npx react-native run-android",
     "ios": "npx react-native run-ios --simulator='iPhone SE (2nd generation)'",
     "ios:iphone11": "npx react-native run-ios --simulator='iPhone 11'",
     "ios:iphone11pro": "npx react-native run-ios --simulator='iPhone 11 Pro'",
