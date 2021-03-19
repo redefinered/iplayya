@@ -29,6 +29,8 @@ import { Creators } from 'modules/ducks/itv/itv.actions';
 
 import SplashScreen from 'react-native-splash-screen';
 
+import Test from './test.component.js';
+
 const App = ({
   purgeStoreAction,
   signOutAction,
@@ -68,36 +70,38 @@ const App = ({
     }
   }, [isLoggedIn]);
 
-  if (passwordUpdateParams)
-    return (
-      <NavigationContainer>
-        <ResetPasswordStack />
-      </NavigationContainer>
-    );
+  return <Test />;
 
-  if (!isLoggedIn)
-    return (
-      <NavigationContainer>
-        <OnboardingStack />
-      </NavigationContainer>
-    );
+  // if (passwordUpdateParams)
+  //   return (
+  //     <NavigationContainer>
+  //       <ResetPasswordStack />
+  //     </NavigationContainer>
+  //   );
 
-  // if there is no provider show IPTV stack instead of home stack
-  if (typeof providers !== 'undefined') {
-    if (!providers.length && !skippedProviderAdd)
-      return (
-        <NavigationContainer>
-          <IptvStack />
-        </NavigationContainer>
-      );
-  }
+  // if (!isLoggedIn)
+  //   return (
+  //     <NavigationContainer>
+  //       <OnboardingStack />
+  //     </NavigationContainer>
+  //   );
 
-  return (
-    <NavigationContainer>
-      <StatusBar translucent backgroundColor="transparent" />
-      <HomeTabs />
-    </NavigationContainer>
-  );
+  // // if there is no provider show IPTV stack instead of home stack
+  // if (typeof providers !== 'undefined') {
+  //   if (!providers.length && !skippedProviderAdd)
+  //     return (
+  //       <NavigationContainer>
+  //         <IptvStack />
+  //       </NavigationContainer>
+  //     );
+  // }
+
+  // return (
+  //   <NavigationContainer>
+  //     <StatusBar translucent backgroundColor="transparent" />
+  //     <HomeTabs />
+  //   </NavigationContainer>
+  // );
 };
 
 const mapStateToProps = createStructuredSelector({
