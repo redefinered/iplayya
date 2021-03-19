@@ -4,7 +4,7 @@ import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const GRAPHQL_ENDPOINT = 'http://94.130.20.221/graphql';
+const GRAPHQL_ENDPOINT = 'https://94.130.20.221/graphql';
 
 const httpLink = createHttpLink({
   uri: GRAPHQL_ENDPOINT
