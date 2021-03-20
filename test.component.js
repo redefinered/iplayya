@@ -36,10 +36,24 @@ const TestQuery = () => {
 
   console.log({ data, loading, error });
 
-  if (!data || loading)
+  if (loading)
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Working...</Text>
+      </View>
+    );
+
+  if (error)
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>{error}</Text>
+      </View>
+    );
+
+  if (!data)
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>no data</Text>
       </View>
     );
 
