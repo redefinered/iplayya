@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -22,9 +21,6 @@ import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
 import { Linking, Platform, StatusBar } from 'react-native';
-
-import AsyncStorage from '@react-native-community/async-storage';
-import VerticalSlider from 'rn-vertical-slider';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 
 import SplashScreen from 'react-native-splash-screen';
@@ -32,16 +28,23 @@ import SplashScreen from 'react-native-splash-screen';
 import Test from './test.component.js';
 
 const App = ({
+  // eslint-disable-next-line no-unused-vars
   purgeStoreAction,
+  // eslint-disable-next-line no-unused-vars
   signOutAction,
+
   isLoggedIn,
   updatePasswordStartAction,
   passwordUpdateParams,
   providers,
   skippedProviderAdd,
   getProfileAction,
+
+  // eslint-disable-next-line no-unused-vars
   resetAction
 }) => {
+  const [testMode] = React.useState(false);
+
   React.useEffect(() => {
     /// hide splash screen
     if (Platform.OS === 'android') SplashScreen.hide();
@@ -70,38 +73,38 @@ const App = ({
     }
   }, [isLoggedIn]);
 
-  return <Test />;
+  if (testMode) return <Test />;
 
-  // if (passwordUpdateParams)
-  //   return (
-  //     <NavigationContainer>
-  //       <ResetPasswordStack />
-  //     </NavigationContainer>
-  //   );
+  if (passwordUpdateParams)
+    return (
+      <NavigationContainer>
+        <ResetPasswordStack />
+      </NavigationContainer>
+    );
 
-  // if (!isLoggedIn)
-  //   return (
-  //     <NavigationContainer>
-  //       <OnboardingStack />
-  //     </NavigationContainer>
-  //   );
+  if (!isLoggedIn)
+    return (
+      <NavigationContainer>
+        <OnboardingStack />
+      </NavigationContainer>
+    );
 
-  // // if there is no provider show IPTV stack instead of home stack
-  // if (typeof providers !== 'undefined') {
-  //   if (!providers.length && !skippedProviderAdd)
-  //     return (
-  //       <NavigationContainer>
-  //         <IptvStack />
-  //       </NavigationContainer>
-  //     );
-  // }
+  // if there is no provider show IPTV stack instead of home stack
+  if (typeof providers !== 'undefined') {
+    if (!providers.length && !skippedProviderAdd)
+      return (
+        <NavigationContainer>
+          <IptvStack />
+        </NavigationContainer>
+      );
+  }
 
-  // return (
-  //   <NavigationContainer>
-  //     <StatusBar translucent backgroundColor="transparent" />
-  //     <HomeTabs />
-  //   </NavigationContainer>
-  // );
+  return (
+    <NavigationContainer>
+      <StatusBar translucent backgroundColor="transparent" />
+      <HomeTabs />
+    </NavigationContainer>
+  );
 };
 
 const mapStateToProps = createStructuredSelector({
