@@ -63,5 +63,5 @@ export const isValidName = (value) => {
 };
 
 export const isValidPassword = (value) => {
-  return checkRegularExpression(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,8}$/, value);
+  return checkRegularExpression(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4-8}$/, value);
 };
