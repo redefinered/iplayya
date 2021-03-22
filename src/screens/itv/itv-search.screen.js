@@ -49,7 +49,7 @@ const ItvSearchScreen = ({
       searchStartAction();
     }
     if (term.length) {
-      if (term.length <= 3) return;
+      if (term.length <= 2) return;
       search(term);
     }
   }, [term]);
