@@ -28,7 +28,7 @@ export const create = async (args) => {
     if (error.graphQLErrors.length) {
       throw new Error(error.graphQLErrors[0].extensions.reason);
     }
-    console.log({ error });
+    // console.log({ error });
     throw new Error(error);
   }
 };

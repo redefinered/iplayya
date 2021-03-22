@@ -57,7 +57,14 @@ class SignInScreen extends React.Component {
         style={styles.container}
       >
         <StatusBar translucent backgroundColor="transparent" />
-        <View style={styles.logo}>
+        <View
+          style={{
+            flex: 3,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: isolatedInputs ? -100 : 0
+          }}
+        >
           <Logo />
         </View>
         <ContentWrap style={styles.form}>
@@ -118,8 +125,15 @@ class SignInScreen extends React.Component {
           </Pressable>
         </ContentWrap>
 
-        <View style={{ ...styles.signUp }}>
-          <Text style={{ display: isolatedInputs ? 'none' : 'flex' }}>
+        <View
+          style={{
+            ...styles.signUp,
+            flex: isolatedInputs ? 1 : 2,
+            alignItems: 'center'
+            // marginTop: isolatedInputs ? 30 : null
+          }}
+        >
+          <Text>
             Don't you have an account yet?{' '}
             <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
               Sign-up
@@ -127,10 +141,8 @@ class SignInScreen extends React.Component {
           </Text>
         </View>
 
-        <Pressable style={styles.help}>
-          <Text style={{ ...styles.signUpText, display: isolatedInputs ? 'none' : 'flex' }}>
-            Need help?
-          </Text>
+        <Pressable style={{ flex: 1, alignItems: 'center' }}>
+          <Text style={{ ...styles.signUpText }}>Need help?</Text>
         </Pressable>
       </KeyboardAvoidingView>
     );

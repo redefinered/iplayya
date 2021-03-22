@@ -82,17 +82,23 @@ class AddIptvScreen extends React.Component {
     // eslint-disable-next-line no-unused-vars
     const { modalVisible, errors: stateError, valid, ...input } = this.state;
 
+    // console.log({ input, stateError });
+
     // validation here
-    if (!isValidName(input.name)) {
+    if (!input.name) {
       this.setError(stateError, 'name', true);
     } else {
       this.setError(stateError, 'name', false);
     }
 
-    if (!isValidWebsite(input.portal_address)) {
+    if (!input.portal_address) {
       this.setError(stateError, 'portal_address', true);
     } else {
-      this.setError(stateError, 'portal_address', false);
+      if (!isValidWebsite(input.portal_address)) {
+        this.setError(stateError, 'portal_address', true);
+      } else {
+        this.setError(stateError, 'portal_address', false);
+      }
     }
 
     if (!isValidUsername(input.username)) {
@@ -104,9 +110,16 @@ class AddIptvScreen extends React.Component {
     /// TODO: fix password validation -- Deluge@2020! is invalid
     // if (!isValidPassword(input.password)) {
     if (!input.password) {
-      return this.setError(stateError, 'password', true);
+      this.setError(stateError, 'password', true);
     } else {
       this.setError(stateError, 'password', false);
+    }
+
+    const withError = stateError.find(({ val }) => val === true);
+    if (typeof withError !== 'undefined') {
+      return this.setState({ valid: false });
+    } else {
+      this.setState({ valid: true });
     }
 
     // submit if no errors
@@ -127,6 +140,8 @@ class AddIptvScreen extends React.Component {
       Object.assign(stateError, { [key]: val });
     });
 
+    console.log({ errors });
+
     return (
       <React.Fragment>
         <ContentWrap>
@@ -138,7 +153,7 @@ class AddIptvScreen extends React.Component {
                 style={styles.textInput}
                 placeholder="IPTV provider name"
                 handleChangeText={this.handleChange}
-                error={stateError.first_name}
+                error={stateError.name}
                 clearButtonMode="while-editing"
                 autoCapitalize="words"
               />
