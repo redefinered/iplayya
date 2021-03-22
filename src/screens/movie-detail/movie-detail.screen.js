@@ -26,6 +26,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 const dirs = RNFetchBlob.fs.dirs;
 
 const MovieDetailScreen = ({
+  error,
   route: {
     params: { videoId }
   },
@@ -127,10 +128,19 @@ const MovieDetailScreen = ({
     setPaused(!paused);
   };
 
+  console.log({ error });
+
+  if (error)
+    return (
+      <ContentWrap>
+        <Text>{error}</Text>
+      </ContentWrap>
+    );
+
   if (!movie)
     return (
       <ContentWrap>
-        <Text>Wait lang beh...</Text>
+        <Text>Working...</Text>
       </ContentWrap>
     );
 
