@@ -33,6 +33,7 @@ const ImovieScreen = ({
   setupPaginatorInfoAction,
   paginatorInfo,
   addMovieToFavoritesStartAction,
+  getCategoriesAction,
   // getMoviesByCategoriesAction,
   route: { params },
   ...rest
@@ -43,6 +44,7 @@ const ImovieScreen = ({
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
     getMoviesStartAction();
+    getCategoriesAction();
   }, []);
 
   React.useEffect(() => {
@@ -182,6 +184,7 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   getMoviesStartAction: Creators.getMoviesStart,
+  getCategoriesAction: Creators.getCategories,
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   setupPaginatorInfoAction: Creators.setupPaginatorInfo,

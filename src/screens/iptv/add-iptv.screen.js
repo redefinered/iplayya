@@ -28,6 +28,7 @@ import {
 import styles from './add-iptv.styles';
 import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
+// eslint-disable-next-line no-unused-vars
 import { isValidName, isValidUsername, isValidWebsite } from 'common/validate';
 
 class AddIptvScreen extends React.Component {
