@@ -74,7 +74,8 @@ const ItvFavoritesScreen = ({
         setSelectedItems([item, ...selectedItems]);
       }
     } else {
-      navigation.navigate('MovieDetailScreen', { videoId: item });
+      // navigation.navigate('MovieDetailScreen', { videoId: item });
+      navigation.navigate('ChannelDetailScreen', { channelId: item });
     }
   };
 
@@ -126,6 +127,8 @@ const ItvFavoritesScreen = ({
     setShowDeleteConfirmation(false);
     handleRemoveItems();
   };
+
+  console.log({ listData });
 
   if (listData.length)
     return (
