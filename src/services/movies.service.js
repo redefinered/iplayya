@@ -41,6 +41,10 @@ export const getMoviesByCategories = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
+    if (error.graphQLErrors.length) {
+      throw new Error(error.graphQLErrors[0].extensions.reason);
+    }
     throw new Error(error);
   }
 };
@@ -97,7 +101,7 @@ export const getDownloads = async (videoIds) => {
 };
 
 export const search = async (input) => {
-  console.log({ input });
+  // console.log({ input });
   try {
     const { data } = await client.query({
       query: SEARCH,

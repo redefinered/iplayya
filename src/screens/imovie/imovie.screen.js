@@ -49,11 +49,6 @@ const ImovieScreen = ({
 
   React.useEffect(() => {
     if (typeof params !== 'undefined') {
-      // console.log({ params });
-
-      /// QUESTION: is this unnecessary???
-      // getMoviesByCategoriesAction({ categories: [parseInt(params.categoryId)] });
-
       /// set scroll offset if positions are set
       let layout = positions[params.categoryName];
       if (typeof layout !== 'undefined') {
@@ -73,22 +68,6 @@ const ImovieScreen = ({
     };
   });
 
-  // React.useEffect(() => {
-  //   if (movies.length) {
-  //     const refs = {};
-  //     console.log({ movies });
-  //     movies.forEach((item, index) => {
-  //       refs[index] = React.createRef();
-  //     });
-  //     console.log({ refs });
-  //     setItemRefs(refs);
-  //   }
-  // }, [movies]);
-
-  // React.useEffect(() => {
-  //   console.log({ itemRefs });
-  // }, [itemRefs]);
-
   React.useEffect(() => {
     if (categories.length) {
       const paginator = setupPaginator(categories);
@@ -98,7 +77,9 @@ const ImovieScreen = ({
 
   // get movies on mount
   React.useEffect(() => {
-    getMoviesAction(paginatorInfo);
+    if (paginatorInfo.length) {
+      getMoviesAction(paginatorInfo);
+    }
   }, [paginatorInfo]);
 
   const handleMovieSelect = (videoId) => {

@@ -33,23 +33,19 @@ export function* getMovieRequest(action) {
 
 export function* getMoviesRequest(action) {
   const { paginatorInfo } = action;
+
   try {
     const videos = yield all(
       paginatorInfo.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
     );
 
-    // const { favoriteVideos } = yield call(getFavoriteMovies);
+    // remove items that have 0 content
+    const filtered = videos.filter(({ videoByCategory }) => videoByCategory.length > 0);
 
-    const movies = videos.map(({ videoByCategory }) => {
+    const movies = filtered.map(({ videoByCategory }) => {
       return { category: videoByCategory[0].category, videos: videoByCategory };
     });
-
-    // console.log({ favoriteVideos });
-
-    // movies.unshift({ category: 'Favorites', videos: favoriteVideos });
-
     yield put(Creators.getMoviesSuccess(movies));
-    // yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
   } catch (error) {
     yield put(Creators.getMoviesFailure(error.message));
   }

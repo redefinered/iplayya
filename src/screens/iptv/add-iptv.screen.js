@@ -16,7 +16,6 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
-import { Creators as MovieCreators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -56,10 +55,7 @@ class AddIptvScreen extends React.Component {
     if (prevProps.created !== this.props.created) {
       const { created, navigation } = this.props;
       if (created) {
-        /// get categories
-        this.props.getCategoriesAction();
-
-        /// exit
+        /// redirect to iptv screen
         navigation.replace('IPTV');
       }
     }
@@ -223,8 +219,7 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   createStartAction: ProviderCreators.createStart,
   createAction: ProviderCreators.create,
-  skipProviderAddAction: UserCreators.skipProviderAdd,
-  getCategoriesAction: MovieCreators.getCategories
+  skipProviderAddAction: UserCreators.skipProviderAdd
 };
 
 export default compose(
