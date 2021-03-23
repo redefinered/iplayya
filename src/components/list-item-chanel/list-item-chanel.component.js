@@ -25,8 +25,6 @@ const ListItemChanel = ({
 }) => {
   const theme = useTheme();
 
-  console.log({ thumbnailL: contentProps.thumbnail });
-
   if (full)
     return (
       <ContentWrap>
