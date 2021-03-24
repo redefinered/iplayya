@@ -26,7 +26,7 @@ const INITIAL_STATE = {
   downloads: {},
 
   // downloads progress
-  downloadsProgress: {},
+  downloadsProgress: [],
 
   // when movie is downloading
   // downloading: false,
@@ -259,11 +259,9 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.UPDATE_DOWNLOADS_PROGRESS]: (state, action) => {
     const { id, ...progress } = action.data;
-    const current = state.downloadsProgress;
-    current[id] = { id, ...progress };
     return {
       ...state,
-      downloadsProgress: current
+      downloadsProgress: [...state.downloadsProgress, { id, ...progress }]
     };
   },
   [Types.GET_DOWNLOADS]: (state) => {

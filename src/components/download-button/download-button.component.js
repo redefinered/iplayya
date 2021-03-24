@@ -7,7 +7,8 @@ import RNFetchBlob from 'rn-fetch-blob';
 import {
   selectDownloads,
   selectMovieUrl,
-  selectMovieTitle
+  selectMovieTitle,
+  selectDownloadsProgress
 } from 'modules/ducks/movies/movies.selectors';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -27,7 +28,9 @@ const DownloadButton = ({
 
   downloads,
   updateDownloadsProgressAction,
-  updateDownloadsAction
+  updateDownloadsAction,
+
+  downloadsProgress
 }) => {
   const [files, setFiles] = React.useState([]);
   const [downloading, setDownloading] = React.useState(false);
@@ -36,6 +39,10 @@ const DownloadButton = ({
   React.useEffect(() => {
     checkIfMovieIsDownlowded();
   }, []);
+
+  React.useEffect(() => {
+    console.log({ downloadsProgress });
+  }, [downloadsProgress]);
 
   const handleDownloadMovie = (video) => {
     if (downloading) return;
@@ -162,7 +169,8 @@ DownloadButton.propTypes = {
   movieTitle: PropTypes.string,
   downloads: PropTypes.object,
   updateDownloadsAction: PropTypes.func,
-  updateDownloadsProgressAction: PropTypes.func
+  updateDownloadsProgressAction: PropTypes.func,
+  downloadsProgress: PropTypes.object
 };
 
 const actions = {
@@ -173,7 +181,8 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   downloads: selectDownloads,
   movieUrl: selectMovieUrl,
-  movieTitle: selectMovieTitle
+  movieTitle: selectMovieTitle,
+  downloadsProgress: selectDownloadsProgress
 });
 
 export default compose(connect(mapStateToProps, actions), withTheme)(DownloadButton);

@@ -46,7 +46,7 @@ const ImovieDownloadsScreen = ({
 
   React.useEffect(() => {
     const input = Object.keys(downloadsProgress).map((key) => parseInt(key));
-    // console.log({ input });
+    console.log({ downloadsProgress });
     getSavedVideos();
 
     /// TO FIX: if the downloadsProgress resets the downloads data is not going to be set
@@ -55,6 +55,10 @@ const ImovieDownloadsScreen = ({
     // instead of the downloadsProgress array in state
     getDownloadsAction({ input });
   }, []);
+
+  React.useEffect(() => {
+    console.log({ downloadsProgress });
+  }, [downloadsProgress]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
