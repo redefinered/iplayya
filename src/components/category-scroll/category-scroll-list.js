@@ -17,11 +17,16 @@ const CategoryScrollList = ({
   paginatorOfCategory
 }) => {
   // eslint-disable-next-line react/prop-types
-  const renderItem = ({ item: { id, thumbnail: uri } }) => (
-    <Pressable style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
-      <Image style={{ width: CARD_WIDTH, height: CARD_HEIGHT, borderRadius: 8 }} source={{ uri }} />
-    </Pressable>
-  );
+  const renderItem = ({ item: { id, thumbnail: uri } }) => {
+    return (
+      <Pressable style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
+        <Image
+          style={{ width: CARD_WIDTH, height: CARD_HEIGHT, borderRadius: 8 }}
+          source={{ uri }}
+        />
+      </Pressable>
+    );
+  };
 
   // console.log({ paginatorOfCategory });
 

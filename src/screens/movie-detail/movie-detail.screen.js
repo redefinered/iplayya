@@ -159,7 +159,7 @@ const MovieDetailScreen = ({
     if (source) {
       return (
         <MediaPlayer
-          type="mp4"
+          // type="mp4"
           paused={paused}
           source={source}
           thumbnail={thumbnail}

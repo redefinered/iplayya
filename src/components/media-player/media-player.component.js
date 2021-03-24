@@ -24,8 +24,8 @@ const MediaPlayer = ({
   thumbnail,
   title,
   paused,
-  togglePlay,
-  type
+  togglePlay
+  // type
 }) => {
   const theme = useTheme();
   const [showControls, setShowControls] = React.useState(false);
@@ -40,7 +40,7 @@ const MediaPlayer = ({
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
 
-  console.log({ sourcex: source, type });
+  // console.log({ sourcex: source, type });
 
   let timer = null;
 

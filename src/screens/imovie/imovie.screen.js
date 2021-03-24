@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import Icon from 'components/icon/icon.component';
 import {
   selectError,
   selectIsFetching,
@@ -34,12 +35,14 @@ const ImovieScreen = ({
   paginatorInfo,
   addMovieToFavoritesStartAction,
   getCategoriesAction,
+  theme,
   // getMoviesByCategoriesAction,
   route: { params },
   ...rest
 }) => {
   const [positions, setPositions] = React.useState({});
   const [scrollOffset, setScrollOffset] = React.useState(0); /// scroll offset if a category is selected from search
+  const [showBanner, setShowBanner] = React.useState(true);
   // reset 'added' state when adding a movie to favorites to prevent conflicts
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
@@ -87,9 +90,7 @@ const ImovieScreen = ({
   };
 
   const renderEmpty = () => {
-    if (error) return <Text>{error}</Text>;
-    // this should only be returned if user did not subscribe to any channels
-    return <Text>Working...</Text>;
+    return <Text>No movies found</Text>;
   };
 
   const handleSetItemsPosition = (index, layout) => {
@@ -98,8 +99,44 @@ const ImovieScreen = ({
     setPositions(newPositions);
   };
 
+  const handleRetry = () => {
+    if (paginatorInfo.length) {
+      getMoviesAction(paginatorInfo);
+    }
+    setShowBanner(false);
+  };
+
+  // show error banner on error
+  React.useEffect(() => {
+    if (error) {
+      setShowBanner(true);
+    }
+  }, [error]);
+
+  const renderErrorBanner = () => {
+    if (!error) return;
+
+    return (
+      <Banner
+        visible={showBanner}
+        actions={[
+          {
+            label: 'Retry',
+            onPress: () => handleRetry()
+          }
+        ]}
+        icon={({ size }) => (
+          <Icon name="alert" size={size} color={theme.iplayya.colors.vibrantpussy} />
+        )}
+      >
+        <Text style={{ color: 'black' }}>{error}</Text>
+      </Banner>
+    );
+  };
+
   return (
     <View style={styles.container}>
+      {renderErrorBanner()}
       {movies.length ? (
         <React.Fragment>
           <ScrollView contentOffset={{ y: scrollOffset }}>
@@ -176,5 +213,6 @@ const actions = {
 export default compose(
   withHeaderPush(),
   connect(mapStateToProps, actions),
-  withLoader
+  withLoader,
+  withTheme
 )(ImovieScreen);
