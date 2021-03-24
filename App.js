@@ -14,14 +14,15 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
-import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+import { Creators as ProfileActionCreators } from 'modules/ducks/profile/profile.actions';
+import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
 import { Linking, Platform, StatusBar } from 'react-native';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+// import { Creators } from 'modules/ducks/itv/itv.actions';
 
 import SplashScreen from 'react-native-splash-screen';
 
@@ -118,8 +119,8 @@ const actions = {
   purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
-  getProfileAction: ProfileCreators.get,
-  resetAction: Creators.reset
+  getProfileAction: ProfileActionCreators.get,
+  resetAction: MoviesActionCreators.reset
 };
 
 export default connect(mapStateToProps, actions)(App);

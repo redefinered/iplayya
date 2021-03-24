@@ -317,5 +317,8 @@ export default createReducer(INITIAL_STATE, {
       error: action.error,
       searchResults: []
     };
+  },
+  [Types.RESET]: () => {
+    return { ...INITIAL_STATE };
   }
 });
