@@ -309,8 +309,7 @@ MediaPlayer.propTypes = {
   thumbnail: PropTypes.string,
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
-  updatePlaybackInfoAction: PropTypes.func,
-  type: PropTypes.string.isRequired
+  updatePlaybackInfoAction: PropTypes.func
 };
 
 const actions = {
