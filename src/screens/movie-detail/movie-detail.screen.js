@@ -49,7 +49,7 @@ const MovieDetailScreen = ({
   const listDownloadedFiles = async () => {
     const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
     setDownloadedFiles(ls);
-    // console.log({ ls });
+    console.log({ ls });
   };
 
   React.useEffect(() => {
@@ -127,8 +127,6 @@ const MovieDetailScreen = ({
     setLoading(true);
     setPaused(!paused);
   };
-
-  console.log({ error });
 
   if (error)
     return (
