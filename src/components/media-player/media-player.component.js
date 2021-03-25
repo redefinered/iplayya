@@ -16,6 +16,11 @@ import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
 
+// const samplevideo = require('assets/sample-mp4-file.mp4');
+// eslint-disable-next-line no-unused-vars
+const samplenetworkvideo =
+  'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
+
 const MediaPlayer = ({
   loading,
   setLoading,
@@ -152,6 +157,7 @@ const MediaPlayer = ({
         paused={paused}
         onProgress={handleProgress}
         source={{ uri: source }}
+        // source={samplevideo}
         // source={{ uri: 'http://185.152.64.163:2080/435/mpegts' }}
         ref={player}
         volume={volume}

@@ -2,6 +2,8 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
 import { updateMoviesState, updatePaginatorInfo } from './movies.utils';
 
+import { setupPaginator } from 'screens/imovie/imovie.utils';
+
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
@@ -108,13 +110,13 @@ export default createReducer(INITIAL_STATE, {
   },
 
   // setup paginator info
-  [Types.SETUP_PAGINATOR_INFO]: (state, action) => {
-    const { paginatorInfo } = action;
-    return {
-      ...state,
-      paginatorInfo
-    };
-  },
+  // [Types.SETUP_PAGINATOR_INFO]: (state, action) => {
+  //   const { paginatorInfo } = action;
+  //   return {
+  //     ...state,
+  //     paginatorInfo
+  //   };
+  // },
 
   // get all categories
   [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
@@ -123,7 +125,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: null,
       isFetching: false,
-      categories
+      categories,
+      paginatorInfo: setupPaginator(categories)
     };
   },
 

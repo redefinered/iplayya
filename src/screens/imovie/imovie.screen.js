@@ -21,7 +21,6 @@ import {
   selectPaginatorInfo
 } from 'modules/ducks/movies/movies.selectors';
 import { urlEncodeTitle } from 'utils';
-import { setupPaginator } from './imovie.utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 
 const ImovieScreen = ({
@@ -29,14 +28,13 @@ const ImovieScreen = ({
   getMoviesStartAction,
   navigation,
   error,
-  categories,
+  // categories,
   getMoviesAction,
-  setupPaginatorInfoAction,
+  // setupPaginatorInfoAction,
   paginatorInfo,
   addMovieToFavoritesStartAction,
-  getCategoriesAction,
+  // getCategoriesAction,
   theme,
-  // getMoviesByCategoriesAction,
   route: { params },
   ...rest
 }) => {
@@ -47,7 +45,7 @@ const ImovieScreen = ({
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
     getMoviesStartAction();
-    getCategoriesAction();
+    // getCategoriesAction();
   }, []);
 
   React.useEffect(() => {
@@ -70,13 +68,6 @@ const ImovieScreen = ({
       ...rest
     };
   });
-
-  React.useEffect(() => {
-    if (categories.length) {
-      const paginator = setupPaginator(categories);
-      setupPaginatorInfoAction(paginator);
-    }
-  }, [categories]);
 
   // get movies on mount
   React.useEffect(() => {
@@ -155,22 +146,6 @@ const ImovieScreen = ({
                 </View>
               );
             })}
-
-            {/* continue watching */}
-            {/* <View style={{ marginBottom: 30, paddingBottom: 100 }}>
-              <ContentWrap>
-                <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                  Continue watching
-                </Text>
-              </ContentWrap>
-              <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {movies.map(({ id, thumbnail: url }) => (
-                  <Pressable key={id} style={{ marginRight: 10 }}>
-                    <Image style={{ width: 115, height: 170, borderRadius: 8 }} source={{ url }} />
-                  </Pressable>
-                ))}
-              </ScrollView>
-            </View> */}
             <Spacer size={100} />
           </ScrollView>
         </React.Fragment>
@@ -202,12 +177,9 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   getMoviesStartAction: Creators.getMoviesStart,
-  getCategoriesAction: Creators.getCategories,
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  setupPaginatorInfoAction: Creators.setupPaginatorInfo,
-  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
-  getMoviesByCategoriesAction: Creators.getMoviesByCategories
+  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart
 };
 
 export default compose(

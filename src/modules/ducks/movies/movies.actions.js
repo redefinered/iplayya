@@ -2,7 +2,7 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    setupPaginatorInfo: ['paginatorInfo'],
+    // setupPaginatorInfo: ['paginatorInfo'],
 
     getMovieStart: [],
     getMovie: ['videoId'],

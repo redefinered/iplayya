@@ -12,9 +12,20 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/auth/auth.selectors';
 import withLoader from 'components/with-loader.component';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 
-const Home = ({ navigation, completedOnboarding, setBottomTabsVisibleAction }) => {
+const Home = ({
+  navigation,
+  completedOnboarding,
+  setBottomTabsVisibleAction,
+  getCategoriesAction
+}) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
+
+  /// load categories here
+  React.useEffect(() => {
+    getCategoriesAction();
+  }, []);
 
   React.useEffect(() => {
     // makes sure main tab navigation is always visible on application mount
@@ -60,7 +71,8 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible
+  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
+  getCategoriesAction: Creators.getCategories
 };
 
 export default compose(
