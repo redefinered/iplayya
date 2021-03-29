@@ -114,13 +114,10 @@ const MovieDetailScreen = ({
   }, [isFavListUpdated]);
 
   React.useEffect(() => {
-    addMovieToFavoritesStartAction();
-  }, []);
-
-  React.useEffect(() => {
     playbackStartAction();
     getMovieStartAction();
     getMovieAction(videoId);
+    addMovieToFavoritesStartAction();
   }, []);
 
   const handleTogglePlay = () => {
