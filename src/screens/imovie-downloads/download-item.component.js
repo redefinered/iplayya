@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, View, Image } from 'react-native';
+import { Pressable, View, Image, Dimensions } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
+import Icon from 'components/icon/icon.component';
 
 const DownloadItem = ({
   id,
@@ -16,11 +17,80 @@ const DownloadItem = ({
   category,
   handleSelectItem,
 
+  isDownloaded,
+
   // url is the thumbnail url
-  url
+  imageUrl: uri,
+
+  progress
 }) => {
+  // const [isDownloaded] = React.useState(false);
+  const [paused] = React.useState(true);
+
+  // console.log({ progress });
+
+  const renderPauseButton = () => {
+    if (paused)
+      return (
+        <Pressable style={{ marginLeft: theme.spacing(4) }}>
+          <Icon name="circular-play" size={40} />
+        </Pressable>
+      );
+
+    return (
+      <Pressable style={{ marginLeft: theme.spacing(4) }}>
+        <Icon name="circular-pause" size={40} />
+      </Pressable>
+    );
+  };
+
+  const renderProgress = () => {
+    if (isDownloaded) return;
+    if (!progress) return;
+
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: Dimensions.get('window').width,
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          paddingHorizontal: theme.spacing(4),
+          flexDirection: 'row'
+        }}
+      >
+        {/* <Pressable style={{ marginLeft: theme.spacing(4) }}>
+        <Icon name="redo" size={40} />
+      </Pressable> */}
+        {renderPauseButton()}
+        <Pressable style={{ marginLeft: theme.spacing(4) }}>
+          <Icon name="close" size={40} />
+        </Pressable>
+        <View
+          style={{
+            backgroundColor: theme.iplayya.colors.white10,
+            position: 'absolute',
+            bottom: 0,
+            left: 0
+          }}
+        >
+          <View
+            style={{
+              width: Dimensions.get('window').width * progress,
+              height: 2,
+              backgroundColor: theme.iplayya.colors.vibrantpussy
+            }}
+          />
+        </View>
+      </View>
+    );
+  };
+
   return (
-    <ContentWrap>
+    <ContentWrap style={{ position: 'relative', marginBottom: 20 }}>
       {/* <View
         style={{
           width: '100%',
@@ -29,7 +99,12 @@ const DownloadItem = ({
         }}
       /> */}
       <Pressable
-        style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
+        style={{
+          position: 'relative',
+          height: 96,
+          paddingLeft: 75,
+          opacity: isDownloaded ? 1 : 0.5
+        }}
         // onLongPress={() => handleLongPress(id)}
         onPress={() => handleSelectItem(id)}
       >
@@ -42,7 +117,7 @@ const DownloadItem = ({
             top: 0,
             left: 0
           }}
-          source={{ url }}
+          source={{ uri }}
         />
         <View
           style={{
@@ -82,6 +157,8 @@ const DownloadItem = ({
                     )} */}
         </View>
       </Pressable>
+
+      {renderProgress()}
     </ContentWrap>
   );
 };
@@ -96,7 +173,9 @@ DownloadItem.propTypes = {
   rating_mpaa: PropTypes.string,
   age_rating: PropTypes.string,
   category: PropTypes.string,
-  url: PropTypes.string
+  imageUrl: PropTypes.string,
+  isDownloaded: PropTypes.bool,
+  progress: PropTypes.number
 };
 
 export default withTheme(DownloadItem);

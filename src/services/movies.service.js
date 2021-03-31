@@ -34,7 +34,6 @@ export const getCategories = async () => {
 };
 
 export const getMoviesByCategories = async (input) => {
-  console.log('xxx');
   try {
     const { data } = await client.query({
       query: GET_MOVIES_BY_CATEGORIES,
@@ -96,6 +95,7 @@ export const getDownloads = async (videoIds) => {
     });
     return data;
   } catch (error) {
+    // console.log({ error });
     throw new Error(error);
   }
 };

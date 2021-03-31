@@ -15,6 +15,11 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 
+// const samplenetworkvideo =
+//   'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
+
+// const samplenetworkvideo = 'https://www.dropbox.com/s/h07we38gd6x0kic/12AngryMen.mp4?dl=0';
+
 let dirs = RNFetchBlob.fs.dirs;
 
 const DownloadButton = ({
@@ -29,8 +34,10 @@ const DownloadButton = ({
   downloads,
   updateDownloadsProgressAction,
   updateDownloadsAction,
+  // updateDownloadIdsAction,
 
-  downloadsProgress
+  downloadsProgress,
+  cleanUpDownloadsProgressAction
 }) => {
   const [files, setFiles] = React.useState([]);
   const [downloading, setDownloading] = React.useState(false);
@@ -40,9 +47,9 @@ const DownloadButton = ({
     checkIfMovieIsDownlowded();
   }, []);
 
-  React.useEffect(() => {
-    console.log({ downloadsProgress });
-  }, [downloadsProgress]);
+  // React.useEffect(() => {
+  //   console.log({ downloadsProgress });
+  // }, [downloadsProgress]);
 
   const handleDownloadMovie = (video) => {
     if (downloading) return;
@@ -79,6 +86,13 @@ const DownloadButton = ({
           .fetch('GET', video.url, {
             //some headers ..
           })
+
+          /**
+           * FOR DEVELOPMENT
+           * testing a sample network video for downloads progress UI development
+           */
+          // .fetch('GET', samplenetworkvideo, {})
+
           .progress({ count: 100 }, (received, total) => {
             const progress = received / total;
             updateDownloadsProgressAction({ id: video.videoId, received, total });
@@ -87,6 +101,13 @@ const DownloadButton = ({
           .then((res) => {
             // the temp file path
             console.log('The file saved to ', res.path());
+
+            let completedItems = downloadsProgress.filter(
+              ({ received, total }) => received === total
+            );
+            completedItems = completedItems.map(({ id }) => id);
+
+            cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
 
             // set downloading state to false
             setDownloading(false);
@@ -100,6 +121,7 @@ const DownloadButton = ({
 
       // setDownloads(Object.assign(downloads, currentDownloads));
       updateDownloadsAction(Object.assign(downloads, currentDownloads));
+      // updateDownloadIdsAction(video.videoId);
     } catch (error) {
       console.log(error.message);
     }
@@ -170,12 +192,15 @@ DownloadButton.propTypes = {
   downloads: PropTypes.object,
   updateDownloadsAction: PropTypes.func,
   updateDownloadsProgressAction: PropTypes.func,
-  downloadsProgress: PropTypes.object
+  downloadsProgress: PropTypes.object,
+  cleanUpDownloadsProgressAction: PropTypes.func
+  // updateDownloadIdsAction: PropTypes.func
 };
 
 const actions = {
   updateDownloadsAction: Creators.updateDownloads,
-  updateDownloadsProgressAction: Creators.updateDownloadsProgress
+  updateDownloadsProgressAction: Creators.updateDownloadsProgress,
+  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress
 };
 
 const mapStateToProps = createStructuredSelector({

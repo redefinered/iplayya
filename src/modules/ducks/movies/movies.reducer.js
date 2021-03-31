@@ -268,6 +268,28 @@ export default createReducer(INITIAL_STATE, {
       downloadsProgress: [...state.downloadsProgress, { id, ...progress }]
     };
   },
+
+  [Types.CLEAN_UP_DOWNLOADS_PROGRESS]: (state, action) => {
+    const { ids } = action;
+    const downloadsProgress = state.downloadsProgress;
+    let incompleteItems = [];
+    ids.forEach((removeId) => {
+      incompleteItems = downloadsProgress.filter(({ id }) => id !== removeId);
+    });
+
+    return {
+      ...state,
+      downloadsProgress: incompleteItems
+    };
+  },
+
+  [Types.RESET_DOWNLOADS_PROGRESS]: (state) => {
+    return {
+      ...state,
+      downloadsProgress: []
+    };
+  },
+
   [Types.GET_DOWNLOADS]: (state) => {
     return {
       ...state,

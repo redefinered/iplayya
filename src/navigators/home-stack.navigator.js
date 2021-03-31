@@ -43,16 +43,20 @@ const Stack = createStackNavigator();
 
 export const deleteFile = async (filename = null) => {
   if (!filename) return;
-  await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
-  const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
-  console.log({ ls });
+  try {
+    await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
+  } catch (error) {
+    console.log(`Delete file error: ${error.message}`);
+  }
+  // const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
+  // console.log({ ls });
 };
 
 const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
   React.useEffect(() => {
     // does nothing if no specified filename, bitch!
     // listDownloadedMovies();
-    // deleteFile('19_12_Angry_Men.mp4');
+    // deleteFile('35915_100_Metros.mp4');
     // console.log({ dirs });
   }, []);
 

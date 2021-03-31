@@ -51,6 +51,10 @@ const { Types, Creators } = createActions(
      */
     updateDownloads: ['data'],
 
+    /// the id argument is the ID to be removed
+    cleanUpDownloadsProgress: ['ids'],
+    resetDownloadsProgress: [],
+
     updateDownloadsProgress: ['data'],
 
     getDownloadsStart: [],

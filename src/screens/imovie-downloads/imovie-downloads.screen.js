@@ -16,7 +16,8 @@ import {
   selectDownloads,
   selectFavorites,
   selectDownloadsProgress,
-  selectDownloadsData
+  selectDownloadsData,
+  selectDownloadIds
 } from 'modules/ducks/movies/movies.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import DownloadItem from './download-item.component';
@@ -31,34 +32,39 @@ const ImovieDownloadsScreen = ({
   // route,
   downloadsProgress,
   getDownloadsAction,
-  downloadsData
+  downloadsData,
+
+  // eslint-disable-next-line no-unused-vars
+  resetDownloadsProgressAction
 }) => {
-  // const [files, setFiles] = React.
+  const [downloadedItemsIds, setDownloadedItemsIds] = React.useState([]);
+  // const [downloadCompleteItems, setDownloadCompleteItems] = React.useState([]);
   const activateCheckboxes = false;
 
-  const getSavedVideos = async () => {
+  const setDownloadIdsForFething = async () => {
     const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
     console.log({ ls });
-    // const downloadedMovies = downloadsProgress.map(({ id }) => {
-    //   return;
-    // });
+    let downloadsIdsFromFileSystem = ls.map((i) => {
+      let splitTitle = i.split('_');
+      return splitTitle[0]; /// IDs of donwloaded items
+    });
+
+    downloadsIdsFromFileSystem = downloadsIdsFromFileSystem.map((d) => parseInt(d));
+
+    setDownloadedItemsIds(downloadsIdsFromFileSystem);
   };
 
   React.useEffect(() => {
-    const input = Object.keys(downloadsProgress).map((key) => parseInt(key));
-    console.log({ downloadsProgress });
-    getSavedVideos();
-
-    /// TO FIX: if the downloadsProgress resets the downloads data is not going to be set
-    // so the downloads screen is going to be empty even if the downloads are actually still
-    // in the phone storage. Refactor so the downloads list is based on the files in storage
-    // instead of the downloadsProgress array in state
-    getDownloadsAction({ input });
+    // resetDownloadsProgressAction(); /// reset downloads progress for development
+    setDownloadIdsForFething();
   }, []);
 
   React.useEffect(() => {
-    console.log({ downloadsProgress });
-  }, [downloadsProgress]);
+    if (downloadedItemsIds) {
+      // list the downloaded items complete or not
+      getDownloadsAction({ input: downloadedItemsIds });
+    }
+  }, [downloadedItemsIds]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -80,12 +86,36 @@ const ImovieDownloadsScreen = ({
       return (
         <ScrollView>
           {downloadsData.map(({ id, thumbnail, ...otherProps }) => {
-            let url = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
+            let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
+
+            let isDownloaded =
+              typeof downloadsProgress.find(
+                ({ id: dowloadProgressId }) => id === dowloadProgressId
+              ) === 'undefined'
+                ? true
+                : false;
+
+            let progress = null;
+
+            if (downloadsProgress.length) {
+              let progressData = downloadsProgress.filter(
+                ({ id: progressId }) => id === progressId
+              );
+
+              let currentProgress = progressData[progressData.length - 1];
+
+              if (typeof currentProgress !== 'undefined') {
+                progress = currentProgress.received / currentProgress.total;
+              }
+            }
+
             return (
               <DownloadItem
                 key={id}
                 id={id}
-                url={url}
+                isDownloaded={isDownloaded}
+                progress={progress}
+                imageUrl={imageUrl}
                 {...otherProps}
                 handleSelectItem={handleSelectItem}
               />
@@ -128,7 +158,8 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const actions = {
-  getDownloadsAction: Creators.getDownloads
+  getDownloadsAction: Creators.getDownloads,
+  resetDownloadsProgressAction: Creators.resetDownloadsProgress
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -137,7 +168,8 @@ const mapStateToProps = createStructuredSelector({
   downloads: selectDownloads,
   favorites: selectFavorites,
   downloadsProgress: selectDownloadsProgress,
-  downloadsData: selectDownloadsData
+  downloadsData: selectDownloadsData,
+  downloadIds: selectDownloadIds
 });
 
 export default compose(
