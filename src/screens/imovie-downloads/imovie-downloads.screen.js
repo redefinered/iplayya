@@ -16,8 +16,7 @@ import {
   selectDownloads,
   selectFavorites,
   selectDownloadsProgress,
-  selectDownloadsData,
-  selectDownloadIds
+  selectDownloadsData
 } from 'modules/ducks/movies/movies.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import DownloadItem from './download-item.component';
@@ -42,16 +41,30 @@ const ImovieDownloadsScreen = ({
   const activateCheckboxes = false;
 
   const setDownloadIdsForFething = async () => {
-    const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
-    console.log({ ls });
-    let downloadsIdsFromFileSystem = ls.map((i) => {
-      let splitTitle = i.split('_');
-      return splitTitle[0]; /// IDs of donwloaded items
-    });
+    const dir = dirs.DocumentDir;
+    try {
+      const ls = await RNFetchBlob.fs.ls(dir);
+      console.log({ ls });
+      let downloadsIdsFromFileSystem = ls.map((i) => {
+        let splitTitle = i.split('_');
+        return splitTitle[0]; /// IDs of donwloaded items
+      });
 
-    downloadsIdsFromFileSystem = downloadsIdsFromFileSystem.map((d) => parseInt(d));
+      downloadsIdsFromFileSystem = downloadsIdsFromFileSystem.filter(
+        (videoId) => !Number.isNaN(parseInt(videoId))
+      );
 
-    setDownloadedItemsIds(downloadsIdsFromFileSystem);
+      // downloadsIdsFromFileSystem = downloadsIdsFromFileSystem.map((d) => parseInt(d));
+
+      // remove null values
+      // eslint-disable-next-line use-isnan
+
+      console.log({ downloadsIdsFromFileSystem });
+
+      setDownloadedItemsIds(downloadsIdsFromFileSystem);
+    } catch (error) {
+      console.log({ error });
+    }
   };
 
   React.useEffect(() => {
@@ -60,7 +73,7 @@ const ImovieDownloadsScreen = ({
   }, []);
 
   React.useEffect(() => {
-    if (downloadedItemsIds) {
+    if (downloadedItemsIds.length) {
       // list the downloaded items complete or not
       getDownloadsAction({ input: downloadedItemsIds });
     }
@@ -168,8 +181,7 @@ const mapStateToProps = createStructuredSelector({
   downloads: selectDownloads,
   favorites: selectFavorites,
   downloadsProgress: selectDownloadsProgress,
-  downloadsData: selectDownloadsData,
-  downloadIds: selectDownloadIds
+  downloadsData: selectDownloadsData
 });
 
 export default compose(
