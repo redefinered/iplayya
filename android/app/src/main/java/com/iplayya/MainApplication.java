@@ -17,6 +17,8 @@ import com.brentvatne.react.ReactVideoPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -55,6 +57,9 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
+    long size = 50L * 1024L * 1024L; // 50 MB
+    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
   }
 
   /**
