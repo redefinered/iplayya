@@ -47,7 +47,9 @@ const MovieDetailScreen = ({
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
   const listDownloadedFiles = async () => {
-    const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
+    // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.MovieDir;
+    const dir = dirs.DocumentDir;
+    const ls = await RNFetchBlob.fs.ls(dir);
     setDownloadedFiles(ls);
     console.log({ ls });
   };
@@ -84,7 +86,6 @@ const MovieDetailScreen = ({
         setSource(`${dirs.DocumentDir}/${filename}`);
       } else {
         let src = rtsp_url.split(' ')[1];
-        console.log({ src });
         let setsrc = typeof src === 'undefined' ? null : src;
         setSource(setsrc);
       }

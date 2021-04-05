@@ -100,7 +100,8 @@ const DownloadButton = ({
   };
 
   const checkIfMovieIsDownlowded = async () => {
-    const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
+    // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
+    const dir = dirs.DocumentDir;
     const ls = await RNFetchBlob.fs.ls(dir);
     const dls = ls.map((file) => {
       let split = file.split('_');
