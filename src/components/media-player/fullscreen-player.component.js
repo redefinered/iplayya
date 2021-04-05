@@ -74,6 +74,7 @@ const FullScreenPlayer = (props) => {
                 ? `https://via.placeholder.com/${HEIGHT}x${WIDTH}.png?text=${urlEncodeTitle(title)}`
                 : thumbnail
             }
+            resizeMode="contain"
             posterResizeMode="cover"
             style={{
               position: 'absolute',

@@ -168,6 +168,7 @@ const MediaPlayer = ({
             ? `https://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
             : thumbnail
         }
+        resizeMode="contain"
         posterResizeMode="cover"
         style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
       />
