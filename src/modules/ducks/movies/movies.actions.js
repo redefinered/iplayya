@@ -67,6 +67,8 @@ const { Types, Creators } = createActions(
     searchSuccess: ['data'],
     searchFailure: ['error'],
 
+    setPermissionError: ['error'],
+
     reset: []
   },
   { prefix: '@Movies/' }

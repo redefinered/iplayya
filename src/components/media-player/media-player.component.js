@@ -16,6 +16,7 @@ import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
 
+// const temp = require('/data/user/0/com.iplayya/files/35466_God_of_War.mp4');
 // const samplevideo = require('assets/sample-mp4-file.mp4');
 // eslint-disable-next-line no-unused-vars
 const samplenetworkvideo =
@@ -114,6 +115,8 @@ const MediaPlayer = ({
     setScreencastOption(val);
     setScreencastActiveState(null);
   };
+
+  console.log({ source });
 
   if (fullscreen)
     return (

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { View, Pressable, ScrollView } from 'react-native';
+// eslint-disable-next-line no-unused-vars
+import { View, Pressable, ScrollView, Platform } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import NoDownloads from 'assets/downloads-empty.svg';
@@ -42,6 +43,7 @@ const ImovieDownloadsScreen = ({
 
   const setDownloadIdsForFething = async () => {
     const dir = dirs.DocumentDir;
+    // let dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
     try {
       const ls = await RNFetchBlob.fs.ls(dir);
       console.log({ ls });

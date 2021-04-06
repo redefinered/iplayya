@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable } from 'react-native';
+// eslint-disable-next-line no-unused-vars
+import { View, ScrollView, StyleSheet, Pressable, Platform } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
@@ -47,7 +48,7 @@ const MovieDetailScreen = ({
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
   const listDownloadedFiles = async () => {
-    // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.MovieDir;
+    // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
     const dir = dirs.DocumentDir;
     const ls = await RNFetchBlob.fs.ls(dir);
     setDownloadedFiles(ls);

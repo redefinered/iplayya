@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, StyleSheet } from 'react-native';
+// eslint-disable-next-line no-unused-vars
+import { Pressable, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { withTheme, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -17,21 +18,8 @@ import { Creators } from 'modules/ducks/movies/movies.actions';
 
 let dirs = RNFetchBlob.fs.dirs;
 
-// const convertHttpToHttps = (httpUrl) => {
-//   const [protocol, path] = httpUrl.split('://');
-
-//   // replaces protocol is http replace with https
-//   if (protocol === 'http') return `https://${path}`;
-
-//   // else just return the original
-//   return httpUrl;
-// };
-
 const DownloadButton = ({
   theme,
-  // isMovieDownloaded,
-  // setIsMovieDownloaded,
-  // handleDownloadMovie,
   videoId,
   movieTitle,
   movieUrl,
@@ -43,7 +31,8 @@ const DownloadButton = ({
   // updateDownloadIdsAction,
 
   downloadsProgress,
-  cleanUpDownloadsProgressAction
+  cleanUpDownloadsProgressAction,
+  setPermissionErrorAction
 }) => {
   const [files, setFiles] = React.useState([]);
   const [downloading, setDownloading] = React.useState(false);
@@ -57,7 +46,38 @@ const DownloadButton = ({
   //   console.log({ downloadsProgress });
   // }, [downloadsProgress]);
 
-  const handleDownloadMovie = (video) => {
+  const requestWritePermissionAndroid = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Permission to write into file storage',
+          message: 'The app needs access to your file storage so you can download the file',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK'
+        }
+      );
+
+      const readgrant = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+      );
+
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        throw new Error('No write access');
+      }
+
+      if (readgrant !== PermissionsAndroid.RESULTS.GRANTED) {
+        throw new Error('No read access');
+      }
+
+      return PermissionsAndroid.RESULTS.GRANTED;
+    } catch (error) {
+      setPermissionErrorAction(error.message);
+    }
+  };
+
+  const handleDownloadMovie = async (video) => {
     if (downloading) return;
 
     // return if movie is already downloaded
@@ -73,25 +93,39 @@ const DownloadButton = ({
     }
 
     // let source = convertHttpToHttps(video.url);
-    // let source =
-    //   'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
-    let source = video.url;
+    let source =
+      'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
+    // let source = video.url;
 
     // set downloading state to true
     setDownloading(true);
+
+    const permission = await requestWritePermissionAndroid();
+
+    console.log({ permission });
+
+    if (!permission) {
+      return setDownloading(false);
+    }
 
     try {
       const titlesplit = video.title.split(' ');
       const title = titlesplit.join('_');
       console.log(title);
 
-      // let downloadPath = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.MovieDir;
+      // let downloadPath = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
       const downloadPath = dirs.DocumentDir;
 
       const currentDownloads = downloads;
       currentDownloads[`task_${video.videoId}`] = {
         id: video.videoId,
         task: RNFetchBlob.config({
+          // addAndroidDownloads: {
+          //   useDownloadManager: true,
+          //   notification: true,
+          //   title: movieTitle,
+          //   path: `${downloadPath}/${video.videoId}_${title}.mp4`
+          // },
           // add this option that makes response data to be stored as a file,
           // this is much more performant.
           fileCache: true,
@@ -209,14 +243,15 @@ DownloadButton.propTypes = {
   updateDownloadsAction: PropTypes.func,
   updateDownloadsProgressAction: PropTypes.func,
   downloadsProgress: PropTypes.any,
-  cleanUpDownloadsProgressAction: PropTypes.func
-  // updateDownloadIdsAction: PropTypes.func
+  cleanUpDownloadsProgressAction: PropTypes.func,
+  setPermissionErrorAction: PropTypes.func
 };
 
 const actions = {
   updateDownloadsAction: Creators.updateDownloads,
   updateDownloadsProgressAction: Creators.updateDownloadsProgress,
-  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress
+  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress,
+  setPermissionErrorAction: Creators.setPermissionError
 };
 
 const mapStateToProps = createStructuredSelector({
