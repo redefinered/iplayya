@@ -18,12 +18,14 @@ const Home = ({
   navigation,
   completedOnboarding,
   setBottomTabsVisibleAction,
-  getCategoriesAction
+  getCategoriesAction,
+  getMoviesStartAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
 
   /// load categories here
   React.useEffect(() => {
+    getMoviesStartAction();
     getCategoriesAction();
   }, []);
 
@@ -72,7 +74,8 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  getCategoriesAction: Creators.getCategories
+  getCategoriesAction: Creators.getCategories,
+  getMoviesStartAction: Creators.getMoviesStart
 };
 
 export default compose(
