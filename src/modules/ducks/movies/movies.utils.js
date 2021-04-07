@@ -2,6 +2,9 @@ import uniqBy from 'lodash/uniqBy';
 
 export const updateMoviesState = (state, newMovies) => {
   let { movies } = state;
+
+  if (!newMovies.length) return movies;
+
   const index = movies.findIndex(({ category }) => category === newMovies[0].category);
   const moviesToUpdate = movies.find(({ category }) => category === newMovies[0].category);
   const mergedMovies = [...moviesToUpdate.videos, ...newMovies];
@@ -14,6 +17,9 @@ export const updateMoviesState = (state, newMovies) => {
 
 export const updatePaginatorInfo = (state, newMovies, nextPaginator) => {
   const { paginatorInfo } = state;
+
+  if (!newMovies.length) return paginatorInfo;
+
   const prevPaginator = paginatorInfo.find(({ title }) => title === newMovies[0].category);
   const index = paginatorInfo.findIndex(({ title }) => title === newMovies[0].category);
 
