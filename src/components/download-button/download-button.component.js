@@ -102,8 +102,6 @@ const DownloadButton = ({
 
     const permission = await requestWritePermissionAndroid();
 
-    console.log({ permission });
-
     if (!permission) {
       return setDownloading(false);
     }
@@ -124,7 +122,7 @@ const DownloadButton = ({
           //   useDownloadManager: true,
           //   notification: true,
           //   title: movieTitle,
-          //   path: `${downloadPath}/${video.videoId}_${title}.mp4`
+          //   path: `${dirs.MovieDir}/${video.videoId}_${title}.mp4`
           // },
           // add this option that makes response data to be stored as a file,
           // this is much more performant.
