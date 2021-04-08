@@ -19,8 +19,8 @@ import Spacer from 'components/spacer.component';
 // const temp = require('/data/user/0/com.iplayya/files/35466_God_of_War.mp4');
 // const samplevideo = require('assets/sample-mp4-file.mp4');
 // eslint-disable-next-line no-unused-vars
-const samplenetworkvideo =
-  'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
+// const samplenetworkvideo =
+//   'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
 
 const MediaPlayer = ({
   loading,
@@ -160,8 +160,6 @@ const MediaPlayer = ({
         paused={paused}
         onProgress={handleProgress}
         source={{ uri: source }}
-        // source={samplevideo}
-        // source={{ uri: 'http://185.152.64.163:2080/435/mpegts' }}
         ref={player}
         volume={volume}
         onBuffer={() => onBuffer()}

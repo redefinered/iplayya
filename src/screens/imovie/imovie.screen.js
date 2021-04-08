@@ -25,7 +25,7 @@ import CategoryScroll from 'components/category-scroll/category-scroll.component
 
 const ImovieScreen = ({
   isFetching,
-  getMoviesStartAction,
+  // getMoviesStartAction,
   navigation,
   error,
   // categories,
@@ -44,9 +44,15 @@ const ImovieScreen = ({
   // reset 'added' state when adding a movie to favorites to prevent conflicts
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
-    getMoviesStartAction();
+    // getMoviesStartAction();
     // getCategoriesAction();
   }, []);
+
+  // React.useEffect(() => {
+  //   if (categories.length) {
+  //     setupPaginatorInfoAction();
+  //   }
+  // }, [categories]);
 
   React.useEffect(() => {
     if (typeof params !== 'undefined') {
@@ -59,15 +65,21 @@ const ImovieScreen = ({
     }
   }, [params, positions]);
 
-  let movies = rest.movies.map(({ thumbnail, ...rest }) => {
-    return {
-      thumbnail:
-        thumbnail === '' || thumbnail === 'N/A'
-          ? `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(rest.title)}`
-          : thumbnail,
-      ...rest
-    };
-  });
+  let movies = [];
+
+  if (typeof rest.movies === 'undefined') {
+    movies = [];
+  } else {
+    movies = rest.movies.map(({ thumbnail, ...rest }) => {
+      return {
+        thumbnail:
+          thumbnail === '' || thumbnail === 'N/A'
+            ? `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(rest.title)}`
+            : thumbnail,
+        ...rest
+      };
+    });
+  }
 
   // get movies on mount
   React.useEffect(() => {
@@ -180,6 +192,7 @@ const actions = {
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart
+  // setupPaginatorInfoAction: Creators.setupPaginatorInfo
 };
 
 export default compose(
