@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, Image, FlatList, Platform } from 'react-native';
+import { TouchableOpacity, Image, FlatList, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selectors';
@@ -19,12 +19,12 @@ const CategoryScrollList = ({
   // eslint-disable-next-line react/prop-types
   const renderItem = ({ item: { id, thumbnail: uri } }) => {
     return (
-      <Pressable style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
+      <TouchableOpacity style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
         <Image
           style={{ width: CARD_WIDTH, height: CARD_HEIGHT, borderRadius: 8 }}
           source={{ uri }}
         />
-      </Pressable>
+      </TouchableOpacity>
     );
   };
 

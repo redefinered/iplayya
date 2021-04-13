@@ -1,6 +1,12 @@
 import RNFetchBlob from 'rn-fetch-blob';
+// eslint-disable-next-line no-unused-vars
+import { Platform } from 'react-native';
+// import RNFS from 'react-native-fs';
+
 let dirs = RNFetchBlob.fs.dirs;
-const downloadPath = dirs.DocumentDir;
+
+export const downloadPath = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
+// export const downloadPath = dirs.DocumentDir; /// Download manager could not resolve downloaded file path.
 
 export default function getConfig(video) {
   const { videoId, title } = video;
@@ -13,9 +19,10 @@ export default function getConfig(video) {
     addAndroidDownloads: {
       useDownloadManager: true,
       notification: true,
-      title: title
-      // path: `${downloadPath}/${video.videoId}_${title}.mp4`
+      title: title,
+      path: `${downloadPath}/${filename}`
     },
+    trusty: true,
     fileCache: true,
     path: `${downloadPath}/${filename}`
   };

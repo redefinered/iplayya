@@ -10,7 +10,48 @@ import Imusic from 'assets/btn_imusic.svg';
 import Imovie from 'assets/btn_imovie.svg';
 import Isports from 'assets/btn_isports.svg';
 
+// import RNFetchBlob from 'rn-fetch-blob';
+// import RNFS from 'react-native-fs';
+
+// let dirs = RNFetchBlob.fs.dirs;
+
 const HomeMenu = ({ navigation }) => {
+  // React.useEffect(() => {
+  //   listFiles();
+  // }, []);
+
+  // const listFiles = async () => {
+  //   try {
+  //     // RNFetchBlob.fs.ls(dirs.DCIMDir).then((files) => console.log({ files }));
+  //     // console.log({ list });
+
+  //     RNFS.readDir(RNFS.DocumentDirectoryPath) // On Android, use "RNFS.DocumentDirectoryPath" (MainBundlePath is not defined)
+  //       .then((result) => {
+  //         console.log('GOT RESULT', result);
+
+  //         // stat the first file
+  //         return Promise.all([RNFS.stat(result[0].path), result[0].path]);
+  //       })
+  //       .then((statResult) => {
+  //         if (statResult[0].isFile()) {
+  //           // if we have a file, read it
+  //           return RNFS.readFile(statResult[1], 'utf8');
+  //         }
+
+  //         return 'no file';
+  //       })
+  //       .then((contents) => {
+  //         // log the file contents
+  //         console.log(contents);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err.message, err.code);
+  //       });
+  //   } catch (error) {
+  //     console.log({ error: error.message });
+  //   }
+  // };
+
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
       <TouchableOpacity style={styles.menuitem} onPress={() => navigation.replace('ItvScreen')}>

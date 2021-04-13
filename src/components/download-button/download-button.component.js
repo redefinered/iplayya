@@ -15,7 +15,8 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-import getConfig from './get-config';
+// import getConfig from './download-utils';
+// import { downloadPath } from './download-utils';
 
 let dirs = RNFetchBlob.fs.dirs;
 
@@ -96,7 +97,8 @@ const DownloadButton = ({
     // let source = convertHttpToHttps(video.url);
     // let source =
     //   'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
-    let source = video.url;
+    // let source = video.url;
+    let source = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
 
     // set downloading state to true
     setDownloading(true);
@@ -104,16 +106,19 @@ const DownloadButton = ({
     const permission = await requestWritePermissionAndroid();
 
     if (!permission) {
+      console.log('permission denied');
       return setDownloading(false);
     }
-
+    // console.log({ folder });
     try {
-      const config = getConfig(video);
+      // const config = getConfig(video);
 
       const currentDownloads = downloads;
+
       currentDownloads[`task_${video.videoId}`] = {
         id: video.videoId,
-        task: RNFetchBlob.config(config)
+        task: RNFetchBlob
+          // .config(config)
           .fetch('GET', source, {
             //some headers ..
           })
@@ -151,9 +156,7 @@ const DownloadButton = ({
         status: 'in-prgress'
       };
 
-      // setDownloads(Object.assign(downloads, currentDownloads));
       updateDownloadsAction(Object.assign(downloads, currentDownloads));
-      // updateDownloadIdsAction(video.videoId);
     } catch (error) {
       console.log(error.message);
     }
