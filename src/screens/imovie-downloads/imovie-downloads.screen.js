@@ -22,8 +22,7 @@ import {
 import RNFetchBlob from 'rn-fetch-blob';
 import DownloadItem from './download-item.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-
-const dirs = RNFetchBlob.fs.dirs;
+import { downloadPath } from 'components/download-button/download-utils';
 
 // eslint-disable-next-line no-unused-vars
 const ImovieDownloadsScreen = ({
@@ -42,10 +41,8 @@ const ImovieDownloadsScreen = ({
   const activateCheckboxes = false;
 
   const setDownloadIdsForFething = async () => {
-    const dir = dirs.DocumentDir;
-    // let dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
     try {
-      const ls = await RNFetchBlob.fs.ls(dir);
+      const ls = await RNFetchBlob.fs.ls(downloadPath);
       console.log({ ls });
       let downloadsIdsFromFileSystem = ls.map((i) => {
         let splitTitle = i.split('_');
@@ -56,12 +53,7 @@ const ImovieDownloadsScreen = ({
         (videoId) => !Number.isNaN(parseInt(videoId))
       );
 
-      // downloadsIdsFromFileSystem = downloadsIdsFromFileSystem.map((d) => parseInt(d));
-
-      // remove null values
-      // eslint-disable-next-line use-isnan
-
-      console.log({ downloadsIdsFromFileSystem });
+      // console.log({ downloadsIdsFromFileSystem });
 
       setDownloadedItemsIds(downloadsIdsFromFileSystem);
     } catch (error) {
@@ -131,8 +123,8 @@ const ImovieDownloadsScreen = ({
                 isDownloaded={isDownloaded}
                 progress={progress}
                 imageUrl={imageUrl}
-                {...otherProps}
                 handleSelectItem={handleSelectItem}
+                {...otherProps}
               />
             );
           })}

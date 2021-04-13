@@ -15,6 +15,8 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+// import getConfig from './download-utils';
+// import { downloadPath } from './download-utils';
 
 let dirs = RNFetchBlob.fs.dirs;
 
@@ -93,9 +95,10 @@ const DownloadButton = ({
     }
 
     // let source = convertHttpToHttps(video.url);
-    let source =
-      'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
+    // let source =
+    //   'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
     // let source = video.url;
+    let source = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
 
     // set downloading state to true
     setDownloading(true);
@@ -103,32 +106,19 @@ const DownloadButton = ({
     const permission = await requestWritePermissionAndroid();
 
     if (!permission) {
+      console.log('permission denied');
       return setDownloading(false);
     }
-
+    // console.log({ folder });
     try {
-      const titlesplit = video.title.split(' ');
-      const title = titlesplit.join('_');
-      console.log(title);
-
-      // let downloadPath = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
-      const downloadPath = dirs.DocumentDir;
+      // const config = getConfig(video);
 
       const currentDownloads = downloads;
+
       currentDownloads[`task_${video.videoId}`] = {
         id: video.videoId,
-        task: RNFetchBlob.config({
-          // addAndroidDownloads: {
-          //   useDownloadManager: true,
-          //   notification: true,
-          //   title: movieTitle,
-          //   path: `${dirs.MovieDir}/${video.videoId}_${title}.mp4`
-          // },
-          // add this option that makes response data to be stored as a file,
-          // this is much more performant.
-          fileCache: true,
-          path: `${downloadPath}/${video.videoId}_${title}.mp4`
-        })
+        task: RNFetchBlob
+          // .config(config)
           .fetch('GET', source, {
             //some headers ..
           })
@@ -166,9 +156,7 @@ const DownloadButton = ({
         status: 'in-prgress'
       };
 
-      // setDownloads(Object.assign(downloads, currentDownloads));
       updateDownloadsAction(Object.assign(downloads, currentDownloads));
-      // updateDownloadIdsAction(video.videoId);
     } catch (error) {
       console.log(error.message);
     }

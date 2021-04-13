@@ -14,6 +14,9 @@ import com.facebook.soloader.SoLoader;
 // react-native-video
 import com.brentvatne.react.ReactVideoPackage;
 
+// react-native-fs
+import com.rnfs.RNFSPackage;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -37,6 +40,9 @@ public class MainApplication extends Application implements ReactApplication {
 
           /// react-native-video
           packages.add(new ReactVideoPackage());
+
+          /// react-native-video
+//          packages.add(new RNFSPackage());
 
           return packages;
         }
