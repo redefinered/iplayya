@@ -36,27 +36,26 @@ import DownloadButton from 'components/download-button/download-button.component
 import ChannelDownloadButton from 'components/channel-download-button/channel-download-button.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { headerHeight } from 'common/values';
-
-let dirs = RNFetchBlob.fs.dirs;
+import { downloadPath } from 'components/download-button/download-utils';
 
 const Stack = createStackNavigator();
 
 export const deleteFile = async (filename = null) => {
   if (!filename) return;
   try {
-    await RNFetchBlob.fs.unlink(`${dirs.DocumentDir}/${filename}`);
+    await RNFetchBlob.fs.unlink(`${downloadPath}/${filename}`);
   } catch (error) {
     console.log(`Delete file error: ${error.message}`);
   }
-  // const ls = await RNFetchBlob.fs.ls(dirs.DocumentDir);
-  // console.log({ ls });
+  const ls = await RNFetchBlob.fs.ls(downloadPath);
+  console.log({ ls });
 };
 
 const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
   React.useEffect(() => {
     // does nothing if no specified filename, bitch!
     // listDownloadedMovies();
-    // deleteFile('35915_100_Metros.mp4');
+    // deleteFile('12YearsASlave.mp4');
     // console.log({ dirs });
   }, []);
 

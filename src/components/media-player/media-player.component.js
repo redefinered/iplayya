@@ -189,6 +189,7 @@ const MediaPlayer = ({
         seek={currentTime}
         onProgress={handleProgress}
         source={{ uri: source }}
+        // source={{ uri: 'file://data/user/0/com.iplayya/files/8234_21_Jump_Street.mp4' }}
         volume={volume}
         onBuffering={() => onBuffer()}
         onPlaying={() => handleOnPlaying()}

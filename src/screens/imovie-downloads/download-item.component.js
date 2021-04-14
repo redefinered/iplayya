@@ -79,7 +79,7 @@ const DownloadItem = ({
         >
           <View
             style={{
-              width: Dimensions.get('window').width * progress,
+              width: (progress * Dimensions.get('window').width) / 100,
               height: 2,
               backgroundColor: theme.iplayya.colors.vibrantpussy
             }}

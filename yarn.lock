@@ -6803,6 +6803,11 @@ react-is@^16.12.0, react-is@^16.13.0, react-is@^16.7.0, react-is@^16.8.1, react-
   version "1.0.1"
   resolved "https://github.com/redefinered/react-native-anchor-point.git#4d64db83bd55fe54702c37e59b20d39281a7e31e"
 
+react-native-background-downloader@^2.3.4:
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/react-native-background-downloader/-/react-native-background-downloader-2.3.4.tgz#050a94b044b0a204f1c41b9852d4d53dcefe527c"
+  integrity sha512-SqAnsf3dJ/aoj2zq8zG/qVcQZxeK3Le0PsoNQ00G/q6oDho2kHNfIOxthD/00B0t384J3u2gWurwRW8idI79zg==
+
 react-native-fs@^2.17.0:
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.17.0.tgz#8bd7d57d5f3325ae2f511e3fb2391ca5802d7a88"

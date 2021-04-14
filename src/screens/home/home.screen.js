@@ -13,6 +13,8 @@ import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/auth/auth.selectors';
 import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import RNBackgroundDownloader from 'react-native-background-downloader';
+import theme from 'common/theme';
 
 const Home = ({
   navigation,
@@ -27,7 +29,43 @@ const Home = ({
   React.useEffect(() => {
     getMoviesStartAction();
     getCategoriesAction();
+
+    // downloadtest();
+
+    console.log({ path: `${RNBackgroundDownloader.directories.documents}/12YearsASlave.mp4` });
   }, []);
+
+  const downloadtest = () => {
+    console.log('testing donwload');
+    let task = RNBackgroundDownloader.download({
+      id: 'file123',
+      url: 'http://vod3.freeddns.org:80/195181164146/12YearsASlave.mp4',
+      // url:
+      //   'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d',
+      destination: `${RNBackgroundDownloader.directories.documents}/12YearsASlave.mp4`
+    })
+      .begin((expectedBytes) => {
+        console.log(`Going to download ${expectedBytes} bytes!`);
+      })
+      .progress((percent) => {
+        console.log(`Downloaded: ${percent * 100}%`);
+      })
+      .done(() => {
+        console.log('Download is done!');
+      })
+      .error((error) => {
+        console.log('Download canceled due to error: ', error);
+      });
+
+    // Pause the task
+    // task.pause();
+
+    // Resume after pause
+    // task.resume();
+
+    // Cancel the task
+    // task.stop();
+  };
 
   React.useEffect(() => {
     // makes sure main tab navigation is always visible on application mount

@@ -16,6 +16,7 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import getConfig from './download-utils';
+import RNBackgroundDownloader from 'react-native-background-downloader';
 // import { downloadPath } from './download-utils';
 
 let dirs = RNFetchBlob.fs.dirs;
@@ -99,7 +100,7 @@ const DownloadButton = ({
     // let source =
     //   'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
     // let source = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
-    let source = video.url;
+    // let source = video.url;
 
     // set downloading state to true
     setDownloading(true);
@@ -120,26 +121,19 @@ const DownloadButton = ({
 
       currentDownloads[`task_${video.videoId}`] = {
         id: video.videoId,
-        task: RNFetchBlob.config(config)
-          .fetch('GET', source, {
-            //some headers ..
+        task: RNBackgroundDownloader.download(config)
+          .begin((expectedBytes) => {
+            console.log(`Going to download ${expectedBytes} bytes!`);
           })
-
-          /**
-           * FOR DEVELOPMENT
-           * testing a sample network video for downloads progress UI development
-           */
-          // .fetch('GET', samplenetworkvideo, {})
-
-          .progress({ count: 100 }, (received, total) => {
-            console.log({ received, total });
-            // const progress = received / total;
-            updateDownloadsProgressAction({ id: video.videoId, received, total });
-            // console.log('progress', progress);
+          .progress((percent) => {
+            updateDownloadsProgressAction({ id: video.videoId, progress: percent * 100 });
+            // console.log(`Downloaded: ${percent * 100}%`);
           })
-          .then((res) => {
+          .done(() => {
+            console.log('Download is done!');
+
             // the temp file path
-            console.log('The file saved to ', res.path());
+            // console.log('The file saved to ', res.path());
 
             let completedItems = downloadsProgress.filter(
               ({ received, total }) => received === total
@@ -151,10 +145,45 @@ const DownloadButton = ({
             // set downloading state to false
             setDownloading(false);
           })
-          .catch((error) => {
-            // throw new Error(error.message);
-            console.log({ error });
+          .error((error) => {
+            console.log('Download canceled due to error: ', error);
           }),
+
+        // task: RNFetchBlob.config(config)
+        //   .fetch('GET', source, {
+        //     //some headers ..
+        //   })
+
+        //   /**
+        //    * FOR DEVELOPMENT
+        //    * testing a sample network video for downloads progress UI development
+        //    */
+        //   // .fetch('GET', samplenetworkvideo, {})
+
+        //   .progress({ count: 100 }, (received, total) => {
+        //     console.log({ received, total });
+        //     // const progress = received / total;
+        //     updateDownloadsProgressAction({ id: video.videoId, received, total });
+        //     // console.log('progress', progress);
+        //   })
+        //   .then((res) => {
+        //     // the temp file path
+        //     console.log('The file saved to ', res.path());
+
+        //     let completedItems = downloadsProgress.filter(
+        //       ({ received, total }) => received === total
+        //     );
+        //     completedItems = completedItems.map(({ id }) => id);
+
+        //     cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
+
+        //     // set downloading state to false
+        //     setDownloading(false);
+        //   })
+        //   .catch((error) => {
+        //     // throw new Error(error.message);
+        //     console.log({ error });
+        //   }),
         status: 'in-prgress'
       };
 

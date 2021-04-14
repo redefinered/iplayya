@@ -112,7 +112,8 @@ const ImovieDownloadsScreen = ({
               let currentProgress = progressData[progressData.length - 1];
 
               if (typeof currentProgress !== 'undefined') {
-                progress = currentProgress.received / currentProgress.total;
+                // progress = currentProgress.received / currentProgress.total;
+                progress = currentProgress.progress;
               }
             }
 

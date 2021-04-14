@@ -23,8 +23,7 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import { createFontFormat } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
-
-const dirs = RNFetchBlob.fs.dirs;
+import { downloadPath } from 'components/download-button/download-utils';
 
 const MovieDetailScreen = ({
   error,
@@ -49,8 +48,8 @@ const MovieDetailScreen = ({
 
   const listDownloadedFiles = async () => {
     // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
-    const dir = dirs.DocumentDir;
-    const ls = await RNFetchBlob.fs.ls(dir);
+    // const dir = dirs.DocumentDir;
+    const ls = await RNFetchBlob.fs.ls(downloadPath);
     setDownloadedFiles(ls);
     console.log({ ls });
   };
@@ -90,11 +89,11 @@ const MovieDetailScreen = ({
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
 
-      // console.log({ isMovieDownloaded, xxxx: rtsp_url.split(' ')[1] });
+      console.log({ isMovieDownloaded, filename });
 
       // set source
       if (isMovieDownloaded) {
-        setSource(`${dirs.DocumentDir}/${filename}`);
+        setSource(`${downloadPath}/${filename}`);
       } else {
         let src = videoUrl.split(' ')[1];
         let setsrc = typeof src === 'undefined' ? null : src;
@@ -169,7 +168,9 @@ const MovieDetailScreen = ({
           // type="mp4"
           isSeries={movie.is_series}
           paused={paused}
-          source={isMovieDownloaded ? `file://${source}` : source}
+          source={source} /// OG
+          // source={isMovieDownloaded ? `file://${source}` : source}
+          // source="/data/user/0/com.iplayya/files/8234_21_Jump_Street.mp4" /// for testing
           thumbnail={thumbnail}
           title={title}
           togglePlay={handleTogglePlay}
