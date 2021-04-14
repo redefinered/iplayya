@@ -11,9 +11,6 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 
-// react-native-video
-import com.brentvatne.react.ReactVideoPackage;
-
 // react-native-fs
 import com.rnfs.RNFSPackage;
 
@@ -39,7 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
 
           /// react-native-video
-          packages.add(new ReactVideoPackage());
+//          packages.add(new ReactVideoPackage());
 
           /// react-native-video
 //          packages.add(new RNFSPackage());

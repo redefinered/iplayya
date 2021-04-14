@@ -194,7 +194,7 @@ const MediaPlayer = ({
         onPlaying={() => handleOnPlaying()}
         onError={() => videoError()}
         resizeMode="contain"
-        style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
+        style={{ width: Dimensions.get('window').width, height: 211 }}
       />
 
       {/* volume slider */}
@@ -340,7 +340,8 @@ MediaPlayer.propTypes = {
   thumbnail: PropTypes.string,
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
-  updatePlaybackInfoAction: PropTypes.func
+  updatePlaybackInfoAction: PropTypes.func,
+  isSeries: PropTypes.bool
 };
 
 const actions = {
