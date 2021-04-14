@@ -75,7 +75,17 @@ const MovieDetailScreen = ({
 
   React.useEffect(() => {
     if (movie) {
-      const { title: movieTitle, rtsp_url } = movie;
+      const { is_series } = movie;
+      let videoUrl = '';
+      if (is_series) {
+        /// for testing
+        videoUrl = 'xxx http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+      } else {
+        const { video_urls } = movie;
+        videoUrl = video_urls[0].link;
+      }
+      const { title: movieTitle } = movie;
+      // const { link: videoUrl } = video_urls[0];
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
@@ -86,7 +96,7 @@ const MovieDetailScreen = ({
       if (isMovieDownloaded) {
         setSource(`${dirs.DocumentDir}/${filename}`);
       } else {
-        let src = rtsp_url.split(' ')[1];
+        let src = videoUrl.split(' ')[1];
         let setsrc = typeof src === 'undefined' ? null : src;
         setSource(setsrc);
       }
@@ -157,8 +167,9 @@ const MovieDetailScreen = ({
       return (
         <MediaPlayer
           // type="mp4"
+          isSeries={movie.is_series}
           paused={paused}
-          source={source}
+          source={isMovieDownloaded ? `file://${source}` : source}
           thumbnail={thumbnail}
           title={title}
           togglePlay={handleTogglePlay}

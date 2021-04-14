@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, View, Modal, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import Video from 'react-native-video';
+// import Video from 'react-native-video';
 import Icon from 'components/icon/icon.component';
 import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
@@ -15,6 +17,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
+import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
 
 // const temp = require('/data/user/0/com.iplayya/files/35466_God_of_War.mp4');
 // const samplevideo = require('assets/sample-mp4-file.mp4');
@@ -30,8 +33,8 @@ const MediaPlayer = ({
   thumbnail,
   title,
   paused,
-  togglePlay
-  // type
+  togglePlay,
+  isSeries
 }) => {
   const theme = useTheme();
   const [showControls, setShowControls] = React.useState(false);
@@ -58,6 +61,10 @@ const MediaPlayer = ({
 
   const onBuffer = () => {
     console.log('buffer callback');
+  };
+
+  const handleOnPlaying = () => {
+    timer = hideControls(10);
   };
 
   const videoError = () => {
@@ -129,6 +136,7 @@ const MediaPlayer = ({
         volume={volume}
         thumbnail={thumbnail}
         onBuffer={onBuffer}
+        onPlaying={() => handleOnPlaying()}
         videoError={videoError}
         volumeSliderVisible={volumeSliderVisible}
         setVolume={setVolume}
@@ -155,7 +163,7 @@ const MediaPlayer = ({
   return (
     <View style={{ position: 'relative' }}>
       {/* video */}
-      <Video
+      {/* <Video
         currentTime={currentTime}
         paused={paused}
         onProgress={handleProgress}
@@ -171,6 +179,21 @@ const MediaPlayer = ({
         }
         resizeMode="contain"
         posterResizeMode="cover"
+        style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
+      /> */}
+
+      <VLCPlayer
+        ref={player}
+        autoplay={false}
+        paused={paused}
+        seek={currentTime}
+        onProgress={handleProgress}
+        source={{ uri: source }}
+        volume={volume}
+        onBuffering={() => onBuffer()}
+        onPlaying={() => handleOnPlaying()}
+        onError={() => videoError()}
+        resizeMode="contain"
         style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
       />
 
@@ -193,7 +216,7 @@ const MediaPlayer = ({
       {/* media player controls */}
       <Controls
         volume={volume}
-        multipleMedia={false}
+        multipleMedia={isSeries}
         loading={loading}
         title={title}
         togglePlay={togglePlay}

@@ -3,10 +3,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, View, Dimensions, StatusBar } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import Video from 'react-native-video';
+// import Video from 'react-native-video';
 import Controls from './controls.component';
 // import VerticalSlider from 'rn-vertical-slider';
 import Slider from '@react-native-community/slider';
+import { VLCPlayer } from 'react-native-vlc-media-player';
 
 import { urlEncodeTitle } from 'utils';
 
@@ -21,8 +22,9 @@ const FullScreenPlayer = (props) => {
     source,
     player,
     volume,
-    thumbnail,
+    // thumbnail,
     onBuffer,
+    onPlaying,
     videoError,
     volumeSliderVisible,
     setVolume,
@@ -59,7 +61,7 @@ const FullScreenPlayer = (props) => {
             justifyContent: 'center'
           }}
         >
-          <Video
+          {/* <Video
             currentTime={currentTime}
             paused={paused}
             onProgress={handleProgress}
@@ -76,6 +78,25 @@ const FullScreenPlayer = (props) => {
             }
             resizeMode="contain"
             posterResizeMode="cover"
+            style={{
+              position: 'absolute',
+              width: HEIGHT,
+              height: WIDTH,
+              backgroundColor: 'black'
+            }}
+          /> */}
+
+          <VLCPlayer
+            ref={player}
+            paused={paused}
+            seek={currentTime}
+            onProgress={handleProgress}
+            source={{ uri: source }}
+            volume={volume}
+            onBuffering={() => onBuffer()}
+            onPlaying={() => onPlaying()}
+            onError={() => videoError()}
+            resizeMode="contain"
             style={{
               position: 'absolute',
               width: HEIGHT,
@@ -154,7 +175,8 @@ FullScreenPlayer.propTypes = {
   handleProgress: PropTypes.func,
   player: PropTypes.object,
   volume: PropTypes.string,
-  onBuffer: PropTypes.string,
+  onBuffer: PropTypes.func,
+  onPlaying: PropTypes.func,
   videoError: PropTypes.string,
   volumeSliderVisible: PropTypes.string,
   setVolume: PropTypes.string,
