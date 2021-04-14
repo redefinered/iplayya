@@ -3009,11 +3009,6 @@ ee-first@1.1.1:
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
-eme-encryption-scheme-polyfill@^2.0.1:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/eme-encryption-scheme-polyfill/-/eme-encryption-scheme-polyfill-2.0.2.tgz#6d3edb6d95951883a499f2d6dafbd84a5574f8c3"
-  integrity sha512-tZXuxVUCV1GmlQBGGVVNAt6lXBUxjDFqIAPAhz4F5Z/TvCi/coojxcZGEO5k+KMt/dWRFmXaK5pxKCMehue/oA==
-
 emoji-regex@^7.0.1:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
@@ -5243,11 +5238,6 @@ jsx-ast-utils@^2.2.3:
     array-includes "^3.1.1"
     object.assign "^4.1.0"
 
-keymirror@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/keymirror/-/keymirror-0.1.1.tgz#918889ea13f8d0a42e7c557250eee713adc95c35"
-  integrity sha1-kYiJ6hP40KQufFVyUO7nE63JXDU=
-
 keyv@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-3.1.0.tgz#ecc228486f69991e49e9476485a5be1e8fc5c4d9"
@@ -6937,18 +6927,10 @@ react-native-vector-icons@^8.1.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native-video@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-video/-/react-native-video-5.1.1.tgz#89a7989efeb8d404611c06154d1da227a745d7d8"
-  integrity sha512-zee8gRUrjPWRoZSEBiMebClqu1iAuCQNLjzqpmXFrRWEoJj7azM3BPqLQWJgsnfLiYUYGySeApC/G60THM5+tw==
-  dependencies:
-    keymirror "^0.1.1"
-    prop-types "^15.7.2"
-    shaka-player "^2.5.9"
-
-"react-native-vlc-media-player@https://github.com/redefinered/react-native-vlc-media-player.git":
-  version "1.0.31"
-  resolved "https://github.com/redefinered/react-native-vlc-media-player.git#d23e73215d8911a0dd2b10facbb08ac2ed6352c9"
+react-native-vlc-media-player@^1.0.30:
+  version "1.0.30"
+  resolved "https://registry.yarnpkg.com/react-native-vlc-media-player/-/react-native-vlc-media-player-1.0.30.tgz#1ea3d581b5f4e95e8e32a0a4414d57d7c16d32c1"
+  integrity sha512-8r+/QRIHuAe6BfOn9RxnK0mEDA+93iK5OzvjTOU6JwK1jPnKOsFltSxXlzxqth8XbNqadeVDU6o9miMZFYZM0Q==
   dependencies:
     react-native-slider "^0.11.0"
     react-native-vector-icons "^6.6.0"
@@ -7541,13 +7523,6 @@ setprototypeof@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.1.1.tgz#7e95acb24aa92f5885e0abef5ba131330d4ae683"
   integrity sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==
-
-shaka-player@^2.5.9:
-  version "2.5.21"
-  resolved "https://registry.yarnpkg.com/shaka-player/-/shaka-player-2.5.21.tgz#37969672e445cabcb4a0ac0dbbe2349df966ae4c"
-  integrity sha512-7LCadr8ohzMaiagWTzV3HzdSBlpswFUWBet2J4WtNr3Z1C3jzKhdjAgNjPPWwypdaAfM2lN+3ez9LKp9wRyH0w==
-  dependencies:
-    eme-encryption-scheme-polyfill "^2.0.1"
 
 shallow-clone@^0.1.2:
   version "0.1.2"
