@@ -1,37 +1,32 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
 import HomeTabs from 'navigators/home-tabs.navigator';
 import IptvStack from 'navigators/iptv-stack.navigator';
-
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as ProfileActionCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators as DownloadsActionCreators } from 'modules/ducks/downloads/downloads.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
-
 import { Linking, Platform, StatusBar } from 'react-native';
-// import { Creators } from 'modules/ducks/itv/itv.actions';
-
 import SplashScreen from 'react-native-splash-screen';
-
+import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
 
 const App = ({
-  // eslint-disable-next-line no-unused-vars
   purgeStoreAction,
-  // eslint-disable-next-line no-unused-vars
   signOutAction,
 
   isLoggedIn,
@@ -41,18 +36,20 @@ const App = ({
   skippedProviderAdd,
   getProfileAction,
 
-  // eslint-disable-next-line no-unused-vars
   resetAction
 }) => {
   const [testMode] = React.useState(false);
 
   React.useEffect(() => {
-    /// hide splash screen
     if (Platform.OS === 'android') SplashScreen.hide();
 
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
     // resetAction();
+
+    checkExistingDownloads();
+    // listDownloadedFiles();
+    // deleteFile('19_12_Angry_Men.mp4');
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
@@ -120,7 +117,7 @@ const actions = {
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   getProfileAction: ProfileActionCreators.get,
-  resetAction: MoviesActionCreators.reset
+  resetAction: DownloadsActionCreators.reset
 };
 
 export default connect(mapStateToProps, actions)(App);

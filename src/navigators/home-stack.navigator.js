@@ -34,31 +34,11 @@ import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
 import ChannelDownloadButton from 'components/channel-download-button/channel-download-button.component';
-import RNFetchBlob from 'rn-fetch-blob';
 import { headerHeight } from 'common/values';
-import { downloadPath } from 'components/download-button/download-utils';
 
 const Stack = createStackNavigator();
 
-export const deleteFile = async (filename = null) => {
-  if (!filename) return;
-  try {
-    await RNFetchBlob.fs.unlink(`${downloadPath}/${filename}`);
-  } catch (error) {
-    console.log(`Delete file error: ${error.message}`);
-  }
-  const ls = await RNFetchBlob.fs.ls(downloadPath);
-  console.log({ ls });
-};
-
 const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
-  React.useEffect(() => {
-    // does nothing if no specified filename, bitch!
-    // listDownloadedMovies();
-    // deleteFile('12YearsASlave.mp4');
-    // console.log({ dirs });
-  }, []);
-
   return (
     <Stack.Navigator
       initialRouteName="HomeScreen"

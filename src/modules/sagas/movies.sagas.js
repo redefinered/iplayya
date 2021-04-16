@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/movies/movies.actions';
 import {
@@ -6,7 +7,6 @@ import {
   getMoviesByCategories,
   addMovieToFavorites,
   getFavoriteMovies,
-  getDownloads,
   removeFromFavorites,
   search,
   getCategories
@@ -36,7 +36,9 @@ export function* getMoviesRequest(action) {
 
   try {
     const videos = yield all(
-      paginatorInfo.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
+      paginatorInfo
+        .slice(0, 2)
+        .map(({ paginator: input }) => call(getMoviesByCategories, { input }))
     );
 
     // remove items that have 0 content
@@ -93,15 +95,15 @@ export function* getFavoriteMoviesRequest() {
   }
 }
 
-export function* getDownloadsRequest(action) {
-  const { input } = action.data;
-  try {
-    const { videoByIds } = yield call(getDownloads, input);
-    yield put(Creators.getDownloadsSuccess(videoByIds));
-  } catch (error) {
-    yield put(Creators.getDownloadsFailure(error.message));
-  }
-}
+// export function* getDownloadsRequest(action) {
+//   const { input } = action.data;
+//   try {
+//     const { videoByIds } = yield call(getDownloads, input);
+//     yield put(Creators.getDownloadsSuccess(videoByIds));
+//   } catch (error) {
+//     yield put(Creators.getDownloadsFailure(error.message));
+//   }
+// }
 
 export function* removeFromFavoritesRequest(action) {
   const { videoIds } = action;
@@ -149,7 +151,7 @@ export default function* movieSagas() {
   yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
-  yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
+  // yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_CATEGORIES, getCategoriesRequest);
 }

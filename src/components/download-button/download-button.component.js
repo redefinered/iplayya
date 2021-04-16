@@ -1,25 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// eslint-disable-next-line no-unused-vars
 import { Pressable, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
 import { withTheme, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import RNFetchBlob from 'rn-fetch-blob';
-import {
-  selectDownloads,
-  selectMovieUrl,
-  selectMovieTitle,
-  selectDownloadsProgress
-} from 'modules/ducks/movies/movies.selectors';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-import getConfig from './download-utils';
+import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
+import { selectMovieUrl, selectMovieTitle } from 'modules/ducks/movies/movies.selectors';
+import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
+import getConfig, { downloadPath } from './download-utils';
+import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
-// import { downloadPath } from './download-utils';
-
-let dirs = RNFetchBlob.fs.dirs;
 
 const DownloadButton = ({
   theme,
@@ -27,7 +20,7 @@ const DownloadButton = ({
   movieTitle,
   movieUrl,
 
-  downloads,
+  // downloads,
   // eslint-disable-next-line no-unused-vars
   updateDownloadsProgressAction,
   updateDownloadsAction,
@@ -117,86 +110,42 @@ const DownloadButton = ({
     try {
       const config = getConfig(video);
 
-      const currentDownloads = downloads;
+      let task = RNBackgroundDownloader.download(config)
+        .begin((expectedBytes) => {
+          console.log(`Going to download ${expectedBytes} bytes!`);
+        })
+        .progress((percent) => {
+          updateDownloadsProgressAction({ id: video.videoId, progress: percent * 100 });
+          // console.log(`Downloaded: ${percent * 100}%`);
+        })
+        .done(() => {
+          console.log('Download is done!');
 
-      currentDownloads[`task_${video.videoId}`] = {
-        id: video.videoId,
-        task: RNBackgroundDownloader.download(config)
-          .begin((expectedBytes) => {
-            console.log(`Going to download ${expectedBytes} bytes!`);
-          })
-          .progress((percent) => {
-            updateDownloadsProgressAction({ id: video.videoId, progress: percent * 100 });
-            // console.log(`Downloaded: ${percent * 100}%`);
-          })
-          .done(() => {
-            console.log('Download is done!');
+          // the temp file path
+          // console.log('The file saved to ', res.path());
 
-            // the temp file path
-            // console.log('The file saved to ', res.path());
+          let completedItems = downloadsProgress.filter(
+            ({ received, total }) => received === total
+          );
+          completedItems = completedItems.map(({ id }) => id);
 
-            let completedItems = downloadsProgress.filter(
-              ({ received, total }) => received === total
-            );
-            completedItems = completedItems.map(({ id }) => id);
+          cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
 
-            cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
+          // set downloading state to false
+          setDownloading(false);
+        })
+        .error((error) => {
+          console.log('Download canceled due to error: ', error);
+        });
 
-            // set downloading state to false
-            setDownloading(false);
-          })
-          .error((error) => {
-            console.log('Download canceled due to error: ', error);
-          }),
-
-        // task: RNFetchBlob.config(config)
-        //   .fetch('GET', source, {
-        //     //some headers ..
-        //   })
-
-        //   /**
-        //    * FOR DEVELOPMENT
-        //    * testing a sample network video for downloads progress UI development
-        //    */
-        //   // .fetch('GET', samplenetworkvideo, {})
-
-        //   .progress({ count: 100 }, (received, total) => {
-        //     console.log({ received, total });
-        //     // const progress = received / total;
-        //     updateDownloadsProgressAction({ id: video.videoId, received, total });
-        //     // console.log('progress', progress);
-        //   })
-        //   .then((res) => {
-        //     // the temp file path
-        //     console.log('The file saved to ', res.path());
-
-        //     let completedItems = downloadsProgress.filter(
-        //       ({ received, total }) => received === total
-        //     );
-        //     completedItems = completedItems.map(({ id }) => id);
-
-        //     cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
-
-        //     // set downloading state to false
-        //     setDownloading(false);
-        //   })
-        //   .catch((error) => {
-        //     // throw new Error(error.message);
-        //     console.log({ error });
-        //   }),
-        status: 'in-prgress'
-      };
-
-      updateDownloadsAction(Object.assign(downloads, currentDownloads));
+      updateDownloadsAction(task);
     } catch (error) {
       console.log(error.message);
     }
   };
 
   const checkIfMovieIsDownlowded = async () => {
-    // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.MovieDir;
-    const dir = dirs.DocumentDir;
-    const ls = await RNFetchBlob.fs.ls(dir);
+    const ls = await RNFetchBlob.fs.ls(downloadPath);
     const dls = ls.map((file) => {
       let split = file.split('_');
       return split[0]; // this is the ID
@@ -256,7 +205,6 @@ DownloadButton.propTypes = {
   videoId: PropTypes.string,
   movieUrl: PropTypes.string,
   movieTitle: PropTypes.string,
-  downloads: PropTypes.object,
   updateDownloadsAction: PropTypes.func,
   updateDownloadsProgressAction: PropTypes.func,
   downloadsProgress: PropTypes.any,
@@ -265,14 +213,13 @@ DownloadButton.propTypes = {
 };
 
 const actions = {
-  updateDownloadsAction: Creators.updateDownloads,
-  updateDownloadsProgressAction: Creators.updateDownloadsProgress,
-  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress,
+  updateDownloadsAction: DownloadsCreators.updateDownloads,
+  updateDownloadsProgressAction: DownloadsCreators.updateDownloadsProgress,
+  cleanUpDownloadsProgressAction: DownloadsCreators.cleanUpDownloadsProgress,
   setPermissionErrorAction: Creators.setPermissionError
 };
 
 const mapStateToProps = createStructuredSelector({
-  downloads: selectDownloads,
   movieUrl: selectMovieUrl,
   movieTitle: selectMovieTitle,
   downloadsProgress: selectDownloadsProgress

@@ -60,6 +60,7 @@ const MediaPlayer = ({
   };
 
   const onBuffer = () => {
+    setLoading(false);
     console.log('buffer callback');
   };
 
@@ -123,7 +124,7 @@ const MediaPlayer = ({
     setScreencastActiveState(null);
   };
 
-  console.log({ source });
+  console.log('media source', source);
 
   if (fullscreen)
     return (

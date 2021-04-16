@@ -51,7 +51,7 @@ const MovieDetailScreen = ({
     // const dir = dirs.DocumentDir;
     const ls = await RNFetchBlob.fs.ls(downloadPath);
     setDownloadedFiles(ls);
-    console.log({ ls });
+    // console.log({ ls });
   };
 
   React.useEffect(() => {
@@ -88,8 +88,6 @@ const MovieDetailScreen = ({
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
-
-      console.log({ isMovieDownloaded, filename });
 
       // set source
       if (isMovieDownloaded) {

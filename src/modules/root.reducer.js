@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
+import downloadsReducer from './ducks/downloads/downloads.reducer';
 import userReducer from './ducks/user/user.reducer';
 import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
@@ -20,6 +21,7 @@ export const persistConfig = {
 const rootReducer = persistCombineReducers(persistConfig, {
   nav: navReducer,
   auth: authReducer,
+  downloads: downloadsReducer,
   user: userReducer,
   password: passwordReducer,
   itv: itvReducer,

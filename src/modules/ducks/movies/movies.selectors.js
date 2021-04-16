@@ -72,6 +72,21 @@ export const selectPaginatorOfCategory = createSelector(
   (paginatorInfo) => paginatorInfo
 );
 
+// const selectTaskById = ({ movies: { downloads } }, props) => {
+//   if (typeof downloads[props.id] === 'undefined') return;
+
+//   return downloads[props.id].task;
+//   // return downloads.find(({ id }) => id === props.id);
+// };
+
+// export const selectTask = createSelector([selectTaskById], (task) => task);
+
+// const selectDownloadData = ({ movies: { downloadsData } }, props) => {
+//   return downloadsData.find(({ id }) => id === props.id);
+// };
+
+// export const selectVideoForDownloadInfo = createSelector([selectDownloadData], (video) => video);
+
 export const selectFavorites = createSelector(
   [moviesState],
   ({ favoriteVideos }) => favoriteVideos
@@ -82,20 +97,19 @@ export const selectUpdatedFavoritesCheck = createSelector(
   ({ updatedFavorites }) => updatedFavorites
 );
 
-export const selectDownloads = createSelector([moviesState], ({ downloads }) => {
-  // console.log({ downloadInfo });
-  return downloads;
-});
+// export const selectDownloads = createSelector([moviesState], ({ downloads }) => {
+//   return downloads;
+// });
 
-export const selectDownloadsData = createSelector(
-  [moviesState],
-  ({ downloadsData }) => downloadsData
-);
+// export const selectDownloadsData = createSelector(
+//   [moviesState],
+//   ({ downloadsData }) => downloadsData
+// );
 
-export const selectDownloadsProgress = createSelector(
-  [moviesState],
-  ({ downloadsProgress }) => downloadsProgress
-);
+// export const selectDownloadsProgress = createSelector(
+//   [moviesState],
+//   ({ downloadsProgress }) => downloadsProgress
+// );
 
 export const selectRemovedFromFavorites = createSelector(
   [moviesState],

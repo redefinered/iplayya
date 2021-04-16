@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-// eslint-disable-next-line no-unused-vars
-import { View, Pressable, ScrollView, Platform } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import NoDownloads from 'assets/downloads-empty.svg';
@@ -11,18 +10,16 @@ import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import {
   selectError,
   selectIsFetching,
   selectDownloads,
-  selectFavorites,
   selectDownloadsProgress,
   selectDownloadsData
-} from 'modules/ducks/movies/movies.selectors';
-import RNFetchBlob from 'rn-fetch-blob';
+} from 'modules/ducks/downloads/downloads.selectors';
 import DownloadItem from './download-item.component';
-import { Creators } from 'modules/ducks/movies/movies.actions';
-import { downloadPath } from 'components/download-button/download-utils';
+import { Creators } from 'modules/ducks/downloads/downloads.actions';
 
 // eslint-disable-next-line no-unused-vars
 const ImovieDownloadsScreen = ({
@@ -33,36 +30,24 @@ const ImovieDownloadsScreen = ({
   getDownloadsAction,
   downloadsData,
 
-  // eslint-disable-next-line no-unused-vars
-  resetDownloadsProgressAction
+  downloads
 }) => {
   const [downloadedItemsIds, setDownloadedItemsIds] = React.useState([]);
-  // const [downloadCompleteItems, setDownloadCompleteItems] = React.useState([]);
   const activateCheckboxes = false;
 
   const setDownloadIdsForFething = async () => {
     try {
-      const ls = await RNFetchBlob.fs.ls(downloadPath);
-      console.log({ ls });
-      let downloadsIdsFromFileSystem = ls.map((i) => {
-        let splitTitle = i.split('_');
-        return splitTitle[0]; /// IDs of donwloaded items
-      });
+      /// return if downloads state is empty
+      if (!downloads.length) return;
 
-      downloadsIdsFromFileSystem = downloadsIdsFromFileSystem.filter(
-        (videoId) => !Number.isNaN(parseInt(videoId))
-      );
-
-      // console.log({ downloadsIdsFromFileSystem });
-
-      setDownloadedItemsIds(downloadsIdsFromFileSystem);
+      let ids = downloads.map(({ id }) => id);
+      setDownloadedItemsIds(ids);
     } catch (error) {
       console.log({ error });
     }
   };
 
   React.useEffect(() => {
-    // resetDownloadsProgressAction(); /// reset downloads progress for development
     setDownloadIdsForFething();
   }, []);
 
@@ -95,12 +80,12 @@ const ImovieDownloadsScreen = ({
           {downloadsData.map(({ id, thumbnail, ...otherProps }) => {
             let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
 
-            let isDownloaded =
-              typeof downloadsProgress.find(
-                ({ id: dowloadProgressId }) => id === dowloadProgressId
-              ) === 'undefined'
-                ? true
-                : false;
+            // let isDownloaded =
+            //   typeof downloadsProgress.find(
+            //     ({ id: dowloadProgressId }) => id === dowloadProgressId
+            //   ) === 'undefined'
+            //     ? true
+            //     : false;
 
             let progress = null;
 
@@ -121,7 +106,6 @@ const ImovieDownloadsScreen = ({
               <DownloadItem
                 key={id}
                 id={id}
-                isDownloaded={isDownloaded}
                 progress={progress}
                 imageUrl={imageUrl}
                 handleSelectItem={handleSelectItem}
@@ -166,8 +150,7 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const actions = {
-  getDownloadsAction: Creators.getDownloads,
-  resetDownloadsProgressAction: Creators.resetDownloadsProgress
+  getDownloadsAction: Creators.getDownloads
 };
 
 const mapStateToProps = createStructuredSelector({
