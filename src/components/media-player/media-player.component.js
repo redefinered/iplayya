@@ -37,6 +37,7 @@ const MediaPlayer = ({
   isSeries
 }) => {
   const theme = useTheme();
+  const [error, setError] = React.useState(false);
   const [showControls, setShowControls] = React.useState(false);
   const [fullscreen, setFullscreen] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
@@ -60,16 +61,17 @@ const MediaPlayer = ({
   };
 
   const onBuffer = () => {
-    setLoading(false);
+    setError(false);
     console.log('buffer callback');
   };
 
   const handleOnPlaying = () => {
+    setLoading(false);
     timer = hideControls(10);
   };
 
   const videoError = () => {
-    console.log('video error');
+    setError(true);
   };
 
   const handleProgress = (playbackInfo) => {
@@ -163,6 +165,20 @@ const MediaPlayer = ({
 
   return (
     <View style={{ position: 'relative' }}>
+      {error && (
+        <View
+          style={{
+            position: 'absolute',
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Text>VIDEO ERROR</Text>
+        </View>
+      )}
       {/* video */}
       {/* <Video
         currentTime={currentTime}
@@ -190,7 +206,7 @@ const MediaPlayer = ({
         seek={currentTime}
         onProgress={handleProgress}
         source={{ uri: source }}
-        // source={{ uri: 'file://data/user/0/com.iplayya/files/8234_21_Jump_Street.mp4' }}
+        // source={{ uri: isDownla }}
         volume={volume}
         onBuffering={() => onBuffer()}
         onPlaying={() => handleOnPlaying()}

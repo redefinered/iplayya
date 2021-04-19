@@ -53,7 +53,8 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      downloadsData: []
     };
   },
   [Types.GET_DOWNLOADS_SUCCESS]: (state, action) => {

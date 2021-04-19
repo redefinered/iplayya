@@ -47,8 +47,8 @@ const App = ({
     // purgeStoreAction(); // manual state purge for debugging
     // resetAction();
 
-    checkExistingDownloads();
-    // listDownloadedFiles();
+    // checkExistingDownloads();
+    listDownloadedFiles();
     // deleteFile('19_12_Angry_Men.mp4');
 
     Linking.addEventListener('url', ({ url }) => {

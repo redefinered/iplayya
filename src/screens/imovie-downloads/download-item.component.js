@@ -34,61 +34,41 @@ const DownloadItem = ({
   // url is the thumbnail url
   imageUrl: uri,
 
-  progress,
+  // progress,
 
-  task,
+  task
   // video,
 
   // deleteAction
-  updateDownloadsAction,
-  updateDownloadsProgressAction,
-  cleanUpDownloadsProgressAction
+  // updateDownloadsAction,
+  // updateDownloadsProgressAction,
+  // cleanUpDownloadsProgressAction
 }) => {
   // const [isDownloaded] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
-  const [broken, setBroken] = React.useState(false);
+  const [progress, setProgress] = React.useState(0);
+  // const [broken, setBroken] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof task === 'undefined') return;
+    if (typeof task === 'undefined') return setIsDownloaded(true);
     if (task.state === 'PAUSED') return setPaused(true);
     if (task.state === 'PENDING') return setPaused(true);
-
-    setPaused(false);
+    // console.log({ task });
+    setProgress(task.percent * 100);
+    task
+      .progress((percent) => setProgress(percent * 100))
+      .done(() => {
+        console.log('Download is done!');
+      })
+      .error((error) => {
+        console.log('Download canceled due to error: ', error);
+      });
+    // setPaused(false);
   }, [task]);
 
-  React.useEffect(() => {
-    console.log({ broken });
-    if (broken) {
-      const config = getConfig({ videoId: id, title });
-      let task = RNBackgroundDownloader.download(config)
-        .begin((expectedBytes) => {
-          console.log(`Going to download ${expectedBytes} bytes!`);
-        })
-        .progress((percent) => {
-          updateDownloadsProgressAction({ id, progress: percent * 100 });
-          // console.log(`Downloaded: ${percent * 100}%`);
-        })
-        .done(() => {
-          console.log('Download is done!');
-
-          // the temp file path
-          // console.log('The file saved to ', res.path());
-
-          let completedItems = downloadsProgress.filter(
-            ({ received, total }) => received === total
-          );
-          completedItems = completedItems.map(({ id }) => id);
-
-          cleanUpDownloadsProgressAction([id, ...completedItems]);
-        })
-        .error((error) => {
-          console.log('Download canceled due to error: ', error);
-        });
-
-      updateDownloadsAction(task);
-    }
-  }, [broken]);
+  console.log('task', task);
+  console.log('progresss', progress);
 
   React.useEffect(() => {
     if (typeof task === 'undefined') return;
@@ -97,7 +77,7 @@ const DownloadItem = ({
     setIsDownloaded(false);
   }, [task]);
 
-  console.log({ task });
+  // console.log({ task });
 
   // const handleDelete = () => {
   //   console.log({ video });
@@ -119,15 +99,15 @@ const DownloadItem = ({
   const handlePlay = async () => {
     if (typeof task === 'undefined') return;
 
-    if (typeof task.resume === 'undefined') {
-      const activeDownloads = await checkExistingDownloads();
+    // if (typeof task.resume === 'undefined') {
+    //   const activeDownloads = await checkExistingDownloads();
 
-      // declare item download broken
-      if (!activeDownloads.length) return setBroken(true);
+    //   // declare item download broken
+    //   if (!activeDownloads.length) return setBroken(true);
 
-      console.log({ activeDownloads });
-      return;
-    }
+    //   console.log({ activeDownloads });
+    //   return;
+    // }
 
     task.resume();
 
@@ -154,6 +134,8 @@ const DownloadItem = ({
       </Pressable>
     );
   };
+
+  // console.log({ progress });
 
   const renderProgress = () => {
     if (isDownloaded) return;
@@ -314,7 +296,7 @@ const mapStateToProps = (state, props) => {
   const { downloadsProgress } = state.downloads;
   return {
     downloadsProgress,
-    task: selectTask(state, props),
+    // task: selectTask(state, props),
     video: selectVideoForDownloadInfo(state, props)
   };
 };

@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+
 import React from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
@@ -20,6 +22,10 @@ import {
 } from 'modules/ducks/downloads/downloads.selectors';
 import DownloadItem from './download-item.component';
 import { Creators } from 'modules/ducks/downloads/downloads.actions';
+import { checkExistingDownloads } from 'services/download.service';
+import RNFetchBlob from 'rn-fetch-blob';
+import { downloadPath } from 'utils';
+import uniq from 'lodash/uniq';
 
 // eslint-disable-next-line no-unused-vars
 const ImovieDownloadsScreen = ({
@@ -32,16 +38,37 @@ const ImovieDownloadsScreen = ({
 
   downloads
 }) => {
-  const [downloadedItemsIds, setDownloadedItemsIds] = React.useState([]);
+  const [ids, setIds] = React.useState([]);
+  // const [donwloadingItems, setDownloadingItems] = React.useState([]);
+  const [activeDownloads, setActiveDownloads] = React.useState([]);
   const activateCheckboxes = false;
 
   const setDownloadIdsForFething = async () => {
+    // console.log('asdas');
     try {
+      let data = [];
       /// return if downloads state is empty
-      if (!downloads.length) return;
+      // if (!downloads.length) return;
 
-      let ids = downloads.map(({ id }) => id);
-      setDownloadedItemsIds(ids);
+      // let ids = downloads.map(({ id }) => id);
+      // setDownloadedItemsIds(ids);
+      const existingDownloads = await checkExistingDownloads();
+
+      console.log({ existingDownloads });
+
+      setActiveDownloads(existingDownloads);
+
+      data = [...existingDownloads.map((d) => d.id)];
+
+      let ls = await RNFetchBlob.fs.ls(downloadPath);
+
+      // console.log({ ls, existingDownloads });
+
+      ls = ls.map((filename) => filename.split('_')[0]);
+
+      data = [...data, ...ls];
+      console.log({ data });
+      setIds(uniq(data));
     } catch (error) {
       console.log({ error });
     }
@@ -52,11 +79,25 @@ const ImovieDownloadsScreen = ({
   }, []);
 
   React.useEffect(() => {
-    if (downloadedItemsIds.length) {
-      // list the downloaded items complete or not
-      getDownloadsAction({ input: downloadedItemsIds });
+    console.log({ ids });
+    if (ids.length) {
+      getDownloadsAction({ input: ids });
     }
-  }, [downloadedItemsIds]);
+  }, [ids]);
+
+  // console.log({ zzzzzzz: ids });
+
+  // const getDownloadIdsForFetching = async () => {
+  //   const ls = await RNFetchBlob.fs.ls(downloadPath);
+  //   setDownloadedItemsIds(ls);
+  // };
+
+  // React.useEffect(() => {
+  //   if (downloadedItemsIds.length) {
+  //     // list the downloaded items complete or not
+  //     getDownloadsAction({ input: downloadedItemsIds });
+  //   }
+  // }, [downloadedItemsIds]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -102,6 +143,8 @@ const ImovieDownloadsScreen = ({
               }
             }
 
+            let task = activeDownloads.find((d) => d.id === id);
+
             return (
               <DownloadItem
                 key={id}
@@ -109,6 +152,7 @@ const ImovieDownloadsScreen = ({
                 progress={progress}
                 imageUrl={imageUrl}
                 handleSelectItem={handleSelectItem}
+                task={task}
                 {...otherProps}
               />
             );

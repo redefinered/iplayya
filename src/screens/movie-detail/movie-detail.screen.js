@@ -91,7 +91,11 @@ const MovieDetailScreen = ({
 
       // set source
       if (isMovieDownloaded) {
-        setSource(`${downloadPath}/${filename}`);
+        let src =
+          Platform.OS === 'ios'
+            ? `file://${downloadPath}/${filename}`
+            : `${downloadPath}/${filename}`;
+        setSource(src); /// file:// teqnique only works on iOS
       } else {
         let src = videoUrl.split(' ')[1];
         let setsrc = typeof src === 'undefined' ? null : src;
