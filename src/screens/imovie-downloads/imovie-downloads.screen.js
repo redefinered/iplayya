@@ -47,27 +47,23 @@ const ImovieDownloadsScreen = ({
     // console.log('asdas');
     try {
       let data = [];
-      /// return if downloads state is empty
-      // if (!downloads.length) return;
-
-      // let ids = downloads.map(({ id }) => id);
-      // setDownloadedItemsIds(ids);
+      // check for active downloads in the background
       const existingDownloads = await checkExistingDownloads();
-
-      console.log({ existingDownloads });
-
       setActiveDownloads(existingDownloads);
 
+      // add existing downloads ids to data array
       data = [...existingDownloads.map((d) => d.id)];
 
+      // get downloaded movie ids in the download folder
       let ls = await RNFetchBlob.fs.ls(downloadPath);
 
-      // console.log({ ls, existingDownloads });
-
+      // get the id from filename
       ls = ls.map((filename) => filename.split('_')[0]);
 
+      // add ids to data array
       data = [...data, ...ls];
-      console.log({ data });
+
+      // set imovies downloads for listing in the screen
       setIds(uniq(data));
     } catch (error) {
       console.log({ error });

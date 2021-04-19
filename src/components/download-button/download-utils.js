@@ -18,7 +18,6 @@ export default function getConfig(video) {
   return {
     id: video.videoId,
     url: video.url,
-    // url: 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4',
     destination: `${downloadPath}/${filename}`
   };
 }

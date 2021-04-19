@@ -164,7 +164,7 @@ const MediaPlayer = ({
     );
 
   return (
-    <View style={{ position: 'relative' }}>
+    <View style={{ position: 'relative', backgroundColor: 'black' }}>
       {error && (
         <View
           style={{
@@ -179,25 +179,6 @@ const MediaPlayer = ({
           <Text>VIDEO ERROR</Text>
         </View>
       )}
-      {/* video */}
-      {/* <Video
-        currentTime={currentTime}
-        paused={paused}
-        onProgress={handleProgress}
-        source={{ uri: source }}
-        ref={player}
-        volume={volume}
-        onBuffer={() => onBuffer()}
-        onError={() => videoError()}
-        poster={
-          thumbnail === 'N/A' || thumbnail === ''
-            ? `https://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
-            : thumbnail
-        }
-        resizeMode="contain"
-        posterResizeMode="cover"
-        style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
-      /> */}
 
       <VLCPlayer
         ref={player}
@@ -206,7 +187,6 @@ const MediaPlayer = ({
         seek={currentTime}
         onProgress={handleProgress}
         source={{ uri: source }}
-        // source={{ uri: isDownla }}
         volume={volume}
         onBuffering={() => onBuffer()}
         onPlaying={() => handleOnPlaying()}

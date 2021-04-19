@@ -22,7 +22,6 @@ const FullScreenPlayer = (props) => {
     source,
     player,
     volume,
-    // thumbnail,
     onBuffer,
     onPlaying,
     videoError,
@@ -55,10 +54,12 @@ const FullScreenPlayer = (props) => {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <View
           style={{
+            // position: 'absolute',
             width: HEIGHT,
             height: WIDTH,
             transform: [{ rotate: '90deg' }],
-            justifyContent: 'center'
+            justifyContent: 'center',
+            backgroundColor: 'black'
           }}
         >
           {/* <Video
@@ -98,10 +99,8 @@ const FullScreenPlayer = (props) => {
             onError={() => videoError()}
             resizeMode="contain"
             style={{
-              position: 'absolute',
               width: HEIGHT,
-              height: WIDTH,
-              backgroundColor: 'black'
+              height: WIDTH
             }}
           />
 
@@ -174,7 +173,7 @@ FullScreenPlayer.propTypes = {
   currentTime: PropTypes.number,
   handleProgress: PropTypes.func,
   player: PropTypes.object,
-  volume: PropTypes.string,
+  volume: PropTypes.number,
   onBuffer: PropTypes.func,
   onPlaying: PropTypes.func,
   videoError: PropTypes.string,
@@ -183,7 +182,7 @@ FullScreenPlayer.propTypes = {
   handleFullscreenToggle: PropTypes.string,
   showControls: PropTypes.string,
   setCurrentTime: PropTypes.string,
-  toggleVolumeSliderVisible: PropTypes.string,
+  toggleVolumeSliderVisible: PropTypes.any,
   toggleCastOptions: PropTypes.func,
   toggleVideoOptions: PropTypes.func,
   screencastOption: PropTypes.string,

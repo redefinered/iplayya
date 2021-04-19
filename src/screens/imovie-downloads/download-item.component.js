@@ -54,28 +54,33 @@ const DownloadItem = ({
     if (typeof task === 'undefined') return setIsDownloaded(true);
     if (task.state === 'PAUSED') return setPaused(true);
     if (task.state === 'PENDING') return setPaused(true);
+    if (task.state === 'DONE') return setIsDownloaded(true);
     // console.log({ task });
     setProgress(task.percent * 100);
     task
       .progress((percent) => setProgress(percent * 100))
       .done(() => {
+        setIsDownloaded(true);
         console.log('Download is done!');
       })
       .error((error) => {
+        setIsDownloaded(false);
         console.log('Download canceled due to error: ', error);
       });
     // setPaused(false);
-  }, [task]);
-
-  console.log('task', task);
-  console.log('progresss', progress);
-
-  React.useEffect(() => {
-    if (typeof task === 'undefined') return;
-    if (task.state === 'DONE') return setIsDownloaded(true);
 
     setIsDownloaded(false);
   }, [task]);
+
+  // console.log('task', task);
+  // console.log('progresss', progress);
+
+  // React.useEffect(() => {
+  //   if (typeof task === 'undefined') return;
+  //   if (task.state === 'DONE') return setIsDownloaded(true);
+
+  //   setIsDownloaded(false);
+  // }, [task]);
 
   // console.log({ task });
 
