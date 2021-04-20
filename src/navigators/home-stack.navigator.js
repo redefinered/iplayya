@@ -33,7 +33,7 @@ import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
-import ChannelDownloadButton from 'components/channel-download-button/channel-download-button.component';
+// import ChannelDownloadButton from 'components/channel-download-button/channel-download-button.component';
 import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
@@ -400,11 +400,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         name="ChannelDetailScreen"
         component={ChannelDetailScreen}
         // eslint-disable-next-line no-unused-vars
-        options={({
-          route: {
-            params: { channelId, archived_link }
-          }
-        }) => {
+        options={() => {
           return {
             title: null,
             headerRight: () => (
@@ -412,7 +408,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
                 <Pressable style={styles.headerButtonContainer}>
                   <Icon name="heart-solid" size={24} />
                 </Pressable>
-                <ChannelDownloadButton channelId={channelId} archived_link={archived_link} />
+                {/* <ChannelDownloadButton channelId={channelId} archived_link={archived_link} /> */}
               </View>
             )
           };
