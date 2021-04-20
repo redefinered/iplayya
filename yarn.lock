@@ -6932,10 +6932,10 @@ react-native-vector-icons@^8.1.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native-vlc-media-player@^1.0.30:
-  version "1.0.30"
-  resolved "https://registry.yarnpkg.com/react-native-vlc-media-player/-/react-native-vlc-media-player-1.0.30.tgz#1ea3d581b5f4e95e8e32a0a4414d57d7c16d32c1"
-  integrity sha512-8r+/QRIHuAe6BfOn9RxnK0mEDA+93iK5OzvjTOU6JwK1jPnKOsFltSxXlzxqth8XbNqadeVDU6o9miMZFYZM0Q==
+react-native-vlc-media-player@^1.0.31:
+  version "1.0.31"
+  resolved "https://registry.yarnpkg.com/react-native-vlc-media-player/-/react-native-vlc-media-player-1.0.31.tgz#bfa9c16efa531c5ed396d71f54435191c1f1a15a"
+  integrity sha512-p9SHPEuVmsNpNEPAndwO0yDtSn2zSb/wWXgSjZMPT+qPtRA2Rd3C2aOVlMBZxbuCApkkDcoHF6GhNP11v35+ug==
   dependencies:
     react-native-slider "^0.11.0"
     react-native-vector-icons "^6.6.0"

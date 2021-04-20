@@ -19,10 +19,8 @@ const Home = ({
   completedOnboarding,
   setBottomTabsVisibleAction,
   getCategoriesAction,
-  getMoviesStartAction,
-  isFetching
+  getMoviesStartAction
 }) => {
-  console.log({ isFetching });
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
 
   /// load categories here

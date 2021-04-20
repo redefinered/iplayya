@@ -11,8 +11,8 @@ const { Types, Creators } = createActions(
 
     // get movies for each movie category when user opens imovie screen
     getMoviesStart: [],
-    getMovies: ['paginatorInfo'],
-    getMoviesSuccess: ['movies'],
+    getMovies: ['paginatorInfo', 'categoryPaginator'],
+    getMoviesSuccess: ['movies', 'categoryPaginator'],
     getMoviesFailure: ['error'],
 
     getCategories: [],

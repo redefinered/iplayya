@@ -20,6 +20,11 @@ const INITIAL_STATE = {
   // paginators for movies sections in the main imovie screen
   paginatorInfo: [],
 
+  categoryPaginator: {
+    page: 1,
+    limit: 5
+  },
+
   // if a movie is added to favorites
   updatedFavorites: false,
   removedFromFavorites: false,
@@ -63,11 +68,13 @@ export default createReducer(INITIAL_STATE, {
 
   /// reset paginatorInfo so initial query
   [Types.GET_MOVIES_START]: (state) => {
+    const { paginatorInfo, categoryPaginator } = INITIAL_STATE;
     return {
       ...state,
       isFetching: false,
       error: null,
-      paginatorInfo: []
+      paginatorInfo,
+      categoryPaginator
     };
   },
   // get movies and update paginator i.e. increment pageNumber
@@ -79,13 +86,14 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_MOVIES_SUCCESS]: (state, action) => {
-    const { movies } = action;
+    const { movies, categoryPaginator } = action;
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      movies
+      movies,
+      categoryPaginator
     };
   },
   [Types.GET_MOVIES_FAILURE]: (state, action) => {

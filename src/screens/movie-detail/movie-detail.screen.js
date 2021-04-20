@@ -108,17 +108,6 @@ const MovieDetailScreen = ({
     listDownloadedFiles();
   }, []);
 
-  // // set source
-  // React.useEffect(() => {
-  //   const titlesplit = movie.title.split(' ');
-  //   const title = titlesplit.join('_');
-  //   const filename = `${videoId}_${title}.mp4`;
-  //   const file = downloadedFiles.find((file) => file === filename);
-
-  // }, [isMovieDownloaded]);
-
-  // console.log({ isMovieDownloaded });
-
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
     if (isFavListUpdated) {
@@ -167,12 +156,9 @@ const MovieDetailScreen = ({
     if (source) {
       return (
         <MediaPlayer
-          // type="mp4"
           isSeries={movie.is_series}
           paused={paused}
-          source={source} /// OG
-          // source={isMovieDownloaded ? `file://${source}` : source}
-          // source="/data/user/0/com.iplayya/files/8234_21_Jump_Street.mp4" /// for testing
+          source={source}
           thumbnail={thumbnail}
           title={title}
           togglePlay={handleTogglePlay}

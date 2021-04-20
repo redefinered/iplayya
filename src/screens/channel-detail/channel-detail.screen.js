@@ -6,7 +6,6 @@ import { View, ScrollView, Image, Pressable, Dimensions } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
-// import MediaPlayer from 'components/media-player/media-player.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
 import ProgramGuide from './program-guide.component';
@@ -14,7 +13,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
-
+import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -116,13 +115,7 @@ const ChannelDetailScreen = ({
     // console.log({ isMovieDownloaded });
   }, [channel, isMovieDownloaded]);
 
-  // console.log({ channel });
-
   const isFavorite = false;
-
-  // const { rtsp_url } = sampledata.data.videos.find(({ id }) => id === '24969');
-  // const rtsp_url = 'ffmpeg http://195.181.160.220:2080/12/video.m3u8';
-  // const rtsp_url_x = 'ffmpeg http://46.4.72.215:80/1299/video.m3u8';
 
   const handleTogglePlay = () => {
     setLoading(true);
@@ -135,6 +128,25 @@ const ChannelDetailScreen = ({
 
   if (!channel) return <Text>fetching...</Text>;
 
+  const renderPlayer = () => {
+    if (source) {
+      return (
+        <MediaPlayer
+          isSeries={false}
+          paused={paused}
+          source={source}
+          thumbnail={currentlyPlaying.thumbnail}
+          title={currentlyPlaying.title}
+          togglePlay={handleTogglePlay}
+          loading={loading}
+          setLoading={setLoading}
+        />
+      );
+    }
+  };
+
+  console.log({ source });
+
   return (
     <View>
       {/* Player */}
@@ -144,22 +156,20 @@ const ChannelDetailScreen = ({
           height: 211,
           marginBottom: 10,
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          backgroundColor: 'black'
         }}
       >
         {error && <Text style={{ color: 'red' }}>Erro: something went wrong</Text>}
-        {source.length ? (
-          <VLCPlayer
-            style={{
-              width: Dimensions.get('window').width,
-              height: 211
-              // backgroundColor: 'black'
-            }}
-            videoAspectRatio="16:9"
-            source={{ uri: source }}
-          />
-        ) : null}
+        {/* <VLCPlayer
+          autoplay={true}
+          source={{ uri: source }}
+          volume={null}
+          style={{ width: Dimensions.get('window').width, height: 211 }}
+        /> */}
+        {/* {renderPlayer()} */}
       </View>
+
       <ScrollView>
         <ContentWrap>
           <View

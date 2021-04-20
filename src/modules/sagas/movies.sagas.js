@@ -32,13 +32,23 @@ export function* getMovieRequest(action) {
 }
 
 export function* getMoviesRequest(action) {
-  const { paginatorInfo } = action;
+  const { paginatorInfo, categoryPaginator } = action;
+
+  // console.log({ paginatorInfo, categoryPaginator });
+
+  /// category paginator
+  const { page, limit } = categoryPaginator;
+
+  const index = (page - 1) * limit;
+
+  // let paginator = paginatorInfo.slice(index, limit);
+  let paginator = paginatorInfo.slice(0, 5);
+
+  console.log({ paginator });
 
   try {
     const videos = yield all(
-      paginatorInfo
-        .slice(0, 2)
-        .map(({ paginator: input }) => call(getMoviesByCategories, { input }))
+      paginator.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
     );
 
     // remove items that have 0 content
@@ -47,7 +57,11 @@ export function* getMoviesRequest(action) {
     const movies = filtered.map(({ videoByCategory }) => {
       return { category: videoByCategory[0].category, videos: videoByCategory };
     });
-    yield put(Creators.getMoviesSuccess(movies));
+
+    /// increment paginator with every successful request
+    Object.assign(categoryPaginator, { page: page + 1 });
+
+    yield put(Creators.getMoviesSuccess(movies, categoryPaginator));
   } catch (error) {
     yield put(Creators.getMoviesFailure(error.message));
   }

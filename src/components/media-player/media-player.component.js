@@ -41,7 +41,7 @@ const MediaPlayer = ({
   const [showControls, setShowControls] = React.useState(false);
   const [fullscreen, setFullscreen] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
-  const [volume, setVolume] = React.useState(0.75);
+  const [volume, setVolume] = React.useState(75);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
@@ -128,6 +128,8 @@ const MediaPlayer = ({
 
   console.log('media source', source);
 
+  console.log('volume', volume);
+
   if (fullscreen)
     return (
       <FullScreenPlayer
@@ -182,7 +184,7 @@ const MediaPlayer = ({
 
       <VLCPlayer
         ref={player}
-        autoplay={false}
+        autoplay={true}
         paused={paused}
         seek={currentTime}
         onProgress={handleProgress}
@@ -203,8 +205,8 @@ const MediaPlayer = ({
             height={100}
             value={volume}
             min={0}
-            max={1}
-            onChange={(value) => setVolume(value)}
+            max={100}
+            onChange={(value) => setVolume(parseInt(value))}
             minimumTrackTintColor={theme.iplayya.colors.white100}
             maximumTrackTintColor={theme.iplayya.colors.white25}
           />

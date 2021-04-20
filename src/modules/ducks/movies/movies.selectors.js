@@ -72,21 +72,6 @@ export const selectPaginatorOfCategory = createSelector(
   (paginatorInfo) => paginatorInfo
 );
 
-// const selectTaskById = ({ movies: { downloads } }, props) => {
-//   if (typeof downloads[props.id] === 'undefined') return;
-
-//   return downloads[props.id].task;
-//   // return downloads.find(({ id }) => id === props.id);
-// };
-
-// export const selectTask = createSelector([selectTaskById], (task) => task);
-
-// const selectDownloadData = ({ movies: { downloadsData } }, props) => {
-//   return downloadsData.find(({ id }) => id === props.id);
-// };
-
-// export const selectVideoForDownloadInfo = createSelector([selectDownloadData], (video) => video);
-
 export const selectFavorites = createSelector(
   [moviesState],
   ({ favoriteVideos }) => favoriteVideos
@@ -152,3 +137,8 @@ export const selectRemainingTime = createSelector([moviesState], ({ playbackInfo
   if (typeof playbackInfo.remainingTime === 'undefined') return 0;
   return Math.abs(playbackInfo.remainingTime / 1000);
 });
+
+export const selectCategoryPaginator = createSelector(
+  [moviesState],
+  ({ categoryPaginator }) => categoryPaginator
+);
