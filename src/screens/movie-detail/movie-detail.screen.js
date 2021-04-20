@@ -23,8 +23,7 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import { createFontFormat } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
-
-const dirs = RNFetchBlob.fs.dirs;
+import { downloadPath } from 'components/download-button/download-utils';
 
 const MovieDetailScreen = ({
   error,
@@ -49,10 +48,10 @@ const MovieDetailScreen = ({
 
   const listDownloadedFiles = async () => {
     // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
-    const dir = dirs.DocumentDir;
-    const ls = await RNFetchBlob.fs.ls(dir);
+    // const dir = dirs.DocumentDir;
+    const ls = await RNFetchBlob.fs.ls(downloadPath);
     setDownloadedFiles(ls);
-    console.log({ ls });
+    // console.log({ ls });
   };
 
   React.useEffect(() => {
@@ -75,18 +74,30 @@ const MovieDetailScreen = ({
 
   React.useEffect(() => {
     if (movie) {
-      const { title: movieTitle, rtsp_url } = movie;
+      const { is_series } = movie;
+      let videoUrl = '';
+      if (is_series) {
+        /// for testing
+        videoUrl = 'xxx http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+      } else {
+        const { video_urls } = movie;
+        videoUrl = video_urls[0].link;
+      }
+      const { title: movieTitle } = movie;
+      // const { link: videoUrl } = video_urls[0];
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
 
-      // console.log({ isMovieDownloaded, xxxx: rtsp_url.split(' ')[1] });
-
       // set source
       if (isMovieDownloaded) {
-        setSource(`${dirs.DocumentDir}/${filename}`);
+        let src =
+          Platform.OS === 'ios'
+            ? `file://${downloadPath}/${filename}`
+            : `${downloadPath}/${filename}`;
+        setSource(src); /// file:// teqnique only works on iOS
       } else {
-        let src = rtsp_url.split(' ')[1];
+        let src = videoUrl.split(' ')[1];
         let setsrc = typeof src === 'undefined' ? null : src;
         setSource(setsrc);
       }
@@ -96,17 +107,6 @@ const MovieDetailScreen = ({
   React.useEffect(() => {
     listDownloadedFiles();
   }, []);
-
-  // // set source
-  // React.useEffect(() => {
-  //   const titlesplit = movie.title.split(' ');
-  //   const title = titlesplit.join('_');
-  //   const filename = `${videoId}_${title}.mp4`;
-  //   const file = downloadedFiles.find((file) => file === filename);
-
-  // }, [isMovieDownloaded]);
-
-  // console.log({ isMovieDownloaded });
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -156,7 +156,7 @@ const MovieDetailScreen = ({
     if (source) {
       return (
         <MediaPlayer
-          // type="mp4"
+          isSeries={movie.is_series}
           paused={paused}
           source={source}
           thumbnail={thumbnail}

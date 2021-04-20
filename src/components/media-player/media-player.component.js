@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, View, Modal, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-import Video from 'react-native-video';
+// import Video from 'react-native-video';
 import Icon from 'components/icon/icon.component';
 import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
@@ -15,6 +17,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
+import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
 
 // const temp = require('/data/user/0/com.iplayya/files/35466_God_of_War.mp4');
 // const samplevideo = require('assets/sample-mp4-file.mp4');
@@ -30,14 +33,15 @@ const MediaPlayer = ({
   thumbnail,
   title,
   paused,
-  togglePlay
-  // type
+  togglePlay,
+  isSeries
 }) => {
   const theme = useTheme();
+  const [error, setError] = React.useState(false);
   const [showControls, setShowControls] = React.useState(false);
   const [fullscreen, setFullscreen] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
-  const [volume, setVolume] = React.useState(0.75);
+  const [volume, setVolume] = React.useState(75);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
@@ -57,11 +61,17 @@ const MediaPlayer = ({
   };
 
   const onBuffer = () => {
+    setError(false);
     console.log('buffer callback');
   };
 
+  const handleOnPlaying = () => {
+    setLoading(false);
+    timer = hideControls(10);
+  };
+
   const videoError = () => {
-    console.log('video error');
+    setError(true);
   };
 
   const handleProgress = (playbackInfo) => {
@@ -116,7 +126,9 @@ const MediaPlayer = ({
     setScreencastActiveState(null);
   };
 
-  console.log({ source });
+  console.log('media source', source);
+
+  console.log('volume', volume);
 
   if (fullscreen)
     return (
@@ -129,6 +141,7 @@ const MediaPlayer = ({
         volume={volume}
         thumbnail={thumbnail}
         onBuffer={onBuffer}
+        onPlaying={() => handleOnPlaying()}
         videoError={videoError}
         volumeSliderVisible={volumeSliderVisible}
         setVolume={setVolume}
@@ -153,25 +166,35 @@ const MediaPlayer = ({
     );
 
   return (
-    <View style={{ position: 'relative' }}>
-      {/* video */}
-      <Video
-        currentTime={currentTime}
+    <View style={{ position: 'relative', backgroundColor: 'black' }}>
+      {error && (
+        <View
+          style={{
+            position: 'absolute',
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Text>VIDEO ERROR</Text>
+        </View>
+      )}
+
+      <VLCPlayer
+        ref={player}
+        autoplay={true}
         paused={paused}
+        seek={currentTime}
         onProgress={handleProgress}
         source={{ uri: source }}
-        ref={player}
         volume={volume}
-        onBuffer={() => onBuffer()}
+        onBuffering={() => onBuffer()}
+        onPlaying={() => handleOnPlaying()}
         onError={() => videoError()}
-        poster={
-          thumbnail === 'N/A' || thumbnail === ''
-            ? `https://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
-            : thumbnail
-        }
         resizeMode="contain"
-        posterResizeMode="cover"
-        style={{ width: Dimensions.get('window').width, height: 211, backgroundColor: 'black' }}
+        style={{ width: Dimensions.get('window').width, height: 211 }}
       />
 
       {/* volume slider */}
@@ -182,8 +205,8 @@ const MediaPlayer = ({
             height={100}
             value={volume}
             min={0}
-            max={1}
-            onChange={(value) => setVolume(value)}
+            max={100}
+            onChange={(value) => setVolume(parseInt(value))}
             minimumTrackTintColor={theme.iplayya.colors.white100}
             maximumTrackTintColor={theme.iplayya.colors.white25}
           />
@@ -193,7 +216,7 @@ const MediaPlayer = ({
       {/* media player controls */}
       <Controls
         volume={volume}
-        multipleMedia={false}
+        multipleMedia={isSeries}
         loading={loading}
         title={title}
         togglePlay={togglePlay}
@@ -317,7 +340,8 @@ MediaPlayer.propTypes = {
   thumbnail: PropTypes.string,
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
-  updatePlaybackInfoAction: PropTypes.func
+  updatePlaybackInfoAction: PropTypes.func,
+  isSeries: PropTypes.bool
 };
 
 const actions = {

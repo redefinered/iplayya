@@ -38,10 +38,23 @@ export const GET_MOVIE = gql`
       rating_kinopoisk
       is_hd
       is_censored
-      rtsp_url
       is_favorite
       thumbnail
       cast
+      is_series
+      series {
+        title
+        season
+        episode
+        video_urls {
+          link
+          quality
+        }
+      }
+      video_urls {
+        link
+        quality
+      }
     }
   }
 `;

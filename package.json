@@ -1,6 +1,6 @@
 {
   "name": "iplayya",
-  "version": "0.0.2-alpha.20",
+  "version": "0.0.2-alpha.24",
   "private": true,
   "scripts": {
     "android": "npx react-native run-android",
@@ -38,6 +38,7 @@
     "react": "16.13.1",
     "react-native": "0.63.3",
     "react-native-anchor-point": "https://github.com/redefinered/react-native-anchor-point.git",
+    "react-native-background-downloader": "^2.3.4",
     "react-native-fs": "^2.17.0",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-linear-gradient": "^2.5.6",
@@ -50,8 +51,7 @@
     "react-native-svg": "^12.1.0",
     "react-native-tab-view": "^2.15.2",
     "react-native-vector-icons": "^8.1.0",
-    "react-native-video": "^5.1.1",
-    "react-native-vlc-media-player": "https://github.com/redefinered/react-native-vlc-media-player.git",
+    "react-native-vlc-media-player": "^1.0.31",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",

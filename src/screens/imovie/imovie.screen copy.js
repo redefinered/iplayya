@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
@@ -23,7 +23,6 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
-import { FlatList } from 'react-native-gesture-handler';
 
 const ImovieScreen = ({
   isFetching,
@@ -35,22 +34,32 @@ const ImovieScreen = ({
   theme,
   route: { params },
   categoryPaginator,
-  movies
+  ...rest
 }) => {
-  const [data, setData] = React.useState([]);
-  const [scrollIndex, setScrollIndex] = React.useState(0);
+  const [positions, setPositions] = React.useState({});
+  const [scrollOffset, setScrollOffset] = React.useState(0); /// scroll offset if a category is selected from search
   const [showBanner, setShowBanner] = React.useState(true);
-
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
   }, []);
 
   React.useEffect(() => {
-    console.log({ movies });
-    let collection = [];
-    if (typeof movies === 'undefined') return setData(collection);
+    if (typeof params !== 'undefined') {
+      /// set scroll offset if positions are set
+      let layout = positions[params.categoryName];
+      if (typeof layout !== 'undefined') {
+        console.log({ layout });
+        setScrollOffset(layout.y);
+      }
+    }
+  }, [params, positions]);
 
-    collection = movies.map(({ thumbnail, ...rest }) => {
+  let movies = [];
+
+  if (typeof rest.movies === 'undefined') {
+    movies = [];
+  } else {
+    movies = rest.movies.map(({ thumbnail, ...rest }) => {
       return {
         thumbnail:
           thumbnail === '' || thumbnail === 'N/A'
@@ -59,18 +68,7 @@ const ImovieScreen = ({
         ...rest
       };
     });
-
-    return setData(collection);
-  }, [movies]);
-
-  React.useEffect(() => {
-    console.log({ data });
-    if (typeof params !== 'undefined') {
-      const { categoryName } = params;
-      return setScrollIndex(data.findIndex((c) => c.category === categoryName));
-    }
-    setScrollIndex(0);
-  }, [params, data]);
+  }
 
   // get movies on mount
   React.useEffect(() => {
@@ -85,6 +83,12 @@ const ImovieScreen = ({
 
   const renderEmpty = () => {
     return <Text>No movies found</Text>;
+  };
+
+  const handleSetItemsPosition = (index, layout) => {
+    const shallow = positions;
+    const newPositions = Object.assign(shallow, { [index]: layout });
+    setPositions(newPositions);
   };
 
   const handleRetry = () => {
@@ -122,19 +126,12 @@ const ImovieScreen = ({
     );
   };
 
-  const renderItem = ({ item: { category } }) => {
-    // console.log({ category });
-    return <CategoryScroll category={category} onSelect={handleMovieSelect} />;
-  };
-
-  console.log({ scrollIndex, params });
-
   return (
     <View style={styles.container}>
       {renderErrorBanner()}
-      {data.length ? (
+      {movies.length ? (
         <React.Fragment>
-          {/* <ScrollView contentOffset={{ y: scrollOffset }}>
+          <ScrollView contentOffset={{ y: scrollOffset }}>
             {movies.map(({ category }) => {
               return (
                 <View
@@ -148,14 +145,7 @@ const ImovieScreen = ({
               );
             })}
             <Spacer size={100} />
-          </ScrollView> */}
-          <FlatList
-            data={data}
-            keyExtractor={(movie) => movie.category}
-            renderItem={renderItem}
-            initialScrollIndex={scrollIndex}
-          />
-          <Spacer size={100} />
+          </ScrollView>
         </React.Fragment>
       ) : (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -171,8 +161,7 @@ const ImovieScreen = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 10,
+    flex: 1
   }
 });
 

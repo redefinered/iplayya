@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
@@ -12,21 +13,14 @@ import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import {
   selectPlaybackInfo,
-  selectSeekableDuration,
-  selectCurrentTime
+  selectCurrentPosition,
+  selectCurrentTime,
+  selectRemainingTime
 } from 'modules/ducks/movies/movies.selectors';
 
 import { createFontFormat, toDateTime } from 'utils';
 
-const VideoControls = ({ theme, ...controlProps }) => {
-  const [timeRemaining, setTimeRemaining] = React.useState(0);
-
-  React.useEffect(() => {
-    setTimeRemaining(controlProps.seekableDuration - controlProps.currentTime);
-  }, [controlProps.currentTime]);
-
-  // console.log({ playbackInfo, timeRemaining, seekableDuration, currentTime });
-
+const VideoControls = ({ theme, currentTime, position, remainingTime, ...controlProps }) => {
   const screencastOptions = () => {
     if (controlProps.showCastOptions) {
       return castOptions.map(({ id, name, label }) => (
@@ -211,23 +205,23 @@ const VideoControls = ({ theme, ...controlProps }) => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ flex: 1.5 }}>
             <Text style={{ ...createFontFormat(10, 14) }}>
-              {moment(toDateTime(controlProps.currentTime)).format('H:mm:ss')}
+              {moment(toDateTime(currentTime)).format('H:mm:ss')}
             </Text>
           </View>
-          <View style={{ flex: 9 }}>
+          <View style={{ flex: 7 }}>
             <Slider
-              value={controlProps.currentTime}
+              value={position}
               onSlidingComplete={(value) => controlProps.setCurrentTime(value)}
               style={{ width: '100%', height: 10 }}
               minimumValue={0}
-              maximumValue={controlProps.seekableDuration}
+              maximumValue={1}
               minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
               maximumTrackTintColor="white"
             />
           </View>
           <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
             <Text style={{ ...createFontFormat(10, 14) }}>
-              {`-${moment(toDateTime(timeRemaining)).format('H:mm:ss')}`}
+              {`-${moment(toDateTime(remainingTime)).format('H:mm:ss')}`}
             </Text>
           </View>
         </View>
@@ -267,8 +261,9 @@ VideoControls.defaultProps = {
 
 const mapStateToProps = createStructuredSelector({
   playbackInfo: selectPlaybackInfo,
-  seekableDuration: selectSeekableDuration,
-  currentTime: selectCurrentTime
+  position: selectCurrentPosition,
+  currentTime: selectCurrentTime,
+  remainingTime: selectRemainingTime
 });
 
 export default compose(connect(mapStateToProps), withTheme)(VideoControls);

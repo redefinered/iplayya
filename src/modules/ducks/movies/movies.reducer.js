@@ -20,21 +20,14 @@ const INITIAL_STATE = {
   // paginators for movies sections in the main imovie screen
   paginatorInfo: [],
 
+  categoryPaginator: {
+    page: 1,
+    limit: 5
+  },
+
   // if a movie is added to favorites
   updatedFavorites: false,
   removedFromFavorites: false,
-
-  // download tasks
-  downloads: {},
-
-  // downloads progress
-  downloadsProgress: [],
-
-  // when movie is downloading
-  // downloading: false,
-
-  // data for downloaded movies where we get properties like title, id, etc...
-  downloadsData: [],
 
   searchResults: []
 };
@@ -75,11 +68,13 @@ export default createReducer(INITIAL_STATE, {
 
   /// reset paginatorInfo so initial query
   [Types.GET_MOVIES_START]: (state) => {
+    const { paginatorInfo, categoryPaginator } = INITIAL_STATE;
     return {
       ...state,
       isFetching: false,
       error: null,
-      paginatorInfo: []
+      paginatorInfo,
+      categoryPaginator
     };
   },
   // get movies and update paginator i.e. increment pageNumber
@@ -91,13 +86,14 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_MOVIES_SUCCESS]: (state, action) => {
-    const { movies } = action;
+    const { movies, categoryPaginator } = action;
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      movies
+      movies,
+      categoryPaginator
     };
   },
   [Types.GET_MOVIES_FAILURE]: (state, action) => {
@@ -118,6 +114,14 @@ export default createReducer(INITIAL_STATE, {
   //   };
   // },
 
+  [Types.GET_CATEGORIES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+
   // get all categories
   [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
     const { categories } = action.data;
@@ -127,6 +131,13 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       categories,
       paginatorInfo: setupPaginator(categories)
+    };
+  },
+  [Types.GET_CATEGORIES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      error: action.error,
+      isFetching: false
     };
   },
 
@@ -249,63 +260,6 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_FAVORITE_MOVIES_FAILURE]: (state) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: null
-    };
-  },
-  [Types.UPDATE_DOWNLOADS]: (state, action) => {
-    return {
-      ...state,
-      downloads: action.data
-    };
-  },
-  [Types.UPDATE_DOWNLOADS_PROGRESS]: (state, action) => {
-    const { id, ...progress } = action.data;
-    return {
-      ...state,
-      downloadsProgress: [...state.downloadsProgress, { id, ...progress }]
-    };
-  },
-
-  [Types.CLEAN_UP_DOWNLOADS_PROGRESS]: (state, action) => {
-    const { ids } = action;
-    const downloadsProgress = state.downloadsProgress;
-    let incompleteItems = [];
-    ids.forEach((removeId) => {
-      incompleteItems = downloadsProgress.filter(({ id }) => id !== removeId);
-    });
-
-    return {
-      ...state,
-      downloadsProgress: incompleteItems
-    };
-  },
-
-  [Types.RESET_DOWNLOADS_PROGRESS]: (state) => {
-    return {
-      ...state,
-      downloadsProgress: []
-    };
-  },
-
-  [Types.GET_DOWNLOADS]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null
-    };
-  },
-  [Types.GET_DOWNLOADS_SUCCESS]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: null,
-      downloadsData: action.data
-    };
-  },
-  [Types.GET_DOWNLOADS_FAILURE]: (state) => {
     return {
       ...state,
       isFetching: false,

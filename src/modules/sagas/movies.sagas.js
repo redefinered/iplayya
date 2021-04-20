@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/movies/movies.actions';
 import {
@@ -6,7 +7,6 @@ import {
   getMoviesByCategories,
   addMovieToFavorites,
   getFavoriteMovies,
-  getDownloads,
   removeFromFavorites,
   search,
   getCategories
@@ -32,11 +32,23 @@ export function* getMovieRequest(action) {
 }
 
 export function* getMoviesRequest(action) {
-  const { paginatorInfo } = action;
+  const { paginatorInfo, categoryPaginator } = action;
+
+  // console.log({ paginatorInfo, categoryPaginator });
+
+  /// category paginator
+  const { page, limit } = categoryPaginator;
+
+  const index = (page - 1) * limit;
+
+  // let paginator = paginatorInfo.slice(index, limit);
+  let paginator = paginatorInfo.slice(0, 5);
+
+  console.log({ paginator });
 
   try {
     const videos = yield all(
-      paginatorInfo.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
+      paginator.map(({ paginator: input }) => call(getMoviesByCategories, { input }))
     );
 
     // remove items that have 0 content
@@ -45,7 +57,11 @@ export function* getMoviesRequest(action) {
     const movies = filtered.map(({ videoByCategory }) => {
       return { category: videoByCategory[0].category, videos: videoByCategory };
     });
-    yield put(Creators.getMoviesSuccess(movies));
+
+    /// increment paginator with every successful request
+    Object.assign(categoryPaginator, { page: page + 1 });
+
+    yield put(Creators.getMoviesSuccess(movies, categoryPaginator));
   } catch (error) {
     yield put(Creators.getMoviesFailure(error.message));
   }
@@ -93,15 +109,15 @@ export function* getFavoriteMoviesRequest() {
   }
 }
 
-export function* getDownloadsRequest(action) {
-  const { input } = action.data;
-  try {
-    const { videoByIds } = yield call(getDownloads, input);
-    yield put(Creators.getDownloadsSuccess(videoByIds));
-  } catch (error) {
-    yield put(Creators.getDownloadsFailure(error.message));
-  }
-}
+// export function* getDownloadsRequest(action) {
+//   const { input } = action.data;
+//   try {
+//     const { videoByIds } = yield call(getDownloads, input);
+//     yield put(Creators.getDownloadsSuccess(videoByIds));
+//   } catch (error) {
+//     yield put(Creators.getDownloadsFailure(error.message));
+//   }
+// }
 
 export function* removeFromFavoritesRequest(action) {
   const { videoIds } = action;
@@ -149,7 +165,7 @@ export default function* movieSagas() {
   yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
-  yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
+  // yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_CATEGORIES, getCategoriesRequest);
 }

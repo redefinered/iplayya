@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
-import { selectIsFetching } from 'modules/ducks/auth/auth.selectors';
+import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
 import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 
@@ -78,8 +78,10 @@ const actions = {
   getMoviesStartAction: Creators.getMoviesStart
 };
 
-export default compose(
+const enhance = compose(
   withHeaderPush({ backgroundType: 'image' }),
   connect(mapStateToProps, actions),
   withLoader
-)(Home);
+);
+
+export default enhance(Home);

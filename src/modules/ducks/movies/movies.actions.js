@@ -11,8 +11,8 @@ const { Types, Creators } = createActions(
 
     // get movies for each movie category when user opens imovie screen
     getMoviesStart: [],
-    getMovies: ['paginatorInfo'],
-    getMoviesSuccess: ['movies'],
+    getMovies: ['paginatorInfo', 'categoryPaginator'],
+    getMoviesSuccess: ['movies', 'categoryPaginator'],
     getMoviesFailure: ['error'],
 
     getCategories: [],
@@ -49,18 +49,19 @@ const { Types, Creators } = createActions(
     /**
      * will have title, status, and progress property
      */
-    updateDownloads: ['data'],
+    // updateDownloads: ['downloadTask'],
 
-    /// the id argument is the ID to be removed
-    cleanUpDownloadsProgress: ['ids'],
-    resetDownloadsProgress: [],
+    // deleteFromDownloadsState: ['videoId'],
 
-    updateDownloadsProgress: ['data'],
+    // /// the id argument is the ID to be removed
+    // cleanUpDownloadsProgress: ['ids'],
 
-    getDownloadsStart: [],
-    getDownloads: ['data'],
-    getDownloadsSuccess: ['data'],
-    getDownloadsFailure: ['error'],
+    // updateDownloadsProgress: ['data'],
+
+    // getDownloadsStart: [],
+    // getDownloads: ['data'],
+    // getDownloadsSuccess: ['data'],
+    // getDownloadsFailure: ['error'],
 
     searchStart: [],
     search: ['input'],
