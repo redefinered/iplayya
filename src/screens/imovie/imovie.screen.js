@@ -217,7 +217,7 @@ const actions = {
 };
 
 export default compose(
-  withHeaderPush(),
+  withHeaderPush({ backgroundType: 'solid' }),
   connect(mapStateToProps, actions),
   withLoader,
   withTheme

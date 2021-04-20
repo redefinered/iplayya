@@ -11,21 +11,22 @@ import {
   selectPaginatorOfCategory
 } from 'modules/ducks/movies/movies.selectors';
 
-import { urlEncodeTitle } from 'utils';
+// import { urlEncodeTitle } from 'utils';
 
 const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCategory }) => {
   if (typeof videos === 'undefined' || videos.length === 0) return <View />;
   let movies = videos.map(({ thumbnail, ...rest }) => {
     return {
-      thumbnail:
-        thumbnail === '' || thumbnail === 'N/A'
-          ? `http://via.placeholder.com/115x170.png?text=${urlEncodeTitle(rest.title)}`
-          : thumbnail,
+      // thumbnail:
+      //   thumbnail === '' || thumbnail === 'N/A'
+      //     ? `http://via.placeholder.com/115x170.png?text=${urlEncodeTitle(rest.title)}`
+      //     : thumbnail,
+      thumbnail: thumbnail === '' || thumbnail === 'N/A' ? null : thumbnail,
       ...rest
     };
   });
 
-  // console.log({ [category]: paginatorOfCategory });
+  console.log({ movies });
 
   return (
     <View style={{ marginBottom: 30 }}>
