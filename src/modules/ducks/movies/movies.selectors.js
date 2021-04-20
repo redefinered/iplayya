@@ -61,7 +61,11 @@ const selectMoviesForFilter = ({ movies: { movies } }, props) => {
   return movies.find(({ category }) => category === props.category);
 };
 
-export const selectMoviesByCategory = createSelector([selectMoviesForFilter], (movies) => movies);
+export const selectMoviesByCategory = createSelector([selectMoviesForFilter], (movies) => {
+  if (typeof movies === 'undefined') return {};
+  // console.log({ movies });
+  return movies;
+});
 
 const selectPaginatorInfoForFilter = ({ movies: { paginatorInfo } }, props) => {
   return paginatorInfo.find(({ title }) => title === props.category);

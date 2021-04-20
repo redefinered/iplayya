@@ -1,6 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
 import { updateMoviesState, updatePaginatorInfo } from './movies.utils';
+import uniq from 'lodash/uniq';
 
 import { setupPaginator } from 'screens/imovie/imovie.utils';
 
@@ -73,6 +74,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
+      movies: [],
       paginatorInfo,
       categoryPaginator
     };
@@ -92,7 +94,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      movies,
+      movies: uniq([...state.movies, ...movies]),
       categoryPaginator
     };
   },
