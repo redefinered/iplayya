@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   container: { flex: 1 },
   form: { flex: 6 },
-  textInput: { backgroundColor: 'rgba(255,255,255,0.1)' },
+  // textInput: { backgroundColor: 'rgba(255,255,255,0.1)' },
   loginButton: { marginTop: 6 },
   forgotPassword: { padding: 15, marginTop: 10 },
   forgotPasswordText: { alignSelf: 'center' },

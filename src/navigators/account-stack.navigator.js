@@ -27,10 +27,11 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
       headerBackImage: () => <HeaderBackImage />,
       headerStyle: { height: headerHeight },
       headerTitleStyle: { fontSize: 24 },
-      headerTitleContainerStyle: { paddingTop: 30 },
+      headerTitleContainerStyle: { alignItems: 'flex-start' },
       headerLeftContainerStyle: {
         paddingLeft: 15,
-        justifyContent: 'flex-end'
+        justifyContent: 'center',
+        alignItems: 'center'
       },
       headerRightContainerStyle: styles.headerRightContainerStyle
     }}
@@ -77,7 +78,8 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
 const styles = StyleSheet.create({
   headerRightContainerStyle: {
     paddingRight: 15,
-    justifyContent: 'flex-end'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   headerButtonContainer: {
     width: 44,

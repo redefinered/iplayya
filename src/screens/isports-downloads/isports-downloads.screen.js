@@ -115,7 +115,7 @@ const IsportsDownloads = ({ theme, navigation, removeFromFavoritesAction }) => {
           </ContentWrap>
         )}
 
-        <View>
+        <View style={{ marginTop: 20 }}>
           {dummydata.map(({ id, ...otherProps }) => {
             return (
               <ListItemItvDownloads

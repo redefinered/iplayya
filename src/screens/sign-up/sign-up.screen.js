@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
+import { View } from 'react-native'
 import { Text } from 'react-native-paper';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
@@ -34,7 +35,7 @@ class SignUpScreen extends React.Component {
       { key: 'email', val: false },
       { key: 'password', val: false },
       { key: 'password_confirmation', val: false }
-    ]
+    ],
   };
 
   componentDidMount() {

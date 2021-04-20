@@ -84,7 +84,7 @@ export default {
       fontSize: 14,
       lineHeight: 19,
       marginBottom: 15
-    }
+    },
   },
   spacing: (multiply) => 6 * multiply
 };

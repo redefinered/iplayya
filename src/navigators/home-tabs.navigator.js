@@ -29,9 +29,9 @@ const HomeTabs = ({ hideTabs }) => {
       tabBarOptions={{
         showLabel: false,
         tabStyle: {
-          // backgroundColor: 'red',
-          // marginHorizontal: 50
-          flex: 4
+          //   // backgroundColor: 'red',
+          //   // marginHorizontal: 50
+          //  flex: 4
         },
         style: {
           backgroundColor: 'transparent',
@@ -39,7 +39,8 @@ const HomeTabs = ({ hideTabs }) => {
           position: 'absolute',
           left: 50,
           right: 50,
-          bottom: hideTabs ? -200 : 50
+          bottom: hideTabs ? -200 : 50,
+          elevation: 0
         }
       }}
     >

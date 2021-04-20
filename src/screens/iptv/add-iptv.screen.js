@@ -59,6 +59,12 @@ class AddIptvScreen extends React.Component {
         navigation.replace('IPTV');
       }
     }
+    if (prevProps.error === this.props.error) return;
+    if (this.props.error) {
+      this.setState({ modalVisible: true });
+    } else {
+      this.setState({ modalVisible: false });
+    }
   }
 
   handleSkip = () => {
@@ -125,6 +131,11 @@ class AddIptvScreen extends React.Component {
     // on success, goes back to iptv list and display a success message
   };
 
+  handleComfirmAction = () => {
+    this.props.createStartAction();
+    this.setState({ modalVisible: false });
+  };
+
   render() {
     const { skippedProviderAdd } = this.props;
     const { errors, valid, modalVisible, ...input } = this.state;
@@ -142,7 +153,7 @@ class AddIptvScreen extends React.Component {
     return (
       <React.Fragment>
         <ContentWrap>
-          <ScrollView>
+          <ScrollView style={{ flex: 1, marginTop: 20 }}>
             <View>
               <TextInput
                 value={input.name}
@@ -201,6 +212,7 @@ class AddIptvScreen extends React.Component {
           variant="danger"
           message="Oops! Your credentials is not valid. Call your IPTV provider for assistance."
           hideAction={() => this.setState({ modalVisible: false })}
+          confirmAction={() => this.handleComfirmAction()}
           visible={modalVisible}
         />
       </React.Fragment>

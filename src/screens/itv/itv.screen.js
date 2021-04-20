@@ -182,6 +182,7 @@ const ItvScreen = ({
         <React.Fragment>
           {error && <Text>{error}</Text>}
           <ScrollView>
+            <Spacer />
             <SelectorPills
               data={genresData}
               labelkey="title"
@@ -196,7 +197,12 @@ const ItvScreen = ({
                   Featured TV Channels
                 </Text>
               </ContentWrap>
-              <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
+              <ScrollView
+                style={{ paddingHorizontal: 10 }}
+                horizontal
+                bounces={false}
+                showsHorizontalScrollIndicator={false}
+              >
                 {channelsData.map(({ id, ...itemProps }) => {
                   let isNotificationActive =
                     notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
@@ -292,7 +298,8 @@ const ItvScreen = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 6
   }
 });
 

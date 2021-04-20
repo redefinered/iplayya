@@ -47,7 +47,7 @@ const Home = ({
   };
 
   return (
-    <ContentWrap>
+    <ContentWrap style={{ paddingTop: 30, }}>
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
     </ContentWrap>

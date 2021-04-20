@@ -160,7 +160,7 @@ const IsportsFavoritesScreen = ({
           </ContentWrap>
         )}
 
-        <View>
+        <View style={{ marginTop: 30 }}>
           {listData.map(({ id, ...itemProps }) => (
             <ListItemChanel
               key={id}

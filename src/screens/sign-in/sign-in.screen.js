@@ -28,7 +28,7 @@ class SignInScreen extends React.Component {
     username: '',
     password: '',
     isolatedInputs: false,
-    showPassword: false
+    showPassword: false,
   };
 
   componentDidMount() {
@@ -62,7 +62,7 @@ class SignInScreen extends React.Component {
             flex: 3,
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: isolatedInputs ? -100 : 0
+            // marginTop: isolatedInputs ? 100 : 0
           }}
         >
           <Logo />
@@ -128,9 +128,9 @@ class SignInScreen extends React.Component {
         <View
           style={{
             ...styles.signUp,
-            flex: isolatedInputs ? 1 : 2,
-            alignItems: 'center'
-            // marginTop: isolatedInputs ? 30 : null
+            flex: isolatedInputs ? 1 : 2, 
+            alignItems: 'center',
+            marginTop: isolatedInputs ? 30 : null
           }}
         >
           <Text>

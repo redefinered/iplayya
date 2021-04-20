@@ -162,7 +162,7 @@ const ItvFavoritesScreen = ({
           </ContentWrap>
         )}
 
-        <View>
+        <View style={{ paddingTop: 30 }}>
           {listData.map(({ id, ...itemProps }) => (
             <ListItemChanel
               key={id}

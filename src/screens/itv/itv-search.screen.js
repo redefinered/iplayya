@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextInput as FormInput } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
@@ -22,6 +22,7 @@ import {
 } from 'modules/ducks/itv/itv.selectors';
 import { ScrollView } from 'react-native-gesture-handler';
 import { selectGenres } from 'modules/ducks/itv/itv.selectors';
+import Spacer from '../../components/spacer.component';
 
 const ItvSearchScreen = ({
   navigation,
@@ -145,7 +146,18 @@ const ItvSearchScreen = ({
 
   return (
     <ContentWrap style={styles.container}>
+      <Spacer />
       <TextInput
+        render={(props) => (
+          <FormInput
+            {...props}
+            style={{
+              marginLeft: 40,
+              fontSize: 16,
+              color: '#ffffff'
+            }}
+          />
+        )}
         name="search"
         returnKeyType="search"
         autoFocus

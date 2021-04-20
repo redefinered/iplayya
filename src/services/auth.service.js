@@ -32,7 +32,7 @@ export const signIn = async (username, password) => {
 
     return data;
   } catch (error) {
-    console.log({ error });
+    console.log({ errorx: error });
     // const message = processError(error, error.graphQLErrors);
     // throw new Error(message);
 

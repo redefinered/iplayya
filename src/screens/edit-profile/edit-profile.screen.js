@@ -133,7 +133,7 @@ class EditProfileScreen extends React.Component {
     return (
       <React.Fragment>
         {isFetching && <Loader size="large" />}
-        <ContentWrap>
+        <ContentWrap style={{ paddingTop: 30 }}>
           <ScrollView>
             <View>
               <TextInput

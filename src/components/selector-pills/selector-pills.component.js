@@ -7,7 +7,7 @@ import { createFontFormat } from 'utils';
 const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
   // console.log({ data });
   return (
-    <ScrollView horizontal style={{ paddingHorizontal: 15, marginVertical: 20 }}>
+    <ScrollView horizontal style={{ paddingHorizontal: 15, marginVertical: 20 }} showsHorizontalScrollIndicator={false}>
       {data.map((d) => {
         const { id, ...itemProps } = d;
         return (

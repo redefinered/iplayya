@@ -111,7 +111,7 @@ const AccountScreen = ({
   if (isFetching || !profile) return <Text style={{ padding: 15 }}>Working...</Text>;
 
   return (
-    <ContentWrap>
+    <ContentWrap style={{ marginTop: 20}}>
       {
         // header section
       }
