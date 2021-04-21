@@ -60,7 +60,6 @@ const ImovieScreen = ({
   }, []);
 
   React.useEffect(() => {
-    console.log({ movies });
     let collection = [];
     if (typeof movies === 'undefined') return setData(collection);
 

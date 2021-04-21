@@ -5,6 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, View, Image, Dimensions } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
+import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
 import Icon from 'components/icon/icon.component';
@@ -36,7 +37,11 @@ const DownloadItem = ({
 
   // progress,
 
-  task
+  task,
+
+  handleLongPress,
+  activateCheckboxes,
+  selectedItems
   // video,
 
   // deleteAction
@@ -55,11 +60,11 @@ const DownloadItem = ({
     if (task.state === 'PAUSED') return setPaused(true);
     if (task.state === 'PENDING') return setPaused(true);
     if (task.state === 'DONE') return setIsDownloaded(true);
-    // console.log({ task });
+    console.log({ task });
     setProgress(task.percent * 100);
     task
       .progress((percent) => {
-        console.log(`progress: ${percent * 100}`);
+        console.log(`progress: ${percent * 100}%`);
         setProgress(percent * 100);
       })
       .done(() => {
@@ -218,7 +223,7 @@ const DownloadItem = ({
           opacity: isDownloaded ? 1 : 0.5,
           paddingVertical: 10
         }}
-        // onLongPress={() => handleLongPress(id)}
+        onLongPress={() => handleLongPress(id)}
         onPress={() => handleSelectItem(id)}
       >
         <Image
@@ -264,9 +269,9 @@ const DownloadItem = ({
               }}
             >{`${rating_mpaa}-${age_rating}, ${category}`}</Text>
           </View>
-          {/* {activateCheckboxes && (
-                      <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                    )} */}
+          {activateCheckboxes && (
+            <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+          )}
         </View>
       </Pressable>
 
