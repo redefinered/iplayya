@@ -58,7 +58,10 @@ const DownloadItem = ({
     // console.log({ task });
     setProgress(task.percent * 100);
     task
-      .progress((percent) => setProgress(percent * 100))
+      .progress((percent) => {
+        console.log(`progress: ${percent * 100}`);
+        setProgress(percent * 100);
+      })
       .done(() => {
         setIsDownloaded(true);
         console.log('Download is done!');
