@@ -89,18 +89,10 @@ const DownloadButton = ({
       return;
     }
 
-    // let source = convertHttpToHttps(video.url);
-    // let source =
-    //   'https://firebasestorage.googleapis.com/v0/b/iplayya.appspot.com/o/12AngryMen.mp4?alt=media&token=e5fbea09-e383-4fbb-85bd-206bceb4ef4d';
-    // let source = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
-    // let source = video.url;
-
     // set downloading state to true
     setDownloading(true);
 
     let androidPermission = Platform.OS === 'ios' ? true : await requestWritePermissionAndroid();
-
-    // const permission = await requestWritePermissionAndroid();
 
     if (!androidPermission) {
       console.log('permission denied');
@@ -120,9 +112,6 @@ const DownloadButton = ({
         })
         .done(() => {
           console.log('Download is done!');
-
-          // the temp file path
-          // console.log('The file saved to ', res.path());
 
           let completedItems = downloadsProgress.filter(
             ({ received, total }) => received === total

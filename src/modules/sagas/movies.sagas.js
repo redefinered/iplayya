@@ -34,6 +34,8 @@ export function* getMovieRequest(action) {
 export function* getMoviesRequest(action) {
   const { paginatorInfo, categoryPaginator } = action;
 
+  // console.log({ categoryPaginator });
+
   // console.log({ paginatorInfo, categoryPaginator });
 
   /// category paginator

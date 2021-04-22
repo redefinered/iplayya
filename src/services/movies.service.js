@@ -34,7 +34,6 @@ export const getCategories = async () => {
 };
 
 export const getMoviesByCategories = async (input) => {
-  console.log({ input });
   try {
     const { data } = await client.query({
       query: GET_MOVIES_BY_CATEGORIES,
