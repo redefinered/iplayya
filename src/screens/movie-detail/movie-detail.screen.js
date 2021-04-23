@@ -66,6 +66,8 @@ const MovieDetailScreen = ({
   React.useEffect(() => {
     if (downloadStarted) {
       setShowSnackbar(true);
+    } else {
+      setShowSnackbar(false);
     }
   }, [downloadStarted]);
 
