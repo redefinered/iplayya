@@ -290,7 +290,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 export default compose(
-  withHeaderPush(),
+  withHeaderPush({ backgroundType: 'solid' }),
   connect(mapStateToProps, actions),
   withLoader,
   withTheme
