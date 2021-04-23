@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
-import { withTheme, ActivityIndicator } from 'react-native-paper';
+import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
@@ -10,7 +10,7 @@ import { Creators } from 'modules/ducks/movies/movies.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
 import { selectMovieUrl, selectMovieTitle } from 'modules/ducks/movies/movies.selectors';
 import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
-import getConfig, { downloadPath } from './download-utils';
+import { getConfig, downloadPath } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
 
@@ -28,10 +28,15 @@ const DownloadButton = ({
 
   downloadsProgress,
   cleanUpDownloadsProgressAction,
-  setPermissionErrorAction
+  setPermissionErrorAction,
+
+  // eslint-disable-next-line react/prop-types
+  downloadStartedAction,
+  // eslint-disable-next-line react/prop-types
+  downloadStartFailure
 }) => {
   const [files, setFiles] = React.useState([]);
-  const [downloading, setDownloading] = React.useState(false);
+  // const [downloading, setDownloading] = React.useState(false);
   const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
 
   React.useEffect(() => {
@@ -75,7 +80,7 @@ const DownloadButton = ({
   };
 
   const handleDownloadMovie = async (video) => {
-    if (downloading) return;
+    // if (downloading) return;
 
     // return if movie is already downloaded
     if (isMovieDownloaded) {
@@ -90,13 +95,13 @@ const DownloadButton = ({
     }
 
     // set downloading state to true
-    setDownloading(true);
+    // setDownloading(true);
 
     let androidPermission = Platform.OS === 'ios' ? true : await requestWritePermissionAndroid();
 
     if (!androidPermission) {
       console.log('permission denied');
-      return setDownloading(false);
+      // return setDownloading(false);
     }
     // console.log({ folder });
     try {
@@ -105,6 +110,7 @@ const DownloadButton = ({
       let task = RNBackgroundDownloader.download(config)
         .begin((expectedBytes) => {
           console.log(`Going to download ${expectedBytes} bytes!`);
+          downloadStartedAction();
         })
         .progress((percent) => {
           updateDownloadsProgressAction({ id: video.videoId, progress: percent * 100 });
@@ -121,10 +127,11 @@ const DownloadButton = ({
           cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
 
           // set downloading state to false
-          setDownloading(false);
+          // setDownloading(false);
         })
         .error((error) => {
           console.log('Download canceled due to error: ', error);
+          downloadStartFailure(error.message);
         });
 
       updateDownloadsAction(task);
@@ -161,15 +168,11 @@ const DownloadButton = ({
       onPress={() => handleDownloadMovie({ videoId, title: movieTitle, url: movieUrl })}
       style={styles.headerButtonContainer}
     >
-      {downloading ? (
-        <ActivityIndicator />
-      ) : (
-        <Icon
-          name="download"
-          size={24}
-          color={isMovieDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
-        />
-      )}
+      <Icon
+        name="download"
+        size={24}
+        color={isMovieDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
+      />
     </Pressable>
   );
 };
@@ -205,7 +208,9 @@ const actions = {
   updateDownloadsAction: DownloadsCreators.updateDownloads,
   updateDownloadsProgressAction: DownloadsCreators.updateDownloadsProgress,
   cleanUpDownloadsProgressAction: DownloadsCreators.cleanUpDownloadsProgress,
-  setPermissionErrorAction: Creators.setPermissionError
+  setPermissionErrorAction: Creators.setPermissionError,
+  downloadStartedAction: DownloadsCreators.downloadStarted,
+  downloadStartFailureAction: DownloadsCreators.downloadStartFailure
 };
 
 const mapStateToProps = createStructuredSelector({

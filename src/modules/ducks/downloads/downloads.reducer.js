@@ -2,6 +2,9 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './downloads.actions';
 
 const INITIAL_STATE = {
+  error: null,
+  isFetching: false,
+
   // download tasks
   downloads: [],
 
@@ -9,15 +12,42 @@ const INITIAL_STATE = {
   downloadsProgress: [],
 
   // data for downloaded movies where we get properties like title, id, etc...
-  downloadsData: []
+  downloadsData: [],
+
+  downloadStarted: false
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.DOWNLOAD_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      downloadStarted: false
+    };
+  },
   [Types.UPDATE_DOWNLOADS]: (state, action) => {
     const { downloadTask } = action;
     return {
       ...state,
+      isFetching: true,
       downloads: [downloadTask, ...state.downloads]
+    };
+  },
+  [Types.DOWNLOAD_STARTED]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      downloadStarted: true,
+      error: null
+    };
+  },
+  [Types.DOWNLOAD_START_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      downloadStarted: false
     };
   },
   [Types.UPDATE_DOWNLOADS_PROGRESS]: (state, action) => {
@@ -73,6 +103,22 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
+  [Types.REMOVE_DOWNLOADS_DATA_BY_IDS]: (state, action) => {
+    let { downloadsData } = state;
+    const { ids } = action;
+    ids.forEach((id) => {
+      let index = downloadsData.findIndex((movie) => movie.id === id);
+      console.log({ index, downloadsData, ids });
+      if (index >= 0) {
+        downloadsData.splice(index, 1);
+      }
+    });
+
+    return {
+      ...state,
+      downloadsData
+    };
+  },
   [Types.RESET]: () => {
     return INITIAL_STATE;
   }

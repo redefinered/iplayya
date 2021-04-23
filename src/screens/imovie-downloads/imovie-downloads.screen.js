@@ -27,7 +27,7 @@ import {
 import DownloadItem from './download-item.component';
 import { Creators } from 'modules/ducks/downloads/downloads.actions';
 import { deleteFile, listDownloadedFiles, checkExistingDownloads } from 'services/download.service';
-import { getFilename } from 'components/download-button/download-utils';
+import { getFilename } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath } from 'utils';
 import uniq from 'lodash/uniq';
@@ -41,7 +41,8 @@ const ImovieDownloadsScreen = ({
   getDownloadsAction,
   downloadsData,
 
-  downloads
+  downloads,
+  removeDownloadsDataByIdsAction
 }) => {
   const [ids, setIds] = React.useState([]);
   // const [donwloadingItems, setDownloadingItems] = React.useState([]);
@@ -103,6 +104,7 @@ const ImovieDownloadsScreen = ({
         await Promise.all(promises);
 
         setActivateCheckboxes(false);
+        removeDownloadsDataByIdsAction(selectedItems);
       } catch (error) {
         console.log('Delete files action error', error.message);
       }
@@ -180,6 +182,8 @@ const ImovieDownloadsScreen = ({
       navigation.navigate('MovieDetailScreen', { videoId: item });
     }
   };
+
+  console.log({ downloadsData });
 
   const renderMain = () => {
     if (downloadsData.length)
@@ -306,7 +310,8 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const actions = {
-  getDownloadsAction: Creators.getDownloads
+  getDownloadsAction: Creators.getDownloads,
+  removeDownloadsDataByIdsAction: Creators.removeDownloadsDataByIds
 };
 
 const mapStateToProps = createStructuredSelector({

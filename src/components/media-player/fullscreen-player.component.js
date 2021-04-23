@@ -88,6 +88,7 @@ const FullScreenPlayer = (props) => {
           /> */}
 
           <VLCPlayer
+            autoplay={false}
             ref={player}
             paused={paused}
             seek={currentTime}

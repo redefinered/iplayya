@@ -183,8 +183,8 @@ const MediaPlayer = ({
       )}
 
       <VLCPlayer
+        autoplay={false}
         ref={player}
-        autoplay={true}
         paused={paused}
         seek={currentTime}
         onProgress={handleProgress}

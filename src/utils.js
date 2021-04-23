@@ -47,13 +47,12 @@ export const getFilename = (video) => {
   return filename;
 };
 
-export default function getConfig(video) {
+export const getConfig = (video) => {
   const filename = getFilename(video);
 
   return {
     id: video.videoId,
-    // url: video.url,
-    url: 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4',
+    url: video.url,
     destination: `${downloadPath}/${filename}`
   };
-}
+};
