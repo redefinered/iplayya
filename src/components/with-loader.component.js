@@ -15,10 +15,10 @@ export default function withScreenLoader(WrappedComponent) {
               position: 'absolute',
               zIndex: 2,
               width: Dimensions.get('window').width,
-              height: Dimensions.get('window').height
+              height: '100%' // Dimensions.get('window').height
             }}
           >
-            <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.1)' }}>
+            <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
               <ActivityIndicator color={theme.colors.primary} size="large" />
             </View>
           </View>

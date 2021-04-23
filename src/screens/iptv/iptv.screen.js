@@ -11,7 +11,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import { View, ScrollView } from 'react-native';
 import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -46,6 +46,7 @@ const IptvScreen = ({
   deleted,
   setProviderAction,
   getProfileAction,
+  createStartAction,
   deleteAction,
   deteteStartAction,
   skipped
@@ -53,6 +54,10 @@ const IptvScreen = ({
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
+
+  React.useEffect(() => {
+    createStartAction();
+  }, []);
 
   // redirect to add provider if there is 0 provider or if adding is not skipped
   React.useEffect(() => {
@@ -117,7 +122,7 @@ const IptvScreen = ({
   if (providers.length)
     return (
       <ContentWrap>
-        <View style={{ paddingBottom: 120 }}>
+        <View style={{ paddingBottom: 120, paddingTop: 30 }}>
           {error && <Text style={{ marginBottom: 15 }}>{error}</Text>}
           {userError && <Text style={{ marginBottom: 15 }}>{userError}</Text>}
           {userIsFetching && <ActivityIndicator style={{ marginBottom: 15 }} />}
@@ -148,7 +153,8 @@ const NoProviders = ({ navigation }) => (
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingBottom: 130
+      paddingBottom: 130,
+      paddingTop: 30
     }}
   >
     <NoProvider />
@@ -169,7 +175,8 @@ const actions = {
   setProviderAction: UserCreators.setProvider,
   getProfileAction: ProfileCreators.get,
   deteteStartAction: ProviderCreators.deleteStart,
-  deleteAction: ProviderCreators.delete
+  deleteAction: ProviderCreators.delete,
+  createStartAction: ProviderCreators.createStart
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -184,9 +191,10 @@ const mapStateToProps = createStructuredSelector({
   skipped: selectSkipProviderAdd
 });
 
-export default compose(
-  withHeaderPush(),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ withLoader: true }),
   withTheme
-)(IptvScreen);
+);
+
+export default enhance(IptvScreen);

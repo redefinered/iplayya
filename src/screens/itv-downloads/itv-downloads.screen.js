@@ -8,7 +8,7 @@ import NoDownloads from 'assets/downloads-empty.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import ListItemItvDownloads from 'components/list-item-itv-downloads/list-item-itv-downloads.component';
@@ -83,7 +83,7 @@ const ItvDownloadsScreen = ({ theme, navigation, removeFromFavoritesAction }) =>
     return (
       <ScrollView>
         {activateCheckboxes && (
-          <ContentWrap>
+          <ContentWrap style={{ marginTop: 10 }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -111,7 +111,7 @@ const ItvDownloadsScreen = ({ theme, navigation, removeFromFavoritesAction }) =>
           </ContentWrap>
         )}
 
-        <View>
+        <View style={{ marginTop: 20 }}>
           {dummydata.map(({ id, ...otherProps }) => {
             return (
               <ListItemItvDownloads
@@ -177,9 +177,10 @@ const actions = {
   removeFromFavoritesAction: Creators.removeFromFavorites
 };
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(ItvDownloadsScreen);
+);
+
+export default enhance(ItvDownloadsScreen);

@@ -3,7 +3,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
+import {
+  View,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  Dimensions
+} from 'react-native';
 import { Text } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
@@ -17,7 +24,7 @@ import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
 
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
 
 import styles from './sign-in.styles';
@@ -61,8 +68,8 @@ class SignInScreen extends React.Component {
           style={{
             flex: 3,
             alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: isolatedInputs ? -100 : 0
+            justifyContent: 'center'
+            // marginTop: isolatedInputs ? 100 : 0
           }}
         >
           <Logo />
@@ -128,9 +135,11 @@ class SignInScreen extends React.Component {
         <View
           style={{
             ...styles.signUp,
-            flex: isolatedInputs ? 1 : 2,
-            alignItems: 'center'
-            // marginTop: isolatedInputs ? 30 : null
+            flex: 1,
+            alignItems: 'center',
+            height: isolatedInputs
+              ? Dimensions.get('window').height - 0.5 * Dimensions.get('window').height
+              : null
           }}
         >
           <Text>
@@ -164,8 +173,9 @@ const actions = {
   signInAction: Creators.signIn
 };
 
-export default compose(
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withScreenContainer(),
-  withLoader
-)(SignInScreen);
+  withScreenContainer({ withLoader: true })
+);
+
+export default enhance(SignInScreen);

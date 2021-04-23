@@ -5,7 +5,6 @@ import { setContext } from '@apollo/client/link/context';
 import AsyncStorage from '@react-native-community/async-storage';
 
 // const GRAPHQL_ENDPOINT = 'https://94.130.20.221/graphql'; // broken
-// const GRAPHQL_ENDPOINT = 'https://178.63.74.10/graphql';
 const GRAPHQL_ENDPOINT = 'https://api.iplayya.com/graphql';
 
 const httpLink = createHttpLink({

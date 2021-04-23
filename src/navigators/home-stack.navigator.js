@@ -48,11 +48,13 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         headerBackTitleVisible: false,
         headerBackImage: () => <HeaderBackImage />,
         headerStyle: { height: headerHeight },
+        headerTitleAlign: 'center',
         headerTitleStyle: { fontSize: 24 },
-        headerTitleContainerStyle: { paddingTop: 30 },
+        headerTitleContainerStyle: { alignItems: 'center' },
         headerLeftContainerStyle: {
           paddingLeft: 15,
-          justifyContent: 'flex-end'
+          justifyContent: 'center',
+          alignItems: 'center'
         },
         headerRightContainerStyle: styles.headerRightContainerStyle
       }}
@@ -439,7 +441,8 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
 const styles = StyleSheet.create({
   headerRightContainerStyle: {
     paddingRight: 15,
-    justifyContent: 'flex-end'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   headerButtonContainer: {
     width: 44,

@@ -213,8 +213,12 @@ ImusicScreen.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 10
   }
 });
 
-export default compose(withHeaderPush({ backgroundType: 'solid' }), withTheme)(ImusicScreen);
+export default compose(
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  withTheme
+)(ImusicScreen);

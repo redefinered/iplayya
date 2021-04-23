@@ -6,7 +6,7 @@ import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
@@ -160,7 +160,7 @@ const IsportsFavoritesScreen = ({
           </ContentWrap>
         )}
 
-        <View>
+        <View style={{ marginTop: 30 }}>
           {listData.map(({ id, ...itemProps }) => (
             <ListItemChanel
               key={id}
@@ -235,9 +235,10 @@ const actions = {
   getChannelsAction: Creators.getChannels
 };
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(IsportsFavoritesScreen);
+);
+
+export default enhance(IsportsFavoritesScreen);

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, TextInput as FormInput } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
@@ -146,6 +146,17 @@ const ImovieSearchScreen = ({
   return (
     <ContentWrap style={styles.container}>
       <TextInput
+        render={(props) => (
+          <FormInput
+            {...props}
+            style={{
+              marginLeft: 40,
+              justifyContent: 'center',
+              fontSize: 16,
+              color: '#ffffff'
+            }}
+          />
+        )}
         name="search"
         returnKeyType="search"
         autoFocus
@@ -179,7 +190,8 @@ const ImovieSearchScreen = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 10
   }
 });
 
@@ -195,8 +207,10 @@ const mapStateToProps = createStructuredSelector({
   categories: selectCategoriesOf('movies')
 });
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(ImovieSearchScreen);
+);
+
+export default enhance(ImovieSearchScreen);

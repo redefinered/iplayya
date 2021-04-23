@@ -11,7 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 
 const Home = ({
@@ -49,7 +49,7 @@ const Home = ({
   };
 
   return (
-    <ContentWrap>
+    <ContentWrap style={{ marginTop: 30 }}>
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
     </ContentWrap>
@@ -82,9 +82,8 @@ const actions = {
 };
 
 const enhance = compose(
-  withHeaderPush({ backgroundType: 'image' }),
   connect(mapStateToProps, actions),
-  withLoader
+  withHeaderPush({ backgroundType: 'image', withLoader: true })
 );
 
 export default enhance(Home);

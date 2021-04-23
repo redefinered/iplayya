@@ -19,7 +19,7 @@ const WelcomeDialog = ({ theme, visible, onButtonPress, hideWelcomeDialogAction 
   };
 
   return (
-    <Modal transparent visible={visible}>
+    <Modal transparent visible={visible} statusBarTranslucent={true}>
       <View style={{ backgroundColor: theme.iplayya.colors.black25, ...styles.container }}>
         <ContentWrap>
           <View style={styles.contentWrap}>

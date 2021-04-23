@@ -88,4 +88,7 @@ MusicPlayerScreen.propTypes = {
   route: PropTypes.object
 };
 
-export default compose(withHeaderPush({ backgroundType: 'solid' }), withTheme)(MusicPlayerScreen);
+export default compose(
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  withTheme
+)(MusicPlayerScreen);

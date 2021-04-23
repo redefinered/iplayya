@@ -8,7 +8,7 @@ import DropdownOption from 'components/dropdown-option/dropdown-option.component
 import RadioOption from 'components/radio-option/radio-option.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -210,9 +210,10 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-export default compose(
-  withHeaderPush(),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ withLoader: true }),
   withTheme
-)(PlaybackSettings);
+);
+
+export default enhance(PlaybackSettings);

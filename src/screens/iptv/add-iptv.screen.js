@@ -1,7 +1,8 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { Pressable, View, ScrollView } from 'react-native';
+import { Pressable, View, ScrollView, StatusBar } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
@@ -10,7 +11,7 @@ import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -58,6 +59,12 @@ class AddIptvScreen extends React.Component {
         /// redirect to iptv screen
         navigation.replace('IPTV');
       }
+    }
+    if (prevProps.error === this.props.error) return;
+    if (this.props.error) {
+      this.setState({ modalVisible: true });
+    } else {
+      this.setState({ modalVisible: false });
     }
   }
 
@@ -125,6 +132,11 @@ class AddIptvScreen extends React.Component {
     // on success, goes back to iptv list and display a success message
   };
 
+  handleComfirmAction = () => {
+    this.props.createStartAction();
+    this.setState({ modalVisible: false });
+  };
+
   render() {
     const { skippedProviderAdd } = this.props;
     const { errors, valid, modalVisible, ...input } = this.state;
@@ -142,7 +154,9 @@ class AddIptvScreen extends React.Component {
     return (
       <React.Fragment>
         <ContentWrap>
-          <ScrollView>
+          <StatusBar translucent backgroundColor="transparent" />
+
+          <ScrollView style={{ flex: 1, marginTop: 20 }}>
             <View>
               <TextInput
                 value={input.name}
@@ -201,6 +215,7 @@ class AddIptvScreen extends React.Component {
           variant="danger"
           message="Oops! Your credentials is not valid. Call your IPTV provider for assistance."
           hideAction={() => this.setState({ modalVisible: false })}
+          confirmAction={() => this.handleComfirmAction()}
           visible={modalVisible}
         />
       </React.Fragment>
@@ -222,8 +237,6 @@ const actions = {
   skipProviderAddAction: UserCreators.skipProviderAdd
 };
 
-export default compose(
-  withFormWrap(),
-  connect(mapStateToProps, actions),
-  withLoader
-)(AddIptvScreen);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));
+
+export default enhance(AddIptvScreen);

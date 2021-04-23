@@ -7,7 +7,7 @@ import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -269,9 +269,10 @@ const actions = {
   getFavoritesAction: Creators.getFavoriteMovies
 };
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(ImovieFavoritesScreen);
+);
+
+export default enhance(ImovieFavoritesScreen);

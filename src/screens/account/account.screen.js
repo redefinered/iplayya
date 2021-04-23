@@ -5,9 +5,9 @@ import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 import Icon from 'components/icon/icon.component';
-import { Text, useTheme } from 'react-native-paper';
+import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import { compose } from 'redux';
@@ -26,7 +26,7 @@ import {
 } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdated } from 'modules/ducks/user/user.selectors';
 
-import { View, Image, Pressable, StyleSheet, Dimensions } from 'react-native';
+import { View, Image, Pressable, StyleSheet, Dimensions, PixelRatio, Platform } from 'react-native';
 import Button from 'components/button/button.component';
 
 const styles = StyleSheet.create({
@@ -39,6 +39,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
+
+const { width: SCREEN_WIDTH /*, height: SCREEN_HEIGHT */ } = Dimensions.get('window');
+
+const scale = SCREEN_WIDTH / 375;
+
+function normalize(size) {
+  const newSize = size * scale;
+  if (Platform.OS == 'ios') {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+  } else {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
+  }
+}
 
 const AccountScreen = ({
   profile,
@@ -111,7 +124,7 @@ const AccountScreen = ({
   if (isFetching || !profile) return <Text style={{ padding: 15 }}>Working...</Text>;
 
   return (
-    <ContentWrap>
+    <ContentWrap style={{ flex: 1, paddingTop: 20, marginBottom: 140 }}>
       {
         // header section
       }
@@ -121,7 +134,7 @@ const AccountScreen = ({
             style={{
               width: 85,
               height: 85,
-              borderRadius: 42.5,
+              borderRadius: 300 / 2,
               resizeMode: 'contain'
             }}
             source={require('assets/placeholder.jpg')}
@@ -134,16 +147,19 @@ const AccountScreen = ({
           }}
         >
           {/* {profile} */}
-          <Text style={{ fontSize: 20, fontWeight: 'bold', lineHeight: 27, marginBottom: 2 }}>
+          <Text
+            style={{ fontSize: normalize(21), fontWeight: 'bold', lineHeight: 22, marginBottom: 5 }}
+          >
             {profile.name}
           </Text>
           <Text
             numberOfLines={1}
             style={{
-              fontSize: 14,
+              fontSize: normalize(14),
               lineHeight: 19,
               marginBottom: 8,
-              paddingRight: 15
+              paddingRight: 15,
+              color: 'rgba(255, 255, 255, 0.5)'
             }}
           >
             {profile.email}
@@ -151,7 +167,7 @@ const AccountScreen = ({
           <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
             <Text
               style={{
-                fontSize: 14,
+                fontSize: normalize(15),
                 lineHeight: 19,
                 marginBottom: 8
               }}
@@ -165,63 +181,88 @@ const AccountScreen = ({
       {
         // settings section
       }
-      <View>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'space-evenly',
+          height: 'auto'
+          // marginBottom: newHeight
+        }}
+      >
         <Text
           style={{
-            fontSize: 12,
+            fontSize: normalize(15),
             lineHeight: 16,
             fontWeight: 'bold',
             color: theme.iplayya.colors.white50,
-            marginBottom: 20
+            marginBottom: 10
           }}
         >
           Settings
         </Text>
-        <Pressable style={styles.settingItem}>
-          <View style={styles.iconContainer}>
-            <Icon name="change-password" size={24} />
+        <TouchableRipple>
+          <View style={styles.settingItem}>
+            <View style={styles.iconContainer}>
+              <Icon name="change-password" size={24} />
+            </View>
+            <View>
+              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Change Password</Text>
+            </View>
           </View>
-          <View>
-            <Text style={{ fontSize: 16, lineHeight: 22 }}>Change Password</Text>
+        </TouchableRipple>
+        <TouchableRipple>
+          <View style={styles.settingItem}>
+            <View style={styles.iconContainer}>
+              <Icon name="email" size={24} />
+            </View>
+            <View>
+              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Manage Email</Text>
+            </View>
           </View>
-        </Pressable>
-        <Pressable
-          style={styles.settingItem}
-          onPress={() => navigation.navigate('PlaybackSettings')}
-        >
-          <View style={styles.iconContainer}>
-            <Icon name="video-settings" size={24} />
+        </TouchableRipple>
+        <TouchableRipple onPress={() => navigation.navigate('PlaybackSettings')}>
+          <View style={styles.settingItem}>
+            <View style={styles.iconContainer}>
+              <Icon name="video-quality" size={24} />
+            </View>
+            <View>
+              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Playback</Text>
+            </View>
           </View>
-          <View>
-            <Text style={{ fontSize: 16, lineHeight: 22 }}>Playback</Text>
+        </TouchableRipple>
+        <TouchableRipple>
+          <View style={styles.settingItem}>
+            <View style={styles.iconContainer}>
+              <Icon name="lock" size={24} />
+            </View>
+            <View>
+              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Parental Control</Text>
+            </View>
           </View>
-        </Pressable>
-        <Pressable style={styles.settingItem}>
-          <View style={styles.iconContainer}>
-            <Icon name="lock" size={24} />
+        </TouchableRipple>
+        <TouchableRipple>
+          <View style={styles.settingItem}>
+            <View style={styles.iconContainer}>
+              <Icon name="help" size={24} />
+            </View>
+            <View>
+              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Need Help?</Text>
+            </View>
           </View>
-          <View>
-            <Text style={{ fontSize: 16, lineHeight: 22 }}>Parental Control</Text>
+        </TouchableRipple>
+        <TouchableRipple onPress={() => signOutAction()}>
+          <View style={styles.settingItem}>
+            <View style={styles.iconContainer}>
+              <Icon name="logout" size={24} />
+            </View>
+            <View>
+              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>
+                {authIsFetching ? 'Processing...' : 'Logout'}
+              </Text>
+            </View>
           </View>
-        </Pressable>
-        <Pressable style={styles.settingItem}>
-          <View style={styles.iconContainer}>
-            <Icon name="help" size={24} />
-          </View>
-          <View>
-            <Text style={{ fontSize: 16, lineHeight: 22 }}>Need Help?</Text>
-          </View>
-        </Pressable>
-        <Pressable style={styles.settingItem} onPress={() => signOutAction()}>
-          <View style={styles.iconContainer}>
-            <Icon name="logout" size={24} />
-          </View>
-          <View>
-            <Text style={{ fontSize: 16, lineHeight: 22 }}>
-              {authIsFetching ? 'Processing...' : 'Logout'}
-            </Text>
-          </View>
-        </Pressable>
+        </TouchableRipple>
       </View>
       {profileError && (
         <AlertModal
@@ -269,8 +310,5 @@ const mapStateToProps = createStructuredSelector({
   userUpdated: selectUpdated
 });
 
-export default compose(
-  withHeaderPush(),
-  connect(mapStateToProps, actions),
-  withLoader
-)(AccountScreen);
+const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
+export default enhance(AccountScreen);

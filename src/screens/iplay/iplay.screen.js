@@ -251,11 +251,15 @@ IplayScreen.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 15
   }
 });
 
-export default compose(withHeaderPush({ backgroundType: 'solid' }), withTheme)(IplayScreen);
+export default compose(
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  withTheme
+)(IplayScreen);
 // export default withHeaderPush({ backgroundType: 'solid' })(IplayScreen);
 // import { Text } from 'react-native';
 // export default function Test() {

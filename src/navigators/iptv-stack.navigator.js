@@ -46,10 +46,11 @@ const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }
         headerBackImage: () => <HeaderBackImage />,
         headerStyle: { height: headerHeight },
         headerTitleStyle: { fontSize: 24 },
-        headerTitleContainerStyle: { paddingTop: 30 },
+        headerTitleContainerStyle: { paddingTop: 0 },
         headerLeftContainerStyle: {
           paddingLeft: 15,
-          justifyContent: 'flex-end'
+          justifyContent: 'center',
+          alignItems: 'center'
         },
         headerRightContainerStyle: styles.headerRightContainerStyle
       }}
@@ -77,7 +78,11 @@ const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }
       <Stack.Screen
         name="AddIptvScreen"
         component={AddIptvScreen}
-        options={{ title: 'Add IPTV', animationEnabled: false }}
+        options={{
+          title: 'Add IPTV',
+          animationEnabled: false,
+          headerTitleAlign: 'center'
+        }}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
@@ -86,7 +91,7 @@ const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }
       <Stack.Screen
         name="EditIptvScreen"
         component={EditIptvScreen}
-        options={{ title: 'Edit IPTV' }}
+        options={{ headerTitleAlign: 'center', title: 'Edit IPTV' }}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
@@ -99,7 +104,8 @@ const IptvStack = ({ setBottomTabsVisibleAction, skippedProviderAdd, providers }
 const styles = StyleSheet.create({
   headerRightContainerStyle: {
     paddingRight: 15,
-    justifyContent: 'flex-end'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   headerButtonContainer: {
     width: 44,

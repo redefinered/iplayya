@@ -9,6 +9,7 @@ import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 // import AlertModal from 'components/alert-modal/alert-modal.component';
 import Loader from 'components/loader.component';
+import Icon from 'components/icon/icon.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -22,7 +23,7 @@ import {
 import { createStructuredSelector } from 'reselect';
 
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 
 import styles from './edit-profile.styles';
 
@@ -177,7 +178,6 @@ class EditProfileScreen extends React.Component {
                 handleChangeText={this.handleChange}
                 error={stateError.gender}
               />
-
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
 
@@ -202,8 +202,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 // export default withFormWrap()(EditProfileScreen);
-export default compose(
-  withFormWrap(),
-  connect(mapStateToProps, actions),
-  withLoader
-)(EditProfileScreen);
+
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));
+
+export default enhance(EditProfileScreen);

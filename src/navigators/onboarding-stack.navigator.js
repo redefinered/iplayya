@@ -30,10 +30,12 @@ const OnboardingStack = () => {
         headerBackImage: () => <HeaderBackImage />,
         headerStyle: { height: headerHeight },
         headerTitleStyle: { fontSize: 24 },
-        headerTitleContainerStyle: { paddingTop: 30 },
+        headerTitleAlign: 'center',
+        headerTitleContainerStyle: { alignItems: 'center' },
         headerLeftContainerStyle: {
           paddingLeft: 15,
-          justifyContent: 'flex-end'
+          justifyContent: 'center',
+          alignItems: 'center'
         },
         headerRightContainerStyle: styles.headerRightContainerStyle
       }}

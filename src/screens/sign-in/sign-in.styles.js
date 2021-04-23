@@ -5,7 +5,7 @@ export default StyleSheet.create({
   form: { flex: 6 },
   textInput: { backgroundColor: 'rgba(255,255,255,0.1)' },
   loginButton: { marginTop: 6 },
-  forgotPassword: { padding: 15, marginTop: 10 },
+  forgotPassword: { padding: 15, marginVertical: 20 },
   forgotPasswordText: { alignSelf: 'center' },
   signUpText: { color: '#E34398' },
   helpText: { alignSelf: 'center' },
