@@ -303,7 +303,7 @@ const MovieDetailScreen = ({
             backgroundColor: theme.iplayya.colors.black50
           }}
         >
-          <ActivityIndicator size="large" color={theme.iplayya.colors.vibrantpussy} />
+          <ActivityIndicator color={theme.iplayya.colors.vibrantpussy} />
         </View>
       </Modal>
 

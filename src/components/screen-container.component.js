@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 
@@ -8,11 +9,11 @@ import {
   View,
   ImageBackground,
   Dimensions,
-  ActivityIndicator
+  Text
   //Modal
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { withTheme, Portal } from 'react-native-paper';
+import { withTheme, Portal, ActivityIndicator } from 'react-native-paper';
 import theme from 'common/theme';
 
 /**
@@ -64,24 +65,57 @@ const ScreenContainer = ({
   };
   const withLoaderScreen = () => {
     if (!withLoader) return;
+
+    // return <Text style={{ color: 'red' }}>asdasda</Text>;
+    // return (
+    //   <View
+    //     style={{
+    //       position: 'absolute',
+    //       zIndex: 3,
+    //       width: Dimensions.get('window').width,
+    //       height: Dimensions.get('window').height
+    //     }}
+    //   >
+    //     <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    //       <ActivityIndicator color={theme.colors.primary} size="large" />
+    //     </View>
+    //   </View>
+    // );
+
     if (isFetching)
       return (
-        <Portal
-          transparent
-          style={
-            {
-              //   // position: 'absolute',
-              //   // zIndex: 3,
-              //   // width: Dimensions.get('window').width,
-              // height: '100%' // Dimensions.get('window').height
-            }
-          }
+        <View
+          style={{
+            position: 'absolute',
+            zIndex: 3,
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height
+          }}
         >
           <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-            <ActivityIndicator color={theme.colors.primary} size="large" />
+            <ActivityIndicator color={theme.colors.primary} />
           </View>
-        </Portal>
+        </View>
       );
+
+    // if (isFetching)
+    //   return (
+    //     <Portal
+    //       transparent
+    //       style={
+    //         {
+    //           //   // position: 'absolute',
+    //           //   // zIndex: 3,
+    //           //   // width: Dimensions.get('window').width,
+    //           // height: '100%' // Dimensions.get('window').height
+    //         }
+    //       }
+    //     >
+    //       <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    //         <ActivityIndicator color={theme.colors.primary} size="large" />
+    //       </View>
+    //     </Portal>
+    //   );
   };
 
   return (
