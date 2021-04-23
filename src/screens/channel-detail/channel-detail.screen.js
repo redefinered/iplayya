@@ -43,7 +43,7 @@ const ChannelDetailScreen = ({
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
-  const [downloadedFiles, setDownloadedFiles] = React.useState([]);
+  // const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
   /// temporary
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
@@ -59,23 +59,23 @@ const ChannelDetailScreen = ({
     getChannelAction({ videoId: channelId });
   }, []);
 
-  React.useEffect(() => {
-    if (channel) {
-      const titlesplit = channel.title.split(' ');
-      const title = titlesplit.join('_');
-      const filename = `${channelId}_${title}.m3u8`;
-      const file = downloadedFiles.find((file) => file === filename);
+  // React.useEffect(() => {
+  //   if (channel) {
+  //     const titlesplit = channel.title.split(' ');
+  //     const title = titlesplit.join('_');
+  //     const filename = `${channelId}_${title}.m3u8`;
+  //     const file = downloadedFiles.find((file) => file === filename);
 
-      // check if downloaded
-      if (downloadedFiles.length) {
-        if (typeof file !== 'undefined') {
-          setIsMoviedownloaded(true);
-        } else {
-          setIsMoviedownloaded(false);
-        }
-      }
-    }
-  }, [channel, downloadedFiles]);
+  //     // check if downloaded
+  //     if (downloadedFiles.length) {
+  //       if (typeof file !== 'undefined') {
+  //         setIsMoviedownloaded(true);
+  //       } else {
+  //         setIsMoviedownloaded(false);
+  //       }
+  //     }
+  //   }
+  // }, [channel, downloadedFiles]);
 
   React.useEffect(() => {
     if (channel && currentProgram) {
@@ -129,6 +129,7 @@ const ChannelDetailScreen = ({
   if (!channel) return <Text>fetching...</Text>;
 
   const renderPlayer = () => {
+    if (!currentlyPlaying) return;
     if (source) {
       return (
         <MediaPlayer
