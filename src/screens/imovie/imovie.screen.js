@@ -5,7 +5,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -172,7 +172,7 @@ const ImovieScreen = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 10,
+    marginTop: 10
   }
 });
 
@@ -191,9 +191,10 @@ const actions = {
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart
 };
 
-export default compose(
-  withHeaderPush(),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ withLoader: true }),
   withTheme
-)(ImovieScreen);
+);
+
+export default enhance(ImovieScreen);

@@ -1,7 +1,8 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View } from 'react-native'
+// import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
@@ -13,7 +14,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
+import { selectError, selectSignedUp, selectIsFetching } from 'modules/ducks/auth/auth.selectors';
 
 import styles from './sign-up.styles';
 
@@ -35,7 +36,7 @@ class SignUpScreen extends React.Component {
       { key: 'email', val: false },
       { key: 'password', val: false },
       { key: 'password_confirmation', val: false }
-    ],
+    ]
   };
 
   componentDidMount() {
@@ -201,6 +202,12 @@ const actions = {
   registerAction: Creators.register
 };
 
-const mapStateToProps = createStructuredSelector({ error: selectError, signedUp: selectSignedUp });
+const mapStateToProps = createStructuredSelector({
+  error: selectError,
+  isFetching: selectIsFetching,
+  signedUp: selectSignedUp
+});
 
-export default compose(withFormWrap(), connect(mapStateToProps, actions))(SignUpScreen);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));
+
+export default enhance(SignUpScreen);

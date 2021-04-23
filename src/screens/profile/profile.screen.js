@@ -2,8 +2,18 @@
 
 import React from 'react';
 import ContentWrap from 'components/content-wrap.component';
-import { View, Image, ScrollView, Pressable, ImageBackground } from 'react-native';
-import { Title, Text, withTheme } from 'react-native-paper';
+import {
+  View,
+  Image,
+  ScrollView,
+  Pressable,
+  ImageBackground,
+  Dimensions,
+  PixelRatio,
+  Platform,
+  Modal
+} from 'react-native';
+import { Title, Text, withTheme, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -34,6 +44,19 @@ const styles = StyleSheet.create({
   }
 });
 
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+const scale = SCREEN_WIDTH / 375;
+
+function normalize(size) {
+  const newSize = size * scale;
+  if (Platform.OS == 'ios') {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
+  } else {
+    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
+  }
+}
+
 const ProfileScreen = ({
   startAction,
   profile,
@@ -46,6 +69,8 @@ const ProfileScreen = ({
 }) => {
   const { name, username, ...otherFields } = profile;
   const [showSnackBar, setShowSnackbar] = React.useState(false);
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const theme = useTheme();
 
   const fields = [
     { key: 'email', icon: 'email' },
@@ -77,30 +102,150 @@ const ProfileScreen = ({
   }, [updated]);
 
   return (
-    <LinearGradient style={{ flex: 1 }} colors={['#2D1449', '#0D0637']}>
+    <LinearGradient style={{ flex: 1, flexBasis: 200 }} colors={['#2D1449', '#0D0637']}>
+      <Modal
+        visible={modalOpen}
+        animationType="fade"
+        transparent={true}
+        statusBarTranslucent={true}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0,0,0,0.5)'
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: theme.iplayya.colors.white100,
+              width: SCREEN_WIDTH - 20,
+              height: SCREEN_HEIGHT - 0.5 * SCREEN_HEIGHT,
+              borderRadius: 30,
+              justifyContent: 'center'
+            }}
+          >
+            <View style={{ marginVertical: 25 }}>
+              <Text
+                style={{
+                  fontSize: normalize(24),
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  color: theme.iplayya.colors.goodnight
+                }}
+              >
+                Upload profile photo
+              </Text>
+            </View>
+            <TouchableRipple onPress={() => setModalOpen()}>
+              <View
+                style={{
+                  marginTop: 15,
+                  width: '90%',
+                  alignSelf: 'center'
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: theme.iplayya.colors.vibrantpussy,
+                    flexDirection: 'row',
+                    padding: 25,
+                    marginBottom: 5,
+                    borderRadius: 10,
+                    paddingLeft: '30%'
+                  }}
+                >
+                  <Icon name="camera" size={24} />
+                  <Text
+                    style={{ fontSize: normalize(18), fontWeight: 'bold', paddingHorizontal: 12 }}
+                  >
+                    Take Picture
+                  </Text>
+                </View>
+              </View>
+            </TouchableRipple>
+            <TouchableRipple>
+              <View style={{ marginVertical: 10, width: '90%', alignSelf: 'center' }}>
+                <View
+                  style={{
+                    backgroundColor: '#13BD38',
+                    flexDirection: 'row',
+                    padding: 25,
+                    borderRadius: 10,
+                    paddingLeft: '30%'
+                  }}
+                >
+                  <Icon name="add-file" size={24} />
+                  <Text
+                    style={{ fontSize: normalize(18), fontWeight: 'bold', paddingHorizontal: 12 }}
+                  >
+                    Browse Image
+                  </Text>
+                </View>
+              </View>
+            </TouchableRipple>
+            <Pressable onPress={() => setModalOpen(false)}>
+              <Text
+                style={{
+                  fontSize: normalize(18),
+                  textAlign: 'center',
+                  color: theme.iplayya.colors.black70,
+                  fontWeight: 'bold',
+                  marginTop: 40
+                }}
+              >
+                Cancel
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       <ImageBackground
         blurRadius={50}
         source={require('assets/placeholder.jpg')}
         style={{ paddingTop: headerHeight + 10 }}
       >
         <View style={styles.headerContainer}>
-          <View style={{ width: 140, marginBottom: 17 }}>
+          <View style={{ width: SCREEN_WIDTH - 0.6 * SCREEN_WIDTH, marginBottom: 17 }}>
             <Image
               source={require('assets/placeholder.jpg')}
               style={{
-                width: 140,
+                width: SCREEN_WIDTH - 0.6 * SCREEN_WIDTH,
                 height: 140,
-                borderRadius: 70,
+                borderRadius: 300 / 2,
                 resizeMode: 'contain'
               }}
             />
+            <Pressable
+              style={{
+                position: 'absolute',
+                left: 100,
+                top: 105,
+                width: 40,
+                height: 40,
+                backgroundColor: theme.iplayya.colors.white10,
+                borderRadius: 100 / 2,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Icon name="camera" size={26} onPress={() => setModalOpen(true)} />
+            </Pressable>
           </View>
-          <Title style={{ fontSize: 24, lineHeight: 33, fontWeight: 'bold', marginBottom: 10 }}>
+          <Title
+            style={{
+              fontSize: normalize(24),
+              lineHeight: 33,
+              fontWeight: 'bold',
+              marginBottom: 10
+            }}
+          >
             {name}
           </Title>
           {username.length > 0 ? (
             <Text
-              style={{ fontSize: 16, lineHeight: 22, color: colors.white80 }}
+              style={{ fontSize: normalize(16), lineHeight: 22, color: colors.white80 }}
             >{`@${username}`}</Text>
           ) : null}
         </View>
@@ -108,11 +253,20 @@ const ProfileScreen = ({
           <View style={{ backgroundColor: colors.vibrantpussy, alignItems: 'center', padding: 15 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Icon name="iplayya" size={21} />
-              <Text style={{ fontSize: 24, lineHeight: 33, fontWeight: 'bold', marginLeft: 10 }}>
+              <Text
+                style={{
+                  fontSize: normalize(24),
+                  lineHeight: 33,
+                  fontWeight: 'bold',
+                  marginLeft: 10
+                }}
+              >
                 20,580
               </Text>
             </View>
-            <Text style={{ fontSize: 12, lineHeight: 16 }}>Total iPlayya time earned</Text>
+            <Text style={{ fontSize: normalize(12), lineHeight: 16 }}>
+              Total iPlayya time earned
+            </Text>
           </View>
         </View>
       </ImageBackground>
@@ -125,7 +279,7 @@ const ProfileScreen = ({
                   <Icon name={icon} size={24} />
                 </View>
                 <View>
-                  <Text style={{ fontSize: 16, lineHeight: 22 }}>
+                  <Text style={{ fontSize: normalize(16), lineHeight: 22 }}>
                     {otherFields[key] ? otherFields[key] : 'N/S'}
                   </Text>
                 </View>

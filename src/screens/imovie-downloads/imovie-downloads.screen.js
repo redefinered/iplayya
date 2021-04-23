@@ -202,9 +202,10 @@ const mapStateToProps = createStructuredSelector({
   downloadsData: selectDownloadsData
 });
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(ImovieDownloadsScreen);
+);
+
+export default enhance(ImovieDownloadsScreen);

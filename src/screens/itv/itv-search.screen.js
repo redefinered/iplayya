@@ -206,8 +206,10 @@ const mapStateToProps = createStructuredSelector({
   genres: selectGenres
 });
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(ItvSearchScreen);
+);
+
+export default enhance(ItvSearchScreen);

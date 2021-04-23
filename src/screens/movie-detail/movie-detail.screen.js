@@ -9,7 +9,7 @@ import { Text, List } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -170,7 +170,7 @@ const MovieDetailScreen = ({
   };
 
   return (
-    <View>
+    <View style={{ marginTop: 10 }}>
       {/* Player */}
       <View>
         <Pressable
@@ -289,9 +289,10 @@ const mapStateToProps = createStructuredSelector({
   isFavListUpdated: selectUpdatedFavoritesCheck
 });
 
-export default compose(
-  withHeaderPush(),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ withLoader: true }),
   withTheme
-)(MovieDetailScreen);
+);
+
+export default enhance(MovieDetailScreen);

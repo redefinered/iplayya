@@ -10,7 +10,7 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import PasswordInput from 'components/password-input/password-input.component';
 
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -167,8 +167,6 @@ const actions = {
   updatePasswordAction: Creators.update
 };
 
-export default compose(
-  withHeaderPush(),
-  connect(mapStateToProps, actions),
-  withLoader
-)(ResetPasswordScreen);
+const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
+
+export default enhance(ResetPasswordScreen);

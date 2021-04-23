@@ -7,7 +7,7 @@ import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 import ProgramGuide from './program-guide.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -148,7 +148,7 @@ const ChannelDetailScreen = ({
   console.log({ source });
 
   return (
-    <View>
+    <View style={{ marginTop: 10 }}>
       {/* Player */}
       <View
         style={{
@@ -170,7 +170,7 @@ const ChannelDetailScreen = ({
         {/* {renderPlayer()} */}
       </View>
 
-      <ScrollView>
+      <ScrollView showsHorizontalScrollIndicator={false}>
         <ContentWrap>
           <View
             style={{
@@ -289,8 +289,9 @@ const actions = {
   getProgramsByChannelAction: Creators.getProgramsByChannel
 };
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader
-)(ChannelDetailScreen);
+  withHeaderPush({ backgroundType: 'solid', withLoader: true })
+);
+
+export default enhance(ChannelDetailScreen);

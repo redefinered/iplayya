@@ -1,5 +1,5 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
-
 import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
@@ -8,9 +8,8 @@ import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
-
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/provider/provider.actions';
@@ -205,8 +204,6 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-export default compose(
-  withFormWrap(),
-  connect(mapStateToProps, actions),
-  withLoader
-)(EditIptvScreen);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));
+
+export default enhance(EditIptvScreen);

@@ -8,7 +8,7 @@ import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -92,8 +92,6 @@ const actions = {
   updateStartAction: Creators.updateStart
 };
 
-export default compose(
-  withHeaderPush(),
-  connect(mapStateToProps, actions),
-  withLoader
-)(ForgotPasswordScreen);
+const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
+
+export default enhance(ForgotPasswordScreen);

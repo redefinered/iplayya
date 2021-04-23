@@ -8,7 +8,7 @@ import { TabView, SceneMap } from 'react-native-tab-view';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import RadioStationsTab from './radios-stations-tab.component';
 import FavoritesTab from './favorites-tab.component';
 import theme from 'common/theme';
@@ -192,7 +192,7 @@ const TabBars = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 20
   }
 });
 
@@ -210,9 +210,10 @@ const actions = {
   getFavoritesAction: Creators.getFavorites
 };
 
-export default compose(
-  withHeaderPush(),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ withLoader: true }),
   withTheme
-)(IradioScreen);
+);
+
+export default enhance(IradioScreen);

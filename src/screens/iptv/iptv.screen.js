@@ -11,7 +11,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import { View, ScrollView } from 'react-native';
 import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -191,9 +191,10 @@ const mapStateToProps = createStructuredSelector({
   skipped: selectSkipProviderAdd
 });
 
-export default compose(
-  withHeaderPush(),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ withLoader: true }),
   withTheme
-)(IptvScreen);
+);
+
+export default enhance(IptvScreen);

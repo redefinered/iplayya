@@ -27,7 +27,7 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
       headerBackImage: () => <HeaderBackImage />,
       headerStyle: { height: headerHeight },
       headerTitleStyle: { fontSize: 24 },
-      headerTitleContainerStyle: { alignItems: 'flex-start' },
+      headerTitleContainerStyle: { alignItems: 'center' },
       headerLeftContainerStyle: {
         paddingLeft: 15,
         justifyContent: 'center',

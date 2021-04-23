@@ -18,7 +18,7 @@ const ActionSheet = ({ visible, actions, hideAction }) => {
             return (
               <Pressable key={key} style={styles.itemContainer} onPress={() => onPress(data)}>
                 <View style={styles.iconContainer}>
-                  <Icon name={icon} style={styles.text} size={17} />
+                  <Icon name={icon} style={styles.iconColor} size={20} />
                 </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>{title}</Text>

@@ -6,7 +6,7 @@ import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
@@ -134,7 +134,7 @@ const ItvFavoritesScreen = ({
     return (
       <ScrollView>
         {activateCheckboxes && (
-          <ContentWrap>
+          <ContentWrap style={{ marginTop: 30 }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -237,9 +237,10 @@ const actions = {
   getChannelsAction: Creators.getChannels
 };
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader,
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(ItvFavoritesScreen);
+);
+
+export default enhance(ItvFavoritesScreen);

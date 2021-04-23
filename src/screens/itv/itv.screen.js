@@ -11,7 +11,7 @@ import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+//import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -323,8 +323,9 @@ const actions = {
   addToFavoritesAction: Creators.addToFavorites
 };
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
-  withLoader
-)(ItvScreen);
+  withHeaderPush({ backgroundType: 'solid', withLoader: true })
+);
+
+export default enhance(ItvScreen);

@@ -190,7 +190,8 @@ const ImovieSearchScreen = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 10
   }
 });
 
@@ -206,8 +207,10 @@ const mapStateToProps = createStructuredSelector({
   categories: selectCategoriesOf('movies')
 });
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid' }),
+const enhance = compose(
   connect(mapStateToProps, actions),
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
-)(ImovieSearchScreen);
+);
+
+export default enhance(ImovieSearchScreen);

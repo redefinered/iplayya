@@ -37,15 +37,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true">
-  <TextView
-    android:id="@+id/customfont"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:textSize="14sp"
-    android:fontFamily="@font/notosans_regular"
-    android:layout_marginBottom="50dp"
-    android:text="@string/splash_title"
-    />
+
+    <TextView
+      android:id="@+id/customfont"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="50dp"
+      android:fontFamily="@font/notosans_regular"
+      android:gravity="center"
+      android:text="@string/splash_title"
+      android:textSize="14sp" />
   </LinearLayout>
     </RelativeLayout>

@@ -13,19 +13,24 @@ import ScreenContainer from 'components/screen-container.component';
 import { useHeaderHeight } from '@react-navigation/stack';
 
 const winWidth = Dimensions.get('window').width;
-const winHeight = Dimensions.get('window').height;
+//const winHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: { flex: 1 }
 });
 
 const withFormWrap = (options = {}) => (WrappedComponent) => {
-  const { backgroundType, gradientTypeColors } = options;
+  const { backgroundType, gradientTypeColors, withLoader } = options;
   const formWrap = (props) => {
     // console.log({ x: navigation });
     const headerHeight = useHeaderHeight();
     return (
-      <ScreenContainer backgroundType={backgroundType} gradientTypeColors={gradientTypeColors}>
+      <ScreenContainer
+        backgroundType={backgroundType}
+        gradientTypeColors={gradientTypeColors}
+        withLoader={withLoader}
+        isFetching={props.isFetching}
+      >
         <KeyboardAvoidingView
           style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

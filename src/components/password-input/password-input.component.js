@@ -13,14 +13,14 @@ const styles = StyleSheet.create({
   },
   textFiledFocused: {
     backgroundColor: 'rgba(255,255,255,0.25)',
-    color: 'rgba(255,255,255,0.5)',
-  },
-})
+    color: 'rgba(255,255,255,0.5)'
+  }
+});
 
 const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
   const [showText, setShowText] = React.useState(false);
-  const [focused, setFocused] = React.useState(false)
-  const customStyle = focused ? styles.textFiledFocused : styles.textField
+  const [focused, setFocused] = React.useState(false);
+  const customStyle = focused ? styles.textFiledFocused : styles.textField;
   return (
     <View style={{ position: 'relative' }}>
       <TextInput
@@ -29,12 +29,12 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         placeholder="password"
         selectionColor={'#E34398'}
         onChangeText={(text) => handleChangeText(text, name)}
-        style={{ marginBottom: 10, ...customStyle, position: 'relative', zIndex: 1 }}
+        style={{ marginBottom: 10, ...style, ...customStyle, position: 'relative', zIndex: 1 }}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         secureTextEntry={!showText}
-        placeholderTextColor={focused ? "#FFFFFF" : "rgba(255,255,255,0.5)"}
-        theme={{ colors: { primary: 'rgba(255,255,255,0.1)'}}}
+        placeholderTextColor={focused ? '#FFFFFF' : 'rgba(255,255,255,0.5)'}
+        theme={{ colors: { primary: 'rgba(255,255,255,0.1)' } }}
         {...otherProps}
       />
       <Pressable

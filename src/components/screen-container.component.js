@@ -1,10 +1,19 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, SafeAreaView, View, ImageBackground, Dimensions } from 'react-native';
+import {
+  StatusBar,
+  View,
+  ImageBackground,
+  Dimensions,
+  ActivityIndicator
+  //Modal
+} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { withTheme } from 'react-native-paper';
+import { withTheme, Portal } from 'react-native-paper';
+import theme from 'common/theme';
 
 /**
  * Wraps a screen with React Fragment and background
@@ -12,6 +21,8 @@ import { withTheme } from 'react-native-paper';
  */
 const ScreenContainer = ({
   children,
+  isFetching,
+  withLoader,
   backgroundType,
   gradientTypeColors,
   theme: {
@@ -22,7 +33,7 @@ const ScreenContainer = ({
     if (backgroundType === 'solid') {
       return (
         <View style={{ flex: 1, backgroundColor: colors.goodnight }}>
-          <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
+          <View style={{ flex: 1 }}>{children}</View>
         </View>
       );
     }
@@ -32,9 +43,13 @@ const ScreenContainer = ({
           imageStyle={{
             flex: 1,
             width: Dimensions.get('window').width,
-            height: '100%' // Dimension.get('window').height, change too '100%' 
+            height: '100%' // Dimensions.get('window').height
           }}
-          style={{ flex: 1, width: Dimensions.get('window').width, height: Dimensions.get('window').height, }}
+          style={{
+            flex: 1,
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height
+          }}
           source={require('assets/Home_BG.png')}
         >
           <View style={{ flex: 1 }}>{children}</View>
@@ -43,14 +58,36 @@ const ScreenContainer = ({
     }
     return (
       <LinearGradient style={{ flex: 1 }} colors={gradientTypeColors}>
-        <SafeAreaView style={{ flex: 1 }}>{children}</SafeAreaView>
+        <View style={{ flex: 1 }}>{children}</View>
       </LinearGradient>
     );
+  };
+  const withLoaderScreen = () => {
+    if (!withLoader) return;
+    if (isFetching)
+      return (
+        <Portal
+          transparent
+          style={
+            {
+              //   // position: 'absolute',
+              //   // zIndex: 3,
+              //   // width: Dimensions.get('window').width,
+              // height: '100%' // Dimensions.get('window').height
+            }
+          }
+        >
+          <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <ActivityIndicator color={theme.colors.primary} size="large" />
+          </View>
+        </Portal>
+      );
   };
 
   return (
     <React.Fragment>
       <StatusBar barStyle="light-content" />
+      {withLoaderScreen()}
       {containerWithBackground()}
     </React.Fragment>
   );

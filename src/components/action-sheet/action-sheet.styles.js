@@ -17,5 +17,6 @@ export default StyleSheet.create({
   },
   iconContainer: { flex: 2, alignItems: 'center' },
   textContainer: { flex: 10 },
-  text: { lineHeight: 19, fontWeight: 'bold', color: theme.iplayya.colors.black70 }
+  text: { lineHeight: 19, fontWeight: 'bold', color: theme.iplayya.colors.black70 },
+  iconColor: { color: theme.iplayya.colors.black70 }
 });
