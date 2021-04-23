@@ -167,7 +167,7 @@ const ChannelDetailScreen = ({
           volume={null}
           style={{ width: Dimensions.get('window').width, height: 211 }}
         /> */}
-        {/* {renderPlayer()} */}
+        {renderPlayer()}
       </View>
 
       <ScrollView showsHorizontalScrollIndicator={false}>

@@ -80,7 +80,6 @@ const ImovieFavoritesScreen = ({
   }, [selectAll]);
 
   const handleSelectAll = () => {
-    console.log('test');
     setSellectAll(!selectAll);
   };
 

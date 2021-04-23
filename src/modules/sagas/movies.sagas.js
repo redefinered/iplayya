@@ -34,6 +34,8 @@ export function* getMovieRequest(action) {
 export function* getMoviesRequest(action) {
   const { paginatorInfo, categoryPaginator } = action;
 
+  // console.log({ categoryPaginator });
+
   // console.log({ paginatorInfo, categoryPaginator });
 
   /// category paginator
@@ -41,10 +43,7 @@ export function* getMoviesRequest(action) {
 
   const index = (page - 1) * limit;
 
-  // let paginator = paginatorInfo.slice(index, limit);
-  let paginator = paginatorInfo.slice(0, 5);
-
-  console.log({ paginator });
+  let paginator = paginatorInfo.slice(index, limit * page);
 
   try {
     const videos = yield all(

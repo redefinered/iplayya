@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-// eslint-disable-next-line no-unused-vars
-import { View, ScrollView, StyleSheet, Pressable, Platform } from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Platform, Modal } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
@@ -13,6 +14,7 @@ import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -21,9 +23,13 @@ import {
   selectPlaybackInfo,
   selectUpdatedFavoritesCheck
 } from 'modules/ducks/movies/movies.selectors';
-import { createFontFormat } from 'utils';
+import {
+  selectIsFetching as selectDownloading,
+  selectDownloadStarted
+} from 'modules/ducks/downloads/downloads.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath } from 'components/download-button/download-utils';
+import { downloadPath, createFontFormat } from 'utils';
+import SnackBar from 'components/snackbar/snackbar.component';
 
 const MovieDetailScreen = ({
   error,
@@ -37,7 +43,11 @@ const MovieDetailScreen = ({
   getMovieStartAction,
   isFavListUpdated,
   getFavoriteMoviesAction,
-  addMovieToFavoritesStartAction
+  addMovieToFavoritesStartAction,
+
+  downloadsIsFetching,
+  downloadStartAction,
+  downloadStarted
 }) => {
   // console.log({ isDownloaded });
   const [paused, setPaused] = React.useState(true);
@@ -45,13 +55,31 @@ const MovieDetailScreen = ({
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
   const [source, setSource] = React.useState(null);
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
+  const [showSnackbar, setShowSnackbar] = React.useState(false);
+
+  React.useEffect(() => {
+    if (showSnackbar) {
+      hideSnackbar();
+    }
+  }, [showSnackbar]);
+
+  React.useEffect(() => {
+    if (downloadStarted) {
+      setShowSnackbar(true);
+    } else {
+      setShowSnackbar(false);
+    }
+  }, [downloadStarted]);
+
+  const hideSnackbar = () => {
+    setTimeout(() => {
+      setShowSnackbar(false);
+    }, 3000);
+  };
 
   const listDownloadedFiles = async () => {
-    // const dir = Platform.OS === 'ios' ? dirs.DocumentDir : dirs.DownloadDir;
-    // const dir = dirs.DocumentDir;
     const ls = await RNFetchBlob.fs.ls(downloadPath);
     setDownloadedFiles(ls);
-    // console.log({ ls });
   };
 
   React.useEffect(() => {
@@ -106,6 +134,7 @@ const MovieDetailScreen = ({
 
   React.useEffect(() => {
     listDownloadedFiles();
+    downloadStartAction();
   }, []);
 
   // execute getFavorites if favorites list is updated
@@ -149,6 +178,9 @@ const MovieDetailScreen = ({
     category,
     director,
     thumbnail,
+    is_series,
+    series,
+    video_urls,
     ...otherFields
   } = movie;
 
@@ -169,6 +201,7 @@ const MovieDetailScreen = ({
     }
   };
 
+  console.log({ downloadStarted });
   return (
     <View style={{ marginTop: 10 }}>
       {/* Player */}
@@ -217,22 +250,27 @@ const MovieDetailScreen = ({
               style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
               titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
             >
-              {Object.keys(otherFields).map((key) => (
-                <List.Item
-                  key={key}
-                  titleStyle={{ marginBottom: -10 }}
-                  title={
-                    <Text style={{ ...createFontFormat(14, 20) }}>
-                      <Text
-                        style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}
-                      >
-                        {key}{' '}
+              {Object.keys(otherFields).map((key) => {
+                return (
+                  <List.Item
+                    key={key}
+                    titleStyle={{ marginBottom: -10 }}
+                    title={
+                      <Text style={{ ...createFontFormat(14, 20) }}>
+                        <Text
+                          style={{
+                            color: theme.iplayya.colors.white50,
+                            ...createFontFormat(14, 20)
+                          }}
+                        >
+                          {key}{' '}
+                        </Text>
+                        {otherFields[key]}
                       </Text>
-                      {otherFields[key]}
-                    </Text>
-                  }
-                />
-              ))}
+                    }
+                  />
+                );
+              })}
             </List.Accordion>
           </List.Section>
 
@@ -254,6 +292,27 @@ const MovieDetailScreen = ({
           </Pressable>
         </ContentWrap>
       </ScrollView>
+
+      {/* loader for download starting */}
+      <Modal transparent visible={downloadsIsFetching}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: theme.iplayya.colors.black50
+          }}
+        >
+          <ActivityIndicator size="large" color={theme.iplayya.colors.vibrantpussy} />
+        </View>
+      </Modal>
+
+      <SnackBar
+        visible={showSnackbar}
+        message="Downloading movie. You can check the progress in Downloaded section."
+        iconName="download"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
@@ -278,7 +337,8 @@ const actions = {
   playbackStartAction: Creators.playbackStart,
   updatePlaybackInfoAction: Creators.updatePlaybackInfo,
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
-  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart
+  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
+  downloadStartAction: DownloadsCreators.downloadStart
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -286,12 +346,14 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   movie: selectMovie,
   playbackInfo: selectPlaybackInfo,
-  isFavListUpdated: selectUpdatedFavoritesCheck
+  isFavListUpdated: selectUpdatedFavoritesCheck,
+  downloadsIsFetching: selectDownloading,
+  downloadStarted: selectDownloadStarted
 });
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ withLoader: true }),
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
 );
 

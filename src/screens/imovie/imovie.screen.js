@@ -37,7 +37,21 @@ const ImovieScreen = ({
   categoryPaginator,
   movies
 }) => {
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
   const [data, setData] = React.useState([]);
+  /**
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   * TODO: scroll index is one render late -- fix!
+   */
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
 
@@ -46,7 +60,6 @@ const ImovieScreen = ({
   }, []);
 
   React.useEffect(() => {
-    console.log({ movies });
     let collection = [];
     if (typeof movies === 'undefined') return setData(collection);
 
@@ -64,7 +77,7 @@ const ImovieScreen = ({
   }, [movies]);
 
   React.useEffect(() => {
-    console.log({ data });
+    // console.log({ data });
     if (typeof params !== 'undefined') {
       const { categoryName } = params;
       return setScrollIndex(data.findIndex((c) => c.category === categoryName));
@@ -89,7 +102,7 @@ const ImovieScreen = ({
 
   const handleRetry = () => {
     if (paginatorInfo.length) {
-      getMoviesAction(paginatorInfo);
+      getMoviesAction(paginatorInfo, categoryPaginator);
     }
     setShowBanner(false);
   };
@@ -122,12 +135,21 @@ const ImovieScreen = ({
     );
   };
 
+  // console.log({ movies });
+
   const renderItem = ({ item: { category } }) => {
+    if (typeof movies === 'undefined') return;
     // console.log({ category });
     return <CategoryScroll category={category} onSelect={handleMovieSelect} />;
   };
 
-  console.log({ scrollIndex, params });
+  const handleEndReached = (info) => {
+    if (!onEndReachedCalledDuringMomentum) {
+      console.log('end reached!', info);
+      getMoviesAction(paginatorInfo, categoryPaginator);
+      setOnEndReachedCalledDuringMomentum(true);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -154,6 +176,9 @@ const ImovieScreen = ({
             keyExtractor={(movie) => movie.category}
             renderItem={renderItem}
             initialScrollIndex={scrollIndex}
+            onEndReached={(info) => handleEndReached(info)}
+            onEndReachedThreshold={0.5}
+            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
           />
           <Spacer size={100} />
         </React.Fragment>
@@ -193,7 +218,7 @@ const actions = {
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ withLoader: true }),
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
 );
 

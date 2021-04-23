@@ -19,7 +19,8 @@ const Home = ({
   completedOnboarding,
   setBottomTabsVisibleAction,
   getCategoriesAction,
-  getMoviesStartAction
+  getMoviesStartAction,
+  resetCategoryPaginatorAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
 
@@ -27,6 +28,7 @@ const Home = ({
   React.useEffect(() => {
     getMoviesStartAction();
     getCategoriesAction();
+    resetCategoryPaginatorAction();
   }, []);
 
   React.useEffect(() => {
@@ -75,7 +77,8 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   getCategoriesAction: Creators.getCategories,
-  getMoviesStartAction: Creators.getMoviesStart
+  getMoviesStartAction: Creators.getMoviesStart,
+  resetCategoryPaginatorAction: Creators.resetCategoryPaginator
 };
 
 const enhance = compose(

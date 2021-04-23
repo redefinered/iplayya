@@ -73,7 +73,6 @@ export const GET_FAVORITE_MOVIES = gql`
     favoriteVideos(input: $input) {
       id
       title
-      rtsp_url
       year
       time
       age_rating

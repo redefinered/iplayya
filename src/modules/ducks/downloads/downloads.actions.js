@@ -2,6 +2,10 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    downloadStart: [],
+    downloadStarted: [],
+    downloadStartFailure: ['error'],
+
     updateDownloads: ['downloadTask'],
     updateDownloadsProgress: ['data'],
     cleanUpDownloadsProgress: ['ids'],
@@ -11,6 +15,7 @@ const { Types, Creators } = createActions(
     getDownloads: ['data'],
     getDownloadsSuccess: ['data'],
     getDownloadsFailure: ['error'],
+    removeDownloadsDataByIds: ['ids'],
 
     reset: []
   },

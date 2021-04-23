@@ -14,6 +14,7 @@ const { Types, Creators } = createActions(
     getMovies: ['paginatorInfo', 'categoryPaginator'],
     getMoviesSuccess: ['movies', 'categoryPaginator'],
     getMoviesFailure: ['error'],
+    resetCategoryPaginator: [],
 
     getCategories: [],
     getCategoriesSuccess: ['data'],

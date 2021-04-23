@@ -34,3 +34,8 @@ const selectDownloadData = ({ downloads: { downloadsData } }, props) => {
 };
 
 export const selectVideoForDownloadInfo = createSelector([selectDownloadData], (video) => video);
+
+export const selectDownloadStarted = createSelector(
+  [downloadsState],
+  ({ downloadStarted }) => downloadStarted
+);
