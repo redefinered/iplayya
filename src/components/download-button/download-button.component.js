@@ -8,17 +8,21 @@ import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
-import { selectMovieUrl, selectMovieTitle } from 'modules/ducks/movies/movies.selectors';
 import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
 import { getConfig, downloadPath } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
+import {
+  // selectMovieUrl,
+  selectMovieTitle,
+  selectDownloadUrl
+} from 'modules/ducks/movies/movies.selectors';
 
 const DownloadButton = ({
   theme,
   videoId,
   movieTitle,
-  movieUrl,
+  donwloadUrl,
 
   // downloads,
   // eslint-disable-next-line no-unused-vars
@@ -33,7 +37,7 @@ const DownloadButton = ({
   // eslint-disable-next-line react/prop-types
   downloadStartedAction,
   // eslint-disable-next-line react/prop-types
-  downloadStartFailure
+  downloadStartFailureAction
 }) => {
   const [files, setFiles] = React.useState([]);
   // const [downloading, setDownloading] = React.useState(false);
@@ -97,12 +101,13 @@ const DownloadButton = ({
     // set downloading state to true
     // setDownloading(true);
 
-    let androidPermission = Platform.OS === 'ios' ? true : await requestWritePermissionAndroid();
+    // let androidPermission = Platform.OS === 'ios' ? true : await requestWritePermissionAndroid();
 
-    if (!androidPermission) {
-      console.log('permission denied');
-      // return setDownloading(false);
-    }
+    // if (!androidPermission) {
+    //   console.log('permission denied');
+    //   // return setDownloading(false);
+    // }
+
     // console.log({ folder });
     try {
       const config = getConfig(video);
@@ -131,7 +136,7 @@ const DownloadButton = ({
         })
         .error((error) => {
           console.log('Download canceled due to error: ', error);
-          downloadStartFailure(error.message);
+          downloadStartFailureAction(error.message);
         });
 
       updateDownloadsAction(task);
@@ -165,7 +170,7 @@ const DownloadButton = ({
 
   return (
     <Pressable
-      onPress={() => handleDownloadMovie({ videoId, title: movieTitle, url: movieUrl })}
+      onPress={() => handleDownloadMovie({ videoId, title: movieTitle, url: donwloadUrl })}
       style={styles.headerButtonContainer}
     >
       <Icon
@@ -195,7 +200,7 @@ DownloadButton.propTypes = {
   setIsMovieDownloaded: PropTypes.func,
   handleDownloadMovie: PropTypes.func,
   videoId: PropTypes.string,
-  movieUrl: PropTypes.string,
+  donwloadUrl: PropTypes.string,
   movieTitle: PropTypes.string,
   updateDownloadsAction: PropTypes.func,
   updateDownloadsProgressAction: PropTypes.func,
@@ -214,7 +219,8 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  movieUrl: selectMovieUrl,
+  // movieUrl: selectMovieUrl,
+  donwloadUrl: selectDownloadUrl,
   movieTitle: selectMovieTitle,
   downloadsProgress: selectDownloadsProgress
 });

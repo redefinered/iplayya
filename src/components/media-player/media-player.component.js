@@ -4,7 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, View, Modal, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-// import Video from 'react-native-video';
 import Icon from 'components/icon/icon.component';
 import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
@@ -18,18 +17,14 @@ import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
 import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
-
-// const temp = require('/data/user/0/com.iplayya/files/35466_God_of_War.mp4');
-// const samplevideo = require('assets/sample-mp4-file.mp4');
-// eslint-disable-next-line no-unused-vars
-// const samplenetworkvideo =
-//   'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+import { createStructuredSelector } from 'reselect';
+import { selectUrlForVodPlayer } from 'modules/ducks/movies/movies.selectors';
 
 const MediaPlayer = ({
   loading,
   setLoading,
   updatePlaybackInfoAction,
-  source,
+  videoSource,
   thumbnail,
   title,
   paused,
@@ -126,9 +121,7 @@ const MediaPlayer = ({
     setScreencastActiveState(null);
   };
 
-  console.log('media source', source);
-
-  console.log('volume', volume);
+  console.log('source', videoSource);
 
   if (fullscreen)
     return (
@@ -136,7 +129,7 @@ const MediaPlayer = ({
         currentTime={currentTime}
         paused={paused}
         handleProgress={handleProgress}
-        source={source}
+        source={videoSource}
         player={player}
         volume={volume}
         thumbnail={thumbnail}
@@ -188,7 +181,7 @@ const MediaPlayer = ({
         paused={paused}
         seek={currentTime}
         onProgress={handleProgress}
-        source={{ uri: source }}
+        source={{ uri: videoSource }}
         volume={volume}
         onBuffering={() => onBuffer()}
         onPlaying={() => handleOnPlaying()}
@@ -341,11 +334,14 @@ MediaPlayer.propTypes = {
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
-  isSeries: PropTypes.bool
+  isSeries: PropTypes.bool,
+  videoSource: PropTypes.string
 };
+
+const mapStateToProps = createStructuredSelector({ videoSource: selectUrlForVodPlayer });
 
 const actions = {
   updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
 };
 
-export default connect(null, actions)(MediaPlayer);
+export default connect(mapStateToProps, actions)(MediaPlayer);

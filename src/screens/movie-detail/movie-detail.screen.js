@@ -201,7 +201,6 @@ const MovieDetailScreen = ({
     }
   };
 
-  console.log({ downloadStarted });
   return (
     <View style={{ marginTop: 10 }}>
       {/* Player */}

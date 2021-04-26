@@ -23,6 +23,34 @@ export const selectMovieUrl = createSelector([moviesState], ({ movie }) => {
   return link.split(' ')[1];
 });
 
+export const selectDownloadUrl = createSelector([moviesState], ({ movie }) => {
+  if (!movie) return;
+
+  console.log({ x: movie });
+
+  const urls = movie.video_urls.map(({ link }) => link);
+  const mp4url = urls.find((url) => !url.includes('video.m3u8'));
+
+  if (typeof mp4url === 'undefined') return '';
+
+  return mp4url.split(' ')[1];
+});
+
+export const selectUrlForVodPlayer = createSelector([moviesState], ({ movie }) => {
+  if (!movie) return;
+
+  const urls = movie.video_urls.map(({ link }) => link);
+  const mp4url = urls.find((url) => !url.includes('video.m3u8'));
+  const m3u8url = urls.find((url) => url.includes('m3u8'));
+
+  // return an empty string if
+  if (typeof mp4url === 'undefined' && typeof m3u8url === 'undefined') return '';
+
+  if (typeof m3u8url === 'undefined') return mp4url.split(' ')[1];
+
+  return m3u8url.split(' ')[1];
+});
+
 export const selectMovieTitle = createSelector([moviesState], ({ movie }) => {
   if (!movie) return;
   return movie.title;

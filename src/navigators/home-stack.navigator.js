@@ -33,7 +33,6 @@ import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
-// import ChannelDownloadButton from 'components/channel-download-button/channel-download-button.component';
 import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
