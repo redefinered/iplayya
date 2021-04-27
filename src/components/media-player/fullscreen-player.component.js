@@ -27,7 +27,7 @@ const FullScreenPlayer = (props) => {
     videoError,
     volumeSliderVisible,
     setVolume,
-    loading,
+    buffering,
     title,
     togglePlay,
     handleFullscreenToggle,
@@ -131,7 +131,7 @@ const FullScreenPlayer = (props) => {
           <Controls
             volume={volume}
             multipleMedia={false}
-            loading={loading}
+            buffering={buffering}
             title={title}
             togglePlay={togglePlay}
             paused={paused}
@@ -163,7 +163,7 @@ const FullScreenPlayer = (props) => {
 };
 
 FullScreenPlayer.propTypes = {
-  loading: PropTypes.bool,
+  buffering: PropTypes.bool,
   setLoading: PropTypes.func,
   title: PropTypes.string,
   source: PropTypes.string,

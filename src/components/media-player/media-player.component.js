@@ -17,18 +17,15 @@ import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
 import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
-import { createStructuredSelector } from 'reselect';
-import { selectUrlForVodPlayer } from 'modules/ducks/movies/movies.selectors';
 
 const MediaPlayer = ({
-  loading,
-  setLoading,
   updatePlaybackInfoAction,
-  videoSource,
+  source,
   thumbnail,
   title,
   paused,
   togglePlay,
+  setPaused,
   isSeries
 }) => {
   const theme = useTheme();
@@ -44,6 +41,7 @@ const MediaPlayer = ({
   const [screencastActiveState, setScreencastActiveState] = React.useState(null);
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
+  const [buffering, setBuffering] = React.useState(false);
 
   // console.log({ sourcex: source, type });
 
@@ -57,21 +55,27 @@ const MediaPlayer = ({
 
   const onBuffer = () => {
     setError(false);
+    setBuffering(true);
+    setShowControls(true);
     console.log('buffer callback');
   };
 
   const handleOnPlaying = () => {
-    setLoading(false);
-    timer = hideControls(10);
+    console.log('onPlaying callback');
+    // timer = hideControls(10);
   };
 
   const videoError = () => {
+    setBuffering(false);
     setError(true);
   };
 
   const handleProgress = (playbackInfo) => {
-    setLoading(false);
+    console.log('onProgress callback');
+    setBuffering(false);
     updatePlaybackInfoAction({ playbackInfo });
+    setPaused(false);
+    timer = hideControls(10);
   };
 
   const hideControls = (duration = 5) => {
@@ -121,7 +125,7 @@ const MediaPlayer = ({
     setScreencastActiveState(null);
   };
 
-  console.log('source', videoSource);
+  // console.log('source', source);
 
   if (fullscreen)
     return (
@@ -129,7 +133,7 @@ const MediaPlayer = ({
         currentTime={currentTime}
         paused={paused}
         handleProgress={handleProgress}
-        source={videoSource}
+        source={source}
         player={player}
         volume={volume}
         thumbnail={thumbnail}
@@ -138,7 +142,7 @@ const MediaPlayer = ({
         videoError={videoError}
         volumeSliderVisible={volumeSliderVisible}
         setVolume={setVolume}
-        loading={loading}
+        buffering={buffering}
         title={title}
         togglePlay={togglePlay}
         handleFullscreenToggle={handleFullscreenToggle}
@@ -181,7 +185,7 @@ const MediaPlayer = ({
         paused={paused}
         seek={currentTime}
         onProgress={handleProgress}
-        source={{ uri: videoSource }}
+        source={{ uri: source }}
         volume={volume}
         onBuffering={() => onBuffer()}
         onPlaying={() => handleOnPlaying()}
@@ -209,8 +213,8 @@ const MediaPlayer = ({
       {/* media player controls */}
       <Controls
         volume={volume}
+        buffering={buffering}
         multipleMedia={isSeries}
-        loading={loading}
         title={title}
         togglePlay={togglePlay}
         paused={paused}
@@ -326,22 +330,19 @@ const MediaPlayer = ({
 };
 
 MediaPlayer.propTypes = {
-  loading: PropTypes.bool,
-  setLoading: PropTypes.func,
   title: PropTypes.string,
   source: PropTypes.string,
   thumbnail: PropTypes.string,
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
+  setPaused: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
   isSeries: PropTypes.bool,
   videoSource: PropTypes.string
 };
 
-const mapStateToProps = createStructuredSelector({ videoSource: selectUrlForVodPlayer });
-
 const actions = {
   updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
 };
 
-export default connect(mapStateToProps, actions)(MediaPlayer);
+export default connect(null, actions)(MediaPlayer);
