@@ -48,13 +48,15 @@ const ImovieSearchScreen = ({
     }
     if (term.length) {
       if (term.length <= 2) return;
+
       search(term);
     }
   }, [term]);
 
-  const search = debounce((keyword) => {
-    searchAction({ keyword, pageNumber: 1, limit: 10 });
-  }, 1300);
+  const search = React.useCallback(
+    debounce((keyword) => searchAction({ keyword, pageNumber: 1, limit: 10 }), 300),
+    []
+  );
 
   const handleItemPress = (videoId) => {
     // navigate to chanel details screen with `id` parameter
@@ -65,7 +67,7 @@ const ImovieSearchScreen = ({
     navigation.navigate('ImovieScreen', { categoryId, categoryName: title });
   };
 
-  console.log({ results });
+  // console.log({ results });
 
   const renderResult = () => {
     if (error)
@@ -150,6 +152,7 @@ const ImovieSearchScreen = ({
           <FormInput
             {...props}
             style={{
+              flex: 1,
               marginLeft: 40,
               justifyContent: 'center',
               fontSize: 16,
@@ -209,7 +212,7 @@ const mapStateToProps = createStructuredSelector({
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  withHeaderPush({ backgroundType: 'solid' }),
   withTheme
 );
 
