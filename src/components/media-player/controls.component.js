@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
 import moment from 'moment';
@@ -20,7 +20,14 @@ import {
 
 import { createFontFormat, toDateTime } from 'utils';
 
-const VideoControls = ({ theme, currentTime, position, remainingTime, ...controlProps }) => {
+const VideoControls = ({
+  theme,
+  currentTime,
+  position,
+  remainingTime,
+  buffering,
+  ...controlProps
+}) => {
   const screencastOptions = () => {
     if (controlProps.showCastOptions) {
       return castOptions.map(({ id, name, label }) => (
@@ -99,7 +106,12 @@ const VideoControls = ({ theme, currentTime, position, remainingTime, ...control
 
   return (
     <View
-      style={{ ...styles.controls, ...controlProps.style, opacity: controlProps.visible ? 1 : 0 }}
+      style={{
+        backgroundColor: theme.iplayya.colors.black50,
+        ...styles.controls,
+        ...controlProps.style,
+        opacity: controlProps.visible ? 1 : 0
+      }}
     >
       <View
         style={{
@@ -111,7 +123,7 @@ const VideoControls = ({ theme, currentTime, position, remainingTime, ...control
         }}
       >
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
-          {controlProps.loading ? 'loading...' : controlProps.title}
+          {controlProps.title}
         </Text>
         <Pressable
           onPress={() => controlProps.toggleCastOptions()}
@@ -148,11 +160,15 @@ const VideoControls = ({ theme, currentTime, position, remainingTime, ...control
           </Pressable>
         ) : null}
         <Pressable onPress={() => controlProps.togglePlay()}>
-          <Icon
-            name={controlProps.paused ? 'circular-play' : 'circular-pause'}
-            size={60}
-            style={{ marginHorizontal: 20 }}
-          />
+          {buffering ? (
+            <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />
+          ) : (
+            <Icon
+              name={controlProps.paused ? 'circular-play' : 'circular-pause'}
+              size={60}
+              style={{ marginHorizontal: 20 }}
+            />
+          )}
         </Pressable>
         {controlProps.multipleMedia ? (
           <Pressable>
@@ -241,6 +257,7 @@ const styles = StyleSheet.create({
 });
 
 VideoControls.propTypes = {
+  buffering: PropTypes.buffering,
   title: PropTypes.string,
   volume: PropTypes.number,
   theme: PropTypes.object,
