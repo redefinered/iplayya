@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
@@ -11,10 +12,12 @@ import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-//import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import AlertModal from 'components/alert-modal/alert-modal.component';
+import { selectError } from 'modules/ducks/movies/movies.selectors';
 
 const Home = ({
+  error,
   navigation,
   completedOnboarding,
   setBottomTabsVisibleAction,
@@ -23,6 +26,7 @@ const Home = ({
   resetCategoryPaginatorAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
+  const [showErrorModal, setShowErrorModal] = React.useState(true);
 
   /// load categories here
   React.useEffect(() => {
@@ -48,10 +52,41 @@ const Home = ({
     setShowWelcomeDialog(false);
   };
 
+  React.useEffect(() => {
+    if (error) {
+      setShowErrorModal(true);
+    } else {
+      setShowErrorModal(false);
+    }
+  }, [error]);
+
+  const handleHideErrorModal = () => {
+    setShowErrorModal(false);
+  };
+
+  const handleProfileErrorConfirmAction = () => {
+    getMoviesStartAction();
+    getCategoriesAction();
+    resetCategoryPaginatorAction();
+
+    // hide error modal after retry
+    setShowErrorModal(false);
+  };
+
   return (
     <ContentWrap style={{ marginTop: 30 }}>
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
+      {error && (
+        <AlertModal
+          variant="danger"
+          message={error}
+          visible={showErrorModal}
+          hideAction={handleHideErrorModal}
+          confirmText="Retry"
+          confirmAction={handleProfileErrorConfirmAction}
+        />
+      )}
     </ContentWrap>
   );
 };
@@ -64,6 +99,7 @@ Home.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   completedOnboarding: selectCompletedOnboarding,
+  error: selectError,
 
   /**
    * FIX BUG WHERE LOADER IS STUCK IN HOME SCREEN
