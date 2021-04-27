@@ -21,7 +21,8 @@ import {
   selectIsFetching,
   selectMovie,
   selectPlaybackInfo,
-  selectUpdatedFavoritesCheck
+  selectUpdatedFavoritesCheck,
+  selectUrlForVodPlayer
 } from 'modules/ducks/movies/movies.selectors';
 import {
   selectIsFetching as selectDownloading,
@@ -32,12 +33,13 @@ import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 
 const MovieDetailScreen = ({
+  theme,
   error,
   route: {
     params: { videoId }
   },
   movie,
-  theme,
+  videoSource,
   playbackStartAction,
   getMovieAction,
   getMovieStartAction,
@@ -53,9 +55,18 @@ const MovieDetailScreen = ({
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
-  const [source, setSource] = React.useState(null);
+  const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
+
+  React.useEffect(() => {
+    listDownloadedFiles();
+    downloadStartAction();
+    playbackStartAction();
+    getMovieStartAction();
+    getMovieAction(videoId);
+    addMovieToFavoritesStartAction();
+  }, []);
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -98,21 +109,21 @@ const MovieDetailScreen = ({
         }
       }
     }
-  }, [movie, downloadedFiles, isMovieDownloaded]);
+  }, [movie, downloadedFiles]);
 
   React.useEffect(() => {
     if (movie) {
       const { is_series } = movie;
       let videoUrl = '';
+
       if (is_series) {
         /// for testing
-        videoUrl = 'xxx http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+        videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
       } else {
-        const { video_urls } = movie;
-        videoUrl = video_urls[0].link;
+        videoUrl = videoSource;
       }
+
       const { title: movieTitle } = movie;
-      // const { link: videoUrl } = video_urls[0];
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
@@ -125,17 +136,12 @@ const MovieDetailScreen = ({
             : `${downloadPath}/${filename}`;
         setSource(src); /// file:// teqnique only works on iOS
       } else {
-        let src = videoUrl.split(' ')[1];
-        let setsrc = typeof src === 'undefined' ? null : src;
-        setSource(setsrc);
+        // let src = videoUrl;
+        // let setsrc = src === '' ? null : src;
+        setSource(videoUrl);
       }
     }
   }, [movie, isMovieDownloaded]);
-
-  React.useEffect(() => {
-    listDownloadedFiles();
-    downloadStartAction();
-  }, []);
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -143,13 +149,6 @@ const MovieDetailScreen = ({
       getFavoriteMoviesAction();
     }
   }, [isFavListUpdated]);
-
-  React.useEffect(() => {
-    playbackStartAction();
-    getMovieStartAction();
-    getMovieAction(videoId);
-    addMovieToFavoritesStartAction();
-  }, []);
 
   const handleTogglePlay = () => {
     setLoading(true);
@@ -180,26 +179,10 @@ const MovieDetailScreen = ({
     thumbnail,
     is_series,
     series,
-    video_urls,
     ...otherFields
   } = movie;
 
-  const renderPlayer = () => {
-    if (source) {
-      return (
-        <MediaPlayer
-          isSeries={movie.is_series}
-          paused={paused}
-          source={source}
-          thumbnail={thumbnail}
-          title={title}
-          togglePlay={handleTogglePlay}
-          loading={loading}
-          setLoading={setLoading}
-        />
-      );
-    }
-  };
+  console.log({ source });
 
   return (
     <View style={{ marginTop: 10 }}>
@@ -215,7 +198,30 @@ const MovieDetailScreen = ({
             alignItems: 'center'
           }}
         >
-          {renderPlayer()}
+          {source !== '' ? (
+            <MediaPlayer
+              isSeries={movie.is_series}
+              paused={paused}
+              source={source}
+              thumbnail={thumbnail}
+              title={title}
+              togglePlay={handleTogglePlay}
+              setPaused={setPaused}
+              loading={loading}
+            />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'black'
+              }}
+            >
+              <Text>NO SOURCE</Text>
+            </View>
+          )}
         </Pressable>
         <ContentWrap>
           <Text
@@ -344,6 +350,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   movie: selectMovie,
+  videoSource: selectUrlForVodPlayer,
   playbackInfo: selectPlaybackInfo,
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
