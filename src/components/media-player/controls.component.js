@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
 });
 
 VideoControls.propTypes = {
-  buffering: PropTypes.buffering,
+  buffering: PropTypes.bool,
   title: PropTypes.string,
   volume: PropTypes.number,
   theme: PropTypes.object,
