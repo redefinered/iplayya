@@ -10,6 +10,7 @@ import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
@@ -24,6 +25,7 @@ import {
 import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
+import NetInfo from '@react-native-community/netinfo';
 
 const ImovieScreen = ({
   isFetching,
@@ -35,7 +37,8 @@ const ImovieScreen = ({
   theme,
   route: { params },
   categoryPaginator,
-  movies
+  movies,
+  setNetworkInfoAction
 }) => {
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -57,6 +60,17 @@ const ImovieScreen = ({
 
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
+
+    // Subscribe
+    const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
+      // console.log('Connection type', type);
+      // console.log('Is connected?', isConnected);
+
+      setNetworkInfoAction({ type, isConnected });
+    });
+
+    // Unsubscribe
+    unsubscribe();
   }, []);
 
   React.useEffect(() => {
@@ -211,6 +225,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  setNetworkInfoAction: AuthActionCreators.setNetworkInfo,
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart

@@ -168,8 +168,8 @@ const ImovieDownloadsScreen = ({
         setSelectedItems([item, ...selectedItems]);
       }
     } else {
-      navigation.navigate('MovieDetailScreen', {
-        downloadedMovie: downloads.find((v) => v.id === item).movie
+      navigation.navigate('MovieDetailDownloadedScreen', {
+        movie: downloads.find((v) => v.id === item).movie
       });
     }
   };

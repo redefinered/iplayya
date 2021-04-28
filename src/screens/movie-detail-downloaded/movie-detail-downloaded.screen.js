@@ -10,7 +10,6 @@ import { Text, List } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-//import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -36,9 +35,8 @@ const MovieDetailScreen = ({
   theme,
   error,
   route: {
-    params: { videoId }
+    params: { movie }
   },
-  movie,
   videoSource,
   playbackStartAction,
   getMovieAction,
@@ -63,8 +61,10 @@ const MovieDetailScreen = ({
     downloadStartAction();
     playbackStartAction();
     getMovieStartAction();
-    getMovieAction(videoId);
     addMovieToFavoritesStartAction();
+    if (typeof videoId !== 'undefined') {
+      getMovieAction(movie.id);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -96,7 +96,25 @@ const MovieDetailScreen = ({
     if (movie) {
       const titlesplit = movie.title.split(' ');
       const title = titlesplit.join('_');
-      const filename = `${videoId}_${title}.mp4`;
+      const filename = `${movie.id}_${title}.mp4`;
+      const file = downloadedFiles.find((file) => file === filename);
+
+      // check if downloaded
+      if (downloadedFiles.length) {
+        if (typeof file !== 'undefined') {
+          setIsMoviedownloaded(true);
+        } else {
+          setIsMoviedownloaded(false);
+        }
+      }
+    }
+  }, [movie, downloadedFiles]);
+
+  React.useEffect(() => {
+    if (movie) {
+      const titlesplit = movie.title.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${movie.id}_${title}.mp4`;
       const file = downloadedFiles.find((file) => file === filename);
 
       // check if downloaded
@@ -125,7 +143,7 @@ const MovieDetailScreen = ({
       const { title: movieTitle } = movie;
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
-      const filename = `${videoId}_${title}.mp4`;
+      const filename = `${movie.id}_${title}.mp4`;
 
       // set source
       if (isMovieDownloaded) {
@@ -140,7 +158,37 @@ const MovieDetailScreen = ({
         setSource(videoUrl);
       }
     }
-  }, [movie, isMovieDownloaded]);
+
+    if (movie) {
+      const { is_series } = movie;
+      let videoUrl = '';
+
+      if (is_series) {
+        /// for testing
+        videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+      } else {
+        videoUrl = videoSource;
+      }
+
+      const { title: movieTitle } = movie;
+      const titlesplit = movieTitle.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${movie.id}_${title}.mp4`;
+
+      // set source
+      if (isMovieDownloaded) {
+        let src =
+          Platform.OS === 'ios'
+            ? `file://${downloadPath}/${filename}`
+            : `${downloadPath}/${filename}`;
+        setSource(src); /// file:// teqnique only works on iOS
+      } else {
+        // let src = videoUrl;
+        // let setsrc = src === '' ? null : src;
+        setSource(videoUrl);
+      }
+    }
+  }, [movie, movie, isMovieDownloaded]);
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -161,15 +209,9 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!movie) return <View />;
 
   const {
-    __typename,
     id,
     title,
     year,
@@ -181,6 +223,7 @@ const MovieDetailScreen = ({
     is_series,
     series,
     video_urls,
+    __typename,
     ...otherFields
   } = movie;
 
@@ -202,7 +245,7 @@ const MovieDetailScreen = ({
         >
           {source !== '' ? (
             <MediaPlayer
-              isSeries={movie.is_series}
+              isSeries={is_series}
               paused={paused}
               source={source}
               thumbnail={thumbnail}
