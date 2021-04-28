@@ -50,8 +50,6 @@ const CategoryScrollList = ({
     );
   };
 
-  // console.log({ paginatorOfCategory });
-
   const handleOnEndReached = () => {
     // set pageNumber prop to get the next n movies
     console.log('end');
@@ -64,13 +62,13 @@ const CategoryScrollList = ({
     <FlatList
       data={data}
       horizontal
-      decelerationRate={0}
+      // decelerationRate={0}
       snapToInterval={CARD_WIDTH + 10}
       snapToAlignment="start"
       contentInset={{
         top: 0,
-        left: SPACING_FOR_CARD_INSET,
         bottom: 0,
+        left: SPACING_FOR_CARD_INSET,
         right: SPACING_FOR_CARD_INSET
       }}
       contentContainerStyle={{

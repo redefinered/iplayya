@@ -244,11 +244,13 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         name="MovieDetailScreen"
         component={MovieDetailScreen}
         // eslint-disable-next-line no-unused-vars
-        options={({
-          route: {
-            params: { videoId }
-          }
-        }) => {
+        options={(props) => {
+          const {
+            route: {
+              params: { videoId }
+            }
+          } = props;
+
           const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
 
           return {

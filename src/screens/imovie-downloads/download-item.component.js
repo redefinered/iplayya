@@ -60,7 +60,7 @@ const DownloadItem = ({
     if (task.state === 'PAUSED') return setPaused(true);
     if (task.state === 'PENDING') return setPaused(true);
     if (task.state === 'DONE') return setIsDownloaded(true);
-    console.log({ task });
+
     setProgress(task.percent * 100);
     task
       .progress((percent) => {

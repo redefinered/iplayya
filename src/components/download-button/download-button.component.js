@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, StyleSheet, PermissionsAndroid, Platform } from 'react-native';
+// eslint-disable-next-line no-unused-vars
+import { Pressable, StyleSheet } from 'react-native';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
@@ -13,13 +14,14 @@ import { getConfig, downloadPath } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
 import {
-  // selectMovieUrl,
   selectMovieTitle,
-  selectDownloadUrl
+  selectDownloadUrl,
+  selectMovie
 } from 'modules/ducks/movies/movies.selectors';
 
 const DownloadButton = ({
   theme,
+  movie,
   videoId,
   movieTitle,
   donwloadUrl,
@@ -32,7 +34,7 @@ const DownloadButton = ({
 
   downloadsProgress,
   cleanUpDownloadsProgressAction,
-  setPermissionErrorAction,
+  // setPermissionErrorAction,
 
   // eslint-disable-next-line react/prop-types
   downloadStartedAction,
@@ -47,45 +49,7 @@ const DownloadButton = ({
     checkIfMovieIsDownlowded();
   }, []);
 
-  // React.useEffect(() => {
-  //   console.log({ downloadsProgress });
-  // }, [downloadsProgress]);
-
-  const requestWritePermissionAndroid = async () => {
-    if (Platform.OS === 'ios') return;
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Permission to write into file storage',
-          message: 'The app needs access to your file storage so you can download the file',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK'
-        }
-      );
-
-      const readgrant = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-      );
-
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        throw new Error('No write access');
-      }
-
-      if (readgrant !== PermissionsAndroid.RESULTS.GRANTED) {
-        throw new Error('No read access');
-      }
-
-      return PermissionsAndroid.RESULTS.GRANTED;
-    } catch (error) {
-      setPermissionErrorAction(error.message);
-    }
-  };
-
   const handleDownloadMovie = async (video) => {
-    // if (downloading) return;
-
     // return if movie is already downloaded
     if (isMovieDownloaded) {
       console.log('already downloaded');
@@ -98,17 +62,6 @@ const DownloadButton = ({
       return;
     }
 
-    // set downloading state to true
-    // setDownloading(true);
-
-    // let androidPermission = Platform.OS === 'ios' ? true : await requestWritePermissionAndroid();
-
-    // if (!androidPermission) {
-    //   console.log('permission denied');
-    //   // return setDownloading(false);
-    // }
-
-    // console.log({ folder });
     try {
       const config = getConfig(video);
 
@@ -119,7 +72,6 @@ const DownloadButton = ({
         })
         .progress((percent) => {
           updateDownloadsProgressAction({ id: video.videoId, progress: percent * 100 });
-          // console.log(`Downloaded: ${percent * 100}%`);
         })
         .done(() => {
           console.log('Download is done!');
@@ -130,16 +82,13 @@ const DownloadButton = ({
           completedItems = completedItems.map(({ id }) => id);
 
           cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
-
-          // set downloading state to false
-          // setDownloading(false);
         })
         .error((error) => {
           console.log('Download canceled due to error: ', error);
           downloadStartFailureAction(error.message);
         });
 
-      updateDownloadsAction(task);
+      updateDownloadsAction({ id: movie.id, task, movie });
     } catch (error) {
       console.log(error.message);
     }
@@ -196,6 +145,7 @@ const styles = StyleSheet.create({
 
 DownloadButton.propTypes = {
   theme: PropTypes.object,
+  movie: PropTypes.object,
   isMovieDownloaded: PropTypes.bool,
   setIsMovieDownloaded: PropTypes.func,
   handleDownloadMovie: PropTypes.func,
@@ -219,6 +169,8 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  // get movie from state to add to downloads data for offline use
+  movie: selectMovie,
   // movieUrl: selectMovieUrl,
   donwloadUrl: selectDownloadUrl,
   movieTitle: selectMovieTitle,

@@ -1,4 +1,5 @@
 import RNBackgroundDownloader from 'react-native-background-downloader';
+import { PermissionsAndroid, Platform } from 'react-native';
 import moment from 'moment';
 
 export const createFontFormat = (fontSize, lineHeight) => {
@@ -55,4 +56,36 @@ export const getConfig = (video) => {
     url: video.url,
     destination: `${downloadPath}/${filename}`
   };
+};
+
+export const requestWritePermissionAndroid = async () => {
+  if (Platform.OS === 'ios') return;
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      {
+        title: 'Permission to write into file storage',
+        message: 'The app needs access to your file storage so you can download the file',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK'
+      }
+    );
+
+    const readgrant = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+    );
+
+    if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+      throw new Error('No write access');
+    }
+
+    if (readgrant !== PermissionsAndroid.RESULTS.GRANTED) {
+      throw new Error('No read access');
+    }
+
+    return PermissionsAndroid.RESULTS.GRANTED;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };

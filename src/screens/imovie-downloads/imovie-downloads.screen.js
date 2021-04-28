@@ -17,13 +17,6 @@ import { createStructuredSelector } from 'reselect';
 import RadioButton from 'components/radio-button/radio-button.component';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-import {
-  selectError,
-  selectIsFetching,
-  selectDownloads,
-  selectDownloadsProgress,
-  selectDownloadsData
-} from 'modules/ducks/downloads/downloads.selectors';
 import DownloadItem from './download-item.component';
 import { Creators } from 'modules/ducks/downloads/downloads.actions';
 import { deleteFile, listDownloadedFiles, checkExistingDownloads } from 'services/download.service';
@@ -31,6 +24,13 @@ import { getFilename } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath } from 'utils';
 import uniq from 'lodash/uniq';
+import {
+  selectError,
+  selectIsFetching,
+  selectDownloads,
+  selectDownloadsProgress,
+  selectDownloadsData
+} from 'modules/ducks/downloads/downloads.selectors';
 
 // eslint-disable-next-line no-unused-vars
 const ImovieDownloadsScreen = ({
@@ -42,18 +42,22 @@ const ImovieDownloadsScreen = ({
   downloadsData,
 
   downloads,
-  removeDownloadsDataByIdsAction
+  removeDownloadsDataByIdsAction,
+  downloadStartAction
 }) => {
-  const [ids, setIds] = React.useState([]);
+  // const [ids, setIds] = React.useState([]);
   // const [donwloadingItems, setDownloadingItems] = React.useState([]);
   const [activeDownloads, setActiveDownloads] = React.useState([]);
+
+  const [list, setList] = React.useState([]);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
 
   React.useEffect(() => {
-    setDownloadIdsForFething();
+    downloadStartAction();
+    setUpDownloadsList(downloads);
     listDownloadedFiles();
   }, []);
 
@@ -120,53 +124,59 @@ const ImovieDownloadsScreen = ({
     handleRemoveItems();
   };
 
-  const setDownloadIdsForFething = async () => {
-    // console.log('asdas');
+  const setUpDownloadsList = async (downloads) => {
     try {
       let data = [];
+      let ids = [];
       // check for active downloads in the background
       const existingDownloads = await checkExistingDownloads();
-      // console.log({ existingDownloads });
+
+      // set active downloads list to get the download tasks
       setActiveDownloads(existingDownloads);
 
+      // add existing download ids to ids array
+      const existingDownloadIds = existingDownloads.map(({ id }) => id);
+      ids = [...existingDownloadIds];
+
+      // add downloaded files ids to ids array
+      const donwloadedFiles = await RNFetchBlob.fs.ls(downloadPath);
+      const donwloadedFilesIds = donwloadedFiles.map((filename) => filename.split('_')[0]);
+      ids = [...existingDownloadIds, ...donwloadedFilesIds];
+
+      data = ids.map((id) => {
+        return downloads.find((d) => d.id === id).movie;
+      });
+
+      console.log({ data, ids });
+
+      // console.log({ existingDownloads });
+
       // add existing downloads ids to data array
-      data = [...existingDownloads.map((d) => d.id)];
+      // data = [...existingDownloads.map((d) => d.id)];
 
       // get downloaded movie ids in the download folder
-      let ls = await RNFetchBlob.fs.ls(downloadPath);
+      // let ls = await RNFetchBlob.fs.ls(downloadPath);
 
       // get the id from filename
-      ls = ls.map((filename) => filename.split('_')[0]);
+      // ls = ls.map((filename) => filename.split('_')[0]);
 
       // add ids to data array
-      data = [...data, ...ls];
+      // data = [...data, ...ls];
 
       // set imovies downloads for listing in the screen
-      setIds(uniq(data));
+      // setIds(uniq(data));
+
+      setList(data);
     } catch (error) {
       console.log({ error });
     }
   };
 
-  React.useEffect(() => {
-    if (ids.length) {
-      getDownloadsAction({ input: ids });
-    }
-  }, [ids]);
-
-  // console.log({ zzzzzzz: ids });
-
-  // const getDownloadIdsForFetching = async () => {
-  //   const ls = await RNFetchBlob.fs.ls(downloadPath);
-  //   setDownloadedItemsIds(ls);
-  // };
-
   // React.useEffect(() => {
-  //   if (downloadedItemsIds.length) {
-  //     // list the downloaded items complete or not
-  //     getDownloadsAction({ input: downloadedItemsIds });
+  //   if (ids.length) {
+  //     getDownloadsAction({ input: ids });
   //   }
-  // }, [downloadedItemsIds]);
+  // }, [ids]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -183,21 +193,14 @@ const ImovieDownloadsScreen = ({
     }
   };
 
-  console.log({ downloadsData });
+  console.log({ list });
 
   const renderMain = () => {
-    if (downloadsData.length)
+    if (list.length)
       return (
         <ScrollView>
-          {downloadsData.map(({ id, thumbnail, ...otherProps }) => {
+          {list.map(({ id, thumbnail, ...otherProps }) => {
             let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
-
-            // let isDownloaded =
-            //   typeof downloadsProgress.find(
-            //     ({ id: dowloadProgressId }) => id === dowloadProgressId
-            //   ) === 'undefined'
-            //     ? true
-            //     : false;
 
             let progress = null;
 
@@ -311,7 +314,8 @@ const EmptyState = ({ theme, navigation }) => (
 
 const actions = {
   getDownloadsAction: Creators.getDownloads,
-  removeDownloadsDataByIdsAction: Creators.removeDownloadsDataByIds
+  removeDownloadsDataByIdsAction: Creators.removeDownloadsDataByIds,
+  downloadStartAction: Creators.downloadStart
 };
 
 const mapStateToProps = createStructuredSelector({

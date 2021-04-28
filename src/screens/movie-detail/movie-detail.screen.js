@@ -51,7 +51,6 @@ const MovieDetailScreen = ({
   downloadStartAction,
   downloadStarted
 }) => {
-  // console.log({ isDownloaded });
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
