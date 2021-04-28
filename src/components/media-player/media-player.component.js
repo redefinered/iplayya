@@ -57,11 +57,11 @@ const MediaPlayer = ({
     setError(false);
     setBuffering(true);
     setShowControls(true);
-    console.log('buffer callback');
+    // console.log('buffer callback');
   };
 
   const handleOnPlaying = () => {
-    console.log('onPlaying callback');
+    // console.log('onPlaying callback');
     // timer = hideControls(10);
   };
 
@@ -71,7 +71,7 @@ const MediaPlayer = ({
   };
 
   const handleProgress = (playbackInfo) => {
-    console.log('onProgress callback');
+    // console.log('onProgress callback');
     setBuffering(false);
     updatePlaybackInfoAction({ playbackInfo });
     setPaused(false);

@@ -147,36 +147,15 @@ const ImovieDownloadsScreen = ({
         return downloads.find((d) => d.id === id).movie;
       });
 
-      console.log({ data, ids });
+      data = uniq(data);
 
-      // console.log({ existingDownloads });
-
-      // add existing downloads ids to data array
-      // data = [...existingDownloads.map((d) => d.id)];
-
-      // get downloaded movie ids in the download folder
-      // let ls = await RNFetchBlob.fs.ls(downloadPath);
-
-      // get the id from filename
-      // ls = ls.map((filename) => filename.split('_')[0]);
-
-      // add ids to data array
-      // data = [...data, ...ls];
-
-      // set imovies downloads for listing in the screen
-      // setIds(uniq(data));
+      console.log({ data });
 
       setList(data);
     } catch (error) {
       console.log({ error });
     }
   };
-
-  // React.useEffect(() => {
-  //   if (ids.length) {
-  //     getDownloadsAction({ input: ids });
-  //   }
-  // }, [ids]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -189,11 +168,11 @@ const ImovieDownloadsScreen = ({
         setSelectedItems([item, ...selectedItems]);
       }
     } else {
-      navigation.navigate('MovieDetailScreen', { videoId: item });
+      navigation.navigate('MovieDetailScreen', {
+        downloadedMovie: downloads.find((v) => v.id === item).movie
+      });
     }
   };
-
-  console.log({ list });
 
   const renderMain = () => {
     if (list.length)

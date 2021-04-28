@@ -36,7 +36,7 @@ const MovieDetailScreen = ({
   theme,
   error,
   route: {
-    params: { videoId }
+    params: { videoId, downloadedMovie }
   },
   movie,
   videoSource,
@@ -63,8 +63,10 @@ const MovieDetailScreen = ({
     downloadStartAction();
     playbackStartAction();
     getMovieStartAction();
-    getMovieAction(videoId);
     addMovieToFavoritesStartAction();
+    if (typeof videoId !== 'undefined') {
+      getMovieAction(videoId);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -111,6 +113,24 @@ const MovieDetailScreen = ({
   }, [movie, downloadedFiles]);
 
   React.useEffect(() => {
+    if (downloadedMovie) {
+      const titlesplit = downloadedMovie.title.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${downloadedMovie.id}_${title}.mp4`;
+      const file = downloadedFiles.find((file) => file === filename);
+
+      // check if downloaded
+      if (downloadedFiles.length) {
+        if (typeof file !== 'undefined') {
+          setIsMoviedownloaded(true);
+        } else {
+          setIsMoviedownloaded(false);
+        }
+      }
+    }
+  }, [downloadedMovie, downloadedFiles]);
+
+  React.useEffect(() => {
     if (movie) {
       const { is_series } = movie;
       let videoUrl = '';
@@ -140,7 +160,37 @@ const MovieDetailScreen = ({
         setSource(videoUrl);
       }
     }
-  }, [movie, isMovieDownloaded]);
+
+    if (downloadedMovie) {
+      const { is_series } = downloadedMovie;
+      let videoUrl = '';
+
+      if (is_series) {
+        /// for testing
+        videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+      } else {
+        videoUrl = videoSource;
+      }
+
+      const { title: movieTitle } = downloadedMovie;
+      const titlesplit = movieTitle.split(' ');
+      const title = titlesplit.join('_');
+      const filename = `${downloadedMovie.id}_${title}.mp4`;
+
+      // set source
+      if (isMovieDownloaded) {
+        let src =
+          Platform.OS === 'ios'
+            ? `file://${downloadPath}/${filename}`
+            : `${downloadPath}/${filename}`;
+        setSource(src); /// file:// teqnique only works on iOS
+      } else {
+        // let src = videoUrl;
+        // let setsrc = src === '' ? null : src;
+        setSource(videoUrl);
+      }
+    }
+  }, [movie, downloadedMovie, isMovieDownloaded]);
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -161,12 +211,13 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  let moviedata = null;
+
+  if (typeof downloadedMovie === 'undefined') {
+    moviedata = movie;
+  } else {
+    moviedata = downloadedMovie;
+  }
 
   const {
     title,
@@ -179,9 +230,7 @@ const MovieDetailScreen = ({
     is_series,
     series,
     ...otherFields
-  } = movie;
-
-  console.log({ source });
+  } = moviedata;
 
   return (
     <View style={{ marginTop: 10 }}>
@@ -199,7 +248,7 @@ const MovieDetailScreen = ({
         >
           {source !== '' ? (
             <MediaPlayer
-              isSeries={movie.is_series}
+              isSeries={is_series}
               paused={paused}
               source={source}
               thumbnail={thumbnail}
