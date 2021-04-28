@@ -10,7 +10,6 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
 import { Creators } from 'modules/ducks/movies/movies.actions';
