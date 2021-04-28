@@ -220,6 +220,7 @@ const MovieDetailScreen = ({
   }
 
   const {
+    id,
     title,
     year,
     description,
@@ -229,8 +230,12 @@ const MovieDetailScreen = ({
     thumbnail,
     is_series,
     series,
+    video_urls,
+    __typename,
     ...otherFields
   } = moviedata;
+
+  console.log({ otherFields, video_urls, __typename, id });
 
   return (
     <View style={{ marginTop: 10 }}>

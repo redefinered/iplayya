@@ -5,10 +5,17 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   isLoggedIn: false,
-  signedUp: false
+  signedUp: false,
+  networkInfo: null
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_NETWORK_INFO]: (state, action) => {
+    return {
+      ...state,
+      networkInfo: action.data
+    };
+  },
   [Types.REGISTER_START]: (state) => {
     return {
       ...state,

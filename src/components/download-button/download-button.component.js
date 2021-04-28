@@ -18,6 +18,7 @@ import {
   selectDownloadUrl,
   selectMovie
 } from 'modules/ducks/movies/movies.selectors';
+import { selectNetworkInfo } from 'modules/ducks/auth/auth.selectors';
 
 const DownloadButton = ({
   theme,
@@ -39,7 +40,9 @@ const DownloadButton = ({
   // eslint-disable-next-line react/prop-types
   downloadStartedAction,
   // eslint-disable-next-line react/prop-types
-  downloadStartFailureAction
+  downloadStartFailureAction,
+
+  networkInfo
 }) => {
   const [files, setFiles] = React.useState([]);
   // const [downloading, setDownloading] = React.useState(false);
@@ -117,16 +120,19 @@ const DownloadButton = ({
 
   // console.log({ downloading });
 
+  const getColor = () => {
+    if (!networkInfo.isConnected) return 'gray';
+    if (isMovieDownloaded) return theme.iplayya.colors.vibrantpussy;
+    return 'white';
+  };
+
   return (
     <Pressable
+      disabled={!networkInfo.isConnected}
       onPress={() => handleDownloadMovie({ videoId, title: movieTitle, url: donwloadUrl })}
       style={styles.headerButtonContainer}
     >
-      <Icon
-        name="download"
-        size={24}
-        color={isMovieDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
-      />
+      <Icon name="download" size={24} color={getColor()} />
     </Pressable>
   );
 };
@@ -156,7 +162,8 @@ DownloadButton.propTypes = {
   updateDownloadsProgressAction: PropTypes.func,
   downloadsProgress: PropTypes.any,
   cleanUpDownloadsProgressAction: PropTypes.func,
-  setPermissionErrorAction: PropTypes.func
+  setPermissionErrorAction: PropTypes.func,
+  networkInfo: PropTypes.object
 };
 
 const actions = {
@@ -174,7 +181,8 @@ const mapStateToProps = createStructuredSelector({
   // movieUrl: selectMovieUrl,
   donwloadUrl: selectDownloadUrl,
   movieTitle: selectMovieTitle,
-  downloadsProgress: selectDownloadsProgress
+  downloadsProgress: selectDownloadsProgress,
+  networkInfo: selectNetworkInfo
 });
 
 export default compose(connect(mapStateToProps, actions), withTheme)(DownloadButton);

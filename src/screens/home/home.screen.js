@@ -10,11 +10,13 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
+import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { selectError } from 'modules/ducks/movies/movies.selectors';
+import NetInfo from '@react-native-community/netinfo';
 
 const Home = ({
   error,
@@ -23,7 +25,8 @@ const Home = ({
   setBottomTabsVisibleAction,
   getCategoriesAction,
   getMoviesStartAction,
-  resetCategoryPaginatorAction
+  resetCategoryPaginatorAction,
+  setNetworkInfoAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
@@ -33,6 +36,17 @@ const Home = ({
     getMoviesStartAction();
     getCategoriesAction();
     resetCategoryPaginatorAction();
+
+    // Subscribe
+    const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
+      // console.log('Connection type', type);
+      // console.log('Is connected?', isConnected);
+
+      setNetworkInfoAction({ type, isConnected });
+    });
+
+    // Unsubscribe
+    unsubscribe();
   }, []);
 
   React.useEffect(() => {
@@ -111,6 +125,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  setNetworkInfoAction: AuthActionCreators.setNetworkInfo,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   getCategoriesAction: Creators.getCategories,
   getMoviesStartAction: Creators.getMoviesStart,
