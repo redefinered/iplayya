@@ -30,7 +30,7 @@ const MediaPlayer = ({
 }) => {
   const theme = useTheme();
   const [error, setError] = React.useState(false);
-  const [showControls, setShowControls] = React.useState(false);
+  const [showControls, setShowControls] = React.useState(true);
   const [fullscreen, setFullscreen] = React.useState(false);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [volume, setVolume] = React.useState(75);
@@ -42,10 +42,9 @@ const MediaPlayer = ({
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
   const [buffering, setBuffering] = React.useState(false);
+  const [timer, setTimer] = React.useState();
 
   // console.log({ sourcex: source, type });
-
-  let timer = null;
 
   let player = React.useRef(null);
 
@@ -54,28 +53,15 @@ const MediaPlayer = ({
   };
 
   const onBuffer = () => {
-    setError(false);
+    console.log('buffering...');
     setBuffering(true);
     setShowControls(true);
-    // console.log('buffer callback');
   };
 
-  const handleOnPlaying = () => {
-    // console.log('onPlaying callback');
-    // timer = hideControls(10);
-  };
-
-  const videoError = () => {
-    setBuffering(false);
-    setError(true);
-  };
-
-  const handleProgress = (playbackInfo) => {
-    // console.log('onProgress callback');
-    setBuffering(false);
-    updatePlaybackInfoAction({ playbackInfo });
+  const handleOnPlaying = (data) => {
+    console.log('onPlaying callback', data);
     setPaused(false);
-    timer = hideControls(10);
+    setTimer(hideControls(10));
   };
 
   const hideControls = (duration = 5) => {
@@ -84,14 +70,20 @@ const MediaPlayer = ({
     }, duration * 1000);
   };
 
-  React.useEffect(() => {
-    if (paused) {
-      clearTimeout(timer);
-      setShowControls(true);
-    } else {
-      timer = hideControls(10);
-    }
-  }, [paused]);
+  const handleOnPause = () => {
+    console.log('paused');
+    setShowControls(true);
+    if (timer) clearTimeout(timer);
+  };
+
+  const videoError = () => {
+    setError(true);
+  };
+
+  const handleProgress = (playbackInfo) => {
+    setBuffering(false);
+    updatePlaybackInfoAction({ playbackInfo });
+  };
 
   const toggleVolumeSliderVisible = () => {
     setVolumeSliderVisible(!volumeSliderVisible);
@@ -130,35 +122,37 @@ const MediaPlayer = ({
   if (fullscreen)
     return (
       <FullScreenPlayer
-        currentTime={currentTime}
-        paused={paused}
-        handleProgress={handleProgress}
-        source={source}
-        player={player}
-        volume={volume}
-        thumbnail={thumbnail}
-        onBuffer={onBuffer}
-        onPlaying={() => handleOnPlaying()}
-        videoError={videoError}
-        volumeSliderVisible={volumeSliderVisible}
-        setVolume={setVolume}
-        buffering={buffering}
         title={title}
-        togglePlay={togglePlay}
+        source={source}
         handleFullscreenToggle={handleFullscreenToggle}
-        showControls={showControls}
-        setCurrentTime={setCurrentTime}
-        toggleVolumeSliderVisible={toggleVolumeSliderVisible}
-        toggleCastOptions={handleToggleCastOptions}
-        toggleVideoOptions={handleToggleVideoOptions}
-        screencastOption={screencastOption}
-        handleSelectScreencastOption={handleSelectScreencastOption}
-        setScreencastActiveState={setScreencastActiveState}
-        showCastOptions={showCastOptions}
-        showVideoOptions={showVideoOptions}
-        handleSelectResolution={handleSelectResolution}
-        setActiveState={setActiveState}
-        resolution={resolution}
+
+        // currentTime={currentTime}
+        // paused={paused}
+        // handleProgress={handleProgress}
+        // player={player}
+        // volume={volume}
+        // thumbnail={thumbnail}
+        // onBuffer={onBuffer}
+        // onPlaying={handleOnPlaying}
+        // videoError={videoError}
+        // volumeSliderVisible={volumeSliderVisible}
+        // setVolume={setVolume}
+        // buffering={buffering}
+        // togglePlay={togglePlay}
+        // handleFullscreenToggle={handleFullscreenToggle}
+        // showControls={showControls}
+        // setCurrentTime={setCurrentTime}
+        // toggleVolumeSliderVisible={toggleVolumeSliderVisible}
+        // toggleCastOptions={handleToggleCastOptions}
+        // toggleVideoOptions={handleToggleVideoOptions}
+        // screencastOption={screencastOption}
+        // handleSelectScreencastOption={handleSelectScreencastOption}
+        // setScreencastActiveState={setScreencastActiveState}
+        // showCastOptions={showCastOptions}
+        // showVideoOptions={showVideoOptions}
+        // handleSelectResolution={handleSelectResolution}
+        // setActiveState={setActiveState}
+        // resolution={resolution}
       />
     );
 
@@ -180,6 +174,8 @@ const MediaPlayer = ({
       )}
 
       <VLCPlayer
+        onPlaying={handleOnPlaying}
+        onPaused={handleOnPause}
         autoplay={false}
         ref={player}
         paused={paused}
@@ -187,9 +183,8 @@ const MediaPlayer = ({
         onProgress={handleProgress}
         source={{ uri: source }}
         volume={volume}
-        onBuffering={() => onBuffer()}
-        onPlaying={() => handleOnPlaying()}
-        onError={() => videoError()}
+        onBuffering={onBuffer}
+        onError={videoError}
         resizeMode="contain"
         style={{ width: Dimensions.get('window').width, height: 211 }}
       />

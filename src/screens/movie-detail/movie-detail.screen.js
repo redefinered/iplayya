@@ -52,7 +52,6 @@ const MovieDetailScreen = ({
   downloadStarted
 }) => {
   const [paused, setPaused] = React.useState(true);
-  const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
@@ -150,7 +149,6 @@ const MovieDetailScreen = ({
   }, [isFavListUpdated]);
 
   const handleTogglePlay = () => {
-    setLoading(true);
     setPaused(!paused);
   };
 
@@ -184,7 +182,7 @@ const MovieDetailScreen = ({
     ...otherFields
   } = movie;
 
-  console.log({ otherFields, video_urls, __typename, id });
+  // console.log({ otherFields, video_urls, __typename, id });
 
   return (
     <View style={{ marginTop: 10 }}>
@@ -209,7 +207,6 @@ const MovieDetailScreen = ({
               title={title}
               togglePlay={handleTogglePlay}
               setPaused={setPaused}
-              loading={loading}
             />
           ) : (
             <View

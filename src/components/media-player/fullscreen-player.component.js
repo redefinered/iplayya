@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, View, Dimensions, StatusBar } from 'react-native';
@@ -10,43 +12,109 @@ import Slider from '@react-native-community/slider';
 import { VLCPlayer } from 'react-native-vlc-media-player';
 
 import { urlEncodeTitle } from 'utils';
+import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const FullScreenPlayer = (props) => {
-  const {
-    currentTime,
-    paused,
-    handleProgress,
-    source,
-    player,
-    volume,
-    onBuffer,
-    onPlaying,
-    videoError,
-    volumeSliderVisible,
-    setVolume,
-    buffering,
-    title,
-    togglePlay,
-    handleFullscreenToggle,
-    showControls,
-    setCurrentTime,
-    toggleVolumeSliderVisible,
-    toggleCastOptions,
-    toggleVideoOptions,
-    screencastOption,
-    handleSelectScreencastOption,
-    setScreencastActiveState,
-    showCastOptions,
-    showVideoOptions,
-    handleSelectResolution,
-    setActiveState,
-    resolution
-  } = props;
-
+const FullScreenPlayer = ({ title, source, updatePlaybackInfoAction, handleFullscreenToggle }) => {
   const theme = useTheme();
+
+  const [paused, setPaused] = React.useState(true);
+  const [error, setError] = React.useState(false);
+  const [showControls, setShowControls] = React.useState(true);
+  // const [fullscreen, setFullscreen] = React.useState(false);
+  const [currentTime, setCurrentTime] = React.useState(0);
+  const [volume, setVolume] = React.useState(75);
+  const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
+  const [showCastOptions, setShowCastOptions] = React.useState(false);
+  const [showVideoOptions, setShowVideoOptions] = React.useState(false);
+  const [activeState, setActiveState] = React.useState(null);
+  const [screencastActiveState, setScreencastActiveState] = React.useState(null);
+  const [screencastOption, setScreencastOption] = React.useState(null);
+  const [resolution, setResolution] = React.useState('auto');
+  const [buffering, setBuffering] = React.useState(false);
+  const [timer, setTimer] = React.useState();
+
+  // console.log({ sourcex: source, type });
+
+  let player = React.useRef(null);
+
+  // const handleFullscreenToggle = () => {
+  //   setFullscreen(!fullscreen);
+  // };
+
+  // console.log({ fullscreen });
+
+  const onBuffer = () => {
+    console.log('buffering...');
+    setBuffering(true);
+    setShowControls(true);
+  };
+
+  const handleOnPlaying = (data) => {
+    console.log('onPlaying callback');
+    setPaused(false);
+    setTimer(hideControls(10));
+  };
+
+  const hideControls = (duration = 5) => {
+    return setTimeout(() => {
+      setShowControls(false);
+    }, duration * 1000);
+  };
+
+  const handleOnPause = () => {
+    console.log('paused');
+    setShowControls(true);
+    if (timer) clearTimeout(timer);
+  };
+
+  const videoError = () => {
+    setError(true);
+  };
+
+  const handleProgress = (playbackInfo) => {
+    setBuffering(false);
+    updatePlaybackInfoAction({ playbackInfo });
+  };
+
+  const toggleVolumeSliderVisible = () => {
+    setVolumeSliderVisible(!volumeSliderVisible);
+  };
+
+  const handleHideCastOptions = () => {
+    setShowCastOptions(false);
+  };
+
+  const handleToggleCastOptions = () => {
+    setShowCastOptions(!showCastOptions);
+  };
+
+  const handleHideVideoOptions = () => {
+    setShowVideoOptions(false);
+  };
+
+  const handleToggleVideoOptions = () => {
+    setShowVideoOptions(!showVideoOptions);
+  };
+
+  const handleSelectResolution = (value) => {
+    setShowVideoOptions(false);
+    setResolution(value);
+    setActiveState(null);
+  };
+
+  const handleSelectScreencastOption = (val) => {
+    setShowCastOptions(false);
+    setScreencastOption(val);
+    setScreencastActiveState(null);
+  };
+
+  const togglePlay = () => {
+    setPaused(!paused);
+  };
 
   return (
     <Modal>
@@ -89,15 +157,16 @@ const FullScreenPlayer = (props) => {
 
           <VLCPlayer
             autoplay={false}
+            onPaused={handleOnPause}
             ref={player}
             paused={paused}
             seek={currentTime}
             onProgress={handleProgress}
             source={{ uri: source }}
             volume={volume}
-            onBuffering={() => onBuffer()}
-            onPlaying={() => onPlaying()}
-            onError={() => videoError()}
+            onBuffering={onBuffer}
+            onPlaying={handleOnPlaying}
+            onError={videoError}
             resizeMode="contain"
             style={{
               width: HEIGHT,
@@ -139,8 +208,8 @@ const FullScreenPlayer = (props) => {
             visible={showControls}
             setCurrentTime={setCurrentTime}
             toggleVolumeSliderVisible={toggleVolumeSliderVisible}
-            toggleCastOptions={toggleCastOptions}
-            toggleVideoOptions={toggleVideoOptions}
+            toggleCastOptions={handleToggleCastOptions}
+            toggleVideoOptions={handleToggleVideoOptions}
             screencastOption={screencastOption}
             handleSelectScreencastOption={handleSelectScreencastOption}
             setScreencastActiveState={setScreencastActiveState}
@@ -162,38 +231,8 @@ const FullScreenPlayer = (props) => {
   );
 };
 
-FullScreenPlayer.propTypes = {
-  buffering: PropTypes.bool,
-  setLoading: PropTypes.func,
-  title: PropTypes.string,
-  source: PropTypes.string,
-  thumbnail: PropTypes.string,
-  paused: PropTypes.bool,
-  togglePlay: PropTypes.func,
-  updatePlaybackInfoAction: PropTypes.func,
-  currentTime: PropTypes.number,
-  handleProgress: PropTypes.func,
-  player: PropTypes.object,
-  volume: PropTypes.number,
-  onBuffer: PropTypes.func,
-  onPlaying: PropTypes.func,
-  videoError: PropTypes.func,
-  volumeSliderVisible: PropTypes.string,
-  setVolume: PropTypes.string,
-  handleFullscreenToggle: PropTypes.string,
-  showControls: PropTypes.bool,
-  setCurrentTime: PropTypes.string,
-  toggleVolumeSliderVisible: PropTypes.any,
-  toggleCastOptions: PropTypes.func,
-  toggleVideoOptions: PropTypes.func,
-  screencastOption: PropTypes.string,
-  handleSelectScreencastOption: PropTypes.func,
-  setScreencastActiveState: PropTypes.func,
-  showCastOptions: PropTypes.bool,
-  showVideoOptions: PropTypes.bool,
-  handleSelectResolution: PropTypes.func,
-  setActiveState: PropTypes.func,
-  resolution: PropTypes.string
+const actions = {
+  updatePlaybackInfoAction: Creators.updatePlaybackInfo
 };
 
-export default FullScreenPlayer;
+export default connect(null, actions)(FullScreenPlayer);
