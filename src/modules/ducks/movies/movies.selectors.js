@@ -158,8 +158,11 @@ export const selectCurrentPosition = createSelector([moviesState], ({ playbackIn
 export const selectRemainingTime = createSelector([moviesState], ({ playbackInfo }) => {
   if (!playbackInfo) return 0;
 
-  if (typeof playbackInfo.remainingTime === 'undefined') return 0;
-  return Math.abs(playbackInfo.remainingTime / 1000);
+  const { duration, currentTime } = playbackInfo;
+
+  // if (typeof playbackInfo.remainingTime === 'undefined') return 0;
+  const remainingTime = duration - currentTime;
+  return Math.abs(remainingTime / 1000);
 });
 
 export const selectCategoryPaginator = createSelector(
