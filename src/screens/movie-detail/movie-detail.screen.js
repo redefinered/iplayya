@@ -185,7 +185,7 @@ const MovieDetailScreen = ({
   // console.log({ otherFields, video_urls, __typename, id });
 
   return (
-    <View style={{ marginTop: 10 }}>
+    <View style={{ flex: 1, marginTop: 10 }}>
       {/* Player */}
       <View>
         <Pressable
