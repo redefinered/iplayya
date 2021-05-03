@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -10,7 +9,6 @@ import { Text, List } from 'react-native-paper';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-//import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -167,8 +165,6 @@ const MovieDetailScreen = ({
     );
 
   const {
-    __typename,
-    id,
     title,
     year,
     description,
@@ -177,12 +173,8 @@ const MovieDetailScreen = ({
     director,
     thumbnail,
     is_series,
-    series,
-    video_urls,
     ...otherFields
   } = movie;
-
-  // console.log({ otherFields, video_urls, __typename, id });
 
   return (
     <View style={{ flex: 1, marginTop: 10 }}>
@@ -200,7 +192,7 @@ const MovieDetailScreen = ({
         >
           {source !== '' ? (
             <MediaPlayer
-              isSeries={movie.is_series}
+              isSeries={is_series}
               paused={paused}
               source={source}
               thumbnail={thumbnail}
@@ -235,9 +227,6 @@ const MovieDetailScreen = ({
       {/* content */}
       <ScrollView style={{ height: 300 }}>
         <ContentWrap>
-          {/* <Pressable onPress={() => toggleControlVisible()}>
-            <Text>toggle control</Text>
-          </Pressable> */}
           <Text
             style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
           >{`${title} (${year})`}</Text>
