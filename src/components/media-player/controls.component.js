@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
@@ -9,16 +10,14 @@ import moment from 'moment';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
+import { createFontFormat, toDateTime } from 'utils';
 import {
   selectPlaybackInfo,
   selectCurrentPosition,
   selectCurrentTime,
   selectRemainingTime
 } from 'modules/ducks/movies/movies.selectors';
-
-import { createFontFormat, toDateTime } from 'utils';
 
 const VideoControls = ({
   theme,
@@ -43,43 +42,6 @@ const VideoControls = ({
               controlProps.screencastActiveState === name
                 ? theme.iplayya.colors.white10
                 : 'transparent',
-            paddingHorizontal: 15
-          }}
-        >
-          <View style={{ flex: 1.5 }}>
-            <Icon name="airplay" size={20} />
-          </View>
-          <View style={{ flex: 10.5, paddingLeft: 15 }}>
-            <Text
-              style={{
-                color:
-                  controlProps.screencastOption === name
-                    ? theme.iplayya.colors.vibrantpussy
-                    : theme.colors.text,
-                ...createFontFormat(16, 22)
-              }}
-            >
-              {label}
-            </Text>
-          </View>
-        </Pressable>
-      ));
-    }
-  };
-
-  const videoSettings = () => {
-    if (controlProps.showVideoOptions) {
-      return resolutions.map(({ id, name, label }) => (
-        <Pressable
-          key={id}
-          onPressIn={() => controlProps.setActiveState(name)}
-          onPress={() => controlProps.handleSelectResolution(name)}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            height: 50,
-            backgroundColor:
-              controlProps.resolution === name ? theme.iplayya.colors.white10 : 'transparent',
             paddingHorizontal: 15
           }}
         >
@@ -199,17 +161,6 @@ const VideoControls = ({
             </Pressable> */}
             <Pressable onPress={() => controlProps.toggleVideoOptions()}>
               <Icon name="video-quality" size={25} />
-              <View
-                style={{
-                  backgroundColor: '#202530',
-                  width: 250,
-                  position: 'absolute',
-                  bottom: '100%',
-                  left: 0
-                }}
-              >
-                {videoSettings()}
-              </View>
             </Pressable>
           </View>
           <Pressable onPress={() => controlProps.toggleFullscreen()}>

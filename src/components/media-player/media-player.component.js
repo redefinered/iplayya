@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
@@ -13,10 +14,13 @@ import VerticalSlider from 'rn-vertical-slider';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import ContentWrap from 'components/content-wrap.component';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import resolutions from './video-resolutions.json';
+// import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
 import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
+import { createStructuredSelector } from 'reselect';
+import { selectVideoUrls } from 'modules/ducks/movies/movies.selectors';
+import uuid from 'react-uuid';
 
 const MediaPlayer = ({
   updatePlaybackInfoAction,
@@ -26,7 +30,9 @@ const MediaPlayer = ({
   paused,
   togglePlay,
   setPaused,
-  isSeries
+  isSeries,
+  videoUrls,
+  setSource
 }) => {
   const theme = useTheme();
   const [error, setError] = React.useState(false);
@@ -41,12 +47,35 @@ const MediaPlayer = ({
   const [screencastActiveState, setScreencastActiveState] = React.useState(null);
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
+  const [resolutions, setResolutions] = React.useState([]);
   const [buffering, setBuffering] = React.useState(false);
   const [timer, setTimer] = React.useState();
 
-  // console.log({ sourcex: source, type });
-
   let player = React.useRef(null);
+
+  React.useEffect(() => {
+    const resolutions = videoUrls.map(({ quality, link }, index) => {
+      const name = quality.toLowerCase();
+      const qsplit = name.split(' ');
+      const qjoin = qsplit.join('_');
+
+      return { id: index, name: `${qjoin}_${uuid()}`, label: quality, link };
+    });
+
+    /**
+     * TODO: select lowest resolution depending on internet connection speed
+     * select first one for now
+     */
+    resolutions.unshift({ id: 'auto', name: 'auto', label: 'Auto', link: videoUrls[0].link });
+    setResolutions(resolutions);
+  }, [videoUrls]);
+
+  React.useEffect(() => {
+    let r = resolutions.find(({ name }) => name === resolution);
+
+    if (typeof r === 'undefined') return;
+    setSource(r.link.split(' ')[1]);
+  }, [resolution]);
 
   const handleFullscreenToggle = () => {
     setFullscreen(!fullscreen);
@@ -118,6 +147,7 @@ const MediaPlayer = ({
   };
 
   // console.log('source', source);
+  // console.log({ resolutions });
 
   if (fullscreen)
     return (
@@ -340,4 +370,6 @@ const actions = {
   updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
 };
 
-export default connect(null, actions)(MediaPlayer);
+const mapStateToProps = createStructuredSelector({ videoUrls: selectVideoUrls });
+
+export default connect(mapStateToProps, actions)(MediaPlayer);

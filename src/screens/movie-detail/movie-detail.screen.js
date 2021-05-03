@@ -78,6 +78,10 @@ const MovieDetailScreen = ({
     }
   }, [downloadStarted]);
 
+  const handleSourceSet = (src) => {
+    setSource(src);
+  };
+
   const hideSnackbar = () => {
     setTimeout(() => {
       setShowSnackbar(false);
@@ -199,6 +203,7 @@ const MovieDetailScreen = ({
               title={title}
               togglePlay={handleTogglePlay}
               setPaused={setPaused}
+              setSource={handleSourceSet}
             />
           ) : (
             <View

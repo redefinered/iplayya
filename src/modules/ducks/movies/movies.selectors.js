@@ -169,3 +169,11 @@ export const selectCategoryPaginator = createSelector(
   [moviesState],
   ({ categoryPaginator }) => categoryPaginator
 );
+
+export const selectVideoUrls = createSelector([moviesState], ({ movie }) => {
+  if (!movie) return [];
+
+  if (!movie.video_urls) return [];
+
+  return movie.video_urls;
+});
