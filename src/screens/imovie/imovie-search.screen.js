@@ -58,10 +58,18 @@ const ImovieSearchScreen = ({
     []
   );
 
-  const handleItemPress = (videoId) => {
+  const handleItemPress = ({ id: videoId, is_series }) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('MovieDetailScreen', { videoId });
+    // navigation.navigate('MovieDetailScreen', { videoId });
+    if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+    navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   };
+
+  // const handleMovieSelect = ({ id: videoId, is_series }) => {
+  //   console.log({ videoId, is_series });
+  //   if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+  //   navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
+  // };
 
   const handleCategoryPress = (categoryId, title) => {
     navigation.navigate('ImovieScreen', { categoryId, categoryName: title });
@@ -97,8 +105,9 @@ const ImovieSearchScreen = ({
             Search Results
           </Text>
           <ScrollView>
-            {results.map(({ id, title }) => (
-              <TouchableRipple key={id} onPress={() => handleItemPress(id)}>
+            {results.map(({ id, title, is_series }) => (
+              // Set is_series to true fron now
+              <TouchableRipple key={id} onPress={() => handleItemPress({ id, is_series })}>
                 <Text
                   style={{
                     ...createFontFormat(16, 22),

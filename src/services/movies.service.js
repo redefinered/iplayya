@@ -41,6 +41,7 @@ export const getMoviesByCategories = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     if (error.graphQLErrors.length) {
       throw new Error(error.graphQLErrors[0].extensions.reason);
     }

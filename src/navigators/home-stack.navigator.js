@@ -23,6 +23,7 @@ import IsportsScreen from 'screens/isports/isports.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
+import SeriesDetailScreen from 'screens/series-detail/series-detail.screen';
 import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-detail-downloaded.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
@@ -244,6 +245,37 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
       <Stack.Screen
         name="MovieDetailScreen"
         component={MovieDetailScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={(props) => {
+          const {
+            route: {
+              params: { videoId }
+            }
+          } = props;
+
+          const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+
+          return {
+            title: null,
+            headerRight: () => (
+              <View style={{ flexDirection: 'row' }}>
+                <AddToFavoritesButton
+                  videoId={parseInt(videoId)}
+                  alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                />
+                <DownloadButton videoId={videoId} />
+              </View>
+            )
+          };
+        }}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="SeriesDetailScreen"
+        component={SeriesDetailScreen}
         // eslint-disable-next-line no-unused-vars
         options={(props) => {
           const {

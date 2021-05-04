@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, Image, FlatList, Platform, View, Text } from 'react-native';
@@ -42,9 +43,18 @@ const CategoryScrollList = ({
   };
 
   // eslint-disable-next-line react/prop-types
-  const renderItem = ({ item: { id, thumbnail: uri, title } }) => {
+  const renderItem = ({ item: { id, thumbnail: uri, title, is_series } }) => {
     return (
-      <TouchableOpacity style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
+      /**
+       * ADDING STATIC VALUES FOR DEVELOPMENT OF SERIES VIDEOS
+       * USING GAME OF THRONES SERIES
+       */
+      // <TouchableOpacity style={{ marginRight: 10 }} onPress={() => onSelect({ id, is_series })}>
+      // eslint-disable-next-line prettier/prettier
+      <TouchableOpacity
+        style={{ marginRight: 10 }}
+        onPress={() => onSelect({ id: 316, is_series: true })}
+      >
         {renderThumbnail(uri, title)}
       </TouchableOpacity>
     );

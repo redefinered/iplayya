@@ -1,0 +1,25 @@
+{
+  "data": {
+    "video": {
+      "id": "36928",
+      "title": "1 Buck",
+      "description": "Shifting from one pocket to another, from one man's drama to another, a lowly dollar bill, 'one buck' takes us on an odyssey through the heart of a forgotten town in Louisiana.",
+      "category": "Action",
+      "director": "Fabien Dufils",
+      "actors": "",
+      "year": "2017",
+      "time": "0",
+      "country": "",
+      "age_rating": "",
+      "rating_mpaa": "",
+      "rating_imdb": "0",
+      "rating_kinopoisk": "10",
+      "is_hd": true,
+      "is_censored": false,
+      "rtsp_url": "ffmpeg http://89.187.191.201:80/195181164146/1Buck.mp4",
+      "is_favorite": false,
+      "thumbnail": "https://m.media-amazon.com/images/M/MV5BY2Q5YzI2NGMtNWE0Yy00YWMzLTg5NDMtODNhNzQ5MTYwOTg0XkEyXkFqcGdeQXVyNDUyMzM5NDc@._V1_SX300.jpg",
+      "cast": "John Freeman, Katie Ryan, Cassi Colvin, Will Green"
+    }
+  }
+}

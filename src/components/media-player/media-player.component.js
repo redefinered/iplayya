@@ -54,27 +54,30 @@ const MediaPlayer = ({
   let player = React.useRef(null);
 
   React.useEffect(() => {
-    const resolutions = videoUrls.map(({ quality, link }, index) => {
-      const name = quality.toLowerCase();
-      const qsplit = name.split(' ');
-      const qjoin = qsplit.join('_');
+    if (videoUrls.length) {
+      // console.log({ videoUrls });
+      const resolutions = videoUrls.map(({ quality, link }, index) => {
+        const name = quality.toLowerCase();
+        const qsplit = name.split(' ');
+        const qjoin = qsplit.join('_');
 
-      return { id: index, name: `${qjoin}_${uuid()}`, label: quality, link };
-    });
+        return { id: index, name: `${qjoin}_${uuid()}`, label: quality, link };
+      });
 
-    /**
-     * TODO: select lowest resolution depending on internet connection speed
-     * select first one for now
-     */
-    resolutions.unshift({ id: 'auto', name: 'auto', label: 'Auto', link: videoUrls[0].link });
-    setResolutions(resolutions);
+      /**
+       * TODO: select lowest resolution depending on internet connection speed
+       * select first one for now
+       */
+      resolutions.unshift({ id: 'auto', name: 'auto', label: 'Auto', link: videoUrls[0].link });
+      setResolutions(resolutions);
+    }
   }, [videoUrls]);
+
+  // console.log({ resolutions });
 
   React.useEffect(() => {
     let r = resolutions.find(({ name }) => name === resolution);
-
-    if (typeof r === 'undefined') return;
-    setSource(r.link.split(' ')[1]);
+    if (typeof r !== 'undefined') return setSource(r.link.split(' ')[1]);
   }, [resolution]);
 
   const handleFullscreenToggle = () => {
@@ -146,8 +149,9 @@ const MediaPlayer = ({
     setScreencastActiveState(null);
   };
 
-  // console.log('source', source);
+  // console.log({ source, resolution, resolutions });
   // console.log({ resolutions });
+  console.log('source', source);
 
   if (fullscreen)
     return (

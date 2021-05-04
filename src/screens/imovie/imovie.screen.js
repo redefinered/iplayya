@@ -106,8 +106,10 @@ const ImovieScreen = ({
     }
   }, [paginatorInfo]);
 
-  const handleMovieSelect = (videoId) => {
-    navigation.navigate('MovieDetailScreen', { videoId });
+  const handleMovieSelect = ({ id: videoId, is_series }) => {
+    console.log({ videoId, is_series });
+    if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+    navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   };
 
   const renderEmpty = () => {
@@ -149,7 +151,7 @@ const ImovieScreen = ({
     );
   };
 
-  // console.log({ movies });
+  console.log({ data });
 
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
