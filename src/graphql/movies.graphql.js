@@ -45,10 +45,12 @@ export const GET_MOVIE = gql`
       series {
         title
         season
-        episode
-        video_urls {
-          link
-          quality
+        episodes {
+          episode
+          video_urls {
+            quality
+            link
+          }
         }
       }
       video_urls {
