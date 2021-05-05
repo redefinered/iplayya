@@ -269,10 +269,18 @@ const SeriesDetailScreen = ({
     category,
     director,
     thumbnail,
-    is_series,
     series,
     ...otherFields
   } = seriesdata;
+
+  if (!series)
+    return (
+      <ContentWrap>
+        <Text>Working...</Text>
+      </ContentWrap>
+    );
+
+  // console.log('xxxxxx', series);
 
   return (
     <View style={{ flex: 1, marginTop: 10 }}>
@@ -290,7 +298,7 @@ const SeriesDetailScreen = ({
         >
           {source !== '' ? (
             <MediaPlayer
-              isSeries={is_series}
+              multipleMedia={true}
               paused={paused}
               source={source}
               thumbnail={thumbnail}
@@ -390,7 +398,7 @@ const SeriesDetailScreen = ({
           </Pressable>
         </ContentWrap>
 
-        <ContentWrap>
+        <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
           {series.map(({ season }, index) => {
             const { episodes } = series[index];
             return (
