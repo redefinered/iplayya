@@ -18,7 +18,18 @@ import { Creators } from 'modules/ducks/movies/movies.actions';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 
-const FullScreenPlayer = ({ title, source, updatePlaybackInfoAction, handleFullscreenToggle }) => {
+const FullScreenPlayer = ({
+  title,
+  seriesTitle,
+  source,
+  updatePlaybackInfoAction,
+  handleFullscreenToggle,
+  multipleMedia,
+  previousAction,
+  nextAction,
+  isFirstEpisode,
+  isLastEpisode
+}) => {
   const theme = useTheme();
 
   const [paused, setPaused] = React.useState(true);
@@ -199,9 +210,10 @@ const FullScreenPlayer = ({ title, source, updatePlaybackInfoAction, handleFulls
           {/* media player controls */}
           <Controls
             volume={volume}
-            multipleMedia={false}
+            multipleMedia={multipleMedia}
             buffering={buffering}
             title={title}
+            seriesTitle={seriesTitle}
             togglePlay={togglePlay}
             paused={paused}
             toggleFullscreen={handleFullscreenToggle}
@@ -224,6 +236,10 @@ const FullScreenPlayer = ({ title, source, updatePlaybackInfoAction, handleFulls
               width: HEIGHT,
               height: WIDTH
             }}
+            previousAction={previousAction}
+            nextAction={nextAction}
+            isFirstEpisode={isFirstEpisode}
+            isLastEpisode={isLastEpisode}
           />
         </View>
       </View>

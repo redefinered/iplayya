@@ -29,6 +29,7 @@ const VideoControls = ({
   nextAction,
   isFirstEpisode,
   isLastEpisode,
+  multipleMedia,
   ...controlProps
 }) => {
   const screencastOptions = () => {
@@ -120,7 +121,7 @@ const VideoControls = ({
           zIndex: 100
         }}
       >
-        {controlProps.multipleMedia ? (
+        {multipleMedia && (
           <Pressable onPress={() => previousAction()} disabled={isFirstEpisode}>
             <Icon
               name="previous"
@@ -128,7 +129,7 @@ const VideoControls = ({
               style={{ color: isFirstEpisode ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>
-        ) : null}
+        )}
         <Pressable onPress={() => controlProps.togglePlay()}>
           {buffering ? (
             <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />
@@ -140,7 +141,7 @@ const VideoControls = ({
             />
           )}
         </Pressable>
-        {controlProps.multipleMedia ? (
+        {multipleMedia && (
           <Pressable onPress={() => nextAction()} disabled={isLastEpisode}>
             <Icon
               name="next"
@@ -148,7 +149,7 @@ const VideoControls = ({
               style={{ color: isLastEpisode ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>
-        ) : null}
+        )}
       </View>
 
       <View style={{ position: 'relative', zIndex: 101 }}>

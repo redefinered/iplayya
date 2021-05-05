@@ -107,7 +107,6 @@ const ImovieScreen = ({
   }, [paginatorInfo]);
 
   const handleMovieSelect = ({ id: videoId, is_series }) => {
-    console.log({ videoId, is_series });
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
     navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   };
@@ -150,8 +149,6 @@ const ImovieScreen = ({
       </Banner>
     );
   };
-
-  console.log({ data });
 
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;

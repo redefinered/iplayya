@@ -31,7 +31,7 @@ const MediaPlayer = ({
   paused,
   togglePlay,
   setPaused,
-  isSeries,
+  multipleMedia,
   videoUrls,
   setSource,
   previousAction,
@@ -60,7 +60,6 @@ const MediaPlayer = ({
 
   React.useEffect(() => {
     if (videoUrls.length) {
-      // console.log({ videoUrls });
       const resolutions = videoUrls.map(({ quality, link }, index) => {
         const name = quality.toLowerCase();
         const qsplit = name.split(' ');
@@ -77,8 +76,6 @@ const MediaPlayer = ({
       setResolutions(resolutions);
     }
   }, [videoUrls]);
-
-  // console.log({ resolutions });
 
   React.useEffect(() => {
     let r = resolutions.find(({ name }) => name === resolution);
@@ -156,14 +153,20 @@ const MediaPlayer = ({
 
   // console.log({ source, resolution, resolutions });
   // console.log({ resolutions });
-  console.log('source', source);
+  // console.log('source', source);
 
   if (fullscreen)
     return (
       <FullScreenPlayer
         title={title}
+        seriesTitle={seriesTitle}
+        multipleMedia={multipleMedia}
         source={source}
         handleFullscreenToggle={handleFullscreenToggle}
+        previousAction={previousAction}
+        nextAction={nextAction}
+        isFirstEpisode={isFirstEpisode}
+        isLastEpisode={isLastEpisode}
 
         // currentTime={currentTime}
         // paused={paused}
@@ -248,7 +251,7 @@ const MediaPlayer = ({
       <Controls
         volume={volume}
         buffering={buffering}
-        multipleMedia={isSeries}
+        multipleMedia={multipleMedia}
         title={title}
         seriesTitle={seriesTitle}
         togglePlay={togglePlay}
@@ -376,7 +379,7 @@ MediaPlayer.propTypes = {
   togglePlay: PropTypes.func,
   setPaused: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
-  isSeries: PropTypes.bool,
+  multipleMedia: PropTypes.bool,
   videoSource: PropTypes.string
 };
 
