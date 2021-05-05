@@ -24,6 +24,11 @@ export const selectDownloadUrl = createSelector([moviesState], ({ movie }) => {
   return mp4url.split(' ')[1];
 });
 
+/**
+ * for initial video source
+ * get the first m3u8 source
+ * if no m3u8 found get the first mp4 source
+ */
 export const selectUrlForVodPlayer = createSelector([moviesState], ({ movie }) => {
   if (!movie) return;
 
@@ -170,7 +175,7 @@ export const selectCategoryPaginator = createSelector(
   ({ categoryPaginator }) => categoryPaginator
 );
 
-export const selectVideoUrls = createSelector([moviesState], ({ movie }) => {
+export const selectMovieVideoUrls = createSelector([moviesState], ({ movie }) => {
   if (!movie) return [];
 
   if (!movie.video_urls) return [];

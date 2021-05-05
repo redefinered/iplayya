@@ -20,7 +20,8 @@ import {
   selectMovie,
   selectPlaybackInfo,
   selectUpdatedFavoritesCheck,
-  selectUrlForVodPlayer
+  selectUrlForVodPlayer,
+  selectMovieVideoUrls
 } from 'modules/ducks/movies/movies.selectors';
 import {
   selectIsFetching as selectDownloading,
@@ -47,7 +48,8 @@ const MovieDetailScreen = ({
 
   downloadsIsFetching,
   downloadStartAction,
-  downloadStarted
+  downloadStarted,
+  videoUrls
 }) => {
   const [paused, setPaused] = React.useState(true);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
@@ -116,6 +118,7 @@ const MovieDetailScreen = ({
       const { is_series } = movie;
       let videoUrl = '';
 
+      // initial video source
       if (is_series) {
         /// for testing
         videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
@@ -204,6 +207,7 @@ const MovieDetailScreen = ({
               togglePlay={handleTogglePlay}
               setPaused={setPaused}
               setSource={handleSourceSet}
+              videoUrls={videoUrls}
             />
           ) : (
             <View
@@ -347,7 +351,8 @@ const mapStateToProps = createStructuredSelector({
   playbackInfo: selectPlaybackInfo,
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
-  downloadStarted: selectDownloadStarted
+  downloadStarted: selectDownloadStarted,
+  videoUrls: selectMovieVideoUrls
 });
 
 const enhance = compose(

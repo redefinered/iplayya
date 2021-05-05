@@ -31,13 +31,26 @@ import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 // import { data as dummydata } from './sample-video-series.json';
 
+export const selectSource = (videourls) => {
+  const urls = videourls.map(({ link }) => link);
+  const mp4url = urls.find((url) => !url.includes('video.m3u8'));
+  const m3u8url = urls.find((url) => url.includes('m3u8'));
+
+  // return an empty string if
+  if (typeof mp4url === 'undefined' && typeof m3u8url === 'undefined') return '';
+
+  if (typeof m3u8url === 'undefined') return mp4url.split(' ')[1];
+
+  return m3u8url.split(' ')[1];
+};
+
 const SeriesDetailScreen = ({
   theme,
   error,
   route: {
     params: { videoId }
   },
-  movie: movieseries,
+  movie: seriesdata,
   // videoSource,
   playbackStartAction,
   getMovieAction,
@@ -56,7 +69,12 @@ const SeriesDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
-  const [currentEpisode, setCurrentEpisode] = React.useState({ season: 1, episode: 1 });
+  const [videoUrls, setVideoUrls] = React.useState([]);
+  const [season, setSeason] = React.useState(1);
+  const [episode, setEpisode] = React.useState(1);
+  const [isFirstEpisode, setIsFirstEpisode] = React.useState(true);
+  const [isLastEpisode, setIsLastEpisode] = React.useState(false);
+  const [seriesTitle, setSeriesTitle] = React.useState();
 
   React.useEffect(() => {
     listDownloadedFiles();
@@ -84,9 +102,60 @@ const SeriesDetailScreen = ({
     }
   }, [downloadStarted]);
 
-  // eslint-disable-next-line no-unused-vars
   const handleNextEpisode = () => {
-    setCurrentEpisode({ season: 1, episode: 2 });
+    const { series } = seriesdata;
+    const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+
+    setIsFirstEpisode(false);
+
+    /// total number of seasons
+    const totalSeasons = series.length;
+    /// total number of episodes of last season
+    const totalEpisodesOfLastSeason = series[totalSeasons - 1].episodes.length;
+
+    console.log({ totalSeasons, totalEpisodesOfLastSeason });
+
+    const nextSeason = season + 1; // the supposed next season
+    const nextEpisode = episode + 1; // the supposed next episode
+
+    console.log({ season, episode, nextSeason, nextEpisode });
+
+    if (episodes.length < nextEpisode) {
+      /// cancel action if no episodes left
+      if (nextSeason > totalSeasons && nextEpisode > episodes.length) return setIsLastEpisode(true);
+
+      setSeason(season + 1);
+      setEpisode(1);
+      setIsLastEpisode(false);
+      return;
+    }
+
+    setEpisode(episode + 1);
+  };
+
+  const handlePreviousEpisode = () => {
+    setIsLastEpisode(false);
+
+    const { series } = seriesdata;
+
+    const prevSeason = season - 1; // the supposed previous season
+    const prevEpisode = episode - 1; // the supposed previous episode
+
+    console.log({ season, episode, prevSeason, prevEpisode });
+
+    if (prevEpisode < 1) {
+      /// cancel action if no episodes left
+      if (prevSeason < 1 && prevEpisode < 1) return setIsFirstEpisode(true);
+
+      const { episodes } = series.find(({ season: s }) => parseInt(s) === prevSeason);
+
+      setSeason(season - 1);
+      setEpisode(episodes.length);
+      setIsFirstEpisode(false);
+      return;
+    }
+
+    setEpisode(episode - 1);
   };
 
   const handleSourceSet = (src) => {
@@ -105,8 +174,8 @@ const SeriesDetailScreen = ({
   };
 
   React.useEffect(() => {
-    if (movieseries) {
-      const titlesplit = movieseries.title.split(' ');
+    if (seriesdata) {
+      const titlesplit = seriesdata.title.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
       const file = downloadedFiles.find((file) => file === filename);
@@ -120,36 +189,25 @@ const SeriesDetailScreen = ({
         }
       }
     }
-  }, [movieseries, downloadedFiles]);
+  }, [seriesdata, downloadedFiles]);
 
   React.useEffect(() => {
-    if (movieseries) {
-      // const { is_series } = movieseries;
-      // const { series } = movieseries;
-      const { series } = movieseries;
-      let videoUrl = '';
+    if (seriesdata) {
+      const { series } = seriesdata;
 
-      const { episodes } = series.find(({ season }) => parseInt(season) === currentEpisode.season);
+      /// set title
+      setSeriesTitle(`S${season} E${episode}`);
 
-      const episodedata = episodes.find(
-        ({ episode }) => parseInt(episode) === currentEpisode.episode
-      );
+      const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+
+      const episodedata = episodes.find(({ episode: e }) => parseInt(e) === episode);
       console.log({ episodedata });
 
-      // const { video_urls } = episodedata;
+      setVideoUrls(episodedata.video_urls);
 
-      // videoUrl = video_urls[0].link.split(' ')[1];
+      const defaultSource = selectSource(episodedata.video_urls);
 
-      // console.log({ episodedata, series, video_urls });
-
-      // if (is_series) {
-      //   /// for testing
-      //   videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
-      // } else {
-      //   videoUrl = videoSource;
-      // }
-
-      const { title: movieTitle } = movieseries;
+      const { title: movieTitle } = seriesdata;
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
@@ -164,10 +222,10 @@ const SeriesDetailScreen = ({
       } else {
         // let src = videoUrl;
         // let setsrc = src === '' ? null : src;
-        setSource(videoUrl);
+        setSource(defaultSource);
       }
     }
-  }, [movieseries, isDownloaded]);
+  }, [seriesdata, isDownloaded, episode, season]);
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -187,7 +245,7 @@ const SeriesDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movieseries)
+  if (!seriesdata)
     return (
       <ContentWrap>
         <Text>Working...</Text>
@@ -204,7 +262,7 @@ const SeriesDetailScreen = ({
     thumbnail,
     is_series,
     ...otherFields
-  } = movieseries;
+  } = seriesdata;
 
   return (
     <View style={{ flex: 1, marginTop: 10 }}>
@@ -227,9 +285,15 @@ const SeriesDetailScreen = ({
               source={source}
               thumbnail={thumbnail}
               title={title}
+              seriesTitle={seriesTitle}
               togglePlay={handleTogglePlay}
               setPaused={setPaused}
               setSource={handleSourceSet}
+              videoUrls={videoUrls}
+              previousAction={handlePreviousEpisode}
+              nextAction={handleNextEpisode}
+              isFirstEpisode={isFirstEpisode}
+              isLastEpisode={isLastEpisode}
             />
           ) : (
             <View
