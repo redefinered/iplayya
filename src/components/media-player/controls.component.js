@@ -25,6 +25,10 @@ const VideoControls = ({
   position,
   remainingTime,
   buffering,
+  previousAction,
+  nextAction,
+  isFirstEpisode,
+  isLastEpisode,
   ...controlProps
 }) => {
   const screencastOptions = () => {
@@ -85,7 +89,7 @@ const VideoControls = ({
         }}
       >
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
-          {controlProps.title}
+          {controlProps.seriesTitle || controlProps.title}
         </Text>
         <Pressable
           onPress={() => controlProps.toggleCastOptions()}
@@ -117,8 +121,12 @@ const VideoControls = ({
         }}
       >
         {controlProps.multipleMedia ? (
-          <Pressable>
-            <Icon name="previous" size={35} style={{ color: theme.iplayya.colors.white25 }} />
+          <Pressable onPress={() => previousAction()} disabled={isFirstEpisode}>
+            <Icon
+              name="previous"
+              size={35}
+              style={{ color: isFirstEpisode ? theme.iplayya.colors.white25 : 'white' }}
+            />
           </Pressable>
         ) : null}
         <Pressable onPress={() => controlProps.togglePlay()}>
@@ -133,8 +141,12 @@ const VideoControls = ({
           )}
         </Pressable>
         {controlProps.multipleMedia ? (
-          <Pressable>
-            <Icon name="next" size={35} />
+          <Pressable onPress={() => nextAction()} disabled={isLastEpisode}>
+            <Icon
+              name="next"
+              size={35}
+              style={{ color: isLastEpisode ? theme.iplayya.colors.white25 : 'white' }}
+            />
           </Pressable>
         ) : null}
       </View>

@@ -27,12 +27,17 @@ const MediaPlayer = ({
   source,
   thumbnail,
   title,
+  seriesTitle,
   paused,
   togglePlay,
   setPaused,
   isSeries,
   videoUrls,
-  setSource
+  setSource,
+  previousAction,
+  nextAction,
+  isFirstEpisode,
+  isLastEpisode
 }) => {
   const theme = useTheme();
   const [error, setError] = React.useState(false);
@@ -245,6 +250,7 @@ const MediaPlayer = ({
         buffering={buffering}
         multipleMedia={isSeries}
         title={title}
+        seriesTitle={seriesTitle}
         togglePlay={togglePlay}
         paused={paused}
         toggleFullscreen={handleFullscreenToggle}
@@ -254,6 +260,10 @@ const MediaPlayer = ({
         toggleVolumeSliderVisible={toggleVolumeSliderVisible}
         toggleCastOptions={handleToggleCastOptions}
         toggleVideoOptions={handleToggleVideoOptions}
+        previousAction={previousAction}
+        nextAction={nextAction}
+        isFirstEpisode={isFirstEpisode}
+        isLastEpisode={isLastEpisode}
       />
 
       {/* screencast option */}
@@ -374,6 +384,6 @@ const actions = {
   updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
 };
 
-const mapStateToProps = createStructuredSelector({ videoUrls: selectVideoUrls });
+// const mapStateToProps = createStructuredSelector({ videoUrls: selectVideoUrls });
 
-export default connect(mapStateToProps, actions)(MediaPlayer);
+export default connect(null, actions)(MediaPlayer);
