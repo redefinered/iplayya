@@ -115,6 +115,7 @@ export const SEARCH = gql`
     videos(input: $input) {
       id
       title
+      is_series
     }
   }
 `;

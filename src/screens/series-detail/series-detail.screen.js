@@ -195,6 +195,8 @@ const SeriesDetailScreen = ({
     if (seriesdata) {
       const { series } = seriesdata;
 
+      if (!series) return;
+
       /// set title
       setSeriesTitle(`S${season} E${episode}`);
 
@@ -238,6 +240,13 @@ const SeriesDetailScreen = ({
     setPaused(!paused);
   };
 
+  const handleEpisodeSelect = (data) => {
+    const { season, episode } = data;
+
+    setSeason(parseInt(season));
+    setEpisode(parseInt(episode));
+  };
+
   if (error)
     return (
       <ContentWrap>
@@ -261,6 +270,7 @@ const SeriesDetailScreen = ({
     director,
     thumbnail,
     is_series,
+    series,
     ...otherFields
   } = seriesdata;
 
@@ -379,6 +389,33 @@ const SeriesDetailScreen = ({
             </View>
           </Pressable>
         </ContentWrap>
+
+        <ContentWrap>
+          {series.map(({ season }, index) => {
+            const { episodes } = series[index];
+            return (
+              <List.Accordion
+                key={index}
+                title={`Season ${season}`}
+                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+              >
+                {episodes.map(({ episode }, index) => {
+                  return (
+                    <List.Item
+                      key={index}
+                      onPress={() => handleEpisodeSelect({ season, episode })}
+                      titleStyle={{ marginBottom: -10 }}
+                      title={
+                        <Text style={{ ...createFontFormat(14, 20) }}>{`Episode ${episode}`}</Text>
+                      }
+                    />
+                  );
+                })}
+              </List.Accordion>
+            );
+          })}
+        </ContentWrap>
       </ScrollView>
 
       {/* loader for download starting */}
@@ -433,7 +470,6 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   movie: selectMovie,
-  // videoSource: selectUrlForVodPlayer,
   playbackInfo: selectPlaybackInfo,
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
