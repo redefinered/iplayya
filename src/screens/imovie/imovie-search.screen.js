@@ -59,10 +59,11 @@ const ImovieSearchScreen = ({
   );
 
   const handleItemPress = ({ id: videoId, is_series }) => {
+    // console.log({ videoId, is_series });
     // navigate to chanel details screen with `id` parameter
     // navigation.navigate('MovieDetailScreen', { videoId });
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
-    navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
+    navigation.navigate('MovieDetailScreen', { videoId });
   };
 
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
