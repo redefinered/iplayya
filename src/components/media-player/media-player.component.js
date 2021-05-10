@@ -59,6 +59,7 @@ const MediaPlayer = ({
   let player = React.useRef(null);
 
   React.useEffect(() => {
+    // if (typeof videoUrls === 'undefined') return;
     if (videoUrls.length) {
       const resolutions = videoUrls.map(({ quality, link }, index) => {
         const name = quality.toLowerCase();
@@ -167,34 +168,6 @@ const MediaPlayer = ({
         nextAction={nextAction}
         isFirstEpisode={isFirstEpisode}
         isLastEpisode={isLastEpisode}
-
-        // currentTime={currentTime}
-        // paused={paused}
-        // handleProgress={handleProgress}
-        // player={player}
-        // volume={volume}
-        // thumbnail={thumbnail}
-        // onBuffer={onBuffer}
-        // onPlaying={handleOnPlaying}
-        // videoError={videoError}
-        // volumeSliderVisible={volumeSliderVisible}
-        // setVolume={setVolume}
-        // buffering={buffering}
-        // togglePlay={togglePlay}
-        // handleFullscreenToggle={handleFullscreenToggle}
-        // showControls={showControls}
-        // setCurrentTime={setCurrentTime}
-        // toggleVolumeSliderVisible={toggleVolumeSliderVisible}
-        // toggleCastOptions={handleToggleCastOptions}
-        // toggleVideoOptions={handleToggleVideoOptions}
-        // screencastOption={screencastOption}
-        // handleSelectScreencastOption={handleSelectScreencastOption}
-        // setScreencastActiveState={setScreencastActiveState}
-        // showCastOptions={showCastOptions}
-        // showVideoOptions={showVideoOptions}
-        // handleSelectResolution={handleSelectResolution}
-        // setActiveState={setActiveState}
-        // resolution={resolution}
       />
     );
 
@@ -386,7 +359,5 @@ MediaPlayer.propTypes = {
 const actions = {
   updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
 };
-
-// const mapStateToProps = createStructuredSelector({ videoUrls: selectVideoUrls });
 
 export default connect(null, actions)(MediaPlayer);
