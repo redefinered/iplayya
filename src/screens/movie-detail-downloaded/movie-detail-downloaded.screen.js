@@ -21,7 +21,8 @@ import {
   selectMovie,
   selectPlaybackInfo,
   selectUpdatedFavoritesCheck,
-  selectUrlForVodPlayer
+  selectUrlForVodPlayer,
+  selectMovieVideoUrls
 } from 'modules/ducks/movies/movies.selectors';
 import {
   selectIsFetching as selectDownloading,
@@ -32,6 +33,8 @@ import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 
 const MovieDetailScreen = ({
+  navigation,
+
   theme,
   error,
   route: {
@@ -47,24 +50,27 @@ const MovieDetailScreen = ({
 
   downloadsIsFetching,
   downloadStartAction,
-  downloadStarted
+  downloadStarted,
+
+  videoUrls
 }) => {
   const [paused, setPaused] = React.useState(true);
+  const [title, setTitle] = React.useState('');
   const [loading, setLoading] = React.useState(false);
-  const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
+  const [isMovieDownloaded] = React.useState(true);
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
 
   React.useEffect(() => {
-    listDownloadedFiles();
-    downloadStartAction();
-    playbackStartAction();
-    getMovieStartAction();
-    addMovieToFavoritesStartAction();
-    if (typeof videoId !== 'undefined') {
-      getMovieAction(movie.id);
-    }
+    // listDownloadedFiles();
+    // downloadStartAction();
+    // playbackStartAction();
+    // getMovieStartAction();
+    // addMovieToFavoritesStartAction();
+    // if (typeof videoId !== 'undefined') {
+    //   getMovieAction(movie.id);
+    // }
   }, []);
 
   React.useEffect(() => {
@@ -94,42 +100,6 @@ const MovieDetailScreen = ({
 
   React.useEffect(() => {
     if (movie) {
-      const titlesplit = movie.title.split(' ');
-      const title = titlesplit.join('_');
-      const filename = `${movie.id}_${title}.mp4`;
-      const file = downloadedFiles.find((file) => file === filename);
-
-      // check if downloaded
-      if (downloadedFiles.length) {
-        if (typeof file !== 'undefined') {
-          setIsMoviedownloaded(true);
-        } else {
-          setIsMoviedownloaded(false);
-        }
-      }
-    }
-  }, [movie, downloadedFiles]);
-
-  React.useEffect(() => {
-    if (movie) {
-      const titlesplit = movie.title.split(' ');
-      const title = titlesplit.join('_');
-      const filename = `${movie.id}_${title}.mp4`;
-      const file = downloadedFiles.find((file) => file === filename);
-
-      // check if downloaded
-      if (downloadedFiles.length) {
-        if (typeof file !== 'undefined') {
-          setIsMoviedownloaded(true);
-        } else {
-          setIsMoviedownloaded(false);
-        }
-      }
-    }
-  }, [movie, downloadedFiles]);
-
-  React.useEffect(() => {
-    if (movie) {
       const { is_series } = movie;
       let videoUrl = '';
 
@@ -143,52 +113,23 @@ const MovieDetailScreen = ({
       const { title: movieTitle } = movie;
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
-      const filename = `${movie.id}_${title}.mp4`;
+      const filename = is_series
+        ? `${movie.id}${movie.ep}_${title}_${movie.ep}.mp4`
+        : `${movie.id}_${title}.mp4`;
 
-      // set source
-      if (isMovieDownloaded) {
-        let src =
-          Platform.OS === 'ios'
-            ? `file://${downloadPath}/${filename}`
-            : `${downloadPath}/${filename}`;
-        setSource(src); /// file:// teqnique only works on iOS
-      } else {
-        // let src = videoUrl;
-        // let setsrc = src === '' ? null : src;
-        setSource(videoUrl);
-      }
+      let src =
+        Platform.OS === 'ios'
+          ? `file://${downloadPath}/${filename}`
+          : `${downloadPath}/${filename}`;
+
+      setSource(src); /// file://
+
+      /// set title
+      const { title: movietitle, ep } = movie;
+      const t = ep ? `${movietitle} ${ep}` : movietitle;
+      setTitle(t);
     }
-
-    if (movie) {
-      const { is_series } = movie;
-      let videoUrl = '';
-
-      if (is_series) {
-        /// for testing
-        videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
-      } else {
-        videoUrl = videoSource;
-      }
-
-      const { title: movieTitle } = movie;
-      const titlesplit = movieTitle.split(' ');
-      const title = titlesplit.join('_');
-      const filename = `${movie.id}_${title}.mp4`;
-
-      // set source
-      if (isMovieDownloaded) {
-        let src =
-          Platform.OS === 'ios'
-            ? `file://${downloadPath}/${filename}`
-            : `${downloadPath}/${filename}`;
-        setSource(src); /// file:// teqnique only works on iOS
-      } else {
-        // let src = videoUrl;
-        // let setsrc = src === '' ? null : src;
-        setSource(videoUrl);
-      }
-    }
-  }, [movie, movie, isMovieDownloaded]);
+  }, [movie, isMovieDownloaded]);
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -209,11 +150,11 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
+  /// render a ghost view if movie is null. that's right, hacker!!!
   if (!movie) return <View />;
 
   const {
     id,
-    title,
     year,
     description,
     rating_mpaa,
@@ -226,8 +167,6 @@ const MovieDetailScreen = ({
     __typename,
     ...otherFields
   } = movie;
-
-  console.log({ otherFields, video_urls, __typename, id });
 
   return (
     <View style={{ marginTop: 10 }}>
@@ -253,6 +192,7 @@ const MovieDetailScreen = ({
               togglePlay={handleTogglePlay}
               setPaused={setPaused}
               loading={loading}
+              videoUrls={videoUrls}
             />
           ) : (
             <View
@@ -284,9 +224,7 @@ const MovieDetailScreen = ({
           {/* <Pressable onPress={() => toggleControlVisible()}>
             <Text>toggle control</Text>
           </Pressable> */}
-          <Text
-            style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
-          >{`${title} (${year})`}</Text>
+          <Text style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}>{title}</Text>
           <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
           <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
             <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
@@ -324,7 +262,7 @@ const MovieDetailScreen = ({
             </List.Accordion>
           </List.Section>
 
-          <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
+          {/* <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
             <View style={styles.iconContainer}>
               <Icon name="circular-play" size={24} />
             </View>
@@ -339,8 +277,39 @@ const MovieDetailScreen = ({
             <View>
               <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Watch trailer</Text>
             </View>
-          </Pressable>
+          </Pressable> */}
         </ContentWrap>
+
+        {/* <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
+          {series.map(({ season }, index) => {
+            const { episodes } = series[index];
+            return (
+              <List.Accordion
+                key={index}
+                title={`Season ${season}`}
+                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+              >
+                {episodes.map(({ episode }, index) => {
+                  return (
+                    <List.Item
+                      key={index}
+                      onPress={() =>
+                        navigation.navigate('SeriesDetailScreen', {
+                          episodeFromParams: { season, episode }
+                        })
+                      }
+                      titleStyle={{ marginBottom: -10 }}
+                      title={
+                        <Text style={{ ...createFontFormat(14, 20) }}>{`Episode ${episode}`}</Text>
+                      }
+                    />
+                  );
+                })}
+              </List.Accordion>
+            );
+          })}
+        </ContentWrap> */}
       </ScrollView>
 
       {/* loader for download starting */}
@@ -399,7 +368,8 @@ const mapStateToProps = createStructuredSelector({
   playbackInfo: selectPlaybackInfo,
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
-  downloadStarted: selectDownloadStarted
+  downloadStarted: selectDownloadStarted,
+  videoUrls: selectMovieVideoUrls
 });
 
 const enhance = compose(

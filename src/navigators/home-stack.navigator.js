@@ -228,14 +228,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         // eslint-disable-next-line no-unused-vars
         options={({ navigation }) => ({
           title: 'Downloads',
-          animationEnabled: false,
-          headerRight: () => (
-            <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
-                <Icon name="search" size={24} />
-              </Pressable>
-            </View>
-          )
+          animationEnabled: false
         })}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
@@ -308,28 +301,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         name="MovieDetailDownloadedScreen"
         component={MovieDetailDownloadedScreen}
         // eslint-disable-next-line no-unused-vars
-        options={(props) => {
-          const {
-            route: {
-              params: { videoId }
-            }
-          } = props;
-
-          const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
-
-          return {
-            title: null,
-            headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <AddToFavoritesButton
-                  videoId={parseInt(videoId)}
-                  alreadyInFavorites={isInFavorites >= 0 ? true : false}
-                />
-                <DownloadButton videoId={videoId} />
-              </View>
-            )
-          };
-        }}
+        options={{ title: null }}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })

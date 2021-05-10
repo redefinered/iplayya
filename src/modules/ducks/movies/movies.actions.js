@@ -16,6 +16,8 @@ const { Types, Creators } = createActions(
     getMoviesFailure: ['error'],
     resetCategoryPaginator: [],
 
+    setEpisode: ['season', 'episode'],
+
     getCategories: [],
     getCategoriesSuccess: ['data'],
     getCategoriesFailure: ['error'],

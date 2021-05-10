@@ -9,14 +9,24 @@ export const selectIsFetching = createSelector([moviesState], ({ isFetching }) =
 export const selectMovies = createSelector([moviesState], ({ movies }) => movies);
 export const selectMovie = createSelector([moviesState], ({ movie }) => movie);
 
-export const selectDownloadUrl = createSelector([moviesState], ({ movie }) => {
+export const selectDownloadUrl = createSelector([moviesState], ({ movie, currentEpisode }) => {
   if (!movie) return;
 
-  const { video_urls } = movie;
+  let { video_urls } = movie;
+
+  // console.log('currentEpisode', currentEpisode);
+
+  if (currentEpisode) {
+    // is_series should be true at this point
+    const { season, episode } = currentEpisode;
+    const { series } = movie;
+    const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+    video_urls = episodes.find(({ episode: e }) => parseInt(e) === episode).video_urls;
+  }
 
   if (!video_urls) return '';
 
-  const urls = movie.video_urls.map(({ link }) => link);
+  const urls = video_urls.map(({ link }) => link);
   const mp4url = urls.find((url) => !url.includes('video.m3u8'));
 
   if (typeof mp4url === 'undefined') return '';
@@ -50,6 +60,7 @@ export const selectUrlForVodPlayer = createSelector([moviesState], ({ movie }) =
 
 export const selectMovieTitle = createSelector([moviesState], ({ movie }) => {
   if (!movie) return;
+
   return movie.title;
 });
 
@@ -182,3 +193,8 @@ export const selectMovieVideoUrls = createSelector([moviesState], ({ movie }) =>
 
   return movie.video_urls;
 });
+
+export const selectCurrentEpisode = createSelector(
+  [moviesState],
+  ({ currentEpisode }) => currentEpisode
+);

@@ -61,7 +61,9 @@ const SeriesDetailScreen = ({
 
   downloadsIsFetching,
   downloadStartAction,
-  downloadStarted
+  downloadStarted,
+
+  setEpisodeAction
 }) => {
   // const dummyvideo = dummydata.video;
   const [paused, setPaused] = React.useState(true);
@@ -175,7 +177,9 @@ const SeriesDetailScreen = ({
 
   React.useEffect(() => {
     if (seriesdata) {
-      const titlesplit = seriesdata.title.split(' ');
+      console.log({ seriesdata });
+      const episodetitle = `${seriesdata.title} SO${season}E${episode}`;
+      const titlesplit = episodetitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
       const file = downloadedFiles.find((file) => file === filename);
@@ -189,7 +193,7 @@ const SeriesDetailScreen = ({
         }
       }
     }
-  }, [seriesdata, downloadedFiles]);
+  }, [seriesdata, downloadedFiles, episode, season]);
 
   React.useEffect(() => {
     if (seriesdata) {
@@ -226,6 +230,9 @@ const SeriesDetailScreen = ({
         // let setsrc = src === '' ? null : src;
         setSource(defaultSource);
       }
+
+      /// set episode in reducer state
+      setEpisodeAction(season, episode);
     }
   }, [seriesdata, isDownloaded, episode, season]);
 
@@ -471,7 +478,8 @@ const actions = {
   updatePlaybackInfoAction: Creators.updatePlaybackInfo,
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
-  downloadStartAction: DownloadsCreators.downloadStart
+  downloadStartAction: DownloadsCreators.downloadStart,
+  setEpisodeAction: Creators.setEpisode
 };
 
 const mapStateToProps = createStructuredSelector({

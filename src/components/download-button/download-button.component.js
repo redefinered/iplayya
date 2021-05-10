@@ -16,7 +16,8 @@ import RNBackgroundDownloader from 'react-native-background-downloader';
 import {
   selectMovieTitle,
   selectDownloadUrl,
-  selectMovie
+  selectMovie,
+  selectCurrentEpisode
 } from 'modules/ducks/movies/movies.selectors';
 import { selectNetworkInfo } from 'modules/ducks/auth/auth.selectors';
 
@@ -26,6 +27,8 @@ const DownloadButton = ({
   videoId,
   movieTitle,
   donwloadUrl,
+
+  currentEpisode,
 
   // downloads,
   // eslint-disable-next-line no-unused-vars
@@ -44,6 +47,7 @@ const DownloadButton = ({
 
   networkInfo
 }) => {
+  const [downloadTitle, setDownloadTitle] = React.useState(movieTitle);
   const [files, setFiles] = React.useState([]);
   // const [downloading, setDownloading] = React.useState(false);
   const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
@@ -52,7 +56,26 @@ const DownloadButton = ({
     checkIfMovieIsDownlowded();
   }, []);
 
+  React.useEffect(() => {
+    /// modify title if an episode in a series is selected
+    if (currentEpisode)
+      return setDownloadTitle(`${movieTitle} SO${currentEpisode.season}E${currentEpisode.episode}`);
+
+    /// if single video just return movieTitle
+    setDownloadTitle(movieTitle);
+  }, [movieTitle, currentEpisode]);
+
   const handleDownloadMovie = async (video) => {
+    const { videoId, url, is_series, currentEpisode } = video;
+
+    let ep = '';
+
+    if (is_series) {
+      ep = `SO${currentEpisode.season}E${currentEpisode.episode}`;
+    }
+
+    const downloadId = `${videoId}${ep}`;
+
     // return if movie is already downloaded
     if (isMovieDownloaded) {
       console.log('already downloaded');
@@ -60,13 +83,13 @@ const DownloadButton = ({
     }
 
     // return if there is no available source to download
-    if (typeof video.url === 'undefined') {
+    if (typeof url === 'undefined') {
       console.log('no source');
       return;
     }
 
     try {
-      const config = getConfig(video);
+      let config = getConfig(video);
 
       let task = RNBackgroundDownloader.download(config)
         .begin((expectedBytes) => {
@@ -74,7 +97,7 @@ const DownloadButton = ({
           downloadStartedAction();
         })
         .progress((percent) => {
-          updateDownloadsProgressAction({ id: video.videoId, progress: percent * 100 });
+          updateDownloadsProgressAction({ id: downloadId, progress: percent * 100 });
         })
         .done(() => {
           console.log('Download is done!');
@@ -91,7 +114,12 @@ const DownloadButton = ({
           downloadStartFailureAction(error.message);
         });
 
-      updateDownloadsAction({ id: movie.id, task, movie });
+      updateDownloadsAction({
+        id: downloadId,
+        ep,
+        task,
+        movie
+      });
     } catch (error) {
       console.log(error.message);
     }
@@ -129,7 +157,15 @@ const DownloadButton = ({
   return (
     <Pressable
       disabled={!networkInfo.isConnected}
-      onPress={() => handleDownloadMovie({ videoId, title: movieTitle, url: donwloadUrl })}
+      onPress={() =>
+        handleDownloadMovie({
+          videoId,
+          title: downloadTitle,
+          url: donwloadUrl,
+          is_series: movie.is_series,
+          currentEpisode
+        })
+      }
       style={styles.headerButtonContainer}
     >
       <Icon name="download" size={24} color={getColor()} />
@@ -163,7 +199,8 @@ DownloadButton.propTypes = {
   downloadsProgress: PropTypes.any,
   cleanUpDownloadsProgressAction: PropTypes.func,
   setPermissionErrorAction: PropTypes.func,
-  networkInfo: PropTypes.object
+  networkInfo: PropTypes.object,
+  currentEpisode: PropTypes.object
 };
 
 const actions = {
@@ -182,7 +219,8 @@ const mapStateToProps = createStructuredSelector({
   donwloadUrl: selectDownloadUrl,
   movieTitle: selectMovieTitle,
   downloadsProgress: selectDownloadsProgress,
-  networkInfo: selectNetworkInfo
+  networkInfo: selectNetworkInfo,
+  currentEpisode: selectCurrentEpisode
 });
 
 export default compose(connect(mapStateToProps, actions), withTheme)(DownloadButton);

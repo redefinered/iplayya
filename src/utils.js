@@ -39,11 +39,16 @@ export const generateDatesFromToday = (numberDays = 7) => {
 export const downloadPath = RNBackgroundDownloader.directories.documents;
 
 export const getFilename = (video) => {
-  const { videoId, title } = video;
+  const { videoId, title, is_series, currentEpisode } = video;
 
   const titlesplit = title.split(' ');
   const titlejoin = titlesplit.join('_');
-  const filename = `${videoId}_${titlejoin}.mp4`;
+
+  let filename = `${videoId}_${titlejoin}.mp4`;
+
+  if (is_series) {
+    filename = `${videoId}SO${currentEpisode.season}E${currentEpisode.episode}_${titlejoin}.mp4`;
+  }
 
   return filename;
 };
@@ -51,9 +56,15 @@ export const getFilename = (video) => {
 export const getConfig = (video) => {
   const filename = getFilename(video);
 
+  const { videoId, url, is_series, currentEpisode } = video;
+
+  let taskId = is_series
+    ? `${videoId}SO${currentEpisode.season}E${currentEpisode.episode}`
+    : videoId;
+
   return {
-    id: video.videoId,
-    url: video.url,
+    id: taskId,
+    url: url,
     destination: `${downloadPath}/${filename}`
   };
 };

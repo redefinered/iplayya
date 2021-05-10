@@ -24,6 +24,7 @@ const DownloadItem = ({
   id,
   theme,
   title,
+  ep,
   year,
   time,
   rating_mpaa,
@@ -252,7 +253,7 @@ const DownloadItem = ({
                 marginBottom: 5
               }}
             >
-              {title}
+              {`${title} ${ep}`}
             </Text>
             <Text
               style={{
