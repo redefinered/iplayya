@@ -114,7 +114,7 @@ const MovieDetailScreen = ({
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = is_series
-        ? `${movie.id}${movie.ep}_${title}_${movie.ep}.mp4`
+        ? `${movie.id}${movie.ep}_${title}.mp4`
         : `${movie.id}_${title}.mp4`;
 
       let src =
