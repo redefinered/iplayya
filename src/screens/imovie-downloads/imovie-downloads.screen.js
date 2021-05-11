@@ -47,8 +47,6 @@ const ImovieDownloadsScreen = ({
   removeDownloadsByIdsAction,
   downloadStartAction
 }) => {
-  // const [ids, setIds] = React.useState([]);
-  // const [donwloadingItems, setDownloadingItems] = React.useState([]);
   const [activeDownloads, setActiveDownloads] = React.useState([]);
 
   const [list, setList] = React.useState([]);
@@ -106,6 +104,7 @@ const ImovieDownloadsScreen = ({
             movie: { title }
           } = downloads.find(({ id: downloadId }) => id === downloadId);
           const filename = getFilename({ videoId: id, title });
+          console.log({ filename });
           return deleteFile(filename);
         });
 
@@ -113,8 +112,11 @@ const ImovieDownloadsScreen = ({
 
         setActivateCheckboxes(false);
         removeDownloadsByIdsAction(selectedItems);
+
+        // setup downloads list
+        setUpDownloadsList(downloads);
       } catch (error) {
-        console.log('Delete files action error', error.message);
+        console.log('Delete error: ', error.message);
       }
     }
   };
@@ -148,7 +150,7 @@ const ImovieDownloadsScreen = ({
       const donwloadedFiles = await RNFetchBlob.fs.ls(downloadPath);
       const donwloadedFilesIds = donwloadedFiles.map((filename) => filename.split('_')[0]);
       ids = [...existingDownloadIds, ...donwloadedFilesIds];
-      console.log('xxxxxxx', { ids, downloads });
+
       data = ids.map((id) => {
         const download = downloads.find((d) => d.id === id);
         if (typeof download === 'undefined') return { id: uuid() };
@@ -170,7 +172,6 @@ const ImovieDownloadsScreen = ({
   };
 
   const handleSelectItem = (item) => {
-    console.log({ item });
     if (activateCheckboxes) {
       const newItems = selectedItems;
       const index = selectedItems.findIndex((i) => i === item);
@@ -185,13 +186,8 @@ const ImovieDownloadsScreen = ({
       let { ep, movie: movieFields } = downloads.find(({ id }) => id === item);
 
       navigation.navigate('MovieDetailDownloadedScreen', { movie: { ep, ...movieFields } });
-      // navigation.navigate('MovieDetailScreen', {
-      //   movie: downloads.find((v) => v.id === item).movie
-      // });
     }
   };
-
-  console.log({ list });
 
   const renderMain = () => {
     if (list.length)
@@ -322,7 +318,6 @@ const mapStateToProps = createStructuredSelector({
   downloads: selectDownloads,
   favorites: selectFavorites,
   downloadsProgress: selectDownloadsProgress
-  // downloadsData: selectDownloadsData
 });
 
 const enhance = compose(
