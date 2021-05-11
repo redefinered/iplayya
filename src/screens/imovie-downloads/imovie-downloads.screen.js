@@ -104,7 +104,6 @@ const ImovieDownloadsScreen = ({
             movie: { title }
           } = downloads.find(({ id: downloadId }) => id === downloadId);
           const filename = getFilename({ videoId: id, title });
-          console.log({ filename });
           return deleteFile(filename);
         });
 
