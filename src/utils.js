@@ -47,7 +47,8 @@ export const getFilename = (video) => {
   let filename = `${videoId}_${titlejoin}.mp4`;
 
   if (is_series) {
-    filename = `${videoId}SO${currentEpisode.season}E${currentEpisode.episode}_${titlejoin}.mp4`;
+    let ep = `SO${currentEpisode.season}E${currentEpisode.episode}`; /// e.g. SO3E2
+    filename = `${videoId}${ep}_${titlejoin}.mp4`;
   }
 
   return filename;
