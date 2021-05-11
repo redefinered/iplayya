@@ -47,7 +47,6 @@ const DownloadButton = ({
 
   networkInfo
 }) => {
-  const [downloadTitle, setDownloadTitle] = React.useState(movieTitle);
   const [files, setFiles] = React.useState([]);
   // const [downloading, setDownloading] = React.useState(false);
   const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
@@ -55,15 +54,6 @@ const DownloadButton = ({
   React.useEffect(() => {
     checkIfMovieIsDownlowded();
   }, []);
-
-  React.useEffect(() => {
-    /// modify title if an episode in a series is selected
-    if (currentEpisode)
-      return setDownloadTitle(`${movieTitle} SO${currentEpisode.season}E${currentEpisode.episode}`);
-
-    /// if single video just return movieTitle
-    setDownloadTitle(movieTitle);
-  }, [movieTitle, currentEpisode]);
 
   const handleDownloadMovie = async (video) => {
     const { videoId, url, is_series, currentEpisode } = video;
@@ -160,7 +150,7 @@ const DownloadButton = ({
       onPress={() =>
         handleDownloadMovie({
           videoId,
-          title: downloadTitle,
+          title: movieTitle,
           url: donwloadUrl,
           is_series: movie.is_series,
           currentEpisode
