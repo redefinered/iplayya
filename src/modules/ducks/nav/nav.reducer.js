@@ -2,7 +2,8 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './nav.actions';
 
 const INITIAL_STATE = {
-  hideTabs: false
+  hideTabs: false,
+  swipeEnabled: true
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -11,6 +12,13 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       hideTabs
+    };
+  },
+  [Types.ENABLE_SWIPE]: (state, action) => {
+    const { isEnabled } = action;
+    return {
+      ...state,
+      swipeEnabled: isEnabled
     };
   }
 });

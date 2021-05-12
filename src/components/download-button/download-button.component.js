@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line no-unused-vars
-import { Pressable, StyleSheet } from 'react-native';
-import { withTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, Modal, View, TouchableOpacity } from 'react-native';
+import { withTheme, Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -13,6 +14,7 @@ import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selec
 import { getConfig, downloadPath } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
+import { createFontFormat } from 'utils';
 import {
   selectMovieTitle,
   selectDownloadUrl,
@@ -20,11 +22,13 @@ import {
   selectCurrentEpisode
 } from 'modules/ducks/movies/movies.selectors';
 import { selectNetworkInfo } from 'modules/ducks/auth/auth.selectors';
+import uuid from 'react-uuid';
 
 const DownloadButton = ({
+  videoId, // from navigation parameters
+
   theme,
   movie,
-  videoId,
   movieTitle,
   donwloadUrl,
 
@@ -50,10 +54,46 @@ const DownloadButton = ({
   const [files, setFiles] = React.useState([]);
   // const [downloading, setDownloading] = React.useState(false);
   const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
+  const [sources, setSources] = React.useState([]);
+  const [showDownloadOptionsModal, setShowDownloadOptionsModal] = React.useState(false);
 
   React.useEffect(() => {
     checkIfMovieIsDownlowded();
   }, []);
+
+  React.useEffect(() => {
+    if (currentEpisode && movie) {
+      // is_series should be true at this point
+      const { season, episode } = currentEpisode;
+      const { series } = movie;
+      const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+
+      let downloadSources = episodes.find(({ episode: e }) => parseInt(e) === episode).video_urls;
+
+      downloadSources = downloadSources.map(({ quality, link }) => ({
+        id: uuid(),
+        label: quality,
+        link
+      }));
+
+      downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
+
+      return setSources(downloadSources);
+    }
+
+    // if (movie) {
+    //   let downloadSources = movie.video_urls;
+    //   downloadSources = downloadSources.map(({ quality, link }) => ({
+    //     id: uuid(),
+    //     label: quality,
+    //     link
+    //   }));
+
+    //   downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
+
+    //   return setSources(downloadSources);
+    // }
+  }, [movie, currentEpisode]);
 
   const handleDownloadMovie = async (video) => {
     const { videoId, url, is_series, currentEpisode } = video;
@@ -136,7 +176,21 @@ const DownloadButton = ({
     }
   }, [files]);
 
-  // console.log({ downloading });
+  const hideDownloadOptions = () => {
+    setShowDownloadOptionsModal(false);
+  };
+
+  console.log('sources', sources);
+  // eslint-disable-next-line no-unused-vars
+  const confirmDownload = () => {
+    handleDownloadMovie({
+      videoId,
+      title: movieTitle,
+      url: donwloadUrl,
+      is_series: movie.is_series,
+      currentEpisode
+    });
+  };
 
   const getColor = () => {
     if (!networkInfo.isConnected) return 'gray';
@@ -145,21 +199,48 @@ const DownloadButton = ({
   };
 
   return (
-    <Pressable
-      disabled={!networkInfo.isConnected}
-      onPress={() =>
-        handleDownloadMovie({
-          videoId,
-          title: movieTitle,
-          url: donwloadUrl,
-          is_series: movie.is_series,
-          currentEpisode
-        })
-      }
-      style={styles.headerButtonContainer}
-    >
-      <Icon name="download" size={24} color={getColor()} />
-    </Pressable>
+    <React.Fragment>
+      <Pressable
+        disabled={!networkInfo.isConnected}
+        onPress={() => setShowDownloadOptionsModal(true)}
+        style={styles.headerButtonContainer}
+      >
+        <Icon name="download" size={24} color={getColor()} />
+      </Pressable>
+
+      <Modal animationType="slide" visible={showDownloadOptionsModal} transparent>
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <View style={{ backgroundColor: '#202530', paddingTop: 20 }}>
+            {sources.map(({ id, label }) => (
+              <TouchableRipple
+                key={id}
+                onPress={() => console.log('ssdfsdf')}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 50,
+                  // backgroundColor: theme.iplayya.colors.white10,
+                  paddingHorizontal: 15
+                }}
+              >
+                <View style={{ flex: 10.5 }}>
+                  <Text style={{ ...createFontFormat(16, 22) }}>{label}</Text>
+                </View>
+              </TouchableRipple>
+            ))}
+            <Spacer size={20} />
+            <View
+              style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}
+            />
+            <View style={{ alignItems: 'center', paddingVertical: 20 }}>
+              <TouchableOpacity onPress={() => hideDownloadOptions()}>
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+    </React.Fragment>
   );
 };
 

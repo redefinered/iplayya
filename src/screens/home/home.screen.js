@@ -101,12 +101,6 @@ const mapStateToProps = createStructuredSelector({
   completedOnboarding: selectCompletedOnboarding,
   error: selectError,
 
-  /**
-   * FIX BUG WHERE LOADER IS STUCK IN HOME SCREEN
-   * AFTER A SUCCESSFUL LOGIN. THIS STARTED TO HAPPEN
-   * WHEN I REMOVED CATEGORY_ALIAS IN MOVIES.GRAPHQL
-   * DUE TO API UPDATE
-   */
   isFetching: selectIsFetching
 });
 

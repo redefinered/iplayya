@@ -19,18 +19,18 @@ import AccountStack from 'navigators/account-stack.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectHideTabs } from 'modules/ducks/nav/nav.selectors';
+import { selectSwipeEnabled } from 'modules/ducks/nav/nav.selectors';
 
 const Tab = createBottomTabNavigator();
 
-const HomeTabs = ({ hideTabs }) => {
+const HomeTabs = ({ hideTabs, swipeEnabled }) => {
   return (
     <Tab.Navigator
       initialRouteName="Home"
+      swipeEnabled={swipeEnabled}
       tabBarOptions={{
         showLabel: false,
         tabStyle: {
-          //   // backgroundColor: 'red',
-          //   // marginHorizontal: 50
           flex: 1,
           width: '50%'
         },
@@ -76,6 +76,9 @@ const HomeTabs = ({ hideTabs }) => {
   );
 };
 
-const mapStateToProps = createStructuredSelector({ hideTabs: selectHideTabs });
+const mapStateToProps = createStructuredSelector({
+  hideTabs: selectHideTabs,
+  swipeEnabled: selectSwipeEnabled
+});
 
 export default connect(mapStateToProps)(HomeTabs);
