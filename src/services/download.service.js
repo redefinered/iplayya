@@ -29,6 +29,7 @@ export const checkExistingDownloads = async () => {
 export const listDownloadedFiles = async () => {
   const ls = await RNFetchBlob.fs.ls(downloadPath);
   console.log('downloaded files', ls);
+  return ls;
 };
 
 export const getDownloads = async (videoIds) => {

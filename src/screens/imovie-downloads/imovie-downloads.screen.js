@@ -136,7 +136,7 @@ const ImovieDownloadsScreen = ({
       // check for active downloads in the background
       const existingDownloads = await checkExistingDownloads();
 
-      console.log({ existingDownloads });
+      // console.log({ existingDownloads });
 
       // set active downloads list to get the download tasks
       setActiveDownloads(existingDownloads);

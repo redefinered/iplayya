@@ -22,6 +22,7 @@ import {
   selectCurrentEpisode
 } from 'modules/ducks/movies/movies.selectors';
 import { selectNetworkInfo } from 'modules/ducks/auth/auth.selectors';
+import { checkExistingDownloads } from 'services/download.service';
 import uuid from 'react-uuid';
 
 const DownloadButton = ({
@@ -78,21 +79,23 @@ const DownloadButton = ({
 
       downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
 
+      // console.log('xxxx', downloadSources);
+
       return setSources(downloadSources);
     }
 
-    // if (movie) {
-    //   let downloadSources = movie.video_urls;
-    //   downloadSources = downloadSources.map(({ quality, link }) => ({
-    //     id: uuid(),
-    //     label: quality,
-    //     link
-    //   }));
+    if (movie) {
+      let downloadSources = movie.video_urls;
+      downloadSources = downloadSources.map(({ quality, link }) => ({
+        id: uuid(),
+        label: quality,
+        link
+      }));
 
-    //   downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
+      downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
 
-    //   return setSources(downloadSources);
-    // }
+      return setSources(downloadSources);
+    }
   }, [movie, currentEpisode]);
 
   const handleDownloadMovie = async (video) => {
@@ -180,11 +183,24 @@ const DownloadButton = ({
     setShowDownloadOptionsModal(false);
   };
 
-  // console.log('sources', sources);
+  console.log('sources', sources);
   // eslint-disable-next-line no-unused-vars
-  const confirmDownload = () => {
+  const confirmDownload = async () => {
+    // hide resolution options for download
+    hideDownloadOptions(false);
+
     // don't download if not connected to internet
+    console.log('videoId', videoId);
     if (!networkInfo.isConnected) return;
+
+    /// check if already downloading
+    const activeDownloads = await checkExistingDownloads();
+    const downloadingItem = activeDownloads.find(({ id }) => id === videoId);
+
+    if (typeof downloadingItem !== 'undefined') {
+      console.log('already downloading');
+      return;
+    }
 
     handleDownloadMovie({
       videoId,
@@ -217,7 +233,7 @@ const DownloadButton = ({
             {sources.map(({ id, label }) => (
               <TouchableRipple
                 key={id}
-                onPress={() => console.log('ssdfsdf')}
+                onPress={confirmDownload}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
