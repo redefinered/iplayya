@@ -4,7 +4,14 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:textColor">#ffffff</item>
+      <item name="android:datePickerDialogTheme">@style/DialogDatePicker.Theme</item>
     </style>
+
+  <style name="DialogDatePicker.Theme" parent="Theme.AppCompat.Light.Dialog">
+    <item name="colorAccent">@color/vibrant_pussy</item>
+    <item name="android:textColor">@color/primary_dark</item>
+    <item name="android:textColorPrimary">@color/primary_dark</item>
+  </style>
 
   <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="android:windowBackground">@drawable/gradient_color</item>

@@ -59,7 +59,7 @@ const ForgotPasswordScreen = ({
   }, [getLinkResponse]);
 
   return (
-    <ContentWrap style={{ paddingTop: 30 }}>
+    <ContentWrap style={{ marginTop: 30 }}>
       <Text style={{ marginBottom: 20 }}>
         We will send instructions on how to reset your password in your email that you have
         registered.

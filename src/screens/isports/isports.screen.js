@@ -44,7 +44,8 @@ const IsportsScreen = ({
   getChannelsByCategoriesAction,
   addToFavoritesAction,
   isFavoritesUpdated,
-  getFavoritesAction
+  getFavoritesAction,
+  enableSwipeAction
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
@@ -59,6 +60,7 @@ const IsportsScreen = ({
   React.useEffect(() => {
     resetPaginatorAction(); // for debugging
     getGenresAction();
+    enableSwipeAction(false);
   }, []);
 
   // setup genres data
@@ -174,7 +176,7 @@ const IsportsScreen = ({
       {channelsData.length ? (
         <React.Fragment>
           {error && <Text>{error}</Text>}
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <SelectorPills
               data={genresData}
               labelkey="title"
@@ -307,7 +309,8 @@ const actions = {
   resetPaginatorAction: Creators.resetPaginator,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
-  addToFavoritesAction: Creators.addToFavorites
+  addToFavoritesAction: Creators.addToFavorites,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(

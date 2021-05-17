@@ -2,7 +2,7 @@
 /* eslint-disable react/display-name */
 
 import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import AccountScreen from 'screens/account/account.screen';
@@ -10,6 +10,7 @@ import ProfileScreen from 'screens/profile/profile.screen';
 import EditProfileScreen from 'screens/edit-profile/edit-profile.screen';
 import PlaybackSettings from 'screens/playback-settings/playback-settings.screen';
 import Icon from 'components/icon/icon.component';
+import { TouchableRipple } from 'react-native-paper';
 
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/nav/nav.actions';
@@ -18,7 +19,7 @@ import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
 
-const AccountStack = ({ setBottomTabsVisibleAction }) => (
+const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
   <Stack.Navigator
     screenOptions={{
       headerTransparent: true,
@@ -36,7 +37,15 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
       headerRightContainerStyle: styles.headerRightContainerStyle
     }}
   >
-    <Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'Account' }} />
+    <Stack.Screen
+      name="AccountScreen"
+      component={AccountScreen}
+      options={{ title: 'Account' }}
+      listeners={{
+        focus: () => enableSwipeAction({ swipeEnabled: true }),
+        beforeRemove: () => enableSwipeAction({ swipeEnabled: false })
+      }}
+    />
     <Stack.Screen
       name="ProfileScreen"
       component={ProfileScreen}
@@ -44,12 +53,18 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
         title: null,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
-            <Pressable
+            <TouchableRipple
+              borderless={true}
+              style={{ borderRadius: 44, padding: 8 }}
+              rippleColor="rgba(0,0,0,0.28)"
               onPress={() => navigation.navigate('EditProfileScreen')}
-              style={styles.headerButtonContainer}
             >
-              <Icon name="edit" size={24} />
-            </Pressable>
+              <View>
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="edit" size={24} />
+                </View>
+              </View>
+            </TouchableRipple>
           </View>
         )
       })}
@@ -77,7 +92,7 @@ const AccountStack = ({ setBottomTabsVisibleAction }) => (
 
 const styles = StyleSheet.create({
   headerRightContainerStyle: {
-    paddingRight: 15,
+    paddingRight: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -87,13 +102,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 22,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 15
+    alignItems: 'center'
   }
 });
 
 const actions = {
-  setBottomTabsVisibleAction: Creators.setBottomTabsVisible
+  setBottomTabsVisibleAction: Creators.setBottomTabsVisible,
+  enableSwipeAction: Creators.enableSwipe
 };
 
 export default connect(null, actions)(AccountStack);

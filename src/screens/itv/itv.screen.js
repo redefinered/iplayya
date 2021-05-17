@@ -46,6 +46,7 @@ const ItvScreen = ({
   addToFavoritesAction,
   isFavoritesUpdated,
   getFavoritesAction,
+  enableSwipeAction,
   route: { params }
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
@@ -61,6 +62,7 @@ const ItvScreen = ({
   React.useEffect(() => {
     resetPaginatorAction(); // for debugging
     getGenresAction();
+    enableSwipeAction(false);
   }, []);
 
   React.useEffect(() => {
@@ -181,7 +183,7 @@ const ItvScreen = ({
       {channelsData.length ? (
         <React.Fragment>
           {error && <Text>{error}</Text>}
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <Spacer />
             <SelectorPills
               data={genresData}
@@ -320,7 +322,8 @@ const actions = {
   resetPaginatorAction: Creators.resetPaginator,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
-  addToFavoritesAction: Creators.addToFavorites
+  addToFavoritesAction: Creators.addToFavorites,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(

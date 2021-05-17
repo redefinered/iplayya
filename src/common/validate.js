@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const checkRegularExpression = (expression, value) => {
   const regex = new RegExp(expression);
   return regex.test(value);
@@ -35,7 +37,7 @@ export const isValidEmail = (value) => {
 };
 
 export const isValidPhone = (value) => {
-  return checkRegularExpression(/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/, value);
+  return checkRegularExpression(/^\+(?:[0-9]●?){6,14}[0-9]$/, value.phoneInputValue);
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -64,4 +66,14 @@ export const isValidName = (value) => {
 
 export const isValidPassword = (value) => {
   return checkRegularExpression(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$/, value);
+};
+
+export const isValidBirthday = (value) => {
+  if (value === '') return false;
+  const date = moment(value).format('YYYY MM DD');
+  if (date === 'Invalid date') {
+    return false;
+  } else {
+    return true;
+  }
 };

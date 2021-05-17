@@ -13,13 +13,14 @@ import {
   Platform,
   Modal
 } from 'react-native';
-import { Title, Text, withTheme, useTheme, TouchableRipple } from 'react-native-paper';
+import { Title, Text, withTheme, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/profile/profile.actions';
+import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectProfile,
   selectUpdated,
@@ -31,9 +32,14 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { StyleSheet } from 'react-native';
 import { headerHeight } from 'common/values';
+import ImagePick from 'components/image-picker/image-picker.component';
 
 const styles = StyleSheet.create({
-  headerContainer: { alignItems: 'center', paddingBottom: 40, overflow: 'hidden' },
+  headerContainer: {
+    alignItems: 'center',
+    paddingBottom: 40,
+    overflow: 'hidden'
+  },
   settingItem: {
     flexDirection: 'row',
     paddingVertical: 10
@@ -57,10 +63,14 @@ function normalize(size) {
   }
 }
 
+const profilePlaceholderUri = Image.resolveAssetSource(require('../../assets/Avatar_Eclipse.png'))
+  .uri;
+
 const ProfileScreen = ({
   startAction,
   profile,
   getProfileAction,
+  enableSwipeAction,
   theme: {
     iplayya: { colors }
   },
@@ -70,6 +80,8 @@ const ProfileScreen = ({
   const { name, username, ...otherFields } = profile;
   const [showSnackBar, setShowSnackbar] = React.useState(false);
   const [modalOpen, setModalOpen] = React.useState(false);
+  const [imageChange, setImageChange] = React.useState(profilePlaceholderUri);
+  const [showErrorModal, setShowErrorModal] = React.useState(false);
   const theme = useTheme();
 
   const fields = [
@@ -79,10 +91,42 @@ const ProfileScreen = ({
     { key: 'gender', icon: 'account' }
   ];
 
+  const setProfileImage = (value) => {
+    if (typeof imageChange === 'undefined') {
+      setImageChange(profilePlaceholderUri);
+    } else {
+      console.log('qwe', value);
+      setImageChange(value);
+    }
+  };
+
+  React.useEffect(() => {
+    enableSwipeAction(false);
+  }, []);
+
+  const hideErrorModal = () => {
+    setShowErrorModal(false);
+  };
+
+  React.useEffect(() => {
+    if (error) return setShowErrorModal(true);
+    setShowErrorModal(false);
+  }, [error]);
+
+  React.useEffect(() => {
+    if (modalOpen) {
+      setImageChange(profilePlaceholderUri);
+    }
+  }, [modalOpen]);
+
   const hideSnackBar = () => {
     setTimeout(() => {
       setShowSnackbar(false);
     }, 3000);
+  };
+
+  const hideModalCamera = () => {
+    setModalOpen(false);
   };
 
   React.useEffect(() => {
@@ -100,7 +144,6 @@ const ProfileScreen = ({
       hideSnackBar();
     }
   }, [updated]);
-
   return (
     <LinearGradient style={{ flex: 1, flexBasis: 200 }} colors={['#2D1449', '#0D0637']}>
       <Modal
@@ -126,95 +169,59 @@ const ProfileScreen = ({
               justifyContent: 'center'
             }}
           >
-            <View style={{ marginVertical: 25 }}>
+            <View>
               <Text
                 style={{
                   fontSize: normalize(24),
                   fontWeight: 'bold',
                   textAlign: 'center',
+                  marginTop: 50,
                   color: theme.iplayya.colors.goodnight
                 }}
               >
                 Upload profile photo
               </Text>
             </View>
-            <TouchableRipple onPress={() => setModalOpen()}>
-              <View
-                style={{
-                  marginTop: 15,
-                  width: '90%',
-                  alignSelf: 'center'
-                }}
-              >
-                <View
+            <ImagePick setProfileImage={setProfileImage} hideModalCamera={hideModalCamera} />
+            <View>
+              <Pressable onPress={() => setModalOpen(false)}>
+                <Text
                   style={{
-                    backgroundColor: theme.iplayya.colors.vibrantpussy,
-                    flexDirection: 'row',
-                    padding: 25,
-                    marginBottom: 5,
-                    borderRadius: 10,
-                    paddingLeft: '30%'
+                    fontSize: normalize(18),
+                    textAlign: 'center',
+                    color: theme.iplayya.colors.black70,
+                    fontWeight: 'bold',
+                    marginBottom: 30
                   }}
                 >
-                  <Icon name="camera" size={24} />
-                  <Text
-                    style={{ fontSize: normalize(18), fontWeight: 'bold', paddingHorizontal: 12 }}
-                  >
-                    Take Picture
-                  </Text>
-                </View>
-              </View>
-            </TouchableRipple>
-            <TouchableRipple>
-              <View style={{ marginVertical: 10, width: '90%', alignSelf: 'center' }}>
-                <View
-                  style={{
-                    backgroundColor: '#13BD38',
-                    flexDirection: 'row',
-                    padding: 25,
-                    borderRadius: 10,
-                    paddingLeft: '30%'
-                  }}
-                >
-                  <Icon name="add-file" size={24} />
-                  <Text
-                    style={{ fontSize: normalize(18), fontWeight: 'bold', paddingHorizontal: 12 }}
-                  >
-                    Browse Image
-                  </Text>
-                </View>
-              </View>
-            </TouchableRipple>
-            <Pressable onPress={() => setModalOpen(false)}>
-              <Text
-                style={{
-                  fontSize: normalize(18),
-                  textAlign: 'center',
-                  color: theme.iplayya.colors.black70,
-                  fontWeight: 'bold',
-                  marginTop: 40
-                }}
-              >
-                Cancel
-              </Text>
-            </Pressable>
+                  Cancel
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </Modal>
       <ImageBackground
         blurRadius={50}
-        source={require('assets/placeholder.jpg')}
-        style={{ paddingTop: headerHeight + 10 }}
+        source={{
+          uri: imageChange
+          /*require('assets/placeholder.jpg')*/
+        }}
+        style={{ paddingTop: headerHeight + 10, resizeMode: 'cover' }}
       >
         <View style={styles.headerContainer}>
-          <View style={{ width: SCREEN_WIDTH - 0.6 * SCREEN_WIDTH, marginBottom: 17 }}>
+          <View
+            style={{
+              marginBottom: 17
+            }}
+          >
             <Image
-              source={require('assets/placeholder.jpg')}
+              source={{ uri: imageChange /*require('assets/placeholder.jpg')*/ }}
               style={{
-                width: SCREEN_WIDTH - 0.6 * SCREEN_WIDTH,
+                width: 140,
                 height: 140,
-                borderRadius: 300 / 2,
-                resizeMode: 'contain'
+                borderRadius: 140
+                // resizeMode: 'contain'
               }}
             />
             <Pressable
@@ -256,7 +263,7 @@ const ProfileScreen = ({
               <Text
                 style={{
                   fontSize: normalize(24),
-                  lineHeight: 33,
+                  lineHeight: 23,
                   fontWeight: 'bold',
                   marginLeft: 10
                 }}
@@ -264,7 +271,7 @@ const ProfileScreen = ({
                 20,580
               </Text>
             </View>
-            <Text style={{ fontSize: normalize(12), lineHeight: 16 }}>
+            <Text style={{ fontSize: normalize(14), lineHeight: 16, marginTop: 2 }}>
               Total iPlayya time earned
             </Text>
           </View>
@@ -291,11 +298,12 @@ const ProfileScreen = ({
       <SnackBar visible={showSnackBar} message="Changes saved successfully" />
       {error && (
         <AlertModal
-          visible={error ? true : false}
+          visible={showErrorModal}
           message={error}
           confirmText="Retry"
           variant="danger"
           confirmAction={() => getProfileAction()}
+          hideAction={() => hideErrorModal()}
         />
       )}
     </LinearGradient>
@@ -304,7 +312,8 @@ const ProfileScreen = ({
 
 const actions = {
   getProfileAction: Creators.get,
-  startAction: Creators.start
+  startAction: Creators.start,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const mapStateToProps = createStructuredSelector({

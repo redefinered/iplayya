@@ -3,14 +3,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-  Dimensions
-} from 'react-native';
+import { View, Pressable, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import { Text } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
@@ -53,7 +46,7 @@ class SignInScreen extends React.Component {
   };
 
   render() {
-    const { showPassword, isolatedInputs, username, password } = this.state;
+    const { showPassword /*, isolatedInputs*/, username, password } = this.state;
     const { navigation } = this.props;
 
     // if (this.props.error) console.log({ errorxxx: this.props.error });
@@ -86,8 +79,8 @@ class SignInScreen extends React.Component {
             autoCompleteType="email"
             style={styles.textInput}
             placeholder="email"
-            onFocus={() => this.setState({ isolatedInputs: true })}
-            onBlur={() => this.setState({ isolatedInputs: false })}
+            // onFocus={() => this.setState({ isolatedInputs: true })}
+            // onBlur={() => this.setState({ isolatedInputs: false })}
           />
           <View style={styles.passwordInputContainer}>
             <TextInput
@@ -102,8 +95,8 @@ class SignInScreen extends React.Component {
               }}
               placeholder="password"
               secureTextEntry={!showPassword}
-              onFocus={() => this.setState({ isolatedInputs: true })}
-              onBlur={() => this.setState({ isolatedInputs: false, showPassword: false })}
+              // onFocus={() => this.setState({ isolatedInputs: true })}
+              // onBlur={() => this.setState({ isolatedInputs: false, showPassword: false })}
             />
             <Pressable
               onPress={() => this.setState({ showPassword: !showPassword })}
@@ -136,10 +129,10 @@ class SignInScreen extends React.Component {
           style={{
             ...styles.signUp,
             flex: 1,
-            alignItems: 'center',
-            height: isolatedInputs
-              ? Dimensions.get('window').height - 0.5 * Dimensions.get('window').height
-              : null
+            alignItems: 'center'
+            // height: isolatedInputs
+            //   ? Dimensions.get('window').height - 0.5 * Dimensions.get('window').height
+            //   : null
           }}
         >
           <Text>
@@ -151,7 +144,7 @@ class SignInScreen extends React.Component {
         </View>
 
         <Pressable style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={{ ...styles.signUpText }}>Need help?</Text>
+          <Text style={styles.signUpText}>Need help?</Text>
         </Pressable>
       </KeyboardAvoidingView>
     );
@@ -173,9 +166,6 @@ const actions = {
   signInAction: Creators.signIn
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withScreenContainer({ withLoader: true })
-);
+const enhance = compose(connect(mapStateToProps, actions), withScreenContainer('gradient'));
 
 export default enhance(SignInScreen);

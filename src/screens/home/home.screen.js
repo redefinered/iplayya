@@ -11,7 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-//import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 
 const Home = ({
@@ -20,7 +20,8 @@ const Home = ({
   setBottomTabsVisibleAction,
   getCategoriesAction,
   getMoviesStartAction,
-  resetCategoryPaginatorAction
+  resetCategoryPaginatorAction,
+  enableSwipeAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
 
@@ -29,6 +30,7 @@ const Home = ({
     getMoviesStartAction();
     getCategoriesAction();
     resetCategoryPaginatorAction();
+    enableSwipeAction(true);
   }, []);
 
   React.useEffect(() => {
@@ -78,7 +80,8 @@ const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   getCategoriesAction: Creators.getCategories,
   getMoviesStartAction: Creators.getMoviesStart,
-  resetCategoryPaginatorAction: Creators.resetCategoryPaginator
+  resetCategoryPaginatorAction: Creators.resetCategoryPaginator,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(

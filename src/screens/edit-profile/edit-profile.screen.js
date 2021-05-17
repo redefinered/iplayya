@@ -2,8 +2,8 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView } from 'react-native';
-import { Text } from 'react-native-paper';
+import { View, ScrollView, Platform, Pressable } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
@@ -27,32 +27,38 @@ import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 
 import styles from './edit-profile.styles';
 
-import { isValidName, isValidUsername, isValidPhone } from 'common/validate';
+import { isValidName, isValidBirthday, isValidPhone } from 'common/validate';
+import moment, { relativeTimeRounding } from 'moment';
+import DatePicker from 'components/date-picker/date-picker.component';
+import ActionSheet from 'components/action-sheet/action-sheet.component';
+import PhoneNumberPicker from 'components/phone-number-picker/phone-number-picker.component';
 
 class EditProfileScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    const { name, last_name, username, email, phone, gender } = props.profile;
+    const { first_name, last_name, birth_date, email, phone, gender } = props.profile;
 
     this.state = {
       valid: true,
-      name,
+      actionSheetisVisible: false,
+      first_name,
       last_name,
-      username,
       phone,
-      gender,
+      birth_date,
+      gender: 'Gender',
       errors: [
-        { key: 'name', val: false },
+        { key: 'first_name', val: false },
         { key: 'last_name', val: false },
-        { key: 'username', val: false },
         { key: 'phone', val: false },
+        { key: 'birth_date', val: false },
         { key: 'gender', val: false }
       ]
     };
   }
 
   componentDidMount() {
+    // console.log(isValidBirthday('xxx'));
     this.props.updateStartAction();
   }
 
@@ -72,14 +78,14 @@ class EditProfileScreen extends React.Component {
       profile: { id }
     } = this.props;
 
-    const { errors, valid, ...formdata } = this.state;
+    const { errors, valid, actionSheetisVisible, ...formdata } = this.state;
 
-    console.log({ formdata });
+    console.log({ formdata, actionSheetisVisible });
 
-    if (!isValidName(formdata.name)) {
-      this.setError(errors, 'name', true);
+    if (!isValidName(formdata.first_name)) {
+      this.setError(errors, 'first_name', true);
     } else {
-      this.setError(errors, 'name', false);
+      this.setError(errors, 'first_name', false);
     }
 
     if (!isValidName(formdata.last_name)) {
@@ -88,22 +94,26 @@ class EditProfileScreen extends React.Component {
       this.setError(errors, 'last_name', false);
     }
 
-    if (!isValidUsername(formdata.username)) {
-      this.setError(errors, 'username', true);
+    if (!isValidBirthday(formdata.birth_date)) {
+      this.setError(errors, 'birth_date', true);
     } else {
-      this.setError(errors, 'username', false);
+      this.setError(errors, 'birth_date', false);
     }
 
-    if (!isValidPhone(formdata.phone)) {
-      this.setError(errors, 'phone', true);
+    if (formdata.phone === '') {
+      if (!isValidPhone(formdata.phone)) {
+        this.setError(errors, 'phone', true);
+      } else {
+        this.setError(errors, 'phone', false);
+      }
     } else {
       this.setError(errors, 'phone', false);
     }
 
-    if (formdata.gender === '') {
-      this.setError(errors, 'phone', true);
+    if (formdata.gender === 'Gender') {
+      this.setError(errors, 'gender', true);
     } else {
-      this.setError(errors, 'phone', false);
+      this.setError(errors, 'gender', false);
     }
 
     const withError = errors.find(({ val }) => val === true);
@@ -121,9 +131,42 @@ class EditProfileScreen extends React.Component {
     if (this.props.updated) this.props.navigation.goBack();
   }
 
+  setBirthdate = (value) => {
+    this.setState({ birth_date: value });
+  };
+
+  setPhone = (value) => {
+    this.setState({ phone: value.phoneInputValue });
+  };
+
+  handleSelect = (gender) => {
+    this.setState({ gender, actionSheetisVisible: false });
+  };
+
+  hideActionSheet = () => {
+    this.setState({ actionSheetisVisible: false });
+  };
+
   render() {
     const { isFetching, profile } = this.props;
     const { errors, valid, showModal, ...form } = this.state;
+    console.log('yyy', errors);
+    const actions = [
+      {
+        key: 'male',
+        icon: 'null',
+        title: 'Male',
+        onPress: this.handleSelect,
+        data: 'Male'
+      },
+      {
+        key: 'female',
+        icon: 'null',
+        title: 'Female',
+        onPress: this.handleSelect,
+        data: 'Female'
+      }
+    ];
 
     let stateError = {};
 
@@ -136,14 +179,14 @@ class EditProfileScreen extends React.Component {
         {isFetching && <Loader size="large" />}
         <ContentWrap>
           <ScrollView>
-            <View>
+            <View style={{ marginTop: 30 }}>
               <TextInput
-                name="name"
-                value={form.name}
+                name="first_name"
+                value={form.first_name}
                 style={styles.textInput}
-                placeholder="Full name"
+                placeholder="First name"
                 handleChangeText={this.handleChange}
-                error={stateError.name}
+                error={stateError.first_name}
               />
               <TextInput
                 name="last_name"
@@ -153,46 +196,74 @@ class EditProfileScreen extends React.Component {
                 handleChangeText={this.handleChange}
                 error={stateError.last_name}
               />
-              <TextInput
-                name="username"
-                value={form.username}
-                style={styles.textInput}
-                placeholder="Username"
-                handleChangeText={this.handleChange}
-                error={stateError.username}
-                autoCapitalize="none"
-              />
-              <TextInput
+              {/* <TextInput
                 name="phone"
                 value={form.phone}
                 style={styles.textInput}
                 placeholder="(+44) xxxx xxxxxx"
                 handleChangeText={this.handleChange}
                 error={stateError.phone}
-              />
-              <TextInput
-                name="gender"
-                value={form.gender}
-                style={styles.textInput}
-                placeholder="gender"
-                handleChangeText={this.handleChange}
-                error={stateError.gender}
-              />
+                autoCapitalize="none"
+                keyboardType="number-pad"
+              /> */}
+              <View>
+                <PhoneNumberPicker name="phone" setPhone={this.setPhone} error={stateError.phone} />
+              </View>
+              <View>
+                <DatePicker name="birth_date" setBirthdate={this.setBirthdate} />
+              </View>
+              <TouchableRipple
+                borderless={true}
+                style={[
+                  this.state.gender === 'Gender' ? styles.textUnfocus : styles.textInputFocus,
+                  stateError.gender ? styles.errorText : null
+                ]}
+                onPress={() => this.setState({ actionSheetisVisible: true })}
+              >
+                <View
+                  pointerEvents="none"
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    paddingVertical: 18,
+                    paddingHorizontal: 10
+                  }}
+                >
+                  <Text
+                    style={[
+                      this.state.gender === 'Gender' ? styles.textChangeColor : styles.textUnchange,
+                      { fontSize: 16 }
+                    ]}
+                  >
+                    {form.gender}
+                  </Text>
+                  <View style={{ marginRight: 10, marginTop: -2 }}>
+                    <Icon name="account" size={25} style={{ color: 'rgba(255,255,255,1)' }} />
+                  </View>
+                </View>
+              </TouchableRipple>
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
-
               <Button onPress={() => this.handleSubmit()} style={styles.submit} mode="contained">
                 Save
               </Button>
             </View>
           </ScrollView>
         </ContentWrap>
+        <ActionSheet
+          visible={this.state.actionSheetisVisible}
+          actions={actions}
+          hideAction={this.hideActionSheet}
+        />
       </React.Fragment>
     );
   }
 }
 
-const actions = { updateStartAction: Creators.updateStart, updateAction: Creators.update };
+const actions = {
+  updateStartAction: Creators.updateStart,
+  updateAction: Creators.update
+};
 
 const mapStateToProps = createStructuredSelector({
   profile: selectProfile,
@@ -203,6 +274,6 @@ const mapStateToProps = createStructuredSelector({
 
 // export default withFormWrap()(EditProfileScreen);
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap());
 
 export default enhance(EditProfileScreen);

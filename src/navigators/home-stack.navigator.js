@@ -2,8 +2,8 @@
 /* eslint-disable react/display-name */
 
 import React from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
-import { withTheme } from 'react-native-paper';
+import { StyleSheet, View /*Pressable*/ } from 'react-native';
+import { withTheme, TouchableRipple } from 'react-native-paper';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import Icon from 'components/icon/icon.component.js';
@@ -76,12 +76,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                style={styles.headerButtonContainer}
+              <TouchableRipple
+                borderless={true}
                 onPress={() => navigation.navigate('ItvSearchScreen')}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
               >
-                <Icon name="search" size={24} />
-              </Pressable>
+                <View style={{ ...styles.headerButtonContainer }}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -99,12 +103,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                style={styles.headerButtonContainer}
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
                 onPress={() => navigation.navigate('ItvSearchScreen')}
               >
-                <Icon name="search" size={24} />
-              </Pressable>
+                <View style={{ ...styles.headerButtonContainer }}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -122,12 +130,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                style={styles.headerButtonContainer}
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
                 onPress={() => navigation.navigate('ItvSearchScreen')}
               >
-                <Icon name="search" size={24} />
-              </Pressable>
+                <View style={{ ...styles.headerButtonContainer }}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -146,9 +158,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           // animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer} onPress={() => navigation.goBack()}>
-                <Icon name="close" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+                onPress={() => navigation.goBack()}
+              >
+                <View style={{ ...styles.headerButtonContainer }}>
+                  <Icon name="close" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           ),
           ...TransitionPresets.ModalSlideFromBottomIOS
@@ -165,12 +184,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                style={styles.headerButtonContainer}
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
                 onPress={() => navigation.navigate('ImovieSearchScreen')}
               >
-                <Icon name="search" size={24} />
-              </Pressable>
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -189,9 +212,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           // animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer} onPress={() => navigation.goBack()}>
-                <Icon name="close" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+                onPress={() => navigation.goBack()}
+              >
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="close" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           ),
           ...TransitionPresets.ModalSlideFromBottomIOS
@@ -210,9 +240,15 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
-                <Icon name="search" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+              >
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -230,9 +266,15 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
-                <Icon name="search" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+              >
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -281,9 +323,15 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
-                <Icon name="search" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+              >
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -301,9 +349,15 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
-                <Icon name="search" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+              >
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -321,9 +375,15 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
-                <Icon name="search" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+              >
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -341,9 +401,15 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable style={styles.headerButtonContainer}>
-                <Icon name="search" size={24} />
-              </Pressable>
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
+              >
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -361,12 +427,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                style={styles.headerButtonContainer}
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
                 onPress={() => navigation.navigate('ItvSearchScreen')}
               >
-                <Icon name="search" size={24} />
-              </Pressable>
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -384,12 +454,16 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <Pressable
-                style={styles.headerButtonContainer}
+              <TouchableRipple
+                borderless={true}
+                style={{ borderRadius: 44, padding: 8 }}
+                rippleColor="rgba(0,0,0,0.28)"
                 onPress={() => navigation.navigate('ItvSearchScreen')}
               >
-                <Icon name="search" size={24} />
-              </Pressable>
+                <View style={styles.headerButtonContainer}>
+                  <Icon name="search" size={24} />
+                </View>
+              </TouchableRipple>
             </View>
           )
         })}
@@ -407,9 +481,15 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
             title: null,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
-                <Pressable style={styles.headerButtonContainer}>
-                  <Icon name="heart-solid" size={24} />
-                </Pressable>
+                <TouchableRipple
+                  borderless={true}
+                  style={{ borderRadius: 44, padding: 8 }}
+                  rippleColor="rgba(0,0,0,0.28)"
+                >
+                  <View style={styles.headerButtonContainer}>
+                    <Icon name="heart-solid" size={24} />
+                  </View>
+                </TouchableRipple>
                 {/* <ChannelDownloadButton channelId={channelId} archived_link={archived_link} /> */}
               </View>
             )
@@ -440,7 +520,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
 
 const styles = StyleSheet.create({
   headerRightContainerStyle: {
-    paddingRight: 15,
+    paddingRight: 10,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -450,8 +530,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 22,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 15
+    alignItems: 'center'
+    // marginLeft: 15
   }
 });
 

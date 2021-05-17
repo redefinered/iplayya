@@ -10,7 +10,8 @@ import AccountIconActive from 'assets/tab-icons/account_active.svg';
 import IptvIcon from 'assets/tab-icons/iptv.svg';
 import IptvIconActive from 'assets/tab-icons/iptv_active.svg';
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import IptvStack from 'navigators/iptv-stack.navigator';
 import HomeStack from 'navigators/home-stack.navigator';
@@ -19,20 +20,39 @@ import AccountStack from 'navigators/account-stack.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectHideTabs } from 'modules/ducks/nav/nav.selectors';
+import { Dimensions } from 'react-native';
+import { selectSwipeEnabled } from 'modules/ducks/nav/nav.selectors';
 
-const Tab = createBottomTabNavigator();
+// const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 
-const HomeTabs = ({ hideTabs }) => {
+const HomeTabs = ({ hideTabs, swipeEnabled }) => {
+  console.log('xxx', swipeEnabled);
   return (
     <Tab.Navigator
       initialRouteName="Home"
+      backBehavior="none"
+      tabBarPosition="bottom"
+      swipeEnabled={swipeEnabled}
+      animationEnabled={false}
+      initialLayout={{ width: Dimensions.get('window').width }}
       tabBarOptions={{
+        showIcon: true,
         showLabel: false,
+        pressColor: 'transparent',
+        indicatorStyle: {
+          height: 0
+        },
+        iconStyle: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 30
+        },
         tabStyle: {
-          //   // backgroundColor: 'red',
-          //   // marginHorizontal: 50
-          flex: 1,
-          width: '50%'
+          backgroundColor: 'transparent',
+          // marginHorizontal: 50,
+          flex: 1
+          // width: '50%'
         },
         style: {
           backgroundColor: 'transparent',
@@ -76,6 +96,9 @@ const HomeTabs = ({ hideTabs }) => {
   );
 };
 
-const mapStateToProps = createStructuredSelector({ hideTabs: selectHideTabs });
+const mapStateToProps = createStructuredSelector({
+  hideTabs: selectHideTabs,
+  swipeEnabled: selectSwipeEnabled
+});
 
 export default connect(mapStateToProps)(HomeTabs);

@@ -7,8 +7,9 @@ const Button = ({ children, style, ...otherProps }) => (
   <View style={{ minHeight: 64, justifyContent: 'flex-end' }}>
     <RNPButton
       uppercase={false}
+      contentStyle={{ height: 50 }}
       labelStyle={{ fontWeight: 'bold' }}
-      style={{ paddingVertical: 10, fontSize: 14, fontWeight: 19, ...style }}
+      style={{ fontSize: 14, fontWeight: 19, ...style }}
       {...otherProps}
     >
       {children}

@@ -135,8 +135,8 @@ class PlaybackSettings extends React.Component {
 
     const { theme } = this.props;
     return (
-      <ContentWrap>
-        <ScrollView>
+      <ContentWrap style={{ marginTop: 20 }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 30 }}>
             Set your video watching experience.
           </Text>

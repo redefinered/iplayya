@@ -35,13 +35,18 @@ const IradioScreen = ({
   radioStations,
   getRadiosAction,
   getFavoritesAction,
-  paginatorInfo
+  paginatorInfo,
+  enableSwipeAction
 }) => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'radios', title: 'Radio Stations' },
     { key: 'favorites', title: 'Favorites' }
   ]);
+
+  React.useEffect(() => {
+    enableSwipeAction(false);
+  }, []);
 
   const renderScene = SceneMap({
     // eslint-disable-next-line react/display-name
@@ -207,7 +212,8 @@ const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addToFavoritesAction: Creators.addToFavorites,
   getRadiosAction: Creators.get,
-  getFavoritesAction: Creators.getFavorites
+  getFavoritesAction: Creators.getFavorites,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(

@@ -6,13 +6,13 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
-  View,
-  Dimensions
+  View
+  // Dimensions
 } from 'react-native';
 import ScreenContainer from 'components/screen-container.component';
 import { useHeaderHeight } from '@react-navigation/stack';
 
-const winWidth = Dimensions.get('window').width;
+// const winWidth = Dimensions.get('window').width;
 //const winHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
@@ -35,7 +35,7 @@ const withFormWrap = (options = {}) => (WrappedComponent) => {
           style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <View style={{ height: headerHeight + (winWidth * 0.1) / 2 }} />
+          <View style={{ height: headerHeight }} />
           <ScrollView>
             <WrappedComponent {...props} />
           </ScrollView>

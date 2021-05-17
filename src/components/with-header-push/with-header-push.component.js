@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import { View } from 'react-native';
 import ScreenContainer from 'components/screen-container.component';
@@ -12,6 +14,7 @@ const withHeaderPush = (options = {}) => (WrappedComponent) => {
         backgroundType={backgroundType}
         gradientTypeColors={gradientTypeColors}
         withLoader={withLoader}
+        isFetching={props.isFetching}
       >
         <View style={{ flex: 1, marginTop: headerHeight }}>
           <WrappedComponent {...props} />

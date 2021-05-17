@@ -42,7 +42,8 @@ export default createReducer(INITIAL_STATE, {
   [Types.UPDATE_START]: (state) => {
     return {
       ...state,
-      updated: false
+      updated: false,
+      error: null
     };
   },
   [Types.UPDATE]: (state) => {

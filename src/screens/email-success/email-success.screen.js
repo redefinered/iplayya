@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default compose(withScreenContainer({ withLoader: true }), withTheme)(EmailSuccessScreen);
+export default compose(withScreenContainer('gradient'), withTheme)(EmailSuccessScreen);

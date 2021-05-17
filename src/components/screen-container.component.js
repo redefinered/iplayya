@@ -8,11 +8,11 @@ import {
   View,
   ImageBackground,
   Dimensions,
-  ActivityIndicator
-  //Modal
+  ActivityIndicator,
+  Modal
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { withTheme, Portal } from 'react-native-paper';
+import { withTheme } from 'react-native-paper';
 import theme from 'common/theme';
 
 /**
@@ -66,8 +66,9 @@ const ScreenContainer = ({
     if (!withLoader) return;
     if (isFetching)
       return (
-        <Portal
-          transparent
+        <Modal
+          transparent={true}
+          statusBarTranslucent={true}
           style={
             {
               //   // position: 'absolute',
@@ -80,7 +81,7 @@ const ScreenContainer = ({
           <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
             <ActivityIndicator color={theme.colors.primary} size="large" />
           </View>
-        </Portal>
+        </Modal>
       );
   };
 

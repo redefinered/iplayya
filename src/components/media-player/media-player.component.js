@@ -49,8 +49,8 @@ const MediaPlayer = ({
   const [screencastActiveState, setScreencastActiveState] = React.useState(null);
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
-
   // console.log({ sourcex: source, type });
+  console.log('fff', currentTime);
 
   let timer = null;
 
@@ -82,6 +82,7 @@ const MediaPlayer = ({
   const hideControls = (duration = 5) => {
     return setTimeout(() => {
       setShowControls(false);
+      setVolumeSliderVisible(false);
     }, duration * 1000);
   };
 

@@ -35,7 +35,8 @@ const ImovieScreen = ({
   theme,
   route: { params },
   categoryPaginator,
-  movies
+  movies,
+  enableSwipeAction
 }) => {
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -57,6 +58,7 @@ const ImovieScreen = ({
 
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
+    enableSwipeAction(false);
   }, []);
 
   React.useEffect(() => {
@@ -213,7 +215,8 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart
+  addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(
