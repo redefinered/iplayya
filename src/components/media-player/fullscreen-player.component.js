@@ -5,7 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, View, Dimensions, StatusBar } from 'react-native';
 import { useTheme } from 'react-native-paper';
-// import Video from 'react-native-video';
+import Video from 'react-native-video';
 import Controls from './controls.component';
 // import VerticalSlider from 'rn-vertical-slider';
 import Slider from '@react-native-community/slider';
@@ -29,6 +29,7 @@ const FullScreenPlayer = ({
   nextAction,
   isFirstEpisode,
   isLastEpisode
+  // setSliderPosition
 }) => {
   const theme = useTheme();
 
@@ -36,7 +37,7 @@ const FullScreenPlayer = ({
   const [error, setError] = React.useState(false);
   const [showControls, setShowControls] = React.useState(true);
   // const [fullscreen, setFullscreen] = React.useState(false);
-  const [currentTime, setCurrentTime] = React.useState(0);
+  const [sliderPosition, setSliderPosition] = React.useState(null);
   const [volume, setVolume] = React.useState(75);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
@@ -50,7 +51,13 @@ const FullScreenPlayer = ({
 
   // console.log({ sourcex: source, type });
 
-  let player = React.useRef(null);
+  let player = React.useRef();
+
+  React.useEffect(() => {
+    if (sliderPosition !== null) {
+      player.current.seek(sliderPosition);
+    }
+  }, [sliderPosition]);
 
   // const handleFullscreenToggle = () => {
   //   setFullscreen(!fullscreen);
@@ -64,23 +71,35 @@ const FullScreenPlayer = ({
     setShowControls(true);
   };
 
-  const handleOnPlaying = (data) => {
-    console.log('onPlaying callback');
-    setPaused(false);
-    setTimer(hideControls(10));
-  };
-
   const hideControls = (duration = 5) => {
     return setTimeout(() => {
       setShowControls(false);
     }, duration * 1000);
   };
 
-  const handleOnPause = () => {
-    console.log('paused');
-    setShowControls(true);
-    if (timer) clearTimeout(timer);
-  };
+  // const handleOnPlaying = (data) => {
+  //   console.log('onPlaying callback');
+  //   setPaused(false);
+  //   setTimer(hideControls(10));
+  // };
+
+  // const handleOnPause = () => {
+  //   console.log('paused');
+  //   setShowControls(true);
+  //   if (timer) clearTimeout(timer);
+  // };
+
+  React.useEffect(() => {
+    if (paused) {
+      console.log('paused');
+      setShowControls(true);
+      if (timer) clearTimeout(timer);
+    } else {
+      console.log('onPlaying callback');
+      setPaused(false);
+      setTimer(hideControls(10));
+    }
+  }, [paused]);
 
   const videoError = () => {
     setError(true);
@@ -166,7 +185,7 @@ const FullScreenPlayer = ({
             }}
           /> */}
 
-          <VLCPlayer
+          {/* <VLCPlayer
             autoplay={false}
             onPaused={handleOnPause}
             ref={player}
@@ -183,6 +202,18 @@ const FullScreenPlayer = ({
               width: HEIGHT,
               height: WIDTH
             }}
+          /> */}
+
+          <Video
+            ref={player}
+            paused={paused}
+            onProgress={handleProgress}
+            source={{ uri: source }}
+            volume={volume}
+            onBuffer={onBuffer}
+            onError={videoError}
+            resizeMode="contain"
+            style={{ width: HEIGHT, height: WIDTH }}
           />
 
           {/* volume slider */}
@@ -216,9 +247,10 @@ const FullScreenPlayer = ({
             seriesTitle={seriesTitle}
             togglePlay={togglePlay}
             paused={paused}
+            setPaused={setPaused}
             toggleFullscreen={handleFullscreenToggle}
             visible={showControls}
-            setCurrentTime={setCurrentTime}
+            setSliderPosition={setSliderPosition}
             toggleVolumeSliderVisible={toggleVolumeSliderVisible}
             toggleCastOptions={handleToggleCastOptions}
             toggleVideoOptions={handleToggleVideoOptions}

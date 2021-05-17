@@ -157,28 +157,42 @@ export const selectSeekableDuration = createSelector([moviesState], ({ playbackI
   return Math.floor(playbackInfo.duration);
 });
 
+// export const selectCurrentPosition = createSelector([moviesState], ({ playbackInfo }) => {
+//   if (!playbackInfo) return 0;
+
+//   if (typeof playbackInfo.position === 'undefined') return 0;
+//   return playbackInfo.position;
+// });
+
 export const selectCurrentTime = createSelector([moviesState], ({ playbackInfo }) => {
   if (!playbackInfo) return 0;
 
   if (typeof playbackInfo.currentTime === 'undefined') return 0;
-  return Math.floor(playbackInfo.currentTime / 1000);
-});
-
-export const selectCurrentPosition = createSelector([moviesState], ({ playbackInfo }) => {
-  if (!playbackInfo) return 0;
-
-  if (typeof playbackInfo.position === 'undefined') return 0;
-  return playbackInfo.position;
+  // return Math.floor(playbackInfo.currentTime / 1000);
+  return playbackInfo.currentTime;
 });
 
 export const selectRemainingTime = createSelector([moviesState], ({ playbackInfo }) => {
   if (!playbackInfo) return 0;
 
-  const { duration, currentTime } = playbackInfo;
+  const { seekableDuration, currentTime } = playbackInfo;
+  const remainingTime = seekableDuration - currentTime;
 
-  // if (typeof playbackInfo.remainingTime === 'undefined') return 0;
-  const remainingTime = duration - currentTime;
-  return Math.abs(remainingTime / 1000);
+  // const { duration, currentTime } = playbackInfo;
+  // const remainingTime = duration - currentTime;
+
+  // return Math.abs(remainingTime / 1000);
+  return remainingTime;
+});
+
+export const selectDuration = createSelector([moviesState], ({ playbackInfo }) => {
+  if (!playbackInfo) return 0;
+
+  const { seekableDuration } = playbackInfo;
+
+  if (typeof seekableDuration === 'undefined') return 0;
+
+  return seekableDuration;
 });
 
 export const selectCategoryPaginator = createSelector(

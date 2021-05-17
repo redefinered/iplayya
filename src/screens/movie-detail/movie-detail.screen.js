@@ -208,6 +208,7 @@ const MovieDetailScreen = ({
               setPaused={setPaused}
               setSource={handleSourceSet}
               videoUrls={videoUrls}
+              typename={movie.__typename}
             />
           ) : (
             <View

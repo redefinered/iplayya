@@ -18,6 +18,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
 import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
+import Video from 'react-native-video';
 import { createStructuredSelector } from 'reselect';
 import { selectVideoUrls } from 'modules/ducks/movies/movies.selectors';
 import uuid from 'react-uuid';
@@ -37,14 +38,15 @@ const MediaPlayer = ({
   previousAction,
   nextAction,
   isFirstEpisode,
-  isLastEpisode
+  isLastEpisode,
+  typename
 }) => {
   const theme = useTheme();
   const [error, setError] = React.useState(false);
   const [showControls, setShowControls] = React.useState(true);
   const [fullscreen, setFullscreen] = React.useState(false);
-  const [currentTime, setCurrentTime] = React.useState(0);
-  const [volume, setVolume] = React.useState(75);
+  const [sliderPosition, setSliderPosition] = React.useState(null);
+  const [volume, setVolume] = React.useState(0.6);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
@@ -56,10 +58,18 @@ const MediaPlayer = ({
   const [buffering, setBuffering] = React.useState(false);
   const [timer, setTimer] = React.useState();
 
-  let player = React.useRef(null);
+  let player = React.useRef();
 
   React.useEffect(() => {
-    // if (typeof videoUrls === 'undefined') return;
+    if (sliderPosition !== null) {
+      player.current.seek(sliderPosition);
+    }
+  }, [sliderPosition]);
+
+  React.useEffect(() => {
+    /// for itv channels, videourls is undefined
+    if (typeof videoUrls === 'undefined') return;
+
     if (videoUrls.length) {
       const resolutions = videoUrls.map(({ quality, link }, index) => {
         const name = quality.toLowerCase();
@@ -89,14 +99,12 @@ const MediaPlayer = ({
 
   const onBuffer = () => {
     console.log('buffering...');
+
+    // prevents loader when buffering only in IPTV because buffering in IPTV is very frequent
+    if (typename === 'Iptv') return;
+
     setBuffering(true);
     setShowControls(true);
-  };
-
-  const handleOnPlaying = (data) => {
-    console.log('onPlaying callback', data);
-    setPaused(false);
-    setTimer(hideControls(10));
   };
 
   const hideControls = (duration = 5) => {
@@ -105,11 +113,48 @@ const MediaPlayer = ({
     }, duration * 1000);
   };
 
-  const handleOnPause = () => {
-    console.log('paused');
-    setShowControls(true);
-    if (timer) clearTimeout(timer);
-  };
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+
+  // const handleOnPlaying = (data) => {
+  //   console.log('onPlaying callback', data);
+  //   setPaused(false);
+  //   setTimer(hideControls(10));
+  // };
+
+  // const handleOnPause = () => {
+  //   console.log('paused');
+  //   setShowControls(true);
+  //   if (timer) clearTimeout(timer);
+  // };
+
+  React.useEffect(() => {
+    if (paused) {
+      // console.log('paused');
+      setShowControls(true);
+      if (timer) clearTimeout(timer);
+    } else {
+      // console.log('onPlaying callback');
+      setPaused(false);
+      setTimer(hideControls(10));
+    }
+  }, [paused]);
+
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
 
   const videoError = () => {
     setError(true);
@@ -155,6 +200,41 @@ const MediaPlayer = ({
   // console.log({ source, resolution, resolutions });
   // console.log({ resolutions });
   // console.log('source', source);
+  // console.log('typename', typename);
+
+  const renderPlayer = () => {
+    if (typename === 'Iptv')
+      return (
+        <VLCPlayer
+          // onPlaying={handleOnPlaying}
+          // onPaused={handleOnPause}
+          ref={player}
+          paused={paused}
+          seek={sliderPosition}
+          onProgress={handleProgress}
+          source={{ uri: source }}
+          volume={volume}
+          onBuffering={onBuffer}
+          onError={videoError}
+          resizeMode="contain"
+          style={{ width: Dimensions.get('window').width, height: 211 }}
+        />
+      );
+
+    return (
+      <Video
+        ref={player}
+        paused={paused}
+        onProgress={handleProgress}
+        source={{ uri: source }}
+        volume={volume}
+        onBuffer={onBuffer}
+        onError={videoError}
+        resizeMode="contain"
+        style={{ width: Dimensions.get('window').width, height: 211 }}
+      />
+    );
+  };
 
   if (fullscreen)
     return (
@@ -168,6 +248,8 @@ const MediaPlayer = ({
         nextAction={nextAction}
         isFirstEpisode={isFirstEpisode}
         isLastEpisode={isLastEpisode}
+        setSliderPosition={setSliderPosition}
+        setPaused={setPaused}
       />
     );
 
@@ -188,21 +270,7 @@ const MediaPlayer = ({
         </View>
       )}
 
-      <VLCPlayer
-        onPlaying={handleOnPlaying}
-        onPaused={handleOnPause}
-        autoplay={false}
-        ref={player}
-        paused={paused}
-        seek={currentTime}
-        onProgress={handleProgress}
-        source={{ uri: source }}
-        volume={volume}
-        onBuffering={onBuffer}
-        onError={videoError}
-        resizeMode="contain"
-        style={{ width: Dimensions.get('window').width, height: 211 }}
-      />
+      {renderPlayer()}
 
       {/* volume slider */}
       {volumeSliderVisible ? (
@@ -229,10 +297,11 @@ const MediaPlayer = ({
         seriesTitle={seriesTitle}
         togglePlay={togglePlay}
         paused={paused}
+        setPaused={setPaused}
         toggleFullscreen={handleFullscreenToggle}
         style={{ position: 'absolute' }}
         visible={showControls}
-        setCurrentTime={setCurrentTime}
+        setSliderPosition={setSliderPosition}
         toggleVolumeSliderVisible={toggleVolumeSliderVisible}
         toggleCastOptions={handleToggleCastOptions}
         toggleVideoOptions={handleToggleVideoOptions}
@@ -240,6 +309,7 @@ const MediaPlayer = ({
         nextAction={nextAction}
         isFirstEpisode={isFirstEpisode}
         isLastEpisode={isLastEpisode}
+        typename={typename}
       />
 
       {/* screencast option */}

@@ -14,15 +14,17 @@ import castOptions from './screencast-options.json';
 import { createFontFormat, toDateTime } from 'utils';
 import {
   selectPlaybackInfo,
-  selectCurrentPosition,
+  // selectCurrentPosition,
   selectCurrentTime,
-  selectRemainingTime
+  selectRemainingTime,
+  selectDuration
 } from 'modules/ducks/movies/movies.selectors';
+
+// const thumbimage = require('assets/media-player-slider-thumb.png');
 
 const VideoControls = ({
   theme,
   currentTime,
-  position,
   remainingTime,
   buffering,
   previousAction,
@@ -30,8 +32,26 @@ const VideoControls = ({
   isFirstEpisode,
   isLastEpisode,
   multipleMedia,
+  duration,
   ...controlProps
 }) => {
+  // console.log('xxxx', duration);
+  // const [progress, setProgress] = React.useState(0);
+
+  const handleSlidingStart = () => {
+    controlProps.setPaused(true);
+  };
+
+  const handleSlidingComplete = (value) => {
+    controlProps.setSliderPosition(value);
+    controlProps.setPaused(false);
+  };
+
+  // React.useEffect(() => {
+  //   setProgress(currentTime);
+  // }, [currentTime]);
+
+  // console.log('duration', duration);
   const screencastOptions = () => {
     if (controlProps.showCastOptions) {
       return castOptions.map(({ id, name, label }) => (
@@ -172,9 +192,11 @@ const VideoControls = ({
             {/* <Pressable>
               <Icon name="caption" size={25} style={{ marginRight: 15 }} />
             </Pressable> */}
-            <Pressable onPress={() => controlProps.toggleVideoOptions()}>
-              <Icon name="video-quality" size={25} />
-            </Pressable>
+            {controlProps.typename === 'SingleVideo' ? (
+              <Pressable onPress={() => controlProps.toggleVideoOptions()}>
+                <Icon name="video-quality" size={25} />
+              </Pressable>
+            ) : null}
           </View>
           <Pressable onPress={() => controlProps.toggleFullscreen()}>
             <Icon name="fullscreen" size={25} />
@@ -190,13 +212,15 @@ const VideoControls = ({
           </View>
           <View style={{ flex: 7 }}>
             <Slider
-              value={position}
-              onSlidingComplete={(value) => controlProps.setCurrentTime(value)}
+              value={currentTime}
+              onSlidingStart={handleSlidingStart}
+              onSlidingComplete={(value) => handleSlidingComplete(value)}
               style={{ width: '100%', height: 10 }}
               minimumValue={0}
-              maximumValue={1}
+              maximumValue={duration}
               minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
               maximumTrackTintColor="white"
+              // thumbImage={thumbimage}
             />
           </View>
           <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
@@ -242,9 +266,9 @@ VideoControls.defaultProps = {
 
 const mapStateToProps = createStructuredSelector({
   playbackInfo: selectPlaybackInfo,
-  position: selectCurrentPosition,
   currentTime: selectCurrentTime,
-  remainingTime: selectRemainingTime
+  remainingTime: selectRemainingTime,
+  duration: selectDuration
 });
 
 export default compose(connect(mapStateToProps), withTheme)(VideoControls);

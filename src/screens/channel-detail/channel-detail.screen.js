@@ -141,6 +141,8 @@ const ChannelDetailScreen = ({
           togglePlay={handleTogglePlay}
           loading={loading}
           setLoading={setLoading}
+          typename={channel.__typename}
+          setPaused={setPaused}
         />
       );
     }
