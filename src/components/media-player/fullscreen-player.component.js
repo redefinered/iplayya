@@ -30,6 +30,9 @@ const FullScreenPlayer = ({
   isFirstEpisode,
   isLastEpisode,
   volume,
+  typename,
+  resolutions,
+  setSource,
   ...actionsProps
   // setSliderPosition
 }) => {
@@ -60,6 +63,11 @@ const FullScreenPlayer = ({
     }
   }, [sliderPosition]);
 
+  React.useEffect(() => {
+    let r = resolutions.find(({ name }) => name === resolution);
+    if (typeof r !== 'undefined') return setSource(r.link.split(' ')[1]);
+  }, [resolution]);
+
   // const handleFullscreenToggle = () => {
   //   setFullscreen(!fullscreen);
   // };
@@ -78,17 +86,18 @@ const FullScreenPlayer = ({
     }, duration * 1000);
   };
 
-  // const handleOnPlaying = (data) => {
-  //   console.log('onPlaying callback');
-  //   setPaused(false);
-  //   setTimer(hideControls(10));
-  // };
+  // used by vlc media player in channel
+  const handleOnPlaying = (data) => {
+    console.log('onPlaying callback', data);
+    setPaused(false);
+    setTimer(hideControls(10));
+  };
 
-  // const handleOnPause = () => {
-  //   console.log('paused');
-  //   setShowControls(true);
-  //   if (timer) clearTimeout(timer);
-  // };
+  const handleOnPause = () => {
+    console.log('paused');
+    setShowControls(true);
+    if (timer) clearTimeout(timer);
+  };
 
   React.useEffect(() => {
     if (paused) {
@@ -115,17 +124,17 @@ const FullScreenPlayer = ({
   //   setVolumeSliderVisible(!volumeSliderVisible);
   // };
 
-  const handleHideCastOptions = () => {
-    setShowCastOptions(false);
-  };
+  // const handleHideCastOptions = () => {
+  //   setShowCastOptions(false);
+  // };
 
   const handleToggleCastOptions = () => {
     setShowCastOptions(!showCastOptions);
   };
 
-  const handleHideVideoOptions = () => {
-    setShowVideoOptions(false);
-  };
+  // const handleHideVideoOptions = () => {
+  //   setShowVideoOptions(false);
+  // };
 
   const handleToggleVideoOptions = () => {
     setShowVideoOptions(!showVideoOptions);
@@ -145,6 +154,40 @@ const FullScreenPlayer = ({
 
   const togglePlay = () => {
     setPaused(!paused);
+  };
+
+  const renderPlayer = () => {
+    if (typename === 'Iptv')
+      return (
+        <VLCPlayer
+          onPlaying={handleOnPlaying}
+          onPaused={handleOnPause}
+          ref={player}
+          paused={paused}
+          seek={sliderPosition}
+          onProgress={handleProgress}
+          source={{ uri: source }}
+          volume={volume}
+          // onBuffering={onBuffer}
+          onError={videoError}
+          resizeMode="contain"
+          style={{ width: HEIGHT, height: WIDTH }}
+        />
+      );
+
+    return (
+      <Video
+        ref={player}
+        paused={paused}
+        onProgress={handleProgress}
+        source={{ uri: source }}
+        volume={volume}
+        onBuffer={onBuffer}
+        onError={videoError}
+        resizeMode="contain"
+        style={{ width: HEIGHT, height: WIDTH }}
+      />
+    );
   };
 
   return (
@@ -205,7 +248,7 @@ const FullScreenPlayer = ({
             }}
           /> */}
 
-          <Video
+          {/* <Video
             ref={player}
             paused={paused}
             onProgress={handleProgress}
@@ -215,7 +258,9 @@ const FullScreenPlayer = ({
             onError={videoError}
             resizeMode="contain"
             style={{ width: HEIGHT, height: WIDTH }}
-          />
+          /> */}
+
+          {renderPlayer()}
 
           {/* media player controls */}
           <Controls
@@ -240,12 +285,15 @@ const FullScreenPlayer = ({
             showCastOptions={showCastOptions}
             showVideoOptions={showVideoOptions}
             handleSelectResolution={handleSelectResolution}
+            activeState={activeState}
             setActiveState={setActiveState}
             resolution={resolution}
             previousAction={previousAction}
             nextAction={nextAction}
             isFirstEpisode={isFirstEpisode}
             isLastEpisode={isLastEpisode}
+            typename={typename}
+            resolutions={resolutions}
             style={{
               position: 'absolute',
               zIndex: 100,

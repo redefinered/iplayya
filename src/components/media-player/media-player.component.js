@@ -201,7 +201,7 @@ const MediaPlayer = ({
   // console.log({ resolutions });
   // console.log('source', source);
   // console.log('typename', typename);
-  console.log('volume', volume);
+  // console.log('volume', volume);
 
   const renderPlayer = () => {
     if (typename === 'Iptv')
@@ -253,6 +253,9 @@ const MediaPlayer = ({
         setPaused={setPaused}
         volume={volume}
         setVolume={setVolume}
+        resolutions={resolutions}
+        setSource={setSource}
+        typename={typename}
       />
     );
 
@@ -312,6 +315,11 @@ const MediaPlayer = ({
         nextAction={nextAction}
         isFirstEpisode={isFirstEpisode}
         isLastEpisode={isLastEpisode}
+        resolutions={resolutions}
+        resolution={resolution}
+        activeState={activeState}
+        setActiveState={setActiveState}
+        handleSelectResolution={handleSelectResolution}
         typename={typename}
       />
       {/* screencast option */}

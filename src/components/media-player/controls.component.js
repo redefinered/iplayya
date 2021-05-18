@@ -131,6 +131,44 @@ const VideoControls = ({
     }
   };
 
+  const resolutionOptions = () => {
+    const { resolutions } = controlProps;
+
+    if (typeof resolutions === 'undefined') return;
+
+    if (controlProps.showVideoOptions) {
+      return resolutions.map(({ id, name, label }) => (
+        <Pressable
+          key={id}
+          onPressIn={() => controlProps.setActiveState(name)}
+          onPress={() => controlProps.handleSelectResolution(name)}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 50,
+            backgroundColor:
+              controlProps.activeState === name ? theme.iplayya.colors.white10 : 'transparent',
+            paddingHorizontal: 15
+          }}
+        >
+          <View style={{ flex: 10.5 }}>
+            <Text
+              style={{
+                color:
+                  controlProps.resolution === name
+                    ? theme.iplayya.colors.vibrantpussy
+                    : theme.colors.text,
+                ...createFontFormat(16, 22)
+              }}
+            >
+              {label}
+            </Text>
+          </View>
+        </Pressable>
+      ));
+    }
+  };
+
   return (
     <View
       style={{
@@ -238,6 +276,17 @@ const VideoControls = ({
             {controlProps.typename !== 'Iptv' ? (
               <Pressable onPress={() => controlProps.toggleVideoOptions()}>
                 <Icon name="video-quality" size={25} />
+                <View
+                  style={{
+                    backgroundColor: '#202530',
+                    width: 250,
+                    position: 'absolute',
+                    bottom: '100%',
+                    left: 0
+                  }}
+                >
+                  {resolutionOptions()}
+                </View>
               </Pressable>
             ) : null}
           </View>
@@ -297,10 +346,7 @@ VideoControls.propTypes = {
   togglePlay: PropTypes.func.isRequired,
   paused: PropTypes.bool.isRequired,
   multipleMedia: PropTypes.bool,
-  toggleVolumeSliderVisible: PropTypes.func,
-  toggleCastOptions: PropTypes.func,
-  toggleVideoOptions: PropTypes.func,
-  showCastOptions: PropTypes.bool
+  toggleVolumeSliderVisible: PropTypes.func
 };
 
 VideoControls.defaultProps = {
