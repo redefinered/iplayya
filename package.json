@@ -1,6 +1,6 @@
 {
   "name": "iplayya",
-  "version": "0.0.2-alpha.40",
+  "version": "0.0.2-alpha.41",
   "private": true,
   "scripts": {
     "android": "npx react-native run-android",
