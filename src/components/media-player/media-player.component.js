@@ -201,6 +201,7 @@ const MediaPlayer = ({
   // console.log({ resolutions });
   // console.log('source', source);
   // console.log('typename', typename);
+  console.log('volume', volume);
 
   const renderPlayer = () => {
     if (typename === 'Iptv')
@@ -250,6 +251,8 @@ const MediaPlayer = ({
         isLastEpisode={isLastEpisode}
         setSliderPosition={setSliderPosition}
         setPaused={setPaused}
+        volume={volume}
+        setVolume={setVolume}
       />
     );
 
@@ -269,11 +272,10 @@ const MediaPlayer = ({
           <Text>VIDEO ERROR</Text>
         </View>
       )}
-
       {renderPlayer()}
 
       {/* volume slider */}
-      {volumeSliderVisible ? (
+      {/* {volumeSliderVisible ? (
         <View style={{ position: 'absolute', marginLeft: 20, paddingTop: 40, zIndex: 100 }}>
           <VerticalSlider
             width={8}
@@ -286,11 +288,12 @@ const MediaPlayer = ({
             maximumTrackTintColor={theme.iplayya.colors.white25}
           />
         </View>
-      ) : null}
+      ) : null} */}
 
       {/* media player controls */}
       <Controls
         volume={volume}
+        setVolume={setVolume}
         buffering={buffering}
         multipleMedia={multipleMedia}
         title={title}
@@ -311,7 +314,6 @@ const MediaPlayer = ({
         isLastEpisode={isLastEpisode}
         typename={typename}
       />
-
       {/* screencast option */}
       <Modal animationType="slide" visible={showCastOptions} transparent>
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>

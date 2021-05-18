@@ -28,7 +28,9 @@ const FullScreenPlayer = ({
   previousAction,
   nextAction,
   isFirstEpisode,
-  isLastEpisode
+  isLastEpisode,
+  volume,
+  ...actionsProps
   // setSliderPosition
 }) => {
   const theme = useTheme();
@@ -38,8 +40,7 @@ const FullScreenPlayer = ({
   const [showControls, setShowControls] = React.useState(true);
   // const [fullscreen, setFullscreen] = React.useState(false);
   const [sliderPosition, setSliderPosition] = React.useState(null);
-  const [volume, setVolume] = React.useState(75);
-  const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
+  // const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
   const [activeState, setActiveState] = React.useState(null);
@@ -110,9 +111,9 @@ const FullScreenPlayer = ({
     updatePlaybackInfoAction({ playbackInfo });
   };
 
-  const toggleVolumeSliderVisible = () => {
-    setVolumeSliderVisible(!volumeSliderVisible);
-  };
+  // const toggleVolumeSliderVisible = () => {
+  //   setVolumeSliderVisible(!volumeSliderVisible);
+  // };
 
   const handleHideCastOptions = () => {
     setShowCastOptions(false);
@@ -216,31 +217,11 @@ const FullScreenPlayer = ({
             style={{ width: HEIGHT, height: WIDTH }}
           />
 
-          {/* volume slider */}
-          {/* {volumeSliderVisible ? (
-            
-          ) : null} */}
-
-          <Slider
-            style={{
-              zIndex: 110,
-              width: 200,
-              position: 'relative',
-              left: -100 + 24,
-              opacity: volumeSliderVisible ? 1 : 0
-            }}
-            onValueChange={(value) => setVolume(value)}
-            value={volume}
-            minimumValue={0}
-            maximumValue={1}
-            transform={[{ rotate: '-90deg' }]}
-            minimumTrackTintColor={theme.iplayya.colors.white100}
-            maximumTrackTintColor={theme.iplayya.colors.white25}
-          />
-
           {/* media player controls */}
           <Controls
+            isFullscreen={true}
             volume={volume}
+            setVolume={actionsProps.setVolume}
             multipleMedia={multipleMedia}
             buffering={buffering}
             title={title}
@@ -251,7 +232,6 @@ const FullScreenPlayer = ({
             toggleFullscreen={handleFullscreenToggle}
             visible={showControls}
             setSliderPosition={setSliderPosition}
-            toggleVolumeSliderVisible={toggleVolumeSliderVisible}
             toggleCastOptions={handleToggleCastOptions}
             toggleVideoOptions={handleToggleVideoOptions}
             screencastOption={screencastOption}
@@ -262,16 +242,16 @@ const FullScreenPlayer = ({
             handleSelectResolution={handleSelectResolution}
             setActiveState={setActiveState}
             resolution={resolution}
+            previousAction={previousAction}
+            nextAction={nextAction}
+            isFirstEpisode={isFirstEpisode}
+            isLastEpisode={isLastEpisode}
             style={{
               position: 'absolute',
               zIndex: 100,
               width: HEIGHT,
               height: WIDTH
             }}
-            previousAction={previousAction}
-            nextAction={nextAction}
-            isFirstEpisode={isFirstEpisode}
-            isLastEpisode={isLastEpisode}
           />
         </View>
       </View>

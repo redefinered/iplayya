@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import castOptions from './screencast-options.json';
 import { createFontFormat, toDateTime } from 'utils';
+import VerticalSlider from 'rn-vertical-slider';
 import {
   selectPlaybackInfo,
   // selectCurrentPosition,
@@ -33,6 +34,8 @@ const VideoControls = ({
   isLastEpisode,
   multipleMedia,
   duration,
+  setVolume,
+  isFullscreen,
   ...controlProps
 }) => {
   // console.log('xxxx', duration);
@@ -50,6 +53,43 @@ const VideoControls = ({
   // React.useEffect(() => {
   //   setProgress(currentTime);
   // }, [currentTime]);
+
+  const renderVolumeSlider = () => {
+    if (isFullscreen)
+      return (
+        <Slider
+          style={{
+            zIndex: 110,
+            width: 200,
+            position: 'absolute',
+            left: -100 + 24,
+            top: 150
+          }}
+          onValueChange={(value) => setVolume(value)}
+          value={controlProps.volume}
+          minimumValue={0}
+          maximumValue={1}
+          transform={[{ rotate: '-90deg' }]}
+          minimumTrackTintColor={theme.iplayya.colors.white100}
+          maximumTrackTintColor={theme.iplayya.colors.white25}
+        />
+      );
+
+    return (
+      <View style={{ position: 'absolute', marginLeft: 20, paddingTop: 40, zIndex: 102 }}>
+        <VerticalSlider
+          width={8}
+          height={isFullscreen ? 250 : 100}
+          value={controlProps.volume}
+          min={0}
+          max={1}
+          onChange={(value) => setVolume(parseFloat(value))}
+          minimumTrackTintColor={theme.iplayya.colors.white100}
+          maximumTrackTintColor={theme.iplayya.colors.white25}
+        />
+      </View>
+    );
+  };
 
   // console.log('duration', duration);
   const screencastOptions = () => {
@@ -100,6 +140,9 @@ const VideoControls = ({
         opacity: controlProps.visible ? 1 : 0
       }}
     >
+      {/* volume slider */}
+      {renderVolumeSlider()}
+
       <View
         style={{
           flexDirection: 'row',
@@ -182,7 +225,7 @@ const VideoControls = ({
           }}
         >
           <View style={{ flexDirection: 'row' }}>
-            <Pressable onPress={() => controlProps.toggleVolumeSliderVisible()}>
+            <Pressable>
               <Icon
                 name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
                 size={25}
@@ -192,7 +235,7 @@ const VideoControls = ({
             {/* <Pressable>
               <Icon name="caption" size={25} style={{ marginRight: 15 }} />
             </Pressable> */}
-            {controlProps.typename === 'SingleVideo' ? (
+            {controlProps.typename !== 'Iptv' ? (
               <Pressable onPress={() => controlProps.toggleVideoOptions()}>
                 <Icon name="video-quality" size={25} />
               </Pressable>
