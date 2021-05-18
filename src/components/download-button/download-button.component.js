@@ -63,39 +63,52 @@ const DownloadButton = ({
   }, []);
 
   React.useEffect(() => {
-    if (currentEpisode && movie) {
-      // is_series should be true at this point
-      const { season, episode } = currentEpisode;
-      const { series } = movie;
-      const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
-
-      let downloadSources = episodes.find(({ episode: e }) => parseInt(e) === episode).video_urls;
-
-      downloadSources = downloadSources.map(({ quality, link }) => ({
-        id: uuid(),
-        label: quality,
-        link
-      }));
-
-      downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
-
-      // console.log('xxxx', downloadSources);
-
-      return setSources(downloadSources);
-    }
-
+    console.log({ currentEpisode });
     if (movie) {
-      let downloadSources = movie.video_urls;
-      downloadSources = downloadSources.map(({ quality, link }) => ({
-        id: uuid(),
-        label: quality,
-        link
-      }));
+      const { is_series } = movie;
 
-      downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
+      if (is_series) {
+        if (!currentEpisode) return;
 
-      return setSources(downloadSources);
+        const { season, episode } = currentEpisode;
+        const { series } = movie;
+        const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+
+        let downloadSources = episodes.find(({ episode: e }) => parseInt(e) === episode).video_urls;
+
+        downloadSources = downloadSources.map(({ quality, link }) => ({
+          id: uuid(),
+          label: quality,
+          link
+        }));
+
+        downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
+
+        // console.log('xxxx', downloadSources);
+
+        return setSources(downloadSources);
+      } else {
+        let downloadSources = movie.video_urls;
+        downloadSources = downloadSources.map(({ quality, link }) => ({
+          id: uuid(),
+          label: quality,
+          link
+        }));
+
+        downloadSources = downloadSources.filter(({ link }) => !link.includes('/video.m3u8'));
+
+        return setSources(downloadSources);
+      }
     }
+
+    // if (currentEpisode && movie) {
+    //   // is_series should be true at this point
+
+    // }
+
+    // if (movie) {
+
+    // }
   }, [movie, currentEpisode]);
 
   const handleDownloadMovie = async (video) => {
