@@ -183,7 +183,7 @@ const IsportsScreen = ({
               onSelect={onCategorySelect}
               selected={selectedCategory}
             />
-            <Spacer />
+            <Spacer size={2} />
             {/* featured items section */}
             <View style={{ marginBottom: 30 }}>
               <ContentWrap>

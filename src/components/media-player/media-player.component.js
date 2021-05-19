@@ -4,7 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, View, Modal, Pressable } from 'react-native';
 import { useTheme, Text } from 'react-native-paper';
-// import Video from 'react-native-video';
 import Icon from 'components/icon/icon.component';
 import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
