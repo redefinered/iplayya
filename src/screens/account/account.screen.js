@@ -69,6 +69,7 @@ const AccountScreen = ({
 
   const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
   const [profileErrorVisible, setProfileErrorVisible] = React.useState(false);
+  const [onSigningOut, setOnSigningOut] = React.useState(false);
 
   React.useEffect(() => {
     if (authError !== null) {
@@ -108,6 +109,9 @@ const AccountScreen = ({
     );
 
   // console.log({ authError })
+  const handleHideOnSignOut = () => {
+    setOnSigningOut(false);
+  };
 
   const handleRetry = () => {
     setAuthErrorVisible(false);
@@ -251,7 +255,7 @@ const AccountScreen = ({
             </View>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => signOutAction()}>
+        <TouchableRipple onPress={() => setOnSigningOut(true)}>
           <View style={styles.settingItem}>
             <View style={styles.iconContainer}>
               <Icon name="logout" size={24} />
@@ -263,6 +267,15 @@ const AccountScreen = ({
             </View>
           </View>
         </TouchableRipple>
+        <AlertModal
+          variant="danger"
+          message="Are you sure you want to Logout?"
+          visible={onSigningOut}
+          hideAction={handleHideOnSignOut}
+          onCancel={handleHideOnSignOut}
+          confirmText="OK"
+          confirmAction={signOutAction}
+        />
       </View>
       {profileError && (
         <AlertModal

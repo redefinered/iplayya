@@ -68,11 +68,11 @@ const IptvStack = ({
           animationEnabled: false,
           headerRight: () => (
             <View style={{ flexDirection: 'row' }}>
-              <TouchableRipple style={{ padding: 8 }}>
+              {/* <TouchableRipple style={{ padding: 8 }}>
                 <View style={{ ...styles.headerButtonContainer }}>
                   <Icon name="search" size={24} />
                 </View>
-              </TouchableRipple>
+              </TouchableRipple> */}
               <View>
                 <TouchableRipple
                   borderless={true}

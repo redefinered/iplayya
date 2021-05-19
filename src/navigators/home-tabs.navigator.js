@@ -27,14 +27,12 @@ import { selectSwipeEnabled } from 'modules/ducks/nav/nav.selectors';
 const Tab = createMaterialTopTabNavigator();
 
 const HomeTabs = ({ hideTabs, swipeEnabled }) => {
-  console.log('xxx', swipeEnabled);
   return (
     <Tab.Navigator
       initialRouteName="Home"
       backBehavior="none"
       tabBarPosition="bottom"
       swipeEnabled={swipeEnabled}
-      animationEnabled={false}
       initialLayout={{ width: Dimensions.get('window').width }}
       tabBarOptions={{
         showIcon: true,

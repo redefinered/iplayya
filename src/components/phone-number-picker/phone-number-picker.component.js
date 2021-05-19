@@ -1,18 +1,18 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View /*StyleSheet*/ } from 'react-native';
 import PropTypes from 'prop-types';
 import PhoneInput from 'react-native-phone-input';
 import CountryPicker, { DARK_THEME } from 'react-native-country-picker-modal';
 import { useTheme } from 'react-native-paper';
 
-const styles = StyleSheet.create({
-  textFocus: {
-    backgroundColor: 'rgba(255,255,255,0.3)'
-  },
-  textUnfocus: {
-    backgroundColor: 'rgba(255,255,255,0.1)'
-  }
-});
+// const styles = StyleSheet.create({
+//   textFocus: {
+//     backgroundColor: 'rgba(255,255,255,0.3)'
+//   },
+//   textUnfocus: {
+//     backgroundColor: 'rgba(255,255,255,0.1)'
+//   }
+// });
 
 const PhoneNumberPicker = ({ setPhone }) => {
   const [value, setValue] = React.useState('');
@@ -24,7 +24,7 @@ const PhoneNumberPicker = ({ setPhone }) => {
   const switchVisible = () => setVisible(!visible);
 
   const onPhoneInputChange = (value, iso2) => {
-    console.log(value, iso2);
+    console.log('xxx', value, iso2);
     const newState = {
       phoneInputValue: value
     };
@@ -49,16 +49,14 @@ const PhoneNumberPicker = ({ setPhone }) => {
 
   return (
     <View
-      style={[
-        phone === 'undefined' ? styles.textFocus : styles.textUnfocus,
-        {
-          borderRadius: 8,
-          paddingHorizontal: 10,
-          paddingVertical: 18,
-          marginTop: 5,
-          position: 'relative'
-        }
-      ]}
+      style={{
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+        marginTop: 5,
+        position: 'relative',
+        backgroundColor: 'rgba(255,255,255,0.1)'
+      }}
     >
       <PhoneInput
         ref={phone}

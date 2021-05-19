@@ -9,7 +9,7 @@ import Icon from 'components/icon/icon.component';
 const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
-    borderRadius: 10,
+    borderRadius: 8,
     marginTop: 17
   },
   textDate: {
@@ -24,10 +24,24 @@ const styles = StyleSheet.create({
   dateIcon: {
     marginRight: 10,
     marginTop: -2
+  },
+  textHolderBlur: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    backgroundColor: 'rgba(255,255,255,0.1)'
+  },
+  textHolderFocus: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    backgroundColor: 'rgba(255,255,255,0.3)'
   }
 });
 
-const DatePicker = ({ setBirthdate }) => {
+const DatePicker = ({ setBirthdate, style }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
   const [chosenDate, setChosenDate] = React.useState('mm/dd/yy'); // moment().format('LL')
 
@@ -52,19 +66,11 @@ const DatePicker = ({ setBirthdate }) => {
   return (
     <TouchableRipple
       borderless={true}
-      style={styles.textContainer}
+      style={{ ...styles.textContainer, ...style }}
       onPress={() => showDatePicker()}
     >
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingVertical: 18,
-          paddingHorizontal: 10,
-          backgroundColor: 'rgba(255,255,255,0.1)'
-        }}
-      >
-        <Text style={isDatePickerVisible === false ? styles.textBlur : styles.textFocus}>
+      <View style={chosenDate === 'mm/dd/yy' ? styles.textHolderBlur : styles.textHolderFocus}>
+        <Text style={chosenDate === 'mm/dd/yy' ? styles.textBlur : styles.textFocus}>
           {chosenDate}
         </Text>
         <View style={styles.dateIcon}>
@@ -82,7 +88,8 @@ const DatePicker = ({ setBirthdate }) => {
 };
 
 DatePicker.propTypes = {
-  setBirthdate: PropTypes.func
+  setBirthdate: PropTypes.func,
+  style: PropTypes.object
 };
 
 export default DatePicker;

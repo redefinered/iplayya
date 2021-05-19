@@ -7,7 +7,8 @@ import { Text, TouchableRipple } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
-// import AlertModal from 'components/alert-modal/alert-modal.component';
+import MainButton from 'components/button/mainbutton.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
 import Loader from 'components/loader.component';
 import Icon from 'components/icon/icon.component';
 
@@ -207,10 +208,20 @@ class EditProfileScreen extends React.Component {
                 keyboardType="number-pad"
               /> */}
               <View>
-                <PhoneNumberPicker name="phone" setPhone={this.setPhone} error={stateError.phone} />
+                <PhoneNumberPicker
+                  name="phone"
+                  setPhone={this.setPhone}
+                  error={stateError.phone}
+                  style={stateError.phone ? styles.errorText : null}
+                />
               </View>
               <View>
-                <DatePicker name="birth_date" setBirthdate={this.setBirthdate} />
+                <DatePicker
+                  name="birth_date"
+                  setBirthdate={this.setBirthdate}
+                  error={stateError.birth_date}
+                  style={stateError.birth_date ? styles.errorText : null}
+                />
               </View>
               <TouchableRipple
                 borderless={true}
@@ -225,7 +236,7 @@ class EditProfileScreen extends React.Component {
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    paddingVertical: 18,
+                    paddingVertical: 15,
                     paddingHorizontal: 10
                   }}
                 >
@@ -244,9 +255,14 @@ class EditProfileScreen extends React.Component {
               </TouchableRipple>
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
-              <Button onPress={() => this.handleSubmit()} style={styles.submit} mode="contained">
+              <MainButton
+                onPress={() => this.handleSubmit()}
+                text="Save"
+                style={{ ...styles.submit, marginTop: 30 }}
+              />
+              {/* <Button onPress={() => this.handleSubmit()} style={styles.submit} mode="contained">
                 Save
-              </Button>
+              </Button> */}
             </View>
           </ScrollView>
         </ContentWrap>
