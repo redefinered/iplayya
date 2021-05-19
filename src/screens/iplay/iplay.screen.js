@@ -1,7 +1,8 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-constant-condition */
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
-// import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
@@ -14,30 +15,92 @@ import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import EmptyLibrary from 'assets/iplay-empty-lib.svg';
-
 import { compose } from 'redux';
 import { createFontFormat } from 'utils';
+import DocumentPicker from 'react-native-document-picker';
+import uuid from 'react-uuid';
+import { Creators } from 'modules/ducks/iplay/iplay.actions';
+import { connect } from 'react-redux';
+import { selectVideoFiles } from 'modules/ducks/iplay/iplay.selectors';
+import { createStructuredSelector } from 'reselect';
+import RNFetchBlob from 'rn-fetch-blob';
 
-import library from './dummy-data.json';
+const IplayScreen = ({
+  navigation,
+  theme,
+  addVideoFilesAction,
+  videoFiles,
+  deleteVideoFilesAction
+}) => {
+  // console.log({ videoFiles });
 
-const IplayScreen = ({ navigation, theme }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [alertMessageVisible, setAlertMessageVisible] = React.useState(false);
   const [deleteMessage, setDeleteMessage] = React.useState('');
-  const [videoErrorVisible, setVideoErrorVisible] = React.useState(true);
+  const [videoErrorVisible, setVideoErrorVisible] = React.useState(false);
+  const [error, setError] = React.useState();
 
-  console.log({ selectedItems, library });
+  // initiate pick files when retry has been clicked
+  React.useEffect(() => {
+    if (!videoErrorVisible) pickFiles();
+  }, [videoErrorVisible]);
 
-  const handleSelectItem = (item) => {
-    const newItems = selectedItems;
-    const index = selectedItems.findIndex((i) => i === item);
-    if (index >= 0) {
-      newItems.splice(index, 1);
-      setSelectedItems([...newItems]);
-    } else {
-      setSelectedItems([item, ...selectedItems]);
+  const pickFiles = async () => {
+    const newFiles = [];
+    // Pick multiple files
+    try {
+      const results = await DocumentPicker.pickMultiple({
+        mode: 'import',
+        type: [DocumentPicker.types.video],
+        copyTo: 'documentDirectory'
+      });
+      for (const result of results) {
+        console.log({ result });
+        newFiles.push({ id: uuid(), ...result });
+      }
+
+      addVideoFilesAction([...newFiles]);
+      // setFiles([...newFiles, ...files]);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err;
+      }
+    }
+  };
+
+  const handleSelectItem = ({ id, ...rest }) => {
+    if (activateCheckboxes) {
+      const newItems = selectedItems;
+      const index = selectedItems.findIndex((i) => i === id);
+      if (index >= 0) {
+        newItems.splice(index, 1);
+        setSelectedItems([...newItems]);
+      } else {
+        setSelectedItems([id, ...selectedItems]);
+      }
+      return;
+    }
+
+    return navigation.push('IplayDetailScreen', { file: { id, ...rest } });
+  };
+
+  const handleDeleteItems = async (fileIds) => {
+    try {
+      const paths = fileIds.map((id) => videoFiles.find((f) => f.id === id));
+      const promises = paths.map(({ fileCopyUri }) => RNFetchBlob.fs.unlink(fileCopyUri));
+
+      // wait all promises to be fulfilled...
+      // even if they are meant to be broken
+      await Promise.all(promises);
+
+      deleteVideoFilesAction(fileIds);
+    } catch (error) {
+      console.log({ deleteError: error });
+      setError(error.message);
     }
   };
 
@@ -47,7 +110,7 @@ const IplayScreen = ({ navigation, theme }) => {
       setActivateCheckboxes(false);
     }
 
-    if (selectedItems.length === library.length) {
+    if (selectedItems.length === videoFiles.length) {
       setDeleteMessage('Are you sure you want to delete all videos in your library list?');
     } else {
       setDeleteMessage('Are you sure you want to delete these videos in your library?');
@@ -56,7 +119,7 @@ const IplayScreen = ({ navigation, theme }) => {
 
   React.useEffect(() => {
     if (selectAll) {
-      let collection = library.map(({ id }) => {
+      let collection = videoFiles.map(({ id }) => {
         return id;
       });
       setSelectedItems(collection);
@@ -85,6 +148,8 @@ const IplayScreen = ({ navigation, theme }) => {
   const handleConfirmAction = () => {
     console.log('confirm delete');
     setAlertMessageVisible(false);
+    handleDeleteItems(selectedItems);
+    setActivateCheckboxes(false);
   };
 
   const handleVideoErrorRetry = () => {
@@ -98,97 +163,107 @@ const IplayScreen = ({ navigation, theme }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Text>asdasd</Text> */}
-      {library.length ? (
-        <ContentWrap>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Text style={{ ...createFontFormat(16, 22) }}>Video Library</Text>
-            <Pressable>
-              <Text
-                style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(16, 22) }}
-              >
-                Add video
-              </Text>
-            </Pressable>
-          </View>
-          <Spacer size={35} />
-
-          {activateCheckboxes && (
-            <React.Fragment>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between'
-                }}
-              >
-                <Pressable
-                  onPress={() => handleShowAlertMessage()}
-                  style={{ flexDirection: 'row', alignItems: 'center' }}
+      {videoFiles.length ? (
+        <React.Fragment>
+          <ContentWrap>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text style={{ ...createFontFormat(16, 22) }}>Video Library</Text>
+              <Pressable onPress={pickFiles}>
+                <Text
+                  style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(16, 22) }}
                 >
-                  <Icon name="delete" size={24} style={{ marginRight: 10 }} />
-                  <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => handleSelectAll()}
-                  style={{ flexDirection: 'row', alignItems: 'center' }}
+                  Add video
+                </Text>
+              </Pressable>
+            </View>
+            <Spacer size={35} />
+
+            {activateCheckboxes && (
+              <React.Fragment>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
                 >
-                  <Text style={{ marginRight: 10 }}>All</Text>
-                  <RadioButton selected={selectedItems.length === library.length} />
-                </Pressable>
-              </View>
-
-              <Spacer size={30} />
-            </React.Fragment>
-          )}
-
-          {library.map(({ id, title, size }) => (
-            <Pressable
-              key={id}
-              onLongPress={() => handleLongPress(id)}
-              onPress={() => handleSelectItem(id)}
-            >
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginBottom: 20,
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <View>
-                  <Text
-                    style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}
+                  <Pressable
+                    onPress={() => handleShowAlertMessage()}
+                    style={{ flexDirection: 'row', alignItems: 'center' }}
                   >
-                    {title}
-                  </Text>
-                  <Text style={{ ...createFontFormat(12, 16) }}>{`${size} mb`}</Text>
+                    <Icon name="delete" size={24} style={{ marginRight: 10 }} />
+                    <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={() => handleSelectAll()}
+                    style={{ flexDirection: 'row', alignItems: 'center' }}
+                  >
+                    <Text style={{ marginRight: 10 }}>All</Text>
+                    <RadioButton selected={selectedItems.length === videoFiles.length} />
+                  </Pressable>
                 </View>
-                {activateCheckboxes && (
-                  <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                )}
-              </View>
-            </Pressable>
-          ))}
-        </ContentWrap>
+
+                <Spacer size={30} />
+              </React.Fragment>
+            )}
+          </ContentWrap>
+          <ContentWrap scrollable>
+            {videoFiles.map(({ id, name, size, ...rest }) => {
+              const filesize = size / 1e6;
+              return (
+                <Pressable
+                  key={id}
+                  onLongPress={() => handleLongPress(id)}
+                  onPress={() => handleSelectItem({ id, name, size, ...rest })}
+                >
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      marginBottom: 20,
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <View>
+                      <Text
+                        style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}
+                      >
+                        {name}
+                      </Text>
+                      <Text style={{ ...createFontFormat(12, 16) }}>{`${filesize.toFixed(
+                        1
+                      )} mb`}</Text>
+                    </View>
+                    {activateCheckboxes && (
+                      <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
+          </ContentWrap>
+        </React.Fragment>
       ) : (
         <View
           style={{
             flex: 1,
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            paddingBottom: 95 // TODO: bottom nav height and header height must be calculated to center the items
           }}
         >
           <EmptyLibrary />
           <Spacer size={30} />
-          <Text style={{ fontWeight: 'bold', ...createFontFormat(20, 27) }}>Lets get started!</Text>
+          <Text style={{ fontWeight: 'bold', ...createFontFormat(20, 27) }}>Play Your Video</Text>
           <Spacer size={20} />
-          <ContentWrap>
+          <ContentWrap style={{ maxWidth: '80%' }}>
             <Text style={{ textAlign: 'center', ...createFontFormat(14, 19) }}>
-              Lorem ipsum keme keme keme 48 years wasok dites sangkatuts chapter na ang na wrangler
+              Add video from your media gallery and play it here on your video library
             </Text>
             <Spacer size={20} />
-            <Button mode="contained">Browse files</Button>
+            <Button mode="contained" onPress={pickFiles}>
+              Add video
+            </Button>
           </ContentWrap>
         </View>
       )}
@@ -237,7 +312,7 @@ const IplayScreen = ({ navigation, theme }) => {
         hideAction={handleHideVideoError}
         confirmText="Retry"
         confirmAction={handleVideoErrorRetry}
-        message="The audio file is not supported, please select .mp3 or .mp4 format."
+        message="The video file is not supported, please select mp4 format."
         variant="danger"
       />
     </View>
@@ -256,12 +331,17 @@ const styles = StyleSheet.create({
   }
 });
 
-export default compose(
+const actions = {
+  addVideoFilesAction: Creators.addVideoFiles,
+  deleteVideoFilesAction: Creators.deleteVideoFiles
+};
+
+const mapStateToProps = createStructuredSelector({ videoFiles: selectVideoFiles });
+
+const enhance = compose(
   withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  connect(mapStateToProps, actions),
   withTheme
-)(IplayScreen);
-// export default withHeaderPush({ backgroundType: 'solid' })(IplayScreen);
-// import { Text } from 'react-native';
-// export default function Test() {
-//   return <Text>asdasd</Text>;
-// }
+);
+
+export default enhance(IplayScreen);

@@ -24,6 +24,7 @@ import { selectVideoUrls } from 'modules/ducks/movies/movies.selectors';
 import uuid from 'react-uuid';
 
 const MediaPlayer = ({
+  videoplayer,
   updatePlaybackInfoAction,
   source,
   thumbnail,
@@ -204,7 +205,7 @@ const MediaPlayer = ({
   // console.log('volume', volume);
 
   const renderPlayer = () => {
-    if (typename === 'Iptv')
+    if (typename === 'Iptv' || videoplayer === 'vlc')
       return (
         <VLCPlayer
           // onPlaying={handleOnPlaying}

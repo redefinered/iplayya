@@ -19,6 +19,7 @@ import ImovieDownloadsScreen from 'screens/imovie-downloads/imovie-downloads.scr
 import IradioScreen from 'screens/iradio/iradio.screen';
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import IplayScreen from 'screens/iplay/iplay.screen';
+import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
@@ -363,6 +364,19 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
               </Pressable>
             </View>
           )
+        })}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="IplayDetailScreen"
+        component={IplayDetailScreen}
+        options={() => ({
+          // headerShown: false,
+          title: null,
+          animationEnabled: false
         })}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
