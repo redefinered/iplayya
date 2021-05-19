@@ -6,13 +6,15 @@ import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
-import Button from 'components/button/button.component';
+// import Button from 'components/button/button.component';
+import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 //import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/provider/provider.actions';
+import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectIsFetching,
@@ -56,6 +58,7 @@ class EditIptvScreen extends React.Component {
     // resets provider create state
     this.props.updateStartAction();
     this.props.createStartAction();
+    this.props.enableSwipeAction(false);
   }
 
   handleChange = (text, name) => {
@@ -134,8 +137,8 @@ class EditIptvScreen extends React.Component {
 
     return (
       <React.Fragment>
-        <ContentWrap style={styles.content}>
-          <ScrollView>
+        <ContentWrap>
+          <ScrollView style={{ marginTop: 20 }}>
             <View>
               <TextInput
                 name="name"
@@ -175,9 +178,14 @@ class EditIptvScreen extends React.Component {
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
 
-              <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
+              <MainButton
+                onPress={() => this.handleSubmit()}
+                text="Save"
+                style={{ ...styles.submit }}
+              />
+              {/* <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
                 Save
-              </Button>
+              </Button> */}
             </View>
           </ScrollView>
         </ContentWrap>
@@ -195,7 +203,8 @@ class EditIptvScreen extends React.Component {
 const actions = {
   updateStartAction: Creators.updateStart,
   createStartAction: Creators.createStart,
-  updateAction: Creators.update
+  updateAction: Creators.update,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const mapStateToProps = createStructuredSelector({

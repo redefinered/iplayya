@@ -23,11 +23,11 @@ const TextInput = ({ style, name, handleChangeText, ...otherProps }) => {
       mode="outlined"
       selectionColor={'#E34398'}
       onChangeText={(text) => handleChangeText(text, name)}
-      style={{ marginBottom: 10, ...style, ...customStyle }}
+      style={{ marginBottom: 10, height: 48, ...style, ...customStyle }}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
       placeholderTextColor={focused ? '#FFFFFF' : 'rgba(225,225,225,0.5)'}
-      theme={{ colors: { primary: 'rgba(255,255,255,0.1)' } }}
+      theme={{ colors: { primary: 'rgba(255,255,255,0.1)', error: '#E34398' } }}
       {...otherProps}
     />
   );

@@ -7,7 +7,8 @@ import { View, Pressable, KeyboardAvoidingView, Platform, StatusBar } from 'reac
 import { Text } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
-import Button from 'components/button/button.component';
+// import Button from 'components/button/button.component';
+import MainButton from 'components/button/mainbutton.component';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 
@@ -78,7 +79,8 @@ class SignInScreen extends React.Component {
             keyboardType="email-address"
             autoCompleteType="email"
             style={styles.textInput}
-            placeholder="email"
+            placeholder="Email"
+            error={this.props.error}
             // onFocus={() => this.setState({ isolatedInputs: true })}
             // onBlur={() => this.setState({ isolatedInputs: false })}
           />
@@ -93,8 +95,9 @@ class SignInScreen extends React.Component {
                 position: 'relative',
                 zIndex: 1
               }}
-              placeholder="password"
+              placeholder="Password"
               secureTextEntry={!showPassword}
+              error={this.props.error}
               // onFocus={() => this.setState({ isolatedInputs: true })}
               // onBlur={() => this.setState({ isolatedInputs: false, showPassword: false })}
             />
@@ -110,13 +113,34 @@ class SignInScreen extends React.Component {
             </Pressable>
           </View>
           {this.props.error && <Text>{this.props.error}</Text>}
-          <Button
+          <MainButton
+            onPress={() => this.handleLoginSubmit()}
+            text="Login"
+            style={{ marginTop: 30 }}
+          />
+          {/* <TouchableRipple
+            borderRadius={true}
+            rippleColor="#B4166A"
+            style={{ backgroundColor: '#E34398', borderRadius: 8 }}
+            onPress={() => this.handleLoginSubmit()}
+          >
+            <View
+              style={{
+                height: 45,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <Text style={{ fontSize: 16, fontFamily: 'NotoSans-Bold' }}>Login</Text>
+            </View>
+          </TouchableRipple> */}
+          {/* <Button
             mode="contained"
             style={styles.loginButton}
             onPress={() => this.handleLoginSubmit()}
           >
             Login
-          </Button>
+          </Button> */}
           <Pressable
             onPress={() => navigation.navigate('ForgotPasswordScreen')}
             style={styles.forgotPassword}

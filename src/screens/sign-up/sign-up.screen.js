@@ -6,7 +6,8 @@ import React from 'react';
 import { Text } from 'react-native-paper';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
-import Button from 'components/button/button.component';
+// import Button from 'components/button/button.component';
+import MainButton from 'components/button/mainbutton.component';
 import ContentWrap from 'components/content-wrap.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 
@@ -88,6 +89,12 @@ class SignUpScreen extends React.Component {
     }
 
     if (rest.password_confirmation !== rest.password) {
+      this.setError(stateError, 'password_confirmation', true);
+    } else {
+      this.setError(stateError, 'password_confirmation', false);
+    }
+
+    if (!isValidPassword(rest.password_confirmation)) {
       this.setError(stateError, 'password_confirmation', true);
     } else {
       this.setError(stateError, 'password_confirmation', false);
@@ -189,9 +196,10 @@ class SignUpScreen extends React.Component {
           </Text>
           .
         </Text>
-        <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
+        <MainButton onPress={() => this.handleSubmit()} text="Sign Up" style={styles.submit} />
+        {/* <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
           Sign Up
-        </Button>
+        </Button> */}
       </ContentWrap>
     );
   }

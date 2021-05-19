@@ -7,7 +7,8 @@ import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
-import Button from 'components/button/button.component';
+// import Button from 'components/button/button.component';
+import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
@@ -17,6 +18,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
+import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -50,6 +52,7 @@ class AddIptvScreen extends React.Component {
   componentDidMount() {
     // resets provider create state
     this.props.createStartAction();
+    this.props.enableSwipeAction(false);
   }
 
   componentDidUpdate(prevProps) {
@@ -199,10 +202,14 @@ class AddIptvScreen extends React.Component {
 
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
-
-              <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
+              <MainButton
+                onPress={() => this.handleSubmit()}
+                text="Add IPTV"
+                style={{ ...styles.submit, marginTop: 25 }}
+              />
+              {/* <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
                 Add IPTV
-              </Button>
+              </Button> */}
             </View>
             {!skippedProviderAdd ? (
               <Pressable style={styles.skip} onPress={() => this.handleSkip()}>
@@ -234,7 +241,8 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   createStartAction: ProviderCreators.createStart,
   createAction: ProviderCreators.create,
-  skipProviderAddAction: UserCreators.skipProviderAdd
+  skipProviderAddAction: UserCreators.skipProviderAdd,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));

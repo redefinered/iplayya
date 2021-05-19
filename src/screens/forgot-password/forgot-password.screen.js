@@ -5,7 +5,8 @@ import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
-import Button from 'components/button/button.component';
+// import Button from 'components/button/button.component';
+import MainButton from 'components/button/mainbutton.component';
 
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
 //import withLoader from 'components/with-loader.component';
@@ -70,12 +71,14 @@ const ForgotPasswordScreen = ({
         autoCapitalize="none"
         handleChangeText={handleChange}
         style={styles.textInput}
+        error={error}
       />
       {screenError && <Text>{screenError}</Text>}
       {error && <Text>{error}</Text>}
-      <Button mode="contained" onPress={() => handleSend()}>
+      <MainButton onPress={() => handleSend()} text="Send" style={{ marginTop: 25 }} />
+      {/* <Button mode="contained" onPress={() => handleSend()}>
         Send
-      </Button>
+      </Button> */}
     </ContentWrap>
   );
 };

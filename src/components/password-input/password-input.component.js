@@ -29,12 +29,19 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         placeholder="password"
         selectionColor={'#E34398'}
         onChangeText={(text) => handleChangeText(text, name)}
-        style={{ marginBottom: 10, ...style, ...customStyle, position: 'relative', zIndex: 1 }}
+        style={{
+          marginBottom: 10,
+          height: 48,
+          ...style,
+          ...customStyle,
+          position: 'relative',
+          zIndex: 1
+        }}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         secureTextEntry={!showText}
         placeholderTextColor={focused ? '#FFFFFF' : 'rgba(255,255,255,0.5)'}
-        theme={{ colors: { primary: 'rgba(255,255,255,0.1)' } }}
+        theme={{ colors: { primary: 'rgba(255,255,255,0.1)', error: '#E34398' } }}
         {...otherProps}
       />
       <Pressable
