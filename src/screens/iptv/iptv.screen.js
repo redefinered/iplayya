@@ -139,7 +139,12 @@ const IptvScreen = ({
             ))}
           </ScrollView>
         </View>
-        <SnackBar visible={showSuccessMessage} message="Changes saved successfully" />
+        <SnackBar
+          visible={showSuccessMessage}
+          iconName="circular-check"
+          iconColor="#13BD38"
+          message="Changes saved successfully"
+        />
         <ActionSheet visible={actionSheetVisible} actions={actions} hideAction={hideActionSheet} />
       </ContentWrap>
     );

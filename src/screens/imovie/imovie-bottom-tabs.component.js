@@ -35,7 +35,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         backgroundColor: '#202530',
         borderTopRightRadius: 24,
         borderTopLeftRadius: 24,
-        paddingHorizontal: 30,
+        paddingHorizontal: 15,
         paddingTop: 15,
         paddingBottom: 30,
         position: 'absolute',
@@ -70,7 +70,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         >
           <Icon name="download" size={40} style={{ color: downloadIconColor }} />
           <Text style={{ textTransform: 'uppercase', marginTop: 5, color: downloadIconColor }}>
-            Downloaded
+            Downloads
           </Text>
         </TouchableWithoutFeedback>
       </View>

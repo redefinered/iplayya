@@ -28,6 +28,7 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
       headerBackImage: () => <HeaderBackImage />,
       headerStyle: { height: headerHeight },
       headerTitleStyle: { fontSize: 24 },
+      headerTitleAlign: 'center',
       headerTitleContainerStyle: { alignItems: 'center' },
       headerLeftContainerStyle: {
         paddingLeft: 15,
@@ -40,7 +41,7 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
     <Stack.Screen
       name="AccountScreen"
       component={AccountScreen}
-      options={{ title: 'Account' }}
+      options={{ title: 'Account', animationEnabled: false }}
       listeners={{
         focus: () => enableSwipeAction({ swipeEnabled: true }),
         beforeRemove: () => enableSwipeAction({ swipeEnabled: false })

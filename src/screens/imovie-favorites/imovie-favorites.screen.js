@@ -122,7 +122,8 @@ const ImovieFavoritesScreen = ({
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  justifyContent: 'space-between'
+                  justifyContent: 'space-between',
+                  paddingTop: 10
                 }}
               >
                 <Pressable
