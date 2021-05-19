@@ -14,15 +14,18 @@ export const isValidState = (value) => {
 
 // eslint-disable-next-line no-unused-vars
 export const isValidUsername = (value) => {
-  /**
-   * This regex generates error 'invalid regular expression'
-   * change to something else
-   */
-  // return checkRegularExpression(
-  //   /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
-  //   value
-  // );
-  return true;
+  return checkRegularExpression(
+    /^(?=\S+)(?=[a-zA-ZàáâäãåèéêëìíîïòóôöõøùúûüÿýñçčšžÀÁÂÄÃÅÈÉÊËÌÍÎÏÒÓÔÖÕØÙÚÛÜŸÝÑßÇŒÆČŠŽ∂ð ,.'-]*$).*(?=\S).$/,
+    value
+    /**
+     * This regex generates error 'invalid regular expression'
+     * change to something else
+     */
+    // return checkRegularExpression(
+    //   /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+    //   value
+  );
+  // return true;
 };
 
 export const isValidZipCode = (value) => {
