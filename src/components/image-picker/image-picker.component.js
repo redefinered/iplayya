@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { View, PermissionsAndroid, Platform, StyleSheet, Dimensions } from 'react-native';
-import Button from 'components/button/button.component';
-import { useTheme } from 'react-native-paper';
+import { View, PermissionsAndroid, Platform, StyleSheet, Dimensions, Text } from 'react-native';
+import { useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 
 const ImagePick = ({ hideModalCamera, setProfileImage }) => {
@@ -131,13 +130,14 @@ const ImagePick = ({ hideModalCamera, setProfileImage }) => {
 
   return (
     <View style={styles.container}>
-      <Button
+      {/* <Button
         icon={() => <Icon name="camera" size={28} style={{ marginRight: 10 }} />}
         mode="contained"
         style={{ ...styles.takePictureStyle, backgroundColor: theme.iplayya.colors.vibrantpussy }}
         labelStyle={styles.textStyle}
-        contentStyle={{ height: 50 }}
+        contentStyle={{ height: 70 }}
         onPress={() => captureImage('photo')}
+        theme={{ colors: { primary: theme.iplayya.colors.vibrantpussy } }}
       >
         Take Picture
       </Button>
@@ -146,11 +146,50 @@ const ImagePick = ({ hideModalCamera, setProfileImage }) => {
         icon={() => <Icon name="add-file" size={28} style={{ marginRight: 10 }} />}
         style={styles.browseImageStyle}
         labelStyle={styles.textStyle}
-        contentStyle={{ height: 50 }}
+        contentStyle={{ height: 70, paddingLeft: 10 }}
         onPress={() => chooseFile('photo')}
       >
         Browse Image
-      </Button>
+      </Button> */}
+
+      <TouchableRipple
+        borderless={true}
+        rippleColor={theme.iplayya.colors.strongpussy}
+        onPress={() => captureImage('photo')}
+        style={{ ...styles.takePictureStyle, backgroundColor: theme.iplayya.colors.vibrantpussy }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 70
+          }}
+        >
+          <Icon name="camera" size={30} style={{ marginRight: 10 }} />
+          <Text style={styles.textStyle}>Take Picture</Text>
+        </View>
+      </TouchableRipple>
+
+      <TouchableRipple
+        borderless={true}
+        rippleColor="#118029"
+        style={styles.browseImageStyle}
+        onPress={() => chooseFile('photo')}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 70,
+            borderRadius: 10
+          }}
+        >
+          <Icon name="add-file" size={30} style={{ marginRight: 10 }} />
+          <Text style={styles.textStyle}>Browse Image</Text>
+        </View>
+      </TouchableRipple>
     </View>
   );
 };
@@ -166,7 +205,8 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: '#ffffff',
-    fontSize: 18
+    fontSize: 18,
+    fontFamily: 'NotoSans-Bold'
   },
   takePictureStyle: {
     marginVertical: 10,
@@ -178,7 +218,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: Dimensions.get('window').width - 50,
     borderRadius: 10,
-    paddingLeft: 10
+    paddingLeft: 15
   }
 });
 

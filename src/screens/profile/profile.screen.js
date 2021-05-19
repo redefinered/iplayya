@@ -13,7 +13,7 @@ import {
   Platform,
   Modal
 } from 'react-native';
-import { Title, Text, withTheme, useTheme } from 'react-native-paper';
+import { Title, Text, withTheme, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -175,7 +175,7 @@ const ProfileScreen = ({
                   fontSize: normalize(24),
                   fontWeight: 'bold',
                   textAlign: 'center',
-                  marginTop: 50,
+                  marginTop: 15,
                   color: theme.iplayya.colors.goodnight
                 }}
               >
@@ -183,20 +183,29 @@ const ProfileScreen = ({
               </Text>
             </View>
             <ImagePick setProfileImage={setProfileImage} hideModalCamera={hideModalCamera} />
-            <View>
-              <Pressable onPress={() => setModalOpen(false)}>
+            <View
+              style={{
+                marginBottom: 20,
+                borderRadius: 10,
+                paddingHorizontal: 20
+              }}
+            >
+              <TouchableRipple
+                style={{ paddingVertical: 10 }}
+                rippleColor="rgba(0,0,0,0.05)"
+                onPress={() => setModalOpen(false)}
+              >
                 <Text
                   style={{
                     fontSize: normalize(18),
                     textAlign: 'center',
                     color: theme.iplayya.colors.black70,
-                    fontWeight: 'bold',
-                    marginBottom: 30
+                    fontWeight: 'bold'
                   }}
                 >
                   Cancel
                 </Text>
-              </Pressable>
+              </TouchableRipple>
             </View>
           </View>
         </View>
@@ -295,7 +304,12 @@ const ProfileScreen = ({
           })}
         </ContentWrap>
       </ScrollView>
-      <SnackBar visible={showSnackBar} message="Changes saved successfully" />
+      <SnackBar
+        visible={showSnackBar}
+        iconName="circular-check"
+        iconColor="#13BD38"
+        message="Changes saved successfully"
+      />
       {error && (
         <AlertModal
           visible={showErrorModal}
