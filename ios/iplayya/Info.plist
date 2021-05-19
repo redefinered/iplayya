@@ -92,5 +92,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Okay lang bang makigamit ng photo library mo?</string>
 </dict>
 </plist>
