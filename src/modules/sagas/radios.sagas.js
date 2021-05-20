@@ -9,7 +9,6 @@ import {
 
 export function* getRequest(action) {
   const { ...input } = action.data;
-  console.log({ action });
   try {
     // TODO: input should come from stat, pageNumber should be incremented for every request
     const { radios: radioStations } = yield call(getStations, input);

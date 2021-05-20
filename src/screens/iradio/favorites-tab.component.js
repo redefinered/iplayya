@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
-import ContentWrap from 'components/content-wrap.component';
+import { Text, TouchableRipple, withTheme } from 'react-native-paper';
 import SnackBar from 'components/snackbar/snackbar.component';
 import Icon from 'components/icon/icon.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
@@ -25,7 +24,8 @@ const FavoritesTab = ({
   paginatorInfo,
   getFavoritesAction,
   removedFromFavorites,
-  removeFromFavoritesAction
+  removeFromFavoritesAction,
+  handleSelectItem
 }) => {
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showConfirm, setShowConfirm] = React.useState(false);
@@ -68,8 +68,6 @@ const FavoritesTab = ({
     if (showSnackBar) hideSnackBar();
   }, [showSnackBar]);
 
-  console.log({ removedFromFavorites });
-
   return (
     <React.Fragment>
       <AlertModal
@@ -87,29 +85,30 @@ const FavoritesTab = ({
         iconName="heart-solid"
         iconColor="#FF5050"
       />
-      {favorites.map(({ id, name }) => (
-        <ContentWrap
-          key={id}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 20
-          }}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
+      {favorites.map(({ id, name, ...rest }) => (
+        <TouchableRipple key={id} onPress={() => handleSelectItem({ id, name, ...rest })}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: theme.spacing(2)
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
+            </View>
+            <View>
+              <Pressable onPress={() => handleRemovePressed(id)}>
+                <Icon
+                  name="heart-solid"
+                  size={24}
+                  style={{ color: theme.iplayya.colors.vibrantpussy }}
+                />
+              </Pressable>
+            </View>
           </View>
-          <View>
-            <Pressable onPress={() => handleRemovePressed(id)}>
-              <Icon
-                name="heart-solid"
-                size={24}
-                style={{ color: theme.iplayya.colors.vibrantpussy }}
-              />
-            </Pressable>
-          </View>
-        </ContentWrap>
+        </TouchableRipple>
       ))}
     </React.Fragment>
   );
@@ -123,7 +122,8 @@ FavoritesTab.propTypes = {
   removedFromFavorites: PropTypes.string,
   getFavorites: PropTypes.func,
   removeFromFavoritesAction: PropTypes.func,
-  getFavoritesAction: PropTypes.func
+  getFavoritesAction: PropTypes.func,
+  handleSelectItem: PropTypes.func
 };
 
 const mapStateToProps = createStructuredSelector({
