@@ -42,11 +42,6 @@ const IplayScreen = ({
   const [videoErrorVisible, setVideoErrorVisible] = React.useState(false);
   const [error, setError] = React.useState();
 
-  // initiate pick files when retry has been clicked
-  React.useEffect(() => {
-    if (!videoErrorVisible) pickFiles();
-  }, [videoErrorVisible]);
-
   const pickFiles = async () => {
     const newFiles = [];
     // Pick multiple files
