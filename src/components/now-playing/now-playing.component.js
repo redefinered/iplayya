@@ -17,7 +17,6 @@ const NowPlaying = ({
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [buffering, setBuffering] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [progress, setProgress] = React.useState(0);
 
@@ -58,10 +57,6 @@ const NowPlaying = ({
         />
       );
   };
-
-  // const getTitle = () => {
-  //   if ()
-  // }
 
   const renderContent = () => {
     const { name } = radioProps;
