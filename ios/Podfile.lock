@@ -259,9 +259,7 @@ PODS:
   - React-jsinspector (0.63.3)
   - react-native-background-downloader (2.3.4):
     - React
-  - react-native-document-picker (5.0.4):
-    - React-Core
-  - react-native-image-picker (3.6.0):
+  - react-native-image-picker (3.3.4):
     - React-Core
   - react-native-netinfo (6.0.0):
     - React-Core
@@ -405,7 +403,6 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-background-downloader (from `../node_modules/react-native-background-downloader`)
-  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -494,8 +491,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-background-downloader:
     :path: "../node_modules/react-native-background-downloader"
-  react-native-document-picker:
-    :path: "../node_modules/react-native-document-picker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
@@ -588,8 +583,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-background-downloader: 4a034cf39a3b00fac57364984e360a4f180a5efb
-  react-native-document-picker: 1a7518132d4a06b67f459be9bb1464a567d2b3b4
-  react-native-image-picker: 5bb3325530fd4dc3053a77a73d4f65b6649de820
+  react-native-image-picker: 32fbfa63b6eff82b13b037022dc1d25005290e36
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-safe-area-context: 79fea126c6830c85f65947c223a5e3058a666937
   react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
