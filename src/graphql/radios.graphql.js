@@ -40,6 +40,7 @@ export const GET_FAVORITE_RADIOS = gql`
     favoriteRadios(input: $input) {
       id
       name
+      cmd
       is_favorite
     }
   }

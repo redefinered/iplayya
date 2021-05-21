@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, ScrollView } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 const ContentWrap = ({ children, style, scrollable }) => {
+  const theme = useTheme();
   if (scrollable) {
-    return <ScrollView style={{ paddingHorizontal: 15, ...style }}>{children}</ScrollView>;
+    return (
+      <ScrollView style={{ paddingHorizontal: theme.spacing(2), ...style }}>{children}</ScrollView>
+    );
   }
 
-  return <View style={{ paddingHorizontal: 15, ...style }}>{children}</View>;
+  return <View style={{ paddingHorizontal: theme.spacing(2), ...style }}>{children}</View>;
 };
 
 ContentWrap.propTypes = {

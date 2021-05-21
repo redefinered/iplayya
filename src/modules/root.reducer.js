@@ -12,6 +12,7 @@ import moviesReducer from './ducks/movies/movies.reducer';
 import sportsReducer from './ducks/sports/sports.reducer';
 import radiosReducer from './ducks/radios/radios.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
+import iplayReducer from './ducks/iplay/iplay.reducer';
 
 export const persistConfig = {
   key: 'primary',
@@ -29,7 +30,8 @@ const rootReducer = persistCombineReducers(persistConfig, {
   movies: moviesReducer,
   sports: sportsReducer,
   radios: radiosReducer,
-  provider: providerReducer
+  provider: providerReducer,
+  iplay: iplayReducer
 });
 
 export default (state, action) => {

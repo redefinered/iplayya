@@ -3,15 +3,14 @@
 import React from 'react';
 import { View, ScrollView, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Text, withTheme } from 'react-native-paper';
-import { TabView, SceneMap } from 'react-native-tab-view';
+import { Text, useTheme } from 'react-native-paper';
+import { TabView } from 'react-native-tab-view';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withLoader from 'components/with-loader.component';
 import RadioStationsTab from './radios-stations-tab.component';
 import FavoritesTab from './favorites-tab.component';
-import theme from 'common/theme';
+import NowPlaying from 'components/now-playing/now-playing.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -23,7 +22,6 @@ import {
   selectIsFetching,
   selectRadioStations
 } from 'modules/ducks/radios/radios.selectors';
-import dummydata from './dummydata';
 import { createFontFormat } from 'utils';
 import { selectPaginatorInfo } from 'modules/ducks/radios/radios.selectors';
 
@@ -39,6 +37,14 @@ const IradioScreen = ({
   enableSwipeAction
 }) => {
   const [index, setIndex] = React.useState(0);
+  const [nowPlaying, setNowPlaying] = React.useState(null);
+  const [bottomNavHeight, setBottomNavHeight] = React.useState();
+
+  React.useEffect(() => {
+    getRadiosAction(paginatorInfo);
+    getFavoritesAction(paginatorInfo);
+  }, []);
+
   const [routes] = React.useState([
     { key: 'radios', title: 'Radio Stations' },
     { key: 'favorites', title: 'Favorites' }
@@ -48,29 +54,32 @@ const IradioScreen = ({
     enableSwipeAction(false);
   }, []);
 
-  const renderScene = SceneMap({
-    // eslint-disable-next-line react/display-name
-    radios: RadioStationsTab,
-    favorites: FavoritesTab
-  });
+  // const renderScene = SceneMap({
+  //   // eslint-disable-next-line react/display-name
+  //   radios: RadioStationsTab,
+  //   favorites: FavoritesTab
+  // });
+  const handleSelectItem = (item) => {
+    setNowPlaying(item);
+  };
 
-  radioStations = radioStations.length ? radioStations : dummydata;
+  const handleSetBottomTabsHeight = (event) => {
+    const { layout } = event.nativeEvent;
+    setBottomNavHeight(layout.height);
+  };
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'favorites':
+        return <FavoritesTab handleSelectItem={handleSelectItem} />;
+      default:
+        return <RadioStationsTab handleSelectItem={handleSelectItem} />;
+    }
+  };
 
   if (error) {
     <Text>{error}</Text>;
   }
-
-  // React.useEffect(() => {
-  //   // fetch radio stations if another item is added to favorites
-  //   if (addedToFavorites) {
-  //     getRadioStationsAction({ limit: 10, pageNumber: 1 });
-  //   }
-
-  //   // fetch radio stations if another item is removed to favorites
-  //   if (removedFromFavorites) {
-  //     getRadioStationsAction({ limit: 10, pageNumber: 1 });
-  //   }
-  // }, [addedToFavorites, removedFromFavorites]);
 
   return (
     <View style={styles.container}>
@@ -78,7 +87,6 @@ const IradioScreen = ({
         <React.Fragment>
           <ScrollView>
             <TabView
-              // theme={theme}
               navigationState={{ index, routes }}
               renderScene={renderScene}
               onIndexChange={setIndex}
@@ -94,9 +102,6 @@ const IradioScreen = ({
                 );
               }}
             />
-
-            {/* pushes up the content to make room for the bottom tab */}
-            <View style={{ paddingBottom: 100 }} />
           </ScrollView>
         </React.Fragment>
       ) : (
@@ -105,16 +110,27 @@ const IradioScreen = ({
         </ContentWrap>
       )}
 
+      {nowPlaying && <NowPlaying selected={nowPlaying} navigation={navigation} />}
+
+      {/* pushes up the content to make room for the bottom tab */}
+      <View style={{ paddingBottom: bottomNavHeight }} />
+
       <View
+        onLayout={handleSetBottomTabsHeight}
         style={{
           flexDirection: 'row',
           justifyContent: 'center',
           backgroundColor: '#202530',
-          borderTopRightRadius: 24,
-          borderTopLeftRadius: 24,
+          // borderTopRightRadius: 24,
+          // borderTopLeftRadius: 24,
           paddingHorizontal: 15,
           paddingTop: 10,
           paddingBottom: 10,
+          borderTopRightRadius: !nowPlaying ? 24 : 0,
+          borderTopLeftRadius: !nowPlaying ? 24 : 0,
+          // paddingHorizontal: 30,
+          // paddingTop: 15,
+          // paddingBottom: 30,
           position: 'absolute',
           width: '100%',
           bottom: 0
@@ -139,6 +155,8 @@ const TabBars = ({
   getRadiosAction,
   getFavoritesAction
 }) => {
+  const theme = useTheme();
+
   const handleTabSelect = (key) => {
     if (key === 'radios') {
       getRadiosAction(paginatorInfo);
@@ -216,10 +234,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
 
 export default enhance(IradioScreen);

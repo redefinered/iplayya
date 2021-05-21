@@ -19,6 +19,7 @@ import ImovieDownloadsScreen from 'screens/imovie-downloads/imovie-downloads.scr
 import IradioScreen from 'screens/iradio/iradio.screen';
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import IplayScreen from 'screens/iplay/iplay.screen';
+import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
@@ -264,20 +265,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         // eslint-disable-next-line no-unused-vars
         options={({ navigation }) => ({
           title: 'Downloads',
-          animationEnabled: false,
-          headerRight: () => (
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableRipple
-                borderless={true}
-                style={{ borderRadius: 44, padding: 8 }}
-                rippleColor="rgba(0,0,0,0.28)"
-              >
-                <View style={styles.headerButtonContainer}>
-                  <Icon name="search" size={24} />
-                </View>
-              </TouchableRipple>
-            </View>
-          )
+          animationEnabled: false
         })}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
@@ -346,6 +334,37 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
         }}
       />
+      {/* <Stack.Screen
+        name="SeriesDetailScreen"
+        component={SeriesDetailScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={(props) => {
+          const {
+            route: {
+              params: { videoId }
+            }
+          } = props;
+
+          const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+
+          return {
+            title: null,
+            headerRight: () => (
+              <View style={{ flexDirection: 'row' }}>
+                <AddToFavoritesButton
+                  videoId={parseInt(videoId)}
+                  alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                />
+                <DownloadButton videoId={videoId} />
+              </View>
+            )
+          };
+        }}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      /> */}
       <Stack.Screen
         name="MovieDetailDownloadedScreen"
         component={MovieDetailDownloadedScreen}
@@ -430,6 +449,19 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
               </TouchableRipple>
             </View>
           )
+        })}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="IplayDetailScreen"
+        component={IplayDetailScreen}
+        options={() => ({
+          // headerShown: false,
+          title: null,
+          animationEnabled: false
         })}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),

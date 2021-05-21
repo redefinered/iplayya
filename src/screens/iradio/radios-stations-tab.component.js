@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, TouchableRipple, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import ContentWrap from 'components/content-wrap.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { createFontFormat } from 'utils';
 
@@ -23,31 +22,15 @@ const RadioStationsTab = ({
   radioStations,
   addToFavoritesAction,
   addedToFavorites,
-  paginatorInfo
+  paginatorInfo,
+  handleSelectItem
 }) => {
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
 
-  React.useEffect(() => {
-    getRadioStationsAction(paginatorInfo);
-  }, []);
-
-  // const [data, setData] = React.useState([]);
-
-  // add dummy thumbnails to radio stations
   // React.useEffect(() => {
-  //   if (radioStations.length) {
-  //     let stationsWithThumbnails = radioStations.map((station) => {
-  //       return {
-  //         ...station,
-  //         thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
-  //           'Station Number One'
-  //         )}`
-  //       };
-  //     });
-  //     setData(stationsWithThumbnails);
-  //   }
-  // }, [radioStations]);
+  //   getRadioStationsAction(paginatorInfo);
+  // }, []);
 
   const handleAddToFavorites = (id, title) => {
     console.log({ id, title });
@@ -75,29 +58,31 @@ const RadioStationsTab = ({
     if (showSnackBar) hideSnackBar();
   }, [showSnackBar]);
 
-  return radioStations.map(({ id, name, is_favorite }) => (
+  return radioStations.map(({ id, name, is_favorite, ...rest }) => (
     <React.Fragment key={id}>
-      <ContentWrap
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingVertical: 15
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
+      <TouchableRipple onPress={() => handleSelectItem({ id, name, is_favorite, ...rest })}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: theme.spacing(2)
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
+          </View>
+          <View>
+            <Pressable onPress={() => handleAddToFavorites(id, name)}>
+              <Icon
+                name="heart-solid"
+                size={24}
+                style={{ color: is_favorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
+              />
+            </Pressable>
+          </View>
         </View>
-        <View>
-          <Pressable onPress={() => handleAddToFavorites(id, name)}>
-            <Icon
-              name="heart-solid"
-              size={24}
-              style={{ color: is_favorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-            />
-          </Pressable>
-        </View>
-      </ContentWrap>
+      </TouchableRipple>
       <SnackBar
         visible={showSnackBar}
         message={`${favorited} is added to your favorites list`}
