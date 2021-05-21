@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -32,12 +33,13 @@ import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 
 const MovieDetailScreen = ({
+  navigation,
+
   theme,
   error,
   route: {
-    params: { videoId }
+    params: { movie }
   },
-  movie,
   videoSource,
   playbackStartAction,
   getMovieAction,
@@ -49,21 +51,26 @@ const MovieDetailScreen = ({
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
+
   videoUrls
 }) => {
   const [paused, setPaused] = React.useState(true);
-  const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
+  const [title, setTitle] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [isMovieDownloaded] = React.useState(true);
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
 
   React.useEffect(() => {
-    listDownloadedFiles();
-    downloadStartAction();
-    playbackStartAction();
-    getMovieStartAction();
-    getMovieAction(videoId);
-    addMovieToFavoritesStartAction();
+    // listDownloadedFiles();
+    // downloadStartAction();
+    // playbackStartAction();
+    // getMovieStartAction();
+    // addMovieToFavoritesStartAction();
+    // if (typeof videoId !== 'undefined') {
+    //   getMovieAction(movie.id);
+    // }
   }, []);
 
   React.useEffect(() => {
@@ -80,10 +87,6 @@ const MovieDetailScreen = ({
     }
   }, [downloadStarted]);
 
-  const handleSourceSet = (src) => {
-    setSource(src);
-  };
-
   const hideSnackbar = () => {
     setTimeout(() => {
       setShowSnackbar(false);
@@ -97,28 +100,9 @@ const MovieDetailScreen = ({
 
   React.useEffect(() => {
     if (movie) {
-      const titlesplit = movie.title.split(' ');
-      const title = titlesplit.join('_');
-      const filename = `${videoId}_${title}.mp4`;
-      const file = downloadedFiles.find((file) => file === filename);
-
-      // check if downloaded
-      if (downloadedFiles.length) {
-        if (typeof file !== 'undefined') {
-          setIsMoviedownloaded(true);
-        } else {
-          setIsMoviedownloaded(false);
-        }
-      }
-    }
-  }, [movie, downloadedFiles]);
-
-  React.useEffect(() => {
-    if (movie) {
       const { is_series } = movie;
       let videoUrl = '';
 
-      // initial video source
       if (is_series) {
         /// for testing
         videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
@@ -129,20 +113,21 @@ const MovieDetailScreen = ({
       const { title: movieTitle } = movie;
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
-      const filename = `${videoId}_${title}.mp4`;
+      const filename = is_series
+        ? `${movie.id}${movie.ep}_${title}.mp4`
+        : `${movie.id}_${title}.mp4`;
 
-      // set source
-      if (isMovieDownloaded) {
-        let src =
-          Platform.OS === 'ios'
-            ? `file://${downloadPath}/${filename}`
-            : `${downloadPath}/${filename}`;
-        setSource(src); /// file:// teqnique only works on iOS
-      } else {
-        // let src = videoUrl;
-        // let setsrc = src === '' ? null : src;
-        setSource(videoUrl);
-      }
+      let src =
+        Platform.OS === 'ios'
+          ? `file://${downloadPath}/${filename}`
+          : `${downloadPath}/${filename}`;
+
+      setSource(src); /// file://
+
+      /// set title
+      const { title: movietitle, ep } = movie;
+      const t = ep ? `${movietitle} ${ep}` : movietitle;
+      setTitle(t);
     }
   }, [movie, isMovieDownloaded]);
 
@@ -154,6 +139,7 @@ const MovieDetailScreen = ({
   }, [isFavListUpdated]);
 
   const handleTogglePlay = () => {
+    setLoading(true);
     setPaused(!paused);
   };
 
@@ -164,15 +150,11 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  /// render a ghost view if movie is null. that's right, hacker!!!
+  if (!movie) return <View />;
 
   const {
-    title,
+    id,
     year,
     description,
     rating_mpaa,
@@ -180,11 +162,14 @@ const MovieDetailScreen = ({
     director,
     thumbnail,
     is_series,
+    series,
+    video_urls,
+    __typename,
     ...otherFields
   } = movie;
 
   return (
-    <View style={{ flex: 1, marginTop: 10 }}>
+    <View style={{ marginTop: 10 }}>
       {/* Player */}
       <View>
         <Pressable
@@ -206,9 +191,8 @@ const MovieDetailScreen = ({
               title={title}
               togglePlay={handleTogglePlay}
               setPaused={setPaused}
-              setSource={handleSourceSet}
+              loading={loading}
               videoUrls={videoUrls}
-              typename={movie.__typename}
             />
           ) : (
             <View
@@ -237,9 +221,10 @@ const MovieDetailScreen = ({
       {/* content */}
       <ScrollView style={{ height: 300 }}>
         <ContentWrap>
-          <Text
-            style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
-          >{`${title} (${year})`}</Text>
+          {/* <Pressable onPress={() => toggleControlVisible()}>
+            <Text>toggle control</Text>
+          </Pressable> */}
+          <Text style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}>{title}</Text>
           <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
           <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
             <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
@@ -277,7 +262,7 @@ const MovieDetailScreen = ({
             </List.Accordion>
           </List.Section>
 
-          <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
+          {/* <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
             <View style={styles.iconContainer}>
               <Icon name="circular-play" size={24} />
             </View>
@@ -292,8 +277,39 @@ const MovieDetailScreen = ({
             <View>
               <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Watch trailer</Text>
             </View>
-          </Pressable>
+          </Pressable> */}
         </ContentWrap>
+
+        {/* <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
+          {series.map(({ season }, index) => {
+            const { episodes } = series[index];
+            return (
+              <List.Accordion
+                key={index}
+                title={`Season ${season}`}
+                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+              >
+                {episodes.map(({ episode }, index) => {
+                  return (
+                    <List.Item
+                      key={index}
+                      onPress={() =>
+                        navigation.navigate('SeriesDetailScreen', {
+                          episodeFromParams: { season, episode }
+                        })
+                      }
+                      titleStyle={{ marginBottom: -10 }}
+                      title={
+                        <Text style={{ ...createFontFormat(14, 20) }}>{`Episode ${episode}`}</Text>
+                      }
+                    />
+                  );
+                })}
+              </List.Accordion>
+            );
+          })}
+        </ContentWrap> */}
       </ScrollView>
 
       {/* loader for download starting */}

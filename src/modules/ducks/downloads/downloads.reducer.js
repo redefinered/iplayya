@@ -79,44 +79,44 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  [Types.GET_DOWNLOADS]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null,
-      downloadsData: []
-    };
-  },
-  [Types.GET_DOWNLOADS_SUCCESS]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: null,
-      downloadsData: action.data
-    };
-  },
-  [Types.GET_DOWNLOADS_FAILURE]: (state) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: null
-    };
-  },
+  // [Types.GET_DOWNLOADS]: (state) => {
+  //   return {
+  //     ...state,
+  //     isFetching: true,
+  //     error: null,
+  //     downloadsData: []
+  //   };
+  // },
+  // [Types.GET_DOWNLOADS_SUCCESS]: (state, action) => {
+  //   return {
+  //     ...state,
+  //     isFetching: false,
+  //     error: null,
+  //     downloadsData: action.data
+  //   };
+  // },
+  // [Types.GET_DOWNLOADS_FAILURE]: (state) => {
+  //   return {
+  //     ...state,
+  //     isFetching: false,
+  //     error: null
+  //   };
+  // },
 
-  [Types.REMOVE_DOWNLOADS_DATA_BY_IDS]: (state, action) => {
-    let { downloadsData } = state;
+  [Types.REMOVE_DOWNLOADS_BY_IDS]: (state, action) => {
+    let { downloads } = state;
     const { ids } = action;
     ids.forEach((id) => {
-      let index = downloadsData.findIndex((movie) => movie.id === id);
-      console.log({ index, downloadsData, ids });
+      let index = downloads.findIndex(({ movie }) => movie.id === id);
+      console.log({ index, downloads, ids });
       if (index >= 0) {
-        downloadsData.splice(index, 1);
+        downloads.splice(index, 1);
       }
     });
 
     return {
       ...state,
-      downloadsData
+      downloads
     };
   },
   [Types.RESET]: () => {

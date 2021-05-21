@@ -55,7 +55,7 @@ const PhoneNumberPicker = ({ setPhone }) => {
         paddingVertical: 15,
         marginTop: 5,
         position: 'relative',
-        backgroundColor: 'rgba(255,255,255,0.1)'
+        backgroundColor: value === '' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.3)'
       }}
     >
       <PhoneInput
@@ -65,7 +65,7 @@ const PhoneNumberPicker = ({ setPhone }) => {
         autoFormat={true}
         initialValue="+44"
         textProps={{
-          color: 'rgba(255,255,255,0.3)',
+          color: value === '' ? 'rgba(255,255,255,0.3)' : '#ffffff',
           selectionColor: '#E34398'
         }}
         textStyle={{ fontSize: 16 }}

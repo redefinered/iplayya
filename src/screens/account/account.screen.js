@@ -31,8 +31,7 @@ import Button from 'components/button/button.component';
 
 const styles = StyleSheet.create({
   settingItem: {
-    flexDirection: 'row',
-    paddingVertical: 10
+    flexDirection: 'row'
   },
   iconContainer: {
     width: 42,

@@ -238,35 +238,45 @@ const IsportsScreen = ({
           backgroundColor: '#202530',
           borderTopRightRadius: 24,
           borderTopLeftRadius: 24,
-          paddingHorizontal: 30,
-          paddingTop: 15,
-          paddingBottom: 30,
+          paddingHorizontal: 15,
+          paddingTop: 10,
+          paddingBottom: 10,
           position: 'absolute',
           width: '100%',
           bottom: 0
         }}
       >
-        <TouchableWithoutFeedback
-          style={{ alignItems: 'center' }}
-          onPress={() => navigation.navigate('IsportsFavoritesScreen')}
-        >
-          <Icon name="heart-solid" size={40} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Favorites</Text>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback
-          onPress={() => navigation.replace('HomeScreen')}
-          style={{ alignItems: 'center' }}
-        >
-          <Icon name="iplayya" size={40} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-        </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback
-          style={{ alignItems: 'center' }}
-          onPress={() => navigation.navigate('IsportsDownloadsScreen')}
-        >
-          <Icon name="download" size={40} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Downloaded</Text>
-        </TouchableWithoutFeedback>
+        <View style={{ flex: 4 }}>
+          <TouchableWithoutFeedback
+            style={{ alignItems: 'center' }}
+            onPress={() => navigation.navigate('IsportsFavoritesScreen')}
+          >
+            <Icon name="heart-solid" size={24} />
+            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+              Favorites
+            </Text>
+          </TouchableWithoutFeedback>
+        </View>
+        <View style={{ flex: 4 }}>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.replace('HomeScreen')}
+            style={{ alignItems: 'center' }}
+          >
+            <Icon name="iplayya" size={24} />
+            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+          </TouchableWithoutFeedback>
+        </View>
+        <View style={{ flex: 4 }}>
+          <TouchableWithoutFeedback
+            style={{ alignItems: 'center' }}
+            onPress={() => navigation.navigate('IsportsDownloadsScreen')}
+          >
+            <Icon name="download" size={24} />
+            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+              Downloaded
+            </Text>
+          </TouchableWithoutFeedback>
+        </View>
       </View>
 
       <SnackBar

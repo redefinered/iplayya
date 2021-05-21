@@ -17,6 +17,14 @@ import { createStructuredSelector } from 'reselect';
 import RadioButton from 'components/radio-button/radio-button.component';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AlertModal from 'components/alert-modal/alert-modal.component';
+import DownloadItem from './download-item.component';
+import { Creators } from 'modules/ducks/downloads/downloads.actions';
+import { deleteFile, listDownloadedFiles, checkExistingDownloads } from 'services/download.service';
+import { getFilename } from 'utils';
+import RNFetchBlob from 'rn-fetch-blob';
+import { downloadPath } from 'utils';
+import clone from 'lodash/clone';
+import uniqBy from 'lodash/uniqBy';
 import {
   selectError,
   selectIsFetching,
@@ -24,13 +32,7 @@ import {
   selectDownloadsProgress,
   selectDownloadsData
 } from 'modules/ducks/downloads/downloads.selectors';
-import DownloadItem from './download-item.component';
-import { Creators } from 'modules/ducks/downloads/downloads.actions';
-import { deleteFile, listDownloadedFiles, checkExistingDownloads } from 'services/download.service';
-import { getFilename } from 'utils';
-import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath } from 'utils';
-import uniq from 'lodash/uniq';
+import uuid from 'react-uuid';
 
 // eslint-disable-next-line no-unused-vars
 const ImovieDownloadsScreen = ({
@@ -39,21 +41,23 @@ const ImovieDownloadsScreen = ({
   // route,
   downloadsProgress,
   getDownloadsAction,
-  downloadsData,
+  // downloadsData,
 
   downloads,
-  removeDownloadsDataByIdsAction
+  removeDownloadsByIdsAction,
+  downloadStartAction
 }) => {
-  const [ids, setIds] = React.useState([]);
-  // const [donwloadingItems, setDownloadingItems] = React.useState([]);
   const [activeDownloads, setActiveDownloads] = React.useState([]);
+
+  const [list, setList] = React.useState([]);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
 
   React.useEffect(() => {
-    setDownloadIdsForFething();
+    downloadStartAction();
+    setUpDownloadsList(downloads);
     listDownloadedFiles();
   }, []);
 
@@ -71,14 +75,14 @@ const ImovieDownloadsScreen = ({
 
   React.useEffect(() => {
     if (selectAll) {
-      let collection = downloadsData.map(({ id }) => {
+      let collection = list.map(({ id }) => {
         return id;
       });
       setSelectedItems(collection);
     } else {
       setSelectedItems([]);
     }
-  }, [selectAll]);
+  }, [list, selectAll]);
 
   const handleSelectAll = () => {
     setSellectAll(!selectAll);
@@ -96,7 +100,9 @@ const ImovieDownloadsScreen = ({
     if (selectedItems.length) {
       try {
         let promises = selectedItems.map((id) => {
-          const { title } = downloadsData.find(({ id: downloadId }) => id === downloadId);
+          const {
+            movie: { title }
+          } = downloads.find(({ id: downloadId }) => id === downloadId);
           const filename = getFilename({ videoId: id, title });
           return deleteFile(filename);
         });
@@ -104,9 +110,12 @@ const ImovieDownloadsScreen = ({
         await Promise.all(promises);
 
         setActivateCheckboxes(false);
-        removeDownloadsDataByIdsAction(selectedItems);
+        removeDownloadsByIdsAction(selectedItems);
+
+        // setup downloads list
+        setUpDownloadsList(downloads);
       } catch (error) {
-        console.log('Delete files action error', error.message);
+        console.log('Delete error: ', error.message);
       }
     }
   };
@@ -120,53 +129,46 @@ const ImovieDownloadsScreen = ({
     handleRemoveItems();
   };
 
-  const setDownloadIdsForFething = async () => {
-    // console.log('asdas');
+  const setUpDownloadsList = async (downloads) => {
     try {
       let data = [];
+      let ids = [];
       // check for active downloads in the background
       const existingDownloads = await checkExistingDownloads();
+
       // console.log({ existingDownloads });
+
+      // set active downloads list to get the download tasks
       setActiveDownloads(existingDownloads);
 
-      // add existing downloads ids to data array
-      data = [...existingDownloads.map((d) => d.id)];
+      // add existing download ids to ids array
+      const existingDownloadIds = existingDownloads.map(({ id }) => id);
+      ids = [...existingDownloadIds];
 
-      // get downloaded movie ids in the download folder
-      let ls = await RNFetchBlob.fs.ls(downloadPath);
+      // add downloaded files ids to ids array
+      const donwloadedFiles = await RNFetchBlob.fs.ls(downloadPath);
+      const donwloadedFilesIds = donwloadedFiles.map((filename) => filename.split('_')[0]);
+      ids = [...existingDownloadIds, ...donwloadedFilesIds];
 
-      // get the id from filename
-      ls = ls.map((filename) => filename.split('_')[0]);
+      data = ids.map((id) => {
+        const download = downloads.find((d) => d.id === id);
+        if (typeof download === 'undefined') return { id: uuid() };
 
-      // add ids to data array
-      data = [...data, ...ls];
+        const { id: itemId, movie, ep } = download;
 
-      // set imovies downloads for listing in the screen
-      setIds(uniq(data));
+        let movieClone = clone(movie);
+
+        /// change the movie id to be the download id from redux state
+        return Object.assign(movieClone, { id: itemId, ep });
+      });
+
+      data = uniqBy(data, 'id');
+
+      setList(data);
     } catch (error) {
       console.log({ error });
     }
   };
-
-  React.useEffect(() => {
-    if (ids.length) {
-      getDownloadsAction({ input: ids });
-    }
-  }, [ids]);
-
-  // console.log({ zzzzzzz: ids });
-
-  // const getDownloadIdsForFetching = async () => {
-  //   const ls = await RNFetchBlob.fs.ls(downloadPath);
-  //   setDownloadedItemsIds(ls);
-  // };
-
-  // React.useEffect(() => {
-  //   if (downloadedItemsIds.length) {
-  //     // list the downloaded items complete or not
-  //     getDownloadsAction({ input: downloadedItemsIds });
-  //   }
-  // }, [downloadedItemsIds]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -179,25 +181,19 @@ const ImovieDownloadsScreen = ({
         setSelectedItems([item, ...selectedItems]);
       }
     } else {
-      navigation.navigate('MovieDetailScreen', { videoId: item });
+      /// changed to this so that download still works even without internet
+      let { ep, movie: movieFields } = downloads.find(({ id }) => id === item);
+
+      navigation.navigate('MovieDetailDownloadedScreen', { movie: { ep, ...movieFields } });
     }
   };
 
-  console.log({ downloadsData });
-
   const renderMain = () => {
-    if (downloadsData.length)
+    if (list.length)
       return (
         <ScrollView>
-          {downloadsData.map(({ id, thumbnail, ...otherProps }) => {
+          {list.map(({ id, thumbnail, ...otherProps }) => {
             let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
-
-            // let isDownloaded =
-            //   typeof downloadsProgress.find(
-            //     ({ id: dowloadProgressId }) => id === dowloadProgressId
-            //   ) === 'undefined'
-            //     ? true
-            //     : false;
 
             let progress = null;
 
@@ -260,7 +256,7 @@ const ImovieDownloadsScreen = ({
               style={{ flexDirection: 'row', alignItems: 'center' }}
             >
               <Text style={{ marginRight: 10 }}>All</Text>
-              <RadioButton selected={selectedItems.length === downloadsData.length} />
+              <RadioButton selected={selectedItems.length === list.length} />
             </Pressable>
           </View>
 
@@ -311,7 +307,8 @@ const EmptyState = ({ theme, navigation }) => (
 
 const actions = {
   getDownloadsAction: Creators.getDownloads,
-  removeDownloadsDataByIdsAction: Creators.removeDownloadsDataByIds
+  removeDownloadsByIdsAction: Creators.removeDownloadsByIds,
+  downloadStartAction: Creators.downloadStart
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -319,8 +316,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   downloads: selectDownloads,
   favorites: selectFavorites,
-  downloadsProgress: selectDownloadsProgress,
-  downloadsData: selectDownloadsData
+  downloadsProgress: selectDownloadsProgress
 });
 
 const enhance = compose(

@@ -48,24 +48,35 @@ const ImovieSearchScreen = ({
     }
     if (term.length) {
       if (term.length <= 2) return;
+
       search(term);
     }
   }, [term]);
 
-  const search = debounce((keyword) => {
-    searchAction({ keyword, pageNumber: 1, limit: 10 });
-  }, 1300);
+  const search = React.useCallback(
+    debounce((keyword) => searchAction({ keyword, pageNumber: 1, limit: 10 }), 300),
+    []
+  );
 
-  const handleItemPress = (videoId) => {
+  const handleItemPress = ({ id: videoId, is_series }) => {
+    // console.log({ videoId, is_series });
     // navigate to chanel details screen with `id` parameter
+    // navigation.navigate('MovieDetailScreen', { videoId });
+    if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
     navigation.navigate('MovieDetailScreen', { videoId });
   };
+
+  // const handleMovieSelect = ({ id: videoId, is_series }) => {
+  //   console.log({ videoId, is_series });
+  //   if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+  //   navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
+  // };
 
   const handleCategoryPress = (categoryId, title) => {
     navigation.navigate('ImovieScreen', { categoryId, categoryName: title });
   };
 
-  console.log({ results });
+  // console.log({ results });
 
   const renderResult = () => {
     if (error)
@@ -95,8 +106,9 @@ const ImovieSearchScreen = ({
             Search Results
           </Text>
           <ScrollView>
-            {results.map(({ id, title }) => (
-              <TouchableRipple key={id} onPress={() => handleItemPress(id)}>
+            {results.map(({ id, title, is_series }) => (
+              // Set is_series to true fron now
+              <TouchableRipple key={id} onPress={() => handleItemPress({ id, is_series })}>
                 <Text
                   style={{
                     ...createFontFormat(16, 22),
@@ -150,6 +162,7 @@ const ImovieSearchScreen = ({
           <FormInput
             {...props}
             style={{
+              flex: 1,
               marginLeft: 40,
               justifyContent: 'center',
               fontSize: 16,
@@ -209,7 +222,7 @@ const mapStateToProps = createStructuredSelector({
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  withHeaderPush({ backgroundType: 'solid' }),
   withTheme
 );
 

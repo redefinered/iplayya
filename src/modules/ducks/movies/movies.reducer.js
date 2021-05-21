@@ -30,16 +30,26 @@ const INITIAL_STATE = {
   updatedFavorites: false,
   removedFromFavorites: false,
 
-  searchResults: []
+  searchResults: [],
+
+  currentEpisode: null
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_EPISODE]: (state, action) => {
+    const { season, episode } = action;
+    return {
+      ...state,
+      currentEpisode: { season, episode }
+    };
+  },
   [Types.GET_MOVIE_START]: (state) => {
     return {
       ...state,
       isFetching: false,
       error: null,
-      movie: null
+      movie: null,
+      currentEpisode: null
     };
   },
   [Types.GET_MOVIE]: (state) => {

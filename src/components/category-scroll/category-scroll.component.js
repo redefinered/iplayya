@@ -4,23 +4,16 @@ import { View } from 'react-native';
 import CategoryScrollList from './category-scroll-list';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
-
-import { connect } from 'react-redux';
 import {
   selectMoviesByCategory,
   selectPaginatorOfCategory
 } from 'modules/ducks/movies/movies.selectors';
-
-// import { urlEncodeTitle } from 'utils';
+import { connect } from 'react-redux';
 
 const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCategory }) => {
   if (typeof videos === 'undefined' || videos.length === 0) return <View />;
   let movies = videos.map(({ thumbnail, ...rest }) => {
     return {
-      // thumbnail:
-      //   thumbnail === '' || thumbnail === 'N/A'
-      //     ? `http://via.placeholder.com/115x170.png?text=${urlEncodeTitle(rest.title)}`
-      //     : thumbnail,
       thumbnail: thumbnail === '' || thumbnail === 'N/A' ? null : thumbnail,
       ...rest
     };

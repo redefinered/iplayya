@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -28,7 +28,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
   }, [route]);
 
   return (
-    <View
+    <SafeAreaView
       style={{
         flex: 1,
         flexDirection: 'row',
@@ -36,8 +36,8 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         borderTopRightRadius: 24,
         borderTopLeftRadius: 24,
         paddingHorizontal: 15,
-        paddingTop: 15,
-        paddingBottom: 30,
+        paddingTop: 10,
+        paddingBottom: 10,
         position: 'absolute',
         width: '100%',
         bottom: 0
@@ -48,8 +48,15 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           onPress={() => navigation.navigate('ImovieFavoritesScreen')}
           style={{ alignItems: 'center' }}
         >
-          <Icon name="heart-solid" size={40} style={{ color: heartIconColor }} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5, color: heartIconColor }}>
+          <Icon name="heart-solid" size={24} style={{ color: heartIconColor }} />
+          <Text
+            style={{
+              fontSize: 10,
+              textTransform: 'uppercase',
+              marginTop: 5,
+              color: heartIconColor
+            }}
+          >
             Favorites
           </Text>
         </TouchableWithoutFeedback>
@@ -59,8 +66,8 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           onPress={() => navigation.replace('HomeScreen')}
           style={{ flex: 4, alignItems: 'center' }}
         >
-          <Icon name="iplayya" size={40} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+          <Icon name="iplayya" size={24} />
+          <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
         </TouchableWithoutFeedback>
       </View>
       <View style={{ flex: 4 }}>
@@ -68,13 +75,20 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           onPress={() => navigation.navigate('ImovieDownloadsScreen')}
           style={{ alignItems: 'center' }}
         >
-          <Icon name="download" size={40} style={{ color: downloadIconColor }} />
-          <Text style={{ textTransform: 'uppercase', marginTop: 5, color: downloadIconColor }}>
+          <Icon name="download" size={24} style={{ color: downloadIconColor }} />
+          <Text
+            style={{
+              fontSize: 10,
+              textTransform: 'uppercase',
+              marginTop: 5,
+              color: downloadIconColor
+            }}
+          >
             Downloads
           </Text>
         </TouchableWithoutFeedback>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

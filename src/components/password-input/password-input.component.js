@@ -26,12 +26,11 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
       <TextInput
         mode="outlined"
         autoCapitalize="none"
-        placeholder="password"
+        placeholder="Password"
         selectionColor={'#E34398'}
         onChangeText={(text) => handleChangeText(text, name)}
         style={{
           marginBottom: 10,
-          height: 48,
           ...style,
           ...customStyle,
           position: 'relative',

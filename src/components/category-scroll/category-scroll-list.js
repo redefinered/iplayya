@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, Image, FlatList, Platform, View, Text } from 'react-native';
@@ -42,15 +43,13 @@ const CategoryScrollList = ({
   };
 
   // eslint-disable-next-line react/prop-types
-  const renderItem = ({ item: { id, thumbnail: uri, title } }) => {
+  const renderItem = ({ item: { id, thumbnail: uri, title, is_series } }) => {
     return (
-      <TouchableOpacity style={{ marginRight: 10 }} onPress={() => onSelect(id)}>
+      <TouchableOpacity style={{ marginRight: 10 }} onPress={() => onSelect({ id, is_series })}>
         {renderThumbnail(uri, title)}
       </TouchableOpacity>
     );
   };
-
-  // console.log({ paginatorOfCategory });
 
   const handleOnEndReached = () => {
     // set pageNumber prop to get the next n movies
@@ -64,13 +63,13 @@ const CategoryScrollList = ({
     <FlatList
       data={data}
       horizontal
-      decelerationRate={0}
+      // decelerationRate={0}
       snapToInterval={CARD_WIDTH + 10}
       snapToAlignment="start"
       contentInset={{
         top: 0,
-        left: SPACING_FOR_CARD_INSET,
         bottom: 0,
+        left: SPACING_FOR_CARD_INSET,
         right: SPACING_FOR_CARD_INSET
       }}
       contentContainerStyle={{

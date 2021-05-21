@@ -1,0 +1,76 @@
+{
+  "data": {
+    "video": {
+      "id": "316",
+      "title": "Game of Thrones",
+      "description": "Robert Baratheon, King of the Seven Kingdoms of Westeros, and his wife, Cersei Lannister, travel north to make his old friend Eddard \"Ned\" Stark – Warden of the North and Lord of the castle Winterfell – an offer he cannot refuse. Across the narrow sea in Essos, the exiled Prince Viserys Targaryen forges a new alliance to regain the Iron Throne; he will trade his sister Daenerys in marriage to the",
+      "category": "TV Shows: G",
+      "director": "Tim Van Patten",
+      "actors": "",
+      "year": "2011",
+      "time": "",
+      "country": "USA,UK",
+      "age_rating": "12+",
+      "rating_mpaa": "",
+      "rating_imdb": "9.3000001907349",
+      "rating_kinopoisk": "8.9949998855591",
+      "is_hd": false,
+      "is_censored": false,
+      "is_favorite": false,
+      "thumbnail": "https://m.media-amazon.com/images/M/MV5BYTRiNDQwYzAtMzVlZS00NTI5LWJjYjUtMzkwNTUzMWMxZTllXkEyXkFqcGdeQXVyNDIzMzcwNjc@._V1_SX300.jpg",
+      "cast": "Peter Dinklage, Lena Headey, Emilia Clarke, Kit Harington",
+      "is_series": true,
+      "series": [
+        {
+          "title": null,
+          "season": "1",
+          "episode": null,
+          "video_urls": null
+        },
+        {
+          "title": null,
+          "season": "2",
+          "episode": null,
+          "video_urls": null
+        },
+        {
+          "title": null,
+          "season": "3",
+          "episode": null,
+          "video_urls": null
+        },
+        {
+          "title": null,
+          "season": "4",
+          "episode": null,
+          "video_urls": null
+        },
+        {
+          "title": null,
+          "season": "5",
+          "episode": null,
+          "video_urls": null
+        },
+        {
+          "title": null,
+          "season": "6",
+          "episode": null,
+          "video_urls": null
+        },
+        {
+          "title": null,
+          "season": "7",
+          "episode": null,
+          "video_urls": null
+        },
+        {
+          "title": null,
+          "season": "8",
+          "episode": null,
+          "video_urls": null
+        }
+      ],
+      "video_urls": null
+    }
+  }
+}

@@ -23,6 +23,8 @@ import IsportsScreen from 'screens/isports/isports.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
+import SeriesDetailScreen from 'screens/series-detail/series-detail.screen';
+import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-detail-downloaded.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
 import { compose } from 'redux';
@@ -33,7 +35,6 @@ import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
-// import ChannelDownloadButton from 'components/channel-download-button/channel-download-button.component';
 import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
@@ -287,11 +288,13 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         name="MovieDetailScreen"
         component={MovieDetailScreen}
         // eslint-disable-next-line no-unused-vars
-        options={({
-          route: {
-            params: { videoId }
-          }
-        }) => {
+        options={(props) => {
+          const {
+            route: {
+              params: { videoId }
+            }
+          } = props;
+
           const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
 
           return {
@@ -307,6 +310,47 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
             )
           };
         }}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="SeriesDetailScreen"
+        component={SeriesDetailScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={(props) => {
+          const {
+            route: {
+              params: { videoId }
+            }
+          } = props;
+
+          const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+
+          return {
+            title: null,
+            headerRight: () => (
+              <View style={{ flexDirection: 'row' }}>
+                <AddToFavoritesButton
+                  videoId={parseInt(videoId)}
+                  alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                />
+                <DownloadButton videoId={videoId} />
+              </View>
+            )
+          };
+        }}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+      <Stack.Screen
+        name="MovieDetailDownloadedScreen"
+        component={MovieDetailDownloadedScreen}
+        // eslint-disable-next-line no-unused-vars
+        options={{ title: null }}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })

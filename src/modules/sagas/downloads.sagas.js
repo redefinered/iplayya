@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable prettier/prettier */
+
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/downloads/downloads.actions';
 import { getDownloads } from 'services/download.service';
@@ -14,5 +16,5 @@ export function* getDownloadsRequest(action) {
 }
 
 export default function* downloadsSagas() {
-  yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
+  // yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
 }

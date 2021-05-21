@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
@@ -13,34 +14,39 @@ import VerticalSlider from 'rn-vertical-slider';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import ContentWrap from 'components/content-wrap.component';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import resolutions from './video-resolutions.json';
+// import resolutions from './video-resolutions.json';
 import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
 import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
-
-// const temp = require('/data/user/0/com.iplayya/files/35466_God_of_War.mp4');
-// const samplevideo = require('assets/sample-mp4-file.mp4');
-// eslint-disable-next-line no-unused-vars
-// const samplenetworkvideo =
-//   'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+import Video from 'react-native-video';
+import { createStructuredSelector } from 'reselect';
+import { selectVideoUrls } from 'modules/ducks/movies/movies.selectors';
+import uuid from 'react-uuid';
 
 const MediaPlayer = ({
-  loading,
-  setLoading,
   updatePlaybackInfoAction,
   source,
   thumbnail,
   title,
+  seriesTitle,
   paused,
   togglePlay,
-  isSeries
+  setPaused,
+  multipleMedia,
+  videoUrls,
+  setSource,
+  previousAction,
+  nextAction,
+  isFirstEpisode,
+  isLastEpisode,
+  typename
 }) => {
   const theme = useTheme();
   const [error, setError] = React.useState(false);
-  const [showControls, setShowControls] = React.useState(false);
+  const [showControls, setShowControls] = React.useState(true);
   const [fullscreen, setFullscreen] = React.useState(false);
-  const [currentTime, setCurrentTime] = React.useState(0);
-  const [volume, setVolume] = React.useState(75);
+  const [sliderPosition, setSliderPosition] = React.useState(null);
+  const [volume, setVolume] = React.useState(0.6);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
@@ -48,34 +54,57 @@ const MediaPlayer = ({
   const [screencastActiveState, setScreencastActiveState] = React.useState(null);
   const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
-  // console.log({ sourcex: source, type });
-  console.log('fff', currentTime);
+  const [resolutions, setResolutions] = React.useState([]);
+  const [buffering, setBuffering] = React.useState(false);
+  const [timer, setTimer] = React.useState();
 
-  let timer = null;
+  let player = React.useRef();
 
-  let player = React.useRef(null);
+  React.useEffect(() => {
+    if (sliderPosition !== null) {
+      player.current.seek(sliderPosition);
+    }
+  }, [sliderPosition]);
+
+  React.useEffect(() => {
+    /// for itv channels, videourls is undefined
+    if (typeof videoUrls === 'undefined') return;
+
+    if (videoUrls.length) {
+      const resolutions = videoUrls.map(({ quality, link }, index) => {
+        const name = quality.toLowerCase();
+        const qsplit = name.split(' ');
+        const qjoin = qsplit.join('_');
+
+        return { id: index, name: `${qjoin}_${uuid()}`, label: quality, link };
+      });
+
+      /**
+       * TODO: select lowest resolution depending on internet connection speed
+       * select first one for now
+       */
+      resolutions.unshift({ id: 'auto', name: 'auto', label: 'Auto', link: videoUrls[0].link });
+      setResolutions(resolutions);
+    }
+  }, [videoUrls]);
+
+  React.useEffect(() => {
+    let r = resolutions.find(({ name }) => name === resolution);
+    if (typeof r !== 'undefined') return setSource(r.link.split(' ')[1]);
+  }, [resolution]);
 
   const handleFullscreenToggle = () => {
     setFullscreen(!fullscreen);
   };
 
   const onBuffer = () => {
-    setError(false);
-    console.log('buffer callback');
-  };
+    console.log('buffering...');
 
-  const handleOnPlaying = () => {
-    setLoading(false);
-    timer = hideControls(10);
-  };
+    // prevents loader when buffering only in IPTV because buffering in IPTV is very frequent
+    if (typename === 'Iptv') return;
 
-  const videoError = () => {
-    setError(true);
-  };
-
-  const handleProgress = (playbackInfo) => {
-    setLoading(false);
-    updatePlaybackInfoAction({ playbackInfo });
+    setBuffering(true);
+    setShowControls(true);
   };
 
   const hideControls = (duration = 5) => {
@@ -85,14 +114,57 @@ const MediaPlayer = ({
     }, duration * 1000);
   };
 
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+
+  // const handleOnPlaying = (data) => {
+  //   console.log('onPlaying callback', data);
+  //   setPaused(false);
+  //   setTimer(hideControls(10));
+  // };
+
+  // const handleOnPause = () => {
+  //   console.log('paused');
+  //   setShowControls(true);
+  //   if (timer) clearTimeout(timer);
+  // };
+
   React.useEffect(() => {
     if (paused) {
-      clearTimeout(timer);
+      // console.log('paused');
       setShowControls(true);
+      if (timer) clearTimeout(timer);
     } else {
-      timer = hideControls(10);
+      // console.log('onPlaying callback');
+      setPaused(false);
+      setTimer(hideControls(10));
     }
   }, [paused]);
+
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+  /// needs to be converted to effect since events are not available in react-native-video
+
+  const videoError = () => {
+    setError(true);
+  };
+
+  const handleProgress = (playbackInfo) => {
+    setBuffering(false);
+    updatePlaybackInfoAction({ playbackInfo });
+  };
 
   const toggleVolumeSliderVisible = () => {
     setVolumeSliderVisible(!volumeSliderVisible);
@@ -126,42 +198,65 @@ const MediaPlayer = ({
     setScreencastActiveState(null);
   };
 
-  console.log('media source', source);
+  // console.log({ source, resolution, resolutions });
+  // console.log({ resolutions });
+  // console.log('source', source);
+  // console.log('typename', typename);
+  // console.log('volume', volume);
 
-  console.log('volume', volume);
+  const renderPlayer = () => {
+    if (typename === 'Iptv')
+      return (
+        <VLCPlayer
+          // onPlaying={handleOnPlaying}
+          // onPaused={handleOnPause}
+          ref={player}
+          paused={paused}
+          seek={sliderPosition}
+          onProgress={handleProgress}
+          source={{ uri: source }}
+          volume={volume}
+          onBuffering={onBuffer}
+          onError={videoError}
+          resizeMode="contain"
+          style={{ width: Dimensions.get('window').width, height: 211 }}
+        />
+      );
+
+    return (
+      <Video
+        ref={player}
+        paused={paused}
+        onProgress={handleProgress}
+        source={{ uri: source }}
+        volume={volume}
+        onBuffer={onBuffer}
+        onError={videoError}
+        resizeMode="contain"
+        style={{ width: Dimensions.get('window').width, height: 211 }}
+      />
+    );
+  };
 
   if (fullscreen)
     return (
       <FullScreenPlayer
-        currentTime={currentTime}
-        paused={paused}
-        handleProgress={handleProgress}
-        source={source}
-        player={player}
-        volume={volume}
-        thumbnail={thumbnail}
-        onBuffer={onBuffer}
-        onPlaying={() => handleOnPlaying()}
-        videoError={videoError}
-        volumeSliderVisible={volumeSliderVisible}
-        setVolume={setVolume}
-        loading={loading}
         title={title}
-        togglePlay={togglePlay}
+        seriesTitle={seriesTitle}
+        multipleMedia={multipleMedia}
+        source={source}
         handleFullscreenToggle={handleFullscreenToggle}
-        showControls={showControls}
-        setCurrentTime={setCurrentTime}
-        toggleVolumeSliderVisible={toggleVolumeSliderVisible}
-        toggleCastOptions={handleToggleCastOptions}
-        toggleVideoOptions={handleToggleVideoOptions}
-        screencastOption={screencastOption}
-        handleSelectScreencastOption={handleSelectScreencastOption}
-        setScreencastActiveState={setScreencastActiveState}
-        showCastOptions={showCastOptions}
-        showVideoOptions={showVideoOptions}
-        handleSelectResolution={handleSelectResolution}
-        setActiveState={setActiveState}
-        resolution={resolution}
+        previousAction={previousAction}
+        nextAction={nextAction}
+        isFirstEpisode={isFirstEpisode}
+        isLastEpisode={isLastEpisode}
+        setSliderPosition={setSliderPosition}
+        setPaused={setPaused}
+        volume={volume}
+        setVolume={setVolume}
+        resolutions={resolutions}
+        setSource={setSource}
+        typename={typename}
       />
     );
 
@@ -181,24 +276,10 @@ const MediaPlayer = ({
           <Text>VIDEO ERROR</Text>
         </View>
       )}
-
-      <VLCPlayer
-        autoplay={false}
-        ref={player}
-        paused={paused}
-        seek={currentTime}
-        onProgress={handleProgress}
-        source={{ uri: source }}
-        volume={volume}
-        onBuffering={() => onBuffer()}
-        onPlaying={() => handleOnPlaying()}
-        onError={() => videoError()}
-        resizeMode="contain"
-        style={{ width: Dimensions.get('window').width, height: 211 }}
-      />
+      {renderPlayer()}
 
       {/* volume slider */}
-      {volumeSliderVisible ? (
+      {/* {volumeSliderVisible ? (
         <View style={{ position: 'absolute', marginLeft: 20, paddingTop: 40, zIndex: 100 }}>
           <VerticalSlider
             width={8}
@@ -211,25 +292,37 @@ const MediaPlayer = ({
             maximumTrackTintColor={theme.iplayya.colors.white25}
           />
         </View>
-      ) : null}
+      ) : null} */}
 
       {/* media player controls */}
       <Controls
         volume={volume}
-        multipleMedia={isSeries}
-        loading={loading}
+        setVolume={setVolume}
+        buffering={buffering}
+        multipleMedia={multipleMedia}
         title={title}
+        seriesTitle={seriesTitle}
         togglePlay={togglePlay}
         paused={paused}
+        setPaused={setPaused}
         toggleFullscreen={handleFullscreenToggle}
         style={{ position: 'absolute' }}
         visible={showControls}
-        setCurrentTime={setCurrentTime}
+        setSliderPosition={setSliderPosition}
         toggleVolumeSliderVisible={toggleVolumeSliderVisible}
         toggleCastOptions={handleToggleCastOptions}
         toggleVideoOptions={handleToggleVideoOptions}
+        previousAction={previousAction}
+        nextAction={nextAction}
+        isFirstEpisode={isFirstEpisode}
+        isLastEpisode={isLastEpisode}
+        resolutions={resolutions}
+        resolution={resolution}
+        activeState={activeState}
+        setActiveState={setActiveState}
+        handleSelectResolution={handleSelectResolution}
+        typename={typename}
       />
-
       {/* screencast option */}
       <Modal animationType="slide" visible={showCastOptions} transparent>
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -333,15 +426,15 @@ const MediaPlayer = ({
 };
 
 MediaPlayer.propTypes = {
-  loading: PropTypes.bool,
-  setLoading: PropTypes.func,
   title: PropTypes.string,
   source: PropTypes.string,
   thumbnail: PropTypes.string,
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
+  setPaused: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
-  isSeries: PropTypes.bool
+  multipleMedia: PropTypes.bool,
+  videoSource: PropTypes.string
 };
 
 const actions = {

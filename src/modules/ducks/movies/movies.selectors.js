@@ -8,23 +8,59 @@ export const selectIsFetching = createSelector([moviesState], ({ isFetching }) =
 
 export const selectMovies = createSelector([moviesState], ({ movies }) => movies);
 export const selectMovie = createSelector([moviesState], ({ movie }) => movie);
-export const selectMovieUrl = createSelector([moviesState], ({ movie }) => {
-  if (!movie) return;
-  const { is_series } = movie;
 
-  if (is_series) {
-    // const { series } = movie;
-    // const { video_urls } = series;
-    // const { link } = video_urls[0];
-    // return link.split(' ')[1];
-    return 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
+export const selectDownloadUrl = createSelector([moviesState], ({ movie, currentEpisode }) => {
+  if (!movie) return;
+
+  let { video_urls } = movie;
+
+  // console.log('currentEpisode', currentEpisode);
+
+  if (currentEpisode) {
+    // is_series should be true at this point
+    const { season, episode } = currentEpisode;
+    const { series } = movie;
+    const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+    video_urls = episodes.find(({ episode: e }) => parseInt(e) === episode).video_urls;
   }
-  const { link } = movie.video_urls[0];
-  return link.split(' ')[1];
+
+  if (!video_urls) return '';
+
+  const urls = video_urls.map(({ link }) => link);
+  const mp4url = urls.find((url) => !url.includes('video.m3u8'));
+
+  if (typeof mp4url === 'undefined') return '';
+
+  return mp4url.split(' ')[1];
+});
+
+/**
+ * for initial video source
+ * get the first m3u8 source
+ * if no m3u8 found get the first mp4 source
+ */
+export const selectUrlForVodPlayer = createSelector([moviesState], ({ movie }) => {
+  if (!movie) return;
+
+  const { video_urls } = movie;
+
+  if (!video_urls) return '';
+
+  const urls = movie.video_urls.map(({ link }) => link);
+  const mp4url = urls.find((url) => !url.includes('video.m3u8'));
+  const m3u8url = urls.find((url) => url.includes('m3u8'));
+
+  // return an empty string if
+  if (typeof mp4url === 'undefined' && typeof m3u8url === 'undefined') return '';
+
+  if (typeof m3u8url === 'undefined') return mp4url.split(' ')[1];
+
+  return m3u8url.split(' ')[1];
 });
 
 export const selectMovieTitle = createSelector([moviesState], ({ movie }) => {
   if (!movie) return;
+
   return movie.title;
 });
 
@@ -121,28 +157,58 @@ export const selectSeekableDuration = createSelector([moviesState], ({ playbackI
   return Math.floor(playbackInfo.duration);
 });
 
+// export const selectCurrentPosition = createSelector([moviesState], ({ playbackInfo }) => {
+//   if (!playbackInfo) return 0;
+
+//   if (typeof playbackInfo.position === 'undefined') return 0;
+//   return playbackInfo.position;
+// });
+
 export const selectCurrentTime = createSelector([moviesState], ({ playbackInfo }) => {
   if (!playbackInfo) return 0;
 
   if (typeof playbackInfo.currentTime === 'undefined') return 0;
-  return Math.floor(playbackInfo.currentTime / 1000);
-});
-
-export const selectCurrentPosition = createSelector([moviesState], ({ playbackInfo }) => {
-  if (!playbackInfo) return 0;
-
-  if (typeof playbackInfo.position === 'undefined') return 0;
-  return playbackInfo.position;
+  // return Math.floor(playbackInfo.currentTime / 1000);
+  return playbackInfo.currentTime;
 });
 
 export const selectRemainingTime = createSelector([moviesState], ({ playbackInfo }) => {
   if (!playbackInfo) return 0;
 
-  if (typeof playbackInfo.remainingTime === 'undefined') return 0;
-  return Math.abs(playbackInfo.remainingTime / 1000);
+  const { seekableDuration, currentTime } = playbackInfo;
+  const remainingTime = seekableDuration - currentTime;
+
+  // const { duration, currentTime } = playbackInfo;
+  // const remainingTime = duration - currentTime;
+
+  // return Math.abs(remainingTime / 1000);
+  return remainingTime;
+});
+
+export const selectDuration = createSelector([moviesState], ({ playbackInfo }) => {
+  if (!playbackInfo) return 0;
+
+  const { seekableDuration } = playbackInfo;
+
+  if (typeof seekableDuration === 'undefined') return 0;
+
+  return seekableDuration;
 });
 
 export const selectCategoryPaginator = createSelector(
   [moviesState],
   ({ categoryPaginator }) => categoryPaginator
+);
+
+export const selectMovieVideoUrls = createSelector([moviesState], ({ movie }) => {
+  if (!movie) return [];
+
+  if (!movie.video_urls) return [];
+
+  return movie.video_urls;
+});
+
+export const selectCurrentEpisode = createSelector(
+  [moviesState],
+  ({ currentEpisode }) => currentEpisode
 );

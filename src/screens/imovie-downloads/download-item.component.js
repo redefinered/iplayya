@@ -24,6 +24,7 @@ const DownloadItem = ({
   id,
   theme,
   title,
+  ep,
   year,
   time,
   rating_mpaa,
@@ -60,7 +61,7 @@ const DownloadItem = ({
     if (task.state === 'PAUSED') return setPaused(true);
     if (task.state === 'PENDING') return setPaused(true);
     if (task.state === 'DONE') return setIsDownloaded(true);
-    console.log({ task });
+
     setProgress(task.percent * 100);
     task
       .progress((percent) => {
@@ -252,7 +253,7 @@ const DownloadItem = ({
                 marginBottom: 5
               }}
             >
-              {title}
+              {`${title} ${ep}`}
             </Text>
             <Text
               style={{

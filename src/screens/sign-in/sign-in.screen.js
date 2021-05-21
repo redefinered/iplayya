@@ -3,8 +3,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
-import { Text } from 'react-native-paper';
+import {
+  View,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  ScrollView,
+  Modal
+} from 'react-native';
+import { Text, ActivityIndicator, withTheme } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
 // import Button from 'components/button/button.component';
@@ -18,17 +26,14 @@ import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
 
-// import withLoader from 'components/with-loader.component';
 import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
 
 import styles from './sign-in.styles';
-
-// eslint-disable-next-line no-unused-vars
 class SignInScreen extends React.Component {
   state = {
     username: '',
     password: '',
-    isolatedInputs: false,
+    // isolatedInputs: false,
     showPassword: false
   };
 
@@ -47,129 +52,109 @@ class SignInScreen extends React.Component {
   };
 
   render() {
-    const { showPassword /*, isolatedInputs*/, username, password } = this.state;
+    const { showPassword, username, password } = this.state;
     const { navigation } = this.props;
-
-    // if (this.props.error) console.log({ errorxxx: this.props.error });
 
     return (
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <StatusBar translucent backgroundColor="transparent" />
-        <View
-          style={{
-            flex: 3,
-            alignItems: 'center',
-            justifyContent: 'center'
-            // marginTop: isolatedInputs ? 100 : 0
-          }}
-        >
-          <Logo />
-        </View>
-        <ContentWrap style={styles.form}>
-          {this.props.signedUp && <Text>Sign-up Success! Please sign in</Text>}
-          <TextInput
-            name="username"
-            handleChangeText={this.handleChangeText}
-            value={username}
-            autoCapitalize="none"
-            clearButtonMode="while-editing"
-            keyboardType="email-address"
-            autoCompleteType="email"
-            style={styles.textInput}
-            placeholder="Email"
-            error={this.props.error}
-            // onFocus={() => this.setState({ isolatedInputs: true })}
-            // onBlur={() => this.setState({ isolatedInputs: false })}
-          />
-          <View style={styles.passwordInputContainer}>
-            <TextInput
-              name="password"
-              handleChangeText={this.handleChangeText}
-              value={password}
-              autoCapitalize="none"
-              style={{
-                ...styles.textInput,
-                position: 'relative',
-                zIndex: 1
-              }}
-              placeholder="Password"
-              secureTextEntry={!showPassword}
-              error={this.props.error}
-              // onFocus={() => this.setState({ isolatedInputs: true })}
-              // onBlur={() => this.setState({ isolatedInputs: false, showPassword: false })}
-            />
-            <Pressable
-              onPress={() => this.setState({ showPassword: !showPassword })}
-              style={{ ...styles.showToggleContainer, zIndex: 2 }}
-            >
-              <Icon
-                name={showPassword ? 'close' : 'eye'}
-                size={showPassword ? 25 : 40}
-                style={styles.showToggleIcon}
-              />
-            </Pressable>
-          </View>
-          {this.props.error && <Text>{this.props.error}</Text>}
-          <MainButton
-            onPress={() => this.handleLoginSubmit()}
-            text="Login"
-            style={{ marginTop: 30 }}
-          />
-          {/* <TouchableRipple
-            borderRadius={true}
-            rippleColor="#B4166A"
-            style={{ backgroundColor: '#E34398', borderRadius: 8 }}
-            onPress={() => this.handleLoginSubmit()}
-          >
+        <ScrollView behavior="height" bounces={false}>
+          <View style={{ flex: 1 }}>
+            <StatusBar translucent backgroundColor="transparent" />
             <View
               style={{
-                height: 45,
+                alignItems: 'center',
                 justifyContent: 'center',
-                alignItems: 'center'
+                marginTop: 100,
+                marginBottom: 30
               }}
             >
-              <Text style={{ fontSize: 16, fontFamily: 'NotoSans-Bold' }}>Login</Text>
+              <Logo />
             </View>
-          </TouchableRipple> */}
-          {/* <Button
-            mode="contained"
-            style={styles.loginButton}
-            onPress={() => this.handleLoginSubmit()}
-          >
-            Login
-          </Button> */}
-          <Pressable
-            onPress={() => navigation.navigate('ForgotPasswordScreen')}
-            style={styles.forgotPassword}
-          >
-            <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
-          </Pressable>
-        </ContentWrap>
+            <ContentWrap>
+              {this.props.signedUp && <Text>Sign-up Success! Please sign in</Text>}
+              <TextInput
+                name="username"
+                handleChangeText={this.handleChangeText}
+                value={username}
+                autoCapitalize="none"
+                clearButtonMode="while-editing"
+                keyboardType="email-address"
+                autoCompleteType="email"
+                error={this.props.error}
+                style={styles.textInput}
+                placeholder="Email"
+              />
+              <View style={styles.passwordInputContainer}>
+                <TextInput
+                  name="password"
+                  handleChangeText={this.handleChangeText}
+                  value={password}
+                  autoCapitalize="none"
+                  error={this.props.error}
+                  style={{
+                    ...styles.textInput,
+                    position: 'relative',
+                    zIndex: 1
+                  }}
+                  placeholder="Password"
+                  secureTextEntry={!showPassword}
+                />
+                <Pressable
+                  onPress={() => this.setState({ showPassword: !showPassword })}
+                  style={{ ...styles.showToggleContainer, zIndex: 2 }}
+                >
+                  <Icon
+                    name={showPassword ? 'close' : 'eye'}
+                    size={showPassword ? 25 : 40}
+                    style={styles.showToggleIcon}
+                  />
+                </Pressable>
+              </View>
+              {this.props.error && <Text>{this.props.error}</Text>}
+              <MainButton
+                onPress={() => this.handleLoginSubmit()}
+                text="Login"
+                style={{ marginTop: 30 }}
+              />
+              <Pressable
+                onPress={() => navigation.navigate('ForgotPasswordScreen')}
+                style={styles.forgotPassword}
+              >
+                <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
+              </Pressable>
+            </ContentWrap>
 
-        <View
-          style={{
-            ...styles.signUp,
-            flex: 1,
-            alignItems: 'center'
-            // height: isolatedInputs
-            //   ? Dimensions.get('window').height - 0.5 * Dimensions.get('window').height
-            //   : null
-          }}
-        >
-          <Text>
-            Don't you have an account yet?{' '}
-            <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
-              Sign-up
-            </Text>
-          </Text>
-        </View>
+            <View style={{ alignItems: 'center', marginBottom: 50 }}>
+              <Text>
+                Don't you have an account yet?{' '}
+                <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
+                  Sign-up
+                </Text>
+              </Text>
+            </View>
 
-        <Pressable style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.signUpText}>Need help?</Text>
-        </Pressable>
+            <Pressable style={{ alignItems: 'center', marginBottom: 50 }}>
+              <Text style={{ ...styles.signUpText }}>Need help?</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+
+        {/* loader for download starting */}
+        <Modal transparent statusBarTranslucent={true} visible={this.props.isFetching}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: this.props.theme.iplayya.colors.black50
+            }}
+          >
+            <ActivityIndicator color={this.props.theme.iplayya.colors.vibrantpussy} />
+          </View>
+        </Modal>
       </KeyboardAvoidingView>
     );
   }
@@ -190,6 +175,10 @@ const actions = {
   signInAction: Creators.signIn
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withScreenContainer('gradient'));
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withScreenContainer('gradient'),
+  withTheme
+);
 
 export default enhance(SignInScreen);

@@ -2,6 +2,7 @@
 /* eslint-disable react/display-name */
 
 import React from 'react';
+import { Dimensions } from 'react-native';
 
 import HomeIcon from 'assets/tab-icons/home.svg';
 import HomeIconActive from 'assets/tab-icons/home_active.svg';
@@ -20,7 +21,6 @@ import AccountStack from 'navigators/account-stack.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectHideTabs } from 'modules/ducks/nav/nav.selectors';
-import { Dimensions } from 'react-native';
 import { selectSwipeEnabled } from 'modules/ducks/nav/nav.selectors';
 
 // const Tab = createBottomTabNavigator();

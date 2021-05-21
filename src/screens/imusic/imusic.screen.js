@@ -186,17 +186,17 @@ const ImusicScreen = ({ navigation, theme }) => {
                 backgroundColor: '#202530',
                 borderTopRightRadius: !nowPlaying ? 24 : 0,
                 borderTopLeftRadius: !nowPlaying ? 24 : 0,
-                paddingHorizontal: 30,
-                paddingTop: 15,
-                paddingBottom: 30
+                paddingHorizontal: 15,
+                paddingTop: 10,
+                paddingBottom: 10
               }}
             >
               <TouchableWithoutFeedback
                 onPress={() => navigation.replace('HomeScreen')}
                 style={{ alignItems: 'center' }}
               >
-                <Icon name="iplayya" size={40} />
-                <Text style={{ textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+                <Icon name="iplayya" size={24} />
+                <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
               </TouchableWithoutFeedback>
             </View>
           </View>

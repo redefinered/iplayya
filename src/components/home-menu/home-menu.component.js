@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, /*TouchableOpacity,*/ Pressable } from 'react-native';
 import { Text } from 'react-native-paper';
 import Itv from 'assets/btn_itv.svg';
 import Iradio from 'assets/btn_iradio.svg';
@@ -54,48 +54,102 @@ const HomeMenu = ({ navigation }) => {
 
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
-      <TouchableOpacity style={styles.menuitem} onPress={() => navigation.replace('ItvScreen')}>
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+          },
+          styles.menuitem
+        ]}
+        onPress={() => navigation.replace('ItvScreen')}
+      >
         <View style={styles.iconwrap}>
           <Itv />
         </View>
         <Text style={styles.label}>iTV</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuitem} onPress={() => navigation.replace('ImovieScreen')}>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+          },
+          styles.menuitem
+        ]}
+        onPress={() => navigation.replace('ImovieScreen')}
+      >
         <View style={styles.iconwrap}>
           <Imovie />
         </View>
         <Text style={styles.label}>iMovie</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuitem} onPress={() => navigation.replace('IsportsScreen')}>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+          },
+          styles.menuitem
+        ]}
+        onPress={() => navigation.replace('IsportsScreen')}
+      >
         <View style={styles.iconwrap}>
           <Isports />
         </View>
         <Text style={styles.label}>iSports</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuitem} onPress={() => navigation.replace('IplayScreen')}>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+          },
+          styles.menuitem
+        ]}
+        onPress={() => navigation.replace('IplayScreen')}
+      >
         <View style={styles.iconwrap}>
           <Iplay />
         </View>
         <Text style={styles.label}>iPlay</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuitem} onPress={() => navigation.replace('IradioScreen')}>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+          },
+          styles.menuitem
+        ]}
+        onPress={() => navigation.replace('IradioScreen')}
+      >
         <View style={styles.iconwrap}>
           <Iradio />
         </View>
         <Text style={styles.label}>iRadio</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuitem} onPress={() => navigation.replace('ImusicScreen')}>
+      </Pressable>
+      <Pressable
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+          },
+          styles.menuitem
+        ]}
+        onPress={() => navigation.replace('ImusicScreen')}
+      >
         <View style={styles.iconwrap}>
           <Imusic />
         </View>
         <Text style={styles.label}>iMusic</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  menuitem: { width: '33.33%', alignItems: 'center', marginBottom: 30 },
+  menuitem: {
+    width: '33.33%',
+    alignItems: 'center',
+    marginBottom: 30,
+    borderRadius: 0,
+    padding: 10
+  },
   iconwrap: { borderRadius: 28, overflow: 'hidden' },
   label: { marginTop: 10 }
 });

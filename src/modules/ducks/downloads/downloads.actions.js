@@ -11,11 +11,12 @@ const { Types, Creators } = createActions(
     cleanUpDownloadsProgress: ['ids'],
     resetDownloadsProgress: [],
 
-    getDownloadsStart: [],
-    getDownloads: ['data'],
-    getDownloadsSuccess: ['data'],
-    getDownloadsFailure: ['error'],
-    removeDownloadsDataByIds: ['ids'],
+    // getDownloadsStart: [],
+    // getDownloads: ['data'],
+    // getDownloadsSuccess: ['data'],
+    // getDownloadsFailure: ['error'],
+
+    removeDownloadsByIds: ['ids'],
 
     reset: []
   },

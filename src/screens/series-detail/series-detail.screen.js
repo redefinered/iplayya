@@ -19,9 +19,8 @@ import {
   selectIsFetching,
   selectMovie,
   selectPlaybackInfo,
-  selectUpdatedFavoritesCheck,
-  selectUrlForVodPlayer,
-  selectMovieVideoUrls
+  selectUpdatedFavoritesCheck
+  // selectUrlForVodPlayer
 } from 'modules/ducks/movies/movies.selectors';
 import {
   selectIsFetching as selectDownloading,
@@ -30,15 +29,29 @@ import {
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
+// import { data as dummydata } from './sample-video-series.json';
 
-const MovieDetailScreen = ({
+export const selectSource = (videourls) => {
+  const urls = videourls.map(({ link }) => link);
+  const mp4url = urls.find((url) => !url.includes('video.m3u8'));
+  const m3u8url = urls.find((url) => url.includes('m3u8'));
+
+  // return an empty string if
+  if (typeof mp4url === 'undefined' && typeof m3u8url === 'undefined') return '';
+
+  if (typeof m3u8url === 'undefined') return mp4url.split(' ')[1];
+
+  return m3u8url.split(' ')[1];
+};
+
+const SeriesDetailScreen = ({
   theme,
   error,
   route: {
     params: { videoId }
   },
-  movie,
-  videoSource,
+  movie: seriesdata,
+  // videoSource,
   playbackStartAction,
   getMovieAction,
   getMovieStartAction,
@@ -49,21 +62,32 @@ const MovieDetailScreen = ({
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
-  videoUrls
+
+  setEpisodeAction
 }) => {
+  // const dummyvideo = dummydata.video;
   const [paused, setPaused] = React.useState(true);
-  const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
+  const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
+  const [videoUrls, setVideoUrls] = React.useState([]);
+  const [season, setSeason] = React.useState(1);
+  const [episode, setEpisode] = React.useState(1);
+  const [isFirstEpisode, setIsFirstEpisode] = React.useState(true);
+  const [isLastEpisode, setIsLastEpisode] = React.useState(false);
+  const [seriesTitle, setSeriesTitle] = React.useState();
 
   React.useEffect(() => {
     listDownloadedFiles();
     downloadStartAction();
     playbackStartAction();
     getMovieStartAction();
-    getMovieAction(videoId);
     addMovieToFavoritesStartAction();
+
+    // get movie series data
+    getMovieAction(videoId);
+    // getMovieAction(316); /// for testing
   }, []);
 
   React.useEffect(() => {
@@ -79,6 +103,62 @@ const MovieDetailScreen = ({
       setShowSnackbar(false);
     }
   }, [downloadStarted]);
+
+  const handleNextEpisode = () => {
+    const { series } = seriesdata;
+    const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+
+    setIsFirstEpisode(false);
+
+    /// total number of seasons
+    const totalSeasons = series.length;
+    /// total number of episodes of last season
+    const totalEpisodesOfLastSeason = series[totalSeasons - 1].episodes.length;
+
+    console.log({ totalSeasons, totalEpisodesOfLastSeason });
+
+    const nextSeason = season + 1; // the supposed next season
+    const nextEpisode = episode + 1; // the supposed next episode
+
+    console.log({ season, episode, nextSeason, nextEpisode });
+
+    if (episodes.length < nextEpisode) {
+      /// cancel action if no episodes left
+      if (nextSeason > totalSeasons && nextEpisode > episodes.length) return setIsLastEpisode(true);
+
+      setSeason(season + 1);
+      setEpisode(1);
+      setIsLastEpisode(false);
+      return;
+    }
+
+    setEpisode(episode + 1);
+  };
+
+  const handlePreviousEpisode = () => {
+    setIsLastEpisode(false);
+
+    const { series } = seriesdata;
+
+    const prevSeason = season - 1; // the supposed previous season
+    const prevEpisode = episode - 1; // the supposed previous episode
+
+    console.log({ season, episode, prevSeason, prevEpisode });
+
+    if (prevEpisode < 1) {
+      /// cancel action if no episodes left
+      if (prevSeason < 1 && prevEpisode < 1) return setIsFirstEpisode(true);
+
+      const { episodes } = series.find(({ season: s }) => parseInt(s) === prevSeason);
+
+      setSeason(season - 1);
+      setEpisode(episodes.length);
+      setIsFirstEpisode(false);
+      return;
+    }
+
+    setEpisode(episode - 1);
+  };
 
   const handleSourceSet = (src) => {
     setSource(src);
@@ -96,8 +176,10 @@ const MovieDetailScreen = ({
   };
 
   React.useEffect(() => {
-    if (movie) {
-      const titlesplit = movie.title.split(' ');
+    if (seriesdata) {
+      console.log({ seriesdata });
+      const episodetitle = `${seriesdata.title} SO${season}E${episode}`;
+      const titlesplit = episodetitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
       const file = downloadedFiles.find((file) => file === filename);
@@ -105,34 +187,39 @@ const MovieDetailScreen = ({
       // check if downloaded
       if (downloadedFiles.length) {
         if (typeof file !== 'undefined') {
-          setIsMoviedownloaded(true);
+          setIsDownloaded(true);
         } else {
-          setIsMoviedownloaded(false);
+          setIsDownloaded(false);
         }
       }
     }
-  }, [movie, downloadedFiles]);
+  }, [seriesdata, downloadedFiles, episode, season]);
 
   React.useEffect(() => {
-    if (movie) {
-      const { is_series } = movie;
-      let videoUrl = '';
+    if (seriesdata) {
+      const { series } = seriesdata;
 
-      // initial video source
-      if (is_series) {
-        /// for testing
-        videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
-      } else {
-        videoUrl = videoSource;
-      }
+      if (!series) return;
 
-      const { title: movieTitle } = movie;
+      /// set title
+      setSeriesTitle(`S${season} E${episode}`);
+
+      const { episodes } = series.find(({ season: s }) => parseInt(s) === season);
+
+      const episodedata = episodes.find(({ episode: e }) => parseInt(e) === episode);
+      console.log({ episodedata });
+
+      setVideoUrls(episodedata.video_urls);
+
+      const defaultSource = selectSource(episodedata.video_urls);
+
+      const { title: movieTitle } = seriesdata;
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
       const filename = `${videoId}_${title}.mp4`;
 
       // set source
-      if (isMovieDownloaded) {
+      if (isDownloaded) {
         let src =
           Platform.OS === 'ios'
             ? `file://${downloadPath}/${filename}`
@@ -141,10 +228,13 @@ const MovieDetailScreen = ({
       } else {
         // let src = videoUrl;
         // let setsrc = src === '' ? null : src;
-        setSource(videoUrl);
+        setSource(defaultSource);
       }
+
+      /// set episode in reducer state
+      setEpisodeAction(season, episode);
     }
-  }, [movie, isMovieDownloaded]);
+  }, [seriesdata, isDownloaded, episode, season]);
 
   // execute getFavorites if favorites list is updated
   React.useEffect(() => {
@@ -157,6 +247,13 @@ const MovieDetailScreen = ({
     setPaused(!paused);
   };
 
+  const handleEpisodeSelect = (data) => {
+    const { season, episode } = data;
+
+    setSeason(parseInt(season));
+    setEpisode(parseInt(episode));
+  };
+
   if (error)
     return (
       <ContentWrap>
@@ -164,7 +261,7 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie)
+  if (!seriesdata)
     return (
       <ContentWrap>
         <Text>Working...</Text>
@@ -179,9 +276,18 @@ const MovieDetailScreen = ({
     category,
     director,
     thumbnail,
-    is_series,
+    series,
     ...otherFields
-  } = movie;
+  } = seriesdata;
+
+  if (!series)
+    return (
+      <ContentWrap>
+        <Text>Working...</Text>
+      </ContentWrap>
+    );
+
+  // console.log('xxxxxx', series);
 
   return (
     <View style={{ flex: 1, marginTop: 10 }}>
@@ -199,16 +305,20 @@ const MovieDetailScreen = ({
         >
           {source !== '' ? (
             <MediaPlayer
-              isSeries={is_series}
+              multipleMedia={true}
               paused={paused}
               source={source}
               thumbnail={thumbnail}
               title={title}
+              seriesTitle={seriesTitle}
               togglePlay={handleTogglePlay}
               setPaused={setPaused}
               setSource={handleSourceSet}
               videoUrls={videoUrls}
-              typename={movie.__typename}
+              previousAction={handlePreviousEpisode}
+              nextAction={handleNextEpisode}
+              isFirstEpisode={isFirstEpisode}
+              isLastEpisode={isLastEpisode}
             />
           ) : (
             <View
@@ -294,6 +404,33 @@ const MovieDetailScreen = ({
             </View>
           </Pressable>
         </ContentWrap>
+
+        <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
+          {series.map(({ season }, index) => {
+            const { episodes } = series[index];
+            return (
+              <List.Accordion
+                key={index}
+                title={`Season ${season}`}
+                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+              >
+                {episodes.map(({ episode }, index) => {
+                  return (
+                    <List.Item
+                      key={index}
+                      onPress={() => handleEpisodeSelect({ season, episode })}
+                      titleStyle={{ marginBottom: -10 }}
+                      title={
+                        <Text style={{ ...createFontFormat(14, 20) }}>{`Episode ${episode}`}</Text>
+                      }
+                    />
+                  );
+                })}
+              </List.Accordion>
+            );
+          })}
+        </ContentWrap>
       </ScrollView>
 
       {/* loader for download starting */}
@@ -341,19 +478,18 @@ const actions = {
   updatePlaybackInfoAction: Creators.updatePlaybackInfo,
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
-  downloadStartAction: DownloadsCreators.downloadStart
+  downloadStartAction: DownloadsCreators.downloadStart,
+  setEpisodeAction: Creators.setEpisode
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   movie: selectMovie,
-  videoSource: selectUrlForVodPlayer,
   playbackInfo: selectPlaybackInfo,
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
-  downloadStarted: selectDownloadStarted,
-  videoUrls: selectMovieVideoUrls
+  downloadStarted: selectDownloadStarted
 });
 
 const enhance = compose(
@@ -362,4 +498,4 @@ const enhance = compose(
   withTheme
 );
 
-export default enhance(MovieDetailScreen);
+export default enhance(SeriesDetailScreen);
