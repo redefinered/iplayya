@@ -45,9 +45,9 @@ const FavoritesTab = ({
   };
 
   // get favorites on mount
-  React.useEffect(() => {
-    getFavoritesAction(paginatorInfo);
-  }, []);
+  // React.useEffect(() => {
+  //   getFavoritesAction(paginatorInfo);
+  // }, []);
 
   React.useEffect(() => {
     if (removedFromFavorites) {

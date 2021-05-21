@@ -39,7 +39,10 @@ const IradioScreen = ({
   const [nowPlaying, setNowPlaying] = React.useState(null);
   const [bottomNavHeight, setBottomNavHeight] = React.useState();
 
-  console.log('nowPlaying', nowPlaying);
+  React.useEffect(() => {
+    getRadiosAction(paginatorInfo);
+    getFavoritesAction(paginatorInfo);
+  }, []);
 
   const [routes] = React.useState([
     { key: 'radios', title: 'Radio Stations' },

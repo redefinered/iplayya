@@ -28,26 +28,9 @@ const RadioStationsTab = ({
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
 
-  React.useEffect(() => {
-    getRadioStationsAction(paginatorInfo);
-  }, []);
-
-  // const [data, setData] = React.useState([]);
-
-  // add dummy thumbnails to radio stations
   // React.useEffect(() => {
-  //   if (radioStations.length) {
-  //     let stationsWithThumbnails = radioStations.map((station) => {
-  //       return {
-  //         ...station,
-  //         thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(
-  //           'Station Number One'
-  //         )}`
-  //       };
-  //     });
-  //     setData(stationsWithThumbnails);
-  //   }
-  // }, [radioStations]);
+  //   getRadioStationsAction(paginatorInfo);
+  // }, []);
 
   const handleAddToFavorites = (id, title) => {
     console.log({ id, title });

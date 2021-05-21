@@ -91,15 +91,14 @@ const NowPlaying = ({
       }}
     >
       <Video
-        audioOnly
         paused={paused}
         source={{ uri: radioProps.cmd }}
         // source={samplemp3}
         onBuffer={handleBuffer}
         onError={handleError}
         onProgress={handleProgress}
-        // style={styles.backgroundVideo}
       />
+
       <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
         <View
           style={{
