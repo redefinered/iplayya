@@ -41,8 +41,11 @@ const IplayScreen = ({
   const [deleteMessage, setDeleteMessage] = React.useState('');
   const [videoErrorVisible, setVideoErrorVisible] = React.useState(false);
   const [error, setError] = React.useState();
+  const [loading, setLoading] = React.useState(false);
 
   const pickFiles = async () => {
+    setLoading(true);
+
     const newFiles = [];
     // Pick multiple files
     try {
@@ -55,6 +58,8 @@ const IplayScreen = ({
         console.log({ result });
         newFiles.push({ id: uuid(), ...result });
       }
+
+      setLoading(false);
 
       addVideoFilesAction([...newFiles]);
       // setFiles([...newFiles, ...files]);
@@ -155,6 +160,13 @@ const IplayScreen = ({
   const handleHideVideoError = () => {
     setVideoErrorVisible(false);
   };
+
+  if (loading)
+    return (
+      <ContentWrap>
+        <Text>Adding...</Text>
+      </ContentWrap>
+    );
 
   return (
     <View style={styles.container}>

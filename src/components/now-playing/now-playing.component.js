@@ -11,9 +11,9 @@ import { createFontFormat } from 'utils';
 // const samplemp3 = require('assets/sample.mp3');
 
 const NowPlaying = ({
-  navigation,
+  // navigation,
   theme,
-  selected: { __typename, id, title, artist, thumbnails, ...radioProps }
+  selected: { __typename, title, artist, thumbnails, ...radioProps }
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [buffering, setBuffering] = React.useState(false);
@@ -83,7 +83,7 @@ const NowPlaying = ({
 
   return (
     <Pressable
-      onPress={() => navigation.navigate('MusicPlayerScreen', { id })}
+      // onPress={() => navigation.navigate('MusicPlayerScreen', { id })}
       style={{
         backgroundColor: '#202530',
         borderBottomWidth: 1,
