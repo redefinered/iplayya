@@ -20,9 +20,9 @@ import {
   selectFavorites,
   selectError,
   selectIsFetching
-} from 'modules/ducks/sports/sports.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import { createFontFormat } from 'utils';
-import { Creators } from 'modules/ducks/sports/sports.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import dummydata from './isports-downloads.dummy.json';
 
 const IsportsDownloads = ({ theme, navigation, removeFromFavoritesAction }) => {

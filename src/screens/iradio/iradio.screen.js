@@ -16,14 +16,14 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators } from 'modules/ducks/radios/radios.actions';
+import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import {
   selectError,
   selectIsFetching,
   selectRadioStations
-} from 'modules/ducks/radios/radios.selectors';
+} from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
-import { selectPaginatorInfo } from 'modules/ducks/radios/radios.selectors';
+import { selectPaginatorInfo } from 'modules/ducks/iradio/iradio.selectors';
 
 const initialLayout = { width: Dimensions.get('window').width };
 

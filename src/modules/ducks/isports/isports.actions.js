@@ -36,9 +36,14 @@ const { Types, Creators } = createActions(
     // misc
     reset: [],
     setPaginatorInfo: ['data'],
-    resetPaginator: []
+    resetPaginator: [],
+
+    searchStart: [],
+    search: ['input'],
+    searchSuccess: ['data'],
+    searchFailure: ['error']
   },
-  { prefix: '@Sports/' }
+  { prefix: '@Isports/' }
 );
 
 export { Types, Creators };

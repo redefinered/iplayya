@@ -7,8 +7,8 @@ import passwordSagas from './password.sagas';
 import profileSagas from './profile.sagas';
 import providerSagas from './provider.sagas';
 import moviesSagas from './movies.sagas';
-import sportsSagas from './sports.sagas';
-import radiosSagas from './radios.sagas';
+import isportsSagas from './isports.sagas';
+import iradioSagas from './iradio.sagas';
 
 export default function* rootSaga() {
   yield all([
@@ -18,8 +18,8 @@ export default function* rootSaga() {
     fork(userSagas),
     fork(passwordSagas),
     fork(moviesSagas),
-    fork(sportsSagas),
-    fork(radiosSagas),
+    fork(isportsSagas),
+    fork(iradioSagas),
     fork(profileSagas),
     fork(providerSagas)
   ]);

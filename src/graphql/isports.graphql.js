@@ -88,3 +88,12 @@ export const REMOVE_FROM_FAVORITES = gql`
     }
   }
 `;
+
+export const SEARCH = gql`
+  query SEARCH_ISPORTS($input: videoRequest) {
+    isports(input: $input) {
+      id
+      title
+    }
+  }
+`;

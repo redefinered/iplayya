@@ -12,19 +12,19 @@ import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectSearchResults,
   selectIsFetching
-} from 'modules/ducks/itv/itv.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import { ScrollView } from 'react-native-gesture-handler';
-import { selectGenres } from 'modules/ducks/itv/itv.selectors';
+import { selectGenres } from 'modules/ducks/isports/isports.selectors';
 import Spacer from '../../components/spacer.component';
 
-const ItvSearchScreen = ({
+const ISportsSearchScreen = ({
   navigation,
   theme,
   error,
@@ -55,14 +55,9 @@ const ItvSearchScreen = ({
     }
   }, [term]);
 
-  // const search = debounce((keyword) => {
-  //   searchAction({ keyword, pageNumber: 1, limit: 10 });
-  // }, 1300);
-
-  const search = React.useCallback(
-    debounce((keyword) => searchAction({ keyword, pageNumber: 1, limit: 10 }), 300),
-    []
-  );
+  const search = debounce((keyword) => {
+    searchAction({ keyword, pageNumber: 1, limit: 10 });
+  }, 1300);
 
   const handleItemPress = (channelId) => {
     // navigate to chanel details screen with `id` parameter
@@ -172,7 +167,7 @@ const ItvSearchScreen = ({
         clearButtonMode="while-editing"
         autoCompleteType="email"
         style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-        placeholder="Search a channel"
+        placeholder="Search a sports channel"
         left={
           <RNPTextInput.Icon
             name={() => {
@@ -213,8 +208,8 @@ const mapStateToProps = createStructuredSelector({
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid' }),
+  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
   withTheme
 );
 
-export default enhance(ItvSearchScreen);
+export default enhance(ISportsSearchScreen);

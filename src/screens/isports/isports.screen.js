@@ -15,7 +15,7 @@ import withHeaderPush from 'components/with-header-push/with-header-push.compone
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/sports/sports.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
@@ -25,7 +25,7 @@ import {
   selectChannels,
   selectAddedToFavorites,
   selectFavorites
-} from 'modules/ducks/sports/sports.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 

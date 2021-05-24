@@ -12,7 +12,7 @@ import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { selectPaginatorInfo } from 'modules/ducks/sports/sports.selectors';
+import { selectPaginatorInfo } from 'modules/ducks/isports/isports.selectors';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
@@ -20,9 +20,9 @@ import {
   selectError,
   selectIsFetching,
   selectRemovedFromFavorites
-} from 'modules/ducks/sports/sports.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import { urlEncodeTitle, createFontFormat } from 'utils';
-import { Creators } from 'modules/ducks/sports/sports.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 
 const IsportsFavoritesScreen = ({
   theme,

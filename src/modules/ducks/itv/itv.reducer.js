@@ -2,7 +2,7 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './itv.actions';
 
 const INITIAL_STATE = {
-  isFetching: false,
+  isFetching: true,
   error: null,
   genres: [],
   paginatorInfo: {
