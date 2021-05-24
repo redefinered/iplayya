@@ -51,7 +51,7 @@ const { Types, Creators } = createActions(
     searchSuccess: ['data'],
     searchFailure: ['error']
   },
-  { prefix: '@Itv/' }
+  { prefix: '@Isports/' }
 );
 
 export { Types, Creators };
