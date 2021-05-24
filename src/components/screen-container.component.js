@@ -56,7 +56,8 @@ const ScreenContainer = ({
       </LinearGradient>
     );
   };
-  const withLoaderScreen = () => {
+  const loader = () => {
+    console.log('withLoader', withLoader);
     if (!withLoader) return;
 
     // return <Text style={{ color: 'red' }}>asdasda</Text>;
@@ -97,7 +98,7 @@ const ScreenContainer = ({
   return (
     <React.Fragment>
       <StatusBar barStyle="light-content" />
-      {withLoaderScreen()}
+      {loader()}
       {containerWithBackground()}
     </React.Fragment>
   );
@@ -105,7 +106,8 @@ const ScreenContainer = ({
 
 ScreenContainer.defaultProps = {
   backgroundType: 'gradient',
-  gradientTypeColors: ['#2D1449', '#0D0637']
+  gradientTypeColors: ['#2D1449', '#0D0637'],
+  withLoader: false
 };
 
 ScreenContainer.propTypes = {
