@@ -51,7 +51,7 @@ export const GET_SPORTS_CHANNELS_BY_CATEGORIES = gql`
       id
       title
       description
-      numer
+      number
       genre
     }
   }

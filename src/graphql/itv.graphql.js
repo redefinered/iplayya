@@ -16,7 +16,7 @@ export const GET_CHANNEL = gql`
       title
       description
       genre
-      numer
+      number
       url
       censored
       hd
