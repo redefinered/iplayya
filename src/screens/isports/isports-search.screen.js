@@ -55,9 +55,10 @@ const ISportsSearchScreen = ({
     }
   }, [term]);
 
-  const search = debounce((keyword) => {
-    searchAction({ keyword, pageNumber: 1, limit: 10 });
-  }, 1300);
+  const search = React.useCallback(
+    debounce((keyword) => searchAction({ keyword, pageNumber: 1, limit: 10 }), 300),
+    []
+  );
 
   const handleItemPress = (channelId) => {
     // navigate to chanel details screen with `id` parameter
@@ -82,6 +83,7 @@ const ISportsSearchScreen = ({
           Zero result
         </Text>
       );
+
     if (results.length)
       return (
         <React.Fragment>
@@ -208,7 +210,7 @@ const mapStateToProps = createStructuredSelector({
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  withHeaderPush({ backgroundType: 'solid', withLoader: false }),
   withTheme
 );
 
