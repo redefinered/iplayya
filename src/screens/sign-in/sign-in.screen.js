@@ -177,7 +177,7 @@ const actions = {
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withScreenContainer('gradient'),
+  withScreenContainer({ backgroundType: 'gradient' }),
   withTheme
 );
 

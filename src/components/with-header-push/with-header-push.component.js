@@ -7,7 +7,7 @@ import { useHeaderHeight } from '@react-navigation/stack';
 
 const withHeaderPush = (options = {}) => (WrappedComponent) => {
   let { backgroundType, gradientTypeColors, withLoader } = options;
-  console.log({ backgroundType, gradientTypeColors, withLoader });
+  // console.log({ backgroundType, gradientTypeColors, withLoader });
 
   const headerPush = ({ isFetching, ...otherProps }) => {
     const headerHeight = useHeaderHeight();

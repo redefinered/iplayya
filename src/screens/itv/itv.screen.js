@@ -10,8 +10,9 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 //import withLoader from 'components/with-loader.component';
+import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -339,7 +340,7 @@ const actions = {
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true })
+  withScreenContainer({ withLoader: true, test: 'xxxxxxxx' })
 );
 
 export default enhance(ItvScreen);
