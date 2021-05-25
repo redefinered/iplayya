@@ -95,7 +95,7 @@ export function* getFavoritesRequest(action) {
 
 export function* searchRequest(action) {
   try {
-    const { iptvs: results } = yield call(search, action.input);
+    const { isports: results } = yield call(search, action.input);
     yield put(Creators.searchSuccess(results));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
