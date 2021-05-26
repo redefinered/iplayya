@@ -63,7 +63,6 @@ const DownloadButton = ({
   }, []);
 
   React.useEffect(() => {
-    console.log({ currentEpisode });
     if (movie) {
       const { is_series } = movie;
 
@@ -196,7 +195,7 @@ const DownloadButton = ({
     setShowDownloadOptionsModal(false);
   };
 
-  console.log('sources', sources);
+  // console.log('sources', sources);
   // eslint-disable-next-line no-unused-vars
   const confirmDownload = async () => {
     // hide resolution options for download

@@ -10,9 +10,8 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-//import withLoader from 'components/with-loader.component';
-import { compose } from 'redux';
+import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
@@ -26,9 +25,9 @@ import {
   selectAddedToFavorites,
   selectFavorites
 } from 'modules/ducks/itv/itv.selectors';
-// import { urlEncodeTitle } from 'utils';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
+import { compose } from 'redux';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -309,6 +308,12 @@ const ItvScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ItvScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -337,9 +342,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true })
-);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(ItvScreen);
+export default enhance(Container);

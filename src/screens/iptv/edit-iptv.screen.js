@@ -9,7 +9,8 @@ import PasswordInput from 'components/password-input/password-input.component';
 // import Button from 'components/button/button.component';
 import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-//import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -200,6 +201,12 @@ class EditIptvScreen extends React.Component {
   }
 }
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <EditIptvScreen {...props} />
+  </ScreenContainer>
+);
+
 const actions = {
   updateStartAction: Creators.updateStart,
   createStartAction: Creators.createStart,
@@ -213,6 +220,6 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));
+const enhance = compose(connect(mapStateToProps, actions), withLoader, withFormWrap);
 
-export default enhance(EditIptvScreen);
+export default enhance(Container);

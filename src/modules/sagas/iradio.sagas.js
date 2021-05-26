@@ -1,11 +1,11 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { Types, Creators } from 'modules/ducks/radios/radios.actions';
+import { Types, Creators } from 'modules/ducks/iradio/iradio.actions';
 import {
   getStations,
   getFavorites,
   addToFavorites,
   removeFromFavorites
-} from 'services/radios.service';
+} from 'services/iradio.service';
 
 export function* getRequest(action) {
   const { ...input } = action.data;

@@ -1,5 +1,5 @@
 import { createReducer } from 'reduxsauce';
-import { Types } from './radios.actions';
+import { Types } from './iradio.actions';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -10,6 +10,7 @@ const INITIAL_STATE = {
   playbackInfo: null,
   addedToFavorites: false,
   removedFromFavorites: null,
+  searchResults: [],
   paginatorInfo: {
     limit: 10,
     pageNumber: 1
@@ -126,6 +127,38 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       playbackInfo
+    };
+  },
+
+  /// search
+  [Types.SEARCH_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      searchResults: []
+    };
+  },
+  [Types.SEARCH]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.SEARCH_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      searchResults: action.data
+    };
+  },
+  [Types.SEARCH_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      searchResults: []
     };
   }
 });

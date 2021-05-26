@@ -8,14 +8,14 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/radios/radios.actions';
+import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectFavorites,
   selectRemovedFromFavorites,
   selectPaginatorInfo
-} from 'modules/ducks/radios/radios.selectors';
-import { selectRadioStations } from 'modules/ducks/radios/radios.selectors';
+} from 'modules/ducks/iradio/iradio.selectors';
+import { selectRadioStations } from 'modules/ducks/iradio/iradio.selectors';
 
 const FavoritesTab = ({
   theme,

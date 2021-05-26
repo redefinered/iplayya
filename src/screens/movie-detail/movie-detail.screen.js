@@ -6,8 +6,9 @@ import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import { withTheme } from 'react-native-paper';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
+import { useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -32,7 +33,6 @@ import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 
 const MovieDetailScreen = ({
-  theme,
   error,
   route: {
     params: { videoId }
@@ -49,8 +49,12 @@ const MovieDetailScreen = ({
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
-  videoUrls
+  videoUrls,
+
+  isFetching
 }) => {
+  console.log({ isFetching });
+  const theme = useTheme();
   const [paused, setPaused] = React.useState(true);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
@@ -320,6 +324,12 @@ const MovieDetailScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <MovieDetailScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   settingItem: {
     flexDirection: 'row',
@@ -356,10 +366,6 @@ const mapStateToProps = createStructuredSelector({
   videoUrls: selectMovieVideoUrls
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(MovieDetailScreen);
+export default enhance(Container);

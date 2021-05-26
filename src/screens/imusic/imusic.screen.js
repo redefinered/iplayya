@@ -3,23 +3,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Pressable, Image } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import NowPlaying from 'components/now-playing/now-playing.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import Button from 'components/button/button.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import EmptyLibrary from 'assets/imusic-empty-lib.svg';
-
-import { compose } from 'redux';
 import { createFontFormat } from 'utils';
 
 import library from './dummy-data.json';
 
-const ImusicScreen = ({ navigation, theme }) => {
+const ImusicScreen = ({ navigation }) => {
+  const theme = useTheme();
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
@@ -206,6 +205,12 @@ const ImusicScreen = ({ navigation, theme }) => {
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ImusicScreen {...props} />
+  </ScreenContainer>
+);
+
 ImusicScreen.propTypes = {
   navigation: PropTypes.object,
   theme: PropTypes.object
@@ -218,7 +223,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-)(ImusicScreen);
+export default Container;

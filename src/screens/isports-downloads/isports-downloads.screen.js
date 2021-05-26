@@ -7,22 +7,22 @@ import Icon from 'components/icon/icon.component';
 import NoDownloads from 'assets/downloads-empty.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 // import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import ListItemItvDownloads from 'components/list-item-itv-downloads/list-item-itv-downloads.component';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import {
   selectPaginatorInfo,
   selectFavorites,
   selectError,
   selectIsFetching
-} from 'modules/ducks/sports/sports.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import { createFontFormat } from 'utils';
-import { Creators } from 'modules/ducks/sports/sports.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import dummydata from './isports-downloads.dummy.json';
 
 const IsportsDownloads = ({ theme, navigation, removeFromFavoritesAction }) => {
@@ -170,6 +170,12 @@ const EmptyState = ({ theme, navigation }) => (
   </View>
 );
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <IsportsDownloads {...props} />
+  </ScreenContainer>
+);
+
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
@@ -181,10 +187,4 @@ const actions = {
   removeFromFavoritesAction: Creators.removeFromFavorites
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
-
-export default enhance(IsportsDownloads);
+export default connect(mapStateToProps, actions)(Container);

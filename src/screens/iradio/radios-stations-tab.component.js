@@ -13,8 +13,8 @@ import {
   selectRadioStations,
   selectAddedToFavorites,
   selectPaginatorInfo
-} from 'modules/ducks/radios/radios.selectors';
-import { Creators } from 'modules/ducks/radios/radios.actions';
+} from 'modules/ducks/iradio/iradio.selectors';
+import { Creators } from 'modules/ducks/iradio/iradio.actions';
 
 const RadioStationsTab = ({
   theme,

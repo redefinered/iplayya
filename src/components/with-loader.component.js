@@ -1,25 +1,47 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { ActivityIndicator, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import { View } from 'react-native';
-import { withTheme } from 'react-native-paper';
+import { useTheme, ActivityIndicator } from 'react-native-paper';
 
-export default function withScreenLoader(WrappedComponent) {
-  const ScreenLoader = ({ theme, isFetching, ...otherProps }) => {
+/**
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ * TODO: fix z-index so it appears in front of all elements
+ *
+ * @param {Component} WrappedComponent the component to enclose with loader
+ * @returns a new component with loader
+ */
+export default function withLoader(WrappedComponent) {
+  const Loader = ({ isFetching, ...otherProps }) => {
+    const theme = useTheme();
     const renderLoader = () => {
       if (isFetching)
         return (
           <View
+            transparent
+            statusBarTranslucent
             style={{
               position: 'absolute',
-              zIndex: 2,
+              zIndex: 3,
               width: Dimensions.get('window').width,
-              height: '100%' // Dimensions.get('window').height
+              height: Dimensions.get('window').height
             }}
           >
             <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-              <ActivityIndicator color={theme.colors.primary} size="large" />
+              <ActivityIndicator color={theme.colors.primary} />
             </View>
           </View>
         );
@@ -27,12 +49,10 @@ export default function withScreenLoader(WrappedComponent) {
     return (
       <React.Fragment>
         {renderLoader()}
-        <View style={{ flex: 1, position: 'relative', zIndex: 1 }}>
-          <WrappedComponent isFetching={isFetching} {...otherProps} />
-        </View>
+        <WrappedComponent isFetching={isFetching} {...otherProps} />
       </React.Fragment>
     );
   };
 
-  return withTheme(ScreenLoader);
+  return Loader;
 }

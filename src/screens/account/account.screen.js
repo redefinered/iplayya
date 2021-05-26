@@ -3,21 +3,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-//import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
 import Icon from 'components/icon/icon.component';
 import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import {
   selectProfile,
-  selectIsFetching,
   selectError as selectProfileError
 } from 'modules/ducks/profile/profile.selectors';
 import {
@@ -25,7 +21,6 @@ import {
   selectIsFetching as selectAuthIsFetching
 } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdated } from 'modules/ducks/user/user.selectors';
-
 import { View, Image, Pressable, StyleSheet, Dimensions, PixelRatio, Platform } from 'react-native';
 import Button from 'components/button/button.component';
 
@@ -301,6 +296,12 @@ const AccountScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <AccountScreen {...props} />
+  </ScreenContainer>
+);
+
 AccountScreen.propTypes = {
   signOutAction: PropTypes.func,
   getProfileAction: PropTypes.func,
@@ -314,7 +315,6 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  isFetching: selectIsFetching, // this is required when using withLoader HOC
   authIsFetching: selectAuthIsFetching,
   profile: selectProfile,
   profileError: selectProfileError,
@@ -322,5 +322,4 @@ const mapStateToProps = createStructuredSelector({
   userUpdated: selectUpdated
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
-export default enhance(AccountScreen);
+export default connect(mapStateToProps, actions)(Container);

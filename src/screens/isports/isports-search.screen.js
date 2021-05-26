@@ -1,32 +1,35 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, ScrollView, TextInput as FormInput } from 'react-native';
-import { Text, ActivityIndicator, TouchableRipple, useTheme } from 'react-native-paper';
+import { StyleSheet, TextInput as FormInput } from 'react-native';
+import { Text, useTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
 import ContentWrap from 'components/content-wrap.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectSearchResults,
-  selectIsFetching,
-  selectCategoriesOf
-} from 'modules/ducks/movies/movies.selectors';
+  selectIsFetching
+} from 'modules/ducks/isports/isports.selectors';
+import { ScrollView } from 'react-native-gesture-handler';
+import { selectGenres } from 'modules/ducks/isports/isports.selectors';
+import Spacer from '../../components/spacer.component';
 
-const ImovieSearchScreen = ({
+const ISportsSearchScreen = ({
   navigation,
   error,
   searchStartAction,
   searchAction,
   results,
-  categories,
+  genres,
   isFetching
 }) => {
   const theme = useTheme();
@@ -47,7 +50,6 @@ const ImovieSearchScreen = ({
     }
     if (term.length) {
       if (term.length <= 2) return;
-
       search(term);
     }
   }, [term]);
@@ -57,25 +59,14 @@ const ImovieSearchScreen = ({
     []
   );
 
-  const handleItemPress = ({ id: videoId, is_series }) => {
-    // console.log({ videoId, is_series });
+  const handleItemPress = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    // navigation.navigate('MovieDetailScreen', { videoId });
-    if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
-    navigation.navigate('MovieDetailScreen', { videoId });
+    navigation.navigate('ChannelDetailScreen', { channelId });
   };
 
-  // const handleMovieSelect = ({ id: videoId, is_series }) => {
-  //   console.log({ videoId, is_series });
-  //   if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
-  //   navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
-  // };
-
-  const handleCategoryPress = (categoryId, title) => {
-    navigation.navigate('ImovieScreen', { categoryId, categoryName: title });
+  const handleGenrePress = (genreId) => {
+    navigation.navigate('ItvScreen', { genreId });
   };
-
-  // console.log({ results });
 
   const renderResult = () => {
     if (error)
@@ -91,6 +82,7 @@ const ImovieSearchScreen = ({
           Zero result
         </Text>
       );
+
     if (results.length)
       return (
         <React.Fragment>
@@ -105,9 +97,8 @@ const ImovieSearchScreen = ({
             Search Results
           </Text>
           <ScrollView>
-            {results.map(({ id, title, is_series }) => (
-              // Set is_series to true fron now
-              <TouchableRipple key={id} onPress={() => handleItemPress({ id, is_series })}>
+            {results.map(({ id, title }) => (
+              <TouchableRipple key={id} onPress={() => handleItemPress(id)}>
                 <Text
                   style={{
                     ...createFontFormat(16, 22),
@@ -129,7 +120,7 @@ const ImovieSearchScreen = ({
       /// return if search results is not empty
       if (results.length) return;
 
-      if (categories.length)
+      if (genres.length)
         return (
           <React.Fragment>
             <Text
@@ -143,8 +134,8 @@ const ImovieSearchScreen = ({
               Suggested Search
             </Text>
             <ScrollView>
-              {categories.map(({ id, title }) => (
-                <TouchableRipple key={id} onPress={() => handleCategoryPress(id, title)}>
+              {genres.map(({ id, title }) => (
+                <TouchableRipple key={id} onPress={() => handleGenrePress(id)}>
                   <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{title}</Text>
                 </TouchableRipple>
               ))}
@@ -156,14 +147,13 @@ const ImovieSearchScreen = ({
 
   return (
     <ContentWrap style={styles.container}>
+      <Spacer />
       <TextInput
         render={(props) => (
           <FormInput
             {...props}
             style={{
-              flex: 1,
               marginLeft: 40,
-              justifyContent: 'center',
               fontSize: 16,
               color: '#ffffff'
             }}
@@ -176,10 +166,9 @@ const ImovieSearchScreen = ({
         value={term}
         autoCapitalize="none"
         clearButtonMode="while-editing"
-        keyboardType="email-address"
         autoCompleteType="email"
         style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
-        placeholder="Search a movie"
+        placeholder="Search a sports channel"
         left={
           <RNPTextInput.Icon
             name={() => {
@@ -201,15 +190,14 @@ const ImovieSearchScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
-    <ImovieSearchScreen {...props} />
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <ISportsSearchScreen {...props} />
   </ScreenContainer>
 );
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 10
+    flex: 1
   }
 });
 
@@ -222,7 +210,9 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
-  categories: selectCategoriesOf('movies')
+  genres: selectGenres
 });
 
-export default connect(mapStateToProps, actions)(Container);
+const enhance = compose(connect(mapStateToProps, actions));
+
+export default enhance(Container);

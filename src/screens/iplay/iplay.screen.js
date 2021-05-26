@@ -1,11 +1,9 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-constant-condition */
-/* eslint-disable no-unused-vars */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
@@ -13,7 +11,7 @@ import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
 import EmptyLibrary from 'assets/iplay-empty-lib.svg';
 import { compose } from 'redux';
 import { createFontFormat } from 'utils';
@@ -24,14 +22,10 @@ import { connect } from 'react-redux';
 import { selectVideoFiles } from 'modules/ducks/iplay/iplay.selectors';
 import { createStructuredSelector } from 'reselect';
 import RNFetchBlob from 'rn-fetch-blob';
+import withLoader from 'components/with-loader.component';
 
-const IplayScreen = ({
-  navigation,
-  theme,
-  addVideoFilesAction,
-  videoFiles,
-  deleteVideoFilesAction
-}) => {
+const IplayScreen = ({ navigation, addVideoFilesAction, videoFiles, deleteVideoFilesAction }) => {
+  const theme = useTheme();
   // console.log({ videoFiles });
 
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
@@ -40,6 +34,7 @@ const IplayScreen = ({
   const [alertMessageVisible, setAlertMessageVisible] = React.useState(false);
   const [deleteMessage, setDeleteMessage] = React.useState('');
   const [videoErrorVisible, setVideoErrorVisible] = React.useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = React.useState();
   const [loading, setLoading] = React.useState(false);
 
@@ -326,6 +321,12 @@ const IplayScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <IplayScreen {...props} />
+  </ScreenContainer>
+);
+
 IplayScreen.propTypes = {
   navigation: PropTypes.object,
   theme: PropTypes.object
@@ -345,10 +346,6 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({ videoFiles: selectVideoFiles });
 
-const enhance = compose(
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  connect(mapStateToProps, actions),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(IplayScreen);
+export default enhance(Container);

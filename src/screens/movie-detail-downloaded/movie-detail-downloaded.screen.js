@@ -7,7 +7,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
@@ -31,6 +31,7 @@ import {
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
+import withLoader from 'components/with-loader.component';
 
 const MovieDetailScreen = ({
   navigation,
@@ -336,19 +337,25 @@ const MovieDetailScreen = ({
   );
 };
 
-const styles = StyleSheet.create({
-  settingItem: {
-    flexDirection: 'row',
-    paddingVertical: 10
-  },
-  iconContainer: {
-    width: 42,
-    justifyContent: 'center'
-  },
-  controls: {
-    position: 'absolute'
-  }
-});
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <MovieDetailScreen {...props} />
+  </ScreenContainer>
+);
+
+// const styles = StyleSheet.create({
+//   settingItem: {
+//     flexDirection: 'row',
+//     paddingVertical: 10
+//   },
+//   iconContainer: {
+//     width: 42,
+//     justifyContent: 'center'
+//   },
+//   controls: {
+//     position: 'absolute'
+//   }
+// });
 
 const actions = {
   getMovieAction: Creators.getMovie,
@@ -372,10 +379,6 @@ const mapStateToProps = createStructuredSelector({
   videoUrls: selectMovieVideoUrls
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
-export default enhance(MovieDetailScreen);
+export default enhance(Container);

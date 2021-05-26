@@ -1,5 +1,5 @@
 import { takeLatest, put, call, all } from 'redux-saga/effects';
-import { Types, Creators } from 'modules/ducks/sports/sports.actions';
+import { Types, Creators } from 'modules/ducks/isports/isports.actions';
 import {
   getGenres,
   getChannel,
@@ -7,8 +7,9 @@ import {
   getChannelsByCategory,
   addToFavorites,
   removeFromFavorites,
-  getFavorites
-} from 'services/sports.service';
+  getFavorites,
+  search
+} from 'services/isports.service';
 
 export function* getGenresRequest() {
   try {
@@ -92,6 +93,15 @@ export function* getFavoritesRequest(action) {
   }
 }
 
+export function* searchRequest(action) {
+  try {
+    const { isports: results } = yield call(search, action.input);
+    yield put(Creators.searchSuccess(results));
+  } catch (error) {
+    yield put(Creators.searchFailure(error.message));
+  }
+}
+
 export default function* itvSagas() {
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
   yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
@@ -100,4 +110,5 @@ export default function* itvSagas() {
   yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
+  yield takeLatest(Types.SEARCH, searchRequest);
 }

@@ -4,8 +4,8 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-//import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -209,6 +209,12 @@ const ImovieScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ImovieScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -233,10 +239,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
-export default enhance(ImovieScreen);
+export default enhance(Container);

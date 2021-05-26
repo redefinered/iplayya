@@ -9,8 +9,7 @@ import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import NoDownloads from 'assets/downloads-empty.svg';
 import { createFontFormat } from 'utils';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -305,6 +304,12 @@ const EmptyState = ({ theme, navigation }) => (
   </View>
 );
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ImovieDownloadsScreen {...props} />
+  </ScreenContainer>
+);
+
 const actions = {
   getDownloadsAction: Creators.getDownloads,
   removeDownloadsByIdsAction: Creators.removeDownloadsByIds,
@@ -319,10 +324,6 @@ const mapStateToProps = createStructuredSelector({
   downloadsProgress: selectDownloadsProgress
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
-export default enhance(ImovieDownloadsScreen);
+export default enhance(Container);

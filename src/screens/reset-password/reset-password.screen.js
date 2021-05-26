@@ -8,10 +8,8 @@ import ContentWrap from 'components/content-wrap.component';
 import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import PasswordInput from 'components/password-input/password-input.component';
-
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-//import withLoader from 'components/with-loader.component';
-
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/password/password.actions';
@@ -22,7 +20,6 @@ import {
   selectUpdateParams,
   selectUpdated
 } from 'modules/ducks/password/password.selectors';
-
 import { isValidPassword } from 'common/validate';
 
 const styles = StyleSheet.create({
@@ -154,6 +151,12 @@ class ResetPasswordScreen extends React.Component {
   }
 }
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ResetPasswordScreen {...props} />
+  </ScreenContainer>
+);
+
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
@@ -167,6 +170,6 @@ const actions = {
   updatePasswordAction: Creators.update
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(ResetPasswordScreen);
+export default enhance(Container);
