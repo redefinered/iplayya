@@ -46,7 +46,6 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_MOVIE_START]: (state) => {
     return {
       ...state,
-      isFetching: false,
       error: null,
       movie: null,
       currentEpisode: null
@@ -212,7 +211,6 @@ export default createReducer(INITIAL_STATE, {
   [Types.ADD_MOVIE_TO_FAVORITES_START]: (state) => {
     return {
       ...state,
-      isFetching: false,
       error: null,
       updatedFavorites: false
     };

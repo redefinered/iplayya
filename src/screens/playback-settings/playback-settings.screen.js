@@ -7,8 +7,8 @@ import SwitchOption from 'components/switch-option/switch-option.component';
 import DropdownOption from 'components/dropdown-option/dropdown-option.component';
 import RadioOption from 'components/radio-option/radio-option.component';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-//import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -198,6 +198,12 @@ class PlaybackSettings extends React.Component {
   }
 }
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <PlaybackSettings {...props} />
+  </ScreenContainer>
+);
+
 const actions = {
   updatePlaybackSettingsStartAction: UserCreators.updatePlaybackSettingsStart,
   updatePlaybackSettingsAction: UserCreators.updatePlaybackSettings
@@ -210,10 +216,6 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
-export default enhance(PlaybackSettings);
+export default enhance(Container);

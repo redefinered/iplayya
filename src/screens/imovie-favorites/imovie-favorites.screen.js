@@ -4,10 +4,10 @@ import { View, Pressable, Image, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
+import ScreenContainer from 'components/screen-container.component';
 import Spacer from 'components/spacer.component';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withLoader from 'components/with-loader.component';
+import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -258,6 +258,12 @@ const EmptyState = ({ theme, navigation }) => (
   </View>
 );
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ImovieFavoritesScreen {...props} />
+  </ScreenContainer>
+);
+
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
@@ -270,10 +276,6 @@ const actions = {
   getFavoritesAction: Creators.getFavoriteMovies
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
-export default enhance(ImovieFavoritesScreen);
+export default enhance(Container);

@@ -1,13 +1,12 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 
 import React from 'react';
-import { View, ScrollView, Image, Pressable, Dimensions } from 'react-native';
+import { View, ScrollView, Image, Pressable } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-//import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import ProgramGuide from './program-guide.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -22,7 +21,6 @@ import {
   selectChannel,
   selectCurrentProgram
 } from 'modules/ducks/itv/itv.selectors';
-import { VLCPlayer } from 'react-native-vlc-media-player';
 import moment from 'moment';
 
 const dirs = RNFetchBlob.fs.dirs;
@@ -37,11 +35,14 @@ const ChannelDetailScreen = ({
   getChannelAction,
 
   /// the program that is playing at this moment
-  currentProgram
+  currentProgram,
+
+  isFetching
 }) => {
+  console.log({ isFetching });
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-  const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
+  const [isMovieDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
   // const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
@@ -147,8 +148,6 @@ const ChannelDetailScreen = ({
       );
     }
   };
-
-  console.log({ source });
 
   return (
     <View style={{ marginTop: 10 }}>
@@ -276,6 +275,12 @@ const CategoryPill = ({ id, name, selected, onSelect }) => {
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <ChannelDetailScreen {...props} />
+  </ScreenContainer>
+);
+
 CategoryPill.defaultProps = {
   selected: '1'
 };
@@ -292,9 +297,6 @@ const actions = {
   getProgramsByChannelAction: Creators.getProgramsByChannel
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true })
-);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(ChannelDetailScreen);
+export default enhance(Container);

@@ -5,8 +5,8 @@ import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
+// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
@@ -221,6 +221,12 @@ const EmptyState = ({ theme, navigation }) => (
   </View>
 );
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <IsportsFavoritesScreen {...props} />
+  </ScreenContainer>
+);
+
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
@@ -235,10 +241,6 @@ const actions = {
   getChannelsAction: Creators.getChannels
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
-export default enhance(IsportsFavoritesScreen);
+export default enhance(Container);

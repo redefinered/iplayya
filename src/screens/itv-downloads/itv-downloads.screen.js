@@ -7,7 +7,8 @@ import Icon from 'components/icon/icon.component';
 import NoDownloads from 'assets/downloads-empty.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
+// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 // import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
@@ -166,6 +167,12 @@ const EmptyState = ({ theme, navigation }) => (
   </View>
 );
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <ItvDownloadsScreen {...props} />
+  </ScreenContainer>
+);
+
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
@@ -177,10 +184,6 @@ const actions = {
   removeFromFavoritesAction: Creators.removeFromFavorites
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
-export default enhance(ItvDownloadsScreen);
+export default enhance(Container);

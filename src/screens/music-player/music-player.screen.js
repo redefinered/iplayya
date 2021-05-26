@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Image, Pressable } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
+// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import ContentWrap from 'components/content-wrap.component';
 import dummydata from '../imusic/dummy-data.json';
 import Icon from 'components/icon/icon.component';
@@ -11,6 +12,7 @@ import { createFontFormat } from 'utils';
 import thumbImage from 'assets/player-thumb-image.png';
 
 import { compose } from 'redux';
+import withLoader from 'components/with-loader.component';
 
 const MusicPlayerScreen = ({
   theme: {
@@ -83,12 +85,15 @@ const MusicPlayerScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <MusicPlayerScreen {...props} />
+  </ScreenContainer>
+);
+
 MusicPlayerScreen.propTypes = {
   theme: PropTypes.object,
   route: PropTypes.object
 };
 
-export default compose(
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-)(MusicPlayerScreen);
+export default compose(withTheme, withLoader)(Container);

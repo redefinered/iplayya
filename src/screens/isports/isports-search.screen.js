@@ -2,11 +2,10 @@
 
 import React from 'react';
 import { StyleSheet, TextInput as FormInput } from 'react-native';
-import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
+import { Text, useTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
-// import suggestions from './suggestions.json';
 import ContentWrap from 'components/content-wrap.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
@@ -26,7 +25,6 @@ import Spacer from '../../components/spacer.component';
 
 const ISportsSearchScreen = ({
   navigation,
-  theme,
   error,
   searchStartAction,
   searchAction,
@@ -34,6 +32,7 @@ const ISportsSearchScreen = ({
   genres,
   isFetching
 }) => {
+  const theme = useTheme();
   const [term, setTerm] = React.useState('');
 
   /// clear previous search result
@@ -190,6 +189,12 @@ const ISportsSearchScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <ISportsSearchScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1
@@ -208,10 +213,6 @@ const mapStateToProps = createStructuredSelector({
   genres: selectGenres
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: false }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions));
 
-export default enhance(ISportsSearchScreen);
+export default enhance(Container);

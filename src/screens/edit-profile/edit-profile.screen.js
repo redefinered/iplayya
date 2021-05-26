@@ -8,6 +8,7 @@ import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 import MainButton from 'components/button/mainbutton.component';
+import ScreenContainer from 'components/screen-container.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import Loader from 'components/loader.component';
 import Icon from 'components/icon/icon.component';
@@ -276,6 +277,12 @@ class EditProfileScreen extends React.Component {
   }
 }
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <EditProfileScreen {...props} />
+  </ScreenContainer>
+);
+
 const actions = {
   updateStartAction: Creators.updateStart,
   updateAction: Creators.update
@@ -290,6 +297,6 @@ const mapStateToProps = createStructuredSelector({
 
 // export default withFormWrap()(EditProfileScreen);
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap());
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap);
 
-export default enhance(EditProfileScreen);
+export default enhance(Container);

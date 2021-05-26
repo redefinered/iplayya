@@ -54,12 +54,13 @@ const DownloadItem = ({
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
-  // const [broken, setBroken] = React.useState(false);
+  const [broken, setBroken] = React.useState(false);
 
   React.useEffect(() => {
     if (typeof task === 'undefined') return setIsDownloaded(true);
     if (task.state === 'PAUSED') return setPaused(true);
     if (task.state === 'PENDING') return setPaused(true);
+    if (task.state === 'FAILED') return setBroken(true);
     if (task.state === 'DONE') return setIsDownloaded(true);
 
     setProgress(task.percent * 100);
@@ -74,6 +75,7 @@ const DownloadItem = ({
       })
       .error((error) => {
         setIsDownloaded(false);
+        setBroken(true);
         console.log('Download canceled due to error: ', error);
       });
     // setPaused(false);
@@ -81,26 +83,12 @@ const DownloadItem = ({
     setIsDownloaded(false);
   }, [task]);
 
-  // console.log('task', task);
-  // console.log('progresss', progress);
+  const handleRetry = () => {
+    // initialise download here
 
-  // React.useEffect(() => {
-  //   if (typeof task === 'undefined') return;
-  //   if (task.state === 'DONE') return setIsDownloaded(true);
-
-  //   setIsDownloaded(false);
-  // }, [task]);
-
-  // console.log({ task });
-
-  // const handleDelete = () => {
-  //   console.log({ video });
-  //   /// stop download
-
-  //   handleStop();
-
-  //   deleteAction(video);
-  // };
+    setBroken(false);
+    // retry download
+  };
 
   const handlePause = () => {
     if (typeof task === 'undefined') return;
@@ -113,26 +101,10 @@ const DownloadItem = ({
   const handlePlay = async () => {
     if (typeof task === 'undefined') return;
 
-    // if (typeof task.resume === 'undefined') {
-    //   const activeDownloads = await checkExistingDownloads();
-
-    //   // declare item download broken
-    //   if (!activeDownloads.length) return setBroken(true);
-
-    //   console.log({ activeDownloads });
-    //   return;
-    // }
-
     task.resume();
 
     setPaused(false);
   };
-
-  // const handleStop = () => {
-  //   if (typeof task === 'undefined') return;
-
-  //   task.stop();
-  // };
 
   const renderPauseButton = () => {
     if (paused)
@@ -142,14 +114,20 @@ const DownloadItem = ({
         </Pressable>
       );
 
+    if (broken) {
+      return (
+        <Pressable style={{ marginLeft: theme.spacing(4) }}>
+          <Icon name="redo" size={40} />
+        </Pressable>
+      );
+    }
+
     return (
       <Pressable onPress={() => handlePause()} style={{ marginLeft: theme.spacing(4) }}>
         <Icon name="circular-pause" size={40} />
       </Pressable>
     );
   };
-
-  // console.log({ progress });
 
   const renderProgress = () => {
     if (isDownloaded) return;
@@ -168,9 +146,6 @@ const DownloadItem = ({
           flexDirection: 'row'
         }}
       >
-        {/* <Pressable style={{ marginLeft: theme.spacing(4) }}>
-        <Icon name="redo" size={40} />
-      </Pressable> */}
         {renderPauseButton()}
         <Pressable style={{ marginLeft: theme.spacing(4) }}>
           <Icon name="close" size={40} />
@@ -207,6 +182,66 @@ const DownloadItem = ({
       </View>
     );
   };
+
+  // const handleDownloadMovie = async (video) => {
+  //   const { videoId, url, is_series, currentEpisode } = video;
+
+  //   let ep = '';
+
+  //   if (is_series) {
+  //     ep = `SO${currentEpisode.season}E${currentEpisode.episode}`;
+  //   }
+
+  //   const downloadId = `${videoId}${ep}`;
+
+  //   // return if movie is already downloaded
+  //   if (isMovieDownloaded) {
+  //     console.log('already downloaded');
+  //     return;
+  //   }
+
+  //   // return if there is no available source to download
+  //   if (typeof url === 'undefined') {
+  //     console.log('no source');
+  //     return;
+  //   }
+
+  //   try {
+  //     let config = getConfig(video);
+
+  //     let task = RNBackgroundDownloader.download(config)
+  //       .begin((expectedBytes) => {
+  //         console.log(`Going to download ${expectedBytes} bytes!`);
+  //         downloadStartedAction();
+  //       })
+  //       .progress((percent) => {
+  //         updateDownloadsProgressAction({ id: downloadId, progress: percent * 100 });
+  //       })
+  //       .done(() => {
+  //         console.log('Download is done!');
+
+  //         let completedItems = downloadsProgress.filter(
+  //           ({ received, total }) => received === total
+  //         );
+  //         completedItems = completedItems.map(({ id }) => id);
+
+  //         cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
+  //       })
+  //       .error((error) => {
+  //         console.log('Download canceled due to error: ', error);
+  //         downloadStartFailureAction(error.message);
+  //       });
+
+  //     updateDownloadsAction({
+  //       id: downloadId,
+  //       ep,
+  //       task,
+  //       movie
+  //     });
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // };
 
   return (
     <ContentWrap style={{ position: 'relative', marginBottom: 20 }}>

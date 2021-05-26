@@ -1,8 +1,7 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { Pressable, View, ScrollView, StatusBar } from 'react-native';
+import { Pressable, StatusBar } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
@@ -11,8 +10,9 @@ import PasswordInput from 'components/password-input/password-input.component';
 import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 
+import ScreenContainer from 'components/screen-container.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
-// import withLoader from 'components/with-loader.component';
+import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -156,67 +156,60 @@ class AddIptvScreen extends React.Component {
 
     return (
       <React.Fragment>
-        <ContentWrap>
+        <ContentWrap scrollable>
           <StatusBar translucent backgroundColor="transparent" />
+          <TextInput
+            value={input.name}
+            name="name"
+            style={styles.textInput}
+            placeholder="IPTV provider name"
+            handleChangeText={this.handleChange}
+            error={stateError.name}
+            clearButtonMode="while-editing"
+            autoCapitalize="words"
+          />
+          <TextInput
+            value={input.portal_address}
+            name="portal_address"
+            style={styles.textInput}
+            placeholder="Portal address"
+            handleChangeText={this.handleChange}
+            error={stateError.portal_address}
+            keyboardType="url"
+            clearButtonMode="while-editing"
+            autoCapitalize="none"
+          />
+          <TextInput
+            value={input.username}
+            name="username"
+            style={styles.textInput}
+            placeholder="Username"
+            handleChangeText={this.handleChange}
+            error={stateError.username}
+            clearButtonMode="while-editing"
+            autoCapitalize="none"
+          />
+          <PasswordInput
+            value={input.password}
+            name="password"
+            style={styles.textInput}
+            handleChangeText={this.handleChange}
+            error={stateError.password}
+          />
 
-          <ScrollView style={{ flex: 1, marginTop: 20 }}>
-            <View>
-              <TextInput
-                value={input.name}
-                name="name"
-                style={styles.textInput}
-                placeholder="IPTV provider name"
-                handleChangeText={this.handleChange}
-                error={stateError.name}
-                clearButtonMode="while-editing"
-                autoCapitalize="words"
-              />
-              <TextInput
-                value={input.portal_address}
-                name="portal_address"
-                style={styles.textInput}
-                placeholder="Portal address"
-                handleChangeText={this.handleChange}
-                error={stateError.portal_address}
-                keyboardType="url"
-                clearButtonMode="while-editing"
-                autoCapitalize="none"
-              />
-              <TextInput
-                value={input.username}
-                name="username"
-                style={styles.textInput}
-                placeholder="Username"
-                handleChangeText={this.handleChange}
-                error={stateError.username}
-                clearButtonMode="while-editing"
-                autoCapitalize="none"
-              />
-              <PasswordInput
-                value={input.password}
-                name="password"
-                style={styles.textInput}
-                handleChangeText={this.handleChange}
-                error={stateError.password}
-              />
+          {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
+          {this.props.error && <Text>{this.props.error}</Text>}
+          <MainButton
+            onPress={() => this.handleSubmit()}
+            text="Add IPTV"
+            style={{ ...styles.submit, marginTop: 25 }}
+          />
 
-              {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
-              {this.props.error && <Text>{this.props.error}</Text>}
-              <MainButton
-                onPress={() => this.handleSubmit()}
-                text="Add IPTV"
-                style={{ ...styles.submit, marginTop: 25 }}
-              />
-              {/* <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
-                Add IPTV
-              </Button> */}
-            </View>
-            {!skippedProviderAdd ? (
-              <Pressable style={styles.skip} onPress={() => this.handleSkip()}>
-                <Text>Skip for now</Text>
-              </Pressable>
-            ) : null}
-          </ScrollView>
+          {!skippedProviderAdd ? (
+            <Pressable style={styles.skip} onPress={() => this.handleSkip()}>
+              <Text>Skip for now</Text>
+            </Pressable>
+          ) : null}
         </ContentWrap>
         <AlertModal
           variant="danger"
@@ -229,6 +222,12 @@ class AddIptvScreen extends React.Component {
     );
   }
 }
+
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <AddIptvScreen {...props} />
+  </ScreenContainer>
+);
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
@@ -245,6 +244,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap({ withLoader: true }));
+const enhance = compose(connect(mapStateToProps, actions), withLoader, withFormWrap);
 
-export default enhance(AddIptvScreen);
+export default enhance(Container);

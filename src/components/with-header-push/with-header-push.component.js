@@ -12,16 +12,17 @@ const withHeaderPush = (options = {}) => (WrappedComponent) => {
   const headerPush = ({ isFetching, ...otherProps }) => {
     const headerHeight = useHeaderHeight();
     return (
-      <ScreenContainer
-        backgroundType={backgroundType}
-        gradientTypeColors={gradientTypeColors}
-        withLoader={withLoader}
-        isFetching={isFetching}
-      >
-        <View style={{ flex: 1, marginTop: headerHeight }}>
-          <WrappedComponent isFetching={isFetching} {...otherProps} />
-        </View>
-      </ScreenContainer>
+      // <ScreenContainer
+      //   backgroundType={backgroundType}
+      //   gradientTypeColors={gradientTypeColors}
+      //   withLoader={withLoader}
+      //   isFetching={isFetching}
+      // >
+
+      // </ScreenContainer>
+      <View style={{ flex: 1, marginTop: headerHeight }}>
+        <WrappedComponent isFetching={isFetching} {...otherProps} />
+      </View>
     );
   };
 

@@ -7,7 +7,7 @@ import { Text, useTheme } from 'react-native-paper';
 import { TabView } from 'react-native-tab-view';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
 import RadioStationsTab from './radios-stations-tab.component';
 import FavoritesTab from './favorites-tab.component';
 import NowPlaying from 'components/now-playing/now-playing.component';
@@ -24,6 +24,7 @@ import {
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
 import { selectPaginatorInfo } from 'modules/ducks/iradio/iradio.selectors';
+import withLoader from 'components/with-loader.component';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -212,6 +213,12 @@ const TabBars = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <IradioScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -234,6 +241,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(IradioScreen);
+export default enhance(Container);
