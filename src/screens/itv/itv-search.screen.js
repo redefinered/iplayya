@@ -208,7 +208,7 @@ const mapStateToProps = createStructuredSelector({
 
 const enhance = compose(
   connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
+  withHeaderPush({ backgroundType: 'solid' }),
   withTheme
 );
 

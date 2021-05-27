@@ -9,7 +9,7 @@ import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
 import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-import Loader from 'components/loader.component';
+// import Loader from 'components/loader.component';
 import Icon from 'components/icon/icon.component';
 
 import { compose } from 'redux';
@@ -177,7 +177,7 @@ class EditProfileScreen extends React.Component {
 
     return (
       <React.Fragment>
-        {isFetching && <Loader size="large" />}
+        {/* {isFetching && <Loader size="large" />} */}
         <ContentWrap>
           <ScrollView>
             <View style={{ marginTop: 30 }}>
@@ -208,12 +208,7 @@ class EditProfileScreen extends React.Component {
                 keyboardType="number-pad"
               /> */}
               <View>
-                <PhoneNumberPicker
-                  name="phone"
-                  setPhone={this.setPhone}
-                  error={stateError.phone}
-                  style={stateError.phone ? styles.errorText : null}
-                />
+                <PhoneNumberPicker name="phone" setPhone={this.setPhone} error={stateError.phone} />
               </View>
               <View>
                 <DatePicker

@@ -5,7 +5,6 @@ import { View, StyleSheet } from 'react-native';
 import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import withHeaderPush from 'components/with-header-push/with-header-push.component';
-//import withLoader from 'components/with-loader.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -195,7 +194,7 @@ const ImovieScreen = ({
             onEndReachedThreshold={0.5}
             onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
           />
-          <Spacer size={70} />
+          <Spacer size={80} />
         </React.Fragment>
       ) : (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

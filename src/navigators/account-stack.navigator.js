@@ -8,6 +8,7 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import AccountScreen from 'screens/account/account.screen';
 import ProfileScreen from 'screens/profile/profile.screen';
 import EditProfileScreen from 'screens/edit-profile/edit-profile.screen';
+import ChangePasswordScreen from 'screens/change-password/change-password.screen';
 import PlaybackSettings from 'screens/playback-settings/playback-settings.screen';
 import Icon from 'components/icon/icon.component';
 import { TouchableRipple } from 'react-native-paper';
@@ -78,6 +79,15 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
       name="EditProfileScreen"
       component={EditProfileScreen}
       options={{ title: 'Edit Profile' }}
+    />
+    <Stack.Screen
+      name="ChangePasswordScreen"
+      component={ChangePasswordScreen}
+      options={{ title: 'Change Password' }}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
     />
     <Stack.Screen
       name="PlaybackSettings"

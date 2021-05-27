@@ -204,7 +204,11 @@ const AccountScreen = ({
         >
           Settings
         </Text>
-        <TouchableRipple>
+        <TouchableRipple
+          borderless={false}
+          rippleColor="rgba(0,0,0,0.28)"
+          onPress={() => navigation.navigate('ChangePasswordScreen')}
+        >
           <View style={styles.settingItem}>
             <View style={styles.iconContainer}>
               <Icon name="change-password" size={24} />
@@ -224,7 +228,10 @@ const AccountScreen = ({
             </View>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => navigation.navigate('PlaybackSettings')}>
+        <TouchableRipple
+          rippleColor="rgba(0,0,0,0.28)"
+          onPress={() => navigation.navigate('PlaybackSettings')}
+        >
           <View style={styles.settingItem}>
             <View style={styles.iconContainer}>
               <Icon name="video-quality" size={24} />
@@ -254,7 +261,7 @@ const AccountScreen = ({
             </View>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => setOnSigningOut(true)}>
+        <TouchableRipple rippleColor="rgba(0,0,0,0.28)" onPress={() => setOnSigningOut(true)}>
           <View style={styles.settingItem}>
             <View style={styles.iconContainer}>
               <Icon name="logout" size={24} />

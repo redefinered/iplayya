@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ActivityIndicator, Dimensions } from 'react-native';
-import { View } from 'react-native';
+import { View, Modal } from 'react-native';
 import { withTheme } from 'react-native-paper';
 
 export default function withScreenLoader(WrappedComponent) {
@@ -11,6 +11,8 @@ export default function withScreenLoader(WrappedComponent) {
       if (isFetching)
         return (
           <View
+            // transparent
+            // statusBarTranslucent={true}
             style={{
               position: 'absolute',
               zIndex: 2,
