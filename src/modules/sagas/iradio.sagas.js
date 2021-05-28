@@ -1,15 +1,14 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
-import { Types, Creators } from 'modules/ducks/radios/radios.actions';
+import { Types, Creators } from 'modules/ducks/iradio/iradio.actions';
 import {
   getStations,
   getFavorites,
   addToFavorites,
   removeFromFavorites
-} from 'services/radios.service';
+} from 'services/iradio.service';
 
 export function* getRequest(action) {
   const { ...input } = action.data;
-  console.log({ action });
   try {
     // TODO: input should come from stat, pageNumber should be incremented for every request
     const { radios: radioStations } = yield call(getStations, input);

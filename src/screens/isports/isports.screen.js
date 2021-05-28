@@ -10,12 +10,13 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withLoader from 'components/with-loader.component';
+// import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/sports/sports.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
@@ -25,7 +26,7 @@ import {
   selectChannels,
   selectAddedToFavorites,
   selectFavorites
-} from 'modules/ducks/sports/sports.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
@@ -295,6 +296,12 @@ const IsportsScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <IsportsScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -323,9 +330,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true })
-);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(IsportsScreen);
+export default enhance(Container);

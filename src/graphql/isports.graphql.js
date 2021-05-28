@@ -51,7 +51,7 @@ export const GET_SPORTS_CHANNELS_BY_CATEGORIES = gql`
       id
       title
       description
-      numer
+      number
       genre
     }
   }
@@ -85,6 +85,15 @@ export const REMOVE_FROM_FAVORITES = gql`
     removeIsportToFavorites(input: $input) {
       status
       message
+    }
+  }
+`;
+
+export const SEARCH = gql`
+  query SEARCH_ISPORTS($input: videoRequest) {
+    isports(input: $input) {
+      id
+      title
     }
   }
 `;

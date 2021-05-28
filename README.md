@@ -1,3 +1,4 @@
-# iPlayya
+# WIP: Fixing Loader Component
 
-IMPORTANT: please branch out from this branch and make a pull request on to it in every change.
+Use screen container as a normal parent component instead of higher order component
+

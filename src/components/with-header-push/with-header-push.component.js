@@ -6,20 +6,23 @@ import ScreenContainer from 'components/screen-container.component';
 import { useHeaderHeight } from '@react-navigation/stack';
 
 const withHeaderPush = (options = {}) => (WrappedComponent) => {
-  const { backgroundType, gradientTypeColors, withLoader } = options;
-  const headerPush = (props) => {
+  let { backgroundType, gradientTypeColors, withLoader } = options;
+  // console.log({ backgroundType, gradientTypeColors, withLoader });
+
+  const headerPush = ({ isFetching, ...otherProps }) => {
     const headerHeight = useHeaderHeight();
     return (
-      <ScreenContainer
-        backgroundType={backgroundType}
-        gradientTypeColors={gradientTypeColors}
-        withLoader={withLoader}
-        isFetching={props.isFetching}
-      >
-        <View style={{ flex: 1, marginTop: headerHeight }}>
-          <WrappedComponent {...props} />
-        </View>
-      </ScreenContainer>
+      // <ScreenContainer
+      //   backgroundType={backgroundType}
+      //   gradientTypeColors={gradientTypeColors}
+      //   withLoader={withLoader}
+      //   isFetching={isFetching}
+      // >
+
+      // </ScreenContainer>
+      <View style={{ flex: 1, marginTop: headerHeight }}>
+        <WrappedComponent isFetching={isFetching} {...otherProps} />
+      </View>
     );
   };
 

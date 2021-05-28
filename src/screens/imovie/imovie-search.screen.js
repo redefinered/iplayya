@@ -2,14 +2,13 @@
 
 import React from 'react';
 import { StyleSheet, ScrollView, TextInput as FormInput } from 'react-native';
-import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
+import { Text, ActivityIndicator, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
 import ContentWrap from 'components/content-wrap.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import debounce from 'lodash/debounce';
@@ -23,7 +22,6 @@ import {
 
 const ImovieSearchScreen = ({
   navigation,
-  theme,
   error,
   searchStartAction,
   searchAction,
@@ -31,6 +29,7 @@ const ImovieSearchScreen = ({
   categories,
   isFetching
 }) => {
+  const theme = useTheme();
   const [term, setTerm] = React.useState('');
 
   /// clear previous search result
@@ -201,6 +200,12 @@ const ImovieSearchScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer backgroundType="solid" withHeaderPush>
+    <ImovieSearchScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -220,10 +225,4 @@ const mapStateToProps = createStructuredSelector({
   categories: selectCategoriesOf('movies')
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid' }),
-  withTheme
-);
-
-export default enhance(ImovieSearchScreen);
+export default connect(mapStateToProps, actions)(Container);

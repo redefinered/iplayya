@@ -9,10 +9,9 @@ import IptvItem from 'components/iptv-item/iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { View, ScrollView } from 'react-native';
-import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withLoader from 'components/with-loader.component';
-
+import { Text, ActivityIndicator } from 'react-native-paper';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
@@ -172,6 +171,12 @@ const NoProviders = ({ navigation }) => (
   </View>
 );
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <IptvScreen {...props} />
+  </ScreenContainer>
+);
+
 IptvScreen.propTypes = {
   providers: PropTypes.array
 };
@@ -196,10 +201,6 @@ const mapStateToProps = createStructuredSelector({
   skipped: selectSkipProviderAdd
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(IptvScreen);
+export default enhance(Container);

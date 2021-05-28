@@ -9,11 +9,13 @@ const styles = StyleSheet.create({
   textField: {
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderWidth: 0,
-    borderColor: 'transparent'
+    borderColor: 'transparent',
+    fontFamily: 'sans-serif'
   },
   textFiledFocused: {
     backgroundColor: 'rgba(255,255,255,0.25)',
-    color: 'rgba(255,255,255,0.5)'
+    color: 'rgba(255,255,255,0.5)',
+    fontFamily: 'sans-serif'
   }
 });
 
@@ -28,6 +30,7 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         autoCapitalize="none"
         placeholder="Password"
         selectionColor={'#E34398'}
+        secureTextEntry={!showText}
         onChangeText={(text) => handleChangeText(text, name)}
         style={{
           marginBottom: 10,
@@ -38,9 +41,12 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         }}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        secureTextEntry={!showText}
         placeholderTextColor={focused ? '#FFFFFF' : 'rgba(255,255,255,0.5)'}
-        theme={{ colors: { primary: 'rgba(255,255,255,0.1)', error: '#E34398' } }}
+        theme={{
+          colors: { primary: 'rgba(255,255,255,0.1)', error: '#E34398' },
+          fonts: { regular: { fontFamily: 'NotoSans-Regular' } }
+        }}
+        ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans-Regular' } })}
         {...otherProps}
       />
       <Pressable
@@ -51,7 +57,6 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
           height: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          width: 40,
           zIndex: 2
         }}
       >

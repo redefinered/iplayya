@@ -3,19 +3,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
 import HomeMenu from 'components/home-menu/home-menu.component';
 import WelcomeDialog from 'components/welcome-dialog/welcome-dialog.component';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-// import withLoader from 'components/with-loader.component';
+import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { selectError } from 'modules/ducks/movies/movies.selectors';
+import { compose } from 'redux';
 
 const Home = ({
   error,
@@ -94,6 +94,12 @@ const Home = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer backgroundType="image" withHeaderPush>
+    <Home {...props} />
+  </ScreenContainer>
+);
+
 Home.propTypes = {
   currentUser: PropTypes.object,
   portalAddress: PropTypes.string,
@@ -115,9 +121,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'image', withLoader: true })
-);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(Home);
+export default enhance(Container);

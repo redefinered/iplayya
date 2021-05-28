@@ -6,8 +6,9 @@ import {
   GET_SPORTS_CHANNELS_BY_CATEGORIES,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
-  GET_FAVORITES
-} from 'graphql/sports.graphql';
+  GET_FAVORITES,
+  SEARCH
+} from 'graphql/isports.graphql';
 
 export const getGenres = async () => {
   try {
@@ -118,6 +119,19 @@ export const getFavorites = async (input) => {
     });
     return data;
   } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const search = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: SEARCH,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
+    // console.log({ error });
     throw new Error(error);
   }
 };

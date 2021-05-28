@@ -1,14 +1,14 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 
 import React from 'react';
-import { Dimensions, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MainButton from 'components/button/mainbutton.component';
 import PasswordInput from 'components/password-input/password-input.component';
-
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
+import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -23,8 +23,6 @@ import {
 } from 'modules/ducks/password/password.selectors';
 
 import { isValidPassword } from 'common/validate';
-
-const { width, height: wHeight } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   textInput: {
@@ -118,50 +116,54 @@ class ChangePasswordScreen extends React.Component {
     });
 
     return (
-      <KeyboardAvoidingView>
-        <ContentWrap style={{ paddingTop: 30 }}>
-          <Text
-            style={{ marginBottom: 20, textAlign: 'center', paddingHorizontal: 60, fontSize: 16 }}
-          >
-            In order to change your password, enter your new password below.
-          </Text>
-          <View>
-            <PasswordInput
-              name="old_password"
-              value={old_password}
-              handleChangeText={this.handleChange}
-              style={{ ...styles.textInput }}
-              autoCapitalize="none"
-              placeholder="Current Password"
-              error={stateError.old_password}
-            />
-            <PasswordInput
-              name="password"
-              value={password}
-              autoCapitalize="none"
-              handleChangeText={this.handleChange}
-              style={styles.textInput}
-              placeholder="New password"
-              error={stateError.password}
-            />
-            <PasswordInput
-              name="password_confirmation"
-              value={password_confirmation}
-              autoCapitalize="none"
-              handleChangeText={this.handleChange}
-              style={styles.textInput}
-              placeholder="Confirm new password"
-              error={stateError.password_confirmation}
-            />
-          </View>
-          {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
-          {this.props.error && <Text>{this.props.error}</Text>}
-          <MainButton onPress={() => this.handleSubmit()} text="Change" style={{ marginTop: 30 }} />
-        </ContentWrap>
-      </KeyboardAvoidingView>
+      <ContentWrap style={{ paddingTop: 30 }}>
+        <Text
+          style={{ marginBottom: 20, textAlign: 'center', paddingHorizontal: 60, fontSize: 16 }}
+        >
+          In order to change your password, enter your new password below.
+        </Text>
+        <View>
+          <PasswordInput
+            name="old_password"
+            value={old_password}
+            handleChangeText={this.handleChange}
+            style={{ ...styles.textInput }}
+            autoCapitalize="none"
+            placeholder="Current Password"
+            error={stateError.old_password}
+          />
+          <PasswordInput
+            name="password"
+            value={password}
+            autoCapitalize="none"
+            handleChangeText={this.handleChange}
+            style={styles.textInput}
+            placeholder="New password"
+            error={stateError.password}
+          />
+          <PasswordInput
+            name="password_confirmation"
+            value={password_confirmation}
+            autoCapitalize="none"
+            handleChangeText={this.handleChange}
+            style={styles.textInput}
+            placeholder="Confirm new password"
+            error={stateError.password_confirmation}
+          />
+        </View>
+        {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
+        {this.props.error && <Text>{this.props.error}</Text>}
+        <MainButton onPress={() => this.handleSubmit()} text="Change" style={{ marginTop: 30 }} />
+      </ContentWrap>
     );
   }
 }
+
+const container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ChangePasswordScreen {...props} />
+  </ScreenContainer>
+);
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
@@ -177,6 +179,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader);
 
-export default enhance(ChangePasswordScreen);
+export default enhance(container);

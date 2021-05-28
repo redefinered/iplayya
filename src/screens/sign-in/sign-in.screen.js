@@ -9,26 +9,23 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
-  ScrollView,
-  Modal
+  ScrollView
 } from 'react-native';
-import { Text, ActivityIndicator, withTheme } from 'react-native-paper';
+import { Text, withTheme } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
-// import Button from 'components/button/button.component';
 import MainButton from 'components/button/mainbutton.component';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
-
+import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
 
-import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
-
 import styles from './sign-in.styles';
+import withLoader from 'components/with-loader.component';
 class SignInScreen extends React.Component {
   state = {
     username: '',
@@ -143,7 +140,7 @@ class SignInScreen extends React.Component {
         </ScrollView>
 
         {/* loader for download starting */}
-        <Modal transparent statusBarTranslucent={true} visible={this.props.isFetching}>
+        {/* <Modal transparent statusBarTranslucent={true} visible={this.props.isFetching}>
           <View
             style={{
               flex: 1,
@@ -154,11 +151,17 @@ class SignInScreen extends React.Component {
           >
             <ActivityIndicator color={this.props.theme.iplayya.colors.vibrantpussy} />
           </View>
-        </Modal>
+        </Modal> */}
       </KeyboardAvoidingView>
     );
   }
 }
+
+const Container = (props) => (
+  <ScreenContainer>
+    <SignInScreen {...props} />
+  </ScreenContainer>
+);
 
 SignInScreen.propTypes = {
   signInAction: PropTypes.func
@@ -175,10 +178,6 @@ const actions = {
   signInAction: Creators.signIn
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withScreenContainer('gradient'),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
-export default enhance(SignInScreen);
+export default enhance(Container);

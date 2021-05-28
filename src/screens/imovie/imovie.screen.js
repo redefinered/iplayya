@@ -4,7 +4,8 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -187,6 +188,7 @@ const ImovieScreen = ({
           </ScrollView> */}
           <FlatList
             data={data}
+            showsHorizontalScrollIndicator={false}
             keyExtractor={(movie) => movie.category}
             renderItem={renderItem}
             initialScrollIndex={scrollIndex}
@@ -207,6 +209,12 @@ const ImovieScreen = ({
     </View>
   );
 };
+
+const Container = (props) => (
+  <ScreenContainer backgroundType="solid" withHeaderPush>
+    <ImovieScreen {...props} />
+  </ScreenContainer>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -232,10 +240,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
-export default enhance(ImovieScreen);
+export default enhance(Container);

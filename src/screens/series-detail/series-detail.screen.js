@@ -6,7 +6,8 @@ import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import { withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
@@ -20,7 +21,6 @@ import {
   selectMovie,
   selectPlaybackInfo,
   selectUpdatedFavoritesCheck
-  // selectUrlForVodPlayer
 } from 'modules/ducks/movies/movies.selectors';
 import {
   selectIsFetching as selectDownloading,
@@ -29,7 +29,6 @@ import {
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
-// import { data as dummydata } from './sample-video-series.json';
 
 export const selectSource = (videourls) => {
   const urls = videourls.map(({ link }) => link);
@@ -457,6 +456,12 @@ const SeriesDetailScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush backgroundType="solid">
+    <SeriesDetailScreen {...props} />
+  </ScreenContainer>
+);
+
 const styles = StyleSheet.create({
   settingItem: {
     flexDirection: 'row',
@@ -492,10 +497,6 @@ const mapStateToProps = createStructuredSelector({
   downloadStarted: selectDownloadStarted
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withHeaderPush({ backgroundType: 'solid', withLoader: true }),
-  withTheme
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
-export default enhance(SeriesDetailScreen);
+export default enhance(Container);

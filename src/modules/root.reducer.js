@@ -9,9 +9,10 @@ import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
-import sportsReducer from './ducks/sports/sports.reducer';
-import radiosReducer from './ducks/radios/radios.reducer';
+import isportsReducer from './ducks/isports/isports.reducer';
+import iradioReducer from './ducks/iradio/iradio.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
+import iplayReducer from './ducks/iplay/iplay.reducer';
 
 export const persistConfig = {
   key: 'primary',
@@ -27,9 +28,10 @@ const rootReducer = persistCombineReducers(persistConfig, {
   itv: itvReducer,
   profile: profileReducer,
   movies: moviesReducer,
-  sports: sportsReducer,
-  radios: radiosReducer,
-  provider: providerReducer
+  sports: isportsReducer,
+  radios: iradioReducer,
+  provider: providerReducer,
+  iplay: iplayReducer
 });
 
 export default (state, action) => {

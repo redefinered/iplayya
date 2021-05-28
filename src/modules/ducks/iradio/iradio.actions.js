@@ -28,9 +28,14 @@ const { Types, Creators } = createActions(
 
     // misc
     playbackStart: [],
-    updatePlaybackInfo: ['data']
+    updatePlaybackInfo: ['data'],
+
+    searchStart: [],
+    search: ['input'],
+    searchSuccess: ['data'],
+    searchFailure: ['error']
   },
-  { prefix: '@Radios/' }
+  { prefix: '@Iradio/' }
 );
 
 export { Types, Creators };

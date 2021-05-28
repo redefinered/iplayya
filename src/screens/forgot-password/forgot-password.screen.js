@@ -5,12 +5,9 @@ import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
-// import Button from 'components/button/button.component';
 import MainButton from 'components/button/mainbutton.component';
-
-import withHeaderPush from 'components/with-header-push/with-header-push.component';
-//import withLoader from 'components/with-loader.component';
-
+import withLoader from 'components/with-loader.component';
+import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/password/password.actions';
@@ -83,6 +80,12 @@ const ForgotPasswordScreen = ({
   );
 };
 
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <ForgotPasswordScreen {...props} />
+  </ScreenContainer>
+);
+
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
@@ -95,6 +98,6 @@ const actions = {
   updateStartAction: Creators.updateStart
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withHeaderPush({ withLoader: true }));
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
-export default enhance(ForgotPasswordScreen);
+export default enhance(Container);
