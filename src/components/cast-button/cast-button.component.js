@@ -44,7 +44,7 @@ const GoogleCastButton = ({ movie, source: contentUrl }) => {
       }
     }
   };
-  return <CastButton style={{ width: 30, height: 30 }} tintColor="white" />;
+  return <CastButton style={{ width: 30, height: 30, tintColor: 'white' }} tintColor="white" />;
 };
 
 GoogleCastButton.propTypes = {
