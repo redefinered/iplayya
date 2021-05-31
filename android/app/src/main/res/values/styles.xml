@@ -3,7 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:textColor">#ffffff</item>
+        <item name="android:textColor">@color/primary_dark</item>
       <item name="android:datePickerDialogTheme">@style/DialogDatePicker.Theme</item>
     </style>
 
@@ -22,5 +22,41 @@
   <style name="SplashStatusBarTheme" parent="SplashScreen_SplashTheme">
     <item name="android:statusBarColor">@color/background</item>
   </style>
+
+<!--  <style name="CustomCastIntroOverlay">-->
+<!--    <item name="colorPrimary">@color/vibrant_pussy</item>-->
+<!--    <item name="colorPrimaryDark">@color/primary_dark</item>-->
+<!--    <item name="colorAccent">@color/vibrant_pussy</item>-->
+<!--    <item name="android:textColorPrimary">@color/primary_dark</item>-->
+<!--    <item name="android:textColorSecondary">@color/primary_dark</item>-->
+<!--  </style>-->
+
+<!--  <style name="CustomCastMiniController">-->
+<!--    <item name="colorPrimary">@color/vibrant_pussy</item>-->
+<!--    <item name="colorPrimaryDark">@color/primary_dark</item>-->
+<!--    <item name="colorAccent">@color/vibrant_pussy</item>-->
+<!--    <item name="android:textColorPrimary">@color/primary_dark</item>-->
+<!--    <item name="android:textColorSecondary">@color/primary_dark</item>-->
+<!--  </style>-->
+
+<!--  <style name="CustomCastExpandedController">-->
+<!--    <item name="colorPrimary">@color/vibrant_pussy</item>-->
+<!--    <item name="colorPrimaryDark">@color/primary_dark</item>-->
+<!--    <item name="colorAccent">@color/vibrant_pussy</item>-->
+<!--    <item name="android:textColorPrimary">@color/primary_dark</item>-->
+<!--    <item name="android:textColorSecondary">@color/primary_dark</item>-->
+<!--  </style>-->
+
+<!--  <style name="Theme.CastVideosTheme" parent="Theme.AppCompat.Light.NoActionBar">-->
+<!--    &lt;!&ndash; Set AppCompat's color theming attrs &ndash;&gt;-->
+<!--    <item name="colorPrimary">@color/vibrant_pussy</item>-->
+<!--    <item name="colorPrimaryDark">@color/vibrant_pussy</item>-->
+<!--    <item name="colorAccent">@color/vibrant_pussy</item>-->
+<!--    <item name="android:textColorPrimary">@color/vibrant_pussy</item>-->
+<!--    <item name="android:textColorSecondary">@color/vibrant_pussy</item>-->
+<!--    <item name="castIntroOverlayStyle">@style/CustomCastIntroOverlay</item>-->
+<!--    <item name="castMiniControllerStyle">@style/CustomCastMiniController</item>-->
+<!--    <item name="castExpandedControllerStyle">@style/CustomCastExpandedController</item>-->
+<!--  </style>-->
 
 </resources>

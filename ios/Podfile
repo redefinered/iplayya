@@ -8,8 +8,12 @@ target 'iplayya' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-
+  # react-native-image-picker
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
+  # googlecast guest mode
+  pod 'react-native-google-cast/GuestMode', path: '../node_modules/react-native-google-cast/ios/'
+  pod 'google-cast-sdk'
 
   target 'iplayyaTests' do
     inherit! :complete

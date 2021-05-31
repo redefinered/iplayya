@@ -6949,6 +6949,7 @@ react-native-country-picker-modal@^2.0.0:
     node-emoji "1.10.0"
     prop-types "15.7.2"
     react-async-hook "3.6.1"
+
 react-native-document-picker@^5.0.4:
   version "5.0.4"
   resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-5.0.4.tgz#86a874e093284b21896581985b8b6e13e04a4251"
@@ -6971,6 +6972,11 @@ react-native-gesture-handler@^1.8.0:
     hoist-non-react-statics "^3.3.0"
     invariant "^2.2.4"
     prop-types "^15.7.2"
+
+react-native-google-cast@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-google-cast/-/react-native-google-cast-4.0.3.tgz#f9a4ae583ed8a6b423f3ed2efb3a828392d42cdc"
+  integrity sha512-gEGexpeZS7Axac1xefeXH3vhgzndeYEk66NFPt8YnogSRv1UXEb9missKUAZr+NJDpLwpO06h2ILHmxZoabn3Q==
 
 react-native-image-picker@^3.3.4:
   version "3.3.4"

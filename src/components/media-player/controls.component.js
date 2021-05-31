@@ -1,16 +1,17 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
-import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
+import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
 import moment from 'moment';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import castOptions from './screencast-options.json';
+// import castOptions from './screencast-options.json';
 import { createFontFormat, toDateTime } from 'utils';
 import VerticalSlider from 'rn-vertical-slider';
 import {
@@ -21,7 +22,7 @@ import {
   selectDuration
 } from 'modules/ducks/movies/movies.selectors';
 
-// const thumbimage = require('assets/media-player-slider-thumb.png');
+import CastButton from 'components/cast-button/cast-button.component';
 
 const VideoControls = ({
   theme,
@@ -36,11 +37,9 @@ const VideoControls = ({
   duration,
   setVolume,
   isFullscreen,
+  source,
   ...controlProps
 }) => {
-  // console.log('xxxx', duration);
-  // const [progress, setProgress] = React.useState(0);
-
   const handleSlidingStart = () => {
     controlProps.setPaused(true);
   };
@@ -92,44 +91,44 @@ const VideoControls = ({
   };
 
   // console.log('duration', duration);
-  const screencastOptions = () => {
-    if (controlProps.showCastOptions) {
-      return castOptions.map(({ id, name, label }) => (
-        <Pressable
-          key={id}
-          onPressIn={() => controlProps.setScreencastActiveState(name)}
-          onPress={() => controlProps.handleSelectScreencastOption(name)}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            height: 50,
-            backgroundColor:
-              controlProps.screencastActiveState === name
-                ? theme.iplayya.colors.white10
-                : 'transparent',
-            paddingHorizontal: 15
-          }}
-        >
-          <View style={{ flex: 1.5 }}>
-            <Icon name="airplay" size={20} />
-          </View>
-          <View style={{ flex: 10.5, paddingLeft: 15 }}>
-            <Text
-              style={{
-                color:
-                  controlProps.screencastOption === name
-                    ? theme.iplayya.colors.vibrantpussy
-                    : theme.colors.text,
-                ...createFontFormat(16, 22)
-              }}
-            >
-              {label}
-            </Text>
-          </View>
-        </Pressable>
-      ));
-    }
-  };
+  // const screencastOptions = () => {
+  //   if (controlProps.showCastOptions) {
+  //     return castOptions.map(({ id, name, label }) => (
+  //       <Pressable
+  //         key={id}
+  //         onPressIn={() => controlProps.setScreencastActiveState(name)}
+  //         onPress={() => controlProps.handleSelectScreencastOption(name)}
+  //         style={{
+  //           flexDirection: 'row',
+  //           alignItems: 'center',
+  //           height: 50,
+  //           backgroundColor:
+  //             controlProps.screencastActiveState === name
+  //               ? theme.iplayya.colors.white10
+  //               : 'transparent',
+  //           paddingHorizontal: 15
+  //         }}
+  //       >
+  //         <View style={{ flex: 1.5 }}>
+  //           <Icon name="airplay" size={20} />
+  //         </View>
+  //         <View style={{ flex: 10.5, paddingLeft: 15 }}>
+  //           <Text
+  //             style={{
+  //               color:
+  //                 controlProps.screencastOption === name
+  //                   ? theme.iplayya.colors.vibrantpussy
+  //                   : theme.colors.text,
+  //               ...createFontFormat(16, 22)
+  //             }}
+  //           >
+  //             {label}
+  //           </Text>
+  //         </View>
+  //       </Pressable>
+  //     ));
+  //   }
+  // };
 
   const resolutionOptions = () => {
     const { resolutions } = controlProps;
@@ -193,7 +192,12 @@ const VideoControls = ({
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
           {controlProps.seriesTitle || controlProps.title}
         </Text>
-        <Pressable
+
+        <Pressable>
+          <CastButton source={source} />
+        </Pressable>
+
+        {/* <Pressable
           onPress={() => controlProps.toggleCastOptions()}
           style={{ position: 'relative' }}
         >
@@ -210,7 +214,7 @@ const VideoControls = ({
           >
             {screencastOptions()}
           </View>
-        </Pressable>
+        </Pressable> */}
       </View>
       <View
         style={{

@@ -87,10 +87,20 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
+  - google-cast-sdk (4.5.3):
+    - google-cast-sdk/Core (= 4.5.3)
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.13)
+  - google-cast-sdk/Core (4.5.3):
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.13)
+  - GTMSessionFetcher/Core (1.5.0)
   - MobileVLCKit (3.3.14)
   - OpenSSL-Universal (1.0.2.20):
     - OpenSSL-Universal/Static (= 1.0.2.20)
   - OpenSSL-Universal/Static (1.0.2.20)
+  - PromisesObjC (2.0.0)
+  - Protobuf (3.17.0)
   - RCTRequired (0.63.3)
   - RCTTypeSafety (0.63.3):
     - FBLazyVector (= 0.63.3)
@@ -261,6 +271,13 @@ PODS:
     - React
   - react-native-document-picker (5.0.4):
     - React-Core
+  - react-native-google-cast/GuestMode (4.0.3):
+    - google-cast-sdk
+    - React
+    - react-native-google-cast/RNGoogleCast
+  - react-native-google-cast/RNGoogleCast (4.0.3):
+    - PromisesObjC
+    - React
   - react-native-image-picker (3.3.4):
     - React-Core
   - react-native-netinfo (6.0.0):
@@ -396,6 +413,7 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (~> 0.54.0)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - google-cast-sdk
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -410,6 +428,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-background-downloader (from `../node_modules/react-native-background-downloader`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-google-cast/GuestMode (from `../node_modules/react-native-google-cast/ios/`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -455,8 +474,12 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - Flipper-RSocket
     - FlipperKit
+    - google-cast-sdk
+    - GTMSessionFetcher
     - MobileVLCKit
     - OpenSSL-Universal
+    - PromisesObjC
+    - Protobuf
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -502,6 +525,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-downloader"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-google-cast:
+    :path: "../node_modules/react-native-google-cast/ios/"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
@@ -585,8 +610,12 @@ SPEC CHECKSUMS:
   FlipperKit: ab353d41aea8aae2ea6daaf813e67496642f3d7d
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
+  google-cast-sdk: f94c5df87564f71d4342400b8487665e9bed27c6
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   MobileVLCKit: 7f5065858eb9c29a91743c3554654d2e81b85db2
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
+  PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  Protobuf: 7327d4444215b5f18e560a97f879ff5503c4581c
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047
   RCTTypeSafety: edf4b618033c2f1c5b7bc3d90d8e085ed95ba2ab
   React: f36e90f3ceb976546e97df3403e37d226f79d0e3
@@ -599,6 +628,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-background-downloader: 4a034cf39a3b00fac57364984e360a4f180a5efb
   react-native-document-picker: 1a7518132d4a06b67f459be9bb1464a567d2b3b4
+  react-native-google-cast: 8edc149baf13eee0dd2acf1583ed1412c00fd253
   react-native-image-picker: 32fbfa63b6eff82b13b037022dc1d25005290e36
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-safe-area-context: 79fea126c6830c85f65947c223a5e3058a666937
@@ -631,6 +661,6 @@ SPEC CHECKSUMS:
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: a4b14a65911f88d0a8cfdc878f9072a0f8d153d0
+PODFILE CHECKSUM: 1a85628489cdff4c33a3644aba1f5cc8a82d6b92
 
 COCOAPODS: 1.10.1

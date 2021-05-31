@@ -94,6 +94,31 @@ const MediaPlayer = ({
     if (typeof r !== 'undefined') return setSource(r.link.split(' ')[1]);
   }, [resolution]);
 
+  const getCastConfig = () => {
+    return {
+      mediaInfo: {
+        contentUrl:
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
+        contentType: 'video/mp4',
+        metadata: {
+          images: [
+            {
+              url:
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/BigBuckBunny.jpg'
+            }
+          ],
+          title: seriesTitle || title,
+          subtitle:
+            'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
+          studio: 'Blender Foundation',
+          type: 'movie'
+        },
+        streamDuration: 596 // seconds
+      },
+      startTime: 10 // seconds
+    };
+  };
+
   const handleFullscreenToggle = () => {
     setFullscreen(!fullscreen);
   };
@@ -323,6 +348,7 @@ const MediaPlayer = ({
         setActiveState={setActiveState}
         handleSelectResolution={handleSelectResolution}
         typename={typename}
+        source={source}
       />
       {/* screencast option */}
       <Modal animationType="slide" visible={showCastOptions} transparent>

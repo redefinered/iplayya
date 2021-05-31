@@ -16,6 +16,9 @@ import { Creators } from 'modules/ducks/movies/movies.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { selectError } from 'modules/ducks/movies/movies.selectors';
 import { compose } from 'redux';
+import { CastButton, useRemoteMediaClient } from 'react-native-google-cast';
+
+// import { View } from 'react-native';
 
 const Home = ({
   error,
@@ -29,6 +32,34 @@ const Home = ({
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
+
+  // this will automatically rerender when client is connected
+  const client = useRemoteMediaClient();
+
+  if (client) {
+    client.loadMedia({
+      mediaInfo: {
+        contentUrl:
+          'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
+        contentType: 'video/mp4',
+        metadata: {
+          images: [
+            {
+              url:
+                'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/BigBuckBunny.jpg'
+            }
+          ],
+          title: 'Big Buck Bunny',
+          subtitle:
+            'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
+          studio: 'Blender Foundation',
+          type: 'movie'
+        },
+        streamDuration: 596 // seconds
+      },
+      startTime: 10 // seconds
+    });
+  }
 
   /// load categories here
   React.useEffect(() => {
@@ -79,6 +110,8 @@ const Home = ({
   return (
     <ContentWrap style={{ marginTop: 30 }}>
       <HomeMenu navigation={navigation} />
+      <CastButton style={{ width: 24, height: 24 }} tintColor="red" />
+      {/* <View style={{ width: 24, height: 24, backgroundColor: 'red' }} /> */}
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
       {error && (
         <AlertModal
