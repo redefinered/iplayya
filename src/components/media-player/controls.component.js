@@ -22,6 +22,8 @@ import {
   selectDuration
 } from 'modules/ducks/movies/movies.selectors';
 
+// import { CastButton } from 'react-native-google-cast';
+
 import CastButton from 'components/cast-button/cast-button.component';
 
 const VideoControls = ({
@@ -38,6 +40,7 @@ const VideoControls = ({
   setVolume,
   isFullscreen,
   source,
+  castSessionActive,
   ...controlProps
 }) => {
   const handleSlidingStart = () => {
@@ -54,6 +57,8 @@ const VideoControls = ({
   // }, [currentTime]);
 
   const renderVolumeSlider = () => {
+    if (castSessionActive) return;
+
     if (isFullscreen)
       return (
         <Slider
@@ -168,6 +173,59 @@ const VideoControls = ({
     }
   };
 
+  const renderBottomControls = () => {
+    if (castSessionActive) return;
+
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 20
+        }}
+      >
+        <View style={{ flexDirection: 'row' }}>
+          <Pressable>
+            <Icon
+              name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
+              size={25}
+              style={{ marginRight: 15 }}
+            />
+          </Pressable>
+          {/* <Pressable>
+              <Icon name="caption" size={25} style={{ marginRight: 15 }} />
+            </Pressable> */}
+          {controlProps.typename !== 'Iptv' ? (
+            <Pressable onPress={() => controlProps.toggleVideoOptions()}>
+              <Icon name="video-quality" size={25} />
+              <View
+                style={{
+                  backgroundColor: '#202530',
+                  width: 250,
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: 0
+                }}
+              >
+                {resolutionOptions()}
+              </View>
+            </Pressable>
+          ) : null}
+        </View>
+        <Pressable onPress={() => controlProps.toggleFullscreen()}>
+          <Icon name="fullscreen" size={25} />
+        </Pressable>
+      </View>
+    );
+  };
+
+  const getContentTitle = () => {
+    if (castSessionActive) return 'Connected to Google Cast';
+
+    return controlProps.seriesTitle || controlProps.title;
+  };
+
   return (
     <View
       style={{
@@ -189,13 +247,9 @@ const VideoControls = ({
           zIndex: 101
         }}
       >
-        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
-          {controlProps.seriesTitle || controlProps.title}
-        </Text>
+        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{getContentTitle()}</Text>
 
-        <Pressable>
-          <CastButton source={source} />
-        </Pressable>
+        <CastButton style={{ width: 24, height: 24 }} source={source} />
 
         {/* <Pressable
           onPress={() => controlProps.toggleCastOptions()}
@@ -216,12 +270,13 @@ const VideoControls = ({
           </View>
         </Pressable> */}
       </View>
+
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 10,
+          // marginTop: 10,
           position: 'relative',
           zIndex: 100
         }}
@@ -258,46 +313,7 @@ const VideoControls = ({
       </View>
 
       <View style={{ position: 'relative', zIndex: 101 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 20
-          }}
-        >
-          <View style={{ flexDirection: 'row' }}>
-            <Pressable>
-              <Icon
-                name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
-                size={25}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-            {/* <Pressable>
-              <Icon name="caption" size={25} style={{ marginRight: 15 }} />
-            </Pressable> */}
-            {controlProps.typename !== 'Iptv' ? (
-              <Pressable onPress={() => controlProps.toggleVideoOptions()}>
-                <Icon name="video-quality" size={25} />
-                <View
-                  style={{
-                    backgroundColor: '#202530',
-                    width: 250,
-                    position: 'absolute',
-                    bottom: '100%',
-                    left: 0
-                  }}
-                >
-                  {resolutionOptions()}
-                </View>
-              </Pressable>
-            ) : null}
-          </View>
-          <Pressable onPress={() => controlProps.toggleFullscreen()}>
-            <Icon name="fullscreen" size={25} />
-          </Pressable>
-        </View>
+        {renderBottomControls()}
 
         {/* video progress */}
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>

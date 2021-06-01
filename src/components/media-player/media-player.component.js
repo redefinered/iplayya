@@ -1,27 +1,24 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, View, Modal, Pressable } from 'react-native';
-import { useTheme, Text } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+import { Dimensions, View, Modal, Pressable, ImageBackground } from 'react-native';
+import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
 import { connect } from 'react-redux';
 import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
-import VerticalSlider from 'rn-vertical-slider';
-import { urlEncodeTitle, createFontFormat } from 'utils';
-import ContentWrap from 'components/content-wrap.component';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { createFontFormat } from 'utils';
+// import ContentWrap from 'components/content-wrap.component';
+// import { TouchableOpacity } from 'react-native-gesture-handler';
 // import resolutions from './video-resolutions.json';
-import castOptions from './screencast-options.json';
+// import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
-import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
+import { VLCPlayer } from 'react-native-vlc-media-player';
 import Video from 'react-native-video';
-import { createStructuredSelector } from 'reselect';
-import { selectVideoUrls } from 'modules/ducks/movies/movies.selectors';
 import uuid from 'react-uuid';
+
+import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
 
 const MediaPlayer = ({
   videoplayer,
@@ -43,6 +40,9 @@ const MediaPlayer = ({
   typename
 }) => {
   const theme = useTheme();
+  const castSession = useCastSession();
+  const client = useRemoteMediaClient();
+
   const [error, setError] = React.useState(false);
   const [showControls, setShowControls] = React.useState(true);
   const [fullscreen, setFullscreen] = React.useState(false);
@@ -52,14 +52,71 @@ const MediaPlayer = ({
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
   const [activeState, setActiveState] = React.useState(null);
-  const [screencastActiveState, setScreencastActiveState] = React.useState(null);
-  const [screencastOption, setScreencastOption] = React.useState(null);
+  // const [screencastActiveState, setScreencastActiveState] = React.useState(null);
+  // const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
   const [resolutions, setResolutions] = React.useState([]);
   const [buffering, setBuffering] = React.useState(false);
+  const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [timer, setTimer] = React.useState();
 
   let player = React.useRef();
+
+  let listener = null;
+
+  React.useEffect(() => {
+    if (!client) {
+      return setCastSessionActive(false);
+    }
+
+    if (timer) clearTimeout(timer);
+    setCastSessionActive(true);
+  }, [client]);
+
+  React.useEffect(() => {
+    setCastSession();
+
+    listener = GoogleCast.onCastStateChanged((castState) => {
+      console.log({ castState });
+      /// switch cast state
+      switch (castState) {
+        case 'connecting':
+          setBuffering(true);
+          break;
+        case 'connected':
+          /// pause whatever is playing when connected to chromecast
+          setPaused(true);
+
+          setBuffering(false);
+          setCastSessionActive(true);
+          break;
+        case 'notConnected':
+          setBuffering(false);
+          setCastSessionActive(false);
+          break;
+        case 'noDevicesAvailable':
+          setBuffering(false);
+          setCastSessionActive(false);
+          break;
+        default:
+          setBuffering(false);
+          setCastSessionActive(false);
+          break;
+      }
+      // 'noDevicesAvailable' | 'notConnected' | 'connecting' | 'connected'
+    });
+
+    return () => listener.remove();
+  }, []);
+
+  const setCastSession = async () => {
+    if (castSession) {
+      /// set castSessionActive if castSession is not null
+      return setCastSessionActive(true);
+    }
+
+    return setCastSessionActive(false);
+  };
 
   React.useEffect(() => {
     if (sliderPosition !== null) {
@@ -93,31 +150,6 @@ const MediaPlayer = ({
     let r = resolutions.find(({ name }) => name === resolution);
     if (typeof r !== 'undefined') return setSource(r.link.split(' ')[1]);
   }, [resolution]);
-
-  const getCastConfig = () => {
-    return {
-      mediaInfo: {
-        contentUrl:
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/mp4/BigBuckBunny.mp4',
-        contentType: 'video/mp4',
-        metadata: {
-          images: [
-            {
-              url:
-                'https://commondatastorage.googleapis.com/gtv-videos-bucket/CastVideos/images/480x270/BigBuckBunny.jpg'
-            }
-          ],
-          title: seriesTitle || title,
-          subtitle:
-            'A large and lovable rabbit deals with three tiny bullies, led by a flying squirrel, who are determined to squelch his happiness.',
-          studio: 'Blender Foundation',
-          type: 'movie'
-        },
-        streamDuration: 596 // seconds
-      },
-      startTime: 10 // seconds
-    };
-  };
 
   const handleFullscreenToggle = () => {
     setFullscreen(!fullscreen);
@@ -168,11 +200,19 @@ const MediaPlayer = ({
       setShowControls(true);
       if (timer) clearTimeout(timer);
     } else {
-      // console.log('onPlaying callback');
-      setPaused(false);
+      if (client) return;
+
       setTimer(hideControls(10));
     }
   }, [paused]);
+
+  /// cancel hide control timeout if cast session is active
+  React.useEffect(() => {
+    if (castSessionActive) {
+      if (timer) clearTimeout(timer);
+      setShowControls(true);
+    }
+  }, [castSessionActive]);
 
   /// needs to be converted to effect since events are not available in react-native-video
   /// needs to be converted to effect since events are not available in react-native-video
@@ -196,17 +236,17 @@ const MediaPlayer = ({
     setVolumeSliderVisible(!volumeSliderVisible);
   };
 
-  const handleHideCastOptions = () => {
-    setShowCastOptions(false);
-  };
+  // const handleHideCastOptions = () => {
+  //   setShowCastOptions(false);
+  // };
 
   const handleToggleCastOptions = () => {
     setShowCastOptions(!showCastOptions);
   };
 
-  const handleHideVideoOptions = () => {
-    setShowVideoOptions(false);
-  };
+  // const handleHideVideoOptions = () => {
+
+  // };
 
   const handleToggleVideoOptions = () => {
     setShowVideoOptions(!showVideoOptions);
@@ -218,11 +258,11 @@ const MediaPlayer = ({
     setActiveState(null);
   };
 
-  const handleSelectScreencastOption = (val) => {
-    setShowCastOptions(false);
-    setScreencastOption(val);
-    setScreencastActiveState(null);
-  };
+  // const handleSelectScreencastOption = (val) => {
+  //   setShowCastOptions(false);
+  //   setScreencastOption(val);
+  //   setScreencastActiveState(null);
+  // };
 
   // console.log({ source, resolution, resolutions });
   // console.log({ resolutions });
@@ -231,6 +271,14 @@ const MediaPlayer = ({
   // console.log('volume', volume);
 
   const renderPlayer = () => {
+    if (castSessionActive)
+      return (
+        <ImageBackground
+          source={{ uri: thumbnail }}
+          style={{ width: Dimensions.get('window').width, height: 211, background: thumbnail }}
+        />
+      );
+
     if (typename === 'Iptv' || videoplayer === 'vlc')
       return (
         <VLCPlayer
@@ -304,22 +352,6 @@ const MediaPlayer = ({
       )}
       {renderPlayer()}
 
-      {/* volume slider */}
-      {/* {volumeSliderVisible ? (
-        <View style={{ position: 'absolute', marginLeft: 20, paddingTop: 40, zIndex: 100 }}>
-          <VerticalSlider
-            width={8}
-            height={100}
-            value={volume}
-            min={0}
-            max={100}
-            onChange={(value) => setVolume(parseInt(value))}
-            minimumTrackTintColor={theme.iplayya.colors.white100}
-            maximumTrackTintColor={theme.iplayya.colors.white25}
-          />
-        </View>
-      ) : null} */}
-
       {/* media player controls */}
       <Controls
         volume={volume}
@@ -349,9 +381,10 @@ const MediaPlayer = ({
         handleSelectResolution={handleSelectResolution}
         typename={typename}
         source={source}
+        castSessionActive={castSessionActive}
       />
       {/* screencast option */}
-      <Modal animationType="slide" visible={showCastOptions} transparent>
+      {/* <Modal animationType="slide" visible={showCastOptions} transparent>
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
           <View style={{ backgroundColor: '#202530', paddingTop: 20 }}>
             <ContentWrap>
@@ -403,7 +436,7 @@ const MediaPlayer = ({
             </View>
           </View>
         </View>
-      </Modal>
+      </Modal> */}
 
       {/* video settings */}
       <Modal animationType="slide" visible={showVideoOptions} transparent>
@@ -440,11 +473,12 @@ const MediaPlayer = ({
             <View
               style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}
             />
-            <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-              <TouchableOpacity onPress={() => handleHideVideoOptions()}>
-                <Text>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableRipple
+              onPress={() => setShowVideoOptions(false)}
+              style={{ alignItems: 'center', paddingVertical: 20 }}
+            >
+              <Text>Cancel</Text>
+            </TouchableRipple>
           </View>
         </View>
       </Modal>

@@ -32,6 +32,8 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 
+import { useRemoteMediaClient } from 'react-native-google-cast';
+
 const MovieDetailScreen = ({
   error,
   route: {
@@ -49,11 +51,10 @@ const MovieDetailScreen = ({
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
-  videoUrls,
-
-  isFetching
+  videoUrls
 }) => {
-  console.log({ isFetching });
+  const client = useRemoteMediaClient();
+
   const theme = useTheme();
   const [paused, setPaused] = React.useState(true);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
@@ -69,6 +70,63 @@ const MovieDetailScreen = ({
     getMovieAction(videoId);
     addMovieToFavoritesStartAction();
   }, []);
+
+  React.useEffect(() => {
+    if (!client) return;
+    getChromecastStatus();
+
+    if (paused) {
+      handlePause();
+    } else {
+      handlePlay();
+    }
+  }, [client, paused]);
+
+  const handlePlay = async () => {
+    if (!client) return;
+    await client.play();
+  };
+
+  const handlePause = async () => {
+    if (!client) return;
+    await client.pause();
+  };
+
+  const getChromecastStatus = async () => {
+    const chromecastStatus = await client.getMediaStatus();
+
+    console.log({ chromecastStatus });
+  };
+
+  // const loadMovieIntoChromecast = async () => {
+  //   if (!source) return;
+
+  //   try {
+  //     await client.loadMedia({
+  //       // autoplay: false,
+  //       mediaInfo: {
+  //         contentUrl: source,
+  //         // contentType: 'video/mp4',
+  //         metadata: {
+  //           images: [
+  //             {
+  //               url: thumbnail
+  //             }
+  //           ],
+  //           title: seriesTitle || title,
+  //           subtitle,
+  //           // studio: 'Blender Foundation',
+  //           type: 'movie',
+  //           releaseDate
+  //         },
+  //         streamDuration: time * 60
+  //       },
+  //       startTime: 10 // seconds
+  //     });
+  //   } catch (error) {
+  //     console.log({ error });
+  //   }
+  // };
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -187,6 +245,38 @@ const MovieDetailScreen = ({
     ...otherFields
   } = movie;
 
+  const renderMediaPlayer = () => {
+    if (!source)
+      return (
+        <View
+          style={{
+            flex: 1,
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'black'
+          }}
+        >
+          <Text>NO SOURCE</Text>
+        </View>
+      );
+
+    return (
+      <MediaPlayer
+        isSeries={is_series}
+        paused={paused}
+        source={source}
+        thumbnail={thumbnail}
+        title={title}
+        togglePlay={handleTogglePlay}
+        setPaused={setPaused}
+        setSource={handleSourceSet}
+        videoUrls={videoUrls}
+        typename={movie.__typename}
+      />
+    );
+  };
+
   return (
     <View style={{ flex: 1, marginTop: 10 }}>
       {/* Player */}
@@ -201,32 +291,7 @@ const MovieDetailScreen = ({
             alignItems: 'center'
           }}
         >
-          {source !== '' ? (
-            <MediaPlayer
-              isSeries={is_series}
-              paused={paused}
-              source={source}
-              thumbnail={thumbnail}
-              title={title}
-              togglePlay={handleTogglePlay}
-              setPaused={setPaused}
-              setSource={handleSourceSet}
-              videoUrls={videoUrls}
-              typename={movie.__typename}
-            />
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'black'
-              }}
-            >
-              <Text>NO SOURCE</Text>
-            </View>
-          )}
+          {renderMediaPlayer()}
         </Pressable>
         <ContentWrap>
           <Text
@@ -237,6 +302,9 @@ const MovieDetailScreen = ({
           >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
         </ContentWrap>
       </View>
+
+      {/* <Button onPress={handleGooleCastPlay}>Play</Button>
+      <Button onPress={handleGooleCastPause}>Pause</Button> */}
 
       {/* content */}
       <ScrollView style={{ height: 300 }}>
