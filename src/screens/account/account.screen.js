@@ -21,7 +21,16 @@ import {
   selectIsFetching as selectAuthIsFetching
 } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdated } from 'modules/ducks/user/user.selectors';
-import { View, Image, Pressable, StyleSheet, Dimensions, PixelRatio, Platform } from 'react-native';
+import {
+  View,
+  Image,
+  Pressable,
+  StyleSheet,
+  Dimensions,
+  PixelRatio,
+  Platform,
+  SafeAreaView
+} from 'react-native';
 import Button from 'components/button/button.component';
 
 const styles = StyleSheet.create({
@@ -83,6 +92,7 @@ const AccountScreen = ({
       return;
     }
     // fixes an issue where previous user profile is being loaded from cache
+
     if (currentUserId === profile.id) return;
     getProfileAction();
   }, [currentUserId, profile]);
@@ -122,69 +132,74 @@ const AccountScreen = ({
   if (isFetching || !profile) return <Text style={{ padding: 15 }}>Working...</Text>;
 
   return (
-    <ContentWrap style={{ flex: 1, paddingTop: 20, marginBottom: 140 }}>
-      {
-        // header section
-      }
-      <View style={{ flexDirection: 'row', marginBottom: 35 }}>
-        <View style={{ width: 85 }}>
-          <Image
+    <SafeAreaView style={{ flex: 1 }}>
+      <ContentWrap style={{ flex: 1, paddingTop: 20 }}>
+        {
+          // header section
+        }
+        <View style={{ flexDirection: 'row', marginBottom: 35 }}>
+          <View style={{ width: 85 }}>
+            <Image
+              style={{
+                width: 85,
+                height: 85,
+                borderRadius: 300 / 2,
+                resizeMode: 'contain'
+              }}
+              source={require('assets/placeholder.jpg')}
+            />
+          </View>
+          <View
             style={{
-              width: 85,
-              height: 85,
-              borderRadius: 300 / 2,
-              resizeMode: 'contain'
-            }}
-            source={require('assets/placeholder.jpg')}
-          />
-        </View>
-        <View
-          style={{
-            paddingHorizontal: 15,
-            width: Dimensions.get('window').width - 100 // 100 is the 15 space left and 85 image width
-          }}
-        >
-          {/* {profile} */}
-          <Text
-            style={{ fontSize: normalize(21), fontWeight: 'bold', lineHeight: 22, marginBottom: 5 }}
-          >
-            {profile.name}
-          </Text>
-          <Text
-            numberOfLines={1}
-            style={{
-              fontSize: normalize(14),
-              lineHeight: 19,
-              marginBottom: 8,
-              paddingRight: 15,
-              color: 'rgba(255, 255, 255, 0.5)'
+              paddingHorizontal: 15,
+              width: Dimensions.get('window').width - 100 // 100 is the 15 space left and 85 image width
             }}
           >
-            {profile.email}
-          </Text>
-          <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
+            {/* {profile} */}
             <Text
               style={{
-                fontSize: normalize(15),
-                lineHeight: 19,
-                marginBottom: 8
+                fontSize: normalize(21),
+                fontWeight: 'bold',
+                lineHeight: 22,
+                marginBottom: 5
               }}
             >
-              View profile
+              {profile.name}
             </Text>
-          </Pressable>
+            <Text
+              numberOfLines={1}
+              style={{
+                fontSize: normalize(14),
+                lineHeight: 19,
+                marginBottom: 8,
+                paddingRight: 15,
+                color: 'rgba(255, 255, 255, 0.5)'
+              }}
+            >
+              {profile.email}
+            </Text>
+            <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
+              <Text
+                style={{
+                  fontSize: normalize(15),
+                  lineHeight: 19,
+                  marginBottom: 8
+                }}
+              >
+                View profile
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
+      </ContentWrap>
 
       {
         // settings section
       }
+
       <View
         style={{
-          flex: 1,
-          flexDirection: 'column',
-          justifyContent: 'space-evenly',
-          height: 'auto'
+          flex: 5
           // marginBottom: newHeight
         }}
       >
@@ -194,80 +209,91 @@ const AccountScreen = ({
             lineHeight: 16,
             fontWeight: 'bold',
             color: theme.iplayya.colors.white50,
+            padding: theme.spacing(2),
             marginBottom: 10
           }}
         >
           Settings
         </Text>
-        <TouchableRipple
-          borderless={false}
-          rippleColor="rgba(0,0,0,0.28)"
-          onPress={() => navigation.navigate('ChangePasswordScreen')}
+        <View
+          style={{
+            flex: 2,
+            flexDirection: 'column'
+          }}
         >
-          <View style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="change-password" size={24} />
+          <TouchableRipple
+            borderless={false}
+            rippleColor="rgba(0,0,0,0.28)"
+            onPress={() => navigation.navigate('ChangePasswordScreen')}
+          >
+            <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
+              <View style={styles.iconContainer}>
+                <Icon name="change-password" size={24} />
+              </View>
+              <View>
+                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Change Password</Text>
+              </View>
             </View>
-            <View>
-              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Change Password</Text>
+          </TouchableRipple>
+          <TouchableRipple
+            rippleColor="rgba(0,0,0,0.28)"
+            onPress={() => navigation.navigate('ManageEmailScreen')}
+          >
+            <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
+              <View style={styles.iconContainer}>
+                <Icon name="email" size={24} />
+              </View>
+              <View>
+                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Manage Email</Text>
+              </View>
             </View>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple>
-          <View style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="email" size={24} />
+          </TouchableRipple>
+          <TouchableRipple
+            rippleColor="rgba(0,0,0,0.28)"
+            onPress={() => navigation.navigate('PlaybackSettings')}
+          >
+            <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
+              <View style={styles.iconContainer}>
+                <Icon name="video-quality" size={24} />
+              </View>
+              <View>
+                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Playback</Text>
+              </View>
             </View>
-            <View>
-              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Manage Email</Text>
+          </TouchableRipple>
+          <TouchableRipple>
+            <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
+              <View style={styles.iconContainer}>
+                <Icon name="lock" size={24} />
+              </View>
+              <View>
+                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Parental Control</Text>
+              </View>
             </View>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple
-          rippleColor="rgba(0,0,0,0.28)"
-          onPress={() => navigation.navigate('PlaybackSettings')}
-        >
-          <View style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="video-quality" size={24} />
+          </TouchableRipple>
+          <TouchableRipple>
+            <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
+              <View style={styles.iconContainer}>
+                <Icon name="help" size={24} />
+              </View>
+              <View>
+                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Need Help?</Text>
+              </View>
             </View>
-            <View>
-              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Playback</Text>
+          </TouchableRipple>
+          <TouchableRipple rippleColor="rgba(0,0,0,0.28)" onPress={() => setOnSigningOut(true)}>
+            <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
+              <View style={styles.iconContainer}>
+                <Icon name="logout" size={24} />
+              </View>
+              <View>
+                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>
+                  {authIsFetching ? 'Processing...' : 'Logout'}
+                </Text>
+              </View>
             </View>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple>
-          <View style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="lock" size={24} />
-            </View>
-            <View>
-              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Parental Control</Text>
-            </View>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple>
-          <View style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="help" size={24} />
-            </View>
-            <View>
-              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Need Help?</Text>
-            </View>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple rippleColor="rgba(0,0,0,0.28)" onPress={() => setOnSigningOut(true)}>
-          <View style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="logout" size={24} />
-            </View>
-            <View>
-              <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>
-                {authIsFetching ? 'Processing...' : 'Logout'}
-              </Text>
-            </View>
-          </View>
-        </TouchableRipple>
+          </TouchableRipple>
+        </View>
         <AlertModal
           variant="danger"
           message="Are you sure you want to Logout?"
@@ -277,29 +303,30 @@ const AccountScreen = ({
           confirmText="OK"
           confirmAction={signOutAction}
         />
-      </View>
-      {profileError && (
-        <AlertModal
-          variant="danger"
-          message={profileError}
-          visible={profileErrorVisible}
-          hideAction={handleHideProfileAlert}
-          confirmText="Retry"
-          confirmAction={handleProfileErrorConfirmAction}
-        />
-      )}
-      {authError ? (
-        <React.Fragment>
+        {/* </View> */}
+        {profileError && (
           <AlertModal
             variant="danger"
-            message={authError}
-            visible={authErrorVisible}
+            message={profileError}
+            visible={profileErrorVisible}
+            hideAction={handleHideProfileAlert}
             confirmText="Retry"
-            confirmAction={handleRetry}
+            confirmAction={handleProfileErrorConfirmAction}
           />
-        </React.Fragment>
-      ) : null}
-    </ContentWrap>
+        )}
+        {authError ? (
+          <React.Fragment>
+            <AlertModal
+              variant="danger"
+              message={authError}
+              visible={authErrorVisible}
+              confirmText="Retry"
+              confirmAction={handleRetry}
+            />
+          </React.Fragment>
+        ) : null}
+      </View>
+    </SafeAreaView>
   );
 };
 

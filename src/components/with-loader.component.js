@@ -33,11 +33,9 @@ export default function withLoader(WrappedComponent) {
           <View
             transparent
             statusBarTranslucent
-            pointerEvents="none"
             style={{
               position: 'absolute',
-              zIndex: 1,
-              elevation: 4,
+              zIndex: 1300,
               width: Dimensions.get('window').width,
               height: '100%' /*Dimensions.get('window').height*/
             }}
@@ -46,6 +44,7 @@ export default function withLoader(WrappedComponent) {
               pointerEvents="none"
               style={{
                 flex: 1,
+                alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'rgba(0,0,0,0.5)'
               }}

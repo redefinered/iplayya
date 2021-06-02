@@ -10,6 +10,8 @@ import ProfileScreen from 'screens/profile/profile.screen';
 import EditProfileScreen from 'screens/edit-profile/edit-profile.screen';
 import ChangePasswordScreen from 'screens/change-password/change-password.screen';
 import PlaybackSettings from 'screens/playback-settings/playback-settings.screen';
+import ManageEmailScreen from 'screens/manage-email/manage-email.screen';
+import ChangeEmailScreen from 'screens/manage-email/change-email.screen';
 import Icon from 'components/icon/icon.component';
 import { TouchableRipple } from 'react-native-paper';
 
@@ -28,7 +30,7 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
       headerBackTitleVisible: false,
       headerBackImage: () => <HeaderBackImage />,
       headerStyle: { height: headerHeight },
-      headerTitleStyle: { fontSize: 24 },
+      headerTitleStyle: { fontSize: 24, fontWeight: '100' },
       headerTitleAlign: 'center',
       headerTitleContainerStyle: { alignItems: 'center' },
       headerLeftContainerStyle: {
@@ -88,6 +90,20 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
         focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
         beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
       }}
+    />
+    <Stack.Screen
+      name="ManageEmailScreen"
+      component={ManageEmailScreen}
+      options={{ title: 'Manage Email' }}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="ChangeEmailScreen"
+      component={ChangeEmailScreen}
+      options={{ title: 'Change Email' }}
     />
     <Stack.Screen
       name="PlaybackSettings"
