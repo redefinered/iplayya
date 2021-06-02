@@ -11,17 +11,19 @@ const GoogleCastButton = ({ movie, source: contentUrl }) => {
   const client = useRemoteMediaClient();
   const { title, seriesTitle, thumbnail, description: subtitle, year: releaseDate, time } = movie;
 
-  console.log({ contentUrl });
+  React.useEffect(() => {
+    loadMedia(contentUrl);
+  }, [contentUrl]);
 
   React.useEffect(() => {
     if (client) {
-      loadMedia();
+      loadMedia(contentUrl);
 
       // getChromecastStatus();
     }
   }, [client]);
 
-  const loadMedia = async () => {
+  const loadMedia = async (contentUrl) => {
     try {
       await client.loadMedia({
         autoplay: false,
