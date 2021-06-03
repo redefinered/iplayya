@@ -7,13 +7,13 @@ import { createStructuredSelector } from 'reselect';
 import { selectMovie } from 'modules/ducks/movies/movies.selectors';
 import { connect } from 'react-redux';
 
-const GoogleCastButton = ({ movie, source: contentUrl }) => {
+const GoogleCastButton = ({ movie, source: contentUrl, seriesTitle }) => {
   const client = useRemoteMediaClient();
-  const { title, seriesTitle, thumbnail, description: subtitle, year: releaseDate, time } = movie;
+  const { title, thumbnail, description: subtitle, year: releaseDate, time } = movie;
 
-  React.useEffect(() => {
-    loadMedia(contentUrl);
-  }, [contentUrl]);
+  // React.useEffect(() => {
+  //   loadMedia(contentUrl);
+  // }, [contentUrl]);
 
   React.useEffect(() => {
     if (client) {
@@ -21,12 +21,13 @@ const GoogleCastButton = ({ movie, source: contentUrl }) => {
 
       // getChromecastStatus();
     }
-  }, [client]);
+  }, [client, contentUrl]);
 
   const loadMedia = async (contentUrl) => {
+    const castTitle = seriesTitle ? `${title} - ${seriesTitle}` : title;
     try {
       await client.loadMedia({
-        autoplay: false,
+        // autoplay: false,
         mediaInfo: {
           contentUrl,
           // contentType: 'video/mp4',
@@ -36,15 +37,15 @@ const GoogleCastButton = ({ movie, source: contentUrl }) => {
                 url: thumbnail
               }
             ],
-            title: seriesTitle || title,
+            title: castTitle,
             subtitle,
             // studio: 'Blender Foundation',
             type: 'movie',
             releaseDate
           },
           streamDuration: time * 60
-        },
-        startTime: 10 // seconds
+        }
+        // startTime: currentTime // seconds
       });
     } catch (error) {
       console.log({ error });
@@ -63,7 +64,8 @@ const GoogleCastButton = ({ movie, source: contentUrl }) => {
 GoogleCastButton.propTypes = {
   movie: PropTypes.object,
   source: PropTypes.string,
-  paused: PropTypes.bool
+  paused: PropTypes.bool,
+  seriesTitle: PropTypes.string
 };
 
 const mapStateToProps = createStructuredSelector({ movie: selectMovie });

@@ -7,7 +7,7 @@ import { useTheme, Text, TouchableRipple } from 'react-native-paper';
 import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
 import { connect } from 'react-redux';
-import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import { createFontFormat } from 'utils';
 // import ContentWrap from 'components/content-wrap.component';
 // import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -120,6 +120,7 @@ const MediaPlayer = ({
 
   React.useEffect(() => {
     if (sliderPosition !== null) {
+      if (!player.current) return;
       player.current.seek(sliderPosition);
     }
   }, [sliderPosition]);
@@ -499,7 +500,7 @@ MediaPlayer.propTypes = {
 };
 
 const actions = {
-  updatePlaybackInfoAction: MoviesActionCreators.updatePlaybackInfo
+  updatePlaybackInfoAction: Creators.updatePlaybackInfo
 };
 
 export default connect(null, actions)(MediaPlayer);
