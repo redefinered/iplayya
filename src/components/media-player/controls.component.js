@@ -4,16 +4,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
-import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
+import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
 import moment from 'moment';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-// import castOptions from './screencast-options.json';
 import { createFontFormat, toDateTime } from 'utils';
 import VerticalSlider from 'rn-vertical-slider';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
   selectPlaybackInfo,
   // selectCurrentPosition,
@@ -22,9 +22,8 @@ import {
   selectDuration
 } from 'modules/ducks/movies/movies.selectors';
 
-// import { CastButton } from 'react-native-google-cast';
-
 import CastButton from 'components/cast-button/cast-button.component';
+import { useRemoteMediaClient } from 'react-native-google-cast';
 
 const VideoControls = ({
   theme,
@@ -41,19 +40,57 @@ const VideoControls = ({
   isFullscreen,
   source,
   castSessionActive,
+  updatePlaybackInfoAction,
   ...controlProps
 }) => {
+  const [mediaInfo, setMediaInfo] = React.useState(null);
+  const client = useRemoteMediaClient();
+
+  React.useEffect(() => {
+    if (client) {
+      getMediaStatus();
+    }
+  }, [client]);
+
+  React.useEffect(() => {
+    if (client) {
+      if (!mediaInfo) return;
+      const { streamDuration } = mediaInfo;
+      const { setPaused } = controlProps;
+      client.onMediaProgressUpdated((streamPosition) => {
+        setPaused(false);
+        updatePlaybackInfoAction({
+          playbackInfo: { seekableDuration: streamDuration, currentTime: streamPosition }
+        });
+      });
+    }
+  });
+
+  const getMediaStatus = async () => {
+    if (!client) return;
+    const { mediaInfo } = await client.getMediaStatus();
+    setMediaInfo(mediaInfo);
+  };
+
   const handleSlidingStart = () => {
     controlProps.setPaused(true);
   };
 
-  const handleSlidingComplete = (value) => {
-    controlProps.setSliderPosition(value);
+  const handleSlidingComplete = async (position) => {
+    if (castSessionActive) {
+      if (!client) return;
+
+      await client.seek({ position });
+    }
+
+    controlProps.setSliderPosition(position);
     controlProps.setPaused(false);
   };
 
   // React.useEffect(() => {
-  //   setProgress(currentTime);
+  //   if (currentTime === 0) {
+  //     controlProps.setPaused(true);
+  //   }
   // }, [currentTime]);
 
   const renderVolumeSlider = () => {
@@ -249,7 +286,12 @@ const VideoControls = ({
       >
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{getContentTitle()}</Text>
 
-        <CastButton style={{ width: 24, height: 24 }} source={source} />
+        <CastButton
+          style={{ width: 24, height: 24 }}
+          source={source}
+          currentTime={currentTime}
+          seriesTitle={controlProps.seriesTitle}
+        />
 
         {/* <Pressable
           onPress={() => controlProps.toggleCastOptions()}
@@ -332,7 +374,6 @@ const VideoControls = ({
               maximumValue={duration}
               minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
               maximumTrackTintColor="white"
-              // thumbImage={thumbimage}
             />
           </View>
           <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
@@ -366,7 +407,8 @@ VideoControls.propTypes = {
   togglePlay: PropTypes.func.isRequired,
   paused: PropTypes.bool.isRequired,
   multipleMedia: PropTypes.bool,
-  toggleVolumeSliderVisible: PropTypes.func
+  toggleVolumeSliderVisible: PropTypes.func,
+  updatePlaybackInfoAction: PropTypes.func
 };
 
 VideoControls.defaultProps = {
@@ -380,4 +422,8 @@ const mapStateToProps = createStructuredSelector({
   duration: selectDuration
 });
 
-export default compose(connect(mapStateToProps), withTheme)(VideoControls);
+const actions = {
+  updatePlaybackInfoAction: Creators.updatePlaybackInfo
+};
+
+export default compose(connect(mapStateToProps, actions), withTheme)(VideoControls);

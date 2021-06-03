@@ -71,9 +71,10 @@ const MovieDetailScreen = ({
     addMovieToFavoritesStartAction();
   }, []);
 
+  /// cast functions
   React.useEffect(() => {
     if (!client) return;
-    getChromecastStatus();
+    // getChromecastStatus();
 
     if (paused) {
       handlePause();
@@ -83,49 +84,18 @@ const MovieDetailScreen = ({
   }, [client, paused]);
 
   const handlePlay = async () => {
-    if (!client) return;
     await client.play();
   };
 
   const handlePause = async () => {
-    if (!client) return;
     await client.pause();
   };
+  /// end cast functions
 
-  const getChromecastStatus = async () => {
-    const chromecastStatus = await client.getMediaStatus();
+  // const getChromecastStatus = async () => {
+  //   const chromecastStatus = await client.getMediaStatus();
 
-    console.log({ chromecastStatus });
-  };
-
-  // const loadMovieIntoChromecast = async () => {
-  //   if (!source) return;
-
-  //   try {
-  //     await client.loadMedia({
-  //       // autoplay: false,
-  //       mediaInfo: {
-  //         contentUrl: source,
-  //         // contentType: 'video/mp4',
-  //         metadata: {
-  //           images: [
-  //             {
-  //               url: thumbnail
-  //             }
-  //           ],
-  //           title: seriesTitle || title,
-  //           subtitle,
-  //           // studio: 'Blender Foundation',
-  //           type: 'movie',
-  //           releaseDate
-  //         },
-  //         streamDuration: time * 60
-  //       },
-  //       startTime: 10 // seconds
-  //     });
-  //   } catch (error) {
-  //     console.log({ error });
-  //   }
+  //   console.log({ chromecastStatus });
   // };
 
   React.useEffect(() => {

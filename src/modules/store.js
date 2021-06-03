@@ -9,7 +9,10 @@ import rootReducer, { persistConfig } from './root.reducer';
 
 import rootSaga from 'modules/sagas/root.saga';
 
-const logger = createLogger({ collapsed: true });
+const logger = createLogger({
+  collapsed: true,
+  predicate: (getState, action) => action.type !== '@Movies/UPDATE_PLAYBACK_INFO'
+});
 
 const sagaMiddleware = createSagaMiddleware();
 
