@@ -11,10 +11,6 @@ const GoogleCastButton = ({ movie, source: contentUrl, seriesTitle }) => {
   const client = useRemoteMediaClient();
   const { title, thumbnail, description: subtitle, year: releaseDate, time } = movie;
 
-  // React.useEffect(() => {
-  //   loadMedia(contentUrl);
-  // }, [contentUrl]);
-
   React.useEffect(() => {
     if (client) {
       loadMedia(contentUrl);
@@ -30,7 +26,8 @@ const GoogleCastButton = ({ movie, source: contentUrl, seriesTitle }) => {
         // autoplay: false,
         mediaInfo: {
           contentUrl,
-          // contentType: 'video/mp4',
+          // contentType: 'application/x-mpegURL',
+          // streamType: 'other',
           metadata: {
             images: [
               {
