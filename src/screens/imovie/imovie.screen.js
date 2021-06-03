@@ -166,6 +166,8 @@ const ImovieScreen = ({
     }
   };
 
+  console.log({ data });
+
   return (
     <View style={styles.container}>
       {renderErrorBanner()}

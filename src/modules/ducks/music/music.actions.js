@@ -11,7 +11,7 @@ const { Types, Creators } = createActions(
     playbackStart: [],
     updatePlaybackInfo: ['data']
   },
-  { prefix: '@Movie/' }
+  { prefix: '@Music/' }
 );
 
 export { Types, Creators };
