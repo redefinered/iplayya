@@ -13,6 +13,7 @@ import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectIsFetching } from 'modules/ducks/movies/movies.selectors';
 import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as MusicCreator } from 'modules/ducks/music/music.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { selectError } from 'modules/ducks/movies/movies.selectors';
 import { compose } from 'redux';
@@ -25,7 +26,8 @@ const Home = ({
   getCategoriesAction,
   getMoviesStartAction,
   resetCategoryPaginatorAction,
-  enableSwipeAction
+  enableSwipeAction,
+  getMusicGenresAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
@@ -34,8 +36,11 @@ const Home = ({
   React.useEffect(() => {
     getMoviesStartAction();
     getCategoriesAction();
+    getMusicGenresAction();
     resetCategoryPaginatorAction();
     enableSwipeAction(true);
+
+    // console.log('xxxxxx');
   }, []);
 
   React.useEffect(() => {
@@ -116,6 +121,7 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   getCategoriesAction: Creators.getCategories,
+  getMusicGenresAction: MusicCreator.getGenres,
   getMoviesStartAction: Creators.getMoviesStart,
   resetCategoryPaginatorAction: Creators.resetCategoryPaginator,
   enableSwipeAction: NavActionCreators.enableSwipe

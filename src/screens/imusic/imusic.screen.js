@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -12,16 +13,16 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators } from 'modules/ducks/music/music.actions';
 import Icon from 'components/icon/icon.component';
 import {
   selectError,
   selectIsFetching,
-  selectMovies,
-  selectCategoriesOf,
+  // selectMovies,
+  // selectCategoriesOf,
   selectPaginatorInfo,
-  selectCategoryPaginator
-} from 'modules/ducks/movies/movies.selectors';
+  selectGenrePaginator
+} from 'modules/ducks/music/music.selectors';
 import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
@@ -31,12 +32,12 @@ const ImusicScreen = ({
   isFetching,
   navigation,
   error,
-  getMoviesAction,
+  getAlbumsAction,
   paginatorInfo,
   addMovieToFavoritesStartAction,
   theme,
   route: { params },
-  categoryPaginator,
+  genrePaginator,
   movies,
   enableSwipeAction,
   setNetworkInfoAction
@@ -59,18 +60,18 @@ const ImusicScreen = ({
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
 
-  React.useEffect(() => {
-    addMovieToFavoritesStartAction();
-    enableSwipeAction(false);
+  // React.useEffect(() => {
+  //   addMovieToFavoritesStartAction();
+  //   enableSwipeAction(false);
 
-    // Subscribe to network changes
-    const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
-      setNetworkInfoAction({ type, isConnected });
-    });
+  //   // Subscribe to network changes
+  //   const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
+  //     setNetworkInfoAction({ type, isConnected });
+  //   });
 
-    // Unsubscribe to network changes
-    unsubscribe();
-  }, []);
+  //   // Unsubscribe to network changes
+  //   unsubscribe();
+  // }, []);
 
   React.useEffect(() => {
     let collection = [];
@@ -101,7 +102,7 @@ const ImusicScreen = ({
   // get movies on mount
   React.useEffect(() => {
     if (paginatorInfo.length) {
-      getMoviesAction(paginatorInfo, categoryPaginator);
+      getAlbumsAction(paginatorInfo, genrePaginator);
     }
   }, [paginatorInfo]);
 
@@ -111,12 +112,12 @@ const ImusicScreen = ({
   };
 
   const renderEmpty = () => {
-    return <Text>No movies found</Text>;
+    return <Text>No music found</Text>;
   };
 
   const handleRetry = () => {
     if (paginatorInfo.length) {
-      getMoviesAction(paginatorInfo, categoryPaginator);
+      getAlbumsAction(paginatorInfo, genrePaginator);
     }
     setShowBanner(false);
   };
@@ -151,14 +152,14 @@ const ImusicScreen = ({
 
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
-    // console.log({ category });
+
     return <CategoryScroll datatype="music" category={category} onSelect={handleMovieSelect} />;
   };
 
   const handleEndReached = (info) => {
     if (!onEndReachedCalledDuringMomentum) {
       console.log('end reached!', info);
-      getMoviesAction(paginatorInfo, categoryPaginator);
+      getAlbumsAction(paginatorInfo, genrePaginator);
       setOnEndReachedCalledDuringMomentum(true);
     }
   };
@@ -222,15 +223,15 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  movies: selectMovies,
+  // movies: selectMovies,
   paginatorInfo: selectPaginatorInfo,
-  categoryPaginator: selectCategoryPaginator,
-  categories: selectCategoriesOf('movies')
+  genrePaginator: selectGenrePaginator
+  // categories: selectCategoriesOf('movies')
 });
 
 const actions = {
   setNetworkInfoAction: AuthActionCreators.setNetworkInfo,
-  getMoviesAction: Creators.getMovies,
+  getAlbumsAction: Creators.getAlbums,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   enableSwipeAction: NavActionCreators.enableSwipe

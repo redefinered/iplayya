@@ -1,11 +1,22 @@
 import { gql } from '@apollo/client';
 
-export const GET = gql`
-  query GET_VIDEOS($input: videoRequest) {
-    videos(input: $input) {
+export const GET_GENRES = gql`
+  {
+    albumGenres {
       id
-      title
-      description
+      name
+    }
+  }
+`;
+
+export const GET_ALBUMS_BY_GENRE = gql`
+  query GET_ALBUMS_BY_GENRE($input: albumRequestByGenre) {
+    albumByGenre(input: $input) {
+      id
+      name
+      cover
+      performer
+      year
     }
   }
 `;

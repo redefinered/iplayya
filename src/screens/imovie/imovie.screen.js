@@ -22,7 +22,7 @@ import {
   selectPaginatorInfo,
   selectCategoryPaginator
 } from 'modules/ducks/movies/movies.selectors';
-import { urlEncodeTitle } from 'utils';
+// import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
 import NetInfo from '@react-native-community/netinfo';
@@ -76,20 +76,9 @@ const ImovieScreen = ({
   }, []);
 
   React.useEffect(() => {
-    let collection = [];
-    if (typeof movies === 'undefined') return setData(collection);
+    if (!movies) return;
 
-    collection = movies.map(({ thumbnail, ...rest }) => {
-      return {
-        thumbnail:
-          thumbnail === '' || thumbnail === 'N/A'
-            ? `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(rest.title)}`
-            : thumbnail,
-        ...rest
-      };
-    });
-
-    return setData(collection);
+    setData(movies);
   }, [movies]);
 
   React.useEffect(() => {
@@ -101,6 +90,7 @@ const ImovieScreen = ({
     setScrollIndex(0);
   }, [params, data]);
 
+  // console.log({ paginatorInfo });
   // get movies on mount
   React.useEffect(() => {
     if (paginatorInfo.length) {
@@ -165,8 +155,6 @@ const ImovieScreen = ({
       setOnEndReachedCalledDuringMomentum(true);
     }
   };
-
-  console.log({ data });
 
   return (
     <View style={styles.container}>

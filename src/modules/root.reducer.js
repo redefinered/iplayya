@@ -1,6 +1,7 @@
 import { persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 
+import appReducer from './ducks/app.reducer';
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
 import downloadsReducer from './ducks/downloads/downloads.reducer';
@@ -9,6 +10,7 @@ import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
+import musicReducer from './ducks/music/music.reducer';
 import isportsReducer from './ducks/isports/isports.reducer';
 import iradioReducer from './ducks/iradio/iradio.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
@@ -20,6 +22,7 @@ export const persistConfig = {
 };
 
 const rootReducer = persistCombineReducers(persistConfig, {
+  app: appReducer,
   nav: navReducer,
   auth: authReducer,
   downloads: downloadsReducer,
@@ -28,6 +31,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   itv: itvReducer,
   profile: profileReducer,
   movies: moviesReducer,
+  music: musicReducer,
   sports: isportsReducer,
   radios: iradioReducer,
   provider: providerReducer,

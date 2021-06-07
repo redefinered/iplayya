@@ -74,7 +74,6 @@ export function* getMoviesByCategoriesRequest(action) {
     const { videoByCategory: newMovies } = yield call(getMoviesByCategories, {
       input: nextPageInput
     });
-    console.log({ nextPageInput });
     yield put(Creators.getMoviesByCategoriesSuccess({ newMovies, nextPaginator: nextPageInput }));
   } catch (error) {
     yield put(Creators.getMoviesByCategoriesFailure(error.message));

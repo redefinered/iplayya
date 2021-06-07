@@ -1,11 +1,10 @@
 import client from 'apollo/client';
-import { GET_MOVIE, GET_MOVIES } from 'graphql/movie.graphql';
+import { GET_GENRES, GET_ALBUMS_BY_GENRE } from 'graphql/music.graphql';
 
-export const getOne = async (id) => {
+export const getGenres = async () => {
   try {
     const { data } = await client.query({
-      query: GET_MOVIE,
-      variables: { id }
+      query: GET_GENRES
     });
     return data;
   } catch (error) {
@@ -13,16 +12,14 @@ export const getOne = async (id) => {
   }
 };
 
-export const get = async (args) => {
-  const { limit, pageNumber } = args;
+export const getAlbumsByGenre = async (input) => {
   try {
     const { data } = await client.query({
-      query: GET_MOVIES,
-      variables: { input: { limit, pageNumber } }
+      query: GET_ALBUMS_BY_GENRE,
+      variables: { input }
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };

@@ -16,6 +16,7 @@ import { Creators as PasswordActionCreators } from 'modules/ducks/password/passw
 import { Creators as ProfileActionCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
 import { Creators as DownloadsActionCreators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import { selectProviders } from 'modules/ducks/provider/provider.selectors';
@@ -34,7 +35,7 @@ const App = ({
   passwordUpdateParams,
   providers,
   skippedProviderAdd,
-  getProfileAction,
+  // getProfileAction,
 
   resetAction
 }) => {
@@ -65,11 +66,11 @@ const App = ({
     });
   }, []);
 
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      getProfileAction();
-    }
-  }, [isLoggedIn]);
+  // React.useEffect(() => {
+  //   if (isLoggedIn) {
+  //     getProfileAction();
+  //   }
+  // }, [isLoggedIn]);
 
   if (testMode) return <Test />;
 
@@ -116,8 +117,9 @@ const actions = {
   purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
-  getProfileAction: ProfileActionCreators.get,
-  resetAction: DownloadsActionCreators.reset
+  // getProfileAction: ProfileActionCreators.get,
+  // resetAction: DownloadsActionCreators.reset
+  resetAction: MusicCreators.reset
 };
 
 export default connect(mapStateToProps, actions)(App);
