@@ -188,6 +188,7 @@ const ImovieScreen = ({
           </ScrollView> */}
           <FlatList
             data={data}
+            showsVerticalScrollIndicator={false}
             keyExtractor={(movie) => movie.category}
             renderItem={renderItem}
             initialScrollIndex={scrollIndex}
