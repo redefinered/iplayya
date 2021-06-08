@@ -20,10 +20,10 @@ import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectSearchResults,
-  selectIsFetching
+  selectIsFetching,
+  selectGenres
 } from 'modules/ducks/itv/itv.selectors';
 import { ScrollView } from 'react-native-gesture-handler';
-import { selectGenres } from 'modules/ducks/itv/itv.selectors';
 import Spacer from '../../components/spacer.component';
 
 const ItvSearchScreen = ({

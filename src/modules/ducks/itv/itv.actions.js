@@ -3,53 +3,55 @@ import { createActions } from 'reduxsauce';
 const { Types, Creators } = createActions(
   {
     /// query: GET_GENRES
-    getGenres: [],
+    getGenres: null,
     getGenresSuccess: ['data'],
     getGenresFailure: ['error'],
 
     getChannel: ['input'],
-    getChannelSuccess: ['data'],
+    getChannelSuccess: ['channel', 'token'],
     getChannelFailure: ['error'],
 
     /// get channels
+    getChannelsStart: null,
     getChannels: ['input'],
-    getChannelsSuccess: ['data'],
+    getChannelsSuccess: ['channels', 'nextPaginatorInfo'],
     getChannelsFailure: ['error'],
 
     getProgramsByChannel: ['input'],
     getProgramsByChannelSuccess: ['data'],
     getProgramsByChannelFailure: ['error'],
 
+    getChannelsByCategoriesStart: null,
     getChannelsByCategories: ['input'],
-    getChannelsByCategoriesSuccess: ['data'],
+    getChannelsByCategoriesSuccess: ['channels', 'nextPaginatorInfo'],
     getChannelsByCategoriesFailure: ['error'],
 
     // add to favorites
     addToFavorites: ['input'],
-    addToFavoritesSuccess: [],
+    addToFavoritesSuccess: null,
     addToFavoritesFailure: ['error'],
 
     removeFromFavorites: ['channelIds'],
-    removeFromFavoritesSuccess: [],
+    removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],
 
     getFavorites: ['input'],
     getFavoritesSuccess: ['data'],
     getFavoritesFailure: ['error'],
 
-    // misc
-    reset: [],
-    setPaginatorInfo: ['data'],
-    resetPaginator: [],
-
     /// downloads
     updateDownloads: ['data'],
     updateDownloadsProgress: ['data'],
 
-    searchStart: [],
+    searchStart: null,
     search: ['input'],
     searchSuccess: ['data'],
-    searchFailure: ['error']
+    searchFailure: ['error'],
+
+    // misc
+    reset: null,
+    setPaginatorInfo: ['data'],
+    resetPaginator: null
   },
   { prefix: '@Itv/' }
 );

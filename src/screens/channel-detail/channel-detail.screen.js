@@ -35,11 +35,8 @@ const ChannelDetailScreen = ({
   getChannelAction,
 
   /// the program that is playing at this moment
-  currentProgram,
-
-  isFetching
+  currentProgram
 }) => {
-  console.log({ isFetching });
   const [paused, setPaused] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
@@ -96,7 +93,7 @@ const ChannelDetailScreen = ({
 
   React.useEffect(() => {
     if (channel) {
-      const { url, title: channelName } = channel;
+      const { token, url, title: channelName } = channel;
       const titlesplit = channelName.split(' ');
       const title = titlesplit.join('_');
       const filename = `${channelId}_${title}.m3u8`;
@@ -109,7 +106,8 @@ const ChannelDetailScreen = ({
         // setSource(`${dirs.DocumentDir}/112238_test112238.m3u8`);
       } else {
         let sourceSplit = url.split(' ');
-        setSource(sourceSplit[1]);
+        setSource(`${sourceSplit[1]}?token=${token}`);
+        // setSource('http://84.17.37.2:2080/15/video.m3u8?token=08a9e5c3765cde1972e2384f4c5d4044');
         // setSource(`${dirs.DocumentDir}/112238_test112238.mp4`);
       }
     }

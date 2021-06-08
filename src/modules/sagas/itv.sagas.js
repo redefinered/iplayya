@@ -5,6 +5,7 @@ import {
   getChannel,
   getChannels,
   getChannelsByCategory,
+  getChannelToken,
   addToFavorites,
   removeFromFavorites,
   getFavorites,
@@ -29,7 +30,7 @@ export function* getChannelsRequest(action) {
 
   try {
     const { iptvs } = yield call(getChannels, action.input);
-    yield put(Creators.getChannelsSuccess({ channels: iptvs, nextPaginatorInfo }));
+    yield put(Creators.getChannelsSuccess(iptvs, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.getChannelsFailure(error.message));
   }
@@ -38,7 +39,11 @@ export function* getChannelsRequest(action) {
 export function* getChannelRequest(action) {
   try {
     const { iptv: channel } = yield call(getChannel, action.input);
-    yield put(Creators.getChannelSuccess(channel));
+    const {
+      getItvChannelToken: { token }
+    } = yield call(getChannelToken, { channelId: action.input.videoId });
+
+    yield put(Creators.getChannelSuccess(channel, token));
   } catch (error) {
     yield put(Creators.getChannelFailure(error.message));
   }
@@ -52,9 +57,7 @@ export function* getChannelsByCategoriesRequest(action) {
 
   try {
     const { iptvByCategory } = yield call(getChannelsByCategory, action.input);
-    yield put(
-      Creators.getChannelsByCategoriesSuccess({ channels: iptvByCategory, nextPaginatorInfo })
-    );
+    yield put(Creators.getChannelsByCategoriesSuccess(iptvByCategory, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.getChannelsByCategoriesFailure(error.message));
   }

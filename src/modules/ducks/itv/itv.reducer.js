@@ -1,13 +1,18 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './itv.actions';
+import uniqBy from 'lodash/unionBy';
+import orderBy from 'lodash/orderBy';
 
 const INITIAL_STATE = {
   isFetching: true,
   error: null,
   genres: [],
-  paginatorInfo: {
+
+  paginator: {
     limit: 10,
-    pageNumber: 1
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
   },
 
   // random channels from getChannelsByCategory
@@ -69,11 +74,13 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_CHANNEL_SUCCESS]: (state, action) => {
+    const { channel, token } = action;
+
     return {
       ...state,
       isFetching: false,
       error: null,
-      channel: action.data
+      channel: { token, ...channel }
     };
   },
   [Types.GET_CHANNEL_FAILURE]: (state, action) => {
@@ -85,7 +92,12 @@ export default createReducer(INITIAL_STATE, {
   },
 
   /// TODO: add GET_PROGRAMS_BY_CHANNEL reducers
-
+  [Types.GET_CHANNELS_START]: (state) => {
+    return {
+      ...state,
+      channels: []
+    };
+  },
   [Types.GET_CHANNELS]: (state) => {
     return {
       ...state,
@@ -94,20 +106,16 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_CHANNELS_SUCCESS]: (state, action) => {
-    const { channels, nextPaginatorInfo } = action.data;
+    const { channels, nextPaginatorInfo } = action;
 
-    /// reference to current state paginator info object
-    const currentPaginator = state.paginatorInfo;
-
-    /// update paginator info
-    const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
+    const updatedChannels = uniqBy([...channels, ...state.channels], 'id');
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      channels,
-      paginatorInfo,
+      channels: orderBy(updatedChannels, 'number', 'asc'),
+      paginator: Object.assign(state.paginator, nextPaginatorInfo),
       addedToFavorites: false,
       removedFromFavorites: false
     };
@@ -119,6 +127,12 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+  [Types.GET_CHANNELS_BY_CATEGORIES_START]: (state) => {
+    return {
+      ...state,
+      channels: []
+    };
+  },
   [Types.GET_CHANNELS_BY_CATEGORIES]: (state) => {
     return {
       ...state,
@@ -127,20 +141,18 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_SUCCESS]: (state, action) => {
-    const { channels, nextPaginatorInfo } = action.data;
+    const { channels, nextPaginatorInfo } = action;
 
-    /// reference to current state paginator info object
-    const currentPaginator = state.paginatorInfo;
-
-    /// update paginator info
-    const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
+    const updatedChannels = uniqBy([...channels, ...state.channels], 'id');
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      channels,
-      paginatorInfo
+      channels: orderBy(updatedChannels, 'number', 'asc'),
+      paginator: Object.assign(state.paginator, nextPaginatorInfo)
+      // addedToFavorites: false,
+      // removedFromFavorites: false
     };
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_FAILURE]: (state, action) => {
@@ -270,13 +282,18 @@ export default createReducer(INITIAL_STATE, {
   [Types.SET_PAGINATOR_INFO]: (state, action) => {
     return {
       ...state,
-      paginatorInfo: action.data
+      paginator: action.data
     };
   },
   [Types.RESET_PAGINATOR]: (state) => {
     return {
       ...state,
-      paginatorInfo: { limit: 10, pageNumber: 1 }
+      paginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
     };
   },
 

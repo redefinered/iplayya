@@ -39,6 +39,7 @@ const MediaPlayer = ({
   isLastEpisode,
   typename
 }) => {
+  console.log({ source });
   const theme = useTheme();
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
@@ -259,17 +260,9 @@ const MediaPlayer = ({
     setActiveState(null);
   };
 
-  // const handleSelectScreencastOption = (val) => {
-  //   setShowCastOptions(false);
-  //   setScreencastOption(val);
-  //   setScreencastActiveState(null);
-  // };
-
-  // console.log({ source, resolution, resolutions });
-  // console.log({ resolutions });
-  // console.log('source', source);
-  // console.log('typename', typename);
-  // console.log('volume', volume);
+  const handlePlaying = () => {
+    setPaused(false);
+  };
 
   const renderPlayer = () => {
     if (castSessionActive)
@@ -283,12 +276,11 @@ const MediaPlayer = ({
     if (typename === 'Iptv' || videoplayer === 'vlc')
       return (
         <VLCPlayer
-          // onPlaying={handleOnPlaying}
-          // onPaused={handleOnPause}
           ref={player}
           paused={paused}
           seek={sliderPosition}
           onProgress={handleProgress}
+          onPlaying={() => handlePlaying}
           source={{ uri: source }}
           volume={volume}
           onBuffering={onBuffer}

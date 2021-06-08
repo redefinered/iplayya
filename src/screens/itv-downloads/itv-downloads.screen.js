@@ -16,8 +16,12 @@ import ListItemItvDownloads from 'components/list-item-itv-downloads/list-item-i
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { selectPaginatorInfo } from 'modules/ducks/itv/itv.selectors';
-import { selectFavorites, selectError, selectIsFetching } from 'modules/ducks/itv/itv.selectors';
+import {
+  selectFavorites,
+  selectError,
+  selectIsFetching,
+  selectPaginator
+} from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import dummydata from './itv-downloads.dummy.json';
@@ -176,7 +180,7 @@ const Container = (props) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  paginatorInfo: selectPaginatorInfo,
+  paginatorInfo: selectPaginator,
   favorites: selectFavorites
 });
 

@@ -11,7 +11,6 @@ import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { selectPaginatorInfo } from 'modules/ducks/itv/itv.selectors';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
@@ -231,7 +230,6 @@ const Container = (props) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  paginatorInfo: selectPaginatorInfo,
   favorites: selectFavorites,
   removedFromFavorites: selectRemovedFromFavorites
 });

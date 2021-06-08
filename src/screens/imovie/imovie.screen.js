@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -24,7 +24,6 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
-import { FlatList } from 'react-native-gesture-handler';
 import NetInfo from '@react-native-community/netinfo';
 
 const ImovieScreen = ({

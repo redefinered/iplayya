@@ -7,6 +7,7 @@ import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
+import moment from 'moment';
 
 const spacer = 20;
 
@@ -23,8 +24,6 @@ const ListItemChanel = ({
   archived_link,
   ...contentProps
 }) => {
-  const theme = useTheme();
-
   if (full)
     return (
       <ContentWrap>
@@ -41,11 +40,6 @@ const ListItemChanel = ({
           <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
             <Image
               style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-              // source={{
-              //   url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(
-              //     contentProps.title
-              //   )}`
-              // }}
               source={contentProps.thumbnail}
             />
             <Content
@@ -85,11 +79,7 @@ const ListItemChanel = ({
           </Text>
         </View>
         <Pressable onPress={() => onRightActionPress(contentProps.title)}>
-          <Icon
-            name="heart-solid"
-            size={24}
-            style={{ color: is_favorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-          />
+          <Icon name="heart-solid" size={24} style={{ color: 'red' }} />
         </Pressable>
       </Pressable>
       <Spacer size={spacer} />
@@ -100,9 +90,11 @@ const ListItemChanel = ({
 // eslint-disable-next-line react/prop-types
 const Content = ({
   id,
+  number,
   title,
-  chanel,
+  epgtitle,
   time,
+  time_to,
   onRightActionPress,
   isFavorite,
   selected,
@@ -119,6 +111,17 @@ const Content = ({
     if (!activateCheckboxes) return;
     return <RadioButton selected={selected} />;
   };
+
+  const renderEpgtitle = () => {
+    if (!epgtitle) return;
+
+    return (
+      <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+        {epgtitle}
+      </Text>
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -128,7 +131,9 @@ const Content = ({
           justifyContent: 'space-between'
         }}
       >
-        <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
+        <Text
+          style={{ ...createFontFormat(12, 16), marginBottom: 5 }}
+        >{`${number}: ${title}`}</Text>
         {onRightActionPress ? (
           <Pressable onPress={() => handleRightActionPress()}>
             <Icon
@@ -141,9 +146,9 @@ const Content = ({
           renderCheckbox()
         )}
       </View>
-      <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-        {chanel}
-      </Text>
+
+      {renderEpgtitle()}
+
       <View
         style={{
           flexDirection: 'row',
@@ -152,7 +157,9 @@ const Content = ({
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>{time}</Text>
+          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>{`${moment(time).format(
+            'HH:mm A'
+          )} - ${moment(time_to).format('HH:mm A')}`}</Text>
           <Icon name="history" color="#13BD38" />
         </View>
         <Text
@@ -170,10 +177,13 @@ const Content = ({
 };
 
 Content.propTypes = {
+  number: PropTypes.string,
   time: PropTypes.string,
+  time_to: PropTypes.string,
   chanel: PropTypes.string,
   id: PropTypes.any,
   title: PropTypes.string,
+  epgtitle: PropTypes.string,
   isFavorite: PropTypes.bool,
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,

@@ -1,5 +1,13 @@
 import { gql } from '@apollo/client';
 
+export const GET_CHANNEL_TOKEN = gql`
+  query GET_CHANNEL_TOKEN($input: tokenRequest) {
+    getItvChannelToken(input: $input) {
+      token
+    }
+  }
+`;
+
 export const GET_GENRES = gql`
   query GET_GENRES {
     iptvGenres {
@@ -35,6 +43,7 @@ export const GET_CHANNELS = gql`
   query GET_CHANNELS($input: videoRequest) {
     iptvs(input: $input) {
       id
+      number
       title
       description
       time
@@ -51,6 +60,7 @@ export const GET_TV_CHANNELS_BY_CATEGORIES = gql`
   query GET_TV_CHANNELS_BY_CATEGORIES($input: videoRequestByGenre) {
     iptvByCategory(input: $input) {
       id
+      number
       title
       description
       time

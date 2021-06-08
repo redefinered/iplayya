@@ -1,15 +1,31 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CastButton, useRemoteMediaClient } from 'react-native-google-cast';
 import { createStructuredSelector } from 'reselect';
-import { selectMovie } from 'modules/ducks/movies/movies.selectors';
 import { connect } from 'react-redux';
+import { selectMovie } from 'modules/ducks/movies/movies.selectors';
+import { selectChannel } from 'modules/ducks/itv/itv.selectors';
 
-const GoogleCastButton = ({ movie, source: contentUrl, seriesTitle }) => {
+const GoogleCastButton = ({ movie, channel, source: contentUrl, seriesTitle }) => {
+  const [state, setState] = React.useState();
   const client = useRemoteMediaClient();
-  const { title, thumbnail, description: subtitle, year: releaseDate, time } = movie;
+
+  React.useEffect(() => {
+    if (movie) {
+      const { title, thumbnail, description: subtitle, year: releaseDate, time } = movie;
+
+      setState({ title, thumbnail, description: subtitle, year: releaseDate, time });
+    }
+
+    if (channel) {
+      const { title, description: subtitle } = channel;
+
+      setState({ title, thumbnail: null, description: subtitle, year: null, time: null });
+    }
+  }, [movie, channel]);
 
   React.useEffect(() => {
     if (client) {
@@ -20,6 +36,10 @@ const GoogleCastButton = ({ movie, source: contentUrl, seriesTitle }) => {
   }, [client, contentUrl]);
 
   const loadMedia = async (contentUrl) => {
+    if (!state) return;
+
+    const { title, thumbnail, description: subtitle, year: releaseDate, time } = state;
+
     const castTitle = seriesTitle ? `${title} - ${seriesTitle}` : title;
     try {
       await client.loadMedia({
@@ -65,6 +85,6 @@ GoogleCastButton.propTypes = {
   seriesTitle: PropTypes.string
 };
 
-const mapStateToProps = createStructuredSelector({ movie: selectMovie });
+const mapStateToProps = createStructuredSelector({ movie: selectMovie, channel: selectChannel });
 
 export default connect(mapStateToProps)(GoogleCastButton);
