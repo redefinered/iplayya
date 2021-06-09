@@ -6,13 +6,9 @@ import { createFontFormat } from 'utils';
 
 const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
   // console.log({ data });
-  const theme = useTheme();
+  // const theme = useTheme();
   return (
-    <ScrollView
-      horizontal
-      style={{ marginLeft: theme.spacing(2), paddingBottom: 30 }}
-      showsHorizontalScrollIndicator={false}
-    >
+    <ScrollView horizontal style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
       {data.map((d) => {
         const { id, ...itemProps } = d;
         return (
@@ -20,9 +16,9 @@ const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
             key={id}
             id={id.toString()}
             label={d[labelkey]}
-            {...itemProps}
             onSelect={onSelect}
             selected={selected}
+            {...itemProps}
           />
         );
       })}
@@ -48,12 +44,12 @@ const Pill = ({ id, label, selected, onSelect }) => {
       onPress={() => onSelect(id)}
       style={{
         paddingVertical: 10,
+        marginLeft: theme.spacing(2),
         paddingHorizontal: 15,
         backgroundColor:
           selected === id ? theme.iplayya.colors.vibrantpussy : theme.iplayya.colors.white25,
         height: 34,
-        borderRadius: 34,
-        marginRight: 10
+        borderRadius: 34
       }}
     >
       <Text style={{ ...createFontFormat(12, 16) }}>{label}</Text>

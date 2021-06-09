@@ -222,11 +222,9 @@ const ItvScreen = ({
     return <Text>No channels found</Text>;
   };
 
-  // console.log({ chanels: channelsData.map(({ number }) => number) });
-
   return (
     <View style={styles.container}>
-      <React.Fragment>
+      <View>
         {error && <Text>{error}</Text>}
         <SelectorPills
           data={genresData}
@@ -234,10 +232,12 @@ const ItvScreen = ({
           onSelect={onCategorySelect}
           selected={selectedCategory}
         />
+
+        <ContentWrap style={{ paddingTop: theme.spacing(2) }}>
+          {isFetching ? renderEmpty() : <View style={{ height: 0 }} />}
+        </ContentWrap>
         {!channelsData.length ? (
-          <ContentWrap style={{ paddingTop: theme.spacing(2) }}>
-            {!isFetching ? renderEmpty() : <View style={{ height: 0 }} />}
-          </ContentWrap>
+          <View />
         ) : (
           <FlatList
             ListHeaderComponent={
@@ -286,7 +286,7 @@ const ItvScreen = ({
             onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
           />
         )}
-      </React.Fragment>
+      </View>
 
       <Spacer size={50} />
 
@@ -356,7 +356,7 @@ const ItvScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
+  <ScreenContainer withHeaderPush withLoader>
     <ItvScreen {...props} />
   </ScreenContainer>
 );

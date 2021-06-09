@@ -39,6 +39,7 @@ const MediaPlayer = ({
   isLastEpisode,
   typename
 }) => {
+  console.log({ source });
   const theme = useTheme();
   const castSession = useCastSession();
   const client = useRemoteMediaClient();

@@ -142,7 +142,7 @@ const ChannelDetailScreen = ({
         {renderPlayer()}
       </View>
 
-      <ScrollView showsHorizontalScrollIndicator={false}>
+      <ScrollView showsHorizontalScrollIndicator={false} bounces={false}>
         <ContentWrap>
           <View
             style={{
@@ -188,6 +188,7 @@ const Content = ({
   isFavorite
   // ...rest
 }) => {
+  const theme = useTheme();
   // console.log({ title, epgtitle, time, time_to, onRightActionPress, isFavorite, ...rest });
   const renderEpgtitle = () => {
     if (!epgtitle)
@@ -210,7 +211,6 @@ const Content = ({
     return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
   };
 
-  const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
       <View
