@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -32,6 +32,7 @@ import uniq from 'lodash/uniq';
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvScreen = ({
+  isFetching,
   navigation,
   error,
   genres,
@@ -52,7 +53,8 @@ const ItvScreen = ({
   // eslint-disable-next-line no-unused-vars
   reset
 }) => {
-  const [selectedCategory, setSelectedCategory] = React.useState('all');
+  const theme = useTheme();
+  const [selectedCategory, setSelectedCategory] = React.useState();
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
@@ -72,6 +74,9 @@ const ItvScreen = ({
     enableSwipeAction(false);
 
     getChannelsStartAction();
+    getChannelsByCategoriesStartAction();
+
+    setSelectedCategory('all');
 
     // reset();
   }, []);
@@ -211,13 +216,11 @@ const ItvScreen = ({
     }
   };
 
-  console.log({ channelsData: channelsData.map(({ number }) => number) });
-
-  // const renderEmpty = () => {
-  //   if (error) return <Text>{error}</Text>;
-  //   // this should only be returned if user did not subscribe to any channels
-  //   return <Text>No channels found</Text>;
-  // };
+  const renderEmpty = () => {
+    if (error) return <Text>{error}</Text>;
+    // this should only be returned if user did not subscribe to any channels
+    return <Text>No channels found</Text>;
+  };
 
   // console.log({ chanels: channelsData.map(({ number }) => number) });
 
@@ -231,56 +234,58 @@ const ItvScreen = ({
           onSelect={onCategorySelect}
           selected={selectedCategory}
         />
-        {/* {!channelsData.length ? (
+        {!channelsData.length ? (
           <ContentWrap style={{ paddingTop: theme.spacing(2) }}>
-            {!isFetching ? renderEmpty() : null}
+            {!isFetching ? renderEmpty() : <View style={{ height: 0 }} />}
           </ContentWrap>
-        ) : null} */}
-        <FlatList
-          ListHeaderComponent={
-            <View style={{ marginBottom: 30 }}>
-              <ContentWrap>
-                <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                  Featured TV Channels
-                </Text>
-              </ContentWrap>
-              <ScrollView
-                style={{ paddingHorizontal: 10 }}
-                horizontal
-                bounces={false}
-                showsHorizontalScrollIndicator={false}
-              >
-                {channelsData.map(({ id, ...itemProps }) => {
-                  let isNotificationActive =
-                    notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
-                  return (
-                    <ItemPreview
-                      id={id}
-                      key={id}
-                      onSelect={handleItemSelect}
-                      handleSubscribeToItem={handleSubscribeToItem}
-                      isNotificationActive={isNotificationActive}
-                      {...itemProps}
-                    />
-                  );
-                })}
-              </ScrollView>
-            </View>
-          }
-          data={channelsData}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item: { ...itemProps } }) => (
-            <ListItemChanel
-              onSelect={handleItemSelect}
-              onRightActionPress={handleAddToFavorites}
-              full
-              {...itemProps}
-            />
-          )}
-          onEndReached={() => handleEndReached()}
-          onEndReachedThreshold={0.5}
-          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-        />
+        ) : (
+          <FlatList
+            ListHeaderComponent={
+              <View style={{ marginBottom: 30 }}>
+                <ContentWrap>
+                  <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+                    Featured TV Channels
+                  </Text>
+                </ContentWrap>
+                <ScrollView
+                  style={{ paddingHorizontal: 10 }}
+                  horizontal
+                  bounces={false}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {channelsData.map(({ id, ...itemProps }) => {
+                    let isNotificationActive =
+                      notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
+                    return (
+                      <ItemPreview
+                        id={id}
+                        key={id}
+                        onSelect={handleItemSelect}
+                        handleSubscribeToItem={handleSubscribeToItem}
+                        isNotificationActive={isNotificationActive}
+                        {...itemProps}
+                      />
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            }
+            data={channelsData}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item: { epgtitle, ...itemProps } }) => (
+              <ListItemChanel
+                onSelect={handleItemSelect}
+                onRightActionPress={handleAddToFavorites}
+                full
+                epgtitle={epgtitle}
+                {...itemProps}
+              />
+            )}
+            onEndReached={() => handleEndReached()}
+            onEndReachedThreshold={0.5}
+            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          />
+        )}
       </React.Fragment>
 
       <Spacer size={50} />

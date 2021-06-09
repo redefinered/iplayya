@@ -29,6 +29,7 @@ const ChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
+  // eslint-disable-next-line no-unused-vars
   error,
   channel,
   getProgramsByChannelAction,
@@ -37,19 +38,12 @@ const ChannelDetailScreen = ({
   /// the program that is playing at this moment
   currentProgram
 }) => {
-  const [paused, setPaused] = React.useState(true);
+  const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
-  // const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
-  /// temporary
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
-
-  // console.log({ isMovieDownloaded });
-
-  /// temporary data
-  // const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
     let date = new Date(Date.now());
@@ -57,34 +51,14 @@ const ChannelDetailScreen = ({
     getChannelAction({ videoId: channelId });
   }, []);
 
-  // React.useEffect(() => {
-  //   if (channel) {
-  //     const titlesplit = channel.title.split(' ');
-  //     const title = titlesplit.join('_');
-  //     const filename = `${channelId}_${title}.m3u8`;
-  //     const file = downloadedFiles.find((file) => file === filename);
-
-  //     // check if downloaded
-  //     if (downloadedFiles.length) {
-  //       if (typeof file !== 'undefined') {
-  //         setIsMoviedownloaded(true);
-  //       } else {
-  //         setIsMoviedownloaded(false);
-  //       }
-  //     }
-  //   }
-  // }, [channel, downloadedFiles]);
-
   React.useEffect(() => {
     if (channel && currentProgram) {
-      const { title, time, time_to } = currentProgram;
-      let startTime = new Date(time);
-      let endTime = new Date(time_to);
+      const { title: epgtitle, time, time_to } = currentProgram;
       const data = {
-        id: 6,
-        title,
-        chanel: channel.title,
-        time: `${moment(startTime).format('hh:mm A')} - ${moment(endTime).format('hh:mm A')}`,
+        title: channel.title,
+        epgtitle,
+        time,
+        time_to,
         thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
       };
       setCurrentlyPlaying(data);
@@ -107,8 +81,6 @@ const ChannelDetailScreen = ({
       } else {
         let sourceSplit = url.split(' ');
         setSource(`${sourceSplit[1]}?token=${token}`);
-        // setSource('http://84.17.37.2:2080/15/video.m3u8?token=08a9e5c3765cde1972e2384f4c5d4044');
-        // setSource(`${dirs.DocumentDir}/112238_test112238.mp4`);
       }
     }
     // console.log({ isMovieDownloaded });
@@ -128,15 +100,15 @@ const ChannelDetailScreen = ({
   if (!channel) return <Text>fetching...</Text>;
 
   const renderPlayer = () => {
-    if (!currentlyPlaying) return;
+    // if (!currentlyPlaying) return;
     if (source) {
       return (
         <MediaPlayer
           isSeries={false}
           paused={paused}
           source={source}
-          thumbnail={currentlyPlaying.thumbnail}
-          title={currentlyPlaying.title}
+          // thumbnail={currentlyPlaying.thumbnail}
+          // title={currentlyPlaying.title}
           togglePlay={handleTogglePlay}
           loading={loading}
           setLoading={setLoading}
@@ -160,7 +132,7 @@ const ChannelDetailScreen = ({
           backgroundColor: 'black'
         }}
       >
-        {error && <Text style={{ color: 'red' }}>Erro: something went wrong</Text>}
+        {/* {error && <Text style={{ color: 'red' }}>Error: something went wrong x</Text>} */}
         {/* <VLCPlayer
           autoplay={true}
           source={{ uri: source }}
@@ -190,6 +162,7 @@ const ChannelDetailScreen = ({
               />
               <Content
                 {...currentlyPlaying}
+                channeltitle={channel.title}
                 onRightActionPress={handleFovoritePress}
                 isFavorite={isFavorite}
               />
@@ -198,20 +171,45 @@ const ChannelDetailScreen = ({
         </ContentWrap>
         {/* program guide */}
 
-        <View>
-          <ContentWrap>
-            <Text style={{ ...createFontFormat(16, 22) }}>Program Guide</Text>
-          </ContentWrap>
-
-          <ProgramGuide channelId={channelId} />
-        </View>
+        <ProgramGuide channelId={channelId} />
       </ScrollView>
     </View>
   );
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
+const Content = ({
+  channeltitle,
+  title,
+  epgtitle,
+  time,
+  time_to,
+  onRightActionPress,
+  isFavorite
+  // ...rest
+}) => {
+  // console.log({ title, epgtitle, time, time_to, onRightActionPress, isFavorite, ...rest });
+  const renderEpgtitle = () => {
+    if (!epgtitle)
+      return (
+        <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+          Program title unavailable
+        </Text>
+      );
+
+    return (
+      <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+        {epgtitle}
+      </Text>
+    );
+  };
+
+  const getSchedule = (time, time_to) => {
+    if (!time || !time_to) return;
+
+    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+  };
+
   const theme = useTheme();
   return (
     <View style={{ flex: 1 }}>
@@ -222,7 +220,9 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
           justifyContent: 'space-between'
         }}
       >
-        <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
+        <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>
+          {title || channeltitle}
+        </Text>
         <Pressable onPress={() => onRightActionPress(title)}>
           <Icon
             name="heart-solid"
@@ -232,7 +232,7 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
         </Pressable>
       </View>
       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-        {chanel}
+        {renderEpgtitle()}
       </Text>
       <View
         style={{
@@ -242,7 +242,9 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>{time}</Text>
+          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
+            {getSchedule(time, time_to)}
+          </Text>
           <Icon name="history" color="#13BD38" />
         </View>
       </View>

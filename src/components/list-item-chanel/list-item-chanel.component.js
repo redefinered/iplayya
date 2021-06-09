@@ -18,18 +18,23 @@ const ListItemChanel = ({
   is_favorite,
   full,
   selected,
-  handleLongPress,
+  // handleLongPress,
   activateCheckboxes,
-  // eslint-disable-next-line react/prop-types
-  archived_link,
   ...contentProps
 }) => {
+  const handleItemPress = () => {
+    // const { epgtitle, time, time_to } = contentProps;
+    // if (!epgtitle || !time || !time_to) return;
+
+    onSelect(id);
+  };
+
   if (full)
     return (
       <ContentWrap>
         <Pressable
-          onLongPress={() => handleLongPress(id)}
-          onPress={() => onSelect(id, archived_link)}
+          // onLongPress={() => handleLongPress(id)}
+          onPress={handleItemPress}
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -59,7 +64,7 @@ const ListItemChanel = ({
   return (
     <ContentWrap>
       <Pressable
-        onPress={() => onSelect(id)}
+        onPress={handleItemPress}
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -113,13 +118,24 @@ const Content = ({
   };
 
   const renderEpgtitle = () => {
-    if (!epgtitle) return;
+    if (!epgtitle)
+      return (
+        <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+          Program title unavailable
+        </Text>
+      );
 
     return (
       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
         {epgtitle}
       </Text>
     );
+  };
+
+  const getSchedule = (time, time_to) => {
+    if (!time || !time_to) return;
+
+    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
   };
 
   return (
@@ -157,9 +173,9 @@ const Content = ({
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>{`${moment(time).format(
-            'HH:mm A'
-          )} - ${moment(time_to).format('HH:mm A')}`}</Text>
+          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
+            {getSchedule(time, time_to)}
+          </Text>
           <Icon name="history" color="#13BD38" />
         </View>
         <Text
@@ -198,7 +214,7 @@ ListItemChanel.propTypes = {
   onSelect: PropTypes.func,
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
-  handleLongPress: PropTypes.func,
+  // handleLongPress: PropTypes.func,
   activateCheckboxes: PropTypes.bool
 };
 

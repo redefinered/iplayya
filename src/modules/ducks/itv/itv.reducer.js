@@ -183,7 +183,8 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: false,
-      error: action.error
+      error: action.error,
+      programs: []
     };
   },
 
