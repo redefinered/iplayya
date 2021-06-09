@@ -15,6 +15,7 @@ import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
+import Spacer from 'components/screen-container.component';
 import {
   selectError,
   selectIsFetching,
@@ -120,13 +121,13 @@ const ChannelDetailScreen = ({
   };
 
   return (
-    <View style={{ marginTop: 10 }}>
+    <View style={{ marginTop: 10, paddingBottom: 220 }}>
       {/* Player */}
       <View
         style={{
           width: '100%',
           height: 211,
-          marginBottom: 10,
+          // marginBottom: 10,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: 'black'
@@ -142,7 +143,7 @@ const ChannelDetailScreen = ({
         {renderPlayer()}
       </View>
 
-      <ScrollView showsHorizontalScrollIndicator={false} bounces={false}>
+      <ScrollView showsHorizontalScrollIndicator={false} bounces={true}>
         <ContentWrap>
           <View
             style={{
@@ -152,7 +153,7 @@ const ChannelDetailScreen = ({
               marginBottom: 20
             }}
           >
-            <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
               <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{

@@ -54,7 +54,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_GENRES_SUCCESS]: (state, action) => {
     return {
       ...state,
-      isFetching: false,
+      // isFetching: false,
       error: null,
       genres: action.data
     };

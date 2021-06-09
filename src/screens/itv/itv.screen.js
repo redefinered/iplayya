@@ -53,6 +53,7 @@ const ItvScreen = ({
   // eslint-disable-next-line no-unused-vars
   reset
 }) => {
+  console.log({ isFetching });
   const theme = useTheme();
   const [selectedCategory, setSelectedCategory] = React.useState();
   const [showSnackBar, setShowSnackBar] = React.useState(false);
@@ -356,7 +357,7 @@ const ItvScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush withLoader>
+  <ScreenContainer withHeaderPush>
     <ItvScreen {...props} />
   </ScreenContainer>
 );

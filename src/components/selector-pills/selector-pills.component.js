@@ -5,10 +5,8 @@ import { Text, useTheme } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 
 const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
-  // console.log({ data });
-  // const theme = useTheme();
   return (
-    <ScrollView horizontal style={{ paddingBottom: 30 }} showsHorizontalScrollIndicator={false}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 40 }}>
       {data.map((d) => {
         const { id, ...itemProps } = d;
         return (
@@ -43,7 +41,7 @@ const Pill = ({ id, label, selected, onSelect }) => {
     <Pressable
       onPress={() => onSelect(id)}
       style={{
-        paddingVertical: 10,
+        justifyContent: 'center',
         marginLeft: theme.spacing(2),
         paddingHorizontal: 15,
         backgroundColor:

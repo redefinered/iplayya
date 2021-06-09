@@ -11,6 +11,8 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { selectPrograms } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
+// import Spacer from 'components/screen-container.component';
+import theme from 'common/theme';
 
 // eslint-disable-next-line no-unused-vars
 const ProgramGuide = ({ programs, getProgramsByChannelAction, channelId }) => {
@@ -28,11 +30,15 @@ const ProgramGuide = ({ programs, getProgramsByChannelAction, channelId }) => {
     // console.log({ id, dateObj });
   };
 
+  // return empty componet if no available programs
   if (!programs.length) return <View />;
+
   return (
     <View>
       <ContentWrap>
-        <Text style={{ ...createFontFormat(16, 22) }}>Program Guide</Text>
+        <Text style={{ ...createFontFormat(16, 22), marginBottom: theme.spacing(2) }}>
+          Program Guide
+        </Text>
       </ContentWrap>
 
       <SelectorPills
