@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -23,7 +23,6 @@ import {
   selectPaginator,
   selectGenres,
   selectChannels,
-  selectAddedToFavorites,
   selectFavorites
 } from 'modules/ducks/itv/itv.selectors';
 import Spacer from 'components/spacer.component';
@@ -32,12 +31,12 @@ import uniq from 'lodash/uniq';
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvScreen = ({
-  isFetching,
+  // isFetching,
   navigation,
   error,
   genres,
   channels,
-  getGenresAction,
+  // getGenresAction,
   getChannelsByCategoriesStartAction,
   getChannelsStartAction,
   getChannelsAction,
@@ -45,17 +44,16 @@ const ItvScreen = ({
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
-  isFavoritesUpdated,
-  getFavoritesAction,
+  // isFavoritesUpdated,
+  // getFavoritesAction,
   enableSwipeAction,
   route: { params },
 
   // eslint-disable-next-line no-unused-vars
   reset
 }) => {
-  console.log({ isFetching });
-  const theme = useTheme();
-  const [selectedCategory, setSelectedCategory] = React.useState();
+  // const theme = useTheme();
+  const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
@@ -71,16 +69,19 @@ const ItvScreen = ({
   // get genres on mount
   React.useEffect(() => {
     resetPaginatorAction(); // for debugging
-    getGenresAction();
+    // getGenresAction();
     enableSwipeAction(false);
 
     getChannelsStartAction();
-    getChannelsByCategoriesStartAction();
 
-    setSelectedCategory('all');
-
-    // reset();
+    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
   }, []);
+
+  // React.useEffect(() => {
+  //   if (genreRefreshed) {
+  //     getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+  //   }
+  // }, [genreRefreshed]);
 
   React.useEffect(() => {
     if (typeof params !== 'undefined') {
@@ -96,21 +97,8 @@ const ItvScreen = ({
       data.unshift({ id: 'all', title: 'All channels' });
 
       setGenresData(data);
-
-      // fetch data from all channels initially
-      // getChannelsAction({ ...paginator });
     }
   }, [genres]);
-
-  // get favorites if an item is added
-  React.useEffect(() => {
-    if (isFavoritesUpdated) {
-      setShowSnackBar(true);
-      getFavoritesAction();
-      // getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-      getChannelsAction(paginator);
-    }
-  }, [isFavoritesUpdated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -136,9 +124,6 @@ const ItvScreen = ({
       let data = channels.map(({ id, title, ...rest }) => ({
         id,
         title,
-        // thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
-        // thumbnail:
-        //   'https://venngage-wordpress.s3.amazonaws.com/uploads/2020/04/Curves-Twitch-Banner-Template.png',
         thumbnail: channelplaceholder,
         ...rest
       }));
@@ -152,7 +137,7 @@ const ItvScreen = ({
     let title = channels.find(({ id }) => id === channelId).title;
     setFavorited(title);
 
-    addToFavoritesAction({ videoId: parseInt(channelId) });
+    addToFavoritesAction(parseInt(channelId));
   };
 
   const hideSnackBar = () => {
@@ -187,15 +172,9 @@ const ItvScreen = ({
     if (selectedCategory === 'all') {
       getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     } else {
-      // console.log('fuck!');
       getChannelsByCategoriesAction({
         categories: [parseInt(selectedCategory)],
         ...paginator
-        // limit: 10,
-        // pageNumber: 1,
-
-        // orderBy: 'number',
-        // order: 'asc'
       });
     }
   }, [selectedCategory]);
@@ -217,16 +196,20 @@ const ItvScreen = ({
     }
   };
 
-  const renderEmpty = () => {
-    if (error) return <Text>{error}</Text>;
-    // this should only be returned if user did not subscribe to any channels
-    return <Text>No channels found</Text>;
+  // eslint-disable-next-line no-unused-vars
+  const renderError = () => {
+    if (error)
+      return (
+        <ContentWrap>
+          <Text>{error}</Text>
+        </ContentWrap>
+      );
   };
 
   return (
     <View style={styles.container}>
       <View>
-        {error && <Text>{error}</Text>}
+        {/* {error && <Text>{error}</Text>} */}
         <SelectorPills
           data={genresData}
           labelkey="title"
@@ -234,9 +217,8 @@ const ItvScreen = ({
           selected={selectedCategory}
         />
 
-        <ContentWrap style={{ paddingTop: theme.spacing(2) }}>
-          {isFetching ? renderEmpty() : <View style={{ height: 0 }} />}
-        </ContentWrap>
+        {/* {renderError()} errors should give more information rather than just saying "empty" */}
+
         {!channelsData.length ? (
           <View />
         ) : (
@@ -375,8 +357,7 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   genres: selectGenres,
   paginator: selectPaginator,
-  channels: selectChannels,
-  isFavoritesUpdated: selectAddedToFavorites
+  channels: selectChannels
 });
 
 const actions = {

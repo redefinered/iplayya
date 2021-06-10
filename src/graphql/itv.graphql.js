@@ -86,6 +86,7 @@ export const GET_FAVORITES = gql`
   query GET_FAVORITE_CHANNELS($input: videoRequest) {
     favoriteIptvs(input: $input) {
       id
+      number
       title
       description
       time

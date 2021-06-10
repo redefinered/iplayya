@@ -26,7 +26,6 @@ import { useTheme, ActivityIndicator } from 'react-native-paper';
  */
 export default function withLoader(WrappedComponent) {
   const Loader = ({ isFetching, ...otherProps }) => {
-    console.log({ isFetching });
     const theme = useTheme();
     const renderLoader = () => {
       if (isFetching)

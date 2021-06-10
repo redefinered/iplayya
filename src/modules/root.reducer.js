@@ -1,6 +1,7 @@
 import { persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 
+import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
 import downloadsReducer from './ducks/downloads/downloads.reducer';
@@ -20,6 +21,7 @@ export const persistConfig = {
 };
 
 const rootReducer = persistCombineReducers(persistConfig, {
+  app: appReducer,
   nav: navReducer,
   auth: authReducer,
   downloads: downloadsReducer,

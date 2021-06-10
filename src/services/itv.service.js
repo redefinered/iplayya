@@ -71,11 +71,11 @@ export const getChannelsByCategory = async (input) => {
   }
 };
 
-export const addToFavorites = async (input) => {
+export const addToFavorites = async (videoId) => {
   try {
     const { data } = await client.mutate({
       mutation: ADD_TO_FAVORITES,
-      variables: { input },
+      variables: { input: { videoId } },
       refetchQueries: [
         {
           query: GET_FAVORITES,
@@ -121,11 +121,12 @@ export const removeFromFavorites = async (input) => {
 };
 
 export const getFavorites = async (input) => {
-  console.log({ getFavoritesInput: input });
+  // console.log({ getFavoritesInput: input });
   try {
     const { data } = await client.query({
-      query: GET_FAVORITES
-      // variables: { input: { limit: 10, pageNumber: 1 } }
+      query: GET_FAVORITES,
+      fetchPolicy: 'network-only',
+      variables: { input }
     });
     return data;
   } catch (error) {

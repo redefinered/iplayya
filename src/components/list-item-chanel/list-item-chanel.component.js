@@ -18,7 +18,7 @@ const ListItemChanel = ({
   is_favorite,
   full,
   selected,
-  // handleLongPress,
+  handleLongPress,
   activateCheckboxes,
   ...contentProps
 }) => {
@@ -33,7 +33,7 @@ const ListItemChanel = ({
     return (
       <ContentWrap>
         <Pressable
-          // onLongPress={() => handleLongPress(id)}
+          onLongPress={() => handleLongPress(id)}
           onPress={handleItemPress}
           style={{
             flexDirection: 'row',
@@ -214,7 +214,7 @@ ListItemChanel.propTypes = {
   onSelect: PropTypes.func,
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
-  // handleLongPress: PropTypes.func,
+  handleLongPress: PropTypes.func,
   activateCheckboxes: PropTypes.bool
 };
 

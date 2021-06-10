@@ -27,7 +27,7 @@ const { Types, Creators } = createActions(
     getChannelsByCategoriesFailure: ['error'],
 
     // add to favorites
-    addToFavorites: ['input'],
+    addToFavorites: ['videoId'],
     addToFavoritesSuccess: null,
     addToFavoritesFailure: ['error'],
 
@@ -36,8 +36,9 @@ const { Types, Creators } = createActions(
     removeFromFavoritesFailure: ['error'],
 
     getFavorites: ['input'],
-    getFavoritesSuccess: ['data'],
+    getFavoritesSuccess: ['data', 'nextPaginator'],
     getFavoritesFailure: ['error'],
+    resetFavoritesPaginator: null,
 
     /// downloads
     updateDownloads: ['data'],

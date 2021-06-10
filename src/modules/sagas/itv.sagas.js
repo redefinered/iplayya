@@ -64,10 +64,8 @@ export function* getChannelsByCategoriesRequest(action) {
 }
 
 export function* addToFavoritesRequest(action) {
-  const { input } = action;
-  console.log({ input });
   try {
-    const { addIptvToFavorites } = yield call(addToFavorites, input);
+    const { addIptvToFavorites } = yield call(addToFavorites, action.videoId);
     if (addIptvToFavorites.status !== 'success') throw new Error('Error adding item to favorites');
     yield put(Creators.addToFavoritesSuccess());
   } catch (error) {
@@ -91,7 +89,11 @@ export function* getFavoritesRequest(action) {
   const { input } = action;
   try {
     const { favoriteIptvs } = yield call(getFavorites, input);
-    yield put(Creators.getFavoritesSuccess(favoriteIptvs));
+
+    /// increment paginator pageNumber
+    Object.assign(input, { pageNumber: input.pageNumber + 1 });
+
+    yield put(Creators.getFavoritesSuccess(favoriteIptvs, input));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
   }

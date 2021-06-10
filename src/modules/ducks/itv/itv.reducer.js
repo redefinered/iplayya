@@ -2,6 +2,7 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './itv.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
+import { updateChannelsWithFavorited } from './itv.helpers';
 
 const INITIAL_STATE = {
   isFetching: true,
@@ -26,10 +27,17 @@ const INITIAL_STATE = {
   // programs per selected channel
   programs: [],
 
-  addedToFavorites: false,
-  removedFromFavorites: false,
+  // addedToFavorites: false,
+  // removedFromFavorites: false,
 
   favorites: [],
+  favoritesPaginator: {
+    limit: 10,
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
+  },
+  favoritesListUpdated: false,
 
   // download tasks
   downloads: {},
@@ -54,7 +62,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_GENRES_SUCCESS]: (state, action) => {
     return {
       ...state,
-      // isFetching: false,
+      isFetching: false,
       error: null,
       genres: action.data
     };
@@ -115,9 +123,9 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: null,
       channels: orderBy(updatedChannels, 'number', 'asc'),
-      paginator: Object.assign(state.paginator, nextPaginatorInfo),
-      addedToFavorites: false,
-      removedFromFavorites: false
+      paginator: Object.assign(state.paginator, nextPaginatorInfo)
+      // addedToFavorites: false,
+      // removedFromFavorites: false
     };
   },
   [Types.GET_CHANNELS_FAILURE]: (state, action) => {
@@ -151,7 +159,7 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       channels: orderBy(updatedChannels, 'number', 'asc'),
       paginator: Object.assign(state.paginator, nextPaginatorInfo)
-      // addedToFavorites: false,
+      // addedToFavorites: false
       // removedFromFavorites: false
     };
   },
@@ -189,11 +197,15 @@ export default createReducer(INITIAL_STATE, {
   },
 
   // add to favorites
-  [Types.ADD_TO_FAVORITES]: (state) => {
+  [Types.ADD_TO_FAVORITES]: (state, action) => {
+    const channels = updateChannelsWithFavorited(state, action);
+
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      channels,
+      favoritesListUpdated: false
     };
   },
   [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
@@ -201,14 +213,15 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      addedToFavorites: true
+      favoritesListUpdated: true
     };
   },
   [Types.ADD_TO_FAVORITES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      error: action.error
+      error: action.error,
+      favoritesListUpdated: false
     };
   },
 
@@ -217,7 +230,8 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      favoritesListUpdated: false
     };
   },
   [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
@@ -225,14 +239,16 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      removedFromFavorites: true
+      favorites: [],
+      favoritesListUpdated: true
     };
   },
   [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      error: action.error
+      error: action.error,
+      favoritesListUpdated: false
     };
   },
 
@@ -245,13 +261,18 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
+    const { data, nextPaginator } = action;
+
+    const updatedData = uniqBy([...state.favorites, ...data], 'id');
+
     return {
       ...state,
       isFetching: false,
       error: null,
-      addedToFavorites: false,
-      removedFromFavorites: false,
-      favorites: action.data
+      // addedToFavorites: false,
+      // removedFromFavorites: false,
+      favorites: orderBy(updatedData, 'number', 'asc'), /// overkill yata to
+      favoritesPaginator: nextPaginator
     };
   },
   [Types.GET_FAVORITES_FAILURE]: (state, action) => {
@@ -259,6 +280,17 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error
+    };
+  },
+  [Types.RESET_FAVORITES_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      favoritesPaginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
     };
   },
 

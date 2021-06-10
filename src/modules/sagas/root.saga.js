@@ -1,4 +1,5 @@
 import { all, fork } from 'redux-saga/effects';
+import appSagas from './app.sagas';
 import authSagas from './auth.sagas';
 import downloadsSagas from './downloads.sagas';
 import itvSagas from './itv.sagas';
@@ -12,6 +13,7 @@ import iradioSagas from './iradio.sagas';
 
 export default function* rootSaga() {
   yield all([
+    fork(appSagas),
     fork(authSagas),
     fork(downloadsSagas),
     fork(itvSagas),
