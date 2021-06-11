@@ -15,7 +15,6 @@ import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
-import Spacer from 'components/screen-container.component';
 import {
   selectError,
   selectIsFetching,
@@ -127,19 +126,11 @@ const ChannelDetailScreen = ({
         style={{
           width: '100%',
           height: 211,
-          // marginBottom: 10,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: 'black'
         }}
       >
-        {/* {error && <Text style={{ color: 'red' }}>Error: something went wrong x</Text>} */}
-        {/* <VLCPlayer
-          autoplay={true}
-          source={{ uri: source }}
-          volume={null}
-          style={{ width: Dimensions.get('window').width, height: 211 }}
-        /> */}
         {renderPlayer()}
       </View>
 
@@ -157,7 +148,6 @@ const ChannelDetailScreen = ({
               <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
-                  // url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(data.title)}`
                   url: 'http://via.placeholder.com/60x60.png'
                 }}
               />
@@ -187,10 +177,8 @@ const Content = ({
   time_to,
   onRightActionPress,
   isFavorite
-  // ...rest
 }) => {
   const theme = useTheme();
-  // console.log({ title, epgtitle, time, time_to, onRightActionPress, isFavorite, ...rest });
   const renderEpgtitle = () => {
     if (!epgtitle)
       return (

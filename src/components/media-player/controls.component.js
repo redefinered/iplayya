@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -25,6 +24,8 @@ import {
 import CastButton from 'components/cast-button/cast-button.component';
 import { useRemoteMediaClient } from 'react-native-google-cast';
 
+import SystemSetting from 'react-native-system-setting';
+
 const VideoControls = ({
   theme,
   currentTime,
@@ -45,6 +46,15 @@ const VideoControls = ({
 }) => {
   const [mediaInfo, setMediaInfo] = React.useState(null);
   const client = useRemoteMediaClient();
+
+  React.useEffect(() => {
+    const volumeListener = SystemSetting.addVolumeListener((data) => {
+      const volume = data.value;
+      setVolume(volume);
+    });
+
+    return () => SystemSetting.removeVolumeListener(volumeListener);
+  }, []);
 
   React.useEffect(() => {
     if (client) {
@@ -86,12 +96,6 @@ const VideoControls = ({
     controlProps.setSliderPosition(position);
     controlProps.setPaused(false);
   };
-
-  // React.useEffect(() => {
-  //   if (currentTime === 0) {
-  //     controlProps.setPaused(true);
-  //   }
-  // }, [currentTime]);
 
   const renderVolumeSlider = () => {
     if (castSessionActive) return;

@@ -20,6 +20,8 @@ import uuid from 'react-uuid';
 
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
 
+import SystemSetting from 'react-native-system-setting';
+
 const MediaPlayer = ({
   videoplayer,
   updatePlaybackInfoAction,
@@ -39,7 +41,7 @@ const MediaPlayer = ({
   isLastEpisode,
   typename
 }) => {
-  console.log({ source });
+  // console.log({ source });
   const theme = useTheme();
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
@@ -60,6 +62,11 @@ const MediaPlayer = ({
   const [buffering, setBuffering] = React.useState(false);
   const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [timer, setTimer] = React.useState();
+
+  React.useEffect(() => {
+    console.log({ x: volume });
+    SystemSetting.setVolume(volume, { showUI: false });
+  }, [volume]);
 
   let player = React.useRef();
 
@@ -282,7 +289,7 @@ const MediaPlayer = ({
           onProgress={handleProgress}
           onPlaying={() => handlePlaying}
           source={{ uri: source }}
-          volume={volume}
+          // volume={volume} /// this library might work: https://github.com/c19354837/react-native-system-setting
           onBuffering={onBuffer}
           onError={videoError}
           resizeMode="contain"

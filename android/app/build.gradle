@@ -209,6 +209,8 @@ dependencies {
     /// react-native-google-cast configuration
     implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
 
+    implementation project(':react-native-system-setting')
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
