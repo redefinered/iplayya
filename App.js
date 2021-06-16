@@ -44,7 +44,7 @@ const App = ({
     if (Platform.OS === 'android') SplashScreen.hide();
 
     // signOutAction(); // manual signout for debugging
-    purgeStoreAction(); // manual state purge for debugging
+    // purgeStoreAction(); // manual state purge for debugging
 
     // checkExistingDownloads();
     // listDownloadedFiles();
