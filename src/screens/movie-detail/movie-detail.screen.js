@@ -263,8 +263,6 @@ const MovieDetailScreen = ({
     };
   });
 
-  console.log({ readMoreData });
-
   const renderMediaPlayer = () => {
     if (!source)
       return (

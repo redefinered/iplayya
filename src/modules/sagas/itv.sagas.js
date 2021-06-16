@@ -110,9 +110,17 @@ export function* getProgramsByChannelRequest(action) {
 }
 
 export function* searchRequest(action) {
+  const { limit, pageNumber } = action.input;
+  const { shouldIncrement } = action;
+
   try {
     const { iptvs: results } = yield call(search, action.input);
-    yield put(Creators.searchSuccess(results));
+
+    /// increment pageNumber each successful request
+    const nextPaginatorInfo = { limit, pageNumber: shouldIncrement ? pageNumber + 1 : pageNumber };
+
+    // console.log({ loc: 'saga', ...nextPaginatorInfo });
+    yield put(Creators.searchSuccess(results, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
   }

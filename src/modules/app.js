@@ -6,12 +6,13 @@ const { Types, Creators } = createActions(
     appReadySuccess: null,
     appReadyFailure: ['error'],
     setNetworkInfo: ['networkInfo'],
-    default: null
+    default: null,
+    purgeStore: null
   },
   { prefix: '@App/' }
 );
 
-export { Types, Creators };
+export { Creators };
 
 // default State
 const INITIAL_STATE = {

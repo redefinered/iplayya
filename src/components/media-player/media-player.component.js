@@ -64,7 +64,7 @@ const MediaPlayer = ({
   const [timer, setTimer] = React.useState();
 
   React.useEffect(() => {
-    console.log({ x: volume });
+    // console.log({ x: volume });
     SystemSetting.setVolume(volume, { showUI: false });
   }, [volume]);
 

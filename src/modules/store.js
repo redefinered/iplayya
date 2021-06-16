@@ -11,7 +11,8 @@ import rootSaga from 'modules/sagas/root.saga';
 
 const logger = createLogger({
   collapsed: true,
-  predicate: (getState, action) => action.type !== '@Movies/UPDATE_PLAYBACK_INFO'
+  predicate: (_, action) =>
+    action.type !== '@Movies/UPDATE_PLAYBACK_INFO' && action.type !== '@Nav/SET_BOTTOM_TABS_VISIBLE'
 });
 
 const sagaMiddleware = createSagaMiddleware();

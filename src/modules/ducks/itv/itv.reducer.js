@@ -48,7 +48,13 @@ const INITIAL_STATE = {
   // data for downloaded movies where we get properties like title, id, etc...
   downloadsData: [],
 
-  searchResults: []
+  searchResults: [],
+  searchResultsPaginator: {
+    limit: 10,
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
+  }
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -347,18 +353,35 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
+    const { results, nextPaginatorInfo } = action;
+
+    const updatedSearchResults = uniqBy([...results, ...state.searchResults], 'id');
+
+    // console.log({ loc: 'reducer', ...nextPaginatorInfo });
+
     return {
       ...state,
       isFetching: false,
-      searchResults: action.data
+      searchResults: orderBy(updatedSearchResults, 'number', 'asc'),
+      searchResultsPaginator: { orderBy: 'number', order: 'asc', ...nextPaginatorInfo }
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      error: action.error,
-      searchResults: []
+      error: action.error
+    };
+  },
+  [Types.RESET_SEARCH_RESULTS_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      searchResultsPaginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
     };
   },
 

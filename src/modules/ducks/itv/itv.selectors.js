@@ -41,3 +41,8 @@ export const selectFavoritesListUpdated = createSelector(
   [itvState],
   ({ favoritesListUpdated }) => favoritesListUpdated
 );
+
+export const selectSearchResultsPaginator = createSelector(
+  [itvState],
+  ({ searchResultsPaginator }) => searchResultsPaginator
+);

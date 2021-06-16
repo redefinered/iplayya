@@ -124,6 +124,7 @@ export const SEARCH = gql`
     iptvs(input: $input) {
       id
       title
+      number
     }
   }
 `;

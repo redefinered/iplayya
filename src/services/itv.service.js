@@ -150,6 +150,7 @@ export const search = async (input) => {
   try {
     const { data } = await client.query({
       query: SEARCH,
+      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;

@@ -11,6 +11,7 @@ import HomeTabs from 'navigators/home-tabs.navigator';
 import IptvStack from 'navigators/iptv-stack.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { Creators } from 'modules/app';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as ProfileActionCreators } from 'modules/ducks/profile/profile.actions';
@@ -34,9 +35,7 @@ const App = ({
   passwordUpdateParams,
   providers,
   skippedProviderAdd,
-  getProfileAction,
-
-  resetAction
+  getProfileAction
 }) => {
   const [testMode] = React.useState(false);
 
@@ -44,8 +43,7 @@ const App = ({
     if (Platform.OS === 'android') SplashScreen.hide();
 
     // signOutAction(); // manual signout for debugging
-    // purgeStoreAction(); // manual state purge for debugging
-    // resetAction();
+    purgeStoreAction(); // manual state purge for debugging
 
     // checkExistingDownloads();
     // listDownloadedFiles();
@@ -113,7 +111,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
+  purgeStoreAction: Creators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   getProfileAction: ProfileActionCreators.get,

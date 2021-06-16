@@ -37,7 +37,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
 });
 
 export default (state, action) => {
-  if (action.type === '@Auth/PURGE_STORE') {
+  if (action.type === '@App/PURGE_STORE') {
     console.log('store purged!');
     AsyncStorage.removeItem('persist:primary');
     AsyncStorage.removeItem('access_token');

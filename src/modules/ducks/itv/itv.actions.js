@@ -45,9 +45,10 @@ const { Types, Creators } = createActions(
     updateDownloadsProgress: ['data'],
 
     searchStart: null,
-    search: ['input'],
-    searchSuccess: ['data'],
+    search: ['input', 'shouldIncrement'],
+    searchSuccess: ['results', 'nextPaginatorInfo'],
     searchFailure: ['error'],
+    resetSearchResultsPaginator: null,
 
     // misc
     reset: null,
