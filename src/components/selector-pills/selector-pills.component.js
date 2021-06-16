@@ -5,9 +5,8 @@ import { Text, useTheme } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 
 const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
-  // console.log({ data });
   return (
-    <ScrollView horizontal style={{ paddingHorizontal: 15, marginVertical: 20 }} showsHorizontalScrollIndicator={false}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 40 }}>
       {data.map((d) => {
         const { id, ...itemProps } = d;
         return (
@@ -15,9 +14,9 @@ const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
             key={id}
             id={id.toString()}
             label={d[labelkey]}
-            {...itemProps}
             onSelect={onSelect}
             selected={selected}
+            {...itemProps}
           />
         );
       })}
@@ -42,13 +41,13 @@ const Pill = ({ id, label, selected, onSelect }) => {
     <Pressable
       onPress={() => onSelect(id)}
       style={{
-        paddingVertical: 10,
+        justifyContent: 'center',
+        marginLeft: theme.spacing(2),
         paddingHorizontal: 15,
         backgroundColor:
           selected === id ? theme.iplayya.colors.vibrantpussy : theme.iplayya.colors.white25,
         height: 34,
-        borderRadius: 34,
-        marginRight: 10
+        borderRadius: 34
       }}
     >
       <Text style={{ ...createFontFormat(12, 16) }}>{label}</Text>

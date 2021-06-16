@@ -20,6 +20,8 @@ import uuid from 'react-uuid';
 
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
 
+import SystemSetting from 'react-native-system-setting';
+
 const MediaPlayer = ({
   videoplayer,
   updatePlaybackInfoAction,
@@ -39,6 +41,7 @@ const MediaPlayer = ({
   isLastEpisode,
   typename
 }) => {
+  // console.log({ source });
   const theme = useTheme();
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
@@ -59,6 +62,11 @@ const MediaPlayer = ({
   const [buffering, setBuffering] = React.useState(false);
   const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [timer, setTimer] = React.useState();
+
+  React.useEffect(() => {
+    // console.log({ x: volume });
+    SystemSetting.setVolume(volume, { showUI: false });
+  }, [volume]);
 
   let player = React.useRef();
 
@@ -259,17 +267,9 @@ const MediaPlayer = ({
     setActiveState(null);
   };
 
-  // const handleSelectScreencastOption = (val) => {
-  //   setShowCastOptions(false);
-  //   setScreencastOption(val);
-  //   setScreencastActiveState(null);
-  // };
-
-  // console.log({ source, resolution, resolutions });
-  // console.log({ resolutions });
-  // console.log('source', source);
-  // console.log('typename', typename);
-  // console.log('volume', volume);
+  const handlePlaying = () => {
+    setPaused(false);
+  };
 
   const renderPlayer = () => {
     if (castSessionActive)
@@ -283,14 +283,13 @@ const MediaPlayer = ({
     if (typename === 'Iptv' || videoplayer === 'vlc')
       return (
         <VLCPlayer
-          // onPlaying={handleOnPlaying}
-          // onPaused={handleOnPause}
           ref={player}
           paused={paused}
           seek={sliderPosition}
           onProgress={handleProgress}
+          onPlaying={() => handlePlaying}
           source={{ uri: source }}
-          volume={volume}
+          // volume={volume} /// this library might work: https://github.com/c19354837/react-native-system-setting
           onBuffering={onBuffer}
           onError={videoError}
           resizeMode="contain"

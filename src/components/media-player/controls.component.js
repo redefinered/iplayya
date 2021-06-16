@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -25,6 +24,8 @@ import {
 import CastButton from 'components/cast-button/cast-button.component';
 import { useRemoteMediaClient } from 'react-native-google-cast';
 
+import SystemSetting from 'react-native-system-setting';
+
 const VideoControls = ({
   theme,
   currentTime,
@@ -45,6 +46,15 @@ const VideoControls = ({
 }) => {
   const [mediaInfo, setMediaInfo] = React.useState(null);
   const client = useRemoteMediaClient();
+
+  React.useEffect(() => {
+    const volumeListener = SystemSetting.addVolumeListener((data) => {
+      const volume = data.value;
+      setVolume(volume);
+    });
+
+    return () => SystemSetting.removeVolumeListener(volumeListener);
+  }, []);
 
   React.useEffect(() => {
     if (client) {
@@ -86,12 +96,6 @@ const VideoControls = ({
     controlProps.setSliderPosition(position);
     controlProps.setPaused(false);
   };
-
-  // React.useEffect(() => {
-  //   if (currentTime === 0) {
-  //     controlProps.setPaused(true);
-  //   }
-  // }, [currentTime]);
 
   const renderVolumeSlider = () => {
     if (castSessionActive) return;
@@ -257,6 +261,37 @@ const VideoControls = ({
     );
   };
 
+  const renderProgressSlider = () => {
+    const timeRemaining = isNaN(remainingTime)
+      ? '0:00:00'
+      : moment(toDateTime(remainingTime)).format('H:mm:ss');
+
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flex: 1.5 }}>
+          <Text style={{ ...createFontFormat(10, 14) }}>
+            {moment(toDateTime(currentTime)).format('H:mm:ss')}
+          </Text>
+        </View>
+        <View style={{ flex: 7 }}>
+          <Slider
+            value={currentTime}
+            onSlidingStart={handleSlidingStart}
+            onSlidingComplete={(value) => handleSlidingComplete(value)}
+            style={{ width: '100%', height: 10 }}
+            minimumValue={0}
+            maximumValue={duration}
+            minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
+            maximumTrackTintColor="white"
+          />
+        </View>
+        <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
+          <Text style={{ ...createFontFormat(10, 14) }}>{`-${timeRemaining}`}</Text>
+        </View>
+      </View>
+    );
+  };
+
   const getContentTitle = () => {
     if (castSessionActive) return 'Connected to Google Cast';
 
@@ -357,31 +392,7 @@ const VideoControls = ({
       <View style={{ position: 'relative', zIndex: 101 }}>
         {renderBottomControls()}
 
-        {/* video progress */}
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ flex: 1.5 }}>
-            <Text style={{ ...createFontFormat(10, 14) }}>
-              {moment(toDateTime(currentTime)).format('H:mm:ss')}
-            </Text>
-          </View>
-          <View style={{ flex: 7 }}>
-            <Slider
-              value={currentTime}
-              onSlidingStart={handleSlidingStart}
-              onSlidingComplete={(value) => handleSlidingComplete(value)}
-              style={{ width: '100%', height: 10 }}
-              minimumValue={0}
-              maximumValue={duration}
-              minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
-              maximumTrackTintColor="white"
-            />
-          </View>
-          <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
-            <Text style={{ ...createFontFormat(10, 14) }}>
-              {`-${moment(toDateTime(remainingTime)).format('H:mm:ss')}`}
-            </Text>
-          </View>
-        </View>
+        {renderProgressSlider()}
       </View>
     </View>
   );

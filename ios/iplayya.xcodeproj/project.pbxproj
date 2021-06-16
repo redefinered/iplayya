@@ -27,6 +27,7 @@
 		A5AF4FE125FA66620034A2CE /* NotoSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5AF4FDC25FA66620034A2CE /* NotoSans-BoldItalic.ttf */; };
 		A5AF4FE225FA66620034A2CE /* NotoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5AF4FDD25FA66620034A2CE /* NotoSans-Regular.ttf */; };
 		F206DDB9751E4A6490B97C7D /* libPods-iplayya.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */; };
+		34938791B7A24232BC3D60D2 /* iplayyaicons1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C241A4640E484945B0365C43 /* iplayyaicons1.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 		F10C80F6532549FDB996FD95 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		F9CFC0AAEDC257B823124664 /* Pods-iplayya-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-iplayya-tvOS/Pods-iplayya-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		FED963EF7BA27E553787AD5B /* Pods-iplayya-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya-tvOS.release.xcconfig"; path = "Target Support Files/Pods-iplayya-tvOS/Pods-iplayya-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		C241A4640E484945B0365C43 /* iplayyaicons1.ttf */ = {isa = PBXFileReference; name = "iplayyaicons1.ttf"; path = "../src/assets/fonts/iplayyaicons1.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 				04C64ABA28FF4EA393FB835E /* Octicons.ttf */,
 				C3DE088EDF894B9A90CA0D4B /* SimpleLineIcons.ttf */,
 				456B51DB7CF2426B817AE8AA /* Zocial.ttf */,
+				C241A4640E484945B0365C43 /* iplayyaicons1.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -420,6 +423,7 @@
 				A5085E3D254AB9C9009CB339 /* AppCenter-Config.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				A5AF4FE025FA66620034A2CE /* iplayyaicons.ttf in Resources */,
+				34938791B7A24232BC3D60D2 /* iplayyaicons1.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

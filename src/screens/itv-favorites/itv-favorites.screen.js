@@ -1,17 +1,17 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { View, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, FlatList } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { selectPaginatorInfo } from 'modules/ducks/itv/itv.selectors';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
@@ -19,18 +19,26 @@ import {
   selectFavorites,
   selectError,
   selectIsFetching,
-  selectRemovedFromFavorites
+  selectRemovedFromFavorites,
+  selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
-import { urlEncodeTitle, createFontFormat } from 'utils';
+import { createFontFormat } from 'utils';
+import { selectFavoritesListUpdated } from 'modules/ducks/itv/itv.selectors';
+
+const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvFavoritesScreen = ({
   theme,
   navigation,
   favorites,
-  getChannelsAction,
   getFavoritesAction,
+  favoritesPaginator,
+  favoritesListUpdated,
+  // getChannelsAction,
   removeFromFavoritesAction,
-  removedFromFavorites
+  removedFromFavorites,
+
+  resetFavoritesPaginatorAction
 }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
@@ -38,17 +46,35 @@ const ItvFavoritesScreen = ({
   const [listData, setListData] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
+
   React.useEffect(() => {
-    getFavoritesAction({ limit: 10, pageNumber: 1 });
+    resetFavoritesPaginatorAction();
   }, []);
+
+  React.useEffect(() => {
+    if (favoritesPaginator.pageNumber === 1) {
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    }
+  }, [favoritesPaginator]);
+
+  React.useEffect(() => {
+    if (favoritesListUpdated) {
+      setActivateCheckboxes(false);
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    }
+  }, [favoritesListUpdated]);
 
   // setup channels data
   React.useEffect(() => {
     if (favorites.length) {
-      let data = favorites.map(({ id, title }) => ({
+      let data = favorites.map(({ id, title, ...rest }) => ({
         id,
         title,
-        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
+        thumbnail: channelplaceholder,
+        ...rest
       }));
       setListData(data);
     }
@@ -56,8 +82,8 @@ const ItvFavoritesScreen = ({
 
   React.useEffect(() => {
     if (removedFromFavorites) {
-      getFavoritesAction({ limit: 10, pageNumber: 1 });
-      getChannelsAction({ limit: 10, pageNumber: 1 });
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      // getChannelsAction({ limit: 10, pageNumber: 1 });
       setSelectedItems([]);
     }
   }, [removedFromFavorites]);
@@ -113,8 +139,6 @@ const ItvFavoritesScreen = ({
     }
   };
 
-  console.log({ selectedItems });
-
   const handleHideConfirmDeleteModal = () => {
     setShowDeleteConfirmation(false);
   };
@@ -127,11 +151,27 @@ const ItvFavoritesScreen = ({
     handleRemoveItems();
   };
 
-  console.log({ listData });
+  const handleEndReached = () => {
+    console.log({ favoritesPaginator });
+    if (!onEndReachedCalledDuringMomentum) {
+      getFavoritesAction(favoritesPaginator);
+      setOnEndReachedCalledDuringMomentum(true);
+    }
+  };
+
+  const getDeleteAlertMessage = () => {
+    if (selectedItems.length === listData.length)
+      return 'Are you sure you want to delete all channels from your favorites list?';
+
+    if (selectedItems.length > 1)
+      return 'Are you sure you want to delete these channels from your favorites list?';
+
+    return 'Are you sure you want to delete this channel from your favorites list?';
+  };
 
   if (listData.length)
     return (
-      <ScrollView>
+      <View>
         {activateCheckboxes && (
           <ContentWrap style={{ marginTop: 30 }}>
             <View
@@ -156,13 +196,30 @@ const ItvFavoritesScreen = ({
                 <RadioButton selected={selectedItems.length === favorites.length} />
               </Pressable>
             </View>
-
-            <Spacer size={30} />
           </ContentWrap>
         )}
 
-        <View style={{ paddingTop: 30 }}>
-          {listData.map(({ id, ...itemProps }) => (
+        <View style={{ paddingTop: theme.spacing(4) }}>
+          <FlatList
+            data={listData}
+            keyExtractor={(item) => item.id}
+            onEndReached={() => handleEndReached()}
+            onEndReachedThreshold={0.5}
+            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+            renderItem={({ item: { id, ...rest } }) => (
+              <ListItemChanel
+                id={id}
+                handleLongPress={handleLongPress}
+                onSelect={handleSelectItem}
+                onRightActionPress={null}
+                selected={selectedItems.findIndex((i) => i === id) >= 0}
+                activateCheckboxes={activateCheckboxes}
+                full
+                {...rest}
+              />
+            )}
+          />
+          {/* {listData.map(({ id, ...rest }) => (
             <ListItemChanel
               key={id}
               id={id}
@@ -176,17 +233,15 @@ const ItvFavoritesScreen = ({
                   ? true
                   : false
               }
-              {...itemProps}
+              {...rest}
               full
             />
-          ))}
+          ))} */}
         </View>
         {showDeleteConfirmation && (
           <AlertModal
             variant="danger"
-            message={`Are you sure you want to delete ${
-              selectedItems.length > 1 ? 'these' : 'this'
-            } channel in your download list?`}
+            message={getDeleteAlertMessage()}
             visible={showDeleteConfirmation}
             onCancel={handleHideConfirmDeleteModal}
             hideAction={handleHideConfirmDeleteModal}
@@ -194,7 +249,7 @@ const ItvFavoritesScreen = ({
             confirmAction={handleConfirmDelete}
           />
         )}
-      </ScrollView>
+      </View>
     );
 
   return <EmptyState theme={theme} navigation={navigation} />;
@@ -231,17 +286,19 @@ const Container = (props) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  paginatorInfo: selectPaginatorInfo,
   favorites: selectFavorites,
-  removedFromFavorites: selectRemovedFromFavorites
+  favoritesPaginator: selectFavoritesPaginator,
+  removedFromFavorites: selectRemovedFromFavorites,
+  favoritesListUpdated: selectFavoritesListUpdated
 });
 
 const actions = {
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavorites,
-  getChannelsAction: Creators.getChannels
+  getChannelsAction: Creators.getChannels,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
 export default enhance(Container);

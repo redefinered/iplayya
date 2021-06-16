@@ -136,8 +136,8 @@ android {
         applicationId "com.iplayya"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 70
-        versionName "0.0.2-alpha.70"
+        versionCode 75
+        versionName "0.0.2-alpha.75"
     }
     splits {
         abi {
@@ -208,6 +208,8 @@ dependencies {
 
     /// react-native-google-cast configuration
     implementation "com.google.android.gms:play-services-cast-framework:${safeExtGet('castFrameworkVersion', '+')}"
+
+    implementation project(':react-native-system-setting')
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

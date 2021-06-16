@@ -10,7 +10,7 @@ import Icon from 'components/icon/icon.component.js';
 import HomeScreen from 'screens/home/home.screen';
 import ItvScreen from 'screens/itv/itv.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
-import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
+// import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
 import ImovieScreen from 'screens/imovie/imovie.screen';
 import ImovieSearchScreen from 'screens/imovie/imovie-search.screen';
@@ -124,7 +124,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="ItvDownloadsScreen"
         component={ItvDownloadsScreen}
         // eslint-disable-next-line no-unused-vars
@@ -150,7 +150,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
         }}
-      />
+      /> */}
       <Stack.Screen
         name="ItvSearchScreen"
         component={ItvSearchScreen}

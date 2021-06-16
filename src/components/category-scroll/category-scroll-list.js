@@ -72,6 +72,7 @@ const CategoryScrollList = ({
   return (
     <FlatList
       data={data}
+      showsHorizontalScrollIndicator={false}
       horizontal
       // decelerationRate={0}
       snapToInterval={cardDimension.WIDTH + 10}

@@ -5,6 +5,7 @@ import {
   getChannel,
   getChannels,
   getChannelsByCategory,
+  getChannelToken,
   addToFavorites,
   removeFromFavorites,
   getFavorites,
@@ -29,7 +30,7 @@ export function* getChannelsRequest(action) {
 
   try {
     const { iptvs } = yield call(getChannels, action.input);
-    yield put(Creators.getChannelsSuccess({ channels: iptvs, nextPaginatorInfo }));
+    yield put(Creators.getChannelsSuccess(iptvs, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.getChannelsFailure(error.message));
   }
@@ -38,7 +39,11 @@ export function* getChannelsRequest(action) {
 export function* getChannelRequest(action) {
   try {
     const { iptv: channel } = yield call(getChannel, action.input);
-    yield put(Creators.getChannelSuccess(channel));
+    const {
+      getItvChannelToken: { token }
+    } = yield call(getChannelToken, { channelId: action.input.videoId });
+
+    yield put(Creators.getChannelSuccess(channel, token));
   } catch (error) {
     yield put(Creators.getChannelFailure(error.message));
   }
@@ -52,19 +57,15 @@ export function* getChannelsByCategoriesRequest(action) {
 
   try {
     const { iptvByCategory } = yield call(getChannelsByCategory, action.input);
-    yield put(
-      Creators.getChannelsByCategoriesSuccess({ channels: iptvByCategory, nextPaginatorInfo })
-    );
+    yield put(Creators.getChannelsByCategoriesSuccess(iptvByCategory, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.getChannelsByCategoriesFailure(error.message));
   }
 }
 
 export function* addToFavoritesRequest(action) {
-  const { input } = action;
-  console.log({ input });
   try {
-    const { addIptvToFavorites } = yield call(addToFavorites, input);
+    const { addIptvToFavorites } = yield call(addToFavorites, action.videoId);
     if (addIptvToFavorites.status !== 'success') throw new Error('Error adding item to favorites');
     yield put(Creators.addToFavoritesSuccess());
   } catch (error) {
@@ -88,7 +89,11 @@ export function* getFavoritesRequest(action) {
   const { input } = action;
   try {
     const { favoriteIptvs } = yield call(getFavorites, input);
-    yield put(Creators.getFavoritesSuccess(favoriteIptvs));
+
+    /// increment paginator pageNumber
+    Object.assign(input, { pageNumber: input.pageNumber + 1 });
+
+    yield put(Creators.getFavoritesSuccess(favoriteIptvs, input));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
   }
@@ -105,9 +110,17 @@ export function* getProgramsByChannelRequest(action) {
 }
 
 export function* searchRequest(action) {
+  const { limit, pageNumber } = action.input;
+  const { shouldIncrement } = action;
+
   try {
     const { iptvs: results } = yield call(search, action.input);
-    yield put(Creators.searchSuccess(results));
+
+    /// increment pageNumber each successful request
+    const nextPaginatorInfo = { limit, pageNumber: shouldIncrement ? pageNumber + 1 : pageNumber };
+
+    // console.log({ loc: 'saga', ...nextPaginatorInfo });
+    yield put(Creators.searchSuccess(results, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
   }

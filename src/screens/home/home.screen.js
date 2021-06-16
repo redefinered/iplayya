@@ -85,6 +85,7 @@ const Home = ({
     <ContentWrap style={{ marginTop: 30 }}>
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
+
       {error && (
         <AlertModal
           variant="danger"

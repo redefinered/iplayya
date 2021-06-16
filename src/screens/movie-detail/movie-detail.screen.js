@@ -29,10 +29,11 @@ import {
   selectDownloadStarted
 } from 'modules/ducks/downloads/downloads.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath, createFontFormat } from 'utils';
+import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 
 import { useRemoteMediaClient } from 'react-native-google-cast';
+import moment from 'moment';
 
 const MovieDetailScreen = ({
   error,
@@ -204,6 +205,22 @@ const MovieDetailScreen = ({
     );
 
   const {
+    /// items to exclude in 'read more' section
+    // eslint-disable-next-line no-unused-vars
+    id,
+    // eslint-disable-next-line no-unused-vars
+    __typename,
+    // eslint-disable-next-line no-unused-vars
+    video_urls,
+    // eslint-disable-next-line no-unused-vars
+    is_hd,
+    // eslint-disable-next-line no-unused-vars
+    is_censored,
+    // eslint-disable-next-line no-unused-vars
+    is_favorite,
+    // eslint-disable-next-line no-unused-vars
+    series,
+
     title,
     year,
     description,
@@ -214,6 +231,37 @@ const MovieDetailScreen = ({
     is_series,
     ...otherFields
   } = movie;
+
+  // const timeToDate = toDateTime(otherFields.time * 60);
+  // Object.assign(otherFields, {
+  //   time: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
+  // });
+
+  const readMoreData = Object.keys(otherFields).map((key) => {
+    if (key === 'time') {
+      const timeToDate = toDateTime(otherFields.time * 60);
+
+      return {
+        key,
+        label: 'Duration',
+        value: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
+      };
+    }
+
+    if (key === 'country') {
+      return {
+        key,
+        label: 'Country of origin',
+        value: otherFields[key]
+      };
+    }
+
+    return {
+      key,
+      label: toTitleCase(key.replace('_', ' ')),
+      value: otherFields[key]
+    };
+  });
 
   const renderMediaPlayer = () => {
     if (!source)
@@ -295,7 +343,7 @@ const MovieDetailScreen = ({
               style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
               titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
             >
-              {Object.keys(otherFields).map((key) => {
+              {readMoreData.map(({ key, label, value }) => {
                 return (
                   <List.Item
                     key={key}
@@ -308,9 +356,10 @@ const MovieDetailScreen = ({
                             ...createFontFormat(14, 20)
                           }}
                         >
-                          {key}{' '}
+                          {label}
+                          {': '}
                         </Text>
-                        {otherFields[key]}
+                        {value}
                       </Text>
                     }
                   />

@@ -1,7 +1,7 @@
 import { persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import appReducer from './ducks/app.reducer';
+import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
 import downloadsReducer from './ducks/downloads/downloads.reducer';
@@ -39,7 +39,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
 });
 
 export default (state, action) => {
-  if (action.type === '@Auth/PURGE_STORE') {
+  if (action.type === '@App/PURGE_STORE') {
     console.log('store purged!');
     AsyncStorage.removeItem('persist:primary');
     AsyncStorage.removeItem('access_token');
