@@ -4,9 +4,8 @@
   "private": true,
   "scripts": {
     "android": "npx react-native run-android",
-    "ios": "npx react-native run-ios --simulator='iPhone SE (2nd generation)'",
-    "ios:iphone11": "npx react-native run-ios --simulator='iPhone 11'",
-    "ios:iphone11pro": "npx react-native run-ios --simulator='iPhone 11 Pro'",
+    "ios:ipse": "npx react-native run-ios --simulator='iPhone SE (2nd generation)'",
+    "ios": "npx react-native run-ios --simulator='iPhone 12 mini'",
     "ios:device": "npx react-native run-ios --device 'Red’s iPhone SE'",
     "start": "npx react-native start",
     "start:reset-cache": "yarn start --reset-cache",
