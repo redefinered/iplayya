@@ -1,5 +1,6 @@
 import { persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
+import { resettableReducer } from 'reduxsauce';
 
 import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
@@ -21,6 +22,8 @@ export const persistConfig = {
   storage: AsyncStorage
 };
 
+const resettable = resettableReducer('RESET');
+
 const rootReducer = persistCombineReducers(persistConfig, {
   app: appReducer,
   nav: navReducer,
@@ -31,7 +34,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   itv: itvReducer,
   profile: profileReducer,
   movies: moviesReducer,
-  music: musicReducer,
+  music: resettable(musicReducer),
   sports: isportsReducer,
   radios: iradioReducer,
   provider: providerReducer,

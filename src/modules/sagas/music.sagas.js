@@ -14,9 +14,7 @@ export function* getGenresRequest() {
 export function* getAlbumsRequest(action) {
   const { paginatorInfo, genrePaginator } = action;
 
-  console.log({ paginatorInfo, genrePaginator });
-
-  /// category paginator
+  /// genre paginator
   const { page, limit } = genrePaginator;
 
   const index = (page - 1) * limit;
@@ -24,23 +22,27 @@ export function* getAlbumsRequest(action) {
   let paginator = paginatorInfo.slice(index, limit * page);
 
   try {
-    const albums = yield all(
+    const response = yield all(
       paginator.map(({ paginator: input }) => call(getAlbumsByGenre, input))
     );
 
-    console.log({ albums });
+    // // remove items that have 0 content
+    const filtered = response.filter(({ albumByGenre }) => albumByGenre.length > 0);
 
-    // remove items that have 0 content
-    // const filtered = albums.filter(({ albumByGenre }) => albumByGenre.length > 0);
+    const albumsByGenre = filtered.map(({ albumByGenre }, index) => {
+      return {
+        id: paginator[index].id,
+        genre: paginator[index].title.trim(),
+        albums: albumByGenre
+      };
+    });
 
-    // const movies = filtered.map(({ albumByGenre }) => {
-    //   return { category: albumByGenre[0].category, albums: albumByGenre };
-    // });
+    // console.log({ albumsByGenre, paginator });
 
-    // /// increment paginator with every successful request
-    // Object.assign(genrePaginator, { page: page + 1 });
+    /// increment paginator with every successful request
+    Object.assign(genrePaginator, { page: page + 1 });
 
-    // yield put(Creators.getMoviesSuccess(movies, genrePaginator));
+    yield put(Creators.getAlbumsSuccess(albumsByGenre, genrePaginator));
   } catch (error) {
     yield put(Creators.getAlbumsFailure(error.message));
   }

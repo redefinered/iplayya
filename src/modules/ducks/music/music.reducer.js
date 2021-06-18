@@ -1,7 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './music.actions';
 import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './music.utils';
-import uniq from 'lodash/uniq';
+import uniqBy from 'lodash/uniqBy';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -27,7 +27,7 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_GENRES_SUCCESS]: (state, action) => {
-    const { genres } = action.data;
+    const { genres } = action;
     return {
       ...state,
       isFetching: false,
@@ -43,6 +43,16 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  [Types.GET_ALBUMS_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      albums: [],
+      paginatorInfo: INITIAL_STATE.paginatorInfo
+    };
+  },
   [Types.GET_ALBUMS]: (state) => {
     return {
       ...state,
@@ -56,7 +66,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      albums: uniq([...state.albums, ...albums]),
+      albums: uniqBy([...state.albums, ...albums], 'id'),
       genrePaginator
     };
   },
@@ -67,6 +77,7 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
   [Types.GET_ALBUMS_BY_GENRE]: (state) => {
     return {
       ...state,

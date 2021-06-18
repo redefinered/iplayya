@@ -3,22 +3,27 @@ import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { REHYDRATE } from 'redux-persist';
 import { Creators } from 'modules/app';
 import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
-// import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
-// import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
-// import { getCategories } from 'services/movies.service';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { get as getProfile } from 'services/profile.service';
 import { getGenres } from 'services/itv.service';
+import { getGenres as getMusicGenres } from 'services/music.service';
 
-export function* appReady() {
+export function* appReady(state) {
+  if (typeof state.payload === 'undefined') return;
+
+  const { isLoggedIn } = state.payload.auth;
+
   try {
-    // setup music genres and vod categories when app mounts
-    // const [{ categories }, { albumGenres }] = yield all([call(getCategories), call(getGenres)]);
+    if (isLoggedIn) {
+      const { me: profile } = yield call(getProfile);
+      const { iptvGenres } = yield call(getGenres);
+      const { albumGenres } = yield call(getMusicGenres);
 
-    const { iptvGenres } = yield call(getGenres);
-
-    console.log({ iptvGenres });
-
-    yield put(ItvCreators.getGenresSuccess(iptvGenres));
-    // yield put(MusicCreators.getGenresSuccess({ genres: albumGenres }));
+      yield put(ProfileCreators.getSuccess({ profile }));
+      yield put(ItvCreators.getGenresSuccess(iptvGenres));
+      yield put(MusicCreators.getGenresSuccess(albumGenres));
+    }
 
     // This action will be launched after Finishing Store Rehydrate
     yield put(Creators.appReadySuccess());
@@ -29,4 +34,5 @@ export function* appReady() {
 
 export default function* watchApp() {
   yield takeLatest(REHYDRATE, appReady);
+  // yield takeLatest(Types.APP_READY, appReady);
 }

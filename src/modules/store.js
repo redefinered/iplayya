@@ -29,6 +29,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(...middlewares)));
 
+export const resetStore = () => store.dispatch({ type: 'RESET' });
+
 sagaMiddleware.run(rootSaga);
 
 export const persistor = persistStore(store);

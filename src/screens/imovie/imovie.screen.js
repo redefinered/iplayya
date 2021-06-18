@@ -10,7 +10,7 @@ import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
+import { Creators as AppActionCreators } from 'modules/ducks/app.reducer';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
@@ -64,14 +64,11 @@ const ImovieScreen = ({
 
     // Subscribe
     const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
-      // console.log('Connection type', type);
-      // console.log('Is connected?', isConnected);
-
       setNetworkInfoAction({ type, isConnected });
     });
 
     // Unsubscribe
-    unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   React.useEffect(() => {
@@ -222,7 +219,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  setNetworkInfoAction: AuthActionCreators.setNetworkInfo,
+  setNetworkInfoAction: AppActionCreators.setNetworkInfo,
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
