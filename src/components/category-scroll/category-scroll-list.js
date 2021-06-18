@@ -9,10 +9,10 @@ import { Creators } from 'modules/ducks/movies/movies.actions';
 import { useTheme } from 'react-native-paper';
 
 const SPACING_FOR_CARD_INSET = 15;
+const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const CategoryScrollList = ({
   data,
-  datatype,
   onSelect,
   getMoviesByCategoriesAction,
   paginatorOfCategory
@@ -20,21 +20,13 @@ const CategoryScrollList = ({
   const theme = useTheme();
   const brand = theme.iplayya.colors;
 
-  const [cardDimension, setCardDimension] = React.useState({ WIDTH: 115, HEIGHT: 170 });
-
-  React.useEffect(() => {
-    if (datatype === 'music') {
-      setCardDimension({ WIDTH: 148, HEIGHT: 148 });
-    }
-  }, [datatype]);
-
   const renderThumbnail = (uri, title) => {
     if (!uri) {
       return (
         <View
           style={{
-            width: cardDimension.WIDTH,
-            height: cardDimension.HEIGHT,
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
             backgroundColor: brand.white10,
             borderRadius: 8,
             padding: theme.spacing(1)
@@ -46,7 +38,7 @@ const CategoryScrollList = ({
     }
     return (
       <Image
-        style={{ width: cardDimension.WIDTH, height: cardDimension.HEIGHT, borderRadius: 8 }}
+        style={{ width: CARD_DIMENSIONS.WIDTH, height: CARD_DIMENSIONS.HEIGHT, borderRadius: 8 }}
         source={{ uri }}
       />
     );
@@ -75,7 +67,7 @@ const CategoryScrollList = ({
       showsHorizontalScrollIndicator={false}
       horizontal
       // decelerationRate={0}
-      snapToInterval={cardDimension.WIDTH + 10}
+      snapToInterval={CARD_DIMENSIONS.WIDTH + 10}
       snapToAlignment="start"
       contentInset={{
         top: 0,
@@ -100,7 +92,6 @@ CategoryScrollList.propTypes = {
   isFetching: PropTypes.bool,
   error: PropTypes.string,
   data: PropTypes.array,
-  datatype: PropTypes.string,
   onSelect: PropTypes.func,
   paginatorOfCategory: PropTypes.object,
   getMoviesByCategoriesAction: PropTypes.func
