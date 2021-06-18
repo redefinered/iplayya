@@ -18,15 +18,18 @@ import Icon from 'components/icon/icon.component';
 import {
   selectError,
   selectIsFetching,
-  // selectMovies,
+  selectAlbums,
   // selectCategoriesOf,
   selectPaginatorInfo,
   selectGenrePaginator
 } from 'modules/ducks/music/music.selectors';
 import { urlEncodeTitle } from 'utils';
-import CategoryScroll from 'components/category-scroll/category-scroll.component';
+import GenreScroll from './genre-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
-import NetInfo from '@react-native-community/netinfo';
+// import NetInfo from '@react-native-community/netinfo';
+// import { selectAlbums } from 'modules/ducks/music/music.selectors';
+
+const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const ImusicScreen = ({
   isFetching,
@@ -38,9 +41,10 @@ const ImusicScreen = ({
   theme,
   route: { params },
   genrePaginator,
-  movies,
+  albums,
   enableSwipeAction,
-  setNetworkInfoAction
+  setNetworkInfoAction,
+  resetGenrePaginatorAction
 }) => {
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -60,6 +64,10 @@ const ImusicScreen = ({
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
 
+  React.useEffect(() => {
+    resetGenrePaginatorAction();
+  }, []);
+
   // React.useEffect(() => {
   //   addMovieToFavoritesStartAction();
   //   enableSwipeAction(false);
@@ -75,23 +83,17 @@ const ImusicScreen = ({
 
   React.useEffect(() => {
     let collection = [];
-    if (typeof movies === 'undefined') return setData(collection);
+    if (typeof albums === 'undefined') return setData(collection);
 
-    collection = movies.map(({ thumbnail, ...rest }) => {
-      return {
-        thumbnail:
-          thumbnail === '' || thumbnail === 'N/A'
-            ? `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(rest.title)}`
-            : thumbnail,
-        ...rest
-      };
+    collection = albums.map((props) => {
+      return { thumbnail: coverplaceholder, ...props };
     });
 
     return setData(collection);
-  }, [movies]);
+  }, [albums]);
 
   React.useEffect(() => {
-    // console.log({ data });
+    // console.log({ data, albums });
     if (typeof params !== 'undefined') {
       const { categoryName } = params;
       return setScrollIndex(data.findIndex((c) => c.category === categoryName));
@@ -102,7 +104,7 @@ const ImusicScreen = ({
   // get movies on mount
   React.useEffect(() => {
     if (paginatorInfo.length) {
-      getAlbumsAction(paginatorInfo, genrePaginator);
+      getAlbumsAction(paginatorInfo, { page: 1, limit: 10 });
     }
   }, [paginatorInfo]);
 
@@ -150,10 +152,10 @@ const ImusicScreen = ({
     );
   };
 
-  const renderItem = ({ item: { category } }) => {
-    if (typeof movies === 'undefined') return;
+  const renderItem = ({ item: { genre } }) => {
+    if (typeof albums === 'undefined') return;
 
-    return <CategoryScroll datatype="music" category={category} onSelect={handleMovieSelect} />;
+    return <GenreScroll genre={genre} onSelect={handleMovieSelect} />;
   };
 
   const handleEndReached = (info) => {
@@ -186,7 +188,7 @@ const ImusicScreen = ({
           </ScrollView> */}
           <FlatList
             data={data}
-            keyExtractor={(movie) => movie.category}
+            keyExtractor={(album) => album.id}
             renderItem={renderItem}
             initialScrollIndex={scrollIndex}
             onEndReached={(info) => handleEndReached(info)}
@@ -223,10 +225,9 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  // movies: selectMovies,
+  albums: selectAlbums,
   paginatorInfo: selectPaginatorInfo,
   genrePaginator: selectGenrePaginator
-  // categories: selectCategoriesOf('movies')
 });
 
 const actions = {
@@ -234,7 +235,8 @@ const actions = {
   getAlbumsAction: Creators.getAlbums,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
-  enableSwipeAction: NavActionCreators.enableSwipe
+  enableSwipeAction: NavActionCreators.enableSwipe,
+  resetGenrePaginatorAction: Creators.resetGenrePaginator
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
