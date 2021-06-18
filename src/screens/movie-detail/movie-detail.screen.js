@@ -237,6 +237,8 @@ const MovieDetailScreen = ({
   //   time: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
   // });
 
+  console.log({ otherFields });
+
   const readMoreData = Object.keys(otherFields).map((key) => {
     if (key === 'time') {
       const timeToDate = toDateTime(otherFields.time * 60);
@@ -253,6 +255,22 @@ const MovieDetailScreen = ({
         key,
         label: 'Country of origin',
         value: otherFields[key]
+      };
+    }
+
+    if (key === 'rating_imdb') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
+      };
+    }
+
+    if (key === 'rating_kinopoisk') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
       };
     }
 
