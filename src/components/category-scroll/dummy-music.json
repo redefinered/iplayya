@@ -1,0 +1,302 @@
+[
+  {
+    "category": "Pop Music",
+    "albums": [
+      {
+        "id": "2738",
+        "name": "PARTYMOBILE",
+        "cover": "2738.jpg",
+        "performer": "PARTYNEXTDOOR",
+        "year": "2020"
+      },
+      {
+        "id": "2732",
+        "name": "Changes",
+        "cover": "2732.jpg",
+        "performer": "Justin Bieber",
+        "year": "2020"
+      },
+      {
+        "id": "2745",
+        "name": "Insomnia",
+        "cover": "2745.jpg",
+        "performer": "Skepta, Chip & Young Adz",
+        "year": "2020"
+      },
+      {
+        "id": "3455",
+        "name": "One World",
+        "cover": "3455.jpg",
+        "performer": "Billy Ocean",
+        "year": "2020"
+      },
+      {
+        "id": "2711",
+        "name": "Future Nostalgia",
+        "cover": "2711.jpg",
+        "performer": "Dua Lipa",
+        "year": "2020"
+      },
+      {
+        "id": "2775",
+        "name": "Deep Cuts",
+        "cover": "2775.jpg",
+        "performer": "Daft Punk",
+        "year": "2020"
+      },
+      {
+        "id": "2855",
+        "name": "NOW That’s What I Call Music! 105",
+        "cover": "2855.jpg",
+        "performer": "Various Artists",
+        "year": "2020"
+      },
+      {
+        "id": "2774",
+        "name": "The New Abnormal",
+        "cover": "2774.jpg",
+        "performer": "The Strokes",
+        "year": "2020"
+      },
+      {
+        "id": "3486",
+        "name": "Letter to You",
+        "cover": "3486.jpg",
+        "performer": "Bruce Springsteen",
+        "year": "2020"
+      },
+      {
+        "id": "3129",
+        "name": "Polaris",
+        "cover": "3129.jpg",
+        "performer": "Aitch",
+        "year": "2020"
+      }
+    ]
+  },
+  {
+    "category": "Hip-hop Music",
+    "albums": [
+      {
+        "id": "3339",
+        "name": "Ain’t Done Yet",
+        "cover": "3339.jpg",
+        "performer": "Savoy Brown",
+        "year": "2020"
+      },
+      {
+        "id": "2773",
+        "name": "Neon Future IV",
+        "cover": "2773.jpg",
+        "performer": "Steve Aoki",
+        "year": "2020"
+      },
+      {
+        "id": "2772",
+        "name": "Ghosts VI  Locusts",
+        "cover": "2772.png",
+        "performer": "Nine Inch Nails",
+        "year": "2020"
+      },
+      {
+        "id": "2949",
+        "name": "Pick Me Up Off the Floor",
+        "cover": "2949.jpg",
+        "performer": "Norah Jones",
+        "year": "2020"
+      },
+      {
+        "id": "2707",
+        "name": "Music to Be Murdered By",
+        "cover": "2707.png",
+        "performer": "Eminem",
+        "year": "2020"
+      },
+      {
+        "id": "3127",
+        "name": "Big Conspiracy",
+        "cover": "3127.jpg",
+        "performer": "J Hus",
+        "year": "2020"
+      },
+      {
+        "id": "2722",
+        "name": "Happiness Begins",
+        "cover": "2722.jpg",
+        "performer": "Jonas Brothers",
+        "year": "2019"
+      },
+      {
+        "id": "2946",
+        "name": "Begin Again",
+        "cover": "2946.jpg",
+        "performer": "Norah Jones",
+        "year": "2019"
+      },
+      {
+        "id": "2704",
+        "name": "Back Together",
+        "cover": "2704.jpg",
+        "performer": "Michael Ball & Alfie Boe",
+        "year": "2019"
+      },
+      {
+        "id": "2783",
+        "name": "When I Wake Up",
+        "cover": "2783.jpg",
+        "performer": "Maverick Sabre",
+        "year": "2019"
+      }
+    ]
+  },
+  {
+    "category": "Hip-hop 90's",
+    "albums": [
+      {
+        "id": "2840",
+        "name": "NOW That’s What I Call Music! 104",
+        "cover": "2840.jpg",
+        "performer": "Various Artists",
+        "year": "2019"
+      },
+      {
+        "id": "2743",
+        "name": "Please Excuse Me for Being Antisocial",
+        "cover": "2743.jpg",
+        "performer": "Roddy Ricch",
+        "year": "2019"
+      },
+      {
+        "id": "2710",
+        "name": "AJ Tracey",
+        "cover": "2710.jpg",
+        "performer": "AJ Tracey",
+        "year": "2019"
+      },
+      {
+        "id": "2839",
+        "name": "NOW That’s What I Call Music! 103",
+        "cover": "2839.jpg",
+        "performer": "Various Artists",
+        "year": "2019"
+      },
+      {
+        "id": "2742",
+        "name": "Fever",
+        "cover": "2742.jpg",
+        "performer": "Megan Thee Stallion",
+        "year": "2019"
+      },
+      {
+        "id": "2838",
+        "name": "NOW That's What I Call Music! 102",
+        "cover": "2838.jpg",
+        "performer": "Various Artists",
+        "year": "2019"
+      },
+      {
+        "id": "2741",
+        "name": "High Expectations",
+        "cover": "2741.png",
+        "performer": "Mabel",
+        "year": "2019"
+      },
+      {
+        "id": "3128",
+        "name": "AitcH2O",
+        "cover": "3128.jpg",
+        "performer": "Aitch",
+        "year": "2019"
+      },
+      {
+        "id": "2722",
+        "name": "Happiness Begins",
+        "cover": "2722.jpg",
+        "performer": "Jonas Brothers",
+        "year": "2019"
+      },
+      {
+        "id": "2704",
+        "name": "Back Together",
+        "cover": "2704.jpg",
+        "performer": "Michael Ball & Alfie Boe",
+        "year": "2019"
+      }
+    ]
+  },
+  {
+    "category": "Gospel Music",
+    "albums": [
+      {
+        "id": "2946",
+        "name": "Begin Again",
+        "cover": "2946.jpg",
+        "performer": "Norah Jones",
+        "year": "2019"
+      },
+      {
+        "id": "2783",
+        "name": "When I Wake Up",
+        "cover": "2783.jpg",
+        "performer": "Maverick Sabre",
+        "year": "2019"
+      },
+      {
+        "id": "2717",
+        "name": "Fine Line",
+        "cover": "2717.jpg",
+        "performer": "Harry Styles",
+        "year": "2019"
+      },
+      {
+        "id": "2733",
+        "name": "Certified Hitmaker",
+        "cover": "2733.jpg",
+        "performer": "Lil Mosey",
+        "year": "2019"
+      },
+      {
+        "id": "2568",
+        "name": "Erratic Cinematic",
+        "cover": "2568.jpg",
+        "performer": "Gerry Cinnamon",
+        "year": "2018"
+      },
+      {
+        "id": "2730",
+        "name": "Goodbye & Good Riddance",
+        "cover": "2730.jpg",
+        "performer": "Juice WRLD",
+        "year": "2018"
+      },
+      {
+        "id": "2502",
+        "name": "Don't Smile At Me (Limited Edition)",
+        "cover": "2502.jpg",
+        "performer": "Billie Eilish",
+        "year": "2018"
+      },
+      {
+        "id": "2713",
+        "name": "Amala",
+        "cover": "2713.jpg",
+        "performer": "Doja Cat",
+        "year": "2018"
+      },
+      {
+        "id": "1769",
+        "name": "Essentials",
+        "cover": "1769.png",
+        "performer": "Avicii",
+        "year": "2018"
+      },
+      {
+        "id": "2269",
+        "name": "Boarding House Reach",
+        "cover": "2269.jpg",
+        "performer": "Jack White",
+        "year": "2018"
+      }
+    ]
+  }
+]

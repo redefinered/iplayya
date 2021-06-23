@@ -10,7 +10,7 @@ import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
+import { Creators as AppActionCreators } from 'modules/ducks/app.reducer';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
@@ -22,7 +22,7 @@ import {
   selectPaginatorInfo,
   selectCategoryPaginator
 } from 'modules/ducks/movies/movies.selectors';
-import { urlEncodeTitle } from 'utils';
+// import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
 
@@ -62,33 +62,19 @@ const ImovieScreen = ({
     addMovieToFavoritesStartAction();
     enableSwipeAction(false);
 
-    // Subscribe
+    // Subscribe to network changes
     const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
-      // console.log('Connection type', type);
-      // console.log('Is connected?', isConnected);
-
       setNetworkInfoAction({ type, isConnected });
     });
 
     // Unsubscribe
-    unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   React.useEffect(() => {
-    let collection = [];
-    if (typeof movies === 'undefined') return setData(collection);
+    if (!movies) return;
 
-    collection = movies.map(({ thumbnail, ...rest }) => {
-      return {
-        thumbnail:
-          thumbnail === '' || thumbnail === 'N/A'
-            ? `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(rest.title)}`
-            : thumbnail,
-        ...rest
-      };
-    });
-
-    return setData(collection);
+    setData(movies);
   }, [movies]);
 
   React.useEffect(() => {
@@ -100,6 +86,7 @@ const ImovieScreen = ({
     setScrollIndex(0);
   }, [params, data]);
 
+  // console.log({ paginatorInfo });
   // get movies on mount
   React.useEffect(() => {
     if (paginatorInfo.length) {
@@ -232,7 +219,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  setNetworkInfoAction: AuthActionCreators.setNetworkInfo,
+  setNetworkInfoAction: AppActionCreators.setNetworkInfo,
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,

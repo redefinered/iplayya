@@ -1,35 +1,117 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Image, Pressable, Dimensions } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
 import PausedAnimationPlaceholder from 'assets/paused-animation-placeholder.svg';
 import { createFontFormat } from 'utils';
+import { selectNowPlaying, selectIsBackgroundMode } from 'modules/ducks/music/music.selectors';
+import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/music/music.actions';
+import { createStructuredSelector } from 'reselect';
+import DeviceInfo from 'react-native-device-info';
+import { selectAlbum } from 'modules/ducks/music/music.selectors';
+import clone from 'lodash/clone';
 
-// const samplemp3 = require('assets/sample.mp3');
+const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const NowPlaying = ({
-  // navigation,
-  theme,
-  selected: { __typename, title, artist, thumbnails, ...radioProps }
+  nowPlaying,
+  album,
+  setNowPlayingAction,
+  isBackgroundMode,
+  setNowPlayingLayoutInfoAction
 }) => {
+  const theme = useTheme();
+  const rootComponent = React.useRef();
+
   const [paused, setPaused] = React.useState(false);
+  // const [isShuffled, setIsShuffled] = React.useState(false);
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [progress, setProgress] = React.useState(0);
+  const [hasNotch, setHasNotch] = React.useState(false);
+
+  React.useEffect(() => {
+    /// shows the bottom padding for devices with notch. not yet fully tested
+    if (DeviceInfo.hasNotch()) setHasNotch(true);
+
+    // if (rootComponent.current) {
+    //   const height = rootComponent.current.clientHeight;
+    //   console.log({ height });
+    // }
+  }, []);
+
+  // React.useEffect(() => {
+  //   console.log({ x: rootComponent.current.getBoundingClientRect() });
+  // });
 
   React.useEffect(() => {
     if (playbackInfo) {
       const { seekableDuration, currentTime } = playbackInfo;
+
+      console.log({ seekableDuration, currentTime });
+
       let percentage = (currentTime / seekableDuration) * 100;
+
+      // console.log(Math.ceil(percentage));
 
       percentage = percentage === Infinity ? 0 : percentage;
       percentage = isNaN(percentage) ? 0 : percentage;
       setProgress(percentage);
+
+      if (Math.ceil(percentage) === 100) playNext();
     }
   }, [playbackInfo]);
+
+  const playNext = () => {
+    /// set now playing to the next item in the selected album
+    const nextTrackNumber = nowPlaying.number + 1;
+
+    /// if next track does not exist, stop
+    if (nextTrackNumber > album.tracks.length) {
+      console.log('stopped because end of the list');
+      // reset progress
+      setProgress(0);
+
+      // turn playing off
+      setPaused(true);
+
+      setNowPlayingAction(null);
+
+      return;
+    }
+
+    const nextTrack = album.tracks.find(({ number }) => nextTrackNumber === parseInt(number));
+
+    const { number, name: title, url: source, performer: artist } = nextTrack;
+    setNowPlayingAction({
+      number: parseInt(number),
+      title,
+      artist,
+      source,
+      thumbnail: coverplaceholder
+    });
+  };
+
+  React.useEffect(() => {
+    if (nowPlaying) {
+      if (playbackInfo) {
+        // hack playbackInfo because it does not reset when music stops
+        const previousPlaybackInfo = clone(playbackInfo);
+        setPlaybackInfo(
+          Object.assign(previousPlaybackInfo, { currentTime: 0, seekableDuration: 0 })
+        );
+      }
+
+      const { source } = nowPlaying;
+      if (!source) return;
+
+      setPaused(false);
+    }
+  }, [nowPlaying]);
 
   const handleBuffer = () => {
     console.log('buffering...');
@@ -41,31 +123,32 @@ const NowPlaying = ({
   };
 
   const handleProgress = (progressInfo) => {
-    // console.log('progressInfo', progressInfo);
+    console.log('progressInfo', progressInfo);
     setPlaybackInfo(progressInfo);
     setBuffering(false);
   };
 
-  const renderThumbnail = () => {
-    if (typeof __typename === 'undefined')
+  const renderThumbnail = (nowPlaying) => {
+    const { thumbnail } = nowPlaying;
+    if (typeof thumbnail !== 'undefined')
       return (
         <Image
           style={{ width: 60, height: 60, borderRadius: 8, marginRight: 15 }}
-          source={{
-            url: thumbnails.small
-          }}
+          source={thumbnail}
         />
       );
   };
 
-  const renderContent = () => {
-    const { name } = radioProps;
+  const renderContent = (nowPlaying) => {
+    const { title, artist } = nowPlaying;
 
-    // if audio file
-    if (typeof __typename === 'undefined')
+    if (artist)
       return (
-        <View>
-          <Text style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}>
+        <View style={{ flex: 1 }}>
+          <Text
+            numberOfLines={1}
+            style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}
+          >
             {buffering ? 'Buffering...' : title}
           </Text>
           <Text style={{ ...createFontFormat(12, 16) }}>{artist}</Text>
@@ -73,85 +156,132 @@ const NowPlaying = ({
       );
 
     return (
-      <View>
-        <Text style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}>
-          {buffering ? 'Buffering...' : name}
+      <View style={{ flex: 1 }}>
+        <Text
+          numberOfLines={1}
+          style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}
+        >
+          {buffering ? 'Buffering...' : title}
         </Text>
       </View>
     );
   };
 
-  return (
-    <Pressable
-      // onPress={() => navigation.navigate('MusicPlayerScreen', { id })}
-      style={{
-        backgroundColor: '#202530',
-        borderBottomWidth: 1,
-        borderColor: theme.iplayya.colors.white10
-      }}
-    >
-      <Video
-        paused={paused}
-        source={{ uri: radioProps.cmd }}
-        // source={samplemp3}
-        onBuffer={handleBuffer}
-        onError={handleError}
-        onProgress={handleProgress}
-      />
+  const visibilityStyles = () => {
+    if (isBackgroundMode) return { top: '100%' };
 
-      <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
-        <View
-          style={{
-            width: (progress * Dimensions.get('window').width) / 100,
-            height: 1,
-            backgroundColor: theme.iplayya.colors.vibrantpussy
-          }}
-        />
-      </View>
-      <View
+    return { bottom: 0 };
+  };
+
+  const handleOnRootLayout = ({ nativeEvent }) => {
+    setNowPlayingLayoutInfoAction(nativeEvent.layout);
+  };
+
+  console.log({ progress });
+
+  if (nowPlaying) {
+    const { source } = nowPlaying;
+
+    return (
+      <Pressable
+        // onPress={() => hideNowPlaying()}
+        onLayout={handleOnRootLayout}
+        ref={rootComponent}
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingVertical: theme.spacing(4),
-          paddingHorizontal: theme.spacing(2)
+          backgroundColor: '#202530',
+          borderBottomWidth: 1,
+          borderColor: theme.iplayya.colors.white10,
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          ...visibilityStyles()
         }}
       >
-        <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
-          {renderThumbnail()}
+        <Video
+          paused={paused}
+          source={{ uri: source }}
+          onBuffer={handleBuffer}
+          onError={handleError}
+          onProgress={handleProgress}
+          playInBackground
+        />
 
-          {renderContent()}
+        <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
+          <View
+            style={{
+              width: (progress * Dimensions.get('window').width) / 100,
+              height: 1,
+              backgroundColor: theme.iplayya.colors.vibrantpussy
+            }}
+          />
         </View>
         <View
           style={{
-            flex: 4,
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'center'
+            paddingVertical: theme.spacing(4),
+            paddingHorizontal: theme.spacing(2)
           }}
         >
-          {paused ? (
-            <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-          ) : (
-            <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-          )}
+          <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
+            {renderThumbnail(nowPlaying)}
 
-          <Pressable onPress={() => setPaused(!paused)}>
-            <Icon
-              name={paused ? 'circular-play' : 'circular-pause'}
-              size={32}
-              style={{ marginHorizontal: 10 }}
-            />
-          </Pressable>
+            {renderContent(nowPlaying)}
+          </View>
+          <View
+            style={{
+              flex: 4,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            {paused ? (
+              <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+            ) : (
+              <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+            )}
+
+            <Pressable onPress={() => setPaused(!paused)}>
+              <Icon
+                name={paused ? 'circular-play' : 'circular-pause'}
+                size={32}
+                style={{ marginHorizontal: 10 }}
+              />
+            </Pressable>
+          </View>
         </View>
-      </View>
-    </Pressable>
-  );
+        {hasNotch && (
+          <View style={{ height: 20, backgroundColor: '#202530' }}>
+            <View style={{ height: 1, backgroundColor: theme.iplayya.colors.white10 }} />
+          </View>
+        )}
+      </Pressable>
+    );
+  }
+
+  /// return an empty component if nowPlaying is null
+  return <View />;
 };
 
 NowPlaying.propTypes = {
-  navigation: PropTypes.object.isRequired,
   theme: PropTypes.object,
-  selected: PropTypes.object.isRequired
+  nowPlaying: PropTypes.object,
+  album: PropTypes.object,
+  setNowPlayingAction: PropTypes.func,
+  isBackgroundMode: PropTypes.bool,
+  setNowPlayingLayoutInfoAction: PropTypes.func
 };
 
-export default withTheme(NowPlaying);
+const actions = {
+  setNowPlayingAction: Creators.setNowPlaying,
+  setNowPlayingLayoutInfoAction: Creators.setNowPlayingLayoutInfo
+};
+
+const mapStateToProps = createStructuredSelector({
+  nowPlaying: selectNowPlaying,
+  album: selectAlbum,
+  isBackgroundMode: selectIsBackgroundMode
+});
+
+export default connect(mapStateToProps, actions)(NowPlaying);

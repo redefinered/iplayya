@@ -15,6 +15,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* iplayyaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* iplayyaTests.m */; };
+		34938791B7A24232BC3D60D2 /* iplayyaicons1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C241A4640E484945B0365C43 /* iplayyaicons1.ttf */; };
 		3991B0F0A0B6D579AE9D3DD1 /* libPods-iplayya-iplayyaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FDEB26F5CFA1112249716B7 /* libPods-iplayya-iplayyaTests.a */; };
 		57948AFE76733A9F607021E8 /* libPods-iplayya-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 85062F1527518D782EF51FCC /* libPods-iplayya-tvOS.a */; };
 		78570F6251FB3CF266329383 /* libPods-iplayya-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AE74DD2B42F1DE8E0DD65D4B /* libPods-iplayya-tvOSTests.a */; };
@@ -27,7 +28,6 @@
 		A5AF4FE125FA66620034A2CE /* NotoSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5AF4FDC25FA66620034A2CE /* NotoSans-BoldItalic.ttf */; };
 		A5AF4FE225FA66620034A2CE /* NotoSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5AF4FDD25FA66620034A2CE /* NotoSans-Regular.ttf */; };
 		F206DDB9751E4A6490B97C7D /* libPods-iplayya.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */; };
-		34938791B7A24232BC3D60D2 /* iplayyaicons1.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C241A4640E484945B0365C43 /* iplayyaicons1.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +88,7 @@
 		A633FB98E6B948298F119E91 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		AC4937EED261457395F0C81A /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		AE74DD2B42F1DE8E0DD65D4B /* libPods-iplayya-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C241A4640E484945B0365C43 /* iplayyaicons1.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = iplayyaicons1.ttf; path = ../src/assets/fonts/iplayyaicons1.ttf; sourceTree = "<group>"; };
 		C3DE088EDF894B9A90CA0D4B /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		C9845CA677047E48E9CD9E88 /* libPods-iplayya.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-iplayya.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D8C43496C174EFA0BDAC2DFC /* Pods-iplayya.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya.debug.xcconfig"; path = "Target Support Files/Pods-iplayya/Pods-iplayya.debug.xcconfig"; sourceTree = "<group>"; };
@@ -99,7 +100,6 @@
 		F10C80F6532549FDB996FD95 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		F9CFC0AAEDC257B823124664 /* Pods-iplayya-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-iplayya-tvOS/Pods-iplayya-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		FED963EF7BA27E553787AD5B /* Pods-iplayya-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iplayya-tvOS.release.xcconfig"; path = "Target Support Files/Pods-iplayya-tvOS/Pods-iplayya-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		C241A4640E484945B0365C43 /* iplayyaicons1.ttf */ = {isa = PBXFileReference; name = "iplayyaicons1.ttf"; path = "../src/assets/fonts/iplayyaicons1.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

@@ -1,9 +1,9 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
-import { updateMoviesState, updatePaginatorInfo } from './movies.utils';
+import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './movies.utils';
 import uniq from 'lodash/uniq';
 
-import { setupPaginator } from 'screens/imovie/imovie.utils';
+// import { setupPaginator } from 'screens/imovie/imovie.utils';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -60,7 +60,6 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.GET_MOVIE_SUCCESS]: (state, action) => {
     const { movie } = action;
-
     return {
       ...state,
       isFetching: false,
@@ -75,7 +74,6 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
-
   /// reset paginatorInfo so initial query
   [Types.GET_MOVIES_START]: (state) => {
     const { paginatorInfo } = INITIAL_STATE;
@@ -97,7 +95,6 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.GET_MOVIES_SUCCESS]: (state, action) => {
     const { movies, categoryPaginator } = action;
-
     return {
       ...state,
       isFetching: false,
@@ -120,7 +117,6 @@ export default createReducer(INITIAL_STATE, {
       categoryPaginator: { page: 1, limit: 5 }
     };
   },
-
   // setup paginator info
   // [Types.SETUP_PAGINATOR_INFO]: (state, action) => {
   //   const { paginatorInfo } = action;
@@ -129,7 +125,6 @@ export default createReducer(INITIAL_STATE, {
   //     paginatorInfo
   //   };
   // },
-
   [Types.GET_CATEGORIES]: (state) => {
     return {
       ...state,
@@ -137,7 +132,6 @@ export default createReducer(INITIAL_STATE, {
       error: null
     };
   },
-
   // get all categories
   [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
     const { categories } = action.data;
@@ -156,7 +150,6 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false
     };
   },
-
   // not sure if I need this
   [Types.GET_MOVIES_BY_CATEGORIES]: (state) => {
     return {
@@ -169,7 +162,6 @@ export default createReducer(INITIAL_STATE, {
     const { newMovies, nextPaginator } = action.data;
     const movies = updateMoviesState(state, newMovies);
     const paginatorInfo = updatePaginatorInfo(state, newMovies, nextPaginator);
-
     return {
       ...state,
       isFetching: false,
@@ -185,7 +177,6 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
-
   [Types.PLAYBACK_START]: (state) => {
     return {
       ...state,
@@ -199,7 +190,6 @@ export default createReducer(INITIAL_STATE, {
       playbackInfo
     };
   },
-
   /// add to favorites
   [Types.ADD_MOVIE_TO_FAVORITES]: (state) => {
     return {
@@ -232,7 +222,6 @@ export default createReducer(INITIAL_STATE, {
       updatedFavorites: false
     };
   },
-
   // add to favorites
   [Types.REMOVE_FROM_FAVORITES]: (state) => {
     return {
@@ -256,7 +245,6 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
-
   [Types.GET_FAVORITE_MOVIES]: (state) => {
     return {
       ...state,
@@ -281,7 +269,6 @@ export default createReducer(INITIAL_STATE, {
       error: null
     };
   },
-
   /// search
   [Types.SEARCH_START]: (state) => {
     return {

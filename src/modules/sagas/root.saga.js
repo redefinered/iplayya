@@ -8,6 +8,7 @@ import passwordSagas from './password.sagas';
 import profileSagas from './profile.sagas';
 import providerSagas from './provider.sagas';
 import moviesSagas from './movies.sagas';
+import musicSagas from './music.sagas';
 import isportsSagas from './isports.sagas';
 import iradioSagas from './iradio.sagas';
 
@@ -20,6 +21,7 @@ export default function* rootSaga() {
     fork(userSagas),
     fork(passwordSagas),
     fork(moviesSagas),
+    fork(musicSagas),
     fork(isportsSagas),
     fork(iradioSagas),
     fork(profileSagas),

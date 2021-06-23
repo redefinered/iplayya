@@ -2,7 +2,7 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    // setupPaginatorInfo: ['paginatorInfo'],
+    setEpisode: ['season', 'episode'],
 
     getMovieStart: [],
     getMovie: ['videoId'],
@@ -15,8 +15,6 @@ const { Types, Creators } = createActions(
     getMoviesSuccess: ['movies', 'categoryPaginator'],
     getMoviesFailure: ['error'],
     resetCategoryPaginator: [],
-
-    setEpisode: ['season', 'episode'],
 
     getCategories: [],
     getCategoriesSuccess: ['data'],
@@ -48,23 +46,6 @@ const { Types, Creators } = createActions(
     removeFromFavorites: ['videoIds'],
     removeFromFavoritesSuccess: [],
     removeFromFavoritesFailure: ['error'],
-
-    /**
-     * will have title, status, and progress property
-     */
-    // updateDownloads: ['downloadTask'],
-
-    // deleteFromDownloadsState: ['videoId'],
-
-    // /// the id argument is the ID to be removed
-    // cleanUpDownloadsProgress: ['ids'],
-
-    // updateDownloadsProgress: ['data'],
-
-    // getDownloadsStart: [],
-    // getDownloads: ['data'],
-    // getDownloadsSuccess: ['data'],
-    // getDownloadsFailure: ['error'],
 
     searchStart: [],
     search: ['input'],

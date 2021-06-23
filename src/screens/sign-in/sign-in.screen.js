@@ -21,8 +21,14 @@ import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
+import { Creators as AppCreators } from 'modules/app';
 import { createStructuredSelector } from 'reselect';
-import { selectIsFetching, selectError, selectSignedUp } from 'modules/ducks/auth/auth.selectors';
+import {
+  selectIsFetching,
+  selectError,
+  selectSignedUp,
+  selectIsLoggedIn
+} from 'modules/ducks/auth/auth.selectors';
 
 import styles from './sign-in.styles';
 import withLoader from 'components/with-loader.component';
@@ -33,6 +39,12 @@ class SignInScreen extends React.Component {
     // isolatedInputs: false,
     showPassword: false
   };
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.isLoggedIn) {
+      this.props.appReadyAction();
+    }
+  }
 
   componentDidMount() {
     this.props.signInStartAction();
@@ -170,12 +182,14 @@ SignInScreen.propTypes = {
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   error: selectError,
-  signedUp: selectSignedUp
+  signedUp: selectSignedUp,
+  isLoggedIn: selectIsLoggedIn
 });
 
 const actions = {
   signInStartAction: Creators.signInStart,
-  signInAction: Creators.signIn
+  signInAction: Creators.signIn,
+  appReadyAction: AppCreators.appReady
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);

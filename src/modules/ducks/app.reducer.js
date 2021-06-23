@@ -1,6 +1,4 @@
-import { REHYDRATE } from 'redux-persist';
 import { createReducer, createActions } from 'reduxsauce';
-import { createSelector } from 'reselect';
 
 const { Types, Creators } = createActions(
   {
@@ -8,13 +6,12 @@ const { Types, Creators } = createActions(
     appReadySuccess: null,
     appReadyFailure: ['error'],
     setNetworkInfo: ['networkInfo'],
-    default: null,
-    purgeStore: null
+    default: null
   },
   { prefix: '@App/' }
 );
 
-export { Creators };
+export { Types, Creators };
 
 // default State
 const INITIAL_STATE = {
@@ -26,12 +23,6 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  [REHYDRATE]: (state) => {
-    return {
-      ...state,
-      isLoading: true
-    };
-  },
   [Types.APP_READY]: (state) => {
     return {
       ...state,
@@ -64,8 +55,3 @@ export default createReducer(INITIAL_STATE, {
     };
   }
 });
-
-const appState = (state) => state.app;
-
-export const selectIsLoading = createSelector([appState], ({ isLoading }) => isLoading);
-export const selectNetworkInfo = createSelector([appState], ({ networkInfo }) => networkInfo);

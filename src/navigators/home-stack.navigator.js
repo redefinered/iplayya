@@ -18,6 +18,7 @@ import ImovieFavoritesScreen from 'screens/imovie-favorites/imovie-favorites.scr
 import ImovieDownloadsScreen from 'screens/imovie-downloads/imovie-downloads.screen';
 import IradioScreen from 'screens/iradio/iradio.screen';
 import ImusicScreen from 'screens/imusic/imusic.screen';
+import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import IplayScreen from 'screens/iplay/iplay.screen';
 import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
 import IsportsScreen from 'screens/isports/isports.screen';
@@ -430,6 +431,8 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
         }}
       />
+
+      {/* iMusic */}
       <Stack.Screen
         name="ImusicScreen"
         component={ImusicScreen}
@@ -456,6 +459,38 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
         }}
       />
+
+      <Stack.Screen
+        name="AlbumDetailScreen"
+        component={AlbumDetailScreen}
+        options={(props) => {
+          const {
+            route: {
+              params: { albumId }
+            }
+          } = props;
+
+          const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
+
+          return {
+            title: null,
+            headerRight: () => (
+              <View style={{ flexDirection: 'row' }}>
+                <AddToFavoritesButton
+                  albumId={parseInt(albumId)}
+                  alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                />
+                <DownloadButton albumId={albumId} />
+              </View>
+            )
+          };
+        }}
+        listeners={{
+          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+        }}
+      />
+
       <Stack.Screen
         name="IplayScreen"
         component={IplayScreen}
