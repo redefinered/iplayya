@@ -36,3 +36,23 @@ export const selectPaginatorOfGenre = createSelector(
   [selectPaginatorInfoForFilter],
   (paginatorInfo) => paginatorInfo
 );
+
+export const selectAlbum = createSelector([musicState], ({ album }) => album);
+
+export const selectTracks = createSelector([musicState], ({ album }) => {
+  if (!album) return [];
+
+  return album.tracks;
+});
+
+export const selectNowPlaying = createSelector([musicState], ({ nowPlaying }) => nowPlaying);
+
+export const selectIsBackgroundMode = createSelector(
+  [musicState],
+  ({ isBackgroundMode }) => isBackgroundMode
+);
+
+export const selectNowPlayingLayoutInfo = createSelector(
+  [musicState],
+  ({ nowPlayingLayoutInfo }) => nowPlayingLayoutInfo
+);

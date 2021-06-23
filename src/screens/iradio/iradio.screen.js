@@ -41,6 +41,8 @@ const IradioScreen = ({
   const [nowPlaying, setNowPlaying] = React.useState(null);
   const [bottomNavHeight, setBottomNavHeight] = React.useState();
 
+  console.log({ nowPlaying });
+
   React.useEffect(() => {
     getRadiosAction(paginatorInfo);
     getFavoritesAction(paginatorInfo);
@@ -61,7 +63,11 @@ const IradioScreen = ({
   //   favorites: FavoritesTab
   // });
   const handleSelectItem = (item) => {
-    setNowPlaying(item);
+    // const { source, title, artist, thumbnail } = item;
+    const { cmd, name } = item;
+
+    console.log({ item });
+    setNowPlaying({ source: cmd, title: name });
   };
 
   const handleSetBottomTabsHeight = (event) => {
@@ -111,7 +117,7 @@ const IradioScreen = ({
         </ContentWrap>
       )}
 
-      {nowPlaying && <NowPlaying selected={nowPlaying} navigation={navigation} />}
+      {nowPlaying && <NowPlaying navigation={navigation} {...nowPlaying} />}
 
       {/* pushes up the content to make room for the bottom tab */}
       <View style={{ paddingBottom: bottomNavHeight }} />

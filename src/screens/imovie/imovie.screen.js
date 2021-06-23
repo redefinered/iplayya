@@ -62,7 +62,7 @@ const ImovieScreen = ({
     addMovieToFavoritesStartAction();
     enableSwipeAction(false);
 
-    // Subscribe
+    // Subscribe to network changes
     const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
       setNetworkInfoAction({ type, isConnected });
     });

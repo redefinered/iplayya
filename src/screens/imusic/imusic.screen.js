@@ -11,6 +11,7 @@ import ImovieBottomTabs from './imusic-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { Creators as AppActionCreators } from 'modules/app';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/music/music.actions';
@@ -26,16 +27,17 @@ import {
 import { urlEncodeTitle } from 'utils';
 import GenreScroll from './genre-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
-// import NetInfo from '@react-native-community/netinfo';
+import NetInfo from '@react-native-community/netinfo';
 // import { selectAlbums } from 'modules/ducks/music/music.selectors';
 
-const coverplaceholder = require('assets/imusic-placeholder.png');
+// const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const ImusicScreen = ({
   isFetching,
   navigation,
   error,
   getAlbumsAction,
+  getAlbumAction,
   paginatorInfo,
   addMovieToFavoritesStartAction,
   theme,
@@ -46,60 +48,46 @@ const ImusicScreen = ({
   setNetworkInfoAction,
   resetGenrePaginatorAction
 }) => {
+  // console.log({ albums });
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
-  const [data, setData] = React.useState([]);
-  /**
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   */
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
 
   React.useEffect(() => {
     resetGenrePaginatorAction();
+    enableSwipeAction(false);
+
+    // Subscribe to network changes
+    const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
+      setNetworkInfoAction({ type, isConnected });
+    });
+
+    // Unsubscribe
+    return () => unsubscribe();
   }, []);
 
   // React.useEffect(() => {
-  //   addMovieToFavoritesStartAction();
-  //   enableSwipeAction(false);
+  //   console.log({ albums });
+  //   let collection = [];
+  //   if (typeof albums === 'undefined') return setData(collection);
 
-  //   // Subscribe to network changes
-  //   const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
-  //     setNetworkInfoAction({ type, isConnected });
+  //   collection = albums.map((props) => {
+  //     return { cover: coverplaceholder, ...props };
   //   });
 
-  //   // Unsubscribe to network changes
-  //   unsubscribe();
-  // }, []);
+  //   return setData(collection);
+  // }, [albums]);
 
-  React.useEffect(() => {
-    let collection = [];
-    if (typeof albums === 'undefined') return setData(collection);
-
-    collection = albums.map((props) => {
-      return { thumbnail: coverplaceholder, ...props };
-    });
-
-    return setData(collection);
-  }, [albums]);
-
-  React.useEffect(() => {
-    // console.log({ data, albums });
-    if (typeof params !== 'undefined') {
-      const { categoryName } = params;
-      return setScrollIndex(data.findIndex((c) => c.category === categoryName));
-    }
-    setScrollIndex(0);
-  }, [params, data]);
+  // React.useEffect(() => {
+  //   // console.log({ data, albums });
+  //   if (typeof params !== 'undefined') {
+  //     const { categoryName } = params;
+  //     return setScrollIndex(data.findIndex((c) => c.category === categoryName));
+  //   }
+  //   setScrollIndex(0);
+  // }, [params, data]);
 
   // get movies on mount
   React.useEffect(() => {
@@ -108,9 +96,12 @@ const ImusicScreen = ({
     }
   }, [paginatorInfo]);
 
-  const handleMovieSelect = ({ id: videoId, is_series }) => {
-    if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
-    navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
+  const handleSelect = (album) => {
+    // console.log(album);
+    navigation.navigate('AlbumDetailScreen', { album });
+    // getAlbumAction(id);
+    // if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+    // navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   };
 
   const renderEmpty = () => {
@@ -155,7 +146,7 @@ const ImusicScreen = ({
   const renderItem = ({ item: { genre } }) => {
     if (typeof albums === 'undefined') return;
 
-    return <GenreScroll genre={genre} onSelect={handleMovieSelect} />;
+    return <GenreScroll genre={genre} onSelect={handleSelect} />;
   };
 
   const handleEndReached = (info) => {
@@ -169,7 +160,7 @@ const ImusicScreen = ({
   return (
     <View style={styles.container}>
       {renderErrorBanner()}
-      {data.length ? (
+      {albums.length ? (
         <React.Fragment>
           {/* <ScrollView contentOffset={{ y: scrollOffset }}>
             {movies.map(({ category }) => {
@@ -187,7 +178,7 @@ const ImusicScreen = ({
             <Spacer size={100} />
           </ScrollView> */}
           <FlatList
-            data={data}
+            data={albums}
             keyExtractor={(album) => album.id}
             renderItem={renderItem}
             initialScrollIndex={scrollIndex}
@@ -231,8 +222,9 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  setNetworkInfoAction: AuthActionCreators.setNetworkInfo,
+  setNetworkInfoAction: AppActionCreators.setNetworkInfo,
   getAlbumsAction: Creators.getAlbums,
+  getAlbumAction: Creators.getAlbum,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   enableSwipeAction: NavActionCreators.enableSwipe,

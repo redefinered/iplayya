@@ -38,7 +38,7 @@ const App = ({
   providers,
   skippedProviderAdd,
 
-  resetAction
+  resetNowPlayingAction
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
@@ -53,8 +53,9 @@ const App = ({
     // listDownloadedFiles();
     // deleteFile('19_12_Angry_Men.mp4');
 
-    // resetAction();
     // resetStore();
+
+    resetNowPlayingAction();
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
@@ -130,7 +131,7 @@ const actions = {
   purgeStoreAction: Creators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
-  resetAction: MusicCreators.reset
+  resetNowPlayingAction: MusicCreators.resetNowPlaying
 };
 
 export default connect(mapStateToProps, actions)(App);

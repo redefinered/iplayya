@@ -8,6 +8,11 @@ const INITIAL_STATE = {
   error: null,
   genres: [],
   albums: [], // grouped with genres
+  album: null,
+
+  nowPlaying: null,
+  nowPlayingLayoutInfo: null,
+  isBackgroundMode: false,
 
   // paginators for musc sections in the main imusic screen
   paginatorInfo: [],
@@ -44,6 +49,34 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
+  /// get album
+  [Types.GET_ALBUM_START]: (state) => {
+    return { ...state, album: null };
+  },
+  [Types.GET_ALBUM]: (state) => {
+    return { ...state, isFetching: true, error: null, album: null };
+  },
+  [Types.GET_ALBUM_SUCCESS]: (state, action) => {
+    return { ...state, isFetching: false, album: action.album };
+  },
+  [Types.GET_ALBUM_FAILURE]: (state, action) => {
+    return { ...state, isFetching: false, album: null, error: action.error };
+  },
+
+  [Types.SET_NOW_PLAYING]: (state, action) => {
+    return { ...state, nowPlaying: action.track };
+  },
+  [Types.RESET_NOW_PLAYING]: (state) => {
+    return { ...state, nowPlaying: null };
+  },
+  [Types.SET_NOW_PLAYING_BACKGROUND_MODE]: (state, action) => {
+    return { ...state, isBackgroundMode: action.isBackgroundMode };
+  },
+  [Types.SET_NOW_PLAYING_LAYOUT_INFO]: (state, action) => {
+    return { ...state, nowPlayingLayoutInfo: action.layoutInfo };
+  },
+
+  /// get albums
   [Types.GET_ALBUMS_START]: (state) => {
     return {
       ...state,
@@ -62,6 +95,7 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.GET_ALBUMS_SUCCESS]: (state, action) => {
     const { albums, genrePaginator } = action;
+    // console.log({ albums });
     return {
       ...state,
       isFetching: false,

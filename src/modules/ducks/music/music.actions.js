@@ -11,9 +11,19 @@ const { Types, Creators } = createActions(
     getAlbumsSuccess: ['albums', 'genrePaginator'],
     getAlbumsFailure: ['error'],
 
+    getAlbumStart: null,
+    getAlbum: ['album'],
+    getAlbumSuccess: ['album'],
+    getAlbumFailure: ['error'],
+
     getAlbumsByGenre: ['input'],
     getAlbumsByGenreSuccess: ['data'],
     getAlbumsByGenreFailure: ['error'],
+
+    setNowPlaying: ['track'],
+    resetNowPlaying: null,
+    setNowPlayingBackgroundMode: ['isBackgroundMode'],
+    setNowPlayingLayoutInfo: ['layoutInfo'],
 
     // misc
     resetGenrePaginator: null,
