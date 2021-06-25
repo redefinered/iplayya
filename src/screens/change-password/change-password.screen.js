@@ -18,7 +18,6 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectUpdateParams,
   selectUpdated
 } from 'modules/ducks/password/password.selectors';
 
@@ -31,20 +30,25 @@ const styles = StyleSheet.create({
 });
 
 class ChangePasswordScreen extends React.Component {
-  state = {
-    old_password: '',
-    password: '',
-    password_confirmation: '',
-    valid: true,
-    errors: [
-      { key: 'first_name', val: false },
-      { key: 'last_name', val: false },
-      { key: 'username', val: false },
-      { key: 'old_password', val: false },
-      { key: 'password', val: false },
-      { key: 'password_confirmation', val: false }
-    ]
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      old_password: '',
+      password: '',
+      password_confirmation: '',
+      valid: true,
+      errors: [
+        { key: 'first_name', val: false },
+        { key: 'last_name', val: false },
+        { key: 'username', val: false },
+        { key: 'email', val: false },
+        { key: 'old_password', val: false },
+        { key: 'password', val: false },
+        { key: 'password_confirmation', val: false }
+      ]
+    };
+  }
 
   componentDidMount() {
     this.props.enableSwipeAction(false);
@@ -62,8 +66,6 @@ class ChangePasswordScreen extends React.Component {
 
   handleSubmit = () => {
     const { old_password, password, password_confirmation, errors } = this.state;
-
-    const { updatePasswordAction } = this.props;
 
     if (!isValidPassword(old_password)) {
       this.setError(errors, 'old_password', true);
@@ -96,13 +98,16 @@ class ChangePasswordScreen extends React.Component {
       this.setState({ valid: true });
     }
 
-    updatePasswordAction({ password, password_confirmation });
+    this.props.changePasswordAction({ old_password, password, password_confirmation });
   };
 
   componentDidUpdate(prevProps) {
     if (prevProps.updated !== this.props.updated) {
-      const { updated } = this.props;
-      console.log({ updated });
+      const { updated, navigation } = this.props;
+      // console.log('www', updated);
+      if (updated) {
+        navigation.goBack();
+      }
     }
   }
 
@@ -168,7 +173,6 @@ const container = (props) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  updateParams: selectUpdateParams,
   updated: selectUpdated
 });
 
@@ -176,6 +180,7 @@ const actions = {
   // clearResetPasswordParamsAction: Creators.clearResetPasswordParams,
   resetUpdateParamsAction: Creators.resetUpdateParams,
   updatePasswordAction: Creators.update,
+  changePasswordAction: Creators.changePassword,
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 

@@ -1,6 +1,6 @@
 import { takeLatest, put, call } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/password/password.actions';
-import { getLink, update } from 'services/password.service';
+import { getLink, update, changePassword } from 'services/password.service';
 
 export function* getLinkRequest(action) {
   const { ...input } = action.data;
@@ -22,7 +22,18 @@ export function* updateRequest(action) {
   }
 }
 
+export function* changePasswordRequest(action) {
+  const { ...input } = action.data;
+  try {
+    yield call(changePassword, input);
+    yield put(Creators.changePasswordSuccess());
+  } catch (error) {
+    yield put(Creators.changePasswordFailure(error.message));
+  }
+}
+
 export default function* passwordSagas() {
   yield takeLatest(Types.GET_LINK, getLinkRequest);
   yield takeLatest(Types.UPDATE, updateRequest);
+  yield takeLatest(Types.CHANGE_PASSWORD, changePasswordRequest);
 }
