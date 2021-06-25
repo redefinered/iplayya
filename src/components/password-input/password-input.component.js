@@ -34,6 +34,7 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         onChangeText={(text) => handleChangeText(text, name)}
         style={{
           marginBottom: 10,
+          height: 30,
           ...style,
           ...customStyle,
           position: 'relative',
@@ -43,10 +44,16 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         onBlur={() => setFocused(false)}
         placeholderTextColor={focused ? '#FFFFFF' : 'rgba(255,255,255,0.5)'}
         theme={{
-          colors: { primary: 'rgba(255,255,255,0.1)', error: '#E34398' },
+          colors: {
+            primary: 'rgba(255,255,255,0.1)',
+            error: '#E34398',
+            placeholder: 'transparent'
+          },
           fonts: { regular: { fontFamily: 'NotoSans-Regular' } }
         }}
-        ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans-Regular' } })}
+        ref={(ref) =>
+          ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans-Regular', height: 50 } })
+        }
         {...otherProps}
       />
       <Pressable
