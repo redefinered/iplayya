@@ -27,6 +27,8 @@ import CategoryScroll from 'components/category-scroll/category-scroll.component
 import { FlatList } from 'react-native-gesture-handler';
 import NetInfo from '@react-native-community/netinfo';
 
+import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
+
 const ImovieScreen = ({
   isFetching,
   navigation,
@@ -58,6 +60,7 @@ const ImovieScreen = ({
    */
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
+  const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
@@ -166,6 +169,16 @@ const ImovieScreen = ({
     }
   };
 
+  React.useEffect(() => {
+    if (params) {
+      setShowWalkthroughGuide(params.openImoviesGuide);
+    }
+  }, [params]);
+
+  const handleWalkthroughGuideHide = () => {
+    setShowWalkthroughGuide(false);
+  };
+
   return (
     <View style={styles.container}>
       {renderErrorBanner()}
@@ -206,6 +219,10 @@ const ImovieScreen = ({
       )}
 
       <ImovieBottomTabs navigation={navigation} />
+      <ImovieWalkthrough
+        visible={showWalkthroughGuide}
+        onButtonClick={handleWalkthroughGuideHide}
+      />
     </View>
   );
 };

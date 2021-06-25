@@ -21,17 +21,21 @@ import {
   selectIsFetching as selectAuthIsFetching
 } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdated } from 'modules/ducks/user/user.selectors';
+import { selectUpdated as selectPasswordUpdated } from 'modules/ducks/password/password.selectors';
 import {
   View,
   Image,
   Pressable,
   StyleSheet,
   Dimensions,
-  PixelRatio,
-  Platform,
+  // PixelRatio,
+  // Platform,
   SafeAreaView
 } from 'react-native';
+import SnackBar from 'components/snackbar/snackbar.component';
 import Button from 'components/button/button.component';
+
+import WalkThrougGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -43,18 +47,18 @@ const styles = StyleSheet.create({
   }
 });
 
-const { width: SCREEN_WIDTH /*, height: SCREEN_HEIGHT */ } = Dimensions.get('window');
+// const { width: SCREEN_WIDTH /*, height: SCREEN_HEIGHT */ } = Dimensions.get('window');
 
-const scale = SCREEN_WIDTH / 375;
+// const scale = SCREEN_WIDTH / 375;
 
-function normalize(size) {
-  const newSize = size * scale;
-  if (Platform.OS == 'ios') {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  } else {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
-  }
-}
+// function normalize(size) {
+//   const newSize = size * scale;
+//   if (Platform.OS == 'ios') {
+//     return Math.round(PixelRatio.roundToNearestPixel(newSize));
+//   } else {
+//     return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
+//   }
+// }
 
 const AccountScreen = ({
   profile,
@@ -66,13 +70,18 @@ const AccountScreen = ({
   authIsFetching,
   currentUserId,
   userUpdated,
-  purgeStoreAction
+  purgeStoreAction,
+  passwordUpdated,
+  route: { params }
 }) => {
   const theme = useTheme();
 
   const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
   const [profileErrorVisible, setProfileErrorVisible] = React.useState(false);
   const [onSigningOut, setOnSigningOut] = React.useState(false);
+  const [showPasswordChangedModal, setShowPasswordChangedModal] = React.useState(false);
+  const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  const [showAccountStepTwo, setShowAccountStepTwo] = React.useState(false);
 
   React.useEffect(() => {
     if (authError !== null) {
@@ -103,6 +112,41 @@ const AccountScreen = ({
     }
   }, [userUpdated]);
 
+  React.useEffect(() => {
+    if (passwordUpdated) handlePasswordChanged();
+    hideSnackBar();
+  }, [passwordUpdated]);
+
+  const handlePasswordChanged = () => {
+    setShowPasswordChangedModal(true);
+    passwordUpdated;
+  };
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowPasswordChangedModal(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (params) {
+      setShowWalkthroughGuide(params.openAccountGuide);
+    }
+  }, [params]);
+
+  const handleAccountGuideVisible = () => {
+    setShowWalkthroughGuide(false);
+  };
+
+  const handleAccountNextGuide = () => {
+    setShowWalkthroughGuide(false);
+    setShowAccountStepTwo(true);
+  };
+
+  const handleAccountStepTwo = () => {
+    setShowAccountStepTwo(false);
+  };
+
   if (profileError)
     return (
       <View style={{ alignItems: 'center' }}>
@@ -132,8 +176,8 @@ const AccountScreen = ({
   if (isFetching || !profile) return <Text style={{ padding: 15 }}>Working...</Text>;
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ContentWrap style={{ flex: 1, paddingTop: 20 }}>
+    <SafeAreaView style={{ flex: 1, paddingTop: 40 }}>
+      <ContentWrap style={{ flex: 1 }}>
         {
           // header section
         }
@@ -141,9 +185,9 @@ const AccountScreen = ({
           <View style={{ width: 85 }}>
             <Image
               style={{
-                width: 85,
-                height: 85,
-                borderRadius: 300 / 2,
+                width: 80,
+                height: 80,
+                borderRadius: 300,
                 resizeMode: 'contain'
               }}
               source={require('assets/placeholder.jpg')}
@@ -158,7 +202,7 @@ const AccountScreen = ({
             {/* {profile} */}
             <Text
               style={{
-                fontSize: normalize(21),
+                fontSize: 20,
                 fontWeight: 'bold',
                 lineHeight: 22,
                 marginBottom: 5
@@ -169,7 +213,7 @@ const AccountScreen = ({
             <Text
               numberOfLines={1}
               style={{
-                fontSize: normalize(14),
+                fontSize: 14,
                 lineHeight: 19,
                 marginBottom: 8,
                 paddingRight: 15,
@@ -181,12 +225,12 @@ const AccountScreen = ({
             <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
               <Text
                 style={{
-                  fontSize: normalize(15),
+                  fontSize: 14,
                   lineHeight: 19,
                   marginBottom: 8
                 }}
               >
-                View profile
+                View Profile
               </Text>
             </Pressable>
           </View>
@@ -199,13 +243,13 @@ const AccountScreen = ({
 
       <View
         style={{
-          flex: 5
+          flex: 6
           // marginBottom: newHeight
         }}
       >
         <Text
           style={{
-            fontSize: normalize(15),
+            fontSize: 12,
             lineHeight: 16,
             fontWeight: 'bold',
             color: theme.iplayya.colors.white50,
@@ -231,7 +275,7 @@ const AccountScreen = ({
                 <Icon name="change-password" size={24} />
               </View>
               <View>
-                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Change Password</Text>
+                <Text style={{ fontSize: 16, lineHeight: 22 }}>Change Password</Text>
               </View>
             </View>
           </TouchableRipple>
@@ -244,7 +288,7 @@ const AccountScreen = ({
                 <Icon name="email" size={24} />
               </View>
               <View>
-                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Manage Email</Text>
+                <Text style={{ fontSize: 16, lineHeight: 22 }}>Manage Email</Text>
               </View>
             </View>
           </TouchableRipple>
@@ -257,7 +301,7 @@ const AccountScreen = ({
                 <Icon name="video-quality" size={24} />
               </View>
               <View>
-                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Playback</Text>
+                <Text style={{ fontSize: 16, lineHeight: 22 }}>Playback</Text>
               </View>
             </View>
           </TouchableRipple>
@@ -267,17 +311,20 @@ const AccountScreen = ({
                 <Icon name="lock" size={24} />
               </View>
               <View>
-                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Parental Control</Text>
+                <Text style={{ fontSize: 16, lineHeight: 22 }}>Parental Control</Text>
               </View>
             </View>
           </TouchableRipple>
-          <TouchableRipple>
+          <TouchableRipple
+            rippleColor="rgba(0,0,0,0.28)"
+            onPress={() => navigation.navigate('NeedHelpScreen')}
+          >
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
                 <Icon name="help" size={24} />
               </View>
               <View>
-                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>Need Help?</Text>
+                <Text style={{ fontSize: 16, lineHeight: 22 }}>Need Help?</Text>
               </View>
             </View>
           </TouchableRipple>
@@ -287,7 +334,7 @@ const AccountScreen = ({
                 <Icon name="logout" size={24} />
               </View>
               <View>
-                <Text style={{ fontSize: normalize(18), lineHeight: 22 }}>
+                <Text style={{ fontSize: 16, lineHeight: 22 }}>
                   {authIsFetching ? 'Processing...' : 'Logout'}
                 </Text>
               </View>
@@ -325,7 +372,50 @@ const AccountScreen = ({
             />
           </React.Fragment>
         ) : null}
+        <SnackBar
+          visible={showPasswordChangedModal}
+          iconName="circular-check"
+          iconColor="#13BD38"
+          message="Password changed successfully,
+              you can use it in your next login."
+        />
       </View>
+      <WalkThrougGuide
+        visible={showWalkthroughGuide}
+        hideModal={handleAccountGuideVisible}
+        nextModal={handleAccountNextGuide}
+        title="View your profile"
+        content="Tap here to view and edit your profile."
+        skip="Skip"
+        skipValue="- 1 of 2"
+        next="Next"
+        topWidth={30}
+        rightWidth={15}
+        leftWidth={15}
+        topValue={0.32}
+        heightValue={0.2}
+        topPosValue={-15}
+        leftPadding={100}
+        trianglePosition="flex-start"
+        rotateArrow="180deg"
+      />
+      <WalkThrougGuide
+        visible={showAccountStepTwo}
+        disabled={true}
+        nextModal={handleAccountStepTwo}
+        title="Back to Home"
+        content="Tap here to go back to Home."
+        skipValue="2 of 2"
+        next="Got it"
+        bottomWidth={25}
+        rightWidth={15}
+        leftWidth={15}
+        topValue={0.75}
+        heightValue={0.2}
+        bottomPosValue={-40}
+        trianglePosition="center"
+        rotateArrow="178deg"
+      />
     </SafeAreaView>
   );
 };
@@ -353,7 +443,8 @@ const mapStateToProps = createStructuredSelector({
   profile: selectProfile,
   profileError: selectProfileError,
   authError: selectAuthError,
-  userUpdated: selectUpdated
+  userUpdated: selectUpdated,
+  passwordUpdated: selectPasswordUpdated
 });
 
 export default connect(mapStateToProps, actions)(Container);
