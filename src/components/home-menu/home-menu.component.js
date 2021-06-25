@@ -61,10 +61,10 @@ const HomeMenu = ({ navigation }) => {
           },
           styles.menuitem
         ]}
-        onPress={() => navigation.replace('ItvScreen')}
+        onPress={() => navigation.navigate('ItvScreen')}
       >
         <View style={styles.iconwrap}>
-          <Itv />
+          <Itv height={85} width={85} />
         </View>
         <Text style={styles.label}>iTV</Text>
       </Pressable>
@@ -78,7 +78,7 @@ const HomeMenu = ({ navigation }) => {
         onPress={() => navigation.replace('ImovieScreen')}
       >
         <View style={styles.iconwrap}>
-          <Imovie />
+          <Imovie height={85} width={85} />
         </View>
         <Text style={styles.label}>iMovie</Text>
       </Pressable>
@@ -92,7 +92,7 @@ const HomeMenu = ({ navigation }) => {
         onPress={() => navigation.replace('IsportsScreen')}
       >
         <View style={styles.iconwrap}>
-          <Isports />
+          <Isports height={85} width={85} />
         </View>
         <Text style={styles.label}>iSports</Text>
       </Pressable>
@@ -106,7 +106,7 @@ const HomeMenu = ({ navigation }) => {
         onPress={() => navigation.replace('IplayScreen')}
       >
         <View style={styles.iconwrap}>
-          <Iplay />
+          <Iplay height={85} width={85} />
         </View>
         <Text style={styles.label}>iPlay</Text>
       </Pressable>
@@ -120,7 +120,7 @@ const HomeMenu = ({ navigation }) => {
         onPress={() => navigation.replace('IradioScreen')}
       >
         <View style={styles.iconwrap}>
-          <Iradio />
+          <Iradio height={85} width={85} />
         </View>
         <Text style={styles.label}>iRadio</Text>
       </Pressable>
@@ -134,7 +134,7 @@ const HomeMenu = ({ navigation }) => {
         onPress={() => navigation.replace('ImusicScreen')}
       >
         <View style={styles.iconwrap}>
-          <Imusic />
+          <Imusic height={85} width={85} />
         </View>
         <Text style={styles.label}>iMusic</Text>
       </Pressable>

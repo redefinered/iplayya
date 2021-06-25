@@ -58,7 +58,7 @@ const HomeTabs = ({ hideTabs, swipeEnabled }) => {
           position: 'absolute',
           left: 20,
           right: 20,
-          bottom: hideTabs ? -200 : 50,
+          bottom: hideTabs ? -200 : 10,
           elevation: 0
         }
       }}
