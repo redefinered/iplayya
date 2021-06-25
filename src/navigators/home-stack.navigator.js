@@ -52,7 +52,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
         headerBackImage: () => <HeaderBackImage />,
         headerStyle: { height: headerHeight },
         headerTitleAlign: 'center',
-        headerTitleStyle: { fontSize: 24, fontWeight: 'normal' },
+        headerTitleStyle: { fontSize: 24, fontWeight: 'normal', fontFamily: 'NotoSans-Regular' },
         headerTitleContainerStyle: { alignItems: 'center' },
         headerLeftContainerStyle: {
           paddingLeft: 15,
