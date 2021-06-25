@@ -7,31 +7,44 @@ import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import MainButton from 'components/button/mainbutton.component';
 import TextInput from 'components/text-input/text-input.component';
-import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+// import PasswordInput from 'components/password-input/password-input.component';
+import { View, Modal, Dimensions } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 
 import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+import { Creators } from 'modules/ducks/profile/profile.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectError, selectIsFetching } from 'modules/ducks/auth/auth.selectors';
+import {
+  selectError,
+  selectIsFetching,
+  selectProfile,
+  selectUpdated
+} from 'modules/ducks/profile/profile.selectors';
+
+// import Icon from 'components/icon/icon.component';
 
 import { isValidEmail } from 'common/validate';
+import ChangeEmailInput from './change-email-input';
 
 class ChangeEmailScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    const { email } = props.profile;
+
     this.state = {
       modalVisible: false,
-      // id,
-      // email,
-      // password,
       valid: true,
-      errors: [{ key: 'email', val: false }]
+      email,
+      showPassword: false,
+      errors: [
+        { key: 'email', val: false },
+        { key: 'password', val: false }
+      ]
     };
   }
 
@@ -39,7 +52,7 @@ class ChangeEmailScreen extends React.Component {
     this.props.getProfileAction();
   }
 
-  handleChange = (text, name) => {
+  handleChangeText = (text, name) => {
     this.setState({ [name]: text });
   };
 
@@ -50,16 +63,15 @@ class ChangeEmailScreen extends React.Component {
   };
 
   handleSubmit = () => {
-    // eslint-disable-next-line no-unused-vars
-    const { modalVisible, errors: stateError, valid, ...input } = this.state;
+    const { email, errors } = this.state;
 
-    if (!isValidEmail(input.email)) {
-      this.setError(stateError, 'email', true);
+    if (!isValidEmail(email)) {
+      this.setError(errors, 'email', true);
     } else {
-      this.setError(stateError, 'email', false);
+      this.setError(errors, 'email', false);
     }
 
-    const withError = stateError.find(({ val }) => val === true);
+    const withError = errors.find(({ val }) => val === true);
     if (typeof withError !== 'undefined') {
       return this.setState({ valid: false });
     } else {
@@ -67,6 +79,15 @@ class ChangeEmailScreen extends React.Component {
     }
 
     console.log('no errors! submit.');
+    if (email === false) {
+      return this.setState({ modalVisible: false });
+    } else {
+      this.setState({ modalVisible: true });
+    }
+  };
+
+  handleClose = () => {
+    this.setState({ modalVisible: false });
   };
 
   render() {
@@ -79,9 +100,122 @@ class ChangeEmailScreen extends React.Component {
     });
 
     return (
-      <ContentWrap>
+      <ContentWrap style={{ paddingTop: 30 }}>
+        <Modal
+          animationType="slide"
+          visible={modalVisible}
+          transparent={true}
+          statusBarTranslucent={true}
+        >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0,0,0,0.5)'
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: '#ffffff',
+                width: Dimensions.get('window').width - 20,
+                height: Dimensions.get('window').height - 0.25 * Dimensions.get('window').height,
+                borderRadius: 30
+              }}
+            >
+              <View style={{ paddingHorizontal: 25, paddingVertical: 10 }}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    textAlign: 'left',
+                    color: 'rgba(0, 0, 0, 0.7)',
+                    fontWeight: '700'
+                  }}
+                >
+                  Enter your password below to continue changing your email.
+                </Text>
+              </View>
+              {/* <View style={{ paddingHorizontal: 25, paddingBottom: 10 }}>
+                <View style={{ position: 'relative' }}>
+                  <PasswordInput
+                    render={(props) => (
+                      <FormInput
+                        {...props}
+                        style={{
+                          color: '#000000',
+                          backgroundColor: 'rgba(13, 17, 29, 0.1)',
+                          padding: 14,
+                          borderWidth: 0
+                        }}
+                      />
+                    )}
+                    name="password"
+                    handleChangeText={this.handleChangeText}
+                    value={form.password}
+                    autoCapitalize="none"
+                    error={stateError.password}
+                    theme={{ colors: { primary: 'transparent', underlineColor: 'transparent' } }}
+                    style={{
+                      position: 'relative',
+                      zIndex: 1
+                    }}
+                    placeholder="Enter Password"
+                    placeholderTextColor="#000000"
+                    secureTextEntry={!showPassword}
+                  />
+                  <Pressable
+                    onPress={() => this.setState({ showPassword: !showPassword })}
+                    style={{
+                      position: 'absolute',
+                      right: 10,
+                      height: '100%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: 40,
+                      zIndex: 2
+                    }}
+                  >
+                    <Icon
+                      name={showPassword ? 'close' : 'eye'}
+                      size={showPassword ? 25 : 40}
+                      style={{ color: 'rgba(0,0,0,0.8)' }}
+                    />
+                  </Pressable>
+                </View>
+              </View>
+              {!valid ? (
+                <Text style={{ color: '#000000', textAlign: 'center' }}>
+                  There are errors in your entries. Please fix!
+                </Text>
+              ) : null}
+              {this.props.error && <Text>{this.props.error}</Text>}
+              <View style={{ paddingHorizontal: 25, paddingBottom: 25 }}>
+                <MainButton text="Proceed" onPress={() => this.handleChange()} />
+              </View> */}
+              <View style={{ height: 150 }}>
+                <ChangeEmailInput />
+              </View>
+              <TouchableRipple
+                style={{ paddingVertical: 10 }}
+                rippleColor="rgba(0,0,0,0.05)"
+                onPress={() => this.handleClose()}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    textAlign: 'center',
+                    color: '#000000',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Cancel
+                </Text>
+              </TouchableRipple>
+            </View>
+          </View>
+        </Modal>
         <Text
-          style={{ marginBottom: 20, textAlign: 'center', paddingHorizontal: 60, fontSize: 16 }}
+          style={{ marginBottom: 20, textAlign: 'center', paddingHorizontal: 40, fontSize: 16 }}
         >
           You can change your email by typing in your new email below
         </Text>
@@ -95,11 +229,11 @@ class ChangeEmailScreen extends React.Component {
             keyboardType="email-address"
             autoCompleteType="email"
             error={stateError.email}
-            placeholder="Email"
+            style={{ paddingBottom: 20 }}
           />
           {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
           {this.props.error && <Text>{this.props.error}</Text>}
-          <MainButton text="Submit" />
+          <MainButton text="Submit" onPress={() => this.handleSubmit()} />
         </View>
       </ContentWrap>
     );
@@ -113,12 +247,16 @@ const Container = (props) => (
 );
 
 const actions = {
-  getProfileAction: ProfileCreators.get
+  getProfileAction: Creators.get,
+  updateStartAction: Creators.updateStart,
+  updateAction: Creators.update
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching
+  isFetching: selectIsFetching,
+  profile: selectProfile,
+  updated: selectUpdated
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader);
