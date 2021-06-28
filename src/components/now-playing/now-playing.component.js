@@ -56,8 +56,6 @@ const NowPlaying = ({
     /// set now playing to the next item in the selected album
     const nextTrackNumber = nowPlaying.sequence + 1;
 
-    console.log({ nextTrackNumber, playlist });
-
     /// if next track does not exist, stop
     if (nextTrackNumber > playlist.length) {
       // reset progress
@@ -70,8 +68,6 @@ const NowPlaying = ({
 
       return;
     }
-
-    console.log({ nextTrackNumber, playlist });
 
     const nextTrack = playlist.find(({ sequence }) => nextTrackNumber === parseInt(sequence));
 
