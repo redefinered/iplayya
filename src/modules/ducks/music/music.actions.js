@@ -20,10 +20,13 @@ const { Types, Creators } = createActions(
     getAlbumsByGenreSuccess: ['data'],
     getAlbumsByGenreFailure: ['error'],
 
-    setNowPlaying: ['track'],
+    setNowPlaying: ['track', 'newPlaylist'],
     resetNowPlaying: null,
     setNowPlayingBackgroundMode: ['isBackgroundMode'],
     setNowPlayingLayoutInfo: ['layoutInfo'],
+    setPlaylist: null,
+    setShuffleOn: null,
+    setShuffleOff: null,
 
     // misc
     resetGenrePaginator: null,

@@ -1,6 +1,11 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './music.actions';
-import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './music.utils';
+import {
+  updateMoviesState,
+  updatePaginatorInfo,
+  setupPaginator,
+  shuffleTrackNumbers
+} from './music.utils';
 import uniqBy from 'lodash/uniqBy';
 
 const INITIAL_STATE = {
@@ -11,6 +16,8 @@ const INITIAL_STATE = {
   album: null,
 
   nowPlaying: null,
+  playlist: [],
+  shuffle: false,
   nowPlayingLayoutInfo: null,
   isBackgroundMode: false,
 
@@ -64,7 +71,49 @@ export default createReducer(INITIAL_STATE, {
   },
 
   [Types.SET_NOW_PLAYING]: (state, action) => {
-    return { ...state, nowPlaying: action.track };
+    const { track, newPlaylist } = action;
+
+    /// if playlist ends this block should get executed
+    if (!track && typeof newPlaylist === 'undefined') {
+      return {
+        ...state,
+        nowPlaying: null,
+        playlist: []
+      };
+    }
+
+    const { shuffle, playlist } = state;
+    const { tracks } = state.album;
+
+    const trackNumbers = tracks.map(({ number }) => number);
+    const shuffledTrackNumbers = shuffleTrackNumbers(trackNumbers);
+
+    // tracks list if shuffle is switched on
+    const tracksWithShuffledNumbers = tracks.map((track, i) => ({
+      sequence: shuffledTrackNumbers[i],
+      ...track
+    }));
+
+    /// tracks list if shuffle is NOT switched on
+    const tracksWithNormalSequence = tracks.map(({ number, ...rest }) => ({
+      sequence: parseInt(number),
+      number,
+      ...rest
+    }));
+
+    const createdPlaylist = shuffle ? tracksWithShuffledNumbers : tracksWithNormalSequence;
+
+    const next = track ? track.sequence : 1;
+
+    const findThis = shuffle ? next : parseInt(track.number);
+
+    return {
+      ...state,
+      nowPlaying: newPlaylist
+        ? createdPlaylist.find(({ sequence }) => parseInt(sequence) === findThis)
+        : playlist.find(({ sequence }) => parseInt(sequence) === findThis),
+      playlist: newPlaylist ? createdPlaylist : playlist
+    };
   },
   [Types.RESET_NOW_PLAYING]: (state) => {
     return { ...state, nowPlaying: null };
@@ -74,6 +123,28 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.SET_NOW_PLAYING_LAYOUT_INFO]: (state, action) => {
     return { ...state, nowPlayingLayoutInfo: action.layoutInfo };
+  },
+
+  [Types.SET_PLAYLIST]: (state) => {
+    const { tracks } = state.album;
+    const { shuffle } = state;
+
+    const trackNumbers = tracks.map(({ number }) => number);
+    const shuffledTrackNumbers = shuffleTrackNumbers(trackNumbers);
+
+    // apply shuffled numbers to tracks
+    const tracksWithShuffledNumbers = tracks.map((track, i) => ({
+      sequence: shuffledTrackNumbers[i],
+      ...track
+    }));
+
+    return { ...state, playlist: shuffle ? tracksWithShuffledNumbers : tracks };
+  },
+  [Types.SET_SHUFFLE_ON]: (state) => {
+    return { ...state, shuffle: true };
+  },
+  [Types.SET_SHUFFLE_OFF]: (state) => {
+    return { ...state, shuffle: false };
   },
 
   /// get albums

@@ -12,14 +12,14 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import DeviceInfo from 'react-native-device-info';
-import { selectAlbum } from 'modules/ducks/music/music.selectors';
+import { selectAlbum, selectPlaylist } from 'modules/ducks/music/music.selectors';
 import clone from 'lodash/clone';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const NowPlaying = ({
   nowPlaying,
-  album,
+  playlist,
   setNowPlayingAction,
   isBackgroundMode,
   setNowPlayingLayoutInfoAction
@@ -28,7 +28,6 @@ const NowPlaying = ({
   const rootComponent = React.useRef();
 
   const [paused, setPaused] = React.useState(false);
-  // const [isShuffled, setIsShuffled] = React.useState(false);
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [progress, setProgress] = React.useState(0);
@@ -37,26 +36,13 @@ const NowPlaying = ({
   React.useEffect(() => {
     /// shows the bottom padding for devices with notch. not yet fully tested
     if (DeviceInfo.hasNotch()) setHasNotch(true);
-
-    // if (rootComponent.current) {
-    //   const height = rootComponent.current.clientHeight;
-    //   console.log({ height });
-    // }
   }, []);
-
-  // React.useEffect(() => {
-  //   console.log({ x: rootComponent.current.getBoundingClientRect() });
-  // });
 
   React.useEffect(() => {
     if (playbackInfo) {
       const { seekableDuration, currentTime } = playbackInfo;
 
-      console.log({ seekableDuration, currentTime });
-
       let percentage = (currentTime / seekableDuration) * 100;
-
-      // console.log(Math.ceil(percentage));
 
       percentage = percentage === Infinity ? 0 : percentage;
       percentage = isNaN(percentage) ? 0 : percentage;
@@ -68,11 +54,12 @@ const NowPlaying = ({
 
   const playNext = () => {
     /// set now playing to the next item in the selected album
-    const nextTrackNumber = nowPlaying.number + 1;
+    const nextTrackNumber = nowPlaying.sequence + 1;
+
+    console.log({ nextTrackNumber, playlist });
 
     /// if next track does not exist, stop
-    if (nextTrackNumber > album.tracks.length) {
-      console.log('stopped because end of the list');
+    if (nextTrackNumber > playlist.length) {
       // reset progress
       setProgress(0);
 
@@ -84,16 +71,22 @@ const NowPlaying = ({
       return;
     }
 
-    const nextTrack = album.tracks.find(({ number }) => nextTrackNumber === parseInt(number));
+    console.log({ nextTrackNumber, playlist });
 
-    const { number, name: title, url: source, performer: artist } = nextTrack;
-    setNowPlayingAction({
-      number: parseInt(number),
-      title,
-      artist,
-      source,
-      thumbnail: coverplaceholder
-    });
+    const nextTrack = playlist.find(({ sequence }) => nextTrackNumber === parseInt(sequence));
+
+    const { number, sequence, name: title, url: source, performer: artist } = nextTrack;
+    setNowPlayingAction(
+      {
+        number: parseInt(number),
+        sequence: parseInt(sequence),
+        title,
+        artist,
+        source,
+        thumbnail: coverplaceholder
+      },
+      false
+    );
   };
 
   React.useEffect(() => {
@@ -123,7 +116,6 @@ const NowPlaying = ({
   };
 
   const handleProgress = (progressInfo) => {
-    console.log('progressInfo', progressInfo);
     setPlaybackInfo(progressInfo);
     setBuffering(false);
   };
@@ -140,7 +132,7 @@ const NowPlaying = ({
   };
 
   const renderContent = (nowPlaying) => {
-    const { title, artist } = nowPlaying;
+    const { name: title, performer: artist } = nowPlaying;
 
     if (artist)
       return (
@@ -177,10 +169,8 @@ const NowPlaying = ({
     setNowPlayingLayoutInfoAction(nativeEvent.layout);
   };
 
-  console.log({ progress });
-
   if (nowPlaying) {
-    const { source } = nowPlaying;
+    const { url: uri } = nowPlaying;
 
     return (
       <Pressable
@@ -199,7 +189,7 @@ const NowPlaying = ({
       >
         <Video
           paused={paused}
-          source={{ uri: source }}
+          source={{ uri }}
           onBuffer={handleBuffer}
           onError={handleError}
           onProgress={handleProgress}
@@ -267,7 +257,7 @@ const NowPlaying = ({
 NowPlaying.propTypes = {
   theme: PropTypes.object,
   nowPlaying: PropTypes.object,
-  album: PropTypes.object,
+  playlist: PropTypes.array,
   setNowPlayingAction: PropTypes.func,
   isBackgroundMode: PropTypes.bool,
   setNowPlayingLayoutInfoAction: PropTypes.func
@@ -280,6 +270,7 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({
   nowPlaying: selectNowPlaying,
+  playlist: selectPlaylist,
   album: selectAlbum,
   isBackgroundMode: selectIsBackgroundMode
 });

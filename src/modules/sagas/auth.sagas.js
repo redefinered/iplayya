@@ -55,7 +55,7 @@ export function* signInRequest(action) {
 
     yield put(AppCreators.appReadySuccess());
   } catch (error) {
-    // console.log({ error });
+    console.log({ error });
     yield put(Creators.signInFailure(error.message));
   }
 }
