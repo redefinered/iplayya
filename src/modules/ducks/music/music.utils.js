@@ -37,3 +37,23 @@ export const setupPaginator = (genres) => {
     paginator: { pageNumber: 1, limit: 10, genres: [parseInt(id)] }
   }));
 };
+
+export const shuffleTrackNumbers = (trackNumbers) => {
+  let currentIndex = trackNumbers.length;
+  let randomIndex = null;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [trackNumbers[currentIndex], trackNumbers[randomIndex]] = [
+      trackNumbers[randomIndex],
+      trackNumbers[currentIndex]
+    ];
+  }
+
+  return trackNumbers.map((n) => parseInt(n));
+};

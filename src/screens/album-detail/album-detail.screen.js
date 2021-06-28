@@ -50,7 +50,8 @@ const AlbumDetail = ({
   setNowPlayingAction,
   nowPlaying,
   setNowPlayingBackgroundModeAction,
-  nowPlayingLayoutInfo
+  nowPlayingLayoutInfo,
+  setShuffleOnAction
 }) => {
   const theme = useTheme();
   const { album: albumData } = route.params;
@@ -70,17 +71,19 @@ const AlbumDetail = ({
   const handleSelectItem = (item) => {
     const { number, name: title, url: source, performer: artist } = item;
 
-    setNowPlayingAction({
-      number: parseInt(number),
-      title,
-      artist,
-      source,
-      thumbnail: coverplaceholder
-    });
+    setNowPlayingAction(
+      {
+        number: parseInt(number),
+        title,
+        artist,
+        source,
+        thumbnail: coverplaceholder
+      },
+      true
+    );
   };
 
   const renderBottomPadding = () => {
-    console.log({ isBackgroundMode, nowPlayingLayoutInfo });
     if (isBackgroundMode) return;
     if (!nowPlayingLayoutInfo) return;
     if (!nowPlaying) return;
@@ -88,6 +91,12 @@ const AlbumDetail = ({
     return (
       <View style={{ width: nowPlayingLayoutInfo.width, height: nowPlayingLayoutInfo.height }} />
     );
+  };
+
+  const handleShufflePlay = () => {
+    setShuffleOnAction();
+
+    setNowPlayingAction(null, true); // select a random track from album
   };
 
   if (!album) return <View />;
@@ -117,7 +126,7 @@ const AlbumDetail = ({
       </ContentWrap>
 
       <ContentWrap style={{ marginBottom: theme.spacing(2) }}>
-        <Button mode="contained">
+        <Button mode="contained" onPress={handleShufflePlay}>
           <Icon name="shuffle" size={20} />
           <View style={{ width: theme.spacing(1) }} />
           <Text style={{ fontWeight: 'bold' }}>Shuffle Play</Text>
@@ -169,7 +178,8 @@ const actions = {
   getAlbumStartAction: Creators.getAlbumStart,
   getAlbumAction: Creators.getAlbum,
   setNowPlayingAction: Creators.setNowPlaying,
-  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode
+  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  setShuffleOnAction: Creators.setShuffleOn
 };
 
 const mapStateToProps = createStructuredSelector({

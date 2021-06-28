@@ -56,3 +56,5 @@ export const selectNowPlayingLayoutInfo = createSelector(
   [musicState],
   ({ nowPlayingLayoutInfo }) => nowPlayingLayoutInfo
 );
+
+export const selectPlaylist = createSelector([musicState], ({ playlist }) => playlist);
