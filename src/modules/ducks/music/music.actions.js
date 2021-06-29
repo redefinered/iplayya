@@ -21,6 +21,9 @@ const { Types, Creators } = createActions(
     getAlbumsByGenreFailure: ['error'],
 
     setNowPlaying: ['track', 'newPlaylist'],
+    setProgress: ['progress'], // progress in percentage
+    setPaused: ['isPaused'], // boolean
+    updatePlaybackInfo: ['playbackInfo'],
     resetNowPlaying: null,
     setNowPlayingBackgroundMode: ['isBackgroundMode'],
     setNowPlayingLayoutInfo: ['layoutInfo'],

@@ -58,3 +58,12 @@ export const selectNowPlayingLayoutInfo = createSelector(
 );
 
 export const selectPlaylist = createSelector([musicState], ({ playlist }) => playlist);
+
+export const selectPlaybackProgress = createSelector(
+  [musicState],
+  ({ playbackProgress }) => playbackProgress
+);
+
+export const selectPaused = createSelector([musicState], ({ paused }) => paused);
+
+export const selectPlaybackInfo = createSelector([musicState], ({ playbackInfo }) => playbackInfo);

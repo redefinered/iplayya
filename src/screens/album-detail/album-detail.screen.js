@@ -7,7 +7,6 @@ import Button from 'components/button/button.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
-// import NowPlaying from 'components/now-playing/now-playing.component';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -49,7 +48,7 @@ const AlbumDetail = ({
   isBackgroundMode,
   setNowPlayingAction,
   nowPlaying,
-  setNowPlayingBackgroundModeAction,
+  // setNowPlayingBackgroundModeAction,
   nowPlayingLayoutInfo,
   setShuffleOnAction
 }) => {
@@ -58,11 +57,11 @@ const AlbumDetail = ({
 
   // const [totalDuration, setTotalDuration] = React.useState(0);
 
-  React.useEffect(() => {
-    setNowPlayingBackgroundModeAction(false);
+  // React.useEffect(() => {
+  //   setNowPlayingBackgroundModeAction(false);
 
-    return () => setNowPlayingBackgroundModeAction(true);
-  }, []);
+  //   return () => setNowPlayingBackgroundModeAction(true);
+  // }, []);
 
   React.useEffect(() => {
     if (albumData) getAlbumAction(albumData);
@@ -162,8 +161,6 @@ const AlbumDetail = ({
         ))}
         {renderBottomPadding()}
       </ScrollView>
-
-      {/* {nowPlaying && <NowPlaying navigation={navigation} />} */}
     </View>
   );
 };

@@ -15,11 +15,15 @@ const INITIAL_STATE = {
   albums: [], // grouped with genres
   album: null,
 
+  paused: false,
   nowPlaying: null,
   playlist: [],
   shuffle: false,
   nowPlayingLayoutInfo: null,
   isBackgroundMode: false,
+
+  playbackProgress: 0,
+  playbackInfo: {},
 
   // paginators for musc sections in the main imusic screen
   paginatorInfo: [],
@@ -31,6 +35,16 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_PAUSED]: (state, action) => {
+    return { ...state, paused: action.isPaused };
+  },
+  [Types.SET_PROGRESS]: (state, action) => {
+    return { ...state, playbackProgress: action.progress };
+  },
+  [Types.UPDATE_PLAYBACK_INFO]: (state, action) => {
+    return { ...state, playbackInfo: action.playbackInfo };
+  },
+
   [Types.GET_GENRES]: (state) => {
     return {
       ...state,

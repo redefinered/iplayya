@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -12,10 +11,11 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as AppActionCreators } from 'modules/app';
-import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
+// import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/music/music.actions';
 import Icon from 'components/icon/icon.component';
+// import NowPlaying from 'components/now-playing/now-playing.component';
 import {
   selectError,
   selectIsFetching,
@@ -24,38 +24,37 @@ import {
   selectPaginatorInfo,
   selectGenrePaginator
 } from 'modules/ducks/music/music.selectors';
-import { urlEncodeTitle } from 'utils';
+// import { urlEncodeTitle } from 'utils';
 import GenreScroll from './genre-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
 import NetInfo from '@react-native-community/netinfo';
-// import { selectAlbums } from 'modules/ducks/music/music.selectors';
-
-// const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const ImusicScreen = ({
   isFetching,
   navigation,
   error,
   getAlbumsAction,
-  getAlbumAction,
+  // getAlbumAction,
   paginatorInfo,
-  addMovieToFavoritesStartAction,
+  // addMovieToFavoritesStartAction,
   theme,
-  route: { params },
+  // route: { params },
   genrePaginator,
   albums,
   enableSwipeAction,
   setNetworkInfoAction,
-  resetGenrePaginatorAction
+  resetGenrePaginatorAction,
+  setNowPlayingBackgroundModeAction
 }) => {
-  // console.log({ albums });
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
-  const [scrollIndex, setScrollIndex] = React.useState(0);
+  const [scrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
 
   React.useEffect(() => {
+    setNowPlayingBackgroundModeAction(false);
+
     resetGenrePaginatorAction();
     enableSwipeAction(false);
 
@@ -65,7 +64,10 @@ const ImusicScreen = ({
     });
 
     // Unsubscribe
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      setNowPlayingBackgroundModeAction();
+    };
   }, []);
 
   // React.useEffect(() => {
@@ -225,6 +227,7 @@ const actions = {
   setNetworkInfoAction: AppActionCreators.setNetworkInfo,
   getAlbumsAction: Creators.getAlbums,
   getAlbumAction: Creators.getAlbum,
+  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   enableSwipeAction: NavActionCreators.enableSwipe,

@@ -23,7 +23,7 @@ import { createStructuredSelector } from 'reselect';
 import { selectHideTabs } from 'modules/ducks/nav/nav.selectors';
 import { selectSwipeEnabled } from 'modules/ducks/nav/nav.selectors';
 
-import NowPlaying from 'components/now-playing/now-playing.component';
+// import NowPlaying from 'components/now-playing/now-playing.component';
 
 // const Tab = createBottomTabNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -94,7 +94,7 @@ const HomeTabs = ({ hideTabs, swipeEnabled }) => {
           }}
         />
       </Tab.Navigator>
-      <NowPlaying />
+      {/* <NowPlaying /> */}
     </React.Fragment>
   );
 };

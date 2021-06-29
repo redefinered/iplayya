@@ -7,30 +7,43 @@ import Video from 'react-native-video';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
 import PausedAnimationPlaceholder from 'assets/paused-animation-placeholder.svg';
 import { createFontFormat } from 'utils';
-import { selectNowPlaying, selectIsBackgroundMode } from 'modules/ducks/music/music.selectors';
+import {
+  selectNowPlaying,
+  selectIsBackgroundMode,
+  selectAlbum,
+  selectPlaylist,
+  selectPaused,
+  selectPlaybackProgress
+} from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import DeviceInfo from 'react-native-device-info';
-import { selectAlbum, selectPlaylist } from 'modules/ducks/music/music.selectors';
 import clone from 'lodash/clone';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const NowPlaying = ({
+  // eslint-disable-next-line react/prop-types
+  navigation,
   nowPlaying,
   playlist,
+  progress,
+  setProgressAction,
   setNowPlayingAction,
   isBackgroundMode,
-  setNowPlayingLayoutInfoAction
+  setNowPlayingLayoutInfoAction,
+
+  updatePlaybackInfoAction,
+
+  paused,
+  setPausedAction
 }) => {
   const theme = useTheme();
   const rootComponent = React.useRef();
 
-  const [paused, setPaused] = React.useState(false);
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
-  const [progress, setProgress] = React.useState(0);
   const [hasNotch, setHasNotch] = React.useState(false);
 
   React.useEffect(() => {
@@ -40,13 +53,15 @@ const NowPlaying = ({
 
   React.useEffect(() => {
     if (playbackInfo) {
+      updatePlaybackInfoAction(playbackInfo);
+
       const { seekableDuration, currentTime } = playbackInfo;
 
       let percentage = (currentTime / seekableDuration) * 100;
 
       percentage = percentage === Infinity ? 0 : percentage;
       percentage = isNaN(percentage) ? 0 : percentage;
-      setProgress(percentage);
+      setProgressAction(percentage);
 
       if (Math.ceil(percentage) === 100) playNext();
     }
@@ -59,12 +74,12 @@ const NowPlaying = ({
     /// if next track does not exist, stop
     if (nextTrackNumber > playlist.length) {
       // reset progress
-      setProgress(0);
+      setProgressAction(0);
 
       // turn playing off
-      setPaused(true);
+      setPausedAction(true);
 
-      setNowPlayingAction(null);
+      // setNowPlayingAction(null);
 
       return;
     }
@@ -98,7 +113,7 @@ const NowPlaying = ({
       const { source } = nowPlaying;
       if (!source) return;
 
-      setPaused(false);
+      setPausedAction(false);
     }
   }, [nowPlaying]);
 
@@ -155,6 +170,11 @@ const NowPlaying = ({
     );
   };
 
+  const handlePress = () => {
+    const { number } = nowPlaying;
+    navigation.navigate('MusicPlayerScreen', { number });
+  };
+
   const visibilityStyles = () => {
     if (isBackgroundMode) return { top: '100%' };
 
@@ -170,7 +190,7 @@ const NowPlaying = ({
 
     return (
       <Pressable
-        // onPress={() => hideNowPlaying()}
+        onPress={handlePress}
         onLayout={handleOnRootLayout}
         ref={rootComponent}
         style={{
@@ -228,7 +248,7 @@ const NowPlaying = ({
               <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
             )}
 
-            <Pressable onPress={() => setPaused(!paused)}>
+            <Pressable onPress={() => setPausedAction(!paused)}>
               <Icon
                 name={paused ? 'circular-play' : 'circular-pause'}
                 size={32}
@@ -251,20 +271,31 @@ const NowPlaying = ({
 };
 
 NowPlaying.propTypes = {
+  navigation: PropTypes.object,
   theme: PropTypes.object,
+  paused: PropTypes.bool,
+  setPausedAction: PropTypes.func,
   nowPlaying: PropTypes.object,
   playlist: PropTypes.array,
+  setProgressAction: PropTypes.func,
   setNowPlayingAction: PropTypes.func,
   isBackgroundMode: PropTypes.bool,
-  setNowPlayingLayoutInfoAction: PropTypes.func
+  setNowPlayingLayoutInfoAction: PropTypes.func,
+  updatePlaybackInfoAction: PropTypes.func,
+  progress: PropTypes.number
 };
 
 const actions = {
   setNowPlayingAction: Creators.setNowPlaying,
-  setNowPlayingLayoutInfoAction: Creators.setNowPlayingLayoutInfo
+  setProgressAction: Creators.setProgress,
+  setNowPlayingLayoutInfoAction: Creators.setNowPlayingLayoutInfo,
+  updatePlaybackInfoAction: Creators.updatePlaybackInfo,
+  setPausedAction: Creators.setPaused
 };
 
 const mapStateToProps = createStructuredSelector({
+  paused: selectPaused,
+  progress: selectPlaybackProgress,
   nowPlaying: selectNowPlaying,
   playlist: selectPlaylist,
   album: selectAlbum,
