@@ -50,7 +50,9 @@ const AlbumDetail = ({
   nowPlaying,
   // setNowPlayingBackgroundModeAction,
   nowPlayingLayoutInfo,
-  setShuffleOnAction
+  setShuffleOnAction,
+  setShuffleOffAction,
+  setProgressAction
 }) => {
   const theme = useTheme();
   const { album: albumData } = route.params;
@@ -68,7 +70,11 @@ const AlbumDetail = ({
   }, [albumData]);
 
   const handleSelectItem = (item) => {
+    setShuffleOffAction();
+
     const { number, name: title, url: source, performer: artist } = item;
+
+    setProgressAction(0);
 
     setNowPlayingAction(
       {
@@ -176,7 +182,9 @@ const actions = {
   getAlbumAction: Creators.getAlbum,
   setNowPlayingAction: Creators.setNowPlaying,
   setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
-  setShuffleOnAction: Creators.setShuffleOn
+  setShuffleOnAction: Creators.setShuffleOn,
+  setShuffleOffAction: Creators.setShuffleOff,
+  setProgressAction: Creators.setProgress
 };
 
 const mapStateToProps = createStructuredSelector({
