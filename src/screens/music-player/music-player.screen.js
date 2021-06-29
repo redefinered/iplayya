@@ -19,28 +19,26 @@ import {
   selectNowPlaying,
   selectPlaybackProgress,
   selectPaused,
-  selectPlaybackInfo
+  selectPlaybackInfo,
+  selectPlaylist,
+  selectShuffle
 } from 'modules/ducks/music/music.selectors';
 
 import moment from 'moment';
-import { selectPlaylist } from 'modules/ducks/music/music.selectors';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const MusicPlayerScreen = ({
   playlist,
-
   nowPlaying,
   setNowPlayingAction,
-
   progress,
   setProgressAction,
   setNowPlayingBackgroundModeAction,
-
   paused,
   setPausedAction,
-
-  playbackInfo
+  playbackInfo,
+  isShuffled
 }) => {
   const theme = useTheme();
   const [remainingTime, setRemainingTime] = React.useState(0);
@@ -186,7 +184,11 @@ const MusicPlayerScreen = ({
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Pressable>
-            <Icon name="shuffle" size={24} style={{ color: theme.iplayya.colors.white50 }} />
+            <Icon
+              name="shuffle"
+              size={24}
+              style={{ color: isShuffled ? 'white' : theme.iplayya.colors.white50 }}
+            />
           </Pressable>
           <View style={{ marginBottom: 30 }}>
             <Text
@@ -273,7 +275,8 @@ const mapStateToProps = createStructuredSelector({
   paused: selectPaused,
   nowPlaying: selectNowPlaying,
   progress: selectPlaybackProgress,
-  playbackInfo: selectPlaybackInfo
+  playbackInfo: selectPlaybackInfo,
+  isShuffled: selectShuffle
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
