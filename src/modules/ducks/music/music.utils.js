@@ -1,5 +1,11 @@
 import uniqBy from 'lodash/unionBy';
 
+export const repeatTypes = [
+  { order: 1, value: 'none' },
+  { order: 2, value: 'all' },
+  { order: 3, value: 'one' }
+];
+
 export const updateMusicState = (state, newAlbums) => {
   let { albums } = state;
 

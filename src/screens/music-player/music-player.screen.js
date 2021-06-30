@@ -21,7 +21,8 @@ import {
   selectPaused,
   selectPlaybackInfo,
   selectPlaylist,
-  selectShuffle
+  selectShuffle,
+  selectRepeat
 } from 'modules/ducks/music/music.selectors';
 
 import moment from 'moment';
@@ -39,7 +40,9 @@ const MusicPlayerScreen = ({
   setPausedAction,
   playbackInfo,
   isShuffled,
-  toggleShuffleAction
+  toggleShuffleAction,
+  cycleRepeatAction,
+  repeat
 }) => {
   const theme = useTheme();
   const [remainingTime, setRemainingTime] = React.useState(0);
@@ -176,6 +179,11 @@ const MusicPlayerScreen = ({
 
   // console.log({ disableNext, disablePrevious });
 
+  const getRepeatColor = () => {
+    if (repeat.order !== 1) return 'white';
+    return theme.iplayya.colors.white50;
+  };
+
   if (nowPlaying) {
     const { name, performer } = nowPlaying;
     return (
@@ -247,8 +255,23 @@ const MusicPlayerScreen = ({
               style={{ color: disableNext ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>
-          <Pressable style={{ marginLeft: 20 }}>
-            <Icon name="repeat" size={24} style={{ color: theme.iplayya.colors.white50 }} />
+          <Pressable
+            style={{ marginLeft: 20, position: 'relative' }}
+            onPress={() => cycleRepeatAction()}
+          >
+            <Icon name="repeat" size={24} style={{ color: getRepeatColor() }} />
+            <Text
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: -8,
+                fontWeight: 'bold',
+                color: 'white',
+                opacity: repeat.order === 3 ? 1 : 0
+              }}
+            >
+              1
+            </Text>
           </Pressable>
         </View>
       </ContentWrap>
@@ -270,7 +293,8 @@ const actions = {
   setProgressAction: Creators.setProgress,
   setNowPlayingAction: Creators.setNowPlaying,
   toggleShuffleAction: Creators.toggleShuffle,
-  setShuffleOffAction: Creators.setShuffleOff
+  setShuffleOffAction: Creators.setShuffleOff,
+  cycleRepeatAction: Creators.cycleRepeat
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -279,7 +303,8 @@ const mapStateToProps = createStructuredSelector({
   nowPlaying: selectNowPlaying,
   progress: selectPlaybackProgress,
   playbackInfo: selectPlaybackInfo,
-  isShuffled: selectShuffle
+  isShuffled: selectShuffle,
+  repeat: selectRepeat
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

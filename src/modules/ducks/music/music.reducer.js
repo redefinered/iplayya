@@ -7,6 +7,7 @@ import {
   shuffleTrackNumbers
 } from './music.utils';
 import uniqBy from 'lodash/uniqBy';
+import { repeatTypes } from './music.utils';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -21,6 +22,7 @@ const INITIAL_STATE = {
   shuffle: false,
   nowPlayingLayoutInfo: null,
   isBackgroundMode: false,
+  repeat: repeatTypes.find(({ value }) => value === 'none'),
 
   playbackProgress: 0,
   playbackInfo: {},
@@ -35,6 +37,16 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.CYCLE_REPEAT]: (state) => {
+    const { repeat } = state;
+
+    let nextRepeat = repeat.order + 1;
+
+    if (nextRepeat > repeatTypes.length) {
+      nextRepeat = 1;
+    }
+    return { ...state, repeat: repeatTypes.find(({ order }) => order === nextRepeat) };
+  },
   [Types.TOGGLE_SHUFFLE]: (state) => {
     const { shuffle } = state;
     const { tracks } = state.album;

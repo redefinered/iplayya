@@ -69,3 +69,5 @@ export const selectPaused = createSelector([musicState], ({ paused }) => paused)
 export const selectPlaybackInfo = createSelector([musicState], ({ playbackInfo }) => playbackInfo);
 
 export const selectShuffle = createSelector([musicState], ({ shuffle }) => shuffle);
+
+export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat);
