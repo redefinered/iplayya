@@ -104,8 +104,8 @@ class SignInScreen extends React.Component {
                   style={{ ...styles.showToggleContainer, zIndex: 2 }}
                 >
                   <Icon
-                    name={showPassword ? 'close' : 'eye'}
-                    size={showPassword ? 25 : 40}
+                    name={showPassword ? 'eye-off' : 'eye'}
+                    size={showPassword ? 40 : 40}
                     style={styles.showToggleIcon}
                   />
                 </Pressable>

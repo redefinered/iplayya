@@ -68,8 +68,8 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
         }}
       >
         <Icon
-          name={showText ? 'close' : 'eye'}
-          size={showText ? 25 : 40}
+          name={showText ? 'eye-off' : 'eye'}
+          size={showText ? 40 : 40}
           style={{ color: 'rgba(255,255,255,0.5)' }}
         />
       </Pressable>
