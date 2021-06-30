@@ -221,10 +221,7 @@ class EditProfileScreen extends React.Component {
               </View>
               <TouchableRipple
                 borderless={true}
-                style={[
-                  this.state.gender === 'Gender' ? styles.textUnfocus : styles.textInputFocus,
-                  stateError.gender ? styles.errorText : null
-                ]}
+                // style={[stateError.gender ? styles.errorText : null]}
                 onPress={() => this.setState({ actionSheetisVisible: true })}
               >
                 <View
@@ -233,7 +230,9 @@ class EditProfileScreen extends React.Component {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     paddingVertical: 15,
-                    paddingHorizontal: 10
+                    paddingHorizontal: 10,
+                    ...(this.state.gender === 'Gender' ? styles.textUnfocus : styles.textUnfocus),
+                    ...(stateError.gender ? styles.errorText : null)
                   }}
                 >
                   <Text
