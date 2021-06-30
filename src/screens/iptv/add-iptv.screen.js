@@ -156,7 +156,7 @@ class AddIptvScreen extends React.Component {
 
     return (
       <React.Fragment>
-        <ContentWrap scrollable>
+        <ContentWrap scrollable style={{ paddingTop: 40 }}>
           <StatusBar translucent backgroundColor="transparent" />
           <TextInput
             value={input.name}

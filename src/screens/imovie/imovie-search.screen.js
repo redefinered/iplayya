@@ -178,7 +178,7 @@ const ImovieSearchScreen = ({
         clearButtonMode="while-editing"
         keyboardType="email-address"
         autoCompleteType="email"
-        style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+        style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
         placeholder="Search a movie"
         left={
           <RNPTextInput.Icon
