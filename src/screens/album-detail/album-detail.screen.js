@@ -52,7 +52,8 @@ const AlbumDetail = ({
   nowPlayingLayoutInfo,
   setShuffleOnAction,
   setShuffleOffAction,
-  setProgressAction
+  setProgressAction,
+  setPausedAction
 }) => {
   const theme = useTheme();
   const { album: albumData } = route.params;
@@ -99,6 +100,7 @@ const AlbumDetail = ({
   };
 
   const handleShufflePlay = () => {
+    setPausedAction(false);
     setShuffleOnAction();
 
     setNowPlayingAction(null, true); // select a random track from album
@@ -182,6 +184,7 @@ const actions = {
   getAlbumAction: Creators.getAlbum,
   setNowPlayingAction: Creators.setNowPlaying,
   setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  setPausedAction: Creators.setPaused,
   setShuffleOnAction: Creators.setShuffleOn,
   setShuffleOffAction: Creators.setShuffleOff,
   setProgressAction: Creators.setProgress
