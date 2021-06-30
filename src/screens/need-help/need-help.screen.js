@@ -32,7 +32,7 @@ const NeedHelpScreen = ({ theme, enableSwipeAction, navigation }) => {
 
   return (
     <ScrollView>
-      <View style={{ paddingTop: 30 }}>
+      <View style={{ paddingTop: 20 }}>
         <TouchableRipple rippleColor="rgba(0,0,0,0.28)" onPress={() => console.log('click')}>
           <View
             style={{

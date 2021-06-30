@@ -48,8 +48,8 @@ const ManageEmailScreen = ({
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ContentWrap style={{ paddingTop: 30 }}>
+    <SafeAreaView style={{ flex: 1, paddingTop: 20 }}>
+      <ContentWrap>
         <Text
           style={{
             fontSize: 16,
