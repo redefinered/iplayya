@@ -13,7 +13,8 @@ import {
   selectAlbum,
   selectPlaylist,
   selectPaused,
-  selectPlaybackProgress
+  selectPlaybackProgress,
+  selectRepeat
 } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
@@ -21,7 +22,7 @@ import { createStructuredSelector } from 'reselect';
 import DeviceInfo from 'react-native-device-info';
 import clone from 'lodash/clone';
 
-const coverplaceholder = require('assets/imusic-placeholder.png');
+// const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const NowPlaying = ({
   // eslint-disable-next-line react/prop-types
@@ -35,8 +36,10 @@ const NowPlaying = ({
   setNowPlayingLayoutInfoAction,
   updatePlaybackInfoAction,
   paused,
-  setPausedAction
+  setPausedAction,
+  repeat
 }) => {
+  // console.log({ playbackCounter });
   const theme = useTheme();
   const rootComponent = React.useRef();
 
@@ -69,30 +72,67 @@ const NowPlaying = ({
     /// set now playing to the next item in the selected album
     const nextTrackNumber = nowPlaying.sequence + 1;
 
-    /// if next track does not exist, stop
     if (nextTrackNumber > playlist.length) {
+      if (repeat.value === 'none') {
+        // reset progress
+        setProgressAction(0);
+
+        // turn playing off
+        setPausedAction(true);
+
+        setNowPlayingAction(null);
+
+        return;
+      } else {
+        if (repeat.value === 'all') {
+          // reset progress
+          setProgressAction(0);
+
+          const { number, sequence } = playlist.find(({ sequence }) => sequence === 1);
+
+          setNowPlayingAction(
+            {
+              number: parseInt(number),
+              sequence: parseInt(sequence)
+            },
+            false
+          );
+
+          return;
+        }
+      }
+    }
+
+    if (repeat.value === 'one') {
+      // set next track to nowPlaying
+      const { number, sequence } = nowPlaying;
+
+      console.log('repeat one!', { number, sequence });
+
+      setNowPlayingAction(
+        {
+          number: parseInt(number),
+          sequence: parseInt(sequence)
+        },
+        false
+      );
+
       // reset progress
       setProgressAction(0);
-
-      // turn playing off
-      setPausedAction(true);
-
-      // setNowPlayingAction(null);
 
       return;
     }
 
-    const nextTrack = playlist.find(({ sequence }) => nextTrackNumber === parseInt(sequence));
+    // repeat is set to "none" and next track is not greater than the total number of tracks
 
-    const { number, sequence, name: title, url: source, performer: artist } = nextTrack;
+    const { number, sequence } = playlist.find(
+      ({ sequence }) => nextTrackNumber === parseInt(sequence)
+    );
+
     setNowPlayingAction(
       {
         number: parseInt(number),
-        sequence: parseInt(sequence),
-        title,
-        artist,
-        source,
-        thumbnail: coverplaceholder
+        sequence: parseInt(sequence)
       },
       false
     );
@@ -280,7 +320,8 @@ NowPlaying.propTypes = {
   isBackgroundMode: PropTypes.bool,
   setNowPlayingLayoutInfoAction: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
-  progress: PropTypes.number
+  progress: PropTypes.number,
+  repeat: PropTypes.object
 };
 
 const actions = {
@@ -297,7 +338,8 @@ const mapStateToProps = createStructuredSelector({
   nowPlaying: selectNowPlaying,
   playlist: selectPlaylist,
   album: selectAlbum,
-  isBackgroundMode: selectIsBackgroundMode
+  isBackgroundMode: selectIsBackgroundMode,
+  repeat: selectRepeat
 });
 
 export default connect(mapStateToProps, actions)(NowPlaying);

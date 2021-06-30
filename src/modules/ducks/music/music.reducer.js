@@ -37,6 +37,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.CLEAR_REPEAT]: (state) => {
+    return { ...state, repeat: repeatTypes.find(({ value }) => value === 'none') };
+  },
   [Types.CYCLE_REPEAT]: (state) => {
     const { repeat } = state;
 

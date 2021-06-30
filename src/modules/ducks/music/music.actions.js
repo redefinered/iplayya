@@ -32,6 +32,7 @@ const { Types, Creators } = createActions(
     setShuffleOff: null,
     toggleShuffle: null,
     cycleRepeat: null,
+    clearRepeat: null,
 
     // misc
     resetGenrePaginator: null,

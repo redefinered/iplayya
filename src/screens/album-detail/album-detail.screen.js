@@ -53,24 +53,19 @@ const AlbumDetail = ({
   setShuffleOnAction,
   setShuffleOffAction,
   setProgressAction,
-  setPausedAction
+  setPausedAction,
+  clearRepeatAction
 }) => {
   const theme = useTheme();
   const { album: albumData } = route.params;
-
-  // const [totalDuration, setTotalDuration] = React.useState(0);
-
-  // React.useEffect(() => {
-  //   setNowPlayingBackgroundModeAction(false);
-
-  //   return () => setNowPlayingBackgroundModeAction(true);
-  // }, []);
 
   React.useEffect(() => {
     if (albumData) getAlbumAction(albumData);
   }, [albumData]);
 
   const handleSelectItem = (item) => {
+    clearRepeatAction();
+
     setShuffleOffAction();
 
     const { number, name: title, url: source, performer: artist } = item;
@@ -100,6 +95,8 @@ const AlbumDetail = ({
   };
 
   const handleShufflePlay = () => {
+    clearRepeatAction();
+
     setPausedAction(false);
     setShuffleOnAction();
 
@@ -187,7 +184,8 @@ const actions = {
   setPausedAction: Creators.setPaused,
   setShuffleOnAction: Creators.setShuffleOn,
   setShuffleOffAction: Creators.setShuffleOff,
-  setProgressAction: Creators.setProgress
+  setProgressAction: Creators.setProgress,
+  clearRepeatAction: Creators.clearRepeat
 };
 
 const mapStateToProps = createStructuredSelector({
