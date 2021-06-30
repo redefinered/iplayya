@@ -3,6 +3,7 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 import ScreenContainer from 'components/screen-container.component';
 
@@ -15,34 +16,35 @@ const styles = StyleSheet.create({
   }
 });
 
-const WalkthroughScreen = ({ navigation }) => {
+const WalkthroughScreen = () => {
+  const navigation = useNavigation();
   const theme = useTheme();
 
   const GoItv = () => {
     navigation.popToTop();
     navigation.navigate('Home');
-    navigation.navigate('ItvScreen', { params: { openItvGuide: true } });
+    navigation.navigate('ItvScreen', { openItvGuide: true });
   };
 
   const GoMovies = () => {
     navigation.popToTop();
     navigation.navigate('Home');
-    navigation.replace('ImovieScreen', { params: { openImoviesGuide: true } });
+    navigation.replace('ImovieScreen', { openImoviesGuide: true });
   };
 
   const GoAccount = () => {
-    navigation.navigate('AccountScreen', { params: { openAccountGuide: true } });
+    navigation.navigate('AccountScreen', { openAccountGuide: true });
   };
 
   const GoIptv = () => {
     navigation.popToTop();
-    navigation.navigate('IPTV', { params: { openIptvGuide: true } });
+    navigation.navigate('IPTV', { screen: 'IPTV', params: { openIptvGuide: true } });
   };
 
   const GoIplay = () => {
     navigation.popToTop();
     navigation.navigate('Home');
-    navigation.replace('IplayScreen', { params: { openIplayGuide: true } });
+    navigation.replace('IplayScreen', { openIplayGuide: true });
   };
 
   return (

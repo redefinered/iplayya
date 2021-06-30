@@ -363,10 +363,11 @@ const IplayScreen = ({
         bottomWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.43}
-        heightValue={0.2}
+        heightValue={152}
         bottomPosValue={-42}
         trianglePosition="center"
+        containerPosition="center"
+        bottomPadding={20}
         rotateArrow="178deg"
       />
       <WalkThroughGuide
@@ -380,10 +381,11 @@ const IplayScreen = ({
         bottomWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.78}
-        heightValue={0.2}
+        heightValue={152}
         bottomPosValue={-43}
         trianglePosition="center"
+        containerPosition="flex-end"
+        bottomPadding={75}
         rotateArrow="178deg"
       />
     </View>

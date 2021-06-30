@@ -40,10 +40,11 @@ const HomeGuide = ({ visible, onButtonTouch }) => {
         topWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.6}
-        heightValue={0.31}
+        heightValue={227}
         topPosValue={-15}
         trianglePosition="center"
+        containerPosition="flex-start"
+        topPadding={450}
         rotateArrow="180deg"
       />
       <WalkThroughGuide
@@ -58,11 +59,12 @@ const HomeGuide = ({ visible, onButtonTouch }) => {
         bottomWidth={30}
         rightWidth={15}
         leftWidth={14}
-        topValue={0.74}
-        heightValue={0.23}
+        heightValue={152}
         bottomPosValue={-35}
         trianglePosition="flex-start"
         leftPadding={40}
+        containerPosition="flex-end"
+        bottomPadding={80}
         rotateArrow="160deg"
       />
       <WalkThroughGuide
@@ -76,11 +78,12 @@ const HomeGuide = ({ visible, onButtonTouch }) => {
         bottomWidth={25}
         rightWidth={14}
         leftWidth={14}
-        topValue={0.74}
-        heightValue={0.23}
+        heightValue={172}
         bottomPosValue={-38}
         trianglePosition="flex-end"
         rightPadding={45}
+        containerPosition="flex-end"
+        bottomPadding={80}
         rotateArrow="195deg"
       />
     </React.Fragment>

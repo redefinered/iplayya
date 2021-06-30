@@ -28,9 +28,9 @@ import {
   Pressable,
   StyleSheet,
   Dimensions,
+  SafeAreaView
   // PixelRatio,
   // Platform,
-  SafeAreaView
 } from 'react-native';
 import SnackBar from 'components/snackbar/snackbar.component';
 import Button from 'components/button/button.component';
@@ -393,10 +393,12 @@ const AccountScreen = ({
         rightWidth={15}
         leftWidth={15}
         topValue={0.32}
-        heightValue={0.2}
+        heightValue={152}
         topPosValue={-15}
         leftPadding={100}
         trianglePosition="flex-start"
+        containerPosition="flex-start"
+        topPadding={251}
         rotateArrow="180deg"
       />
       <WalkThrougGuide
@@ -411,9 +413,11 @@ const AccountScreen = ({
         rightWidth={15}
         leftWidth={15}
         topValue={0.75}
-        heightValue={0.2}
+        heightValue={152}
         bottomPosValue={-40}
         trianglePosition="center"
+        containerPosition="flex-end"
+        bottomPadding={90}
         rotateArrow="178deg"
       />
     </SafeAreaView>

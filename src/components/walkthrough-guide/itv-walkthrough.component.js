@@ -82,11 +82,12 @@ const ItvWalkThrough = ({ visible, onButtonClick }) => {
         topWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.27}
-        heightValue={0.25}
+        heightValue={172}
         topPosValue={-15}
         trianglePosition="flex-start"
         leftPadding={20}
+        containerPosition="flex-start"
+        topPadding={210}
         rotateArrow="180deg"
       />
       <WalkThroughGuide
@@ -101,11 +102,12 @@ const ItvWalkThrough = ({ visible, onButtonClick }) => {
         topWidth={20}
         rightWidth={20}
         leftWidth={20}
-        topValue={0.15}
-        heightValue={0.2}
+        heightValue={152}
         topPosValue={-5}
         trianglePosition="flex-end"
         rightPadding={20}
+        containerPosition="flex-start"
+        topPadding={110}
         rotateArrow="90deg"
       />
       <WalkThroughGuide
@@ -120,11 +122,12 @@ const ItvWalkThrough = ({ visible, onButtonClick }) => {
         topWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.59}
-        heightValue={0.25}
+        heightValue={172}
         topPosValue={-15}
         trianglePosition="center"
         leftPadding={55}
+        containerPosition="center"
+        topPadding={375}
         rotateArrow="180deg"
       />
       <WalkThroughGuide
@@ -139,11 +142,12 @@ const ItvWalkThrough = ({ visible, onButtonClick }) => {
         topWidth={15}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.475}
-        heightValue={0.25}
+        heightValue={172}
         bottomPosValue={-40}
         trianglePosition="flex-end"
         rightPadding={8}
+        containerPosition="flex-start"
+        topPadding={355}
         rotateArrow="90deg"
       />
       <WalkThroughGuide
@@ -158,11 +162,12 @@ const ItvWalkThrough = ({ visible, onButtonClick }) => {
         topWidth={15}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.58}
-        heightValue={0.2}
+        heightValue={152}
         bottomPosValue={-40}
         trianglePosition="flex-end"
         rightPadding={8}
+        containerPosition="flex-end"
+        bottomPadding={120}
         rotateArrow="90deg"
       />
       <WalkThroughGuide
@@ -177,10 +182,11 @@ const ItvWalkThrough = ({ visible, onButtonClick }) => {
         bottomWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.76}
-        heightValue={0.2}
+        heightValue={152}
         bottomPosValue={-40}
         trianglePosition="center"
+        containerPosition="flex-end"
+        bottomPadding={90}
         rotateArrow="178deg"
       />
       <WalkThroughGuide
@@ -194,10 +200,11 @@ const ItvWalkThrough = ({ visible, onButtonClick }) => {
         bottomWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.79}
-        heightValue={0.2}
+        heightValue={152}
         bottomPosValue={-40}
         trianglePosition="center"
+        containerPosition="flex-end"
+        bottomPadding={70}
         rotateArrow="178deg"
       />
     </React.Fragment>

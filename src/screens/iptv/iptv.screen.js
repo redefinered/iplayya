@@ -60,15 +60,13 @@ const IptvScreen = ({
   const [showStepTwo, setShowStepTwo] = React.useState(false);
   const [showStepThree, setShowStepThree] = React.useState(false);
 
-  console.log(params);
-
   React.useEffect(() => {
     createStartAction();
   }, []);
 
   React.useEffect(() => {
     if (params) {
-      showIptvGuide(params.openIptvGuide);
+      setShowIptvGuide(params.openIptvGuide);
     }
   }, [params]);
 
@@ -185,11 +183,12 @@ const IptvScreen = ({
             topWidth={20}
             rightWidth={20}
             leftWidth={20}
-            topValue={0.15}
-            heightValue={0.2}
+            heightValue={152}
             topPosValue={-2}
             trianglePosition="flex-end"
             rightPadding={15}
+            containerPosition="flex-start"
+            topPadding={110}
             rotateArrow="90deg"
           />
           <WalkThroughGuide
@@ -204,11 +203,12 @@ const IptvScreen = ({
             topWidth={20}
             rightWidth={20}
             leftWidth={20}
-            topValue={0.27}
-            heightValue={0.2}
+            heightValue={152}
             topPosValue={-2}
             trianglePosition="flex-end"
             rightPadding={25}
+            containerPosition="flex-start"
+            topPadding={210}
             rotateArrow="90deg"
           />
           <WalkThroughGuide
@@ -222,10 +222,11 @@ const IptvScreen = ({
             bottomWidth={25}
             rightWidth={15}
             leftWidth={15}
-            topValue={0.75}
-            heightValue={0.2}
+            heightValue={152}
             bottomPosValue={-45}
             trianglePosition="center"
+            containerPosition="flex-end"
+            bottomPadding={100}
             rotateArrow="178deg"
           />
         </View>

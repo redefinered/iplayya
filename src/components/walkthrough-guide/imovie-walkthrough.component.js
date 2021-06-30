@@ -42,10 +42,11 @@ const ImovieWalkThrough = ({ visible, onButtonClick }) => {
         bottomWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.25}
-        heightValue={0.25}
+        heightValue={172}
         bottomPosValue={-43}
         trianglePosition="center"
+        containerPosition="flex-start"
+        topPadding={180}
         rotateArrow="178deg"
       />
       <WalkThroughGuide
@@ -60,11 +61,12 @@ const ImovieWalkThrough = ({ visible, onButtonClick }) => {
         topWidth={20}
         rightWidth={20}
         leftWidth={20}
-        topValue={0.15}
-        heightValue={0.2}
+        heightValue={152}
         topPosValue={-5}
         trianglePosition="flex-end"
         rightPadding={20}
+        containerPosition="flex-start"
+        topPadding={110}
         rotateArrow="90deg"
       />
       <WalkThroughGuide
@@ -78,10 +80,11 @@ const ImovieWalkThrough = ({ visible, onButtonClick }) => {
         bottomWidth={25}
         rightWidth={15}
         leftWidth={15}
-        topValue={0.79}
-        heightValue={0.2}
+        heightValue={152}
         bottomPosValue={-40}
         trianglePosition="center"
+        containerPosition="flex-end"
+        bottomPadding={80}
         rotateArrow="178deg"
       />
     </React.Fragment>
