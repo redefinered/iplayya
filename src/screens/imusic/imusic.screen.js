@@ -66,7 +66,7 @@ const ImusicScreen = ({
     // Unsubscribe
     return () => {
       unsubscribe();
-      setNowPlayingBackgroundModeAction();
+      setNowPlayingBackgroundModeAction(true);
     };
   }, []);
 
