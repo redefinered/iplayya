@@ -35,6 +35,33 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.TOGGLE_SHUFFLE]: (state) => {
+    const { shuffle } = state;
+    const { tracks } = state.album;
+
+    if (shuffle) {
+      return {
+        ...state,
+        shuffle: false,
+        playlist: tracks.map(({ number, ...rest }) => ({
+          sequence: parseInt(number),
+          number,
+          ...rest
+        }))
+      };
+    } else {
+      const trackNumbers = tracks.map(({ number }) => number);
+      const shuffledTrackNumbers = shuffleTrackNumbers(trackNumbers);
+
+      // tracks list if shuffle is switched on
+      const tracksWithShuffledNumbers = tracks.map((track, i) => ({
+        sequence: shuffledTrackNumbers[i],
+        ...track
+      }));
+
+      return { ...state, shuffle: true, playlist: tracksWithShuffledNumbers };
+    }
+  },
   [Types.SET_PAUSED]: (state, action) => {
     return { ...state, paused: action.isPaused };
   },
@@ -158,7 +185,9 @@ export default createReducer(INITIAL_STATE, {
     return { ...state, shuffle: true };
   },
   [Types.SET_SHUFFLE_OFF]: (state) => {
-    return { ...state, shuffle: false };
+    const { playlist } = state;
+    const normalizedPlaylist = playlist.map(({ number, rest }) => ({ sequence: number, ...rest }));
+    return { ...state, shuffle: false, playlist: normalizedPlaylist };
   },
 
   /// get albums

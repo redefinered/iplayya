@@ -33,9 +33,7 @@ const NowPlaying = ({
   setNowPlayingAction,
   isBackgroundMode,
   setNowPlayingLayoutInfoAction,
-
   updatePlaybackInfoAction,
-
   paused,
   setPausedAction
 }) => {

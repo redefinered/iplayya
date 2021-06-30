@@ -38,7 +38,8 @@ const MusicPlayerScreen = ({
   paused,
   setPausedAction,
   playbackInfo,
-  isShuffled
+  isShuffled,
+  toggleShuffleAction
 }) => {
   const theme = useTheme();
   const [remainingTime, setRemainingTime] = React.useState(0);
@@ -218,7 +219,7 @@ const MusicPlayerScreen = ({
         {renderDuration()}
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Pressable style={{ marginRight: 20 }}>
+          <Pressable style={{ marginRight: 20 }} onPress={() => toggleShuffleAction()}>
             <Icon
               name="shuffle"
               size={24}
@@ -268,6 +269,7 @@ const actions = {
   setPausedAction: Creators.setPaused,
   setProgressAction: Creators.setProgress,
   setNowPlayingAction: Creators.setNowPlaying,
+  toggleShuffleAction: Creators.toggleShuffle,
   setShuffleOffAction: Creators.setShuffleOff
 };
 

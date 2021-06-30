@@ -30,6 +30,7 @@ const { Types, Creators } = createActions(
     setPlaylist: null,
     setShuffleOn: null,
     setShuffleOff: null,
+    toggleShuffle: null,
 
     // misc
     resetGenrePaginator: null,
