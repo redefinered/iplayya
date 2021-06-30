@@ -2,7 +2,7 @@
 /* eslint-disable react/display-name */
 
 import React from 'react';
-import { StyleSheet, View /*Pressable*/ } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { withTheme, TouchableRipple } from 'react-native-paper';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
@@ -454,6 +454,12 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           options={({ navigation }) => ({
             title: 'iMusic',
             animationEnabled: false,
+            // headerLeft: () => <Text>asd</Text>,
+            headerBackImage: () => (
+              <View style={styles.backButtonContainer}>
+                <Icon name="close" style={{ color: 'white' }} size={24} />
+              </View>
+            ),
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple
@@ -706,6 +712,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
     // marginLeft: 15
+  },
+  backButtonContainer: {
+    width: 44,
+    height: 44,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

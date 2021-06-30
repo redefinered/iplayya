@@ -131,7 +131,7 @@ const HomeMenu = ({ navigation }) => {
           },
           styles.menuitem
         ]}
-        onPress={() => navigation.replace('ImusicScreen')}
+        onPress={() => navigation.navigate('ImusicScreen')}
       >
         <View style={styles.iconwrap}>
           <Imusic />
