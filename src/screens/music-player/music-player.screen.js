@@ -183,13 +183,6 @@ const MusicPlayerScreen = ({
           <Image style={{ width: 220, height: 220, borderRadius: 8 }} source={coverplaceholder} />
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Pressable>
-            <Icon
-              name="shuffle"
-              size={24}
-              style={{ color: isShuffled ? 'white' : theme.iplayya.colors.white50 }}
-            />
-          </Pressable>
           <View style={{ marginBottom: 30 }}>
             <Text
               style={{
@@ -211,9 +204,6 @@ const MusicPlayerScreen = ({
               {performer}
             </Text>
           </View>
-          <Pressable>
-            <Icon name="repeat" size={24} style={{ color: theme.iplayya.colors.white50 }} />
-          </Pressable>
         </View>
         <Slider
           value={progress}
@@ -228,6 +218,13 @@ const MusicPlayerScreen = ({
         {renderDuration()}
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+          <Pressable style={{ marginRight: 20 }}>
+            <Icon
+              name="shuffle"
+              size={24}
+              style={{ color: isShuffled ? 'white' : theme.iplayya.colors.white50 }}
+            />
+          </Pressable>
           <Pressable onPress={playPrevious} disabled={disablePrevious}>
             <Icon
               name="previous"
@@ -249,6 +246,9 @@ const MusicPlayerScreen = ({
               style={{ color: disableNext ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>
+          <Pressable style={{ marginLeft: 20 }}>
+            <Icon name="repeat" size={24} style={{ color: theme.iplayya.colors.white50 }} />
+          </Pressable>
         </View>
       </ContentWrap>
     );
@@ -267,7 +267,8 @@ const actions = {
   setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
   setPausedAction: Creators.setPaused,
   setProgressAction: Creators.setProgress,
-  setNowPlayingAction: Creators.setNowPlaying
+  setNowPlayingAction: Creators.setNowPlaying,
+  setShuffleOffAction: Creators.setShuffleOff
 };
 
 const mapStateToProps = createStructuredSelector({
