@@ -183,7 +183,7 @@ const MusicPlayerScreen = ({
         <View style={{ alignItems: 'center', paddingTop: 70, marginBottom: 30 }}>
           <Image style={{ width: 220, height: 220, borderRadius: 8 }} source={coverplaceholder} />
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <View style={{ marginBottom: 30 }}>
             <Text
               style={{
