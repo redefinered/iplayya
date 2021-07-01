@@ -33,6 +33,7 @@ const { Types, Creators } = createActions(
     toggleShuffle: null,
     cycleRepeat: null,
     clearRepeat: null,
+    setSeekValue: ['seekValue'],
 
     // misc
     resetGenrePaginator: null,

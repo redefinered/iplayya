@@ -71,3 +71,5 @@ export const selectPlaybackInfo = createSelector([musicState], ({ playbackInfo }
 export const selectShuffle = createSelector([musicState], ({ shuffle }) => shuffle);
 
 export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat);
+
+export const selectSeekValue = createSelector([musicState], ({ seekValue }) => seekValue);
