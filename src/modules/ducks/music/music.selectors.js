@@ -3,8 +3,21 @@ import { createSelector } from 'reselect';
 export const musicState = (state) => state.music;
 
 export const selectError = createSelector([musicState], ({ error }) => error);
-
 export const selectIsFetching = createSelector([musicState], ({ isFetching }) => isFetching);
+export const selectPlaylist = createSelector([musicState], ({ playlist }) => playlist);
+export const selectNowPlaying = createSelector([musicState], ({ nowPlaying }) => nowPlaying);
+export const selectPaused = createSelector([musicState], ({ paused }) => paused);
+export const selectPlaybackInfo = createSelector([musicState], ({ playbackInfo }) => playbackInfo);
+export const selectShuffle = createSelector([musicState], ({ shuffle }) => shuffle);
+export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat);
+export const selectSeekValue = createSelector([musicState], ({ seekValue }) => seekValue);
+export const selectAlbum = createSelector([musicState], ({ album }) => album);
+export const selectGenres = createSelector([musicState], ({ genres }) => genres);
+
+export const selectSearchResults = createSelector(
+  [musicState],
+  ({ searchResults }) => searchResults
+);
 
 export const selectPaginatorInfo = createSelector(
   [musicState],
@@ -37,15 +50,11 @@ export const selectPaginatorOfGenre = createSelector(
   (paginatorInfo) => paginatorInfo
 );
 
-export const selectAlbum = createSelector([musicState], ({ album }) => album);
-
 export const selectTracks = createSelector([musicState], ({ album }) => {
   if (!album) return [];
 
   return album.tracks;
 });
-
-export const selectNowPlaying = createSelector([musicState], ({ nowPlaying }) => nowPlaying);
 
 export const selectIsBackgroundMode = createSelector(
   [musicState],
@@ -57,19 +66,7 @@ export const selectNowPlayingLayoutInfo = createSelector(
   ({ nowPlayingLayoutInfo }) => nowPlayingLayoutInfo
 );
 
-export const selectPlaylist = createSelector([musicState], ({ playlist }) => playlist);
-
 export const selectPlaybackProgress = createSelector(
   [musicState],
   ({ playbackProgress }) => playbackProgress
 );
-
-export const selectPaused = createSelector([musicState], ({ paused }) => paused);
-
-export const selectPlaybackInfo = createSelector([musicState], ({ playbackInfo }) => playbackInfo);
-
-export const selectShuffle = createSelector([musicState], ({ shuffle }) => shuffle);
-
-export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat);
-
-export const selectSeekValue = createSelector([musicState], ({ seekValue }) => seekValue);

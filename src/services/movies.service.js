@@ -102,7 +102,6 @@ export const getDownloads = async (videoIds) => {
 };
 
 export const search = async (input) => {
-  // console.log({ input });
   try {
     const { data } = await client.query({
       query: SEARCH,

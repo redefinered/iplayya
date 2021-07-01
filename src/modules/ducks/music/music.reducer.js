@@ -28,6 +28,8 @@ const INITIAL_STATE = {
   playbackProgress: 0,
   playbackInfo: {},
 
+  searchResults: [],
+
   // paginators for musc sections in the main imusic screen
   paginatorInfo: [],
 
@@ -279,7 +281,36 @@ export default createReducer(INITIAL_STATE, {
       genrePaginator: INITIAL_STATE.genrePaginator
     };
   },
-  [Types.RESET]: (state) => {
-    return { ...state, ...INITIAL_STATE };
+
+  /// search
+  [Types.SEARCH_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      searchResults: []
+    };
+  },
+  [Types.SEARCH]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.SEARCH_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      searchResults: action.data
+    };
+  },
+  [Types.SEARCH_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      searchResults: []
+    };
   }
 });

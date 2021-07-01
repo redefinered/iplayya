@@ -105,17 +105,17 @@ const AlbumDetail = ({
 
   if (!album) return <View />;
 
+  const { name, performer, year } = album.tracks[0];
+
   return (
     <View style={styles.root}>
       <ContentWrap style={{ flexDirection: 'row', marginBottom: theme.spacing(2) }}>
         <Image style={styles.cover} source={coverplaceholder} />
         <View style={{ flex: 1, paddingLeft: theme.spacing(2), justifyContent: 'space-between' }}>
           <View style={{ marginTop: theme.spacing(1) }}>
-            <Text style={{ marginBottom: theme.spacing(1), ...styles.albumName }}>
-              {album.name}
-            </Text>
+            <Text style={{ marginBottom: theme.spacing(1), ...styles.albumName }}>{name}</Text>
             <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...styles.artist }}>
-              {album.performer}
+              {performer}
             </Text>
           </View>
           <View style={{ marginBottom: theme.spacing(1) }}>
@@ -124,7 +124,7 @@ const AlbumDetail = ({
             </Text>
             <Text
               style={{ fontSize: 14, color: theme.iplayya.colors.white50 }}
-            >{`Released ${album.year}`}</Text>
+            >{`Released ${year}`}</Text>
           </View>
         </View>
       </ContentWrap>
@@ -158,7 +158,7 @@ const AlbumDetail = ({
               >
                 <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{name}</Text>
                 <Text style={{ fontSize: 12, color: theme.iplayya.colors.white50 }}>
-                  {`${album.performer} • 4:04 min`}
+                  {`${performer} • 4:04 min`}
                 </Text>
               </View>
             </View>

@@ -27,6 +27,7 @@ import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-d
 import IradioScreen from 'screens/iradio/iradio.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
+import ImusicSearchScreen from 'screens/imusic/imusic-search.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
@@ -466,6 +467,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
                   borderless={true}
                   style={{ borderRadius: 44, padding: 8 }}
                   rippleColor="rgba(0,0,0,0.28)"
+                  onPress={() => navigation.navigate('ImusicSearchScreen')}
                 >
                   <View style={styles.headerButtonContainer}>
                     <Icon name="search" size={24} />
@@ -473,6 +475,34 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
                 </TouchableRipple>
               </View>
             )
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="ImusicSearchScreen"
+          component={ImusicSearchScreen}
+          options={({ navigation }) => ({
+            title: 'Search Music',
+            headerLeft: null, // hide back button
+            // animationEnabled: false,
+            headerRight: () => (
+              <View style={{ flexDirection: 'row' }}>
+                <TouchableRipple
+                  borderless={true}
+                  style={{ borderRadius: 44, padding: 8 }}
+                  rippleColor="rgba(0,0,0,0.28)"
+                  onPress={() => navigation.goBack()}
+                >
+                  <View style={styles.headerButtonContainer}>
+                    <Icon name="close" size={24} />
+                  </View>
+                </TouchableRipple>
+              </View>
+            ),
+            ...TransitionPresets.ModalSlideFromBottomIOS
           })}
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),

@@ -35,9 +35,13 @@ const { Types, Creators } = createActions(
     clearRepeat: null,
     setSeekValue: ['seekValue'],
 
+    searchStart: [],
+    search: ['input'],
+    searchSuccess: ['data'],
+    searchFailure: ['error'],
+
     // misc
-    resetGenrePaginator: null,
-    reset: null
+    resetGenrePaginator: null
   },
   { prefix: '@Music/' }
 );

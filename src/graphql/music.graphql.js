@@ -35,3 +35,12 @@ export const GET_ALBUM = gql`
     }
   }
 `;
+
+export const SEARCH = gql`
+  query SEARCH_ALBUMS($input: musicRequest) {
+    albums(input: $input) {
+      id
+      name
+    }
+  }
+`;

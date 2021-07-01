@@ -1,6 +1,6 @@
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/music/music.actions';
-import { getGenres, getAlbum, getAlbumsByGenre } from 'services/music.service';
+import { getGenres, getAlbum, getAlbumsByGenre, search } from 'services/music.service';
 
 export function* getGenresRequest() {
   try {
@@ -58,8 +58,18 @@ export function* getAlbumRequest(action) {
   }
 }
 
+export function* searchRequest(action) {
+  try {
+    const { albums: results } = yield call(search, action.input);
+    yield put(Creators.searchSuccess(results));
+  } catch (error) {
+    yield put(Creators.searchFailure(error.message));
+  }
+}
+
 export default function* musicSagas() {
   yield takeLatest(Types.GET_ALBUM, getAlbumRequest);
   yield takeLatest(Types.GET_ALBUMS, getAlbumsRequest);
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
+  yield takeLatest(Types.SEARCH, searchRequest);
 }
