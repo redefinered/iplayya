@@ -5,11 +5,20 @@ import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import theme from 'common/theme';
+import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/music/music.actions';
+import { createStructuredSelector } from 'reselect';
+import { selectNowPlaying } from 'modules/ducks/music/music.selectors';
 
 // eslint-disable-next-line no-unused-vars
-const ImovieBottomTabs = ({ navigation, route }) => {
+const ImovieBottomTabs = ({ navigation, route, setBottomTabsLayoutInfoAction, nowPlaying }) => {
+  const rootComponent = React.useRef();
   const [heartIconColor, setHeartIconColor] = React.useState('white');
   const [downloadIconColor, setDownloadIconColor] = React.useState('white');
+
+  const handleOnRootLayout = ({ nativeEvent }) => {
+    setBottomTabsLayoutInfoAction(nativeEvent.layout);
+  };
 
   React.useEffect(() => {
     if (typeof route !== 'undefined') {
@@ -27,20 +36,33 @@ const ImovieBottomTabs = ({ navigation, route }) => {
     }
   }, [route]);
 
+  const conditionalStyles = () => {
+    if (nowPlaying)
+      return {
+        borderTopRightRadius: 0,
+        borderTopLeftRadius: 0
+      };
+    return {
+      borderTopRightRadius: 24,
+      borderTopLeftRadius: 24
+    };
+  };
+
   return (
     <SafeAreaView
+      ref={rootComponent}
+      onLayout={handleOnRootLayout}
       style={{
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#202530',
-        borderTopRightRadius: 24,
-        borderTopLeftRadius: 24,
         paddingHorizontal: 15,
         paddingTop: 10,
         paddingBottom: 10,
         position: 'absolute',
         width: '100%',
-        bottom: 0
+        bottom: 0,
+        ...conditionalStyles()
       }}
     >
       <View style={{ flex: 4 }}>
@@ -94,7 +116,15 @@ const ImovieBottomTabs = ({ navigation, route }) => {
 
 ImovieBottomTabs.propTypes = {
   navigation: PropTypes.object,
-  route: PropTypes.object
+  route: PropTypes.object,
+  setBottomTabsLayoutInfoAction: PropTypes.func,
+  nowPlaying: PropTypes.object
 };
 
-export default ImovieBottomTabs;
+const actions = {
+  setBottomTabsLayoutInfoAction: Creators.setBottomTabsLayoutInfo
+};
+
+const mapStateToProps = createStructuredSelector({ nowPlaying: selectNowPlaying });
+
+export default connect(mapStateToProps, actions)(ImovieBottomTabs);

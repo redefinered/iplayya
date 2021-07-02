@@ -40,6 +40,8 @@ const { Types, Creators } = createActions(
     searchSuccess: ['data'],
     searchFailure: ['error'],
 
+    setBottomTabsLayoutInfo: ['layout'],
+
     // misc
     resetGenrePaginator: null
   },

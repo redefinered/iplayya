@@ -54,10 +54,15 @@ const AlbumDetail = ({
   setShuffleOffAction,
   setProgressAction,
   setPausedAction,
-  clearRepeatAction
+  clearRepeatAction,
+  setBottomTabsLayoutInfoAction
 }) => {
   const theme = useTheme();
   const { album: albumData } = route.params;
+
+  React.useEffect(() => {
+    setBottomTabsLayoutInfoAction(null);
+  });
 
   React.useEffect(() => {
     if (albumData) getAlbumAction(albumData);
@@ -65,6 +70,7 @@ const AlbumDetail = ({
 
   const handleSelectItem = (item) => {
     clearRepeatAction();
+    setPausedAction(false);
 
     setShuffleOffAction();
 
@@ -105,7 +111,7 @@ const AlbumDetail = ({
 
   if (!album) return <View />;
 
-  const { name, performer, year } = album.tracks[0];
+  const { album: albumTitle, performer, year } = album.tracks[0];
 
   return (
     <View style={styles.root}>
@@ -113,7 +119,9 @@ const AlbumDetail = ({
         <Image style={styles.cover} source={coverplaceholder} />
         <View style={{ flex: 1, paddingLeft: theme.spacing(2), justifyContent: 'space-between' }}>
           <View style={{ marginTop: theme.spacing(1) }}>
-            <Text style={{ marginBottom: theme.spacing(1), ...styles.albumName }}>{name}</Text>
+            <Text style={{ marginBottom: theme.spacing(1), ...styles.albumName }}>
+              {albumTitle}
+            </Text>
             <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...styles.artist }}>
               {performer}
             </Text>
@@ -185,7 +193,8 @@ const actions = {
   setShuffleOnAction: Creators.setShuffleOn,
   setShuffleOffAction: Creators.setShuffleOff,
   setProgressAction: Creators.setProgress,
-  clearRepeatAction: Creators.clearRepeat
+  clearRepeatAction: Creators.clearRepeat,
+  setBottomTabsLayoutInfoAction: Creators.setBottomTabsLayoutInfo
 };
 
 const mapStateToProps = createStructuredSelector({

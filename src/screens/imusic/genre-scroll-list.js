@@ -58,7 +58,7 @@ const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginato
         >
           {name}
         </Text>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontSize: 12, maxWidth: 148 }}>
+        <Text numberOfLines={2} ellipsizeMode="tail" style={{ fontSize: 12, maxWidth: 148 }}>
           {performer}
         </Text>
       </React.Fragment>
@@ -86,8 +86,6 @@ const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginato
       data={data}
       showsHorizontalScrollIndicator={false}
       horizontal
-      // bounces={false}
-      // decelerationRate={0}
       snapToInterval={CARD_DIMENSIONS.WIDTH + 10}
       snapToAlignment="start"
       contentInset={{

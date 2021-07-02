@@ -13,6 +13,10 @@ export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat)
 export const selectSeekValue = createSelector([musicState], ({ seekValue }) => seekValue);
 export const selectAlbum = createSelector([musicState], ({ album }) => album);
 export const selectGenres = createSelector([musicState], ({ genres }) => genres);
+export const selectBottomNavLayout = createSelector(
+  [musicState],
+  ({ bottomNavLayout }) => bottomNavLayout
+);
 
 export const selectSearchResults = createSelector(
   [musicState],

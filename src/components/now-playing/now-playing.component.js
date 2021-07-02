@@ -15,7 +15,8 @@ import {
   selectPaused,
   selectPlaybackProgress,
   selectRepeat,
-  selectSeekValue
+  selectSeekValue,
+  selectBottomNavLayout
 } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
@@ -39,9 +40,9 @@ const NowPlaying = ({
   paused,
   setPausedAction,
   repeat,
-  seekValue
+  seekValue,
+  bottomNavLayout
 }) => {
-  // console.log({ playbackCounter });
   const theme = useTheme();
   const rootComponent = React.useRef();
   const player = React.useRef();
@@ -234,36 +235,25 @@ const NowPlaying = ({
     return { bottom: 0 };
   };
 
+  const conditionalStyles = () => {
+    if (!bottomNavLayout) return;
+    return {
+      marginBottom: bottomNavLayout.height
+    };
+  };
+
   const handleOnRootLayout = ({ nativeEvent }) => {
     setNowPlayingLayoutInfoAction(nativeEvent.layout);
   };
 
-  const renderPlayer = () => {
-    if (paused) return;
-
+  if (nowPlaying) {
     const { url: uri } = nowPlaying;
 
     return (
-      <Video
-        ref={player}
-        paused={paused}
-        source={{ uri }}
-        onBuffer={handleBuffer}
-        onError={handleError}
-        onProgress={handleProgress}
-        playInBackground
-      />
-    );
-  };
-
-  if (nowPlaying) {
-    // const { url: uri } = nowPlaying;
-
-    return (
       <Pressable
-        onPress={handlePress}
-        onLayout={handleOnRootLayout}
         ref={rootComponent}
+        onLayout={handleOnRootLayout}
+        onPress={handlePress}
         style={{
           backgroundColor: '#202530',
           borderBottomWidth: 1,
@@ -271,12 +261,11 @@ const NowPlaying = ({
           position: 'absolute',
           left: 0,
           right: 0,
-          ...visibilityStyles()
+          ...visibilityStyles(),
+          ...conditionalStyles()
         }}
       >
-        {renderPlayer()}
-
-        {/* <Video
+        <Video
           ref={player}
           paused={paused}
           source={{ uri }}
@@ -284,7 +273,7 @@ const NowPlaying = ({
           onError={handleError}
           onProgress={handleProgress}
           playInBackground
-        /> */}
+        />
 
         <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
           <View
@@ -358,7 +347,8 @@ NowPlaying.propTypes = {
   updatePlaybackInfoAction: PropTypes.func,
   progress: PropTypes.number,
   repeat: PropTypes.object,
-  seekValue: PropTypes.number
+  seekValue: PropTypes.number,
+  bottomNavLayout: PropTypes.object
 };
 
 const actions = {
@@ -377,7 +367,8 @@ const mapStateToProps = createStructuredSelector({
   album: selectAlbum,
   isBackgroundMode: selectIsBackgroundMode,
   repeat: selectRepeat,
-  seekValue: selectSeekValue
+  seekValue: selectSeekValue,
+  bottomNavLayout: selectBottomNavLayout
 });
 
 export default connect(mapStateToProps, actions)(NowPlaying);

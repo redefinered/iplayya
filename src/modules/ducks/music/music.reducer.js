@@ -20,13 +20,15 @@ const INITIAL_STATE = {
   nowPlaying: null,
   playlist: [],
   shuffle: false,
-  nowPlayingLayoutInfo: null,
   isBackgroundMode: false,
   repeat: repeatTypes.find(({ value }) => value === 'none'),
   seekValue: 0,
 
   playbackProgress: 0,
   playbackInfo: {},
+
+  nowPlayingLayoutInfo: null,
+  bottomNavLayout: null,
 
   searchResults: [],
 
@@ -40,6 +42,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  // [Types.SET_BOTTOM_TABS_LAYOUT_INFO]: (state, { layout }) => {
+  //   return { ...state, bottomNavLayout: layout };
+  // },
   [Types.SET_SEEK_VALUE]: (state, { seekValue }) => {
     return { ...state, seekValue };
   },
