@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
@@ -40,7 +40,7 @@ const ForgotPasswordScreen = ({
   // eslint-disable-next-line no-unused-vars
   const handleChange = (text, name) => {
     setScreenError(null);
-    setEmail(text);
+    setEmail(text.toLowerCase());
   };
 
   const handleSend = () => {
@@ -66,6 +66,8 @@ const ForgotPasswordScreen = ({
         name="email"
         placeholder="Email"
         autoCapitalize="none"
+        value={email}
+        keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
         handleChangeText={handleChange}
         style={styles.textInput}
         error={error}
