@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { Pressable, StatusBar } from 'react-native';
-import { Text } from 'react-native-paper';
+import { View, StatusBar } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
@@ -92,7 +92,7 @@ class AddIptvScreen extends React.Component {
     // console.log({ input, stateError });
 
     // validation here
-    if (!input.name) {
+    if (!input.name || input.name.length < 5) {
       this.setError(stateError, 'name', true);
     } else {
       this.setError(stateError, 'name', false);
@@ -163,6 +163,7 @@ class AddIptvScreen extends React.Component {
             placeholder="IPTV provider name"
             handleChangeText={this.handleChange}
             error={stateError.name}
+            maxLength={30}
             clearButtonMode="while-editing"
             autoCapitalize="words"
           />
@@ -202,13 +203,20 @@ class AddIptvScreen extends React.Component {
             text="Add IPTV"
             style={{ ...styles.submit, marginTop: 25 }}
           />
-
-          {!skippedProviderAdd ? (
-            <Pressable style={styles.skip} onPress={() => this.handleSkip()}>
-              <Text>Skip for now</Text>
-            </Pressable>
-          ) : null}
         </ContentWrap>
+
+        <View style={{ flex: 10 }}>
+          {!skippedProviderAdd ? (
+            <TouchableRipple
+              rippleColor="rgba(0,0,0,0.28)"
+              style={styles.skip}
+              onPress={() => this.handleSkip()}
+            >
+              <Text>Skip for now</Text>
+            </TouchableRipple>
+          ) : null}
+        </View>
+
         <AlertModal
           variant="danger"
           message="Oops! Your credentials is not valid. Call your IPTV provider for assistance."
