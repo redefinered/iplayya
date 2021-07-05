@@ -186,7 +186,7 @@ const ImovieSearchScreen = ({
               return isFetching ? (
                 <ActivityIndicator />
               ) : (
-                <Icon name="search" size={30} style={{ marginRight: theme.spacing(2) }} />
+                <Icon name="search" size={30} style={{ marginRight: theme.spacing(0) }} />
               );
             }}
           />
