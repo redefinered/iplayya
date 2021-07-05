@@ -16,6 +16,8 @@ const INITIAL_STATE = {
   albums: [], // grouped with genres
   album: null,
 
+  favoritesUpdateResponse: null,
+
   paused: false,
   nowPlaying: null,
   playlist: [],
@@ -45,6 +47,25 @@ export default createReducer(INITIAL_STATE, {
   // [Types.SET_BOTTOM_TABS_LAYOUT_INFO]: (state, { layout }) => {
   //   return { ...state, bottomNavLayout: layout };
   // },
+  [Types.ADD_ALBUM_TO_FAVORITES]: (state) => {
+    return { ...state, isFetching: true, error: null };
+  },
+  [Types.ADD_TRACK_TO_FAVORITES]: (state) => {
+    return { ...state, isFetching: true, error: null };
+  },
+  [Types.REMOVE_ALBUM_FROM_FAVORITES]: (state) => {
+    return { ...state, isFetching: true, error: null };
+  },
+  [Types.REMOVE_TRACK_FROM_FAVORITES]: (state) => {
+    return { ...state, isFetching: true, error: null };
+  },
+  [Types.UPDATE_FAVORITES_SUCCESS]: (state, action) => {
+    return { ...state, isFetching: false, favoritesUpdateResponse: action.favoritesUpdateResponse };
+  },
+  [Types.UPDATE_FAVORITES_FAILURE]: (state, action) => {
+    return { ...state, isFetching: false, favoritesUpdateResponse: action.favoritesUpdateResponse };
+  },
+
   [Types.SET_SEEK_VALUE]: (state, { seekValue }) => {
     return { ...state, seekValue };
   },

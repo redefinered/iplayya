@@ -225,8 +225,8 @@ const NowPlaying = ({
   };
 
   const handlePress = () => {
-    const { number } = nowPlaying;
-    navigation.navigate('MusicPlayerScreen', { number });
+    const { id } = nowPlaying;
+    navigation.navigate('MusicPlayerScreen', { id });
   };
 
   const visibilityStyles = () => {

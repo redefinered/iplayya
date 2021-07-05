@@ -1,6 +1,15 @@
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/music/music.actions';
-import { getGenres, getAlbum, getAlbumsByGenre, search } from 'services/music.service';
+import {
+  getGenres,
+  getAlbum,
+  getAlbumsByGenre,
+  search,
+  addAlbumToFavorites,
+  addTrackToFavorites
+  // removeAlbumFromFavorites,
+  // removeTrackFromFavorites
+} from 'services/music.service';
 
 export function* getGenresRequest() {
   try {
@@ -67,9 +76,33 @@ export function* searchRequest(action) {
   }
 }
 
+export function* addAlbumToFavoritesRequest(action) {
+  try {
+    const { addAlbumToFavorites: favoritesUpdateResponse } = yield call(addAlbumToFavorites, {
+      albumId: parseInt(action.albumId)
+    });
+    yield put(Creators.updateFavoritesSuccess(favoritesUpdateResponse));
+  } catch (error) {
+    yield put(Creators.updateFavoritesSuccess(error.message));
+  }
+}
+
+export function* addTrackToFavoritesRequest(action) {
+  try {
+    const { addAlbumToFavorites: favoritesUpdateResponse } = yield call(addTrackToFavorites, {
+      musicId: parseInt(action.trackId)
+    });
+    yield put(Creators.updateFavoritesSuccess(favoritesUpdateResponse));
+  } catch (error) {
+    yield put(Creators.updateFavoritesSuccess(error.message));
+  }
+}
+
 export default function* musicSagas() {
   yield takeLatest(Types.GET_ALBUM, getAlbumRequest);
   yield takeLatest(Types.GET_ALBUMS, getAlbumsRequest);
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
+  yield takeLatest(Types.ADD_ALBUM_TO_FAVORITES, addAlbumToFavoritesRequest);
+  yield takeLatest(Types.ADD_TRACK_TO_FAVORITES, addTrackToFavoritesRequest);
 }

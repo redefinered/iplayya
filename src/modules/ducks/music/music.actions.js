@@ -40,6 +40,18 @@ const { Types, Creators } = createActions(
     searchSuccess: ['data'],
     searchFailure: ['error'],
 
+    /// favorites
+    getFavorites: null,
+    getFavoritesSuccess: ['favoriteTracks'],
+    getFavoritesFailure: ['error'],
+
+    addAlbumToFavorites: ['albumId'],
+    addTrackToFavorites: ['trackId'],
+    removeAlbumFromFavorites: ['albumId'],
+    removeTrackFromFavorites: ['trackId'],
+    updateFavoritesSuccess: ['favoritesUpdateResponse'],
+    updateFavoritesFailure: ['error'],
+
     setBottomTabsLayoutInfo: ['layout'],
 
     // misc

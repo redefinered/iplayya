@@ -30,6 +30,7 @@ import ImusicScreen from 'screens/imusic/imusic.screen';
 import ImusicSearchScreen from 'screens/imusic/imusic-search.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
+import ImusicFavoriteButton from 'screens/imusic/add-to-favorites-button.component';
 
 import IplayScreen from 'screens/iplay/iplay.screen';
 import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
@@ -55,7 +56,7 @@ import { headerHeight } from 'common/values';
 
 const Stack = createStackNavigator();
 
-const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
+const HomeStack = ({ setBottomTabsVisibleAction, favorites, favoriteTracks }) => {
   const navigation = useNavigation();
   return (
     <React.Fragment>
@@ -516,21 +517,20 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           options={(props) => {
             const {
               route: {
-                params: { albumId }
+                params: {
+                  album: { id: albumId }
+                }
               }
             } = props;
 
-            const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
+            // const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
 
             return {
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton
-                    albumId={parseInt(albumId)}
-                    alreadyInFavorites={isInFavorites >= 0 ? true : false}
-                  />
-                  <DownloadButton albumId={albumId} />
+                  <ImusicFavoriteButton id={albumId} type="album" active />
+                  {/* <DownloadButton albumId={albumId} /> */}
                 </View>
               )
             };
@@ -696,21 +696,18 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
           options={(props) => {
             const {
               route: {
-                params: { albumId }
+                params: { id: trackId }
               }
             } = props;
 
-            const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
+            // const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
             return {
               title: null,
               headerBackImage: () => <HeaderBackImage vertical />,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton
-                    albumId={parseInt(albumId)}
-                    alreadyInFavorites={isInFavorites >= 0 ? true : false}
-                  />
-                  <DownloadButton albumId={albumId} />
+                  <ImusicFavoriteButton id={trackId} type="track" active />
+                  {/* <DownloadButton albumId={albumId} /> */}
                 </View>
               ),
               ...TransitionPresets.ModalSlideFromBottomIOS
