@@ -54,8 +54,9 @@ class SignInScreen extends React.Component {
     this.setState({ [name]: text });
   };
 
-  handleChangeUsername = (text, name) => {
-    this.setState({ [name]: text.toLowerCase() }); //add toLowerCase
+  handleChangeUsername = (text) => {
+    const lowerCase = text.toLowerCase();
+    this.setState({ username: lowerCase }); //add toLowerCase
   };
 
   handleLoginSubmit = () => {
@@ -95,7 +96,7 @@ class SignInScreen extends React.Component {
                 autoCapitalize="none"
                 clearButtonMode="while-editing"
                 // keyboardType="email-address"
-                keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
+                keyboardType={Platform.OS === 'ios' ? 'email' : 'visible-password'}
                 autoCompleteType="email"
                 error={this.props.error}
                 style={styles.textInput}
