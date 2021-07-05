@@ -27,147 +27,166 @@ import {
   selectIsFetching,
   selectError,
   selectSignedUp,
-  selectIsLoggedIn
+  selectIsLoggedIn,
+  selectCurrentUser
 } from 'modules/ducks/auth/auth.selectors';
 
 import styles from './sign-in.styles';
 import withLoader from 'components/with-loader.component';
-class SignInScreen extends React.Component {
-  state = {
-    username: '',
-    password: '',
-    // isolatedInputs: false,
-    showPassword: false
-  };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.isLoggedIn) {
-      this.props.appReadyAction();
+const SignInScreen = ({
+  error: loginError,
+  navigation,
+  isLoggedIn,
+  currentUser,
+  appReadyAction,
+  signInAction,
+  signInStartAction,
+  signedUp
+}) => {
+  // const [state, setState] = React.useState({ username: '', password: '', showPassword });
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [error, setError] = React.useState({ username: null, password: null });
+
+  React.useEffect(() => {
+    signInStartAction();
+  }, []);
+
+  React.useEffect(() => {
+    if (currentUser) {
+      setUsername(currentUser.email);
     }
-  }
+  }, [currentUser]);
 
-  componentDidMount() {
-    this.props.signInStartAction();
-  }
+  React.useEffect(() => {
+    appReadyAction();
+  }, [isLoggedIn]);
 
-  handleChangeText = (text, name) => {
-    this.setState({ [name]: text });
+  const handleChangeText = (text, name) => {
+    if (name === 'password') return setPassword(text);
+
+    setUsername(text);
   };
 
-  handleLoginSubmit = () => {
-    const { username, password } = this.state;
-    const { signInAction } = this.props;
+  const handleLoginSubmit = () => {
+    if (!username.length) {
+      setError({ username: 'Username is required' });
+      return;
+    }
+    if (!password.length) {
+      setError({ password: 'Password is required' });
+      return;
+    }
+
+    /// if no error set errors to null
+    setError({ username: null, password: null });
+
     signInAction({ username, password });
   };
 
-  render() {
-    const { showPassword, username, password } = this.state;
-    const { navigation } = this.props;
+  const renderError = () => {
+    const { username, password } = error;
 
-    return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView behavior="height" bounces={false}>
-          <View style={{ flex: 1 }}>
-            <StatusBar translucent backgroundColor="transparent" />
-            <View
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginTop: 100,
-                marginBottom: 30
-              }}
-            >
-              <Logo />
-            </View>
-            <ContentWrap>
-              {this.props.signedUp && <Text>Sign-up Success! Please sign in</Text>}
-              <TextInput
-                name="username"
-                handleChangeText={this.handleChangeText}
-                value={username}
-                autoCapitalize="none"
-                clearButtonMode="while-editing"
-                keyboardType="email-address"
-                autoCompleteType="email"
-                error={this.props.error}
-                style={styles.textInput}
-                placeholder="Email"
-              />
-              <View style={styles.passwordInputContainer}>
-                <TextInput
-                  name="password"
-                  handleChangeText={this.handleChangeText}
-                  value={password}
-                  autoCapitalize="none"
-                  error={this.props.error}
-                  style={{
-                    ...styles.textInput,
-                    position: 'relative',
-                    zIndex: 1
-                  }}
-                  placeholder="Password"
-                  secureTextEntry={!showPassword}
-                />
-                <Pressable
-                  onPress={() => this.setState({ showPassword: !showPassword })}
-                  style={{ ...styles.showToggleContainer, zIndex: 2 }}
-                >
-                  <Icon
-                    name={showPassword ? 'close' : 'eye'}
-                    size={showPassword ? 25 : 40}
-                    style={styles.showToggleIcon}
-                  />
-                </Pressable>
-              </View>
-              {this.props.error && <Text>{this.props.error}</Text>}
-              <MainButton
-                onPress={() => this.handleLoginSubmit()}
-                text="Login"
-                style={{ marginTop: 30 }}
-              />
-              <Pressable
-                onPress={() => navigation.navigate('ForgotPasswordScreen')}
-                style={styles.forgotPassword}
-              >
-                <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
-              </Pressable>
-            </ContentWrap>
+    if (username) return <Text>{username}</Text>;
+    if (password) return <Text>{password}</Text>;
 
-            <View style={{ alignItems: 'center', marginBottom: 50 }}>
-              <Text>
-                Don't you have an account yet?{' '}
-                <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
-                  Sign-up
-                </Text>
-              </Text>
-            </View>
+    return <Text>{loginError}</Text>;
+  };
 
-            <Pressable style={{ alignItems: 'center', marginBottom: 50 }}>
-              <Text style={{ ...styles.signUpText }}>Need help?</Text>
-            </Pressable>
-          </View>
-        </ScrollView>
-
-        {/* loader for download starting */}
-        {/* <Modal transparent statusBarTranslucent={true} visible={this.props.isFetching}>
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView behavior="height" bounces={false}>
+        <View style={{ flex: 1 }}>
+          <StatusBar translucent backgroundColor="transparent" />
           <View
             style={{
-              flex: 1,
-              justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: this.props.theme.iplayya.colors.black50
+              justifyContent: 'center',
+              marginTop: 100,
+              marginBottom: 30
             }}
           >
-            <ActivityIndicator color={this.props.theme.iplayya.colors.vibrantpussy} />
+            <Logo />
           </View>
-        </Modal> */}
-      </KeyboardAvoidingView>
-    );
-  }
-}
+          <ContentWrap>
+            {signedUp && <Text>Sign-up Success! Please sign in</Text>}
+            <TextInput
+              name="username"
+              handleChangeText={handleChangeText}
+              value={username}
+              autoCapitalize="none"
+              clearButtonMode="while-editing"
+              keyboardType="email-address"
+              autoCompleteType="email"
+              error={error}
+              style={styles.textInput}
+              placeholder="Email"
+            />
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                name="password"
+                handleChangeText={handleChangeText}
+                value={password}
+                autoCapitalize="none"
+                error={error}
+                style={{
+                  ...styles.textInput,
+                  position: 'relative',
+                  zIndex: 1
+                }}
+                placeholder="Password"
+                secureTextEntry={!showPassword}
+              />
+              <Pressable
+                onPress={() => setShowPassword(!showPassword)}
+                style={{ ...styles.showToggleContainer, zIndex: 2 }}
+              >
+                <Icon
+                  name={showPassword ? 'close' : 'eye'}
+                  size={showPassword ? 25 : 40}
+                  style={styles.showToggleIcon}
+                />
+              </Pressable>
+            </View>
+
+            {/* errors */}
+            {renderError()}
+
+            <MainButton
+              onPress={() => handleLoginSubmit()}
+              text="Login"
+              style={{ marginTop: 30 }}
+            />
+            <Pressable
+              onPress={() => navigation.navigate('ForgotPasswordScreen')}
+              style={styles.forgotPassword}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot passsword?</Text>
+            </Pressable>
+          </ContentWrap>
+
+          <View style={{ alignItems: 'center', marginBottom: 50 }}>
+            <Text>
+              Don't you have an account yet?{' '}
+              <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
+                Sign-up
+              </Text>
+            </Text>
+          </View>
+
+          <Pressable style={{ alignItems: 'center', marginBottom: 50 }}>
+            <Text style={{ ...styles.signUpText }}>Need help?</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+};
 
 const Container = (props) => (
   <ScreenContainer>
@@ -183,7 +202,8 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   error: selectError,
   signedUp: selectSignedUp,
-  isLoggedIn: selectIsLoggedIn
+  isLoggedIn: selectIsLoggedIn,
+  currentUser: selectCurrentUser
 });
 
 const actions = {
