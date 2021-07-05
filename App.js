@@ -53,7 +53,7 @@ const App = ({
     // listDownloadedFiles();
     // deleteFile('19_12_Angry_Men.mp4');
 
-    // resetStore();
+    resetStore();
 
     resetNowPlayingAction();
 
