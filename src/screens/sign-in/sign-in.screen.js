@@ -54,6 +54,10 @@ class SignInScreen extends React.Component {
     this.setState({ [name]: text });
   };
 
+  handleChangeUsername = (text, name) => {
+    this.setState({ [name]: text.toLowerCase() }); //add toLowerCase
+  };
+
   handleLoginSubmit = () => {
     const { username, password } = this.state;
     const { signInAction } = this.props;
@@ -86,11 +90,12 @@ class SignInScreen extends React.Component {
               {this.props.signedUp && <Text>Sign-up Success! Please sign in</Text>}
               <TextInput
                 name="username"
-                handleChangeText={this.handleChangeText}
+                handleChangeText={this.handleChangeUsername}
                 value={username}
                 autoCapitalize="none"
                 clearButtonMode="while-editing"
-                keyboardType="email-address"
+                // keyboardType="email-address"
+                keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
                 autoCompleteType="email"
                 error={this.props.error}
                 style={styles.textInput}
@@ -117,7 +122,7 @@ class SignInScreen extends React.Component {
                 >
                   <Icon
                     name={showPassword ? 'eye-off' : 'eye'}
-                    size={showPassword ? 40 : 40}
+                    size={showPassword ? 39 : 40}
                     style={styles.showToggleIcon}
                   />
                 </Pressable>
