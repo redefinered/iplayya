@@ -105,7 +105,8 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
                   </View>
                 </TouchableRipple>
               </View>
-            )
+            ),
+            headerLeft: null
           })}
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),

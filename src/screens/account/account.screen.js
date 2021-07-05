@@ -70,7 +70,7 @@ const AccountScreen = ({
   authIsFetching,
   currentUserId,
   userUpdated,
-  purgeStoreAction,
+  // purgeStoreAction,
   passwordUpdated,
   route: { params },
   resetAction
