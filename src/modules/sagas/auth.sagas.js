@@ -48,7 +48,7 @@ export function* signInRequest(action) {
     const { albumGenres } = yield call(getMusicGenres);
 
     yield put(ProfileCreators.getSuccess({ profile }));
-    yield put(Creators.signInSuccess());
+    yield put(Creators.signInSuccess(profile));
 
     yield put(ItvCreators.getGenresSuccess(iptvGenres));
     yield put(MusicCreators.getGenresSuccess(albumGenres));

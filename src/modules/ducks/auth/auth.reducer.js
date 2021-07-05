@@ -6,10 +6,15 @@ const INITIAL_STATE = {
   isFetching: false,
   isLoggedIn: false,
   signedUp: false,
-  networkInfo: null
+  networkInfo: null,
+  currentUser: null,
+  onboardingComplete: false
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_ONBOARDING_COMPLETE]: (state) => {
+    return { ...state, onboardingComplete: true };
+  },
   [Types.REGISTER_START]: (state) => {
     return {
       ...state,
@@ -55,12 +60,13 @@ export default createReducer(INITIAL_STATE, {
       signedUp: false
     };
   },
-  [Types.SIGN_IN_SUCCESS]: (state) => {
+  [Types.SIGN_IN_SUCCESS]: (state, action) => {
     return {
       ...state,
       error: null,
       isFetching: false,
-      isLoggedIn: true
+      isLoggedIn: true,
+      currentUser: action.user
     };
   },
   [Types.SIGN_IN_FAILURE]: (state, action) => {
@@ -93,9 +99,12 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.RESET]: (state) => {
+    const { currentUser, onboardingComplete } = state;
     return {
       ...state,
-      ...INITIAL_STATE
+      ...INITIAL_STATE,
+      currentUser,
+      onboardingComplete
     };
   }
 });
