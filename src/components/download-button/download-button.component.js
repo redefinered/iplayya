@@ -21,7 +21,7 @@ import {
   selectMovie,
   selectCurrentEpisode
 } from 'modules/ducks/movies/movies.selectors';
-import { selectNetworkInfo } from 'modules/ducks/auth/auth.selectors';
+import { selectNetworkInfo } from 'modules/app';
 import { checkExistingDownloads } from 'services/download.service';
 import uuid from 'react-uuid';
 

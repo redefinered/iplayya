@@ -28,7 +28,7 @@ export const signIn = async (username, password) => {
       variables: { input: { username, password } }
     });
 
-    // console.log({ data });
+    console.log({ data });
 
     return data;
   } catch (error) {

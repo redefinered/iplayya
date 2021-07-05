@@ -1,99 +1,312 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
-import PropTypes from 'prop-types';
 import { View, Image, Pressable } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
-// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import ContentWrap from 'components/content-wrap.component';
-import dummydata from '../imusic/dummy-data.json';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
-import { createFontFormat } from 'utils';
+import { createFontFormat, toDateTime } from 'utils';
 import thumbImage from 'assets/player-thumb-image.png';
 
 import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/music/music.actions';
 import withLoader from 'components/with-loader.component';
+import { createStructuredSelector } from 'reselect';
+import {
+  selectNowPlaying,
+  selectPlaybackProgress,
+  selectPaused,
+  selectPlaybackInfo,
+  selectPlaylist,
+  selectShuffle,
+  selectRepeat
+} from 'modules/ducks/music/music.selectors';
+
+import moment from 'moment';
+
+const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const MusicPlayerScreen = ({
-  theme: {
-    iplayya: { colors }
-  },
-  route: {
-    params: { id }
-  }
+  playlist,
+  nowPlaying,
+  setNowPlayingAction,
+  progress,
+  setProgressAction,
+  setNowPlayingBackgroundModeAction,
+  paused,
+  setPausedAction,
+  playbackInfo,
+  isShuffled,
+  toggleShuffleAction,
+  cycleRepeatAction,
+  repeat
 }) => {
-  const [paused, setPaused] = React.useState(true);
-  const { title, artist, thumbnails } = dummydata.find((item) => item.id === id);
-  return (
-    <ContentWrap>
-      <View style={{ alignItems: 'center', paddingTop: 70, marginBottom: 30 }}>
-        <Image
-          style={{ width: 220, height: 220, borderRadius: 8 }}
-          source={{ url: thumbnails.large }}
-        />
-      </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Pressable>
-          <Icon name="shuffle" size={24} style={{ color: colors.white50 }} />
-        </Pressable>
-        <View style={{ marginBottom: 30 }}>
-          <Text
-            style={{
-              textAlign: 'center',
-              fontWeight: 'bold',
-              marginBottom: 15,
-              ...createFontFormat(16, 22)
-            }}
-          >
-            {title}
-          </Text>
-          <Text style={{ textAlign: 'center', ...createFontFormat(16, 22) }}>{artist}</Text>
-        </View>
-        <Pressable>
-          <Icon name="repeat" size={24} style={{ color: colors.white50 }} />
-        </Pressable>
-      </View>
-      <Slider
-        value={50}
-        style={{ width: '100%', height: 10 }}
-        minimumValue={0}
-        maximumValue={100}
-        minimumTrackTintColor={colors.vibrantpussy}
-        maximumTrackTintColor="white"
-        thumbImage={thumbImage}
-      />
+  const theme = useTheme();
+  const [remainingTime, setRemainingTime] = React.useState(0);
+  const [disablePrevious, setDisablePrevious] = React.useState(true);
+  const [disableNext, setDisableNext] = React.useState(false);
+
+  React.useEffect(() => {
+    setNowPlayingBackgroundModeAction(true);
+
+    updateButtons(nowPlaying);
+
+    // Unsubscribe
+    return () => setNowPlayingBackgroundModeAction(false);
+  }, []);
+
+  // const { title, artist, thumbnails } = dummydata.find((item) => item.id === id);
+
+  React.useEffect(() => {
+    if (!playbackInfo) return setRemainingTime(0);
+
+    const { seekableDuration, currentTime } = playbackInfo;
+    const remainingTime = seekableDuration - currentTime;
+
+    setRemainingTime(remainingTime);
+  }, [playbackInfo]);
+
+  React.useEffect(() => {
+    updateButtons(nowPlaying);
+  }, [nowPlaying]);
+
+  const updateButtons = (nowPlaying) => {
+    setProgressAction(0);
+
+    if (nowPlaying) {
+      const { sequence } = nowPlaying;
+      const nextSequence = sequence + 1;
+      const previousSequence = sequence - 1;
+      const totalTracks = playlist.length;
+
+      setDisableNext(false);
+      setDisablePrevious(false);
+
+      if (nextSequence > totalTracks) {
+        setDisableNext(true);
+      }
+
+      if (previousSequence < 1) {
+        setDisablePrevious(true);
+      }
+    }
+  };
+
+  const playNext = () => {
+    /// set now playing to the next item in the selected album
+    const nextTrackNumber = nowPlaying.sequence + 1;
+
+    /// if next track does not exist, stop
+    if (nextTrackNumber > playlist.length) {
+      setDisablePrevious(false);
+
+      // reset progress
+      setProgressAction(0);
+
+      // turn playing off
+      setPausedAction(true);
+
+      // setNowPlayingAction(null);
+
+      return;
+    }
+
+    const nextTrack = playlist.find(({ sequence }) => nextTrackNumber === parseInt(sequence));
+
+    const { number, sequence, name: title, url: source, performer: artist } = nextTrack;
+    setNowPlayingAction(
+      {
+        number: parseInt(number),
+        sequence: parseInt(sequence),
+        title,
+        artist,
+        source,
+        thumbnail: coverplaceholder
+      },
+      false
+    );
+  };
+
+  const playPrevious = () => {
+    /// set now playing to the next item in the selected album
+    const nextTrackNumber = nowPlaying.sequence - 1;
+
+    /// if next track does not exist, stop
+    if (nextTrackNumber <= 0) {
+      // reset progress
+      setProgressAction(0);
+
+      // turn playing off
+      setPausedAction(true);
+
+      // setNowPlayingAction(null);
+
+      return;
+    }
+
+    const nextTrack = playlist.find(({ sequence }) => nextTrackNumber === parseInt(sequence));
+
+    const { number, sequence, name: title, url: source, performer: artist } = nextTrack;
+    setNowPlayingAction(
+      {
+        number: parseInt(number),
+        sequence: parseInt(sequence),
+        title,
+        artist,
+        source,
+        thumbnail: coverplaceholder
+      },
+      false
+    );
+  };
+
+  const renderDuration = () => {
+    const { currentTime } = playbackInfo;
+    return (
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
-        <Text style={{ ...createFontFormat(10, 14) }}>1:20</Text>
-        <Text style={{ ...createFontFormat(10, 14) }}>-2:40</Text>
+        <Text style={{ ...createFontFormat(10, 14) }}>
+          {moment(toDateTime(currentTime)).format('mm:ss')}
+        </Text>
+        <Text style={{ ...createFontFormat(10, 14) }}>
+          -{moment(toDateTime(remainingTime)).format('mm:ss')}
+        </Text>
       </View>
-      <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-        <Pressable>
-          <Icon name="previous" size={40} style={{ color: colors.white25 }} />
-        </Pressable>
-        <Pressable onPress={() => setPaused(!paused)}>
-          <Icon
-            name={paused ? 'circular-play' : 'circular-pause'}
-            size={80}
-            style={{ marginHorizontal: 20 }}
-          />
-        </Pressable>
-        <Pressable>
-          <Icon name="next" size={40} />
-        </Pressable>
-      </View>
-    </ContentWrap>
-  );
+    );
+  };
+
+  // console.log({ disableNext, disablePrevious });
+
+  const getRepeatColor = () => {
+    if (repeat.order !== 1) return 'white';
+    return theme.iplayya.colors.white50;
+  };
+
+  if (nowPlaying) {
+    const { name, performer } = nowPlaying;
+    return (
+      <ContentWrap>
+        <View style={{ alignItems: 'center', paddingTop: 70, marginBottom: 30 }}>
+          <Image style={{ width: 220, height: 220, borderRadius: 8 }} source={coverplaceholder} />
+        </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <View style={{ marginBottom: 30 }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                marginBottom: 15,
+                ...createFontFormat(20, 27)
+              }}
+            >
+              {name}
+            </Text>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: theme.iplayya.colors.vibrantpussy,
+                ...createFontFormat(16, 22)
+              }}
+            >
+              {performer}
+            </Text>
+          </View>
+        </View>
+        <Slider
+          value={progress}
+          style={{ width: '100%', height: 10 }}
+          minimumValue={0}
+          maximumValue={100}
+          minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
+          maximumTrackTintColor="white"
+          thumbImage={thumbImage}
+        />
+
+        {renderDuration()}
+
+        <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+          <Pressable style={{ marginRight: 20 }} onPress={() => toggleShuffleAction()}>
+            <Icon
+              name="shuffle"
+              size={24}
+              style={{ color: isShuffled ? 'white' : theme.iplayya.colors.white50 }}
+            />
+          </Pressable>
+          <Pressable onPress={playPrevious} disabled={disablePrevious}>
+            <Icon
+              name="previous"
+              size={40}
+              style={{ color: disablePrevious ? theme.iplayya.colors.white25 : 'white' }}
+            />
+          </Pressable>
+          <Pressable onPress={() => setPausedAction(!paused)}>
+            <Icon
+              name={paused ? 'circular-play' : 'circular-pause'}
+              size={80}
+              style={{ marginHorizontal: 20 }}
+            />
+          </Pressable>
+          <Pressable onPress={playNext} disabled={disableNext}>
+            <Icon
+              name="next"
+              size={40}
+              style={{ color: disableNext ? theme.iplayya.colors.white25 : 'white' }}
+            />
+          </Pressable>
+          <Pressable
+            style={{ marginLeft: 20, position: 'relative' }}
+            onPress={() => cycleRepeatAction()}
+          >
+            <Icon name="repeat" size={24} style={{ color: getRepeatColor() }} />
+            <Text
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: -8,
+                fontWeight: 'bold',
+                color: 'white',
+                opacity: repeat.order === 3 ? 1 : 0
+              }}
+            >
+              1
+            </Text>
+          </Pressable>
+        </View>
+      </ContentWrap>
+    );
+  }
+
+  return <View />;
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <MusicPlayerScreen {...props} />
   </ScreenContainer>
 );
 
-MusicPlayerScreen.propTypes = {
-  theme: PropTypes.object,
-  route: PropTypes.object
+const actions = {
+  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  setPausedAction: Creators.setPaused,
+  setProgressAction: Creators.setProgress,
+  setNowPlayingAction: Creators.setNowPlaying,
+  toggleShuffleAction: Creators.toggleShuffle,
+  setShuffleOffAction: Creators.setShuffleOff,
+  cycleRepeatAction: Creators.cycleRepeat
 };
 
-export default compose(withTheme, withLoader)(Container);
+const mapStateToProps = createStructuredSelector({
+  playlist: selectPlaylist,
+  paused: selectPaused,
+  nowPlaying: selectNowPlaying,
+  progress: selectPlaybackProgress,
+  playbackInfo: selectPlaybackInfo,
+  isShuffled: selectShuffle,
+  repeat: selectRepeat
+});
+
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
+
+export default enhance(Container);

@@ -29,30 +29,21 @@ const ChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
+  // eslint-disable-next-line no-unused-vars
   error,
   channel,
   getProgramsByChannelAction,
   getChannelAction,
 
   /// the program that is playing at this moment
-  currentProgram,
-
-  isFetching
+  currentProgram
 }) => {
-  console.log({ isFetching });
-  const [paused, setPaused] = React.useState(true);
+  const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
-  // const [downloadedFiles, setDownloadedFiles] = React.useState([]);
 
-  /// temporary
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
-
-  // console.log({ isMovieDownloaded });
-
-  /// temporary data
-  // const [data, setData] = React.useState(null);
 
   React.useEffect(() => {
     let date = new Date(Date.now());
@@ -60,34 +51,14 @@ const ChannelDetailScreen = ({
     getChannelAction({ videoId: channelId });
   }, []);
 
-  // React.useEffect(() => {
-  //   if (channel) {
-  //     const titlesplit = channel.title.split(' ');
-  //     const title = titlesplit.join('_');
-  //     const filename = `${channelId}_${title}.m3u8`;
-  //     const file = downloadedFiles.find((file) => file === filename);
-
-  //     // check if downloaded
-  //     if (downloadedFiles.length) {
-  //       if (typeof file !== 'undefined') {
-  //         setIsMoviedownloaded(true);
-  //       } else {
-  //         setIsMoviedownloaded(false);
-  //       }
-  //     }
-  //   }
-  // }, [channel, downloadedFiles]);
-
   React.useEffect(() => {
     if (channel && currentProgram) {
-      const { title, time, time_to } = currentProgram;
-      let startTime = new Date(time);
-      let endTime = new Date(time_to);
+      const { title: epgtitle, time, time_to } = currentProgram;
       const data = {
-        id: 6,
-        title,
-        chanel: channel.title,
-        time: `${moment(startTime).format('hh:mm A')} - ${moment(endTime).format('hh:mm A')}`,
+        title: channel.title,
+        epgtitle,
+        time,
+        time_to,
         thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
       };
       setCurrentlyPlaying(data);
@@ -96,7 +67,7 @@ const ChannelDetailScreen = ({
 
   React.useEffect(() => {
     if (channel) {
-      const { url, title: channelName } = channel;
+      const { token, url, title: channelName } = channel;
       const titlesplit = channelName.split(' ');
       const title = titlesplit.join('_');
       const filename = `${channelId}_${title}.m3u8`;
@@ -109,8 +80,7 @@ const ChannelDetailScreen = ({
         // setSource(`${dirs.DocumentDir}/112238_test112238.m3u8`);
       } else {
         let sourceSplit = url.split(' ');
-        setSource(sourceSplit[1]);
-        // setSource(`${dirs.DocumentDir}/112238_test112238.mp4`);
+        setSource(`${sourceSplit[1]}?token=${token}`);
       }
     }
     // console.log({ isMovieDownloaded });
@@ -130,15 +100,15 @@ const ChannelDetailScreen = ({
   if (!channel) return <Text>fetching...</Text>;
 
   const renderPlayer = () => {
-    if (!currentlyPlaying) return;
+    // if (!currentlyPlaying) return;
     if (source) {
       return (
         <MediaPlayer
           isSeries={false}
           paused={paused}
           source={source}
-          thumbnail={currentlyPlaying.thumbnail}
-          title={currentlyPlaying.title}
+          // thumbnail={currentlyPlaying.thumbnail}
+          // title={currentlyPlaying.title}
           togglePlay={handleTogglePlay}
           loading={loading}
           setLoading={setLoading}
@@ -150,29 +120,21 @@ const ChannelDetailScreen = ({
   };
 
   return (
-    <View style={{ marginTop: 10 }}>
+    <View style={{ marginTop: 10, paddingBottom: 220 }}>
       {/* Player */}
       <View
         style={{
           width: '100%',
           height: 211,
-          marginBottom: 10,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: 'black'
         }}
       >
-        {error && <Text style={{ color: 'red' }}>Erro: something went wrong</Text>}
-        {/* <VLCPlayer
-          autoplay={true}
-          source={{ uri: source }}
-          volume={null}
-          style={{ width: Dimensions.get('window').width, height: 211 }}
-        /> */}
         {renderPlayer()}
       </View>
 
-      <ScrollView showsHorizontalScrollIndicator={false}>
+      <ScrollView showsHorizontalScrollIndicator={false} bounces={true}>
         <ContentWrap>
           <View
             style={{
@@ -182,16 +144,16 @@ const ChannelDetailScreen = ({
               marginBottom: 20
             }}
           >
-            <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
               <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
-                  // url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(data.title)}`
                   url: 'http://via.placeholder.com/60x60.png'
                 }}
               />
               <Content
                 {...currentlyPlaying}
+                channeltitle={channel.title}
                 onRightActionPress={handleFovoritePress}
                 isFavorite={isFavorite}
               />
@@ -200,21 +162,44 @@ const ChannelDetailScreen = ({
         </ContentWrap>
         {/* program guide */}
 
-        <View>
-          <ContentWrap>
-            <Text style={{ ...createFontFormat(16, 22) }}>Program Guide</Text>
-          </ContentWrap>
-
-          <ProgramGuide channelId={channelId} />
-        </View>
+        <ProgramGuide channelId={channelId} />
       </ScrollView>
     </View>
   );
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
+const Content = ({
+  channeltitle,
+  title,
+  epgtitle,
+  time,
+  time_to,
+  onRightActionPress,
+  isFavorite
+}) => {
   const theme = useTheme();
+  const renderEpgtitle = () => {
+    if (!epgtitle)
+      return (
+        <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+          Program title unavailable
+        </Text>
+      );
+
+    return (
+      <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+        {epgtitle}
+      </Text>
+    );
+  };
+
+  const getSchedule = (time, time_to) => {
+    if (!time || !time_to) return;
+
+    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -224,7 +209,9 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
           justifyContent: 'space-between'
         }}
       >
-        <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
+        <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>
+          {title || channeltitle}
+        </Text>
         <Pressable onPress={() => onRightActionPress(title)}>
           <Icon
             name="heart-solid"
@@ -234,7 +221,7 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
         </Pressable>
       </View>
       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-        {chanel}
+        {renderEpgtitle()}
       </Text>
       <View
         style={{
@@ -244,7 +231,9 @@ const Content = ({ title, chanel, time, onRightActionPress, isFavorite }) => {
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>{time}</Text>
+          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
+            {getSchedule(time, time_to)}
+          </Text>
           <Icon name="history" color="#13BD38" />
         </View>
       </View>

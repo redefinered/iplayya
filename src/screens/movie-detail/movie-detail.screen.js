@@ -29,8 +29,11 @@ import {
   selectDownloadStarted
 } from 'modules/ducks/downloads/downloads.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath, createFontFormat } from 'utils';
+import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
+
+import { useRemoteMediaClient } from 'react-native-google-cast';
+import moment from 'moment';
 
 const MovieDetailScreen = ({
   error,
@@ -49,11 +52,10 @@ const MovieDetailScreen = ({
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
-  videoUrls,
-
-  isFetching
+  videoUrls
 }) => {
-  console.log({ isFetching });
+  const client = useRemoteMediaClient();
+
   const theme = useTheme();
   const [paused, setPaused] = React.useState(true);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
@@ -69,6 +71,33 @@ const MovieDetailScreen = ({
     getMovieAction(videoId);
     addMovieToFavoritesStartAction();
   }, []);
+
+  /// cast functions
+  React.useEffect(() => {
+    if (!client) return;
+    // getChromecastStatus();
+
+    if (paused) {
+      handlePause();
+    } else {
+      handlePlay();
+    }
+  }, [client, paused]);
+
+  const handlePlay = async () => {
+    await client.play();
+  };
+
+  const handlePause = async () => {
+    await client.pause();
+  };
+  /// end cast functions
+
+  // const getChromecastStatus = async () => {
+  //   const chromecastStatus = await client.getMediaStatus();
+
+  //   console.log({ chromecastStatus });
+  // };
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -176,6 +205,22 @@ const MovieDetailScreen = ({
     );
 
   const {
+    /// items to exclude in 'read more' section
+    // eslint-disable-next-line no-unused-vars
+    id,
+    // eslint-disable-next-line no-unused-vars
+    __typename,
+    // eslint-disable-next-line no-unused-vars
+    video_urls,
+    // eslint-disable-next-line no-unused-vars
+    is_hd,
+    // eslint-disable-next-line no-unused-vars
+    is_censored,
+    // eslint-disable-next-line no-unused-vars
+    is_favorite,
+    // eslint-disable-next-line no-unused-vars
+    series,
+
     title,
     year,
     description,
@@ -186,6 +231,87 @@ const MovieDetailScreen = ({
     is_series,
     ...otherFields
   } = movie;
+
+  // const timeToDate = toDateTime(otherFields.time * 60);
+  // Object.assign(otherFields, {
+  //   time: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
+  // });
+
+  console.log({ otherFields });
+
+  const readMoreData = Object.keys(otherFields).map((key) => {
+    if (key === 'time') {
+      const timeToDate = toDateTime(otherFields.time * 60);
+
+      return {
+        key,
+        label: 'Duration',
+        value: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
+      };
+    }
+
+    if (key === 'country') {
+      return {
+        key,
+        label: 'Country of origin',
+        value: otherFields[key]
+      };
+    }
+
+    if (key === 'rating_imdb') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
+      };
+    }
+
+    if (key === 'rating_kinopoisk') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
+      };
+    }
+
+    return {
+      key,
+      label: toTitleCase(key.replace('_', ' ')),
+      value: otherFields[key]
+    };
+  });
+
+  const renderMediaPlayer = () => {
+    if (!source)
+      return (
+        <View
+          style={{
+            flex: 1,
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'black'
+          }}
+        >
+          <Text>NO SOURCE</Text>
+        </View>
+      );
+
+    return (
+      <MediaPlayer
+        isSeries={is_series}
+        paused={paused}
+        source={source}
+        thumbnail={thumbnail}
+        title={title}
+        togglePlay={handleTogglePlay}
+        setPaused={setPaused}
+        setSource={handleSourceSet}
+        videoUrls={videoUrls}
+        typename={movie.__typename}
+      />
+    );
+  };
 
   return (
     <View style={{ flex: 1, marginTop: 10 }}>
@@ -201,32 +327,7 @@ const MovieDetailScreen = ({
             alignItems: 'center'
           }}
         >
-          {source !== '' ? (
-            <MediaPlayer
-              isSeries={is_series}
-              paused={paused}
-              source={source}
-              thumbnail={thumbnail}
-              title={title}
-              togglePlay={handleTogglePlay}
-              setPaused={setPaused}
-              setSource={handleSourceSet}
-              videoUrls={videoUrls}
-              typename={movie.__typename}
-            />
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'black'
-              }}
-            >
-              <Text>NO SOURCE</Text>
-            </View>
-          )}
+          {renderMediaPlayer()}
         </Pressable>
         <ContentWrap>
           <Text
@@ -237,6 +338,9 @@ const MovieDetailScreen = ({
           >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
         </ContentWrap>
       </View>
+
+      {/* <Button onPress={handleGooleCastPlay}>Play</Button>
+      <Button onPress={handleGooleCastPause}>Pause</Button> */}
 
       {/* content */}
       <ScrollView style={{ height: 300 }}>
@@ -257,7 +361,7 @@ const MovieDetailScreen = ({
               style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
               titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
             >
-              {Object.keys(otherFields).map((key) => {
+              {readMoreData.map(({ key, label, value }) => {
                 return (
                   <List.Item
                     key={key}
@@ -270,9 +374,10 @@ const MovieDetailScreen = ({
                             ...createFontFormat(14, 20)
                           }}
                         >
-                          {key}{' '}
+                          {label}
+                          {': '}
                         </Text>
-                        {otherFields[key]}
+                        {value}
                       </Text>
                     }
                   />

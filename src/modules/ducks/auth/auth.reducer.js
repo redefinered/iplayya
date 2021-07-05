@@ -10,12 +10,6 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.SET_NETWORK_INFO]: (state, action) => {
-    return {
-      ...state,
-      networkInfo: action.data
-    };
-  },
   [Types.REGISTER_START]: (state) => {
     return {
       ...state,

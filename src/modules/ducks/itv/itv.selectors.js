@@ -4,16 +4,19 @@ export const itvState = (state) => state.itv;
 
 export const selectIsFetching = createSelector([itvState], ({ isFetching }) => isFetching);
 export const selectError = createSelector([itvState], ({ error }) => error);
-export const selectPaginatorInfo = createSelector([itvState], ({ paginatorInfo }) => paginatorInfo);
+
+export const selectPaginator = createSelector([itvState], ({ paginator }) => paginator);
+
+export const selectFavoritesPaginator = createSelector(
+  [itvState],
+  ({ favoritesPaginator }) => favoritesPaginator
+);
+
 export const selectGenres = createSelector([itvState], ({ genres }) => genres);
 export const selectChannels = createSelector([itvState], ({ channels }) => channels);
 export const selectChannel = createSelector([itvState], ({ channel }) => channel);
 export const selectFavorites = createSelector([itvState], ({ favorites }) => favorites);
 export const selectPrograms = createSelector([itvState], ({ programs }) => programs.slice(1));
-export const selectAddedToFavorites = createSelector(
-  [itvState],
-  ({ addedToFavorites }) => addedToFavorites
-);
 export const selectRemovedFromFavorites = createSelector(
   [itvState],
   ({ removedFromFavorites }) => removedFromFavorites
@@ -33,3 +36,13 @@ export const selectCurrentProgram = createSelector([itvState], ({ programs }) =>
   return programs[0];
 });
 export const selectSearchResults = createSelector([itvState], ({ searchResults }) => searchResults);
+
+export const selectFavoritesListUpdated = createSelector(
+  [itvState],
+  ({ favoritesListUpdated }) => favoritesListUpdated
+);
+
+export const selectSearchResultsPaginator = createSelector(
+  [itvState],
+  ({ searchResultsPaginator }) => searchResultsPaginator
+);

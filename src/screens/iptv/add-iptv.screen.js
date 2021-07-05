@@ -152,8 +152,6 @@ class AddIptvScreen extends React.Component {
       Object.assign(stateError, { [key]: val });
     });
 
-    console.log({ errors });
-
     return (
       <React.Fragment>
         <ContentWrap scrollable style={{ paddingTop: 40 }}>

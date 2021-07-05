@@ -1,6 +1,8 @@
 import { persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
+import { resettableReducer } from 'reduxsauce';
 
+import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
 import downloadsReducer from './ducks/downloads/downloads.reducer';
@@ -9,6 +11,7 @@ import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
+import musicReducer from './ducks/music/music.reducer';
 import isportsReducer from './ducks/isports/isports.reducer';
 import iradioReducer from './ducks/iradio/iradio.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
@@ -19,7 +22,10 @@ export const persistConfig = {
   storage: AsyncStorage
 };
 
+const resettable = resettableReducer('RESET');
+
 const rootReducer = persistCombineReducers(persistConfig, {
+  app: appReducer,
   nav: navReducer,
   auth: authReducer,
   downloads: downloadsReducer,
@@ -28,6 +34,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   itv: itvReducer,
   profile: profileReducer,
   movies: moviesReducer,
+  music: resettable(musicReducer),
   sports: isportsReducer,
   radios: iradioReducer,
   provider: providerReducer,
@@ -35,7 +42,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
 });
 
 export default (state, action) => {
-  if (action.type === '@Auth/PURGE_STORE') {
+  if (action.type === '@App/PURGE_STORE') {
     console.log('store purged!');
     AsyncStorage.removeItem('persist:primary');
     AsyncStorage.removeItem('access_token');

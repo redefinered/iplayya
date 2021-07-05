@@ -34,10 +34,6 @@ export function* getMovieRequest(action) {
 export function* getMoviesRequest(action) {
   const { paginatorInfo, categoryPaginator } = action;
 
-  // console.log({ categoryPaginator });
-
-  // console.log({ paginatorInfo, categoryPaginator });
-
   /// category paginator
   const { page, limit } = categoryPaginator;
 
@@ -78,7 +74,6 @@ export function* getMoviesByCategoriesRequest(action) {
     const { videoByCategory: newMovies } = yield call(getMoviesByCategories, {
       input: nextPageInput
     });
-    console.log({ nextPageInput });
     yield put(Creators.getMoviesByCategoriesSuccess({ newMovies, nextPaginator: nextPageInput }));
   } catch (error) {
     yield put(Creators.getMoviesByCategoriesFailure(error.message));
@@ -108,16 +103,6 @@ export function* getFavoriteMoviesRequest() {
   }
 }
 
-// export function* getDownloadsRequest(action) {
-//   const { input } = action.data;
-//   try {
-//     const { videoByIds } = yield call(getDownloads, input);
-//     yield put(Creators.getDownloadsSuccess(videoByIds));
-//   } catch (error) {
-//     yield put(Creators.getDownloadsFailure(error.message));
-//   }
-// }
-
 export function* removeFromFavoritesRequest(action) {
   const { videoIds } = action;
   try {
@@ -128,25 +113,6 @@ export function* removeFromFavoritesRequest(action) {
     yield put(Creators.removeFromFavoritesFailure(error.message));
   }
 }
-
-// export function* downloadMovieRequest(action) {
-//   const { id, title, url } = action.data;
-//   try {
-//     const task = yield call(downloadMovie, { title, url });
-//     task.cancel();
-
-//     // const res = yield task.progress({ count: 10 }, (received, total) => {
-//     //   console.log('progress', received / total);
-//     //   put(
-//     //     Creators.updateDownloadInfo({ id, status: 'downloading', title, progress: received, total })
-//     //   );
-//     // });
-//     // // yield put(Creators.updateDownloadInfo({ id, status: 'complete', filepath: res.path() }));
-//     // yield put(Creators.downloadMovieSuccess({ id, filepath: res.path() }));
-//   } catch (error) {
-//     yield put(Creators.downloadMovieFailure(error.message));
-//   }
-// }
 
 export function* searchRequest(action) {
   try {
@@ -164,7 +130,6 @@ export default function* movieSagas() {
   yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
-  // yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_CATEGORIES, getCategoriesRequest);
 }

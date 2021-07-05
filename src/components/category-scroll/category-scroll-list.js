@@ -8,9 +8,8 @@ import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selec
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { useTheme } from 'react-native-paper';
 
-const CARD_WIDTH = 115;
-const CARD_HEIGHT = 170;
 const SPACING_FOR_CARD_INSET = 15;
+const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const CategoryScrollList = ({
   data,
@@ -26,8 +25,8 @@ const CategoryScrollList = ({
       return (
         <View
           style={{
-            width: 115,
-            height: 170,
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
             backgroundColor: brand.white10,
             borderRadius: 8,
             padding: theme.spacing(1)
@@ -38,7 +37,10 @@ const CategoryScrollList = ({
       );
     }
     return (
-      <Image style={{ width: CARD_WIDTH, height: CARD_HEIGHT, borderRadius: 8 }} source={{ uri }} />
+      <Image
+        style={{ width: CARD_DIMENSIONS.WIDTH, height: CARD_DIMENSIONS.HEIGHT, borderRadius: 8 }}
+        source={{ uri }}
+      />
     );
   };
 
@@ -62,9 +64,10 @@ const CategoryScrollList = ({
   return (
     <FlatList
       data={data}
+      showsHorizontalScrollIndicator={false}
       horizontal
       // decelerationRate={0}
-      snapToInterval={CARD_WIDTH + 10}
+      snapToInterval={CARD_DIMENSIONS.WIDTH + 10}
       snapToAlignment="start"
       contentInset={{
         top: 0,

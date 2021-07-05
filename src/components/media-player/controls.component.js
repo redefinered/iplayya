@@ -10,9 +10,9 @@ import moment from 'moment';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import castOptions from './screencast-options.json';
 import { createFontFormat, toDateTime } from 'utils';
 import VerticalSlider from 'rn-vertical-slider';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
   selectPlaybackInfo,
   // selectCurrentPosition,
@@ -21,7 +21,10 @@ import {
   selectDuration
 } from 'modules/ducks/movies/movies.selectors';
 
-// const thumbimage = require('assets/media-player-slider-thumb.png');
+import CastButton from 'components/cast-button/cast-button.component';
+import { useRemoteMediaClient } from 'react-native-google-cast';
+
+import SystemSetting from 'react-native-system-setting';
 
 const VideoControls = ({
   theme,
@@ -36,25 +39,67 @@ const VideoControls = ({
   duration,
   setVolume,
   isFullscreen,
+  source,
+  castSessionActive,
+  updatePlaybackInfoAction,
   ...controlProps
 }) => {
-  // console.log('xxxx', duration);
-  // const [progress, setProgress] = React.useState(0);
+  const [mediaInfo, setMediaInfo] = React.useState(null);
+  const client = useRemoteMediaClient();
+
+  React.useEffect(() => {
+    const volumeListener = SystemSetting.addVolumeListener((data) => {
+      const volume = data.value;
+      setVolume(volume);
+    });
+
+    return () => SystemSetting.removeVolumeListener(volumeListener);
+  }, []);
+
+  React.useEffect(() => {
+    if (client) {
+      getMediaStatus();
+    }
+  }, [client]);
+
+  React.useEffect(() => {
+    if (client) {
+      if (!mediaInfo) return;
+      const { streamDuration } = mediaInfo;
+      const { setPaused } = controlProps;
+      client.onMediaProgressUpdated((streamPosition) => {
+        setPaused(false);
+        updatePlaybackInfoAction({
+          playbackInfo: { seekableDuration: streamDuration, currentTime: streamPosition }
+        });
+      });
+    }
+  });
+
+  const getMediaStatus = async () => {
+    if (!client) return;
+    const { mediaInfo } = await client.getMediaStatus();
+    setMediaInfo(mediaInfo);
+  };
 
   const handleSlidingStart = () => {
     controlProps.setPaused(true);
   };
 
-  const handleSlidingComplete = (value) => {
-    controlProps.setSliderPosition(value);
+  const handleSlidingComplete = async (position) => {
+    if (castSessionActive) {
+      if (!client) return;
+
+      await client.seek({ position });
+    }
+
+    controlProps.setSliderPosition(position);
     controlProps.setPaused(false);
   };
 
-  // React.useEffect(() => {
-  //   setProgress(currentTime);
-  // }, [currentTime]);
-
   const renderVolumeSlider = () => {
+    if (castSessionActive) return;
+
     if (isFullscreen)
       return (
         <Slider
@@ -92,44 +137,44 @@ const VideoControls = ({
   };
 
   // console.log('duration', duration);
-  const screencastOptions = () => {
-    if (controlProps.showCastOptions) {
-      return castOptions.map(({ id, name, label }) => (
-        <Pressable
-          key={id}
-          onPressIn={() => controlProps.setScreencastActiveState(name)}
-          onPress={() => controlProps.handleSelectScreencastOption(name)}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            height: 50,
-            backgroundColor:
-              controlProps.screencastActiveState === name
-                ? theme.iplayya.colors.white10
-                : 'transparent',
-            paddingHorizontal: 15
-          }}
-        >
-          <View style={{ flex: 1.5 }}>
-            <Icon name="airplay" size={20} />
-          </View>
-          <View style={{ flex: 10.5, paddingLeft: 15 }}>
-            <Text
-              style={{
-                color:
-                  controlProps.screencastOption === name
-                    ? theme.iplayya.colors.vibrantpussy
-                    : theme.colors.text,
-                ...createFontFormat(16, 22)
-              }}
-            >
-              {label}
-            </Text>
-          </View>
-        </Pressable>
-      ));
-    }
-  };
+  // const screencastOptions = () => {
+  //   if (controlProps.showCastOptions) {
+  //     return castOptions.map(({ id, name, label }) => (
+  //       <Pressable
+  //         key={id}
+  //         onPressIn={() => controlProps.setScreencastActiveState(name)}
+  //         onPress={() => controlProps.handleSelectScreencastOption(name)}
+  //         style={{
+  //           flexDirection: 'row',
+  //           alignItems: 'center',
+  //           height: 50,
+  //           backgroundColor:
+  //             controlProps.screencastActiveState === name
+  //               ? theme.iplayya.colors.white10
+  //               : 'transparent',
+  //           paddingHorizontal: 15
+  //         }}
+  //       >
+  //         <View style={{ flex: 1.5 }}>
+  //           <Icon name="airplay" size={20} />
+  //         </View>
+  //         <View style={{ flex: 10.5, paddingLeft: 15 }}>
+  //           <Text
+  //             style={{
+  //               color:
+  //                 controlProps.screencastOption === name
+  //                   ? theme.iplayya.colors.vibrantpussy
+  //                   : theme.colors.text,
+  //               ...createFontFormat(16, 22)
+  //             }}
+  //           >
+  //             {label}
+  //           </Text>
+  //         </View>
+  //       </Pressable>
+  //     ));
+  //   }
+  // };
 
   const resolutionOptions = () => {
     const { resolutions } = controlProps;
@@ -169,6 +214,90 @@ const VideoControls = ({
     }
   };
 
+  const renderBottomControls = () => {
+    if (castSessionActive) return;
+
+    return (
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 20
+        }}
+      >
+        <View style={{ flexDirection: 'row' }}>
+          <Pressable>
+            <Icon
+              name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
+              size={25}
+              style={{ marginRight: 15 }}
+            />
+          </Pressable>
+          {/* <Pressable>
+              <Icon name="caption" size={25} style={{ marginRight: 15 }} />
+            </Pressable> */}
+          {controlProps.typename !== 'Iptv' ? (
+            <Pressable onPress={() => controlProps.toggleVideoOptions()}>
+              <Icon name="video-quality" size={25} />
+              <View
+                style={{
+                  backgroundColor: '#202530',
+                  width: 250,
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: 0
+                }}
+              >
+                {resolutionOptions()}
+              </View>
+            </Pressable>
+          ) : null}
+        </View>
+        <Pressable onPress={() => controlProps.toggleFullscreen()}>
+          <Icon name="fullscreen" size={25} />
+        </Pressable>
+      </View>
+    );
+  };
+
+  const renderProgressSlider = () => {
+    const timeRemaining = isNaN(remainingTime)
+      ? '0:00:00'
+      : moment(toDateTime(remainingTime)).format('H:mm:ss');
+
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flex: 1.5 }}>
+          <Text style={{ ...createFontFormat(10, 14) }}>
+            {moment(toDateTime(currentTime)).format('H:mm:ss')}
+          </Text>
+        </View>
+        <View style={{ flex: 7 }}>
+          <Slider
+            value={currentTime}
+            onSlidingStart={handleSlidingStart}
+            onSlidingComplete={(value) => handleSlidingComplete(value)}
+            style={{ width: '100%', height: 10 }}
+            minimumValue={0}
+            maximumValue={duration}
+            minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
+            maximumTrackTintColor="white"
+          />
+        </View>
+        <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
+          <Text style={{ ...createFontFormat(10, 14) }}>{`-${timeRemaining}`}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const getContentTitle = () => {
+    if (castSessionActive) return 'Connected to Google Cast';
+
+    return controlProps.seriesTitle || controlProps.title;
+  };
+
   return (
     <View
       style={{
@@ -190,10 +319,16 @@ const VideoControls = ({
           zIndex: 101
         }}
       >
-        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>
-          {controlProps.seriesTitle || controlProps.title}
-        </Text>
-        <Pressable
+        <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{getContentTitle()}</Text>
+
+        <CastButton
+          style={{ width: 24, height: 24 }}
+          source={source}
+          currentTime={currentTime}
+          seriesTitle={controlProps.seriesTitle}
+        />
+
+        {/* <Pressable
           onPress={() => controlProps.toggleCastOptions()}
           style={{ position: 'relative' }}
         >
@@ -210,14 +345,15 @@ const VideoControls = ({
           >
             {screencastOptions()}
           </View>
-        </Pressable>
+        </Pressable> */}
       </View>
+
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
-          marginTop: 10,
+          // marginTop: 10,
           position: 'relative',
           zIndex: 100
         }}
@@ -254,73 +390,9 @@ const VideoControls = ({
       </View>
 
       <View style={{ position: 'relative', zIndex: 101 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 20
-          }}
-        >
-          <View style={{ flexDirection: 'row' }}>
-            <Pressable>
-              <Icon
-                name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
-                size={25}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-            {/* <Pressable>
-              <Icon name="caption" size={25} style={{ marginRight: 15 }} />
-            </Pressable> */}
-            {controlProps.typename !== 'Iptv' ? (
-              <Pressable onPress={() => controlProps.toggleVideoOptions()}>
-                <Icon name="video-quality" size={25} />
-                <View
-                  style={{
-                    backgroundColor: '#202530',
-                    width: 250,
-                    position: 'absolute',
-                    bottom: '100%',
-                    left: 0
-                  }}
-                >
-                  {resolutionOptions()}
-                </View>
-              </Pressable>
-            ) : null}
-          </View>
-          <Pressable onPress={() => controlProps.toggleFullscreen()}>
-            <Icon name="fullscreen" size={25} />
-          </Pressable>
-        </View>
+        {renderBottomControls()}
 
-        {/* video progress */}
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <View style={{ flex: 1.5 }}>
-            <Text style={{ ...createFontFormat(10, 14) }}>
-              {moment(toDateTime(currentTime)).format('H:mm:ss')}
-            </Text>
-          </View>
-          <View style={{ flex: 7 }}>
-            <Slider
-              value={currentTime}
-              onSlidingStart={handleSlidingStart}
-              onSlidingComplete={(value) => handleSlidingComplete(value)}
-              style={{ width: '100%', height: 10 }}
-              minimumValue={0}
-              maximumValue={duration}
-              minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
-              maximumTrackTintColor="white"
-              // thumbImage={thumbimage}
-            />
-          </View>
-          <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
-            <Text style={{ ...createFontFormat(10, 14) }}>
-              {`-${moment(toDateTime(remainingTime)).format('H:mm:ss')}`}
-            </Text>
-          </View>
-        </View>
+        {renderProgressSlider()}
       </View>
     </View>
   );
@@ -346,7 +418,8 @@ VideoControls.propTypes = {
   togglePlay: PropTypes.func.isRequired,
   paused: PropTypes.bool.isRequired,
   multipleMedia: PropTypes.bool,
-  toggleVolumeSliderVisible: PropTypes.func
+  toggleVolumeSliderVisible: PropTypes.func,
+  updatePlaybackInfoAction: PropTypes.func
 };
 
 VideoControls.defaultProps = {
@@ -360,4 +433,8 @@ const mapStateToProps = createStructuredSelector({
   duration: selectDuration
 });
 
-export default compose(connect(mapStateToProps), withTheme)(VideoControls);
+const actions = {
+  updatePlaybackInfoAction: Creators.updatePlaybackInfo
+};
+
+export default compose(connect(mapStateToProps, actions), withTheme)(VideoControls);

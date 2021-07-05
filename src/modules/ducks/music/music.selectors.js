@@ -1,31 +1,73 @@
 import { createSelector } from 'reselect';
 
-export const movieState = (state) => state.movie;
+export const musicState = (state) => state.music;
 
-export const selectError = createSelector([movieState], ({ error }) => error);
+export const selectError = createSelector([musicState], ({ error }) => error);
 
-export const selectIsFetching = createSelector([movieState], ({ isFetching }) => isFetching);
-
-export const selectMovies = createSelector([movieState], ({ movies }) => movies);
-
-export const selectFeatured = createSelector([movieState], ({ movies }) => {
-  if (!movies.length) return;
-  return movies[0]; // while waiting for API, select first item for now
-});
+export const selectIsFetching = createSelector([musicState], ({ isFetching }) => isFetching);
 
 export const selectPaginatorInfo = createSelector(
-  [movieState],
+  [musicState],
   ({ paginatorInfo }) => paginatorInfo
 );
 
-export const selectPlaybackInfo = createSelector([movieState], ({ playbackInfo }) => playbackInfo);
+export const selectGenrePaginator = createSelector(
+  [musicState],
+  ({ genrePaginator }) => genrePaginator
+);
 
-export const selectSeekableDuration = createSelector([movieState], ({ playbackInfo }) => {
-  if (!playbackInfo) return;
-  return Math.floor(playbackInfo.seekableDuration);
+export const selectAlbums = createSelector([musicState], ({ albums }) => albums);
+
+const selectAlbumsForFilter = ({ music: { albums } }, props) => {
+  return albums.find(({ genre }) => genre === props.genre);
+};
+
+export const selectAlbumsByGenre = createSelector([selectAlbumsForFilter], (albums) => {
+  if (typeof albums === 'undefined') return {};
+  // console.log({ movies });
+  return albums;
 });
 
-export const selectCurrentTime = createSelector([movieState], ({ playbackInfo }) => {
-  if (!playbackInfo) return;
-  return Math.floor(playbackInfo.currentTime);
+const selectPaginatorInfoForFilter = ({ music: { paginatorInfo } }, props) => {
+  return paginatorInfo.find(({ title }) => title === props.genre);
+};
+
+export const selectPaginatorOfGenre = createSelector(
+  [selectPaginatorInfoForFilter],
+  (paginatorInfo) => paginatorInfo
+);
+
+export const selectAlbum = createSelector([musicState], ({ album }) => album);
+
+export const selectTracks = createSelector([musicState], ({ album }) => {
+  if (!album) return [];
+
+  return album.tracks;
 });
+
+export const selectNowPlaying = createSelector([musicState], ({ nowPlaying }) => nowPlaying);
+
+export const selectIsBackgroundMode = createSelector(
+  [musicState],
+  ({ isBackgroundMode }) => isBackgroundMode
+);
+
+export const selectNowPlayingLayoutInfo = createSelector(
+  [musicState],
+  ({ nowPlayingLayoutInfo }) => nowPlayingLayoutInfo
+);
+
+export const selectPlaylist = createSelector([musicState], ({ playlist }) => playlist);
+
+export const selectPlaybackProgress = createSelector(
+  [musicState],
+  ({ playbackProgress }) => playbackProgress
+);
+
+export const selectPaused = createSelector([musicState], ({ paused }) => paused);
+
+export const selectPlaybackInfo = createSelector([musicState], ({ playbackInfo }) => playbackInfo);
+
+export const selectShuffle = createSelector([musicState], ({ shuffle }) => shuffle);
+
+export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat);

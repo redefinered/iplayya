@@ -4,6 +4,8 @@
 import 'react-native-gesture-handler';
 
 import React from 'react';
+import { View, Linking, Platform, StatusBar, StyleSheet } from 'react-native';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
@@ -11,21 +13,22 @@ import HomeTabs from 'navigators/home-tabs.navigator';
 import IptvStack from 'navigators/iptv-stack.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { Creators, selectIsLoading } from 'modules/app';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
-import { Creators as ProfileActionCreators } from 'modules/ducks/profile/profile.actions';
-import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
-import { Creators as DownloadsActionCreators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
-import { Linking, Platform, StatusBar } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
-import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
+// import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
+import { resetStore } from 'modules/store';
 
 const App = ({
+  isLoading,
+
   purgeStoreAction,
   signOutAction,
 
@@ -34,10 +37,10 @@ const App = ({
   passwordUpdateParams,
   providers,
   skippedProviderAdd,
-  getProfileAction,
 
-  resetAction
+  resetNowPlayingAction
 }) => {
+  const theme = useTheme();
   const [testMode] = React.useState(false);
 
   React.useEffect(() => {
@@ -45,11 +48,14 @@ const App = ({
 
     // signOutAction(); // manual signout for debugging
     // purgeStoreAction(); // manual state purge for debugging
-    // resetAction();
 
     // checkExistingDownloads();
     // listDownloadedFiles();
     // deleteFile('19_12_Angry_Men.mp4');
+
+    // resetStore();
+
+    resetNowPlayingAction();
 
     Linking.addEventListener('url', ({ url }) => {
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
@@ -65,11 +71,19 @@ const App = ({
     });
   }, []);
 
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      getProfileAction();
-    }
-  }, [isLoggedIn]);
+  if (isLoading && isLoggedIn)
+    return (
+      <View
+        style={{
+          justifyContent: 'center',
+          backgroundColor: theme.iplayya.colors.goodnight,
+          ...StyleSheet.absoluteFillObject
+        }}
+      >
+        <StatusBar barStyle="light-content" />
+        <ActivityIndicator />
+      </View>
+    );
 
   if (testMode) return <Test />;
 
@@ -106,6 +120,7 @@ const App = ({
 };
 
 const mapStateToProps = createStructuredSelector({
+  isLoading: selectIsLoading,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
   providers: selectProviders,
@@ -113,11 +128,10 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  purgeStoreAction: AuthActionCreators.purgeStore, // for development and debugging
+  purgeStoreAction: Creators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
-  getProfileAction: ProfileActionCreators.get,
-  resetAction: DownloadsActionCreators.reset
+  resetNowPlayingAction: MusicCreators.resetNowPlaying
 };
 
 export default connect(mapStateToProps, actions)(App);

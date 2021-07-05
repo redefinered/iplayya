@@ -3,6 +3,7 @@ import {
   GET_GENRES,
   GET_CHANNEL,
   GET_CHANNELS,
+  GET_CHANNEL_TOKEN,
   GET_TV_CHANNELS_BY_CATEGORIES,
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
@@ -18,8 +19,18 @@ export const getGenres = async () => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
-    console.log({ error });
+    throw new Error(error);
+  }
+};
+
+export const getChannelToken = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_CHANNEL_TOKEN,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
     throw new Error(error);
   }
 };
@@ -32,7 +43,6 @@ export const getChannel = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };
@@ -45,7 +55,6 @@ export const getChannels = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };
@@ -58,16 +67,15 @@ export const getChannelsByCategory = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };
 
-export const addToFavorites = async (input) => {
+export const addToFavorites = async (videoId) => {
   try {
     const { data } = await client.mutate({
       mutation: ADD_TO_FAVORITES,
-      variables: { input },
+      variables: { input: { videoId } },
       refetchQueries: [
         {
           query: GET_FAVORITES,
@@ -85,7 +93,6 @@ export const addToFavorites = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };
@@ -109,21 +116,20 @@ export const removeFromFavorites = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };
 
 export const getFavorites = async (input) => {
-  console.log({ getFavoritesInput: input });
+  // console.log({ getFavoritesInput: input });
   try {
     const { data } = await client.query({
-      query: GET_FAVORITES
-      // variables: { input: { limit: 10, pageNumber: 1 } }
+      query: GET_FAVORITES,
+      fetchPolicy: 'network-only',
+      variables: { input }
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };
@@ -136,7 +142,6 @@ export const getProgramsByChannel = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };
@@ -145,11 +150,11 @@ export const search = async (input) => {
   try {
     const { data } = await client.query({
       query: SEARCH,
+      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;
   } catch (error) {
-    console.log({ error });
     throw new Error(error);
   }
 };

@@ -72,7 +72,8 @@ const AccountScreen = ({
   userUpdated,
   purgeStoreAction,
   passwordUpdated,
-  route: { params }
+  route: { params },
+  resetAction
 }) => {
   const theme = useTheme();
 
@@ -152,7 +153,7 @@ const AccountScreen = ({
       <View style={{ alignItems: 'center' }}>
         <Text style={{ padding: 15 }}>{profileError}</Text>
         <Button onPress={() => getProfileAction()}>Retry</Button>
-        <Button onPress={() => purgeStoreAction()}>Purge store</Button>
+        <Button onPress={() => resetAction()}>RESET (for development only)</Button>
       </View>
     );
 
@@ -437,7 +438,7 @@ AccountScreen.propTypes = {
 };
 
 const actions = {
-  purgeStoreAction: Creators.purgeStore, // for testing
+  resetAction: Creators.reset, // for testing
   getProfileAction: ProfileCreators.get,
   signOutAction: Creators.signOut
 };

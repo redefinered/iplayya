@@ -1,7 +1,14 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, TextInput as FormInput } from 'react-native';
+import {
+  StyleSheet,
+  TextInput as FormInput,
+  FlatList,
+  View,
+  Keyboard,
+  Dimensions
+} from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -15,32 +22,50 @@ import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectSearchResults,
-  selectIsFetching
+  selectSearchResultsPaginator,
+  selectIsFetching,
+  selectGenres
 } from 'modules/ducks/itv/itv.selectors';
 import { ScrollView } from 'react-native-gesture-handler';
-import { selectGenres } from 'modules/ducks/itv/itv.selectors';
 import Spacer from '../../components/spacer.component';
 
 const ItvSearchScreen = ({
   navigation,
   theme,
+  // eslint-disable-next-line no-unused-vars
   error,
   searchStartAction,
   searchAction,
   results,
+  searchResultsPaginator,
   genres,
-  isFetching
+  isFetching,
+
+  resetSearchResultsPaginatorAction,
+
+  setBottomTabsVisibleAction
 }) => {
+  // console.log({ loc: 'screen', ...searchResultsPaginator });
   const [term, setTerm] = React.useState('');
+
+  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+  //   true
+  // );
+
+  React.useEffect(() => {
+    setBottomTabsVisibleAction({ hideTabs: true }); // does not work here!!!
+  });
 
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
+    resetSearchResultsPaginatorAction();
   }, []);
 
   const handleChange = (value) => {
@@ -48,22 +73,23 @@ const ItvSearchScreen = ({
   };
 
   React.useEffect(() => {
-    if (term.length === 0) {
-      searchStartAction();
-    }
+    searchStartAction();
+    resetSearchResultsPaginatorAction();
+
     if (term.length) {
-      if (term.length <= 2) return;
-      search(term);
+      if (term.length >= 2) {
+        search(term, false);
+      }
     }
   }, [term]);
 
-  // const search = debounce((keyword) => {
-  //   searchAction({ keyword, pageNumber: 1, limit: 10 });
-  // }, 1300);
-
   const search = React.useCallback(
-    debounce((keyword) => searchAction({ keyword, pageNumber: 1, limit: 10 }), 300),
-    []
+    debounce((keyword, shouldIncrement) => {
+      // console.log({ loc: 'screen before search action call', ...searchResultsPaginator });
+      searchAction({ keyword, ...searchResultsPaginator }, shouldIncrement);
+      return;
+    }, 300),
+    [searchResultsPaginator]
   );
 
   const handleItemPress = (channelId) => {
@@ -75,49 +101,95 @@ const ItvSearchScreen = ({
     navigation.navigate('ItvScreen', { genreId });
   };
 
-  const renderResult = () => {
-    if (error)
+  const handleEndReached = () => {
+    console.log('end reached!');
+    // if (!onEndReachedCalledDuringMomentum) {
+    //   if (term.length) {
+    //     if (term.length <= 1) return;
+    //     search(term, true);
+    //   }
+
+    //   setOnEndReachedCalledDuringMomentum(true);
+    // }
+
+    if (term.length) {
+      if (term.length <= 1) return;
+      search(term, true);
+    }
+  };
+
+  const handleScrollAction = () => {
+    Keyboard.dismiss();
+    // setOnEndReachedCalledDuringMomentum(false);
+    setBottomTabsVisibleAction({ hideTabs: true });
+  };
+
+  const renderListLoader = () => {
+    if (isFetching)
       return (
-        <Text
-          style={{
-            ...createFontFormat(14, 19),
-            fontWeight: '700',
-            color: theme.iplayya.colors.white50,
-            paddingVertical: 15
-          }}
-        >
-          Zero result
-        </Text>
+        <View style={{ paddingTop: 0, paddingBottom: 30 }}>
+          <ActivityIndicator size="small" />
+        </View>
       );
+  };
+
+  const renderResult = () => {
+    // if (error)
+    //   return (
+    //     <Text
+    //       style={{
+    //         ...createFontFormat(14, 19),
+    //         fontWeight: '700',
+    //         color: theme.iplayya.colors.white50,
+    //         paddingVertical: 15
+    //       }}
+    //     >
+    //       Zero result
+    //     </Text>
+    //   );
     if (results.length)
       return (
-        <React.Fragment>
-          <Text
-            style={{
-              ...createFontFormat(14, 19),
-              fontWeight: '700',
-              color: theme.iplayya.colors.white50,
-              paddingVertical: 15
-            }}
-          >
-            Search Results
-          </Text>
-          <ScrollView>
-            {results.map(({ id, title }) => (
-              <TouchableRipple key={id} onPress={() => handleItemPress(id)}>
-                <Text
-                  style={{
-                    ...createFontFormat(16, 22),
-                    paddingVertical: 15,
-                    paddingHorizontal: theme.spacing(2)
-                  }}
-                >
-                  {title}
-                </Text>
-              </TouchableRipple>
-            ))}
-          </ScrollView>
-        </React.Fragment>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: 15
+                }}
+              >
+                Search Results
+              </Text>
+            </ContentWrap>
+          }
+          ListFooterComponent={renderListLoader()}
+          onScroll={handleScrollAction}
+          data={results}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item: { id, title } }) => (
+            <TouchableRipple
+              style={{ paddingHorizontal: theme.spacing(2), height: 52 }}
+              key={id}
+              onPress={() => handleItemPress(id)}
+            >
+              <Text
+                style={{
+                  ...createFontFormat(16, 22),
+                  paddingVertical: 15,
+                  paddingHorizontal: theme.spacing(2)
+                }}
+              >
+                {title}
+              </Text>
+            </TouchableRipple>
+          )}
+          onEndReached={() => handleEndReached()}
+          // onEndReachedThreshold={0.9}
+          // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        />
       );
   };
 
@@ -129,21 +201,27 @@ const ItvSearchScreen = ({
       if (genres.length)
         return (
           <React.Fragment>
-            <Text
-              style={{
-                ...createFontFormat(14, 19),
-                fontWeight: '700',
-                color: theme.iplayya.colors.white50,
-                paddingVertical: 15
-              }}
-            >
-              Suggested Search
-            </Text>
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: 15
+                }}
+              >
+                Suggested Search
+              </Text>
+            </ContentWrap>
             <ScrollView>
               {genres.map(({ id, title }) => (
-                <TouchableRipple key={id} onPress={() => handleGenrePress(id)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{title}</Text>
-                </TouchableRipple>
+                <ContentWrap key={id}>
+                  <TouchableRipple onPress={() => handleGenrePress(id)}>
+                    <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>
+                      {title}
+                    </Text>
+                  </TouchableRipple>
+                </ContentWrap>
               ))}
             </ScrollView>
           </React.Fragment>
@@ -152,54 +230,47 @@ const ItvSearchScreen = ({
   };
 
   return (
-    <ContentWrap style={styles.container}>
+    <View style={styles.container}>
       <Spacer />
-      <TextInput
-        render={(props) => (
-          <FormInput
-            {...props}
-            style={{
-              flex: 1,
-              marginLeft: 40,
-              fontSize: 16,
-              justifyContent: 'center',
-              color: '#ffffff'
-            }}
-          />
-        )}
-        name="search"
-        returnKeyType="search"
-        autoFocus
-        handleChangeText={handleChange}
-        value={term}
-        autoCapitalize="none"
-        clearButtonMode="while-editing"
-        autoCompleteType="email"
-        style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
-        placeholder="Search a channel"
-        left={
-          <RNPTextInput.Icon
-            name={() => {
-              return isFetching ? (
-                <ActivityIndicator />
-              ) : (
-                <Icon
-                  name="search"
-                  size={30}
-                  style={{
-                    marginRight: theme.spacing(0)
-                  }}
-                />
-              );
-            }}
-          />
-        }
-        // onFocus={() => this.setState({ isolatedInputs: true })}
-        // onBlur={() => this.setState({ isolatedInputs: false })}
-      />
-      {renderResult()}
+      <ContentWrap>
+        <TextInput
+          onFocus={() => setBottomTabsVisibleAction({ hideTabs: true })}
+          render={(props) => (
+            <FormInput
+              {...props}
+              style={{
+                marginLeft: 40,
+                fontSize: 16,
+                color: '#ffffff'
+              }}
+            />
+          )}
+          name="search"
+          returnKeyType="search"
+          autoFocus
+          handleChangeText={handleChange}
+          value={term}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
+          autoCompleteType="email"
+          style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+          placeholder="Search a channel"
+          left={
+            <RNPTextInput.Icon
+              name={() => {
+                return isFetching ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Icon name="search" size={30} style={{ marginRight: theme.spacing(2) }} />
+                );
+              }}
+            />
+          }
+        />
+      </ContentWrap>
+      <View style={{ flex: 1, height: Dimensions.get('window').height }}>{renderResult()}</View>
       {renderSuggestedSearch()}
-    </ContentWrap>
+    </View>
   );
 };
 
@@ -217,13 +288,16 @@ const styles = StyleSheet.create({
 
 const actions = {
   searchAction: Creators.search,
-  searchStartAction: Creators.searchStart
+  searchStartAction: Creators.searchStart,
+  resetSearchResultsPaginatorAction: Creators.resetSearchResultsPaginator,
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
+  searchResultsPaginator: selectSearchResultsPaginator,
   genres: selectGenres
 });
 

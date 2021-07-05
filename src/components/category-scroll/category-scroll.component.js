@@ -19,6 +19,7 @@ const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCat
     };
   });
 
+  // console.log({ data });
   return (
     <View style={{ marginBottom: 30 }}>
       <ContentWrap>
