@@ -122,7 +122,7 @@ const SignInScreen = ({
               autoCapitalize="none"
               clearButtonMode="while-editing"
               // keyboardType="email-address"
-              keyboardType={Platform.OS === 'ios' ? 'email' : 'visible-password'}
+              keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
               autoCompleteType="email"
               error={error.username}
               style={styles.textInput}
