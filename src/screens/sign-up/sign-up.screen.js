@@ -94,7 +94,7 @@ class SignUpScreen extends React.Component {
       this.setError(stateError, 'email', false);
     }
 
-    if (!isValidPassword(rest.password) || rest.password.length < 8) {
+    if (!isValidPassword(rest.password)) {
       this.setError(stateError, 'password', true);
     } else {
       this.setError(stateError, 'password', false);
@@ -106,7 +106,7 @@ class SignUpScreen extends React.Component {
       this.setError(stateError, 'password_confirmation', false);
     }
 
-    if (!isValidPassword(rest.password_confirmation) || rest.password_confirmation < 8) {
+    if (!isValidPassword(rest.password_confirmation)) {
       this.setError(stateError, 'password_confirmation', true);
     } else {
       this.setError(stateError, 'password_confirmation', false);
