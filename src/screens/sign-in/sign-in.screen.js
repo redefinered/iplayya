@@ -61,6 +61,12 @@ const SignInScreen = ({
   }, [currentUser]);
 
   React.useEffect(() => {
+    if (currentUser) {
+      setUsername(currentUser.email);
+    }
+  }, [loginError]);
+
+  React.useEffect(() => {
     appReadyAction();
   }, [isLoggedIn]);
 
@@ -71,6 +77,8 @@ const SignInScreen = ({
   };
 
   const handleLoginSubmit = () => {
+    signInStartAction();
+
     if (!username.length) {
       setError({ username: 'Username is required' });
       return;
@@ -122,9 +130,9 @@ const SignInScreen = ({
               autoCapitalize="none"
               clearButtonMode="while-editing"
               // keyboardType="email-address"
-              keyboardType={Platform.OS === 'ios' ? 'email' : 'visible-password'}
+              keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
               autoCompleteType="email"
-              error={error.username}
+              error={error.username || loginError}
               style={styles.textInput}
               placeholder="Email"
             />
@@ -134,7 +142,7 @@ const SignInScreen = ({
                 handleChangeText={handleChangeText}
                 value={password}
                 autoCapitalize="none"
-                error={error.password}
+                error={error.password || loginError}
                 style={{
                   ...styles.textInput,
                   position: 'relative',
