@@ -70,13 +70,13 @@ class SignUpScreen extends React.Component {
     // eslint-disable-next-line no-unused-vars
     const { errors: stateError, valid, ...rest } = this.state;
 
-    if (!isValidName(rest.first_name) || rest.first_name.length < 5) {
+    if (!isValidName(rest.first_name) || rest.first_name.length < 3) {
       this.setError(stateError, 'first_name', true);
     } else {
       this.setError(stateError, 'first_name', false);
     }
 
-    if (!isValidName(rest.last_name) || rest.last_name.length < 5) {
+    if (!isValidName(rest.last_name) || rest.last_name.length < 3) {
       this.setError(stateError, 'last_name', true);
     } else {
       this.setError(stateError, 'last_name', false);
@@ -94,7 +94,7 @@ class SignUpScreen extends React.Component {
       this.setError(stateError, 'email', false);
     }
 
-    if (!isValidPassword(rest.password) || rest.password.length < 8) {
+    if (!isValidPassword(rest.password)) {
       this.setError(stateError, 'password', true);
     } else {
       this.setError(stateError, 'password', false);
@@ -106,7 +106,7 @@ class SignUpScreen extends React.Component {
       this.setError(stateError, 'password_confirmation', false);
     }
 
-    if (!isValidPassword(rest.password_confirmation) || rest.password_confirmation < 8) {
+    if (!isValidPassword(rest.password_confirmation)) {
       this.setError(stateError, 'password_confirmation', true);
     } else {
       this.setError(stateError, 'password_confirmation', false);
