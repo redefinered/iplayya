@@ -8,7 +8,7 @@ const { Types, Creators } = createActions(
     registerFailure: ['error'],
     signInStart: [],
     signIn: ['data'],
-    signInSuccess: ['data'],
+    signInSuccess: ['user'],
     signInFailure: ['error'],
     signOut: [],
     signOutSuccess: [],
@@ -17,6 +17,7 @@ const { Types, Creators } = createActions(
     getProfileSuccess: ['data'],
     getProfileFailure: ['error'],
     clearResetPasswordParams: [],
+    setOnboardingComplete: null,
     reset: null
   },
   { prefix: '@Auth/' }

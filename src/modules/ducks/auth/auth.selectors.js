@@ -13,3 +13,8 @@ export const selectError = createSelector([authState], ({ error }) => error);
 export const selectSignedUp = createSelector([authState], ({ signedUp }) => signedUp);
 
 export const selectNetworkInfo = createSelector([authState], ({ networkInfo }) => networkInfo);
+
+export const selectOnboardingComplete = createSelector(
+  [authState],
+  ({ onboardingComplete }) => onboardingComplete
+);

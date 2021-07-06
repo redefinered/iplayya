@@ -23,6 +23,7 @@ const INITIAL_STATE = {
   nowPlayingLayoutInfo: null,
   isBackgroundMode: false,
   repeat: repeatTypes.find(({ value }) => value === 'none'),
+  seekValue: 0,
 
   playbackProgress: 0,
   playbackInfo: {},
@@ -37,6 +38,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_SEEK_VALUE]: (state, { seekValue }) => {
+    return { ...state, seekValue };
+  },
   [Types.CLEAR_REPEAT]: (state) => {
     return { ...state, repeat: repeatTypes.find(({ value }) => value === 'none') };
   },
@@ -134,7 +138,8 @@ export default createReducer(INITIAL_STATE, {
       return {
         ...state,
         nowPlaying: null,
-        playlist: []
+        playlist: [],
+        seekValue: 0
       };
     }
 
@@ -168,7 +173,8 @@ export default createReducer(INITIAL_STATE, {
       nowPlaying: newPlaylist
         ? createdPlaylist.find(({ sequence }) => parseInt(sequence) === findThis)
         : playlist.find(({ sequence }) => parseInt(sequence) === findThis),
-      playlist: newPlaylist ? createdPlaylist : playlist
+      playlist: newPlaylist ? createdPlaylist : playlist,
+      seekValue: 0
     };
   },
   [Types.RESET_NOW_PLAYING]: (state) => {

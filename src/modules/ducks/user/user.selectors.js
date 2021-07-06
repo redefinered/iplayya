@@ -12,10 +12,10 @@ export const selectSkippedProviderAdd = createSelector(
   ({ skippedProviderAdd }) => skippedProviderAdd
 );
 
-export const selectCompletedOnboarding = createSelector(
-  [userState],
-  ({ completedOnboarding }) => completedOnboarding
-);
+// export const selectCompletedOnboarding = createSelector(
+//   [userState],
+//   ({ completedOnboarding }) => completedOnboarding
+// );
 
 export const selectPlaybackSettings = createSelector(
   [profileState],

@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   skippedProviderAdd: false,
-  completedOnboarding: false,
+  // completedOnboarding: false,
   updated: null,
 
   // selected provider where all content will come from
@@ -13,17 +13,16 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.RESET]: (state) => {
-    return {
-      ...state,
-      error: null,
-      isFetching: false,
-      currentUser: null,
-      skippedProviderAdd: false,
-      completedOnboarding: false,
-      updated: null
-    };
-  },
+  // [Types.RESET]: (state) => {
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: false,
+  //     skippedProviderAdd: false,
+  //     completedOnboarding: false,
+  //     updated: null
+  //   };
+  // },
   [Types.SET_PROVIDER]: (state) => {
     return {
       ...state,
@@ -79,11 +78,11 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       updated: false
     };
-  },
-  [Types.HIDE_WELCOME_DIALOG]: (state) => {
-    return {
-      ...state,
-      completedOnboarding: true
-    };
   }
+  // [Types.HIDE_WELCOME_DIALOG]: (state) => {
+  //   return {
+  //     ...state,
+  //     completedOnboarding: true
+  //   };
+  // }
 });

@@ -6,7 +6,7 @@ const { Types, Creators } = createActions(
     setProvider: ['id'],
     setProviderSuccess: ['id'],
     setProviderFailure: ['error'],
-    hideWelcomeDialog: [],
+    // hideWelcomeDialog: [],
     skipProviderAdd: [],
     updatePlaybackSettingsStart: [],
     updatePlaybackSettings: ['data'],

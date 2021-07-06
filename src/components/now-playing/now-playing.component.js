@@ -14,7 +14,8 @@ import {
   selectPlaylist,
   selectPaused,
   selectPlaybackProgress,
-  selectRepeat
+  selectRepeat,
+  selectSeekValue
 } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
@@ -37,20 +38,33 @@ const NowPlaying = ({
   updatePlaybackInfoAction,
   paused,
   setPausedAction,
-  repeat
+  repeat,
+  seekValue
 }) => {
   // console.log({ playbackCounter });
   const theme = useTheme();
   const rootComponent = React.useRef();
+  const player = React.useRef();
 
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
+
+  // eslint-disable-next-line no-unused-vars
   const [hasNotch, setHasNotch] = React.useState(false);
 
   React.useEffect(() => {
     /// shows the bottom padding for devices with notch. not yet fully tested
     if (DeviceInfo.hasNotch()) setHasNotch(true);
   }, []);
+
+  // jumps to seek value specified
+  React.useEffect(() => {
+    if (seekValue) {
+      if (typeof player.current === 'undefined') return;
+
+      player.current.seek(seekValue);
+    }
+  }, [seekValue]);
 
   React.useEffect(() => {
     if (playbackInfo) {
@@ -104,10 +118,9 @@ const NowPlaying = ({
     }
 
     if (repeat.value === 'one') {
+      setPausedAction(true);
       // set next track to nowPlaying
       const { number, sequence } = nowPlaying;
-
-      console.log('repeat one!', { number, sequence });
 
       setNowPlayingAction(
         {
@@ -116,6 +129,8 @@ const NowPlaying = ({
         },
         false
       );
+
+      setPausedAction(false);
 
       // reset progress
       setProgressAction(0);
@@ -223,8 +238,26 @@ const NowPlaying = ({
     setNowPlayingLayoutInfoAction(nativeEvent.layout);
   };
 
-  if (nowPlaying) {
+  const renderPlayer = () => {
+    if (paused) return;
+
     const { url: uri } = nowPlaying;
+
+    return (
+      <Video
+        ref={player}
+        paused={paused}
+        source={{ uri }}
+        onBuffer={handleBuffer}
+        onError={handleError}
+        onProgress={handleProgress}
+        playInBackground
+      />
+    );
+  };
+
+  if (nowPlaying) {
+    // const { url: uri } = nowPlaying;
 
     return (
       <Pressable
@@ -241,14 +274,17 @@ const NowPlaying = ({
           ...visibilityStyles()
         }}
       >
-        <Video
+        {renderPlayer()}
+
+        {/* <Video
+          ref={player}
           paused={paused}
           source={{ uri }}
           onBuffer={handleBuffer}
           onError={handleError}
           onProgress={handleProgress}
           playInBackground
-        />
+        /> */}
 
         <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
           <View
@@ -295,11 +331,11 @@ const NowPlaying = ({
             </Pressable>
           </View>
         </View>
-        {hasNotch && (
+        {/* {hasNotch && (
           <View style={{ height: 20, backgroundColor: '#202530' }}>
             <View style={{ height: 1, backgroundColor: theme.iplayya.colors.white10 }} />
           </View>
-        )}
+        )} */}
       </Pressable>
     );
   }
@@ -321,7 +357,8 @@ NowPlaying.propTypes = {
   setNowPlayingLayoutInfoAction: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
   progress: PropTypes.number,
-  repeat: PropTypes.object
+  repeat: PropTypes.object,
+  seekValue: PropTypes.number
 };
 
 const actions = {
@@ -339,7 +376,8 @@ const mapStateToProps = createStructuredSelector({
   playlist: selectPlaylist,
   album: selectAlbum,
   isBackgroundMode: selectIsBackgroundMode,
-  repeat: selectRepeat
+  repeat: selectRepeat,
+  seekValue: selectSeekValue
 });
 
 export default connect(mapStateToProps, actions)(NowPlaying);

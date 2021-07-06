@@ -8,15 +8,25 @@ import Button from 'components/button/button.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators as UserActionCreators } from 'modules/ducks/user/user.actions';
+import { Creators } from 'modules/ducks/auth/auth.actions';
 
 import styles from './welcome-dialog.styles';
+import { createStructuredSelector } from 'reselect';
+import { selectOnboardingComplete } from 'modules/ducks/auth/auth.selectors';
 
-const WelcomeDialog = ({ theme, visible, onButtonPress, hideWelcomeDialogAction }) => {
+const WelcomeDialog = ({
+  theme,
+  visible,
+  onButtonPress,
+  setOnboardingCompleteAction,
+  onboardingComplete
+}) => {
   const handleButtonPress = () => {
-    hideWelcomeDialogAction();
+    setOnboardingCompleteAction();
     onButtonPress();
   };
+
+  if (onboardingComplete) return <View />;
 
   return (
     <Modal transparent visible={visible} statusBarTranslucent={true}>
@@ -47,11 +57,14 @@ WelcomeDialog.propTypes = {
   theme: PropTypes.object,
   visible: PropTypes.bool,
   onButtonPress: PropTypes.func,
-  hideWelcomeDialogAction: PropTypes.func
+  setOnboardingCompleteAction: PropTypes.func,
+  onboardingComplete: PropTypes.bool
 };
 
 const actions = {
-  hideWelcomeDialogAction: UserActionCreators.hideWelcomeDialog
+  setOnboardingCompleteAction: Creators.setOnboardingComplete
 };
 
-export default compose(withTheme, connect(null, actions))(WelcomeDialog);
+const mapStateToProps = createStructuredSelector({ onboardingComplete: selectOnboardingComplete });
+
+export default compose(withTheme, connect(mapStateToProps, actions))(WelcomeDialog);

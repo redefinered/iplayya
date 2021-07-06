@@ -13,6 +13,7 @@ import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -52,7 +53,8 @@ const MovieDetailScreen = ({
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
-  videoUrls
+  videoUrls,
+  setMusicNowPlaying
 }) => {
   const client = useRemoteMediaClient();
 
@@ -62,6 +64,13 @@ const MovieDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
+
+  /// stop music player when a video is played
+  React.useEffect(() => {
+    if (!paused) {
+      setMusicNowPlaying(null);
+    }
+  }, [paused]);
 
   React.useEffect(() => {
     listDownloadedFiles();
@@ -456,7 +465,8 @@ const actions = {
   updatePlaybackInfoAction: Creators.updatePlaybackInfo,
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
-  downloadStartAction: DownloadsCreators.downloadStart
+  downloadStartAction: DownloadsCreators.downloadStart,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
 const mapStateToProps = createStructuredSelector({

@@ -6,10 +6,8 @@ import { Text, useTheme } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
-import Slider from '@react-native-community/slider';
-import { createFontFormat, toDateTime } from 'utils';
-import thumbImage from 'assets/player-thumb-image.png';
-
+import { createFontFormat } from 'utils';
+import MusicPlayerSlider from './music-player-slider.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
@@ -17,15 +15,11 @@ import withLoader from 'components/with-loader.component';
 import { createStructuredSelector } from 'reselect';
 import {
   selectNowPlaying,
-  selectPlaybackProgress,
   selectPaused,
-  selectPlaybackInfo,
   selectPlaylist,
   selectShuffle,
   selectRepeat
 } from 'modules/ducks/music/music.selectors';
-
-import moment from 'moment';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
@@ -33,19 +27,16 @@ const MusicPlayerScreen = ({
   playlist,
   nowPlaying,
   setNowPlayingAction,
-  progress,
   setProgressAction,
   setNowPlayingBackgroundModeAction,
   paused,
   setPausedAction,
-  playbackInfo,
   isShuffled,
   toggleShuffleAction,
   cycleRepeatAction,
   repeat
 }) => {
   const theme = useTheme();
-  const [remainingTime, setRemainingTime] = React.useState(0);
   const [disablePrevious, setDisablePrevious] = React.useState(true);
   const [disableNext, setDisableNext] = React.useState(false);
 
@@ -57,17 +48,6 @@ const MusicPlayerScreen = ({
     // Unsubscribe
     return () => setNowPlayingBackgroundModeAction(false);
   }, []);
-
-  // const { title, artist, thumbnails } = dummydata.find((item) => item.id === id);
-
-  React.useEffect(() => {
-    if (!playbackInfo) return setRemainingTime(0);
-
-    const { seekableDuration, currentTime } = playbackInfo;
-    const remainingTime = seekableDuration - currentTime;
-
-    setRemainingTime(remainingTime);
-  }, [playbackInfo]);
 
   React.useEffect(() => {
     updateButtons(nowPlaying);
@@ -163,25 +143,11 @@ const MusicPlayerScreen = ({
     );
   };
 
-  const renderDuration = () => {
-    const { currentTime } = playbackInfo;
-    return (
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginVertical: 10 }}>
-        <Text style={{ ...createFontFormat(10, 14) }}>
-          {moment(toDateTime(currentTime)).format('mm:ss')}
-        </Text>
-        <Text style={{ ...createFontFormat(10, 14) }}>
-          -{moment(toDateTime(remainingTime)).format('mm:ss')}
-        </Text>
-      </View>
-    );
-  };
-
-  // console.log({ disableNext, disablePrevious });
-
   const getRepeatColor = () => {
-    if (repeat.order !== 1) return 'white';
-    return theme.iplayya.colors.white50;
+    if (repeat.order !== 1) return theme.iplayya.colors.vibrantpussy;
+
+    /// normal color
+    return 'white';
   };
 
   if (nowPlaying) {
@@ -214,24 +180,17 @@ const MusicPlayerScreen = ({
             </Text>
           </View>
         </View>
-        <Slider
-          value={progress}
-          style={{ width: '100%', height: 10 }}
-          minimumValue={0}
-          maximumValue={100}
-          minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
-          maximumTrackTintColor="white"
-          thumbImage={thumbImage}
-        />
 
-        {renderDuration()}
+        <MusicPlayerSlider />
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
           <Pressable style={{ marginRight: 20 }} onPress={() => toggleShuffleAction()}>
             <Icon
               name="shuffle"
               size={24}
-              style={{ color: isShuffled ? 'white' : theme.iplayya.colors.white50 }}
+              style={{
+                color: isShuffled ? theme.iplayya.colors.vibrantpussy : 'white'
+              }}
             />
           </Pressable>
           <Pressable onPress={playPrevious} disabled={disablePrevious}>
@@ -266,7 +225,7 @@ const MusicPlayerScreen = ({
                 top: 0,
                 right: -8,
                 fontWeight: 'bold',
-                color: 'white',
+                color: getRepeatColor(),
                 opacity: repeat.order === 3 ? 1 : 0
               }}
             >
@@ -301,8 +260,6 @@ const mapStateToProps = createStructuredSelector({
   playlist: selectPlaylist,
   paused: selectPaused,
   nowPlaying: selectNowPlaying,
-  progress: selectPlaybackProgress,
-  playbackInfo: selectPlaybackInfo,
   isShuffled: selectShuffle,
   repeat: selectRepeat
 });
