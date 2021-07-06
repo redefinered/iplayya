@@ -6,7 +6,7 @@ export default StyleSheet.create({
   textInput: { backgroundColor: 'rgba(255,255,255,0.1)' },
   loginButton: { marginTop: 6 },
   forgotPassword: { padding: 15, marginVertical: 20 },
-  forgotPasswordText: { alignSelf: 'center' },
+  forgotPasswordText: { alignSelf: 'center', marginTop: 10 },
   signUpText: { color: '#E34398' },
   helpText: { alignSelf: 'center' },
   showToggleContainer: {
