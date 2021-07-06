@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { KeyboardAvoidingView, StyleSheet, Platform, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Platform, ScrollView } from 'react-native';
 
 const styles = StyleSheet.create({
   container: { flex: 1 }
@@ -14,9 +14,9 @@ const withFormWrap = (WrappedComponent) => {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={{ flex: 1, height: 500 }}>
+        <ScrollView bounces={false} style={{ flex: 1, height: 500 }}>
           <WrappedComponent {...props} />
-        </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     );
   };
