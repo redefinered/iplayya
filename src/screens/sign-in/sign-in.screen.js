@@ -34,6 +34,8 @@ import {
 import styles from './sign-in.styles';
 import withLoader from 'components/with-loader.component';
 
+import { isValidEmail } from 'common/validate';
+
 const SignInScreen = ({
   error: loginError,
   navigation,
@@ -48,7 +50,7 @@ const SignInScreen = ({
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
-  const [error, setError] = React.useState({ username: null, password: null });
+  const [error, setError] = React.useState({ username: null, password: null, commonError: null });
 
   React.useEffect(() => {
     signInStartAction();
@@ -60,11 +62,11 @@ const SignInScreen = ({
     }
   }, [currentUser]);
 
-  React.useEffect(() => {
-    if (currentUser) {
-      setUsername(currentUser.email);
-    }
-  }, [loginError]);
+  // React.useEffect(() => {
+  //   if (currentUser) {
+  //     setUsername(currentUser.email);
+  //   }
+  // }, [loginError]);
 
   React.useEffect(() => {
     appReadyAction();
@@ -72,11 +74,22 @@ const SignInScreen = ({
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
-
+    if (name === 'username') {
+      if (!isValidEmail(text)) {
+        setError({ username: 'Invalid email address' });
+      } else {
+        setError({ username: null });
+      }
+    }
     setUsername(text.toLowerCase());
   };
 
   const handleLoginSubmit = () => {
+    if (error.username || error.password) {
+      setError({ commonError: 'Please fill required fields.' });
+      return;
+    }
+
     signInStartAction();
 
     if (!username.length) {
@@ -92,15 +105,6 @@ const SignInScreen = ({
     setError({ username: null, password: null });
 
     signInAction({ username, password });
-  };
-
-  const renderError = () => {
-    const { username, password } = error;
-
-    if (username) return <Text>{username}</Text>;
-    if (password) return <Text>{password}</Text>;
-
-    return <Text>{loginError}</Text>;
   };
 
   return (
@@ -132,17 +136,18 @@ const SignInScreen = ({
               // keyboardType="email-address"
               keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
               autoCompleteType="email"
-              error={error.username || loginError}
+              error={error.username || loginError || error.commonError}
               style={styles.textInput}
               placeholder="Email"
             />
+            {error.username && <Text>{error.username}</Text>}
             <View style={styles.passwordInputContainer}>
               <TextInput
                 name="password"
                 handleChangeText={handleChangeText}
                 value={password}
                 autoCapitalize="none"
-                error={error.password || loginError}
+                error={error.password || loginError || error.commonError}
                 style={{
                   ...styles.textInput,
                   position: 'relative',
@@ -157,19 +162,19 @@ const SignInScreen = ({
               >
                 <Icon
                   name={showPassword ? 'eye-off' : 'eye'}
-                  size={showPassword ? 39 : 40}
+                  size={showPassword ? 40 : 40}
                   style={styles.showToggleIcon}
                 />
               </Pressable>
             </View>
-
-            {/* errors */}
-            {renderError()}
+            {error.password && <Text>{error.password}</Text>}
+            {loginError && <Text>{loginError}</Text>}
+            {error.commonError && <Text>{error.commonError}</Text>}
 
             <MainButton
               onPress={() => handleLoginSubmit()}
               text="Login"
-              style={{ marginTop: 30 }}
+              style={{ marginTop: 10 }}
             />
             <Pressable
               onPress={() => navigation.navigate('ForgotPasswordScreen')}
@@ -179,7 +184,7 @@ const SignInScreen = ({
             </Pressable>
           </ContentWrap>
 
-          <View style={{ alignItems: 'center', marginBottom: 50 }}>
+          <View style={{ alignItems: 'center', marginTop: 50 }}>
             <Text>
               Don't you have an account yet?{' '}
               <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
@@ -187,11 +192,10 @@ const SignInScreen = ({
               </Text>
             </Text>
           </View>
-
-          <Pressable style={{ alignItems: 'center', marginBottom: 50 }}>
-            <Text style={{ ...styles.signUpText }}>Need help?</Text>
-          </Pressable>
         </View>
+        <Pressable style={{ alignItems: 'center', marginTop: 130 }}>
+          <Text style={{ ...styles.signUpText }}>Need help?</Text>
+        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );

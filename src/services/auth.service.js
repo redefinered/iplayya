@@ -37,7 +37,8 @@ export const signIn = async (username, password) => {
     // throw new Error(message);
 
     if (error.message === 'Authentication exception') {
-      throw new Error(error.graphQLErrors[0].extensions.reason);
+      // throw new Error(error.graphQLErrors[0].extensions.reason);
+      throw new Error('Your email or password is incorrect.');
     }
     throw new Error(error);
   }
