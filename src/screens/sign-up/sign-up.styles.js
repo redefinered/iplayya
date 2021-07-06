@@ -5,7 +5,7 @@ export default StyleSheet.create({
   content: { flex: 1, marginTop: 20 },
   textInput: {
     backgroundColor: 'rgba(255,255,255,0.1)',
-    fontFamily: 'NotoSans-Regular',
+    fontFamily: 'NotoSans',
     fontWeight: 'normal'
   },
   agreement: { textAlign: 'center', marginTop: 10, marginBottom: 20 },

@@ -49,11 +49,9 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
             error: '#E34398',
             placeholder: 'transparent'
           },
-          fonts: { regular: { fontFamily: 'NotoSans-Regular' } }
+          fonts: { regular: { fontFamily: 'NotoSans' } }
         }}
-        ref={(ref) =>
-          ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans-Regular', height: 50 } })
-        }
+        ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans', height: 50 } })}
         {...otherProps}
       />
       <Pressable

@@ -88,7 +88,7 @@ const WalkThroughGuide = ({
                     color: theme.iplayya.colors.vibrantpussy,
                     fontSize: 20,
                     fontWeight: 'bold',
-                    fontFamily: 'NotoSans-Regular'
+                    fontFamily: 'NotoSans'
                   }}
                 >
                   {title}
@@ -98,7 +98,7 @@ const WalkThroughGuide = ({
                     <Text
                       style={{
                         color: theme.iplayya.colors.black80,
-                        fontFamily: 'NotoSans-Regular',
+                        fontFamily: 'NotoSans',
                         fontWeight: '400',
                         paddingVertical: 10,
                         paddingBottom: 20,
@@ -114,7 +114,7 @@ const WalkThroughGuide = ({
                     <Text
                       style={{
                         color: theme.iplayya.colors.black80,
-                        fontFamily: 'NotoSans-Regular',
+                        fontFamily: 'NotoSans',
                         fontWeight: '400',
                         paddingVertical: 10,
                         paddingBottom: 20,

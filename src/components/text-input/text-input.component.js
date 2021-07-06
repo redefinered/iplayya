@@ -30,9 +30,7 @@ const TextInput = ({ style, name, handleChangeText, ...otherProps }) => {
       theme={{
         colors: { primary: 'rgba(255,255,255,0.1)', error: '#E34398', placeholder: 'transparent' }
       }}
-      ref={(ref) =>
-        ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans-Regular', height: 50 } })
-      }
+      ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans', height: 50 } })}
       {...otherProps}
     />
   );

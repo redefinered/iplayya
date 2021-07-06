@@ -10,7 +10,7 @@ import ScreenContainer from 'components/screen-container.component';
 const styles = StyleSheet.create({
   walkthroughText: {
     fontSize: 16,
-    fontFamily: 'NotoSans-Regular',
+    fontFamily: 'NotoSans',
     fontWeight: '400',
     lineHeight: 21
   }
