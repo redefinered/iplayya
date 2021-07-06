@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   updateParams: null,
-  updated: null,
+  updated: false,
   updateResponse: null,
   getLinkResponse: null
 };
@@ -48,7 +48,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       error: null,
-      updated: null,
+      updated: false,
       updateParams
     };
   },
@@ -76,6 +76,30 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       updated: false,
       updateResponse: null
+    };
+  },
+  [Types.CHANGE_PASSWORD]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true,
+      updated: false
+    };
+  },
+  [Types.CHANGE_PASSWORD_SUCCESS]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      updated: true
+    };
+  },
+  [Types.CHANGE_PASSWORD_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      error: action.error,
+      isFetching: false,
+      updated: false
     };
   },
   [Types.RESET_UPDATE_PARAMS]: (state) => {

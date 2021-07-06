@@ -7,8 +7,6 @@ const MainButton = ({ onPress, text, style }) => {
   return (
     <TouchableRipple
       style={{
-        backgroundColor: '#E34398',
-        borderRadius: 8,
         ...style
       }}
       borderless={true}
@@ -26,7 +24,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     height: 45,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#E34398',
+    borderRadius: 8
   },
   textContainer: {
     fontSize: 16,

@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import Button from 'components/button/button.component';
+import MainButton from 'components/button/mainbutton.component';
 import { Title, Text, withTheme } from 'react-native-paper';
 import EmailSentSvg from 'assets/email_sent.svg';
-import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
+// import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
+import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 
 import { compose } from 'redux';
@@ -69,13 +70,11 @@ const EmailSuccessScreen = ({
           justifyContent: 'flex-end'
         }}
       >
-        <Button
+        <MainButton
           onPress={() => navigation.navigate('SignInScreen')}
           style={styles.button}
-          mode="contained"
-        >
-          Go back to login
-        </Button>
+          text="Go back to login"
+        />
       </View>
     </ContentWrap>
   );
@@ -86,12 +85,17 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   button: {
-    fontSize: 16,
-    lineHeight: 22
+    borderRadius: 8
   }
 });
+
+const Container = (props) => (
+  <ScreenContainer>
+    <EmailSuccessScreen {...props} />
+  </ScreenContainer>
+);
 
 export default compose(
   // withScreenContainer({ backgroundType: 'gradient' }),
   withTheme
-)(EmailSuccessScreen);
+)(Container);

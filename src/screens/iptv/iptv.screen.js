@@ -34,6 +34,8 @@ import {
 
 import NoProvider from 'assets/no_provider.svg';
 
+import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
+
 const IptvScreen = ({
   navigation,
   userIsFetching,
@@ -48,15 +50,25 @@ const IptvScreen = ({
   createStartAction,
   deleteAction,
   deteteStartAction,
-  skipped
+  skipped,
+  route: { params }
 }) => {
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
+  const [showIptvGuide, setShowIptvGuide] = React.useState(false);
+  const [showStepTwo, setShowStepTwo] = React.useState(false);
+  const [showStepThree, setShowStepThree] = React.useState(false);
 
   React.useEffect(() => {
     createStartAction();
   }, []);
+
+  React.useEffect(() => {
+    if (params) {
+      setShowIptvGuide(params.openIptvGuide);
+    }
+  }, [params]);
 
   // redirect to add provider if there is 0 provider or if adding is not skipped
   React.useEffect(() => {
@@ -70,6 +82,28 @@ const IptvScreen = ({
     // hide the snackbar in 3 sec
     hideSnackBar();
   }, [created, updated, deleted]);
+
+  const handleVisibleWalkthrough = () => {
+    setShowIptvGuide(false);
+  };
+
+  const handleNextWalkthrough = () => {
+    setShowIptvGuide(false);
+    setShowStepTwo(true);
+  };
+
+  const handleHideTwo = () => {
+    setShowStepTwo(false);
+  };
+
+  const handleShowStepThree = () => {
+    setShowStepTwo(false);
+    setShowStepThree(true);
+  };
+
+  const handleHideStepThree = () => {
+    setShowStepThree(false);
+  };
 
   const handleProviderSelect = (id) => {
     setProviderAction(id);
@@ -137,6 +171,64 @@ const IptvScreen = ({
               />
             ))}
           </ScrollView>
+          <WalkThroughGuide
+            visible={showIptvGuide}
+            hideModal={handleVisibleWalkthrough}
+            nextModal={handleNextWalkthrough}
+            title="Add IPTV"
+            content="Tap here to add your IPTV provider."
+            skip="Skip"
+            skipValue="- 1 of 3"
+            next="Next"
+            topWidth={20}
+            rightWidth={20}
+            leftWidth={20}
+            heightValue={152}
+            topPosValue={-2}
+            trianglePosition="flex-end"
+            rightPadding={15}
+            containerPosition="flex-start"
+            topPadding={110}
+            rotateArrow="90deg"
+          />
+          <WalkThroughGuide
+            visible={showStepTwo}
+            hideModal={handleHideTwo}
+            nextModal={handleShowStepThree}
+            title="More options"
+            content="Tap here for more IPTV options."
+            skip="Skip"
+            skipValue="- 2 of 3"
+            next="Next"
+            topWidth={20}
+            rightWidth={20}
+            leftWidth={20}
+            heightValue={152}
+            topPosValue={-2}
+            trianglePosition="flex-end"
+            rightPadding={25}
+            containerPosition="flex-start"
+            topPadding={210}
+            rotateArrow="90deg"
+          />
+          <WalkThroughGuide
+            visible={showStepThree}
+            disabled={true}
+            nextModal={handleHideStepThree}
+            title="Back to Home"
+            content="Tap here to go back to Home."
+            skipValue="3 of 3"
+            next="Got It"
+            bottomWidth={25}
+            rightWidth={15}
+            leftWidth={15}
+            heightValue={152}
+            bottomPosValue={-45}
+            trianglePosition="center"
+            containerPosition="flex-end"
+            bottomPadding={100}
+            rotateArrow="178deg"
+          />
         </View>
         <SnackBar
           visible={showSuccessMessage}
@@ -172,7 +264,7 @@ const NoProviders = ({ navigation }) => (
 );
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <IptvScreen {...props} />
   </ScreenContainer>
 );

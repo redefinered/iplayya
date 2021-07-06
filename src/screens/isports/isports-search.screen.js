@@ -153,6 +153,8 @@ const ISportsSearchScreen = ({
           <FormInput
             {...props}
             style={{
+              flex: 1,
+              justifyContent: 'center',
               marginLeft: 40,
               fontSize: 16,
               color: '#ffffff'
@@ -167,7 +169,7 @@ const ISportsSearchScreen = ({
         autoCapitalize="none"
         clearButtonMode="while-editing"
         autoCompleteType="email"
-        style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+        style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
         placeholder="Search a sports channel"
         left={
           <RNPTextInput.Icon

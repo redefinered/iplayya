@@ -122,7 +122,7 @@ class EditIptvScreen extends React.Component {
     if (prevProps.updated !== this.props.updated) {
       const { updated, navigation } = this.props;
       if (updated) {
-        navigation.replace('IPTV');
+        navigation.navigate('IPTV');
       }
     }
   }

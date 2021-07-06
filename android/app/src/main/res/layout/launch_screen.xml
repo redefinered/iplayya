@@ -46,6 +46,7 @@
       android:fontFamily="@font/notosans_regular"
       android:gravity="center"
       android:text="@string/splash_title"
+      android:textColor="@color/primary_color"
       android:textSize="14sp" />
   </LinearLayout>
     </RelativeLayout>

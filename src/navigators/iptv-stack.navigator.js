@@ -52,7 +52,7 @@ const IptvStack = ({
         headerBackImage: () => <HeaderBackImage />,
         headerStyle: { height: headerHeight },
         headerTitleAlign: 'center',
-        headerTitleStyle: { fontSize: 24 },
+        headerTitleStyle: { fontSize: 24, fontWeight: 'normal' },
         headerTitleContainerStyle: { alignItems: 'center' },
         headerLeftContainerStyle: {
           paddingLeft: 15,

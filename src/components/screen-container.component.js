@@ -29,13 +29,13 @@ const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
           imageStyle={{
             flex: 1,
             width: Dimensions.get('window').width,
-            height: '100%', // Dimensions.get('window').height,
-            paddingTop: withHeaderPush ? headerHeight : 0
+            height: Dimensions.get('window').height + 70
           }}
           style={{
             flex: 1,
             width: Dimensions.get('window').width,
-            height: Dimensions.get('window').height
+            height: Dimensions.get('window').height,
+            paddingTop: withHeaderPush ? headerHeight : 0
           }}
           source={require('assets/Home_BG.png')}
         >
@@ -52,6 +52,25 @@ const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
       </LinearGradient>
     );
   };
+  // const withLoaderScreen = () => {
+  //   if (!withLoader) return;
+
+  //   if (isFetching)
+  //     return (
+  //       <View
+  //         /*transparent={true} statusBarTranslucent={true}*/ style={{
+  //           position: 'absolute',
+  //           zIndex: 2,
+  //           width: Dimensions.get('window').width,
+  //           height: '100%' // Dimensions.get('window').height
+  //         }}
+  //       >
+  //         <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+  //           <ActivityIndicator color={theme.colors.primary} size="large" />
+  //         </View>
+  //       </View>
+  //     );
+  // };
 
   return (
     <React.Fragment>

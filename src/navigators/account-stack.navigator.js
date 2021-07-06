@@ -8,7 +8,12 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import AccountScreen from 'screens/account/account.screen';
 import ProfileScreen from 'screens/profile/profile.screen';
 import EditProfileScreen from 'screens/edit-profile/edit-profile.screen';
+import ChangePasswordScreen from 'screens/change-password/change-password.screen';
 import PlaybackSettings from 'screens/playback-settings/playback-settings.screen';
+import ManageEmailScreen from 'screens/manage-email/manage-email.screen';
+import ChangeEmailScreen from 'screens/manage-email/change-email.screen';
+import NeedHelpScreen from 'screens/need-help/need-help.screen';
+import WalkthroughScreen from 'screens/walkthrough/walkthrough.screen';
 import Icon from 'components/icon/icon.component';
 import { TouchableRipple } from 'react-native-paper';
 
@@ -80,6 +85,29 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
       options={{ title: 'Edit Profile' }}
     />
     <Stack.Screen
+      name="ChangePasswordScreen"
+      component={ChangePasswordScreen}
+      options={{ title: 'Change Password' }}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="ManageEmailScreen"
+      component={ManageEmailScreen}
+      options={{ title: 'Manage Email' }}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="ChangeEmailScreen"
+      component={ChangeEmailScreen}
+      options={{ title: 'Change Email' }}
+    />
+    <Stack.Screen
       name="PlaybackSettings"
       component={PlaybackSettings}
       options={{ title: 'Playback' }}
@@ -87,6 +115,20 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
         focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
         beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
       }}
+    />
+    <Stack.Screen
+      name="NeedHelpScreen"
+      component={NeedHelpScreen}
+      options={{ title: 'Need Help?' }}
+      listeners={{
+        focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+        beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+      }}
+    />
+    <Stack.Screen
+      name="WalkthroughScreen"
+      component={WalkthroughScreen}
+      options={{ title: 'Walkthrough' }}
     />
   </Stack.Navigator>
 );

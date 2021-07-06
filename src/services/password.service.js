@@ -47,3 +47,23 @@ export const getLink = async (form) => {
     throw new Error(error);
   }
 };
+
+export const changePassword = async (form) => {
+  const { ...input } = form;
+  try {
+    const { data } = await clientWithoutAuthLink.mutate({
+      mutation: gql`
+        mutation CHANGE_PASSWORD($input: UpdatePassword!) {
+          updatePassword(input: $input) {
+            status
+            message
+          }
+        }
+      `,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

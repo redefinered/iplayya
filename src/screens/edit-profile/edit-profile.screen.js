@@ -10,7 +10,7 @@ import Button from 'components/button/button.component';
 import MainButton from 'components/button/mainbutton.component';
 import ScreenContainer from 'components/screen-container.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
-import Loader from 'components/loader.component';
+// import Loader from 'components/loader.component';
 import Icon from 'components/icon/icon.component';
 
 import { compose } from 'redux';
@@ -178,7 +178,7 @@ class EditProfileScreen extends React.Component {
 
     return (
       <React.Fragment>
-        {isFetching && <Loader size="large" />}
+        {/* {isFetching && <Loader size="large" />} */}
         <ContentWrap>
           <ScrollView>
             <View style={{ marginTop: 30 }}>
@@ -209,12 +209,7 @@ class EditProfileScreen extends React.Component {
                 keyboardType="number-pad"
               /> */}
               <View>
-                <PhoneNumberPicker
-                  name="phone"
-                  setPhone={this.setPhone}
-                  error={stateError.phone}
-                  style={stateError.phone ? styles.errorText : null}
-                />
+                <PhoneNumberPicker name="phone" setPhone={this.setPhone} error={stateError.phone} />
               </View>
               <View>
                 <DatePicker
@@ -224,36 +219,40 @@ class EditProfileScreen extends React.Component {
                   style={stateError.birth_date ? styles.errorText : null}
                 />
               </View>
-              <TouchableRipple
-                borderless={true}
-                style={[
-                  this.state.gender === 'Gender' ? styles.textUnfocus : styles.textInputFocus,
-                  stateError.gender ? styles.errorText : null
-                ]}
-                onPress={() => this.setState({ actionSheetisVisible: true })}
-              >
-                <View
-                  pointerEvents="none"
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    paddingVertical: 15,
-                    paddingHorizontal: 10
-                  }}
+              <View>
+                <TouchableRipple
+                  borderless={true}
+                  style={{ marginTop: 15, borderRadius: 8 }}
+                  // style={[stateError.gender ? styles.errorText : null]}
+                  onPress={() => this.setState({ actionSheetisVisible: true })}
                 >
-                  <Text
-                    style={[
-                      this.state.gender === 'Gender' ? styles.textChangeColor : styles.textUnchange,
-                      { fontSize: 16 }
-                    ]}
+                  <View
+                    pointerEvents="none"
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      paddingVertical: 15,
+                      paddingHorizontal: 10,
+                      ...(this.state.gender === 'Gender' ? styles.textUnfocus : styles.textUnfocus),
+                      ...(stateError.gender ? styles.errorText : null)
+                    }}
                   >
-                    {form.gender}
-                  </Text>
-                  <View style={{ marginRight: 10, marginTop: -2 }}>
-                    <Icon name="account" size={25} style={{ color: 'rgba(255,255,255,1)' }} />
+                    <Text
+                      style={[
+                        this.state.gender === 'Gender'
+                          ? styles.textChangeColor
+                          : styles.textUnchange,
+                        { fontSize: 16 }
+                      ]}
+                    >
+                      {form.gender}
+                    </Text>
+                    <View style={{ marginRight: 10, marginTop: -2 }}>
+                      <Icon name="account" size={25} style={{ color: 'rgba(255,255,255,1)' }} />
+                    </View>
                   </View>
-                </View>
-              </TouchableRipple>
+                </TouchableRipple>
+              </View>
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
               <MainButton

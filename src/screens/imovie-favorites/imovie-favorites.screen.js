@@ -259,7 +259,7 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
+  <ScreenContainer backgroundType="solid" withHeaderPush>
     <ImovieFavoritesScreen {...props} />
   </ScreenContainer>
 );
