@@ -178,7 +178,7 @@ const ImovieSearchScreen = ({
         clearButtonMode="while-editing"
         keyboardType="email-address"
         autoCompleteType="email"
-        style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+        style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
         placeholder="Search a movie"
         left={
           <RNPTextInput.Icon
@@ -186,7 +186,7 @@ const ImovieSearchScreen = ({
               return isFetching ? (
                 <ActivityIndicator />
               ) : (
-                <Icon name="search" size={30} style={{ marginRight: theme.spacing(2) }} />
+                <Icon name="search" size={30} style={{ marginRight: theme.spacing(0) }} />
               );
             }}
           />
@@ -201,7 +201,7 @@ const ImovieSearchScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
+  <ScreenContainer backgroundType="solid" withHeaderPush>
     <ImovieSearchScreen {...props} />
   </ScreenContainer>
 );

@@ -28,6 +28,8 @@ import {
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
+import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
+
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvScreen = ({
@@ -61,6 +63,7 @@ const ItvScreen = ({
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
+  const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -132,6 +135,16 @@ const ItvScreen = ({
       setChannelsData([]);
     }
   }, [channels]);
+
+  React.useEffect(() => {
+    if (params) {
+      setShowWalkthroughGuide(params.openItvGuide);
+    }
+  }, [params]);
+
+  const handleWalkthroughGuideHide = () => {
+    setShowWalkthroughGuide(false);
+  };
 
   const handleAddToFavorites = (channelId) => {
     let title = channels.find(({ id }) => id === channelId).title;
@@ -302,7 +315,7 @@ const ItvScreen = ({
         </View>
         <View style={{ flex: 4 }}>
           <TouchableWithoutFeedback
-            onPress={() => navigation.replace('HomeScreen')}
+            onPress={() => navigation.navigate('HomeScreen')}
             style={{ alignItems: 'center' }}
           >
             <Icon name="iplayya" size={24} />
@@ -320,8 +333,8 @@ const ItvScreen = ({
             </Text>
           </TouchableWithoutFeedback>
         </View>
+        <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
       </View>
-
       <SnackBar
         visible={showSnackBar}
         message={`${favorited} is added to your favorites list`}
@@ -339,7 +352,7 @@ const ItvScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
+  <ScreenContainer backgroundType="solid" withHeaderPush>
     <ItvScreen {...props} />
   </ScreenContainer>
 );

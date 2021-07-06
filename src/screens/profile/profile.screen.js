@@ -9,8 +9,6 @@ import {
   Pressable,
   ImageBackground,
   Dimensions,
-  PixelRatio,
-  Platform,
   Modal
 } from 'react-native';
 import { Title, Text, withTheme, useTheme, TouchableRipple } from 'react-native-paper';
@@ -51,17 +49,6 @@ const styles = StyleSheet.create({
 });
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-const scale = SCREEN_WIDTH / 375;
-
-function normalize(size) {
-  const newSize = size * scale;
-  if (Platform.OS == 'ios') {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize));
-  } else {
-    return Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
-  }
-}
 
 const profilePlaceholderUri = Image.resolveAssetSource(require('../../assets/Avatar_Eclipse.png'))
   .uri;
@@ -172,7 +159,7 @@ const ProfileScreen = ({
             <View>
               <Text
                 style={{
-                  fontSize: normalize(24),
+                  fontSize: 24,
                   fontWeight: 'bold',
                   textAlign: 'center',
                   marginTop: 15,
@@ -197,7 +184,7 @@ const ProfileScreen = ({
               >
                 <Text
                   style={{
-                    fontSize: normalize(18),
+                    fontSize: 18,
                     textAlign: 'center',
                     color: theme.iplayya.colors.black70,
                     fontWeight: 'bold'
@@ -251,7 +238,7 @@ const ProfileScreen = ({
           </View>
           <Title
             style={{
-              fontSize: normalize(24),
+              fontSize: 24,
               lineHeight: 33,
               fontWeight: 'bold',
               marginBottom: 10
@@ -261,7 +248,7 @@ const ProfileScreen = ({
           </Title>
           {username.length > 0 ? (
             <Text
-              style={{ fontSize: normalize(16), lineHeight: 22, color: colors.white80 }}
+              style={{ fontSize: 16, lineHeight: 22, color: colors.white80 }}
             >{`@${username}`}</Text>
           ) : null}
         </View>
@@ -271,7 +258,7 @@ const ProfileScreen = ({
               <Icon name="iplayya" size={21} />
               <Text
                 style={{
-                  fontSize: normalize(24),
+                  fontSize: 24,
                   lineHeight: 23,
                   fontWeight: 'bold',
                   marginLeft: 10
@@ -280,7 +267,7 @@ const ProfileScreen = ({
                 20,580
               </Text>
             </View>
-            <Text style={{ fontSize: normalize(14), lineHeight: 16, marginTop: 2 }}>
+            <Text style={{ fontSize: 12, lineHeight: 16, marginTop: 2 }}>
               Total iPlayya time earned
             </Text>
           </View>
@@ -295,7 +282,7 @@ const ProfileScreen = ({
                   <Icon name={icon} size={24} />
                 </View>
                 <View>
-                  <Text style={{ fontSize: normalize(16), lineHeight: 22 }}>
+                  <Text style={{ fontSize: 16, lineHeight: 22 }}>
                     {otherFields[key] ? otherFields[key] : 'N/S'}
                   </Text>
                 </View>

@@ -239,8 +239,10 @@ const ItvSearchScreen = ({
             <FormInput
               {...props}
               style={{
+                flex: 1,
                 marginLeft: 40,
                 fontSize: 16,
+                justifyContent: 'center',
                 color: '#ffffff'
               }}
             />
@@ -253,7 +255,7 @@ const ItvSearchScreen = ({
           autoCapitalize="none"
           clearButtonMode="while-editing"
           autoCompleteType="email"
-          style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+          style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
           placeholder="Search a channel"
           left={
             <RNPTextInput.Icon
@@ -261,7 +263,7 @@ const ItvSearchScreen = ({
                 return isFetching ? (
                   <ActivityIndicator />
                 ) : (
-                  <Icon name="search" size={30} style={{ marginRight: theme.spacing(2) }} />
+                  <Icon name="search" size={30} style={{ marginRight: theme.spacing(0) }} />
                 );
               }}
             />
@@ -275,7 +277,7 @@ const ItvSearchScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
+  <ScreenContainer backgroundType="solid" withHeaderPush>
     <ItvSearchScreen {...props} />
   </ScreenContainer>
 );

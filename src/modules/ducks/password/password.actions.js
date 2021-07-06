@@ -10,6 +10,9 @@ const { Types, Creators } = createActions(
     update: ['data'],
     updateSuccess: ['data'],
     updateFailure: ['error'],
+    changePassword: ['data'],
+    changePasswordSuccess: null,
+    changePasswordFailure: ['error'],
     resetUpdateParams: []
   },
   { prefix: '@Password/' }

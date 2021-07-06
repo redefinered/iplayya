@@ -21,10 +21,19 @@ import { Creators } from 'modules/ducks/iplay/iplay.actions';
 import { connect } from 'react-redux';
 import { selectVideoFiles } from 'modules/ducks/iplay/iplay.selectors';
 import { createStructuredSelector } from 'reselect';
+import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import RNFetchBlob from 'rn-fetch-blob';
 import withLoader from 'components/with-loader.component';
+import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 
-const IplayScreen = ({ navigation, addVideoFilesAction, videoFiles, deleteVideoFilesAction }) => {
+const IplayScreen = ({
+  navigation,
+  addVideoFilesAction,
+  videoFiles,
+  deleteVideoFilesAction,
+  enableSwipeAction,
+  route: { params }
+}) => {
   const theme = useTheme();
   // console.log({ videoFiles });
 
@@ -37,6 +46,8 @@ const IplayScreen = ({ navigation, addVideoFilesAction, videoFiles, deleteVideoF
   // eslint-disable-next-line no-unused-vars
   const [error, setError] = React.useState();
   const [loading, setLoading] = React.useState(false);
+  const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  const [showStepTwo, setShowStepTwo] = React.useState(false);
 
   const pickFiles = async () => {
     setLoading(true);
@@ -99,6 +110,10 @@ const IplayScreen = ({ navigation, addVideoFilesAction, videoFiles, deleteVideoF
     }
   };
 
+  React.useEffect(() => {
+    enableSwipeAction(false);
+  }, []);
+
   // hide checkboxes when there is no selected item
   React.useEffect(() => {
     if (selectedItems.length === 0) {
@@ -154,6 +169,25 @@ const IplayScreen = ({ navigation, addVideoFilesAction, videoFiles, deleteVideoF
 
   const handleHideVideoError = () => {
     setVideoErrorVisible(false);
+  };
+
+  React.useEffect(() => {
+    if (params) {
+      setShowWalkthroughGuide(params.openIplayGuide);
+    }
+  }, [params]);
+
+  const handleHideIplayGuide = () => {
+    setShowWalkthroughGuide(false);
+  };
+
+  const handleShowStepTwo = () => {
+    setShowWalkthroughGuide(false);
+    setShowStepTwo(true);
+  };
+
+  const handleHideStepTwo = () => {
+    setShowStepTwo(false);
   };
 
   if (loading)
@@ -317,6 +351,43 @@ const IplayScreen = ({ navigation, addVideoFilesAction, videoFiles, deleteVideoF
         message="The video file is not supported, please select mp4 format."
         variant="danger"
       />
+      <WalkThroughGuide
+        visible={showWalkthroughGuide}
+        hideModal={handleHideIplayGuide}
+        nextModal={handleShowStepTwo}
+        title="Add video"
+        content="Tap here to play videos from your local folder."
+        skip="Skip"
+        skipValue="- 1 of 2"
+        next="Next"
+        bottomWidth={25}
+        rightWidth={15}
+        leftWidth={15}
+        heightValue={152}
+        bottomPosValue={-42}
+        trianglePosition="center"
+        containerPosition="center"
+        bottomPadding={20}
+        rotateArrow="178deg"
+      />
+      <WalkThroughGuide
+        visible={showStepTwo}
+        disabled={true}
+        nextModal={handleHideStepTwo}
+        title="Back to Home"
+        content="Tap here to go back to Home."
+        skipValue="2 of 2"
+        next="Got it"
+        bottomWidth={25}
+        rightWidth={15}
+        leftWidth={15}
+        heightValue={152}
+        bottomPosValue={-43}
+        trianglePosition="center"
+        containerPosition="flex-end"
+        bottomPadding={75}
+        rotateArrow="178deg"
+      />
     </View>
   );
 };
@@ -341,7 +412,8 @@ const styles = StyleSheet.create({
 
 const actions = {
   addVideoFilesAction: Creators.addVideoFiles,
-  deleteVideoFilesAction: Creators.deleteVideoFiles
+  deleteVideoFilesAction: Creators.deleteVideoFiles,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const mapStateToProps = createStructuredSelector({ videoFiles: selectVideoFiles });

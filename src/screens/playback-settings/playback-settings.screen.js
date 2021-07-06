@@ -14,6 +14,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { createStructuredSelector } from 'reselect';
+import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
@@ -69,6 +70,7 @@ class PlaybackSettings extends React.Component {
       // update user settings
       this.props.updatePlaybackSettingsAction({ input });
     });
+    this.props.enableSwipeAction(false);
   }
 
   componentDidUpdate(prevProps) {
@@ -206,7 +208,8 @@ const Container = (props) => (
 
 const actions = {
   updatePlaybackSettingsStartAction: UserCreators.updatePlaybackSettingsStart,
-  updatePlaybackSettingsAction: UserCreators.updatePlaybackSettings
+  updatePlaybackSettingsAction: UserCreators.updatePlaybackSettings,
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const mapStateToProps = createStructuredSelector({

@@ -6,6 +6,7 @@ import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Button from 'components/button/button.component';
+import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -131,9 +132,12 @@ class ResetPasswordScreen extends React.Component {
           />
           {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
           {this.props.error && <Text>{this.props.error}</Text>}
-          <Button onPress={() => this.handleSubmit()} mode="contained">
-            Reset
-          </Button>
+          <MainButton
+            onPress={() => this.handleSubmit()}
+            text="Reset"
+            style={{ marginTop: 10, borderRadius: 8 }}
+          />
+
           {this.props.updated === false ? (
             <Button onPress={() => this.props.resetUpdateParamsAction()}>Start over</Button>
           ) : null}

@@ -18,6 +18,8 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import { compose } from 'redux';
 // import { selectOnboardingComplete } from 'modules/ducks/auth/auth.selectors';
 
+import HomeGuide from 'components/walkthrough-guide/home-guide.component';
+
 const Home = ({
   error,
   navigation,
@@ -32,6 +34,7 @@ const Home = ({
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
+  const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
   /// load categories here
   React.useEffect(() => {
@@ -57,8 +60,18 @@ const Home = ({
     }
   }, [completedOnboarding]);
 
+  // React.useEffect(() => {
+  //   if (route.params) {
+  //     setShowHomeGuide(route.params.openIptvGuide);
+  //   }
+  // }, [route]);
+
   const handleWelcomeHide = () => {
     setShowWelcomeDialog(false);
+  };
+
+  const handleHomeGuideHide = () => {
+    setShowHomeGuide(false);
   };
 
   React.useEffect(() => {
@@ -83,9 +96,10 @@ const Home = ({
   };
 
   return (
-    <ContentWrap style={{ marginTop: 30 }}>
+    <ContentWrap style={{ marginTop: 20 }}>
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
+      <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
 
       {error && (
         <AlertModal
@@ -102,7 +116,7 @@ const Home = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
+  <ScreenContainer backgroundType="image" withHeaderPush>
     <Home {...props} />
   </ScreenContainer>
 );

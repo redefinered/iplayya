@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Text } from 'react-native-paper';
+import { Platform } from 'react-native';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -46,6 +47,19 @@ class SignUpScreen extends React.Component {
     this.setState({ [name]: value });
   };
 
+  handleChangeEmail = (value, name) => {
+    this.setState({ [name]: value.toLowerCase() });
+  };
+
+  // remove space in textInput username
+  handleChangeUsername = (value, name) => {
+    this.setState({ [name]: this.onlyOneSpace(value) });
+  };
+
+  onlyOneSpace = (str) => {
+    return str.trim();
+  };
+
   setError = (stateError, field, val) => {
     const index = stateError.findIndex(({ key }) => key === field);
     stateError[index].val = val;
@@ -56,31 +70,31 @@ class SignUpScreen extends React.Component {
     // eslint-disable-next-line no-unused-vars
     const { errors: stateError, valid, ...rest } = this.state;
 
-    if (!isValidName(rest.first_name)) {
+    if (!isValidName(rest.first_name) || rest.first_name.length < 5) {
       this.setError(stateError, 'first_name', true);
     } else {
       this.setError(stateError, 'first_name', false);
     }
 
-    if (!isValidName(rest.last_name)) {
+    if (!isValidName(rest.last_name) || rest.last_name.length < 5) {
       this.setError(stateError, 'last_name', true);
     } else {
       this.setError(stateError, 'last_name', false);
     }
 
-    if (!isValidUsername(rest.username)) {
+    if (!isValidUsername(rest.username) || rest.username.length < 6) {
       this.setError(stateError, 'username', true);
     } else {
       this.setError(stateError, 'username', false);
     }
 
-    if (!isValidEmail(rest.email)) {
+    if (!isValidEmail(rest.email) || rest.email.length < 6) {
       this.setError(stateError, 'email', true);
     } else {
       this.setError(stateError, 'email', false);
     }
 
-    if (!isValidPassword(rest.password)) {
+    if (!isValidPassword(rest.password) || rest.password.length < 8) {
       this.setError(stateError, 'password', true);
     } else {
       this.setError(stateError, 'password', false);
@@ -92,7 +106,7 @@ class SignUpScreen extends React.Component {
       this.setError(stateError, 'password_confirmation', false);
     }
 
-    if (!isValidPassword(rest.password_confirmation)) {
+    if (!isValidPassword(rest.password_confirmation) || rest.password_confirmation < 8) {
       this.setError(stateError, 'password_confirmation', true);
     } else {
       this.setError(stateError, 'password_confirmation', false);
@@ -155,7 +169,7 @@ class SignUpScreen extends React.Component {
           style={styles.textInput}
           name="username"
           placeholder="Username"
-          handleChangeText={this.handleChange}
+          handleChangeText={this.handleChangeUsername}
           error={stateError.username}
         />
         <TextInput
@@ -164,7 +178,8 @@ class SignUpScreen extends React.Component {
           style={styles.textInput}
           name="email"
           placeholder="Email"
-          handleChangeText={this.handleChange}
+          handleChangeText={this.handleChangeEmail}
+          keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
           error={stateError.email}
         />
         <PasswordInput
@@ -172,6 +187,7 @@ class SignUpScreen extends React.Component {
           style={styles.textInput}
           name="password"
           placeholder="Password"
+          maxLength={20}
           handleChangeText={this.handleChange}
           error={stateError.password}
         />
@@ -180,6 +196,7 @@ class SignUpScreen extends React.Component {
           style={styles.textInput}
           name="password_confirmation"
           placeholder="Confirm password"
+          maxLength={20}
           handleChangeText={this.handleChange}
           error={stateError.password_confirmation}
         />

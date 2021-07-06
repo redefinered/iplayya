@@ -26,6 +26,8 @@ import {
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
 
+import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
+
 const ImovieScreen = ({
   isFetching,
   navigation,
@@ -57,6 +59,7 @@ const ImovieScreen = ({
    */
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
+  const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
@@ -152,6 +155,16 @@ const ImovieScreen = ({
     }
   };
 
+  React.useEffect(() => {
+    if (params) {
+      setShowWalkthroughGuide(params.openImoviesGuide);
+    }
+  }, [params]);
+
+  const handleWalkthroughGuideHide = () => {
+    setShowWalkthroughGuide(false);
+  };
+
   return (
     <View style={styles.container}>
       {renderErrorBanner()}
@@ -182,7 +195,7 @@ const ImovieScreen = ({
             onEndReachedThreshold={0.5}
             onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
           />
-          <Spacer size={70} />
+          <Spacer size={80} />
         </React.Fragment>
       ) : (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -192,12 +205,16 @@ const ImovieScreen = ({
       )}
 
       <ImovieBottomTabs navigation={navigation} />
+      <ImovieWalkthrough
+        visible={showWalkthroughGuide}
+        onButtonClick={handleWalkthroughGuideHide}
+      />
     </View>
   );
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush>
+  <ScreenContainer backgroundType="solid" withHeaderPush>
     <ImovieScreen {...props} />
   </ScreenContainer>
 );

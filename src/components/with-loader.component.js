@@ -35,12 +35,20 @@ export default function withLoader(WrappedComponent) {
             statusBarTranslucent
             style={{
               position: 'absolute',
-              zIndex: 3,
+              zIndex: 1300,
               width: Dimensions.get('window').width,
-              height: Dimensions.get('window').height
+              height: '100%' /*Dimensions.get('window').height*/
             }}
           >
-            <View style={{ flex: 1, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+            <View
+              pointerEvents="none"
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'rgba(0,0,0,0.5)'
+              }}
+            >
               <ActivityIndicator color={theme.colors.primary} />
             </View>
           </View>

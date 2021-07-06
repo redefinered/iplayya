@@ -61,16 +61,24 @@ const SignInScreen = ({
   }, [currentUser]);
 
   React.useEffect(() => {
+    if (currentUser) {
+      setUsername(currentUser.email);
+    }
+  }, [loginError]);
+
+  React.useEffect(() => {
     appReadyAction();
   }, [isLoggedIn]);
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
 
-    setUsername(text);
+    setUsername(text.toLowerCase());
   };
 
   const handleLoginSubmit = () => {
+    signInStartAction();
+
     if (!username.length) {
       setError({ username: 'Username is required' });
       return;
@@ -121,9 +129,10 @@ const SignInScreen = ({
               value={username}
               autoCapitalize="none"
               clearButtonMode="while-editing"
-              keyboardType="email-address"
+              // keyboardType="email-address"
+              keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
               autoCompleteType="email"
-              error={error}
+              error={error.username || loginError}
               style={styles.textInput}
               placeholder="Email"
             />
@@ -133,7 +142,7 @@ const SignInScreen = ({
                 handleChangeText={handleChangeText}
                 value={password}
                 autoCapitalize="none"
-                error={error}
+                error={error.password || loginError}
                 style={{
                   ...styles.textInput,
                   position: 'relative',
@@ -147,8 +156,8 @@ const SignInScreen = ({
                 style={{ ...styles.showToggleContainer, zIndex: 2 }}
               >
                 <Icon
-                  name={showPassword ? 'close' : 'eye'}
-                  size={showPassword ? 25 : 40}
+                  name={showPassword ? 'eye-off' : 'eye'}
+                  size={showPassword ? 39 : 40}
                   style={styles.showToggleIcon}
                 />
               </Pressable>
