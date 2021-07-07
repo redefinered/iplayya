@@ -122,7 +122,10 @@ class SignUpScreen extends React.Component {
       this.setError('password', 'Password is required');
     } else {
       if (!isValidPassword(rest.password)) {
-        this.setError('password', 'Invalid password');
+        this.setError(
+          'password',
+          '- Password must be at least 4 characters long \n- Should contain uppercase letters and numbers'
+        );
       } else {
         this.setError('password', null);
       }
@@ -132,7 +135,10 @@ class SignUpScreen extends React.Component {
       this.setError('password_confirmation', 'Password is required');
     } else {
       if (!isValidPassword(rest.password_confirmation)) {
-        this.setError('password_confirmation', 'Invalid password_confirmation');
+        this.setError(
+          'password',
+          '- Password must be at least 4 characters long \n- Should contain uppercase letters and numbers'
+        );
       } else {
         this.setError('password_confirmation', null);
       }
@@ -203,6 +209,7 @@ class SignUpScreen extends React.Component {
             placeholder="Username"
             handleChangeText={this.handleChange}
             error={errors.username}
+            maxLength={20}
           />
           {errors.username && <Text style={{ marginBottom: 10 }}>{errors.username}</Text>}
           <TextInput
