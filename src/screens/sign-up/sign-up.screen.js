@@ -112,7 +112,7 @@ class SignUpScreen extends React.Component {
       this.setError('email', 'Email is required');
     } else {
       if (!isValidEmail(rest.email)) {
-        this.setError('email', 'Invalid email');
+        this.setError('email', 'Invalid email address');
       } else {
         this.setError('email', null);
       }
