@@ -27,7 +27,15 @@ export function* registerRequest(action) {
     if (status !== 'SUCCESS') throw new Error('Something went wrong during registration process');
 
     yield AsyncStorage.setItem('access_token', access_token);
-    yield put(Creators.registerSuccess());
+
+    const { me: profile } = yield call(getProfile);
+
+    yield put(Creators.signInSuccess(profile));
+
+    yield put(UserCreators.userStart());
+
+    // removes the loader at the root level
+    yield put(AppCreators.appReadySuccess());
   } catch (error) {
     yield put(Creators.registerFailure(error.message));
   }

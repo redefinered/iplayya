@@ -26,7 +26,6 @@ import { createStructuredSelector } from 'reselect';
 import {
   selectIsFetching,
   selectError,
-  selectSignedUp,
   selectIsLoggedIn,
   selectCurrentUser
 } from 'modules/ducks/auth/auth.selectors';
@@ -43,8 +42,7 @@ const SignInScreen = ({
   currentUser,
   appReadyAction,
   signInAction,
-  signInStartAction,
-  signedUp
+  signInStartAction
 }) => {
   // const [state, setState] = React.useState({ username: '', password: '', showPassword });
   const [username, setUsername] = React.useState('');
@@ -126,7 +124,6 @@ const SignInScreen = ({
             <Logo />
           </View>
           <ContentWrap>
-            {signedUp && <Text>Sign-up Success! Please sign in</Text>}
             <TextInput
               name="username"
               handleChangeText={handleChangeText}
@@ -214,7 +211,6 @@ SignInScreen.propTypes = {
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   error: selectError,
-  signedUp: selectSignedUp,
   isLoggedIn: selectIsLoggedIn,
   currentUser: selectCurrentUser
 });

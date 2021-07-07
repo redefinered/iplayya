@@ -5,7 +5,6 @@ const INITIAL_STATE = {
   error: null,
   isFetching: false,
   isLoggedIn: false,
-  signedUp: false,
   networkInfo: null,
   currentUser: null,
   onboardingComplete: false
@@ -28,20 +27,19 @@ export default createReducer(INITIAL_STATE, {
       isFetching: true
     };
   },
-  [Types.REGISTER_SUCCESS]: (state) => {
-    return {
-      ...state,
-      error: null,
-      isFetching: false,
-      signedUp: true
-    };
-  },
+  // [Types.REGISTER_SUCCESS]: (state) => {
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: false,
+  //     signedUp: true
+  //   };
+  // },
   [Types.REGISTER_FAILURE]: (state, action) => {
     return {
       ...state,
       error: action.error,
-      isFetching: false,
-      signedUp: false
+      isFetching: false
     };
   },
   [Types.SIGN_IN_START]: (state) => {
@@ -56,8 +54,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       error: null,
-      isFetching: true,
-      signedUp: false
+      isFetching: true
     };
   },
   [Types.SIGN_IN_SUCCESS]: (state, action) => {

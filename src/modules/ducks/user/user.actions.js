@@ -2,7 +2,7 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    reset: [],
+    userStart: null,
     setProvider: ['id'],
     setProviderSuccess: ['id'],
     setProviderFailure: ['error'],

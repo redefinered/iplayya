@@ -168,12 +168,12 @@ class SignUpScreen extends React.Component {
     });
   };
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.signedUp !== this.props.signedUp) {
-      const { navigation, signedUp } = this.props;
-      if (signedUp) navigation.goBack();
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.signedUp !== this.props.signedUp) {
+  //     const { navigation, signedUp } = this.props;
+  //     if (signedUp) navigation.goBack();
+  //   }
+  // }
 
   render() {
     const { errors, valid, ...formFields } = this.state;
