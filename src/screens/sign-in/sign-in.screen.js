@@ -87,12 +87,15 @@ const SignInScreen = ({
 
   const handleLoginSubmit = () => {
     if (error.username || error.password) {
-      setError({ commonError: 'Please fill required fields.' });
       return;
     }
 
     signInStartAction();
 
+    if (username === '' || password === '') {
+      setError({ commonError: 'Please fill required fieldds' });
+      return;
+    }
     if (!username.length) {
       setError({ username: 'Username is required' });
       return;
