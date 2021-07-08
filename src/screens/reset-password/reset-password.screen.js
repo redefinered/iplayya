@@ -34,28 +34,42 @@ class ResetPasswordScreen extends React.Component {
     password_confirmation: '',
     valid: true,
     errorMessage: '',
-    errors: [
-      { key: 'first_name', val: false },
-      { key: 'last_name', val: false },
-      { key: 'username', val: false },
-      { key: 'email', val: false },
-      { key: 'password', val: false },
-      { key: 'password_confirmation', val: false }
-    ]
+    errors: {
+      password: null,
+      password_confirmation: null
+      // { key: 'first_name', val: false },
+      // { key: 'last_name', val: false },
+      // { key: 'username', val: false },
+      // { key: 'email', val: false },
+      // { key: 'password', val: false },
+      // { key: 'password_confirmation', val: false }
+    }
   };
 
   handleChange = (value, name) => {
     this.setState({ [name]: value });
+
+    if (name === 'password') {
+      if (!isValidPassword(value)) {
+        this.setError(
+          'password',
+          '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+        );
+      } else {
+        this.setError('password', null);
+      }
+    }
   };
 
-  setError = (stateError, field, val) => {
-    const index = stateError.findIndex(({ key }) => key === field);
-    stateError[index].val = val;
-    this.setState({ errors: stateError });
+  // stateError,
+  setError = (field, val) => {
+    // const index = stateError.findIndex(({ key }) => key === field);
+    // stateError[index].val = val;
+    this.setState({ errors: Object.assign(this.state.errors, { [field]: val }) });
   };
 
   handleSubmit = () => {
-    const { password, password_confirmation, errors } = this.state;
+    const { errors: stateError, valid, password, password_confirmation } = this.state;
 
     const {
       updateParams: { email, token },
@@ -63,37 +77,40 @@ class ResetPasswordScreen extends React.Component {
     } = this.props;
 
     if (!isValidPassword(password)) {
-      this.setError(errors, 'password', true);
-      this.setState({
-        errorMessage:
-          '• At least 4 characters long. \n• Should contain upper case letters and numbers'
-      });
+      this.setError(
+        'password',
+        '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+      );
     } else {
-      this.setError(errors, 'password', false);
+      this.setError('password', null);
     }
 
-    if (password_confirmation !== password) {
-      this.setError(errors, 'password_confirmation', true);
-      this.setState({ errorMessage: 'Password does not match' });
-      return;
+    // if (!isValidPassword(password_confirmation)) {
+    //   this.setError(
+    //     'password_confirmation',
+    //     '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+    //   );
+    // } else {
+    //   this.setError('password_confirmation', null);
+    // }
+
+    if (password === '' && password_confirmation === '') {
+      this.setError('password', 'Please fill required field');
+      this.setError('password_confirmation', ' ');
     } else {
-      this.setError(errors, 'password_confirmation', false);
+      if (password !== password_confirmation) {
+        this.setError('password', 'Password does not Match');
+        this.setError('password_confirmation', ' ');
+      } else {
+        this.setError('password', null);
+        this.setError('password_confirmation', null);
+      }
     }
 
-    if (password === '' || password_confirmation === '') {
-      this.setError(errors, 'password' || 'password_confirmation', true);
-      this.setState({ errorMessage: 'Please fill required field' });
-    } else {
-      this.setError(errors, 'password' || 'password_confirmation', false);
-    }
+    const withError = Object.keys(stateError)
+      .map((key) => ({ key, val: stateError[key] }))
+      .find(({ val }) => val !== null);
 
-    if (!isValidPassword(password_confirmation)) {
-      this.setError(errors, 'password_confirmation', true);
-    } else {
-      this.setError(errors, 'password_confirmation', false);
-    }
-
-    const withError = errors.find(({ val }) => val === true);
     if (typeof withError !== 'undefined') {
       return this.setState({ valid: false });
     } else {
@@ -122,11 +139,11 @@ class ResetPasswordScreen extends React.Component {
   render() {
     const { errors, valid, password, password_confirmation, modalVisible } = this.state;
 
-    let stateError = {};
+    // let stateError = {};
 
-    errors.map(({ key, val }) => {
-      Object.assign(stateError, { [key]: val });
-    });
+    // errors.map(({ key, val }) => {
+    //   Object.assign(stateError, { [key]: val });
+    // });
 
     return (
       <React.Fragment>
@@ -140,7 +157,7 @@ class ResetPasswordScreen extends React.Component {
             handleChangeText={this.handleChange}
             style={styles.textInput}
             placeholder="Enter new password"
-            error={stateError.password}
+            error={errors.password}
           />
           <PasswordInput
             name="password_confirmation"
@@ -148,9 +165,11 @@ class ResetPasswordScreen extends React.Component {
             handleChangeText={this.handleChange}
             style={styles.textInput}
             placeholder="Confirm new password"
-            error={stateError.password_confirmation}
+            error={errors.password_confirmation}
           />
-          {!valid ? <Text>{this.state.errorMessage}</Text> : null}
+          {errors.password ? <Text>{errors.password}</Text> : null}
+          {errors.password_confirmation ? <Text>{errors.password_confirmation}</Text> : null}
+          {/* {!valid ? <Text>{this.state.errorMessage}</Text> : null} */}
           {this.props.error && <Text>{this.props.error}</Text>}
           <MainButton
             onPress={() => this.handleSubmit()}
