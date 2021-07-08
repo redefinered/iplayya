@@ -1,23 +1,17 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { KeyboardAvoidingView, StyleSheet, Platform, View } from 'react-native';
-
-const styles = StyleSheet.create({
-  container: { flex: 1 }
-});
+import { Platform } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const withFormWrap = (WrappedComponent) => {
   const formWrap = (props) => {
+    if (Platform.OS === 'android') return <WrappedComponent {...props} />;
+
     return (
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <View style={{ flex: 1, height: 500 }}>
-          <WrappedComponent {...props} />
-        </View>
-      </KeyboardAvoidingView>
+      <KeyboardAwareScrollView bounces={false} contentContainerStyle={{ flex: 1 }}>
+        <WrappedComponent {...props} />
+      </KeyboardAwareScrollView>
     );
   };
 
