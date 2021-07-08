@@ -15,14 +15,14 @@ export const isValidState = (value) => {
 // eslint-disable-next-line no-unused-vars
 export const isValidUsername = (value) => {
   return checkRegularExpression(
-    // /^(?=\S+)(?=[a-zA-ZàáâäãåèéêëìíîïòóôöõøùúûüÿýñçčšžÀÁÂÄÃÅÈÉÊËÌÍÎÏÒÓÔÖÕØÙÚÛÜŸÝÑßÇŒÆČŠŽ∂ð ,.'-]*$).*(?=\S).{6,}$/,
+    /^(?=\S+)(?=[a-zA-ZàáâäãåèéêëìíîïòóôöõøùúûüÿýñçčšžÀÁÂÄÃÅÈÉÊËÌÍÎÏÒÓÔÖÕØÙÚÛÜŸÝÑßÇŒÆČŠŽ∂ð ,.'-]*$).*(?=\S).{6,}$/,
     // value
     /**
      * This regex generates error 'invalid regular expression'
      * change to something else
      */
     // return checkRegularExpression(
-    /^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+    // /^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
     value
   );
   // return true;
