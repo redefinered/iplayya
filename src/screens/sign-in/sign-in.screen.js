@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
@@ -112,15 +113,20 @@ const SignInScreen = ({
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView behavior="height" bounces={false}>
-        <View style={{ flex: 1 }}>
+      <ScrollView
+        behavior="height"
+        bounces={false}
+        contentContainerStyle={{ height: Dimensions.get('window').height }}
+      >
+        <View style={{ flex: 1, justifyContent: 'space-between' }}>
           <StatusBar translucent backgroundColor="transparent" />
           <View
             style={{
+              flex: 0.5,
               alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 100,
-              marginBottom: 30
+              justifyContent: 'flex-end'
+              // marginTop: 100,
+              // marginBottom: 30
             }}
           >
             <Logo />
@@ -184,18 +190,18 @@ const SignInScreen = ({
             </Pressable>
           </ContentWrap>
 
-          <View style={{ alignItems: 'center', marginTop: 50 }}>
+          <View style={{ alignItems: 'center' }}>
             <Text>
               Don't you have an account yet?{' '}
               <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
-                Sign-up
+                SignUp
               </Text>
             </Text>
           </View>
+          <Pressable style={{ alignItems: 'center' }}>
+            <Text style={{ ...styles.signUpText }}>Need help?</Text>
+          </Pressable>
         </View>
-        <Pressable style={{ alignItems: 'center', marginTop: 130 }}>
-          <Text style={{ ...styles.signUpText }}>Need help?</Text>
-        </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
   );

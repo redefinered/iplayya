@@ -33,6 +33,7 @@ class ResetPasswordScreen extends React.Component {
     password: '',
     password_confirmation: '',
     valid: true,
+    errorMessage: '',
     errors: [
       { key: 'first_name', val: false },
       { key: 'last_name', val: false },
@@ -63,11 +64,30 @@ class ResetPasswordScreen extends React.Component {
 
     if (!isValidPassword(password)) {
       this.setError(errors, 'password', true);
+      this.setState({
+        errorMessage:
+          '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+      });
     } else {
       this.setError(errors, 'password', false);
     }
 
     if (password_confirmation !== password) {
+      this.setError(errors, 'password_confirmation', true);
+      this.setState({ errorMessage: 'Password does not match' });
+      return;
+    } else {
+      this.setError(errors, 'password_confirmation', false);
+    }
+
+    if (password === '' || password_confirmation === '') {
+      this.setError(errors, 'password' || 'password_confirmation', true);
+      this.setState({ errorMessage: 'Please fill required field' });
+    } else {
+      this.setError(errors, 'password' || 'password_confirmation', false);
+    }
+
+    if (!isValidPassword(password_confirmation)) {
       this.setError(errors, 'password_confirmation', true);
     } else {
       this.setError(errors, 'password_confirmation', false);
@@ -130,7 +150,7 @@ class ResetPasswordScreen extends React.Component {
             placeholder="Confirm new password"
             error={stateError.password_confirmation}
           />
-          {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
+          {!valid ? <Text>{this.state.errorMessage}</Text> : null}
           {this.props.error && <Text>{this.props.error}</Text>}
           <MainButton
             onPress={() => this.handleSubmit()}
