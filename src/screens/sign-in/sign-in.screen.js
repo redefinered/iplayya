@@ -75,10 +75,14 @@ const SignInScreen = ({
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
+
     if (name === 'username') {
       if (!isValidEmail(text)) {
         setError({ username: 'Invalid email address' });
       } else {
+        setError({ username: null });
+      }
+      if (text === '') {
         setError({ username: null });
       }
     }

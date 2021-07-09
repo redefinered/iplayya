@@ -18,12 +18,14 @@ import {
   selectGetLinkResponse
 } from 'modules/ducks/password/password.selectors';
 
+import { isValidEmail } from 'common/validate';
+
 const styles = StyleSheet.create({
   textInput: { backgroundColor: 'rgba(255,255,255,0.1)' }
 });
 
 const ForgotPasswordScreen = ({
-  error,
+  error: forgotError,
   navigation,
   getLinkResponse,
   getLinkAction,
@@ -31,6 +33,7 @@ const ForgotPasswordScreen = ({
 }) => {
   const [email, setEmail] = React.useState('');
   const [screenError, setScreenError] = React.useState(null);
+  const [error, setError] = React.useState({ email: null, commonError: null });
 
   React.useEffect(() => {
     // clear get link response
@@ -41,9 +44,22 @@ const ForgotPasswordScreen = ({
   const handleChange = (text, name) => {
     setScreenError(null);
     setEmail(text.toLowerCase());
+    if (name === 'email') {
+      if (!isValidEmail(text)) {
+        setError({ email: 'Invalid email address' });
+      } else {
+        setError({ email: null });
+      }
+    }
   };
 
   const handleSend = () => {
+    if (!email.length) {
+      setError({ email: 'Please fill required fieldds' });
+      return;
+    }
+
+    setError({ email: null });
     getLinkAction({ email });
   };
 
@@ -70,10 +86,11 @@ const ForgotPasswordScreen = ({
         keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
         handleChangeText={handleChange}
         style={styles.textInput}
-        error={error}
+        error={forgotError || error.email}
       />
-      {screenError && <Text>{screenError}</Text>}
-      {error && <Text>{error}</Text>}
+      {error.email ? <Text>{error.email}</Text> : null}
+      {screenError ? <Text>{screenError}</Text> : null}
+      {forgotError ? <Text>{forgotError}</Text> : null}
       <MainButton onPress={() => handleSend()} text="Send" style={{ marginTop: 25 }} />
       {/* <Button mode="contained" onPress={() => handleSend()}>
         Send
