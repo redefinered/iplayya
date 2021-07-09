@@ -75,18 +75,23 @@ const SignInScreen = ({
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
-
     if (name === 'username') {
-      if (!isValidEmail(text)) {
-        setError({ username: 'Invalid email address' });
-      } else {
-        setError({ username: null });
-      }
       if (text === '') {
         setError({ username: null });
       }
     }
     setUsername(text.toLowerCase());
+  };
+
+  const handleOnFocus = () => {
+    if (!isValidEmail(username)) {
+      setError({ username: 'Invalid email address' });
+    } else {
+      setError({ username: null });
+    }
+    if (username === '') {
+      setError({ username: null });
+    }
   };
 
   const handleLoginSubmit = () => {
@@ -96,11 +101,11 @@ const SignInScreen = ({
 
     signInStartAction();
 
-    if (username === '' || password === '') {
+    if (username === '' && password === '') {
       setError({ commonError: 'Please fill required fields' });
       return;
     }
-    if (!username.length) {
+    if (username === '') {
       setError({ username: 'Username is required' });
       return;
     }
@@ -145,6 +150,7 @@ const SignInScreen = ({
               handleChangeText={handleChangeText}
               value={username}
               autoCapitalize="none"
+              onFocus={handleOnFocus}
               clearButtonMode="while-editing"
               // keyboardType="email-address"
               keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
@@ -159,6 +165,7 @@ const SignInScreen = ({
                 name="password"
                 handleChangeText={handleChangeText}
                 value={password}
+                onFocus={handleOnFocus}
                 autoCapitalize="none"
                 error={error.password || loginError || error.commonError}
                 style={{
