@@ -17,7 +17,7 @@ const { Types, Creators } = createActions(
     resetCategoryPaginator: [],
 
     getCategories: [],
-    getCategoriesSuccess: ['data'],
+    getCategoriesSuccess: ['categories'],
     getCategoriesFailure: ['error'],
 
     /**
@@ -54,7 +54,7 @@ const { Types, Creators } = createActions(
 
     setPermissionError: ['error'],
 
-    reset: []
+    reset: null
   },
   { prefix: '@Movies/' }
 );

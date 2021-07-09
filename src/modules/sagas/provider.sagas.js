@@ -6,11 +6,32 @@ import {
   deleteOne as deleteProvider
 } from 'services/provider.service';
 
+import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
+import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+
+import { getGenres as getItvGenres } from 'services/itv.service';
+import { getCategories } from 'services/movies.service';
+import { getGenres as getIsportsGenres } from 'services/isports.service';
+import { getGenres as getMusicGenres } from 'services/music.service';
+
 export function* createRequest(action) {
   const { input } = action.data;
   try {
     const { createUserProvider } = yield call(createProvider, input);
-    console.log({ createUserProvider });
+    // console.log({ createUserProvider });
+
+    const { iptvGenres } = yield call(getItvGenres);
+    const { categories } = yield call(getCategories);
+    const { isportsGenres } = yield call(getIsportsGenres);
+    const { albumGenres } = yield call(getMusicGenres);
+
+    yield put(ItvCreators.getGenresSuccess(iptvGenres));
+    yield put(MoviesCreators.getCategoriesSuccess(categories));
+    yield put(IsportsCreators.getGenresSuccess(isportsGenres));
+    yield put(MusicCreators.getGenresSuccess(albumGenres));
+
     yield put(Creators.createSuccess({ createUserProvider }));
   } catch (error) {
     yield put(Creators.createFailure(error.message));

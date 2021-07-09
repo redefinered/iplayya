@@ -76,13 +76,13 @@ export default createReducer(INITIAL_STATE, {
   },
   /// reset paginatorInfo so initial query
   [Types.GET_MOVIES_START]: (state) => {
-    const { paginatorInfo } = INITIAL_STATE;
+    // const { paginatorInfo } = INITIAL_STATE;
     return {
       ...state,
       isFetching: false,
       error: null,
-      movies: [],
-      paginatorInfo
+      movies: []
+      // paginatorInfo
     };
   },
   // get movies and update paginator i.e. increment pageNumber
@@ -134,7 +134,7 @@ export default createReducer(INITIAL_STATE, {
   },
   // get all categories
   [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
-    const { categories } = action.data;
+    const { categories } = action;
     return {
       ...state,
       error: null,
@@ -300,7 +300,7 @@ export default createReducer(INITIAL_STATE, {
       searchResults: []
     };
   },
-  [Types.RESET]: () => {
-    return { ...INITIAL_STATE };
+  [Types.RESET]: (state) => {
+    return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
   }
 });

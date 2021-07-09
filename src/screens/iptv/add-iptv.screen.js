@@ -196,8 +196,8 @@ class AddIptvScreen extends React.Component {
             error={stateError.password}
           />
 
-          {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
-          {this.props.error && <Text>{this.props.error}</Text>}
+          {!valid ? <Text>Please fill required field.</Text> : null}
+          {/* {this.props.error && <Text>{this.props.error}</Text>} */}
           <MainButton
             onPress={() => this.handleSubmit()}
             text="Add IPTV"

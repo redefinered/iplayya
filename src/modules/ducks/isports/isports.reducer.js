@@ -255,7 +255,7 @@ export default createReducer(INITIAL_STATE, {
       paginatorInfo: { limit: 10, pageNumber: 1 }
     };
   },
-  [Types.RESET]: () => {
-    return { ...INITIAL_STATE };
+  [Types.RESET]: (state) => {
+    return { ...state, ...INITIAL_STATE };
   }
 });

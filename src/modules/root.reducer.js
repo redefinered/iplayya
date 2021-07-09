@@ -26,8 +26,8 @@ const resettable = resettableReducer('RESET');
 
 const rootReducer = persistCombineReducers(persistConfig, {
   app: appReducer,
+  auth: resettable(authReducer),
   nav: navReducer,
-  auth: authReducer,
   downloads: downloadsReducer,
   user: resettable(userReducer),
   password: passwordReducer,

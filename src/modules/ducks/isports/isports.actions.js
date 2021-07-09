@@ -34,7 +34,7 @@ const { Types, Creators } = createActions(
     getFavoritesFailure: ['error'],
 
     // misc
-    reset: [],
+    reset: null,
     setPaginatorInfo: ['data'],
     resetPaginator: [],
 

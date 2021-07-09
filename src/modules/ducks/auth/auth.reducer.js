@@ -55,6 +55,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: null,
       isFetching: true
+      // onboardingComplete: true
     };
   },
   [Types.SIGN_IN_SUCCESS]: (state, action) => {

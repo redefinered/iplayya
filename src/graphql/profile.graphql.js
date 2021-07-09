@@ -12,6 +12,7 @@ export const GET_PROFILE = gql`
       phone
       birth_date
       gender
+      onboardinginfo
       providers {
         id
         name

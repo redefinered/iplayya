@@ -14,6 +14,7 @@ import IptvStack from 'navigators/iptv-stack.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators, selectIsLoading } from 'modules/app';
+import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
@@ -25,6 +26,7 @@ import SplashScreen from 'react-native-splash-screen';
 // import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
 import { resetStore } from 'modules/store';
+import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
 
 const App = ({
   isLoading,
@@ -38,7 +40,10 @@ const App = ({
   providers,
   skippedProviderAdd,
 
-  resetNowPlayingAction
+  resetNowPlayingAction,
+
+  currentUser,
+  setProviderAction
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
@@ -53,7 +58,7 @@ const App = ({
     // listDownloadedFiles();
     // deleteFile('19_12_Angry_Men.mp4');
 
-    resetStore();
+    // resetStore();
 
     resetNowPlayingAction();
 
@@ -70,6 +75,16 @@ const App = ({
       updatePasswordStartAction({ params });
     });
   }, []);
+
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      const { providers } = currentUser;
+      if (providers.length) {
+        setProviderAction(providers[0].id);
+      }
+      // console.log('fua;dskljfas  ;alkdfj;alsdjf');
+    }
+  }, [isLoggedIn, currentUser]);
 
   if (isLoading && isLoggedIn)
     return (
@@ -120,6 +135,7 @@ const App = ({
 };
 
 const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
   isLoading: selectIsLoading,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
@@ -131,7 +147,8 @@ const actions = {
   purgeStoreAction: Creators.purgeStore, // for development and debugging
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
-  resetNowPlayingAction: MusicCreators.resetNowPlaying
+  resetNowPlayingAction: MusicCreators.resetNowPlaying,
+  setProviderAction: UserCreators.setProvider
 };
 
 export default connect(mapStateToProps, actions)(App);
