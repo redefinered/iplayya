@@ -97,7 +97,7 @@ const SignInScreen = ({
     signInStartAction();
 
     if (username === '' || password === '') {
-      setError({ commonError: 'Please fill required fieldds' });
+      setError({ commonError: 'Please fill required fields' });
       return;
     }
     if (!username.length) {
