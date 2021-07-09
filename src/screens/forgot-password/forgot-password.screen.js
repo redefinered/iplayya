@@ -55,7 +55,7 @@ const ForgotPasswordScreen = ({
 
   const handleSend = () => {
     if (!email.length) {
-      setError({ email: 'Please fill required fieldds' });
+      setError({ email: 'Please fill required fields' });
       return;
     }
 
