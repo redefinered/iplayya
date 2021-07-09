@@ -15,6 +15,7 @@ export const isValidUsername = (value) => {
      * change to something else
      */
     // return checkRegularExpression(
+    // /^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
     /^[a-zA-Z0-9]+$/,
     value
   );
