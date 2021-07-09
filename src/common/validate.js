@@ -5,13 +5,6 @@ export const checkRegularExpression = (expression, value) => {
   return regex.test(value);
 };
 
-export const isValidState = (value) => {
-  return checkRegularExpression(
-    /^(?:(A[KLRZ]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|P[AR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY]))$/,
-    value
-  );
-};
-
 // eslint-disable-next-line no-unused-vars
 export const isValidUsername = (value) => {
   return checkRegularExpression(
@@ -22,7 +15,8 @@ export const isValidUsername = (value) => {
      * change to something else
      */
     // return checkRegularExpression(
-    /^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+    // /^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/,
+    /^[a-zA-Z0-9]+$/,
     value
   );
   // return true;
