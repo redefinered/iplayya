@@ -61,7 +61,7 @@ class EditProfileScreen extends React.Component {
 
   componentDidMount() {
     // console.log(isValidBirthday('xxx'));
-    this.props.updateStartAction();
+    this.props.profileStartAction();
   }
 
   handleChange = (text, name) => {
@@ -283,7 +283,7 @@ const Container = (props) => (
 );
 
 const actions = {
-  updateStartAction: Creators.updateStart,
+  profileStartAction: Creators.start,
   updateAction: Creators.update
 };
 

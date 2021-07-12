@@ -42,6 +42,7 @@ export function* registerRequest(action) {
 
     // yield put(Creators.signInSuccess());
     yield put(Creators.signInSuccess(user));
+    // yield put(ProfileCreators.getSuccess(user));
 
     yield put(UserCreators.userStart());
 
@@ -65,6 +66,8 @@ export function* signInRequest(action) {
 
     const { me: user } = yield call(getProfile);
 
+    console.log({ user });
+
     // reset state data
     yield put(ItvCreators.reset());
     yield put(MoviesCreators.reset());
@@ -73,6 +76,7 @@ export function* signInRequest(action) {
 
     // yield put(Creators.signInSuccess());
     yield put(Creators.signInSuccess(user));
+    // yield put(ProfileCreators.getSuccess(user));
 
     yield put(AppCreators.appReadySuccess());
   } catch (error) {

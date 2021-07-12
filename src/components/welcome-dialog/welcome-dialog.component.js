@@ -8,25 +8,37 @@ import Button from 'components/button/button.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/auth/auth.actions';
+import { Creators } from 'modules/ducks/profile/profile.actions';
 
 import styles from './welcome-dialog.styles';
 import { createStructuredSelector } from 'reselect';
-import { selectOnboardingComplete } from 'modules/ducks/auth/auth.selectors';
+import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
+import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
 
-const WelcomeDialog = ({
-  theme,
-  visible,
-  onButtonPress,
-  setOnboardingCompleteAction,
-  onboardingComplete
-}) => {
+import clone from 'lodash/clone';
+
+const WelcomeDialog = ({ theme, visible, userId, onButtonPress, updateAction, onboardinginfo }) => {
+  const { completed } = onboardinginfo;
+
+  const clonedOnboardinginfo = clone(onboardinginfo);
+
   const handleButtonPress = () => {
-    setOnboardingCompleteAction();
+    updateAction({
+      id: userId,
+      onboardinginfo: JSON.stringify(Object.assign(clonedOnboardinginfo, { completed: true }))
+    });
     onButtonPress();
   };
 
-  if (onboardingComplete) return <View />;
+  if (typeof completed !== 'undefined') {
+    if (completed) {
+      return <View />;
+    }
+  }
+
+  // if (completed) return <View />;
+
+  // completed is undefined or false
 
   return (
     <Modal transparent visible={visible} statusBarTranslucent={true}>
@@ -57,14 +69,18 @@ WelcomeDialog.propTypes = {
   theme: PropTypes.object,
   visible: PropTypes.bool,
   onButtonPress: PropTypes.func,
-  setOnboardingCompleteAction: PropTypes.func,
-  onboardingComplete: PropTypes.bool
+  updateAction: PropTypes.func,
+  onboardinginfo: PropTypes.object,
+  userId: PropTypes.string
 };
 
 const actions = {
-  setOnboardingCompleteAction: Creators.setOnboardingComplete
+  updateAction: Creators.update
 };
 
-const mapStateToProps = createStructuredSelector({ onboardingComplete: selectOnboardingComplete });
+const mapStateToProps = createStructuredSelector({
+  onboardinginfo: selectOnboardinginfo,
+  userId: selectCurrentUserId
+});
 
 export default compose(withTheme, connect(mapStateToProps, actions))(WelcomeDialog);

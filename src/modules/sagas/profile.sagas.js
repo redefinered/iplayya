@@ -5,7 +5,8 @@ import { get as getProfile, update as updateProfile } from 'services/profile.ser
 export function* getRequest() {
   try {
     const { me: profile } = yield call(getProfile);
-    yield put(Creators.getSuccess({ profile }));
+
+    yield put(Creators.getSuccess(profile));
   } catch (error) {
     yield put(Creators.getFailure(error.message));
   }
@@ -13,7 +14,7 @@ export function* getRequest() {
 
 export function* updateRequest(action) {
   const { ...input } = action.data;
-  console.log({ input });
+  // console.log({ input });
   try {
     const { updateUserProfile } = yield call(updateProfile, input);
     yield put(Creators.updateSuccess({ updateResponse: updateUserProfile }));

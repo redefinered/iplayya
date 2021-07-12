@@ -16,35 +16,64 @@ import { headerHeight } from 'common/values';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/nav/nav.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
-import { selectProviders } from 'modules/ducks/provider/provider.selectors';
+// import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
+// import { selectProviders } from 'modules/ducks/provider/provider.selectors';
+import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import { TouchableRipple } from 'react-native-paper';
 
 const Stack = createStackNavigator();
 
 const IptvStack = ({
   setBottomTabsVisibleAction,
-  skippedProviderAdd,
-  providers,
+  // skippedProviderAdd,
+  // providers,
   enableSwipeAction
+  // onboardinginfo
 }) => {
-  const [initialRoute, setInitialRoute] = React.useState('IPTV');
+  // const [initialRoute, setInitialRoute] = React.useState('IPTV');
+  // const [skippedProviderAdd, setSkippedProviderAdd] = React.useState(true);
 
-  React.useEffect(() => {
-    setBottomTabsVisibleAction({ hideTabs: false });
-  }, []);
+  // React.useEffect(() => {
+  //   setBottomTabsVisibleAction({ hideTabs: false });
 
-  React.useEffect(() => {
-    if (!providers.length) {
-      setInitialRoute('AddIptvScreen');
-    }
-    if (skippedProviderAdd) {
-      setInitialRoute('IPTV');
-    }
-  }, [providers, skippedProviderAdd]);
+  //   setInitialRoute('AddIptvScreen');
+  // }, []);
+
+  // React.useEffect(() => {
+  //   setInitialRoute('AddIptvScreen');
+  // });
+
+  // React.useEffect(() => {
+  //   console.log({ providers, skippedProviderAdd });
+  //   if (!providers.length && !skippedProviderAdd) {
+  //     return setInitialRoute('AddIptvScreen');
+  //   }
+  //   if (skippedProviderAdd) {
+  //     setInitialRoute('IPTV');
+  //   }
+  // }, [providers, skippedProviderAdd]);
+
+  // React.useEffect(() => {
+  //   console.log({ onboardinginfo });
+  //   if (!onboardinginfo) {
+  //     /// adding provider is not yet skipped
+  //     return setInitialRoute('AddIptvScreen');
+  //   }
+
+  //   const { skippedProviderSetup } = onboardinginfo;
+
+  //   if (typeof skippedProviderSetup === 'undefined') {
+  //     /// adding provider is not yet skipped
+  //     return setInitialRoute('AddIptvScreen');
+  //   } else {
+  //     if (skippedProviderSetup) return setInitialRoute('IPTV');
+  //   }
+  // }, [onboardinginfo]);
+
+  // console.log({ initialRoute });
+
   return (
     <Stack.Navigator
-      initialRouteName={initialRoute}
       screenOptions={{
         headerTransparent: true,
         headerTintColor: 'white',
@@ -142,8 +171,9 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  skippedProviderAdd: selectSkippedProviderAdd,
-  providers: selectProviders
+  // skippedProviderAdd: selectSkippedProviderAdd,
+  onboardinginfo: selectOnboardinginfo
+  // providers: selectProviders
 });
 
 export default connect(mapStateToProps, actions)(IptvStack);

@@ -16,7 +16,8 @@ import withLoader from 'components/with-loader.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
+import { Creators } from 'modules/ducks/profile/profile.actions';
+// import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { createStructuredSelector } from 'reselect';
@@ -26,13 +27,14 @@ import {
   selectProviders,
   selectCreated
 } from 'modules/ducks/provider/provider.selectors';
+import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
+import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
+import clone from 'lodash/clone';
 
 import styles from './add-iptv.styles';
-import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 
 // eslint-disable-next-line no-unused-vars
-import { isValidName, isValidUsername, isValidWebsite } from 'common/validate';
-
+import { isValidUsername, isValidWebsite } from 'common/validate';
 class AddIptvScreen extends React.Component {
   state = {
     modalVisible: false,
@@ -72,7 +74,16 @@ class AddIptvScreen extends React.Component {
   }
 
   handleSkip = () => {
-    this.props.skipProviderAddAction();
+    const { userId, onboardinginfo, updateProfileAction } = this.props;
+
+    const clonedOnboardinginfo = clone(onboardinginfo);
+
+    updateProfileAction({
+      id: userId,
+      onboardinginfo: JSON.stringify(
+        Object.assign(clonedOnboardinginfo, { skippedProviderSetup: true })
+      )
+    });
   };
 
   handleChange = (value, name) => {
@@ -196,7 +207,7 @@ class AddIptvScreen extends React.Component {
             error={stateError.password}
           />
 
-          {!valid ? <Text>Please fill required field.</Text> : null}
+          {!valid ? <Text>Please fill the required fields.</Text> : null}
           {/* {this.props.error && <Text>{this.props.error}</Text>} */}
           <MainButton
             onPress={() => this.handleSubmit()}
@@ -240,14 +251,17 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   created: selectCreated,
   providers: selectProviders,
-  skippedProviderAdd: selectSkippedProviderAdd
+  // skippedProviderAdd: selectSkippedProviderAdd,
+  userId: selectCurrentUserId,
+  onboardinginfo: selectOnboardinginfo
 });
 
 const actions = {
   createStartAction: ProviderCreators.createStart,
   createAction: ProviderCreators.create,
-  skipProviderAddAction: UserCreators.skipProviderAdd,
-  enableSwipeAction: NavActionCreators.enableSwipe
+  // skipProviderAddAction: UserCreators.skipProviderAdd,
+  enableSwipeAction: NavActionCreators.enableSwipe,
+  updateProfileAction: Creators.update
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader, withFormWrap);

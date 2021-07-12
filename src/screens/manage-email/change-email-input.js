@@ -144,7 +144,6 @@ class ChangeEmailInput extends React.Component {
 
 const actions = {
   getProfileAction: Creators.get,
-  updateStartAction: Creators.updateStart,
   updateAction: Creators.update
 };
 
