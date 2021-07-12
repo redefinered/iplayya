@@ -25,7 +25,7 @@ const Home = ({
   navigation,
   completedOnboarding,
   setBottomTabsVisibleAction,
-  getCategoriesAction,
+  // getCategoriesAction,
   getMoviesStartAction,
   resetCategoryPaginatorAction,
   enableSwipeAction
@@ -39,9 +39,9 @@ const Home = ({
   /// load categories here
   React.useEffect(() => {
     getMoviesStartAction();
-    getCategoriesAction();
+    // getCategoriesAction();
     // getMusicGenresAction();
-    resetCategoryPaginatorAction();
+    // resetCategoryPaginatorAction();
     enableSwipeAction(true);
 
     // console.log('xxxxxx');
@@ -88,7 +88,7 @@ const Home = ({
 
   const handleProfileErrorConfirmAction = () => {
     getMoviesStartAction();
-    getCategoriesAction();
+    // getCategoriesAction();
     resetCategoryPaginatorAction();
 
     // hide error modal after retry
@@ -137,7 +137,7 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  getCategoriesAction: Creators.getCategories,
+  // getCategoriesAction: Creators.getCategories,
   // getMusicGenresAction: MusicCreator.getGenres,
   getMoviesStartAction: Creators.getMoviesStart,
   resetCategoryPaginatorAction: Creators.resetCategoryPaginator,

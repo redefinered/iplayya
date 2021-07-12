@@ -16,6 +16,7 @@ export const get = async () => {
 };
 
 export const create = async (args) => {
+  console.log({ args });
   try {
     const { data } = await client.mutate({
       mutation: CREATE_PROVIDER,
@@ -25,6 +26,7 @@ export const create = async (args) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     if (error.graphQLErrors.length) {
       throw new Error(error.graphQLErrors[0].extensions.reason);
     }

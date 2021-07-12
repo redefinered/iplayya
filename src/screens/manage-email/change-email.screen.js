@@ -248,7 +248,6 @@ const Container = (props) => (
 
 const actions = {
   getProfileAction: Creators.get,
-  updateStartAction: Creators.updateStart,
   updateAction: Creators.update
 };
 

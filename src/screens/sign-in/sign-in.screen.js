@@ -23,11 +23,11 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as AppCreators } from 'modules/app';
+// import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectIsFetching,
   selectError,
-  selectSignedUp,
   selectIsLoggedIn,
   selectCurrentUser
 } from 'modules/ducks/auth/auth.selectors';
@@ -40,12 +40,12 @@ import { isValidEmail } from 'common/validate';
 const SignInScreen = ({
   error: loginError,
   navigation,
-  isLoggedIn,
+  // isLoggedIn,
   currentUser,
-  appReadyAction,
+  // appReadyAction,
   signInAction,
-  signInStartAction,
-  signedUp
+  signInStartAction
+  // setProviderAction
 }) => {
   // const [state, setState] = React.useState({ username: '', password: '', showPassword });
   const [username, setUsername] = React.useState('');
@@ -68,10 +68,6 @@ const SignInScreen = ({
   //     setUsername(currentUser.email);
   //   }
   // }, [loginError]);
-
-  React.useEffect(() => {
-    appReadyAction();
-  }, [isLoggedIn]);
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
@@ -144,7 +140,6 @@ const SignInScreen = ({
             <Logo />
           </View>
           <ContentWrap>
-            {signedUp && <Text>Sign-up Success! Please sign in</Text>}
             <TextInput
               name="username"
               handleChangeText={handleChangeText}
@@ -236,7 +231,6 @@ SignInScreen.propTypes = {
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   error: selectError,
-  signedUp: selectSignedUp,
   isLoggedIn: selectIsLoggedIn,
   currentUser: selectCurrentUser
 });
@@ -244,6 +238,7 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   signInStartAction: Creators.signInStart,
   signInAction: Creators.signIn,
+  // setProviderAction: UserCreators.setProvider,
   appReadyAction: AppCreators.appReady
 };
 

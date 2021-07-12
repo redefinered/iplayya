@@ -5,7 +5,7 @@ import orderBy from 'lodash/orderBy';
 import { updateChannelsWithFavorited } from './itv.helpers';
 
 const INITIAL_STATE = {
-  isFetching: true,
+  isFetching: false,
   error: null,
   genres: [],
 
@@ -385,7 +385,7 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  [Types.RESET]: () => {
-    return { ...INITIAL_STATE };
+  [Types.RESET]: (state) => {
+    return { ...state, ...INITIAL_STATE };
   }
 });

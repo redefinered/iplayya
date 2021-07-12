@@ -1,6 +1,8 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './profile.actions';
 
+import { Types as AuthTypes } from 'modules/ducks/auth/auth.actions';
+
 const INITIAL_STATE = {
   error: null,
   isFetching: false,
@@ -13,8 +15,13 @@ export default createReducer(INITIAL_STATE, {
   [Types.START]: (state) => {
     return {
       ...state,
-      updated: false
+      updated: false,
+      isFetching: false,
+      error: null
     };
+  },
+  [AuthTypes.SIGN_IN_SUCCESS]: (state, action) => {
+    return { ...state, profile: action.user, updated: false };
   },
   [Types.GET]: (state) => {
     return {
@@ -24,12 +31,11 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_SUCCESS]: (state, action) => {
-    const { profile } = action.data;
     return {
       ...state,
       error: null,
       isFetching: false,
-      profile
+      profile: action.profile
     };
   },
   [Types.GET_FAILURE]: (state, action) => {
@@ -37,13 +43,6 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: action.error,
       isFetching: false
-    };
-  },
-  [Types.UPDATE_START]: (state) => {
-    return {
-      ...state,
-      updated: false,
-      error: null
     };
   },
   [Types.UPDATE]: (state) => {

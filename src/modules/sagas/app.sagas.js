@@ -2,28 +2,29 @@
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { REHYDRATE } from 'redux-persist';
 import { Creators } from 'modules/app';
-import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
-import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
-import { get as getProfile } from 'services/profile.service';
-import { getGenres } from 'services/itv.service';
-import { getGenres as getMusicGenres } from 'services/music.service';
 
-export function* appReady(state) {
-  if (typeof state.payload === 'undefined') return;
+// import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
+// import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+// import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+// import { get as getProfile } from 'services/profile.service';
+// import { getGenres } from 'services/itv.service';
+// import { getGenres as getMusicGenres } from 'services/music.service';
 
-  const { isLoggedIn } = state.payload.auth;
+export function* appReady() {
+  // if (typeof state.payload === 'undefined') return;
+
+  // const { isLoggedIn } = state.payload.auth;
 
   try {
-    if (isLoggedIn) {
-      const { me: profile } = yield call(getProfile);
-      const { iptvGenres } = yield call(getGenres);
-      const { albumGenres } = yield call(getMusicGenres);
+    // if (isLoggedIn) {
+    //   const { me: profile } = yield call(getProfile);
+    //   const { iptvGenres } = yield call(getGenres);
+    //   const { albumGenres } = yield call(getMusicGenres);
 
-      yield put(ProfileCreators.getSuccess({ profile }));
-      yield put(ItvCreators.getGenresSuccess(iptvGenres));
-      yield put(MusicCreators.getGenresSuccess(albumGenres));
-    }
+    //   yield put(ProfileCreators.getSuccess({ profile }));
+    //   yield put(ItvCreators.getGenresSuccess(iptvGenres));
+    //   yield put(MusicCreators.getGenresSuccess(albumGenres));
+    // }
 
     // This action will be launched after Finishing Store Rehydrate
     yield put(Creators.appReadySuccess());

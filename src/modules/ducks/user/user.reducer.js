@@ -6,23 +6,16 @@ const INITIAL_STATE = {
   isFetching: false,
   skippedProviderAdd: false,
   // completedOnboarding: false,
-  updated: null,
+  updated: null
 
   // selected provider where all content will come from
-  provider: null
+  // provider: null
 };
 
 export default createReducer(INITIAL_STATE, {
-  // [Types.RESET]: (state) => {
-  //   return {
-  //     ...state,
-  //     error: null,
-  //     isFetching: false,
-  //     skippedProviderAdd: false,
-  //     completedOnboarding: false,
-  //     updated: null
-  //   };
-  // },
+  [Types.USER_START]: (state) => {
+    return { ...state, ...INITIAL_STATE };
+  },
   [Types.SET_PROVIDER]: (state) => {
     return {
       ...state,

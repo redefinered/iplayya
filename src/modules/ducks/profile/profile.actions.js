@@ -4,7 +4,7 @@ const { Types, Creators } = createActions(
   {
     start: [],
     get: [],
-    getSuccess: ['data'],
+    getSuccess: ['profile'],
     getFailure: ['error'],
     updateStart: [],
     update: ['data'],

@@ -25,8 +25,10 @@ import {
   selectCreated,
   selectUpdated,
   selectDeleted,
-  selectSkipProviderAdd
+  // selectSkipProviderAdd
+  selectIsProviderSetupSkipped
 } from 'modules/ducks/provider/provider.selectors';
+import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import {
   selectIsFetching as selectUserIsFetching,
   selectError as selectUserError
@@ -50,8 +52,8 @@ const IptvScreen = ({
   createStartAction,
   deleteAction,
   deteteStartAction,
-  skipped,
-  route: { params }
+  route: { params },
+  isProviderSetupSkipped
 }) => {
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
@@ -59,21 +61,23 @@ const IptvScreen = ({
   const [showIptvGuide, setShowIptvGuide] = React.useState(false);
   const [showStepTwo, setShowStepTwo] = React.useState(false);
   const [showStepThree, setShowStepThree] = React.useState(false);
+  // const [skippedProviderAdd, setSkippedProviderAdd] = React.useState(false);
 
   React.useEffect(() => {
     createStartAction();
   }, []);
 
   React.useEffect(() => {
+    if (isProviderSetupSkipped) return;
+
+    navigation.replace('AddIptvScreen');
+  });
+
+  React.useEffect(() => {
     if (params) {
       setShowIptvGuide(params.openIptvGuide);
     }
   }, [params]);
-
-  // redirect to add provider if there is 0 provider or if adding is not skipped
-  React.useEffect(() => {
-    if (providers.length === 0 && !skipped) navigation.replace('AddIptvScreen');
-  }, [providers]);
 
   React.useEffect(() => {
     if (created) handleAddProviderSuccess();
@@ -290,7 +294,9 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated,
   deleted: selectDeleted,
   providers: selectProviders,
-  skipped: selectSkipProviderAdd
+  // skipped: selectSkipProviderAdd,
+  onboardinginfo: selectOnboardinginfo,
+  isProviderSetupSkipped: selectIsProviderSetupSkipped
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
