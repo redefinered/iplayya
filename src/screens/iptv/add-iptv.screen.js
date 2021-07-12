@@ -168,7 +168,7 @@ class AddIptvScreen extends React.Component {
         <ContentWrap scrollable style={{ paddingTop: 40 }}>
           <StatusBar translucent backgroundColor="transparent" />
           <TextInput
-            value={input.name}
+            value={input.name.trimStart().replace(/\s\s+/g, ' ')}
             name="name"
             style={styles.textInput}
             placeholder="IPTV provider name"

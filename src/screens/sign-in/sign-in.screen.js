@@ -71,18 +71,23 @@ const SignInScreen = ({
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
-
     if (name === 'username') {
-      if (!isValidEmail(text)) {
-        setError({ username: 'Invalid email address' });
-      } else {
-        setError({ username: null });
-      }
       if (text === '') {
         setError({ username: null });
       }
     }
     setUsername(text.toLowerCase());
+  };
+
+  const handleOnFocus = () => {
+    if (!isValidEmail(username)) {
+      setError({ username: 'Invalid email address' });
+    } else {
+      setError({ username: null });
+    }
+    if (username === '') {
+      setError({ username: null });
+    }
   };
 
   const handleLoginSubmit = () => {
@@ -92,11 +97,11 @@ const SignInScreen = ({
 
     signInStartAction();
 
-    if (username === '' || password === '') {
+    if (username === '' && password === '') {
       setError({ commonError: 'Please fill required fields' });
       return;
     }
-    if (!username.length) {
+    if (username === '') {
       setError({ username: 'Username is required' });
       return;
     }
@@ -121,13 +126,13 @@ const SignInScreen = ({
         bounces={false}
         contentContainerStyle={{ height: Dimensions.get('window').height }}
       >
-        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
           <StatusBar translucent backgroundColor="transparent" />
           <View
             style={{
-              flex: 0.5,
+              flex: 3,
               alignItems: 'center',
-              justifyContent: 'flex-end'
+              justifyContent: 'center'
               // marginTop: 100,
               // marginBottom: 30
             }}
@@ -140,6 +145,7 @@ const SignInScreen = ({
               handleChangeText={handleChangeText}
               value={username}
               autoCapitalize="none"
+              onFocus={handleOnFocus}
               clearButtonMode="while-editing"
               // keyboardType="email-address"
               keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
@@ -154,6 +160,7 @@ const SignInScreen = ({
                 name="password"
                 handleChangeText={handleChangeText}
                 value={password}
+                onFocus={handleOnFocus}
                 autoCapitalize="none"
                 error={error.password || loginError || error.commonError}
                 style={{
@@ -192,7 +199,7 @@ const SignInScreen = ({
             </Pressable>
           </ContentWrap>
 
-          <View style={{ alignItems: 'center' }}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>
               Don't you have an account yet?{' '}
               <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
@@ -200,9 +207,11 @@ const SignInScreen = ({
               </Text>
             </Text>
           </View>
-          <Pressable style={{ alignItems: 'center' }}>
-            <Text style={{ ...styles.signUpText }}>Need help?</Text>
-          </Pressable>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Pressable style={{ alignItems: 'center' }}>
+              <Text style={{ ...styles.signUpText }}>Need help?</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
