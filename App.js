@@ -14,6 +14,7 @@ import IptvStack from 'navigators/iptv-stack.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators, selectIsLoading } from 'modules/app';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
@@ -21,12 +22,21 @@ import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import { selectProviders } from 'modules/ducks/provider/provider.selectors';
-import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
+// import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 import SplashScreen from 'react-native-splash-screen';
 // import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
 import { resetStore } from 'modules/store';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
+import { selectUpdated, selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors.js';
+import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors.js';
+
+const HomeComponent = () => (
+  <NavigationContainer>
+    <StatusBar translucent backgroundColor="transparent" />
+    <HomeTabs />
+  </NavigationContainer>
+);
 
 const App = ({
   isLoading,
@@ -38,15 +48,22 @@ const App = ({
   updatePasswordStartAction,
   passwordUpdateParams,
   providers,
-  skippedProviderAdd,
+  // skippedProviderAdd,
 
   resetNowPlayingAction,
 
   currentUser,
-  setProviderAction
+  setProviderAction,
+
+  getProfileAction,
+  profileUpdated,
+  onboardinginfo,
+
+  isProviderSetupSkipped
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
+  // const [skippedProviderAdd, setSkippedProviderAdd] = React.useState(false);
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
@@ -75,6 +92,30 @@ const App = ({
       updatePasswordStartAction({ params });
     });
   }, []);
+
+  // if profile is updated get profile to update profile data
+  React.useEffect(() => {
+    if (profileUpdated) {
+      getProfileAction();
+    }
+  }, [profileUpdated]);
+
+  // React.useEffect(() => {
+  //   // might not be necessary
+  //   if (typeof onboardinginfo === 'undefined') return;
+
+  //   const { skippedProviderSetup } = onboardinginfo;
+
+  //   if (typeof skippedProviderSetup === 'undefined') return;
+
+  //   if (skippedProviderSetup) {
+  //     return setSkippedProviderAdd(true);
+  //   } else {
+  //     return setSkippedProviderAdd(false);
+  //   }
+
+  //   // setSkippedProviderAdd(false);
+  // });
 
   React.useEffect(() => {
     if (isLoggedIn) {
@@ -116,22 +157,15 @@ const App = ({
       </NavigationContainer>
     );
 
-  // if there is no provider show IPTV stack instead of home stack
-  if (typeof providers !== 'undefined') {
-    if (!providers.length && !skippedProviderAdd)
-      return (
-        <NavigationContainer>
-          <IptvStack />
-        </NavigationContainer>
-      );
-  }
+  /// if provider add is not skipped
+  if (!isProviderSetupSkipped)
+    return (
+      <NavigationContainer>
+        <IptvStack />
+      </NavigationContainer>
+    );
 
-  return (
-    <NavigationContainer>
-      <StatusBar translucent backgroundColor="transparent" />
-      <HomeTabs />
-    </NavigationContainer>
-  );
+  return <HomeComponent />;
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -140,7 +174,10 @@ const mapStateToProps = createStructuredSelector({
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
   providers: selectProviders,
-  skippedProviderAdd: selectSkippedProviderAdd
+  // skippedProviderAdd: selectSkippedProviderAdd,
+  profileUpdated: selectUpdated,
+  onboardinginfo: selectOnboardinginfo,
+  isProviderSetupSkipped: selectIsProviderSetupSkipped
 });
 
 const actions = {
@@ -148,7 +185,8 @@ const actions = {
   signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   resetNowPlayingAction: MusicCreators.resetNowPlaying,
-  setProviderAction: UserCreators.setProvider
+  setProviderAction: UserCreators.setProvider,
+  getProfileAction: ProfileCreators.get
 };
 
 export default connect(mapStateToProps, actions)(App);
