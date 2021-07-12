@@ -130,13 +130,13 @@ const SignInScreen = ({
         bounces={false}
         contentContainerStyle={{ height: Dimensions.get('window').height }}
       >
-        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
           <StatusBar translucent backgroundColor="transparent" />
           <View
             style={{
-              flex: 0.5,
+              flex: 3,
               alignItems: 'center',
-              justifyContent: 'flex-end'
+              justifyContent: 'center'
               // marginTop: 100,
               // marginBottom: 30
             }}
@@ -204,7 +204,7 @@ const SignInScreen = ({
             </Pressable>
           </ContentWrap>
 
-          <View style={{ alignItems: 'center' }}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Text>
               Don't you have an account yet?{' '}
               <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
@@ -212,9 +212,11 @@ const SignInScreen = ({
               </Text>
             </Text>
           </View>
-          <Pressable style={{ alignItems: 'center' }}>
-            <Text style={{ ...styles.signUpText }}>Need help?</Text>
-          </Pressable>
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <Pressable style={{ alignItems: 'center' }}>
+              <Text style={{ ...styles.signUpText }}>Need help?</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
