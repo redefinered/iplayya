@@ -35,6 +35,7 @@ import styles from './add-iptv.styles';
 
 // eslint-disable-next-line no-unused-vars
 import { isValidUsername, isValidWebsite } from 'common/validate';
+import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors';
 class AddIptvScreen extends React.Component {
   state = {
     modalVisible: false,
@@ -152,7 +153,8 @@ class AddIptvScreen extends React.Component {
   };
 
   render() {
-    const { skippedProviderAdd } = this.props;
+    console.log('sdfasdf', this.props.isProviderSetupSkipped);
+    // const { skippedProviderAdd } = this.props;
     const { errors, valid, modalVisible, ...input } = this.state;
 
     // const [modalVisible, setModalVisible] = React.useState(false);
@@ -217,7 +219,7 @@ class AddIptvScreen extends React.Component {
         </ContentWrap>
 
         <View style={{ flex: 10 }}>
-          {!skippedProviderAdd ? (
+          {!this.props.isProviderSetupSkipped ? (
             <TouchableRipple
               rippleColor="rgba(0,0,0,0.28)"
               style={styles.skip}
@@ -253,7 +255,8 @@ const mapStateToProps = createStructuredSelector({
   providers: selectProviders,
   // skippedProviderAdd: selectSkippedProviderAdd,
   userId: selectCurrentUserId,
-  onboardinginfo: selectOnboardinginfo
+  onboardinginfo: selectOnboardinginfo,
+  isProviderSetupSkipped: selectIsProviderSetupSkipped
 });
 
 const actions = {

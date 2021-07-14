@@ -61,7 +61,8 @@ const IptvScreen = ({
   const [showIptvGuide, setShowIptvGuide] = React.useState(false);
   const [showStepTwo, setShowStepTwo] = React.useState(false);
   const [showStepThree, setShowStepThree] = React.useState(false);
-  // const [skippedProviderAdd, setSkippedProviderAdd] = React.useState(false);
+
+  const [redirect, setRedirect] = React.useState(false); /// hack!!!
 
   React.useEffect(() => {
     createStartAction();
@@ -70,8 +71,18 @@ const IptvScreen = ({
   React.useEffect(() => {
     if (isProviderSetupSkipped) return;
 
-    navigation.replace('AddIptvScreen');
+    setRedirect(true);
+
+    /// navigation replace method does not change the screen for some reason
+    // even if isProviderSetupSkipped is false
+    // console.log({ isProviderSetupSkipped });
   });
+
+  React.useEffect(() => {
+    if (redirect) {
+      return navigation.navigate('AddIptvScreen');
+    }
+  }, [redirect]);
 
   React.useEffect(() => {
     if (params) {
