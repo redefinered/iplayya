@@ -44,22 +44,19 @@ const ForgotPasswordScreen = ({
   const handleChange = (text, name) => {
     setScreenError(null);
     setEmail(text.toLowerCase());
-    if (name === 'email') {
-      if (!isValidEmail(text)) {
+  };
+
+  const handleSend = () => {
+    if (email === '') {
+      setError({ email: 'Please fill required field.' });
+    } else {
+      if (!isValidEmail(email)) {
         setError({ email: 'Invalid email address' });
       } else {
         setError({ email: null });
       }
     }
-  };
 
-  const handleSend = () => {
-    if (!email.length) {
-      setError({ email: 'Please fill required fields' });
-      return;
-    }
-
-    setError({ email: null });
     getLinkAction({ email });
   };
 
@@ -90,7 +87,7 @@ const ForgotPasswordScreen = ({
       />
       {error.email ? <Text>{error.email}</Text> : null}
       {screenError ? <Text>{screenError}</Text> : null}
-      {forgotError ? <Text>{forgotError}</Text> : null}
+      {/* {forgotError ? <Text>{forgotError}</Text> : null} */}
       <MainButton onPress={() => handleSend()} text="Send" style={{ marginTop: 25 }} />
       {/* <Button mode="contained" onPress={() => handleSend()}>
         Send
