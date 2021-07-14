@@ -43,12 +43,20 @@ class AddIptvScreen extends React.Component {
     username: '',
     password: '',
     valid: true,
-    errors: [
-      { key: 'name', val: false },
-      { key: 'portal_address', val: false },
-      { key: 'username', val: false },
-      { key: 'password', val: false }
-    ]
+    errors:
+      // [
+      //   { key: 'name', val: false },
+      //   { key: 'portal_address', val: false },
+      //   { key: 'username', val: false },
+      //   { key: 'password', val: false }
+      // ]
+      {
+        name: null,
+        portal_address: null,
+        username: null,
+        password: null,
+        commonError: null
+      }
   };
 
   componentDidMount() {
@@ -88,13 +96,34 @@ class AddIptvScreen extends React.Component {
 
   handleChange = (value, name) => {
     this.setState({ [name]: value });
+    if (name === 'name') {
+      if (value === '') {
+        this.setError('name', null);
+      }
+    }
   };
 
-  setError = (stateError, field, val) => {
-    const index = stateError.findIndex(({ key }) => key === field);
-    stateError[index].val = val;
-    this.setState({ errors: stateError });
+  handleOnFocus = () => {
+    if (this.state.name.length < 4) {
+      this.setError('name', 'At least 4 characters length.');
+    } else {
+      this.setError('name', null);
+    }
+    if (this.state.name === '') {
+      this.setError('name', null);
+      this.setError('commonError', null);
+    }
   };
+
+  setError = (field, val) => {
+    this.setState({ errors: Object.assign(this.state.errors, { [field]: val }) });
+  };
+
+  // setError = (stateError, field, val) => {
+  //   const index = stateError.findIndex(({ key }) => key === field);
+  //   stateError[index].val = val;
+  //   this.setState({ errors: stateError });
+  // };
 
   handleSubmit = () => {
     // eslint-disable-next-line no-unused-vars
@@ -103,42 +132,96 @@ class AddIptvScreen extends React.Component {
     // console.log({ input, stateError });
 
     // validation here
-    if (!input.name || input.name.length < 5) {
-      this.setError(stateError, 'name', true);
+    // if (!input.name || input.name.length < 5) {
+    //   this.setError(stateError, 'name', true);
+    // } else {
+    //   this.setError(stateError, 'name', false);
+    // }
+
+    if (
+      input.name === '' &&
+      input.portal_address === '' &&
+      input.username === '' &&
+      input.password === ''
+    ) {
+      this.setError('commonError', 'Please fill the required fields.');
+      return;
     } else {
-      this.setError(stateError, 'name', false);
+      this.setError('commonError', null);
     }
 
-    if (!input.portal_address) {
-      this.setError(stateError, 'portal_address', true);
+    if (!input.name.length) {
+      this.setError('name', 'IPTV provider name is required');
+    } else {
+      this.setError('name', null);
+    }
+
+    // if (!input.portal_address) {
+    //   this.setError(stateError, 'portal_address', true);
+    // } else {
+    //   if (!isValidWebsite(input.portal_address)) {
+    //     this.setError(stateError, 'portal_address', true);
+    //   } else {
+    //     this.setError(stateError, 'portal_address', false);
+    //   }
+    // }
+
+    if (!input.portal_address.length) {
+      this.setError('portal_address', 'Portal address is required');
     } else {
       if (!isValidWebsite(input.portal_address)) {
-        this.setError(stateError, 'portal_address', true);
+        this.setError('portal_address', 'Invalid portal address');
       } else {
-        this.setError(stateError, 'portal_address', false);
+        this.setError('portal_address', null);
       }
     }
 
-    if (!isValidUsername(input.username)) {
-      this.setError(stateError, 'username', true);
+    // if (!isValidUsername(input.username)) {
+    //   this.setError(stateError, 'username', true);
+    // } else {
+    //   this.setError(stateError, 'username', false);
+    // }
+
+    if (!input.username.length) {
+      this.setError('username', 'Username is required');
     } else {
-      this.setError(stateError, 'username', false);
+      if (!isValidUsername(input.username)) {
+        this.setError('username', 'Invalid username');
+      } else {
+        this.setError('username', null);
+      }
     }
 
     /// TODO: fix password validation -- Deluge@2020! is invalid
     // if (!isValidPassword(input.password)) {
-    if (!input.password) {
-      this.setError(stateError, 'password', true);
+    // if (!input.password) {
+    //   this.setError(stateError, 'password', true);
+    // } else {
+    //   this.setError(stateError, 'password', false);
+    // }
+
+    if (!input.password.length) {
+      this.setError('password', 'Password is required');
     } else {
-      this.setError(stateError, 'password', false);
+      this.setError('password', null);
     }
 
-    const withError = stateError.find(({ val }) => val === true);
+    const withError = Object.keys(stateError)
+      .map((key) => ({ key, val: stateError[key] }))
+      .find(({ val }) => val !== null);
+
     if (typeof withError !== 'undefined') {
       return this.setState({ valid: false });
     } else {
       this.setState({ valid: true });
     }
+
+    // const withError = stateError.find(({ val }) => val === true);
+    // if (typeof withError !== 'undefined') {
+    //   return this.setState({ valid: false });
+    // } else {
+    //   this.setState({ valid: true });
+    // }
 
     // submit if no errors
     this.props.createAction({ input });
@@ -153,15 +236,15 @@ class AddIptvScreen extends React.Component {
 
   render() {
     const { skippedProviderAdd } = this.props;
-    const { errors, valid, modalVisible, ...input } = this.state;
+    const { errors, modalVisible, ...input } = this.state; // remove valid
 
     // const [modalVisible, setModalVisible] = React.useState(false);
 
-    let stateError = {};
+    // let stateError = {};
 
-    errors.map(({ key, val }) => {
-      Object.assign(stateError, { [key]: val });
-    });
+    // errors.map(({ key, val }) => {
+    //   Object.assign(stateError, { [key]: val });
+    // });
 
     return (
       <React.Fragment>
@@ -173,41 +256,51 @@ class AddIptvScreen extends React.Component {
             style={styles.textInput}
             placeholder="IPTV provider name"
             handleChangeText={this.handleChange}
-            error={stateError.name}
+            error={errors.name || errors.commonError}
             maxLength={30}
+            focusAction={this.handleOnFocus}
             clearButtonMode="while-editing"
             autoCapitalize="words"
           />
+          {errors.name ? <Text style={{ marginBottom: 5 }}>{errors.name}</Text> : null}
           <TextInput
             value={input.portal_address}
             name="portal_address"
             style={styles.textInput}
             placeholder="Portal address"
+            focusAction={this.handleOnFocus}
             handleChangeText={this.handleChange}
-            error={stateError.portal_address}
+            error={errors.portal_address || errors.commonError}
             keyboardType="url"
             clearButtonMode="while-editing"
             autoCapitalize="none"
           />
+          {errors.portal_address ? (
+            <Text style={{ marginBottom: 5 }}>{errors.portal_address}</Text>
+          ) : null}
           <TextInput
             value={input.username}
             name="username"
             style={styles.textInput}
             placeholder="Username"
+            focusAction={this.handleOnFocus}
             handleChangeText={this.handleChange}
-            error={stateError.username}
+            error={errors.username || errors.commonError}
             clearButtonMode="while-editing"
             autoCapitalize="none"
           />
+          {errors.username ? <Text style={{ marginBottom: 5 }}>{errors.username}</Text> : null}
           <PasswordInput
             value={input.password}
             name="password"
             style={styles.textInput}
+            focusAction={this.handleOnFocus}
             handleChangeText={this.handleChange}
-            error={stateError.password}
+            error={errors.password || errors.commonError}
           />
-
-          {!valid ? <Text>Please fill the required fields.</Text> : null}
+          {errors.password ? <Text>{errors.password}</Text> : null}
+          {errors.commonError ? <Text>{errors.commonError}</Text> : null}
+          {/* {!valid ? <Text>Please fill the required fields.</Text> : null} */}
           {/* {this.props.error && <Text>{this.props.error}</Text>} */}
           <MainButton
             onPress={() => this.handleSubmit()}
