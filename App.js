@@ -63,7 +63,6 @@ const App = ({
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
-  // const [skippedProviderAdd, setSkippedProviderAdd] = React.useState(false);
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
@@ -80,16 +79,30 @@ const App = ({
     resetNowPlayingAction();
 
     Linking.addEventListener('url', ({ url }) => {
+      /// decode uri from deep link
+      const urldecoded = decodeURIComponent(url);
+
+      /// extract the query parameter called "params"
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
-        params = {},
+        urlparams = {},
         match;
 
-      while ((match = regex.exec(url))) {
-        params[match[1]] = match[2];
+      while ((match = regex.exec(urldecoded))) {
+        urlparams[match[1]] = match[2];
       }
 
-      // set data required to reset password
-      updatePasswordStartAction({ params });
+      const { params } = urlparams;
+
+      /// get token and email form extracted parameter
+      const splitparams = params.split(',');
+
+      const [token, email] = splitparams.map((i) => {
+        return i.split('|')[1];
+      });
+
+      /// set data required to reset password
+      // this will redirect the app to reset-password screen
+      updatePasswordStartAction({ params: { token, email } });
     });
   }, []);
 
