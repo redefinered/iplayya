@@ -37,7 +37,8 @@ class ResetPasswordScreen extends React.Component {
     errors: {
       password: null,
       password_confirmation: null,
-      commonError: null
+      commonError: null,
+      password_validation: null
       // { key: 'first_name', val: false },
       // { key: 'last_name', val: false },
       // { key: 'username', val: false },
@@ -58,15 +59,16 @@ class ResetPasswordScreen extends React.Component {
   handleOnFocus = () => {
     if (!isValidPassword(this.state.password)) {
       this.setError(
-        'password',
+        'password_validation',
         '• At least 4 characters long. \n• Should contain upper case letters and numbers'
       );
     } else {
-      this.setError('password', null);
+      this.setError('password_validation', null);
       this.setError('commonError', null);
     }
     if (this.state.password_confirmation === '') {
       this.setError('password_confirmation', null);
+      this.setError('password', null);
     }
   };
 
@@ -85,18 +87,22 @@ class ResetPasswordScreen extends React.Component {
       updatePasswordAction
     } = this.props;
 
-    // if (!isValidPassword(password)) {
-    //   this.setError(
-    //     'password',
-    //     '• At least 4 characters long. \n• Should contain upper case letters and numbers'
-    //   );
-    // } else {
-    //   this.setError('password', null);
-    // }
+    if (!isValidPassword(password)) {
+      this.setError(
+        'password',
+        '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+      );
+      this.setError('password_validation', null);
+    } else {
+      this.setError('password', null);
+      this.setError('password_validation', null);
+    }
 
     if (password === '' && password_confirmation === '') {
       this.setError('password_confirmation', 'Please fill required field');
       this.setError('commonError', ' ');
+      this.setError('password_validation', null);
+      this.setError('password', null);
     } else {
       if (password_confirmation !== password) {
         this.setError('commonError', ' ');
@@ -160,6 +166,7 @@ class ResetPasswordScreen extends React.Component {
             placeholder="Enter new password"
             error={errors.password || errors.commonError}
           />
+          {errors.password_validation ? <Text>{errors.password_validation}</Text> : null}
           {errors.password ? <Text>{errors.password}</Text> : null}
           <PasswordInput
             name="password_confirmation"

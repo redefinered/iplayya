@@ -36,7 +36,8 @@ class SignUpScreen extends React.Component {
       email: null,
       password: null,
       password_confirmation: null,
-      commonError: null
+      commonError: null,
+      password_validation: null
     }
   };
 
@@ -49,7 +50,7 @@ class SignUpScreen extends React.Component {
       if (value === '') {
         this.setError('email', null);
       }
-      return this.setState({ [name]: value.toLowerCase() });
+      return this.setState({ [name]: value.toLowerCase().trim() });
     }
 
     if (name === 'username') {
@@ -60,6 +61,10 @@ class SignUpScreen extends React.Component {
     }
 
     if (name === 'password') {
+      if (isValidPassword(value)) {
+        this.setError('password_validation', null);
+      }
+    } else {
       if (value === '') {
         this.setError('password', null);
       }
@@ -77,11 +82,57 @@ class SignUpScreen extends React.Component {
       }
     }
 
+    if (name === 'password_confirmation') {
+      if (value === '') {
+        this.setError('password_confirmation', null);
+      }
+    }
+
     this.setState({ [name]: value });
   };
 
   onlyOneSpace = (str) => {
     return str.trim();
+  };
+
+  handlePasswordFocus = () => {
+    if (!isValidEmail(this.state.email)) {
+      this.setError('email', 'Invalid email address');
+    } else {
+      this.setError('email', null);
+    }
+    if (this.state.email === '') {
+      this.setError('email', null);
+    }
+
+    if (!isValidPassword(this.state.password)) {
+      this.setError(
+        'password_validation',
+        '• Password must be at least 4 characters long \n• Should contain uppercase letters and numbers'
+      );
+      this.setError('password', null);
+    } else {
+      this.setError('password_validation', null);
+    }
+    if (this.state.first_name === '') {
+      this.setError('first_name', null);
+    }
+    if (this.state.last_name === '') {
+      this.setError('last_name', null);
+    }
+    if (this.state.username === '') {
+      this.setError('username', null);
+    }
+    if (this.state.email === '') {
+      this.setError('email', null);
+    }
+    if (this.state.password === '') {
+      this.setError('password', null);
+      this.setError('commonError', null);
+    }
+    if (this.state.password_confirmation === '') {
+      this.setError('password_confirmation', null);
+    }
   };
 
   handleOnFocus = () => {
@@ -94,15 +145,8 @@ class SignUpScreen extends React.Component {
       this.setError('email', null);
     }
 
-    if (!isValidPassword(this.state.password)) {
-      this.setError(
-        'password',
-        '• Password must be at least 4 characters long \n• Should contain uppercase letters and numbers'
-      );
-    } else {
-      this.setError('password', null);
-    }
     if (this.state.password === '') {
+      this.setError('password_validation', null);
       this.setError('password', null);
     }
 
@@ -133,6 +177,10 @@ class SignUpScreen extends React.Component {
     if (this.state.username === '') {
       this.setError('username', null);
     }
+
+    if (this.state.password_confirmation === '') {
+      this.setError('password_confirmation', null);
+    }
   };
 
   setError = (field, val) => {
@@ -154,6 +202,7 @@ class SignUpScreen extends React.Component {
       rest.password_confirmation === ''
     ) {
       this.setError('commonError', 'Please fill the required Fields.');
+      this.setError('password_validation', null);
       return;
     } else {
       this.setError('commonError', null);
@@ -163,7 +212,7 @@ class SignUpScreen extends React.Component {
       this.setError('first_name', 'First name is required');
     } else {
       if (!isValidName(rest.first_name)) {
-        this.setError('first_name', 'Invalid name');
+        this.setError('first_name', 'At least 3 characters length.');
       } else {
         this.setError('first_name', null);
       }
@@ -173,7 +222,7 @@ class SignUpScreen extends React.Component {
       this.setError('last_name', 'Last name is required');
     } else {
       if (!isValidName(rest.last_name)) {
-        this.setError('last_name', 'Invalid last name');
+        this.setError('last_name', 'At least 2 characters length');
       } else {
         this.setError('last_name', null);
       }
@@ -183,7 +232,7 @@ class SignUpScreen extends React.Component {
       this.setError('username', 'Username is required');
     } else {
       if (!isValidUsername(rest.username)) {
-        this.setError('username', 'Invalid username');
+        this.setError('username', 'At least 2 characters length');
       } else {
         this.setError('username', null);
       }
@@ -201,12 +250,14 @@ class SignUpScreen extends React.Component {
 
     if (!rest.password.length) {
       this.setError('password', 'Password is required');
+      this.setError('password_validation', null);
     } else {
       if (!isValidPassword(rest.password)) {
         this.setError(
           'password',
           '• Password must be at least 4 characters long \n• Should contain uppercase letters and numbers'
         );
+        this.setError('password_validation', null);
       } else {
         this.setError('password', null);
       }
@@ -215,14 +266,7 @@ class SignUpScreen extends React.Component {
     if (!rest.password_confirmation.length) {
       this.setError('password_confirmation', 'Password is required');
     } else {
-      if (!isValidPassword(rest.password_confirmation)) {
-        this.setError(
-          'password',
-          '• Password must be at least 4 characters long \n• Should contain uppercase letters and numbers'
-        );
-      } else {
-        this.setError('password_confirmation', null);
-      }
+      this.setError('password_confirmation', null);
     }
 
     if (rest.password_confirmation !== rest.password) {
@@ -314,10 +358,13 @@ class SignUpScreen extends React.Component {
             name="password"
             placeholder="Password"
             maxLength={20}
-            focusAction={this.handleOnFocus}
+            focusAction={this.handlePasswordFocus}
             handleChangeText={this.handleChange}
             error={errors.password || errors.commonError}
           />
+          {errors.password_validation ? (
+            <Text style={{ marginBottom: 10 }}>{errors.password_validation}</Text>
+          ) : null}
           {errors.password && <Text style={{ marginBottom: 10 }}>{errors.password}</Text>}
           <PasswordInput
             value={formFields.password_confirmation}
