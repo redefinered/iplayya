@@ -19,10 +19,17 @@ const styles = StyleSheet.create({
   }
 });
 
-const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
+const PasswordInput = ({ style, name, handleChangeText, focusAction, ...otherProps }) => {
   const [showText, setShowText] = React.useState(false);
   const [focused, setFocused] = React.useState(false);
   const customStyle = focused ? styles.textFiledFocused : styles.textField;
+  const handleFocused = () => {
+    if (typeof focusAction !== 'undefined') {
+      focusAction();
+    }
+    setFocused(true);
+  };
+
   return (
     <View style={{ position: 'relative' }}>
       <TextInput
@@ -40,7 +47,7 @@ const PasswordInput = ({ style, name, handleChangeText, ...otherProps }) => {
           position: 'relative',
           zIndex: 1
         }}
-        onFocus={() => setFocused(true)}
+        onFocus={() => handleFocused()}
         onBlur={() => setFocused(false)}
         placeholderTextColor={focused ? '#FFFFFF' : 'rgba(255,255,255,0.5)'}
         theme={{
