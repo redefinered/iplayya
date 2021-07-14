@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -21,14 +20,14 @@ import { Creators as PasswordActionCreators } from 'modules/ducks/password/passw
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
-import { selectProviders } from 'modules/ducks/provider/provider.selectors';
+// import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 // import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 import SplashScreen from 'react-native-splash-screen';
 // import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
-import { resetStore } from 'modules/store';
+// import { resetStore } from 'modules/store';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
-import { selectUpdated, selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors.js';
+import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
 import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors.js';
 
 const HomeComponent = () => (
@@ -41,13 +40,15 @@ const HomeComponent = () => (
 const App = ({
   isLoading,
 
-  purgeStoreAction,
-  signOutAction,
+  // purgeStoreAction,
+  // signOutAction,
 
   isLoggedIn,
   updatePasswordStartAction,
   passwordUpdateParams,
-  providers,
+  // passwordUpdated,
+  // passwordResetStart,
+  // providers,
   // skippedProviderAdd,
 
   resetNowPlayingAction,
@@ -57,7 +58,7 @@ const App = ({
 
   getProfileAction,
   profileUpdated,
-  onboardinginfo,
+  // onboardinginfo,
 
   isProviderSetupSkipped
 }) => {
@@ -186,10 +187,11 @@ const mapStateToProps = createStructuredSelector({
   isLoading: selectIsLoading,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
-  providers: selectProviders,
+  // passwordUpdated: selectPasswordUpdated,
+  // providers: selectProviders,
   // skippedProviderAdd: selectSkippedProviderAdd,
   profileUpdated: selectUpdated,
-  onboardinginfo: selectOnboardinginfo,
+  // onboardinginfo: selectOnboardinginfo,
   isProviderSetupSkipped: selectIsProviderSetupSkipped
 });
 

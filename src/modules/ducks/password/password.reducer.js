@@ -11,6 +11,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.START]: (state) => {
+    return { ...state, ...INITIAL_STATE };
+  },
   [Types.GET_LINK_START]: (state) => {
     return {
       ...state,

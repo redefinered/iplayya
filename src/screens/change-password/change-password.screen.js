@@ -178,7 +178,7 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   // clearResetPasswordParamsAction: Creators.clearResetPasswordParams,
-  resetUpdateParamsAction: Creators.resetUpdateParams,
+  // resetUpdateParamsAction: Creators.resetUpdateParams,
   updatePasswordAction: Creators.update,
   changePasswordAction: Creators.changePassword,
   enableSwipeAction: NavActionCreators.enableSwipe
