@@ -98,11 +98,11 @@ const SignInScreen = ({
     signInStartAction();
 
     if (username === '' && password === '') {
-      setError({ commonError: 'Please fill required fields' });
+      setError({ commonError: 'Please fill required fields.' });
       return;
     }
     if (username === '') {
-      setError({ username: 'Username is required' });
+      setError({ username: 'Email is required' });
       return;
     }
     if (!password.length) {
@@ -145,7 +145,7 @@ const SignInScreen = ({
               handleChangeText={handleChangeText}
               value={username}
               autoCapitalize="none"
-              onFocus={handleOnFocus}
+              focusAction={handleOnFocus}
               clearButtonMode="while-editing"
               // keyboardType="email-address"
               keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
@@ -160,7 +160,7 @@ const SignInScreen = ({
                 name="password"
                 handleChangeText={handleChangeText}
                 value={password}
-                onFocus={handleOnFocus}
+                focusAction={handleOnFocus}
                 autoCapitalize="none"
                 error={error.password || loginError || error.commonError}
                 style={{
@@ -203,13 +203,13 @@ const SignInScreen = ({
             <Text>
               Don't you have an account yet?{' '}
               <Text onPress={() => navigation.navigate('SignUpScreen')} style={styles.signUpText}>
-                SignUp
+                Sign Up
               </Text>
             </Text>
           </View>
           <View style={{ flex: 1, justifyContent: 'center' }}>
             <Pressable style={{ alignItems: 'center' }}>
-              <Text style={{ ...styles.signUpText }}>Need help?</Text>
+              <Text style={{ color: '#FFFFFF' }}>Need help?</Text>
             </Pressable>
           </View>
         </View>

@@ -36,7 +36,9 @@ class ResetPasswordScreen extends React.Component {
     errorMessage: '',
     errors: {
       password: null,
-      password_confirmation: null
+      password_confirmation: null,
+      commonError: null,
+      password_validation: null
       // { key: 'first_name', val: false },
       // { key: 'last_name', val: false },
       // { key: 'username', val: false },
@@ -48,16 +50,25 @@ class ResetPasswordScreen extends React.Component {
 
   handleChange = (value, name) => {
     this.setState({ [name]: value });
+    if (isValidPassword(value)) {
+      this.setError('password', null);
+      this.setError('commonError', null);
+    }
+  };
 
-    if (name === 'password') {
-      if (!isValidPassword(value)) {
-        this.setError(
-          'password',
-          '• At least 4 characters long. \n• Should contain upper case letters and numbers'
-        );
-      } else {
-        this.setError('password', null);
-      }
+  handleOnFocus = () => {
+    if (!isValidPassword(this.state.password)) {
+      this.setError(
+        'password_validation',
+        '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+      );
+    } else {
+      this.setError('password_validation', null);
+      this.setError('commonError', null);
+    }
+    if (this.state.password_confirmation === '') {
+      this.setError('password_confirmation', null);
+      this.setError('password', null);
     }
   };
 
@@ -81,28 +92,23 @@ class ResetPasswordScreen extends React.Component {
         'password',
         '• At least 4 characters long. \n• Should contain upper case letters and numbers'
       );
+      this.setError('password_validation', null);
     } else {
       this.setError('password', null);
+      this.setError('password_validation', null);
     }
 
-    // if (!isValidPassword(password_confirmation)) {
-    //   this.setError(
-    //     'password_confirmation',
-    //     '• At least 4 characters long. \n• Should contain upper case letters and numbers'
-    //   );
-    // } else {
-    //   this.setError('password_confirmation', null);
-    // }
-
     if (password === '' && password_confirmation === '') {
-      this.setError('password', 'Please fill required field');
-      this.setError('password_confirmation', ' ');
+      this.setError('password_confirmation', 'Please fill required field');
+      this.setError('commonError', ' ');
+      this.setError('password_validation', null);
+      this.setError('password', null);
     } else {
-      if (password !== password_confirmation) {
-        this.setError('password', 'Password does not Match');
-        this.setError('password_confirmation', ' ');
+      if (password_confirmation !== password) {
+        this.setError('commonError', ' ');
+        this.setError('password_confirmation', 'Password does not Match');
       } else {
-        this.setError('password', null);
+        this.setError('commonError', null);
         this.setError('password_confirmation', null);
       }
     }
@@ -156,19 +162,23 @@ class ResetPasswordScreen extends React.Component {
             value={password}
             handleChangeText={this.handleChange}
             style={styles.textInput}
+            focusAction={this.handleOnFocus}
             placeholder="Enter new password"
-            error={errors.password}
+            error={errors.password || errors.commonError}
           />
+          {errors.password_validation ? <Text>{errors.password_validation}</Text> : null}
+          {errors.password ? <Text>{errors.password}</Text> : null}
           <PasswordInput
             name="password_confirmation"
             value={password_confirmation}
             handleChangeText={this.handleChange}
+            focusAction={this.handleOnFocus}
             style={styles.textInput}
             placeholder="Confirm new password"
             error={errors.password_confirmation}
           />
-          {errors.password ? <Text>{errors.password}</Text> : null}
           {errors.password_confirmation ? <Text>{errors.password_confirmation}</Text> : null}
+          {errors.commonError ? <Text>{errors.commonError}</Text> : null}
           {/* {!valid ? <Text>{this.state.errorMessage}</Text> : null} */}
           {this.props.error && <Text>{this.props.error}</Text>}
           <MainButton

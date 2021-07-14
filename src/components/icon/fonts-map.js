@@ -15,7 +15,7 @@ export default {
   cast: String.fromCharCode(hex('E809')),
   'cast-connected': String.fromCharCode(hex('E80A')),
   'change-password': String.fromCharCode(hex('E80B')),
-  'check-circle': String.fromCharCode(hex('E80C')),
+  'circular-check': String.fromCharCode(hex('E80C')),
   'arrow-left': String.fromCharCode(hex('E80D')),
   'circular-pause': String.fromCharCode(hex('E80E')),
   'circular-play': String.fromCharCode(hex('E80F')),
