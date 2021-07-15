@@ -8,8 +8,10 @@ import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
+// import HomeNavigationContainer from 'containers/home-navigation.container';
 import HomeTabs from 'navigators/home-tabs.navigator';
-import IptvStack from 'navigators/iptv-stack.navigator';
+// import IptvStack from 'navigators/iptv-stack.navigator';
+// import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators, selectIsLoading } from 'modules/app';
@@ -25,7 +27,8 @@ import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/
 import SplashScreen from 'react-native-splash-screen';
 // import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
-// import { resetStore } from 'modules/store';
+// eslint-disable-next-line no-unused-vars
+import { resetStore } from 'modules/store';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
 import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
 import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors.js';
@@ -57,10 +60,10 @@ const App = ({
   setProviderAction,
 
   getProfileAction,
-  profileUpdated,
+  profileUpdated
   // onboardinginfo,
 
-  isProviderSetupSkipped
+  // isProviderSetupSkipped
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
@@ -168,14 +171,6 @@ const App = ({
     return (
       <NavigationContainer>
         <OnboardingStack />
-      </NavigationContainer>
-    );
-
-  /// if provider add is not skipped
-  if (!isProviderSetupSkipped)
-    return (
-      <NavigationContainer>
-        <IptvStack />
       </NavigationContainer>
     );
 

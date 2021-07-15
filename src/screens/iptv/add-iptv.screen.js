@@ -44,20 +44,17 @@ class AddIptvScreen extends React.Component {
     username: '',
     password: '',
     valid: true,
-    errors:
-      // [
-      //   { key: 'name', val: false },
-      //   { key: 'portal_address', val: false },
-      //   { key: 'username', val: false },
-      //   { key: 'password', val: false }
-      // ]
-      {
-        name: null,
-        portal_address: null,
-        username: null,
-        password: null,
-        commonError: null
-      }
+    errors: {
+      name: null,
+      portal_address: null,
+      username: null,
+      password: null,
+      commonError: null
+    }
+  };
+
+  static defaultProps = {
+    route: { params: { previousScreen: 'IPTV' } }
   };
 
   componentDidMount() {
@@ -68,10 +65,24 @@ class AddIptvScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.created !== this.props.created) {
-      const { created, navigation } = this.props;
+      const { created, navigation, route } = this.props;
       if (created) {
-        /// redirect to iptv screen
-        navigation.replace('IPTV');
+        console.log({ route });
+        const { params } = route;
+
+        /// if nextScreen param is not defined go back
+        // because that means the previous screen is the main IPTV screen
+        if (typeof params === 'undefined') return navigation.goBack();
+
+        if (params.nextScreen === 'home') {
+          /// go to home-stack
+          // return navigation.navigate('HomeScreen'); /// FOR TESTING
+          /// home stack should be rendered
+          // like magic
+        }
+
+        // if nextScreen is iptv
+        return navigation.goBack();
       }
     }
     if (prevProps.error === this.props.error) return;
@@ -227,7 +238,8 @@ class AddIptvScreen extends React.Component {
     // submit if no errors
     this.props.createAction({ input });
 
-    // on success, goes back to iptv list and display a success message
+    /// handle skip too
+    this.handleSkip(); /// TODO: should not be called if already skipped
   };
 
   handleComfirmAction = () => {

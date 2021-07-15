@@ -139,7 +139,7 @@ const IptvStack = ({
       <Stack.Screen
         name="EditIptvScreen"
         component={EditIptvScreen}
-        options={{ headerTitleAlign: 'center', title: 'Edit IPTV' }}
+        options={{ title: 'Edit IPTV', headerTitleAlign: 'center' }}
         listeners={{
           focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
           beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
