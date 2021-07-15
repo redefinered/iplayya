@@ -71,7 +71,7 @@ export const register = async (form) => {
         } = graphQLErrors[0];
         if (validation['input.password'])
           throw new Error(validation['input.password'].replace('input.', ''));
-        if (validation['input.email']) throw new Error('Email has already been taken');
+        if (validation['input.email']) throw new Error('Email has already been taken.');
         throw new Error(validation['input.email']);
       }
       throw new Error(error);

@@ -31,6 +31,7 @@ import {
   selectIsLoggedIn,
   selectCurrentUser
 } from 'modules/ducks/auth/auth.selectors';
+import { useFocusEffect } from '@react-navigation/native';
 
 import styles from './sign-in.styles';
 import withLoader from 'components/with-loader.component';
@@ -44,7 +45,8 @@ const SignInScreen = ({
   currentUser,
   // appReadyAction,
   signInAction,
-  signInStartAction
+  signInStartAction,
+  registerStartAction
   // setProviderAction
 }) => {
   // const [state, setState] = React.useState({ username: '', password: '', showPassword });
@@ -68,6 +70,10 @@ const SignInScreen = ({
   //     setUsername(currentUser.email);
   //   }
   // }, [loginError]);
+
+  useFocusEffect(() => {
+    registerStartAction();
+  });
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
@@ -238,6 +244,7 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   signInStartAction: Creators.signInStart,
   signInAction: Creators.signIn,
+  registerStartAction: Creators.registerStart,
   // setProviderAction: UserCreators.setProvider,
   appReadyAction: AppCreators.appReady
 };
