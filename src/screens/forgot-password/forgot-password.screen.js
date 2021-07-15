@@ -51,7 +51,7 @@ const ForgotPasswordScreen = ({
       setError({ email: 'Please fill required field.' });
     } else {
       if (!isValidEmail(email)) {
-        setError({ email: 'Invalid email address' });
+        setError({ email: 'Invalid email address.' });
       } else {
         setError({ email: null });
       }

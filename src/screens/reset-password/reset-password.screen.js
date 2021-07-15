@@ -60,7 +60,7 @@ class ResetPasswordScreen extends React.Component {
     if (!isValidPassword(this.state.password)) {
       this.setError(
         'password_validation',
-        '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+        '• At least 4 characters length. \n• Should contain upper case letters and numbers.'
       );
     } else {
       this.setError('password_validation', null);
@@ -90,7 +90,7 @@ class ResetPasswordScreen extends React.Component {
     if (!isValidPassword(password)) {
       this.setError(
         'password',
-        '• At least 4 characters long. \n• Should contain upper case letters and numbers'
+        '• At least 4 characters length. \n• Should contain upper case letters and numbers.'
       );
       this.setError('password_validation', null);
     } else {
@@ -99,14 +99,14 @@ class ResetPasswordScreen extends React.Component {
     }
 
     if (password === '' && password_confirmation === '') {
-      this.setError('password_confirmation', 'Please fill required field');
+      this.setError('password_confirmation', 'Please fill required field.');
       this.setError('commonError', ' ');
       this.setError('password_validation', null);
       this.setError('password', null);
     } else {
       if (password_confirmation !== password) {
         this.setError('commonError', ' ');
-        this.setError('password_confirmation', 'Password does not Match');
+        this.setError('password_confirmation', 'Password does not match.');
       } else {
         this.setError('commonError', null);
         this.setError('password_confirmation', null);

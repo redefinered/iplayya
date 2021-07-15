@@ -61,6 +61,13 @@ export const isValidName = (value) => {
   );
 };
 
+export const isValidLastName = (value) => {
+  return checkRegularExpression(
+    /^(?=\S+)(?=[a-zA-ZàáâäãåèéêëìíîïòóôöõøùúûüÿýñçčšžÀÁÂÄÃÅÈÉÊËÌÍÎÏÒÓÔÖÕØÙÚÛÜŸÝÑßÇŒÆČŠŽ∂ð ,.'-]*$).*(?=\S).{2,}$/,
+    value
+  );
+};
+
 export const isValidPassword = (value) => {
   return checkRegularExpression(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$/, value);
 };

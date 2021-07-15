@@ -18,7 +18,13 @@ import { selectError, selectSignedUp, selectIsFetching } from 'modules/ducks/aut
 
 import styles from './sign-up.styles';
 
-import { isValidEmail, isValidName, isValidUsername, isValidPassword } from 'common/validate';
+import {
+  isValidEmail,
+  isValidName,
+  isValidLastName,
+  isValidUsername,
+  isValidPassword
+} from 'common/validate';
 
 class SignUpScreen extends React.Component {
   state = {
@@ -49,6 +55,7 @@ class SignUpScreen extends React.Component {
     if (name === 'email') {
       if (value === '') {
         this.setError('email', null);
+        this.props.registerStartAction();
       }
       return this.setState({ [name]: value.toLowerCase().trim() });
     }
@@ -64,6 +71,7 @@ class SignUpScreen extends React.Component {
       if (isValidPassword(value)) {
         this.setError('password_validation', null);
       }
+      return this.setState({ [name]: this.onlyOneSpace(value) });
     } else {
       if (value === '') {
         this.setError('password', null);
@@ -86,6 +94,7 @@ class SignUpScreen extends React.Component {
       if (value === '') {
         this.setError('password_confirmation', null);
       }
+      return this.setState({ [name]: this.onlyOneSpace(value) });
     }
 
     this.setState({ [name]: value });
@@ -98,6 +107,7 @@ class SignUpScreen extends React.Component {
   handlePasswordFocus = () => {
     if (!isValidEmail(this.state.email)) {
       this.setError('email', 'Invalid email address');
+      this.props.registerStartAction();
     } else {
       this.setError('email', null);
     }
@@ -108,7 +118,7 @@ class SignUpScreen extends React.Component {
     if (!isValidPassword(this.state.password)) {
       this.setError(
         'password_validation',
-        '• Password must be at least 4 characters long \n• Should contain uppercase letters and numbers'
+        '• At least 4 characters length. \n• Should contain uppercase letters and numbers.'
       );
       this.setError('password', null);
     } else {
@@ -138,6 +148,7 @@ class SignUpScreen extends React.Component {
   handleOnFocus = () => {
     if (!isValidEmail(this.state.email)) {
       this.setError('email', 'Invalid email address');
+      this.props.registerStartAction();
     } else {
       this.setError('email', null);
     }
@@ -160,7 +171,7 @@ class SignUpScreen extends React.Component {
     }
 
     if (this.state.last_name.length < 2) {
-      this.setError('last_name', 'At least 2 characters length');
+      this.setError('last_name', 'At least 2 characters length.');
     } else {
       this.setError('last_name', null);
     }
@@ -170,7 +181,7 @@ class SignUpScreen extends React.Component {
     }
 
     if (this.state.username.length < 2) {
-      this.setError('username', 'At least 2 characters length');
+      this.setError('username', 'At least 2 characters length.');
     } else {
       this.setError('username', null);
     }
@@ -201,7 +212,7 @@ class SignUpScreen extends React.Component {
       rest.password === '' &&
       rest.password_confirmation === ''
     ) {
-      this.setError('commonError', 'Please fill the required Fields.');
+      this.setError('commonError', 'Please fill the required fields.');
       this.setError('password_validation', null);
       return;
     } else {
@@ -221,8 +232,8 @@ class SignUpScreen extends React.Component {
     if (!rest.last_name.length) {
       this.setError('last_name', 'Last name is required');
     } else {
-      if (!isValidName(rest.last_name)) {
-        this.setError('last_name', 'At least 2 characters length');
+      if (!isValidLastName(rest.last_name)) {
+        this.setError('last_name', 'At least 2 characters length.');
       } else {
         this.setError('last_name', null);
       }
@@ -232,7 +243,7 @@ class SignUpScreen extends React.Component {
       this.setError('username', 'Username is required');
     } else {
       if (!isValidUsername(rest.username)) {
-        this.setError('username', 'At least 2 characters length');
+        this.setError('username', 'At least 2 characters length.');
       } else {
         this.setError('username', null);
       }
@@ -242,7 +253,8 @@ class SignUpScreen extends React.Component {
       this.setError('email', 'Email is required');
     } else {
       if (!isValidEmail(rest.email)) {
-        this.setError('email', 'Invalid email address');
+        this.setError('email', 'Invalid email address.');
+        this.props.registerStartAction();
       } else {
         this.setError('email', null);
       }
@@ -255,7 +267,7 @@ class SignUpScreen extends React.Component {
       if (!isValidPassword(rest.password)) {
         this.setError(
           'password',
-          '• Password must be at least 4 characters long \n• Should contain uppercase letters and numbers'
+          '• At least 4 characters length. \n• Should contain uppercase letters and numbers.'
         );
         this.setError('password_validation', null);
       } else {
@@ -302,7 +314,6 @@ class SignUpScreen extends React.Component {
 
   render() {
     const { errors, ...formFields } = this.state; //remove valid
-
     return (
       <ScrollView>
         <ContentWrap style={styles.content}>
@@ -351,6 +362,7 @@ class SignUpScreen extends React.Component {
             keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
             error={errors.email || this.props.error || errors.commonError}
           />
+          {this.props.error && <Text style={{ marginBottom: 10 }}>{this.props.error}</Text>}
           {errors.email && <Text style={{ marginBottom: 10 }}>{errors.email}</Text>}
           <PasswordInput
             value={formFields.password}
@@ -383,7 +395,6 @@ class SignUpScreen extends React.Component {
             <Text style={{ marginBottom: 10 }}>{errors.commonError}</Text>
           ) : null}
           {/* {!valid ? <Text>Please fill required fields.</Text> : null} */}
-          {this.props.error && <Text>{this.props.error}</Text>}
 
           <Text style={styles.agreement}>
             By tapping Sign Up, you agree to our{' '}
