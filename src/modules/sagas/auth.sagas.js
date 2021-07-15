@@ -41,7 +41,7 @@ export function* registerRequest(action) {
     yield put(MusicCreators.reset());
 
     // yield put(Creators.signInSuccess());
-    yield put(Creators.signInSuccess(user));
+    yield put(Creators.signInSuccess(user, true));
     // yield put(ProfileCreators.getSuccess(user));
 
     yield put(UserCreators.userStart());

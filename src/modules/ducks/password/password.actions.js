@@ -2,6 +2,7 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    start: null,
     getLinkStart: [],
     getLink: ['data'],
     getLinkSuccess: ['data'],

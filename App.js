@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -9,8 +8,10 @@ import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
+// import HomeNavigationContainer from 'containers/home-navigation.container';
 import HomeTabs from 'navigators/home-tabs.navigator';
-import IptvStack from 'navigators/iptv-stack.navigator';
+// import IptvStack from 'navigators/iptv-stack.navigator';
+// import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators, selectIsLoading } from 'modules/app';
@@ -21,14 +22,15 @@ import { Creators as PasswordActionCreators } from 'modules/ducks/password/passw
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
-import { selectProviders } from 'modules/ducks/provider/provider.selectors';
+// import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 // import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 import SplashScreen from 'react-native-splash-screen';
 // import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
+// eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
-import { selectUpdated, selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors.js';
+import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
 import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors.js';
 
 const HomeComponent = () => (
@@ -41,13 +43,15 @@ const HomeComponent = () => (
 const App = ({
   isLoading,
 
-  purgeStoreAction,
-  signOutAction,
+  // purgeStoreAction,
+  // signOutAction,
 
   isLoggedIn,
   updatePasswordStartAction,
   passwordUpdateParams,
-  providers,
+  // passwordUpdated,
+  // passwordResetStart,
+  // providers,
   // skippedProviderAdd,
 
   resetNowPlayingAction,
@@ -56,14 +60,13 @@ const App = ({
   setProviderAction,
 
   getProfileAction,
-  profileUpdated,
-  onboardinginfo,
+  profileUpdated
+  // onboardinginfo,
 
-  isProviderSetupSkipped
+  // isProviderSetupSkipped
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
-  // const [skippedProviderAdd, setSkippedProviderAdd] = React.useState(false);
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
@@ -80,16 +83,30 @@ const App = ({
     resetNowPlayingAction();
 
     Linking.addEventListener('url', ({ url }) => {
+      /// decode uri from deep link
+      const urldecoded = decodeURIComponent(url);
+
+      /// extract the query parameter called "params"
       let regex = /[?&]([^=#]+)=([^&#]*)/g,
-        params = {},
+        urlparams = {},
         match;
 
-      while ((match = regex.exec(url))) {
-        params[match[1]] = match[2];
+      while ((match = regex.exec(urldecoded))) {
+        urlparams[match[1]] = match[2];
       }
 
-      // set data required to reset password
-      updatePasswordStartAction({ params });
+      const { params } = urlparams;
+
+      /// get token and email form extracted parameter
+      const splitparams = params.split(',');
+
+      const [token, email] = splitparams.map((i) => {
+        return i.split('|')[1];
+      });
+
+      /// set data required to reset password
+      // this will redirect the app to reset-password screen
+      updatePasswordStartAction({ params: { token, email } });
     });
   }, []);
 
@@ -157,14 +174,6 @@ const App = ({
       </NavigationContainer>
     );
 
-  /// if provider add is not skipped
-  if (!isProviderSetupSkipped)
-    return (
-      <NavigationContainer>
-        <IptvStack />
-      </NavigationContainer>
-    );
-
   return <HomeComponent />;
 };
 
@@ -173,10 +182,11 @@ const mapStateToProps = createStructuredSelector({
   isLoading: selectIsLoading,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
-  providers: selectProviders,
+  // passwordUpdated: selectPasswordUpdated,
+  // providers: selectProviders,
   // skippedProviderAdd: selectSkippedProviderAdd,
   profileUpdated: selectUpdated,
-  onboardinginfo: selectOnboardinginfo,
+  // onboardinginfo: selectOnboardinginfo,
   isProviderSetupSkipped: selectIsProviderSetupSkipped
 });
 

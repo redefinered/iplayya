@@ -52,8 +52,8 @@ const IptvScreen = ({
   createStartAction,
   deleteAction,
   deteteStartAction,
-  route: { params },
-  isProviderSetupSkipped
+  route: { params }
+  // isProviderSetupSkipped
 }) => {
   const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
@@ -61,17 +61,12 @@ const IptvScreen = ({
   const [showIptvGuide, setShowIptvGuide] = React.useState(false);
   const [showStepTwo, setShowStepTwo] = React.useState(false);
   const [showStepThree, setShowStepThree] = React.useState(false);
-  // const [skippedProviderAdd, setSkippedProviderAdd] = React.useState(false);
+
+  // const [redirect, setRedirect] = React.useState(false); /// hack!!!
 
   React.useEffect(() => {
     createStartAction();
   }, []);
-
-  React.useEffect(() => {
-    if (isProviderSetupSkipped) return;
-
-    navigation.replace('AddIptvScreen');
-  });
 
   React.useEffect(() => {
     if (params) {

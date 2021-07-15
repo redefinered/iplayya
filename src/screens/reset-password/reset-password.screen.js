@@ -144,7 +144,6 @@ class ResetPasswordScreen extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.updated !== this.props.updated) {
       const { updated } = this.props;
-      console.log({ updated });
       if (updated) {
         this.setState({ modalVisible: true });
       }
@@ -154,6 +153,7 @@ class ResetPasswordScreen extends React.Component {
   handleModalConfirm = () => {
     this.setState({ modalVisible: false }, () => {
       this.props.resetUpdateParamsAction();
+      this.props.passwordResetStartAction();
     });
   };
 
@@ -214,6 +214,7 @@ class ResetPasswordScreen extends React.Component {
           message="You can now use your new password to login to your account."
           confirmText="Login"
           confirmAction={this.handleModalConfirm}
+          hideAction={this.handleModalConfirm}
           visible={modalVisible}
         />
       </React.Fragment>
@@ -237,6 +238,7 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   // clearResetPasswordParamsAction: Creators.clearResetPasswordParams,
   resetUpdateParamsAction: Creators.resetUpdateParams,
+  passwordResetStartAction: Creators.start,
   updatePasswordAction: Creators.update
 };
 

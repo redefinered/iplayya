@@ -16,6 +16,8 @@ import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
 import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
 
+import AddIptvScreen from 'screens/iptv/add-iptv.screen';
+
 import ImovieScreen from 'screens/imovie/imovie.screen';
 import ImovieSearchScreen from 'screens/imovie/imovie-search.screen';
 import ImovieFavoritesScreen from 'screens/imovie-favorites/imovie-favorites.screen';
@@ -51,15 +53,55 @@ import NowPlaying from 'components/now-playing/now-playing.component';
 import { useNavigation } from '@react-navigation/native';
 
 import { headerHeight } from 'common/values';
+import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
 
 const Stack = createStackNavigator();
 
-const HomeStack = ({ setBottomTabsVisibleAction, favorites }) => {
+const HomeStack = ({ setBottomTabsVisibleAction, favorites, isInitialSignIn }) => {
   const navigation = useNavigation();
+
+  if (isInitialSignIn)
+    return (
+      <React.Fragment>
+        <Stack.Navigator
+          screenOptions={{
+            headerTransparent: true,
+            headerTintColor: 'white',
+            headerBackTitleVisible: false,
+            headerBackImage: () => <HeaderBackImage />,
+            headerStyle: { height: headerHeight },
+            headerTitleAlign: 'center',
+            headerTitleStyle: { fontSize: 24, fontFamily: 'NotoSans' },
+            headerTitleContainerStyle: { alignItems: 'center' },
+            headerLeftContainerStyle: {
+              paddingLeft: 15,
+              justifyContent: 'center',
+              alignItems: 'center'
+            },
+            headerRightContainerStyle: styles.headerRightContainerStyle
+          }}
+        >
+          <Stack.Screen
+            name="AddIptvScreen"
+            component={AddIptvScreen}
+            initialParams={{ nextScreen: 'home' }}
+            options={{
+              title: 'Add IPTV',
+              animationEnabled: false,
+              headerTitleAlign: 'center'
+            }}
+            listeners={{
+              focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+              beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+            }}
+          />
+        </Stack.Navigator>
+      </React.Fragment>
+    );
+
   return (
     <React.Fragment>
       <Stack.Navigator
-        initialRouteName="HomeScreen"
         screenOptions={{
           headerTransparent: true,
           headerTintColor: 'white',
@@ -724,6 +766,10 @@ const styles = StyleSheet.create({
   }
 });
 
+// HomeStack.defaultProps = {
+//   initialRouteName: 'HomeScreen'
+// };
+
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   updateDownloadsAction: MoviesActionCreators.updateDownloads,
@@ -731,7 +777,8 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  favorites: selectFavorites
+  favorites: selectFavorites,
+  isInitialSignIn: selectIsInitialSignIn
   // movieUrl: selectMovieUrl,
   // movieTitle: selectMovieTitle,
   // downloads: selectDownloads
