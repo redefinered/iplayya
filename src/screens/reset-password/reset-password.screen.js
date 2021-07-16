@@ -73,7 +73,7 @@ class ResetPasswordScreen extends React.Component {
     if (!isValidPassword(this.state.password)) {
       this.setError(
         'password_validation',
-        '• At least 4 characters length. \n• Should contain upper case letters and numbers.'
+        '• At least 4 characters in length. \n• Must contain upper case letters and numbers.'
       );
       this.setError('password', null);
     } else {
@@ -105,7 +105,7 @@ class ResetPasswordScreen extends React.Component {
     if (!isValidPassword(password)) {
       this.setError(
         'password',
-        '• At least 4 characters length. \n• Should contain upper case letters and numbers.'
+        '• At least 4 characters in length. \n• Must contain upper case letters and numbers.'
       );
       this.setError('password_validation', null);
     } else {
