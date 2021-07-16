@@ -35,6 +35,7 @@ class SignUpScreen extends React.Component {
     password: '',
     password_confirmation: '',
     valid: true,
+    disable: false,
     errors: {
       first_name: null,
       last_name: null,
@@ -70,17 +71,21 @@ class SignUpScreen extends React.Component {
     if (name === 'password') {
       if (isValidPassword(value)) {
         this.setError('password_validation', null);
+      } else {
+        if (value.length) {
+          this.setState({ disable: true });
+        }
       }
-      return this.setState({ [name]: this.onlyOneSpace(value) });
-    } else {
       if (value === '') {
         this.setError('password', null);
+        this.setState({ disable: false });
       }
-    }
 
-    if (name === 'first_name') {
-      if (value === '') {
-        this.setError('first_name', null);
+      if (name === 'first_name') {
+        if (value === '') {
+          this.setError('first_name', null);
+        }
+        return this.setState({ [name]: this.onlyOneSpace(value) });
       }
     }
 
@@ -118,7 +123,7 @@ class SignUpScreen extends React.Component {
     if (!isValidPassword(this.state.password)) {
       this.setError(
         'password_validation',
-        '• At least 4 characters length. \n• Should contain uppercase letters and numbers.'
+        '• At least 4 characters in length. \n• Must contain uppercase letters and numbers.'
       );
       this.setError('password', null);
     } else {
@@ -162,7 +167,7 @@ class SignUpScreen extends React.Component {
     }
 
     if (this.state.first_name.length < 3) {
-      this.setError('first_name', 'At least 3 characters length.');
+      this.setError('first_name', 'At least 3 characters in length.');
     } else {
       this.setError('first_name', null);
     }
@@ -171,7 +176,7 @@ class SignUpScreen extends React.Component {
     }
 
     if (this.state.last_name.length < 2) {
-      this.setError('last_name', 'At least 2 characters length.');
+      this.setError('last_name', 'At least 2 characters in length.');
     } else {
       this.setError('last_name', null);
     }
@@ -181,7 +186,7 @@ class SignUpScreen extends React.Component {
     }
 
     if (this.state.username.length < 2) {
-      this.setError('username', 'At least 2 characters length.');
+      this.setError('username', 'At least 2 characters in length.');
     } else {
       this.setError('username', null);
     }
@@ -223,7 +228,7 @@ class SignUpScreen extends React.Component {
       this.setError('first_name', 'First name is required');
     } else {
       if (!isValidName(rest.first_name)) {
-        this.setError('first_name', 'At least 3 characters length.');
+        this.setError('first_name', 'At least 3 characters in length.');
       } else {
         this.setError('first_name', null);
       }
@@ -233,7 +238,7 @@ class SignUpScreen extends React.Component {
       this.setError('last_name', 'Last name is required');
     } else {
       if (!isValidLastName(rest.last_name)) {
-        this.setError('last_name', 'At least 2 characters length.');
+        this.setError('last_name', 'At least 2 characters in length.');
       } else {
         this.setError('last_name', null);
       }
@@ -243,7 +248,7 @@ class SignUpScreen extends React.Component {
       this.setError('username', 'Username is required');
     } else {
       if (!isValidUsername(rest.username)) {
-        this.setError('username', 'At least 2 characters length.');
+        this.setError('username', 'At least 2 characters in length.');
       } else {
         this.setError('username', null);
       }
@@ -267,7 +272,7 @@ class SignUpScreen extends React.Component {
       if (!isValidPassword(rest.password)) {
         this.setError(
           'password',
-          '• At least 4 characters length. \n• Should contain uppercase letters and numbers.'
+          '• At least 4 characters in length. \n• Must contain uppercase letters and numbers.'
         );
         this.setError('password_validation', null);
       } else {
@@ -384,6 +389,8 @@ class SignUpScreen extends React.Component {
             name="password_confirmation"
             placeholder="Confirm password"
             maxLength={20}
+            editable={this.state.disable}
+            selectTextOnFocus={this.state.disable}
             focusAction={this.handleOnFocus}
             handleChangeText={this.handleChange}
             error={errors.password_confirmation || errors.commonError}

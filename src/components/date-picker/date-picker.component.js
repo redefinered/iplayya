@@ -43,7 +43,9 @@ const styles = StyleSheet.create({
 
 const DatePicker = ({ setBirthdate, style }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
-  const [chosenDate, setChosenDate] = React.useState('mm/dd/yy'); // moment().format('LL')
+  const [chosenDate, setChosenDate] = React.useState(
+    moment(new Date()).localeData().longDateFormat('L').toLowerCase()
+  ); // moment().format('LL')
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -69,8 +71,20 @@ const DatePicker = ({ setBirthdate, style }) => {
       style={{ ...styles.textContainer, ...style }}
       onPress={() => showDatePicker()}
     >
-      <View style={chosenDate === 'mm/dd/yy' ? styles.textHolderBlur : styles.textHolderFocus}>
-        <Text style={chosenDate === 'mm/dd/yy' ? styles.textBlur : styles.textFocus}>
+      <View
+        style={
+          chosenDate === moment(new Date()).localeData().longDateFormat('L').toLowerCase()
+            ? styles.textHolderBlur
+            : styles.textHolderFocus
+        }
+      >
+        <Text
+          style={
+            chosenDate === moment(new Date()).localeData().longDateFormat('L').toLowerCase()
+              ? styles.textBlur
+              : styles.textFocus
+          }
+        >
           {chosenDate}
         </Text>
         <View style={styles.dateIcon}>

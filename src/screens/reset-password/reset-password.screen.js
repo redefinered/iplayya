@@ -34,6 +34,7 @@ class ResetPasswordScreen extends React.Component {
     password_confirmation: '',
     valid: true,
     errorMessage: '',
+    disable: false,
     errors: {
       password: null,
       password_confirmation: null,
@@ -49,19 +50,32 @@ class ResetPasswordScreen extends React.Component {
   };
 
   handleChange = (value, name) => {
-    this.setState({ [name]: value });
-    if (isValidPassword(value)) {
-      this.setError('password', null);
-      this.setError('commonError', null);
+    if (name === 'password') {
+      if (isValidPassword(value)) {
+        this.setError('password', null);
+        this.setError('commonError', null);
+      } else {
+        if (value.length) {
+          this.setState({ disable: true });
+          this.setError('password_confirmation', null);
+        }
+      }
+      if (!value.length) {
+        this.setState({ disable: false });
+        this.setError('commonError', null);
+        this.setError('password', null);
+      }
     }
+    this.setState({ [name]: value });
   };
 
   handleOnFocus = () => {
     if (!isValidPassword(this.state.password)) {
       this.setError(
         'password_validation',
-        '• At least 4 characters length. \n• Should contain upper case letters and numbers.'
+        '• At least 4 characters in length. \n• Must contain upper case letters and numbers.'
       );
+      this.setError('password', null);
     } else {
       this.setError('password_validation', null);
       this.setError('commonError', null);
@@ -69,6 +83,7 @@ class ResetPasswordScreen extends React.Component {
     if (this.state.password_confirmation === '') {
       this.setError('password_confirmation', null);
       this.setError('password', null);
+      this.setError('commonError', null);
     }
   };
 
@@ -90,7 +105,7 @@ class ResetPasswordScreen extends React.Component {
     if (!isValidPassword(password)) {
       this.setError(
         'password',
-        '• At least 4 characters length. \n• Should contain upper case letters and numbers.'
+        '• At least 4 characters in length. \n• Must contain upper case letters and numbers.'
       );
       this.setError('password_validation', null);
     } else {
@@ -174,6 +189,8 @@ class ResetPasswordScreen extends React.Component {
             handleChangeText={this.handleChange}
             focusAction={this.handleOnFocus}
             style={styles.textInput}
+            editable={this.state.disable}
+            selectTextOnFocus={this.state.disable}
             placeholder="Confirm new password"
             error={errors.password_confirmation}
           />
