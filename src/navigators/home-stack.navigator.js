@@ -54,13 +54,39 @@ import { useNavigation } from '@react-navigation/native';
 
 import { headerHeight } from 'common/values';
 import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
+import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
+import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
+import { Creators } from 'modules/ducks/profile/profile.actions';
+import { selectCreated } from 'modules/ducks/provider/provider.selectors';
+import clone from 'lodash/clone';
 
 const Stack = createStackNavigator();
 
-const HomeStack = ({ setBottomTabsVisibleAction, favorites, isInitialSignIn }) => {
+const HomeStack = ({
+  setBottomTabsVisibleAction,
+  favorites,
+  isInitialSignIn,
+  created,
+  ...rest
+}) => {
   const navigation = useNavigation();
 
-  if (isInitialSignIn)
+  React.useEffect(() => {
+    if (created) {
+      const { userId, onboardinginfo, updateProfileAction } = rest;
+
+      const clonedOnboardinginfo = clone(onboardinginfo);
+
+      updateProfileAction({
+        id: userId,
+        onboardinginfo: JSON.stringify(
+          Object.assign(clonedOnboardinginfo, { skippedProviderSetup: true })
+        )
+      });
+    }
+  }, [created]);
+
+  if (isInitialSignIn) {
     return (
       <React.Fragment>
         <Stack.Navigator
@@ -98,6 +124,7 @@ const HomeStack = ({ setBottomTabsVisibleAction, favorites, isInitialSignIn }) =
         </Stack.Navigator>
       </React.Fragment>
     );
+  }
 
   return (
     <React.Fragment>
@@ -773,12 +800,16 @@ const styles = StyleSheet.create({
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   updateDownloadsAction: MoviesActionCreators.updateDownloads,
-  updateDownloadsProgressAction: MoviesActionCreators.updateDownloadsProgress
+  updateDownloadsProgressAction: MoviesActionCreators.updateDownloadsProgress,
+  updateProfileAction: Creators.update
 };
 
 const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
-  isInitialSignIn: selectIsInitialSignIn
+  isInitialSignIn: selectIsInitialSignIn,
+  onboardinginfo: selectOnboardinginfo,
+  userId: selectCurrentUserId,
+  created: selectCreated
   // movieUrl: selectMovieUrl,
   // movieTitle: selectMovieTitle,
   // downloads: selectDownloads

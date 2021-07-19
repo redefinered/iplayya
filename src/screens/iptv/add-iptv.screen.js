@@ -67,7 +67,6 @@ class AddIptvScreen extends React.Component {
     if (prevProps.created !== this.props.created) {
       const { created, navigation, route } = this.props;
       if (created) {
-        console.log({ route });
         const { params } = route;
 
         /// if nextScreen param is not defined go back
@@ -237,9 +236,6 @@ class AddIptvScreen extends React.Component {
 
     // submit if no errors
     this.props.createAction({ input });
-
-    /// handle skip too
-    this.handleSkip(); /// TODO: should not be called if already skipped
   };
 
   handleComfirmAction = () => {
@@ -337,7 +333,7 @@ class AddIptvScreen extends React.Component {
         <AlertModal
           variant="danger"
           message="Oops! Your credentials is not valid. Call your IPTV provider for assistance."
-          hideAction={() => this.setState({ modalVisible: false })}
+          hideAction={() => this.handleComfirmAction()}
           confirmAction={() => this.handleComfirmAction()}
           visible={modalVisible}
         />
