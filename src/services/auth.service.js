@@ -69,10 +69,14 @@ export const register = async (form) => {
         const {
           extensions: { validation }
         } = graphQLErrors[0];
+
         if (validation['input.password'])
           throw new Error(validation['input.password'].replace('input.', ''));
         if (validation['input.email']) throw new Error('Email has already been taken.');
-        throw new Error(validation['input.email']);
+
+        if (validation['input.username']) throw new Error('username error');
+
+        throw new Error('there is error in graphql operation');
       }
       throw new Error(error);
     }
