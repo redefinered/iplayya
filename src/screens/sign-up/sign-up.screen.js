@@ -207,7 +207,7 @@ class SignUpScreen extends React.Component {
 
   handleSubmit = () => {
     // eslint-disable-next-line no-unused-vars
-    const { errors: stateError, valid, ...rest } = this.state;
+    const { errors: stateError, valid, disable, ...rest } = this.state;
 
     if (
       rest.first_name === '' &&
