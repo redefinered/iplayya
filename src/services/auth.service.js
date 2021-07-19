@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import client, { clientWithoutAuthLink } from 'apollo/client';
+import { REGISTER, SIGN_IN, SIGN_OUT, VALIDATE_USERNAME } from 'graphql/auth.graphql';
 
 // wip
 // export const processError = (error, graphQLErrors) => {
@@ -14,17 +14,7 @@ import client, { clientWithoutAuthLink } from 'apollo/client';
 export const signIn = async (username, password) => {
   try {
     const { data } = await clientWithoutAuthLink.mutate({
-      mutation: gql`
-        mutation LOGIN($input: LoginInput!) {
-          login(input: $input) {
-            access_token
-            user {
-              id
-              username
-            }
-          }
-        }
-      `,
+      mutation: SIGN_IN,
       variables: { input: { username, password } }
     });
 
@@ -47,35 +37,35 @@ export const register = async (form) => {
   console.log({ input });
   try {
     const { data } = await clientWithoutAuthLink.mutate({
-      mutation: gql`
-        mutation SIGN_UP($input: RegisterInput) {
-          register(input: $input) {
-            tokens {
-              access_token
-            }
-            status
-          }
-        }
-      `,
+      mutation: REGISTER,
       variables: { input }
     });
     return data;
   } catch (error) {
-    console.log({ error });
+    /**
+     * ERROR MESSAGES SHOULD BE AS FOLLOW:
+     * USERNAME: USERNAME_ERROR
+     * EMAIL: EMAIL_ERROR
+     * ***
+     * NO NEED TO GET THE WHOLE ERROR MESSAGE AS INPUTS ARE ALREADY DISPLAYING THOSE MESSAGE ON VALIDATION BEFORE SUBMITTING THE FORM
+     * ALSO, USERNAME MAY NOT BE NEEDED BECAUSE IT IS BEING VALIDATED BEFORE SUBMIT - NEEDS TESTING
+     */
 
-    if (error.graphQLErrors) {
-      const { graphQLErrors } = error;
+    const { graphQLErrors } = error;
+
+    if (graphQLErrors) {
       if (graphQLErrors.length) {
         const {
           extensions: { validation }
         } = graphQLErrors[0];
+        if (validation['input.username']) throw new Error('USERNAME_ERROR');
 
-        if (validation['input.password'])
-          throw new Error(validation['input.password'].replace('input.', ''));
-        if (validation['input.email']) throw new Error('Email has already been taken.');
+        if (validation['input.email']) throw new Error('EMAIL_ERROR');
 
-        if (validation['input.username']) throw new Error('username error');
+        // if (validation['input.password'])
+        //   throw new Error(validation['input.password'][0].replace('input.', ''));
 
+        // if above conditions are not met
         throw new Error('there is error in graphql operation');
       }
       throw new Error(error);
@@ -88,18 +78,24 @@ export const register = async (form) => {
 export const signOut = async () => {
   try {
     const { data } = await client.mutate({
-      mutation: gql`
-        mutation {
-          logout {
-            status
-            message
-          }
-        }
-      `
+      mutation: SIGN_OUT
     });
     console.log({ logoutData: data });
-    return data;
+    // return data;
   } catch (error) {
     throw new Error(error);
+  }
+};
+
+export const validateUsername = async (input) => {
+  try {
+    const { data } = await clientWithoutAuthLink.mutate({
+      mutation: VALIDATE_USERNAME,
+      variables: input
+    });
+    return data;
+  } catch (error) {
+    console.log({ error });
+    throw new Error('USERNAME_ERROR');
   }
 };

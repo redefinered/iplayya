@@ -16,6 +16,9 @@ const { Types, Creators } = createActions(
     getProfile: [],
     getProfileSuccess: ['data'],
     getProfileFailure: ['error'],
+    validateUsername: ['data'], /// data is the input object
+    validateUsernameSuccess: [],
+    validateUsernameFailure: ['error'],
     clearResetPasswordParams: [],
     setOnboardingComplete: null,
     reset: null

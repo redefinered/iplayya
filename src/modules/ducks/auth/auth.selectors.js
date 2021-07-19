@@ -11,6 +11,10 @@ export const selectIsFetching = createSelector([authState], ({ isFetching }) => 
 export const selectError = createSelector([authState], ({ error }) => error);
 export const selectSignedUp = createSelector([authState], ({ signedUp }) => signedUp);
 export const selectNetworkInfo = createSelector([authState], ({ networkInfo }) => networkInfo);
+export const selectIsValidUsername = createSelector(
+  [authState],
+  ({ selectIsValidUsername }) => selectIsValidUsername
+);
 export const selectIsInitialSignIn = createSelector(
   [authState],
   ({ isInitialSignIn }) => isInitialSignIn
