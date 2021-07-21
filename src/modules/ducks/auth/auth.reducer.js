@@ -11,7 +11,8 @@ const INITIAL_STATE = {
   networkInfo: null,
   currentUser: null,
   onboardingComplete: false,
-  isInitialSignIn: null
+  isInitialSignIn: null,
+  isUsernameValid: null
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -109,6 +110,28 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error
+    };
+  },
+  [Types.VALIDATE_USERNAME]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true
+    };
+  },
+  [Types.VALIDATE_USERNAME_SUCCESS]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      isUsernameValid: true
+    };
+  },
+  [Types.VALIDATE_USERNAME_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      isUsernameValid: false
     };
   },
   [Types.RESET]: (state) => {

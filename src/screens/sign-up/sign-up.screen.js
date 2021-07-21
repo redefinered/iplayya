@@ -5,6 +5,7 @@ import { Text } from 'react-native-paper';
 import { Platform, ScrollView } from 'react-native';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
+import UsernameInput from './username-input.component';
 import ScreenContainer from 'components/screen-container.component';
 import MainButton from 'components/button/mainbutton.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -65,7 +66,11 @@ class SignUpScreen extends React.Component {
       if (value === '') {
         this.setError('username', null);
       }
-      return this.setState({ [name]: this.onlyOneSpace(value) });
+
+      /// prevent special chars input
+      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
+
+      return this.setState({ username: this.onlyOneSpace(stripSpecChars) });
     }
 
     if (name === 'password') {
@@ -310,15 +315,27 @@ class SignUpScreen extends React.Component {
     });
   };
 
-  // componentDidUpdate(prevProps) {
-  //   if (prevProps.signedUp !== this.props.signedUp) {
-  //     const { navigation, signedUp } = this.props;
-  //     if (signedUp) navigation.goBack();
-  //   }
-  // }
+  /// handle email error
+  componentDidUpdate(prevProps) {
+    // if (prevProps.signedUp !== this.props.signedUp) {
+    //   const { navigation, signedUp } = this.props;
+    //   if (signedUp) navigation.goBack();
+    // }
+
+    if (prevProps.error !== this.props.error) {
+      /// if there is change in auth state error
+      const { error } = this.props;
+
+      if (error === 'EMAIL_ERROR') {
+        return this.setError('email', 'The email has already been taken.');
+      }
+    }
+  }
 
   render() {
     const { errors, ...formFields } = this.state; //remove valid
+
+    // console.log({ errors });
     return (
       <ScrollView>
         <ContentWrap style={styles.content}>
@@ -344,18 +361,18 @@ class SignUpScreen extends React.Component {
             autoCapitalize="words"
           />
           {errors.last_name && <Text style={{ marginBottom: 10 }}>{errors.last_name}</Text>}
-          <TextInput
-            autoCapitalize="none"
-            value={formFields.username}
-            style={styles.textInput}
-            name="username"
-            placeholder="Username"
-            focusAction={this.handleOnFocus}
-            handleChangeText={this.handleChange}
-            error={errors.username || errors.commonError}
-            maxLength={20}
+
+          {/* separated to another component for username real-time validation */}
+          <UsernameInput
+            formFields={formFields}
+            styles={styles}
+            handleOnFocus={this.handleOnFocus}
+            handleChange={this.handleChange}
+            errors={errors}
+            setError={this.setError}
           />
           {errors.username && <Text style={{ marginBottom: 10 }}>{errors.username}</Text>}
+
           <TextInput
             autoCapitalize="none"
             value={formFields.email}
@@ -365,9 +382,8 @@ class SignUpScreen extends React.Component {
             placeholder="Email"
             handleChangeText={this.handleChange}
             keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
-            error={errors.email || this.props.error || errors.commonError}
+            error={errors.email || errors.commonError}
           />
-          {this.props.error && <Text style={{ marginBottom: 10 }}>{this.props.error}</Text>}
           {errors.email && <Text style={{ marginBottom: 10 }}>{errors.email}</Text>}
           <PasswordInput
             value={formFields.password}
@@ -395,6 +411,7 @@ class SignUpScreen extends React.Component {
             handleChangeText={this.handleChange}
             error={errors.password_confirmation || errors.commonError}
           />
+          {/* {this.props.error && <Text style={{ marginBottom: 10 }}>{this.props.error}</Text>} */}
           {errors.password_confirmation && (
             <Text style={{ marginBottom: 10 }}>{errors.password_confirmation}</Text>
           )}

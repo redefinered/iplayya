@@ -12,7 +12,7 @@ import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions'
 import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 
-import { register, signIn, signOut } from 'services/auth.service';
+import { register, signIn, signOut, validateUsername } from 'services/auth.service';
 import { getCategories } from 'services/movies.service';
 import { get as getProfile } from 'services/profile.service';
 import { getGenres } from 'services/itv.service';
@@ -110,6 +110,15 @@ export function* signOutRequest() {
   }
 }
 
+export function* validateUsernameRequest(action) {
+  try {
+    yield call(validateUsername, { input: action.data });
+    yield put(Creators.validateUsernameSuccess());
+  } catch (error) {
+    yield put(Creators.validateUsernameFailure(error.message));
+  }
+}
+
 export function* signInStartRequest() {
   yield AsyncStorage.removeItem('access_token');
 }
@@ -119,4 +128,5 @@ export default function* authSagas() {
   yield takeLatest(Types.SIGN_IN_START, signInStartRequest);
   yield takeLatest(Types.SIGN_IN, signInRequest);
   yield takeLatest(Types.SIGN_OUT, signOutRequest);
+  yield takeLatest(Types.VALIDATE_USERNAME, validateUsernameRequest);
 }
