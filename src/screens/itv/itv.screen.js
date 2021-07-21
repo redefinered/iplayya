@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+// import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import SelectorPills from 'components/selector-pills/selector-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -237,7 +237,7 @@ const ItvScreen = ({
         ) : (
           <FlatList
             ListHeaderComponent={
-              <View style={{ marginBottom: 30 }}>
+              <View style={{ marginBottom: 30, marginTop: 10 }}>
                 <ContentWrap>
                   <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
                     Featured TV Channels
@@ -294,44 +294,56 @@ const ItvScreen = ({
           backgroundColor: '#202530',
           borderTopRightRadius: 24,
           borderTopLeftRadius: 24,
-          paddingHorizontal: 15,
-          paddingTop: 10,
-          paddingBottom: 10,
+          paddingHorizontal: 4,
+          paddingTop: 2,
+          paddingBottom: 2,
           position: 'absolute',
           width: '100%',
           bottom: 0
         }}
       >
         <View style={{ flex: 4 }}>
-          <TouchableWithoutFeedback
-            style={{ alignItems: 'center' }}
+          <TouchableRipple
+            style={{ marginHorizontal: 30, borderRadius: 100 }}
+            borderless={true}
+            rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('ItvFavoritesScreen')}
           >
-            <Icon name="heart-solid" size={24} />
-            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
-              Favorites
-            </Text>
-          </TouchableWithoutFeedback>
+            <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+              <Icon name="heart-solid" size={24} />
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+                Favorites
+              </Text>
+            </View>
+          </TouchableRipple>
         </View>
         <View style={{ flex: 4 }}>
-          <TouchableWithoutFeedback
+          <TouchableRipple
+            style={{ marginHorizontal: 30, borderRadius: 100 }}
+            borderless={true}
+            rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('HomeScreen')}
-            style={{ alignItems: 'center' }}
           >
-            <Icon name="iplayya" size={24} />
-            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-          </TouchableWithoutFeedback>
+            <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+              <Icon name="iplayya" size={24} />
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+            </View>
+          </TouchableRipple>
         </View>
         <View style={{ flex: 4 }}>
-          <TouchableWithoutFeedback
-            style={{ alignItems: 'center' }}
+          <TouchableRipple
+            style={{ marginHorizontal: 30, borderRadius: 100 }}
+            borderless={true}
+            rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('ItvDownloadsScreen')}
           >
-            <Icon name="download" size={24} />
-            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
-              Downloaded
-            </Text>
-          </TouchableWithoutFeedback>
+            <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+              <Icon name="download" size={24} />
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+                Downloads
+              </Text>
+            </View>
+          </TouchableRipple>
         </View>
         <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
       </View>
@@ -352,7 +364,7 @@ const ItvScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer backgroundType="solid" withHeaderPush>
+  <ScreenContainer withHeaderPush>
     <ItvScreen {...props} />
   </ScreenContainer>
 );
