@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -29,6 +29,7 @@ import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
+import useComponentSize from 'hooks/use-component-size.hook';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -54,7 +55,8 @@ const ItvScreen = ({
   // eslint-disable-next-line no-unused-vars
   reset
 }) => {
-  // const theme = useTheme();
+  const theme = useTheme();
+  const [size, onLayout] = useComponentSize();
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -228,6 +230,7 @@ const ItvScreen = ({
           labelkey="title"
           onSelect={onCategorySelect}
           selected={selectedCategory}
+          style={{ marginBottom: theme.spacing(2) }}
         />
 
         {/* {renderError()} errors should give more information rather than just saying "empty" */}
@@ -280,6 +283,9 @@ const ItvScreen = ({
             onEndReached={() => handleEndReached()}
             onEndReachedThreshold={0.5}
             onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+            ListFooterComponent={
+              <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
+            }
           />
         )}
       </View>
@@ -287,6 +293,7 @@ const ItvScreen = ({
       <Spacer size={50} />
 
       <View
+        onLayout={onLayout}
         style={{
           flex: 1,
           flexDirection: 'row',
@@ -299,7 +306,8 @@ const ItvScreen = ({
           paddingBottom: 10,
           position: 'absolute',
           width: '100%',
-          bottom: 0
+          bottom: 0,
+          zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
         <View style={{ flex: 4 }}>
@@ -352,7 +360,7 @@ const ItvScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer backgroundType="solid" withHeaderPush>
+  <ScreenContainer withHeaderPush>
     <ItvScreen {...props} />
   </ScreenContainer>
 );
