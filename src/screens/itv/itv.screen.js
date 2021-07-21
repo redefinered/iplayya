@@ -108,10 +108,16 @@ const ItvScreen = ({
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
 
-    if (index >= 0) return;
+    if (index >= 0) return removeChannelFromNotifyIds(channelId);
 
     setNotifyIds(uniq([...notifyIds, parseInt(channelId)]));
   };
+
+  const removeChannelFromNotifyIds = (channelId) => {
+    setNotifyIds(notifyIds.filter((id) => id !== parseInt(channelId)));
+  };
+
+  console.log({ notifyIds });
 
   React.useEffect(() => {
     if (notifyIds.length) {
@@ -347,13 +353,13 @@ const ItvScreen = ({
         visible={showSnackBar}
         message={`${favorited} is added to your favorites list`}
         iconName="heart-solid"
-        iconColor="#FF5050"
+        iconColor={theme.iplayya.colors.vibrantpussy}
       />
       <SnackBar
         visible={showNotificationSnackBar}
         message={`You will now receive notifications from ${subscribed}`}
         iconName="notifications"
-        iconColor="#FF5050"
+        iconColor={theme.iplayya.colors.vibrantpussy}
       />
     </View>
   );
