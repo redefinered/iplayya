@@ -54,6 +54,7 @@ const ListItemChanel = ({
               onRightActionPress={onRightActionPress}
               isFavorite={is_favorite}
               activateCheckboxes={activateCheckboxes}
+              isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
             />
           </View>
         </Pressable>
@@ -103,9 +104,16 @@ const Content = ({
   onRightActionPress,
   isFavorite,
   selected,
-  activateCheckboxes
+  activateCheckboxes,
+  isCatchUpAvailable
 }) => {
   const theme = useTheme();
+
+  const renderCatchUpIndicator = () => {
+    if (typeof isCatchUpAvailable === 'undefined') return;
+
+    if (isCatchUpAvailable) return <Icon name="history" color="#13BD38" />;
+  };
 
   const handleRightActionPress = () => {
     if (isFavorite) return;
@@ -173,10 +181,16 @@ const Content = ({
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
+          <Text
+            style={{
+              ...createFontFormat(12, 16),
+              marginRight: 6,
+              color: theme.iplayya.colors.white80
+            }}
+          >
             {getSchedule(time, time_to)}
           </Text>
-          <Icon name="history" color="#13BD38" />
+          {renderCatchUpIndicator()}
         </View>
         <Text
           style={{
@@ -193,7 +207,7 @@ const Content = ({
 };
 
 Content.propTypes = {
-  number: PropTypes.string,
+  number: PropTypes.number,
   time: PropTypes.string,
   time_to: PropTypes.string,
   chanel: PropTypes.string,
@@ -203,7 +217,8 @@ Content.propTypes = {
   isFavorite: PropTypes.bool,
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
-  activateCheckboxes: PropTypes.bool
+  activateCheckboxes: PropTypes.bool,
+  isCatchUpAvailable: PropTypes.bool
 };
 
 ListItemChanel.propTypes = {
