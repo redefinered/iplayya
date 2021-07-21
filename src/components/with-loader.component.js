@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
 import { useTheme, ActivityIndicator } from 'react-native-paper';
 
@@ -34,10 +34,13 @@ export default function withLoader(WrappedComponent) {
             transparent
             statusBarTranslucent
             style={{
-              position: 'absolute',
-              zIndex: 1300,
-              width: Dimensions.get('window').width,
-              height: '100%' /*Dimensions.get('window').height*/
+              // position: 'absolute',
+              // width: Dimensions.get('window').width,
+              // height: '100%' /*Dimensions.get('window').height*/
+              // flex: 1,
+              // zIndex: 99999,
+              zIndex: theme.iplayya.zIndex.loader,
+              ...StyleSheet.absoluteFillObject
             }}
           >
             <View
