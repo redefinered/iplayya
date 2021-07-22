@@ -58,6 +58,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.START]: (state) => {
+    return { ...state, channel: null };
+  },
   [Types.GET_GENRES]: (state) => {
     return {
       ...state,
