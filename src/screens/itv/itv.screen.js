@@ -117,8 +117,6 @@ const ItvScreen = ({
     setNotifyIds(notifyIds.filter((id) => id !== parseInt(channelId)));
   };
 
-  console.log({ notifyIds });
-
   React.useEffect(() => {
     if (notifyIds.length) {
       // set the subscribed variable for the snackbar
@@ -245,8 +243,23 @@ const ItvScreen = ({
           <View />
         ) : (
           <FlatList
+            data={channelsData}
+            keyExtractor={(item) => item.id}
+            onEndReached={() => handleEndReached()}
+            onEndReachedThreshold={0.5}
+            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+            renderItem={({ item: { epgtitle, ...itemProps } }) => (
+              <ListItemChanel
+                // handleLongPress={}
+                onSelect={handleItemSelect}
+                onRightActionPress={handleAddToFavorites}
+                full
+                epgtitle={epgtitle}
+                {...itemProps}
+              />
+            )}
             ListHeaderComponent={
-              <View style={{ marginBottom: 30 }}>
+              <View style={{ marginBottom: theme.spacing(2) }}>
                 <ContentWrap>
                   <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
                     Featured TV Channels
@@ -275,20 +288,6 @@ const ItvScreen = ({
                 </ScrollView>
               </View>
             }
-            data={channelsData}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item: { epgtitle, ...itemProps } }) => (
-              <ListItemChanel
-                onSelect={handleItemSelect}
-                onRightActionPress={handleAddToFavorites}
-                full
-                epgtitle={epgtitle}
-                {...itemProps}
-              />
-            )}
-            onEndReached={() => handleEndReached()}
-            onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
             ListFooterComponent={
               <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
             }
