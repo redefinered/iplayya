@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { Pressable, View, Image } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import RadioButton from 'components/radio-button/radio-button.component';
+// import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
 import moment from 'moment';
+import theme from 'common/theme';
 
 const spacer = 20;
 
@@ -18,48 +19,53 @@ const ListItemChanel = ({
   is_favorite,
   full,
   selected,
-  handleLongPress,
   activateCheckboxes,
   ...contentProps
 }) => {
-  const handleItemPress = () => {
-    // const { epgtitle, time, time_to } = contentProps;
-    // if (!epgtitle || !time || !time_to) return;
+  const [isPressed, setIsPressed] = React.useState(false);
 
+  const handleItemPress = () => {
     onSelect(id);
   };
 
   if (full)
     return (
-      <ContentWrap>
-        <Pressable
-          onLongPress={() => handleLongPress(id)}
-          onPress={handleItemPress}
+      <Pressable
+        onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+        onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
+        underlayColor={theme.iplayya.colors.black80}
+        onPress={handleItemPress}
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent'
+        }}
+      >
+        <View
           style={{
+            flex: 11,
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 20
+            padding: theme.spacing(2)
           }}
         >
-          <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
-            <Image
-              style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-              source={contentProps.thumbnail}
-            />
-            <Content
-              {...contentProps}
-              id={id}
-              selected={selected}
-              onRightActionPress={onRightActionPress}
-              isFavorite={is_favorite}
-              activateCheckboxes={activateCheckboxes}
-              isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
-            />
-          </View>
-        </Pressable>
-        <Spacer size={spacer} />
-      </ContentWrap>
+          <Image
+            style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
+            source={contentProps.thumbnail}
+          />
+          <Content
+            {...contentProps}
+            id={id}
+            selected={selected}
+            onRightActionPress={onRightActionPress}
+            isFavorite={is_favorite}
+            activateCheckboxes={activateCheckboxes}
+            isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
+          />
+        </View>
+      </Pressable>
     );
 
   return (
@@ -103,8 +109,8 @@ const Content = ({
   time_to,
   onRightActionPress,
   isFavorite,
-  selected,
-  activateCheckboxes,
+  // selected,
+  // activateCheckboxes,
   isCatchUpAvailable
 }) => {
   const theme = useTheme();
@@ -120,10 +126,10 @@ const Content = ({
     onRightActionPress(id);
   };
 
-  const renderCheckbox = () => {
-    if (!activateCheckboxes) return;
-    return <RadioButton selected={selected} />;
-  };
+  // const renderCheckbox = () => {
+  //   if (!activateCheckboxes) return;
+  //   return <RadioButton selected={selected} />;
+  // };
 
   const renderEpgtitle = () => {
     if (!epgtitle)
@@ -158,7 +164,7 @@ const Content = ({
         <Text
           style={{ ...createFontFormat(12, 16), marginBottom: 5 }}
         >{`${number}: ${title}`}</Text>
-        {onRightActionPress ? (
+        {/* {onRightActionPress ? (
           <Pressable onPress={() => handleRightActionPress()}>
             <Icon
               name="heart-solid"
@@ -168,7 +174,14 @@ const Content = ({
           </Pressable>
         ) : (
           renderCheckbox()
-        )}
+        )} */}
+        <Pressable onPress={() => handleRightActionPress()}>
+          <Icon
+            name="heart-solid"
+            size={24}
+            style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
+          />
+        </Pressable>
       </View>
 
       {renderEpgtitle()}
