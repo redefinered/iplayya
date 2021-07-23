@@ -26,6 +26,7 @@ import moment from 'moment';
 const dirs = RNFetchBlob.fs.dirs;
 
 const ChannelDetailScreen = ({
+  navigation,
   route: {
     params: { channelId }
   },
@@ -36,7 +37,9 @@ const ChannelDetailScreen = ({
   getChannelAction,
 
   /// the program that is playing at this moment
-  currentProgram
+  currentProgram,
+
+  startAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -49,6 +52,11 @@ const ChannelDetailScreen = ({
     let date = new Date(Date.now());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
+
+    /// clear channel data before going back
+    navigation.addListener('beforeRemove', () => {
+      startAction();
+    });
   }, []);
 
   React.useEffect(() => {
@@ -97,8 +105,6 @@ const ChannelDetailScreen = ({
     console.log('add to favorites');
   };
 
-  if (!channel) return <Text>fetching...</Text>;
-
   const renderPlayer = () => {
     // if (!currentlyPlaying) return;
     if (source) {
@@ -118,6 +124,8 @@ const ChannelDetailScreen = ({
       );
     }
   };
+
+  if (!channel) return <View />;
 
   return (
     <View style={{ marginTop: 10, paddingBottom: 220 }}>
@@ -282,6 +290,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  startAction: Creators.start,
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel
 };

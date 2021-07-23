@@ -80,6 +80,10 @@ export default {
       white25: 'rgba(255,255,255,0.25)',
       white10: 'rgba(255,255,255,0.1)'
     },
+    zIndex: {
+      bottomTabs: 1200,
+      loader: 1300
+    },
     bodyp: {
       fontSize: 14,
       lineHeight: 19,

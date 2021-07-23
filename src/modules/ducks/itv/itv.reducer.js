@@ -59,6 +59,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.START]: (state) => {
+    return { ...state, channel: null };
+  },
   [Types.GET_GENRES]: (state) => {
     return {
       ...state,
@@ -123,7 +126,12 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_CHANNELS_SUCCESS]: (state, action) => {
     const { channels, nextPaginatorInfo } = action;
 
-    const updatedChannels = uniqBy([...channels, ...state.channels], 'id');
+    let updatedChannels = uniqBy([...channels, ...state.channels], 'id');
+
+    /// convert number property to Int for orderBy function to work
+    updatedChannels = updatedChannels.map(({ number, ...rest }) => {
+      return { number: parseInt(number), ...rest };
+    });
 
     return {
       ...state,

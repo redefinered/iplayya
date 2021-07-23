@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -29,6 +29,7 @@ import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
+import useComponentSize from 'hooks/use-component-size.hook';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -54,7 +55,8 @@ const ItvScreen = ({
   // eslint-disable-next-line no-unused-vars
   reset
 }) => {
-  // const theme = useTheme();
+  const theme = useTheme();
+  const [size, onLayout] = useComponentSize();
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -106,9 +108,13 @@ const ItvScreen = ({
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
 
-    if (index >= 0) return;
+    if (index >= 0) return removeChannelFromNotifyIds(channelId);
 
     setNotifyIds(uniq([...notifyIds, parseInt(channelId)]));
+  };
+
+  const removeChannelFromNotifyIds = (channelId) => {
+    setNotifyIds(notifyIds.filter((id) => id !== parseInt(channelId)));
   };
 
   React.useEffect(() => {
@@ -228,6 +234,7 @@ const ItvScreen = ({
           labelkey="title"
           onSelect={onCategorySelect}
           selected={selectedCategory}
+          style={{ marginBottom: theme.spacing(2) }}
         />
 
         {/* {renderError()} errors should give more information rather than just saying "empty" */}
@@ -236,8 +243,23 @@ const ItvScreen = ({
           <View />
         ) : (
           <FlatList
+            data={channelsData}
+            keyExtractor={(item) => item.id}
+            onEndReached={() => handleEndReached()}
+            onEndReachedThreshold={0.5}
+            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+            renderItem={({ item: { epgtitle, ...itemProps } }) => (
+              <ListItemChanel
+                // handleLongPress={}
+                onSelect={handleItemSelect}
+                onRightActionPress={handleAddToFavorites}
+                full
+                epgtitle={epgtitle}
+                {...itemProps}
+              />
+            )}
             ListHeaderComponent={
-              <View style={{ marginBottom: 30, marginTop: 10 }}>
+              <View style={{ marginBottom: theme.spacing(2) }}>
                 <ContentWrap>
                   <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
                     Featured TV Channels
@@ -266,20 +288,9 @@ const ItvScreen = ({
                 </ScrollView>
               </View>
             }
-            data={channelsData}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item: { epgtitle, ...itemProps } }) => (
-              <ListItemChanel
-                onSelect={handleItemSelect}
-                onRightActionPress={handleAddToFavorites}
-                full
-                epgtitle={epgtitle}
-                {...itemProps}
-              />
-            )}
-            onEndReached={() => handleEndReached()}
-            onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+            ListFooterComponent={
+              <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
+            }
           />
         )}
       </View>
@@ -287,6 +298,7 @@ const ItvScreen = ({
       <Spacer size={50} />
 
       <View
+        onLayout={onLayout}
         style={{
           flex: 1,
           flexDirection: 'row',
@@ -299,7 +311,8 @@ const ItvScreen = ({
           paddingBottom: 2,
           position: 'absolute',
           width: '100%',
-          bottom: 0
+          bottom: 0,
+          zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
         <View style={{ flex: 4 }}>
@@ -351,13 +364,13 @@ const ItvScreen = ({
         visible={showSnackBar}
         message={`${favorited} is added to your favorites list`}
         iconName="heart-solid"
-        iconColor="#FF5050"
+        iconColor={theme.iplayya.colors.vibrantpussy}
       />
       <SnackBar
         visible={showNotificationSnackBar}
         message={`You will now receive notifications from ${subscribed}`}
         iconName="notifications"
-        iconColor="#E34398"
+        iconColor={theme.iplayya.colors.vibrantpussy}
       />
     </View>
   );
