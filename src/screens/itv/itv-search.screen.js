@@ -335,7 +335,7 @@ const ItvSearchScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer backgroundType="solid" withHeaderPush>
+  <ScreenContainer withHeaderPush>
     <ItvSearchScreen {...props} />
   </ScreenContainer>
 );
