@@ -357,7 +357,7 @@ const ItvScreen = ({
         visible={showNotificationSnackBar}
         message={`You will now receive notifications from ${subscribed}`}
         iconName="notifications"
-        iconColor="#FF5050"
+        iconColor="#E34398"
       />
     </View>
   );

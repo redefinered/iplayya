@@ -50,6 +50,9 @@ const { Types, Creators } = createActions(
     searchFailure: ['error'],
     resetSearchResultsPaginator: null,
 
+    //recent search
+    updateRecentSearch: ['term'],
+
     // misc
     reset: null,
     setPaginatorInfo: ['data'],
