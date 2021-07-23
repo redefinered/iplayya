@@ -179,13 +179,15 @@ const Content = ({
         ) : (
           renderCheckbox()
         )} */}
-        <Pressable onPress={() => handleRightActionPress()}>
-          <Icon
-            name="heart-solid"
-            size={24}
-            style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-          />
-        </Pressable>
+        {onRightActionPress ? (
+          <Pressable onPress={() => handleRightActionPress()}>
+            <Icon
+              name="heart-solid"
+              size={24}
+              style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
+            />
+          </Pressable>
+        ) : null}
       </View>
 
       {renderEpgtitle()}
