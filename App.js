@@ -4,7 +4,7 @@ import 'react-native-gesture-handler';
 
 import React from 'react';
 import { View, Linking, Platform, StatusBar, StyleSheet } from 'react-native';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { Button, ActivityIndicator, useTheme } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
@@ -32,6 +32,9 @@ import { resetStore } from 'modules/store';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
 import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
 import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors.js';
+
+// import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import NotifService from './NotifService';
 
 const HomeComponent = () => (
   <NavigationContainer>
@@ -67,6 +70,23 @@ const App = ({
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
+  const [notifRegisterToken, setNotifRegisterToken] = React.useState(null);
+  const [fcmRegistered, setFcmRegistered] = React.useState(null);
+
+  const notif = new NotifService(onRegister, onNotif);
+
+  const onRegister = ({ token }) => {
+    setNotifRegisterToken(token);
+    setFcmRegistered(true);
+  };
+
+  const onNotif = ({ title, message }) => {
+    console.log({ title, message });
+  };
+
+  const handlePermission = (permissions) => {
+    console.log({ permissions: JSON.stringify(permissions) });
+  };
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
@@ -134,6 +154,8 @@ const App = ({
   //   // setSkippedProviderAdd(false);
   // });
 
+  console.log({ notifRegisterToken, fcmRegistered });
+
   React.useEffect(() => {
     if (isLoggedIn) {
       const { providers } = currentUser;
@@ -171,6 +193,16 @@ const App = ({
     return (
       <NavigationContainer>
         <OnboardingStack />
+        <Button mode="contained" style={{ marginBottom: 10 }} onPress={() => notif.localNotif()}>
+          Local Notification (now)
+        </Button>
+        <Button
+          mode="contained"
+          style={{ marginBottom: 10 }}
+          onPress={() => notif.checkPermission(handlePermission)}
+        >
+          Check permissions
+        </Button>
       </NavigationContainer>
     );
 
