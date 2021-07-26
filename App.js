@@ -73,6 +73,7 @@ const App = ({
   const [notifRegisterToken, setNotifRegisterToken] = React.useState(null);
   const [fcmRegistered, setFcmRegistered] = React.useState(null);
 
+  // eslint-disable-next-line no-unused-vars
   const notif = new NotifService(onRegister, onNotif);
 
   const onRegister = ({ token }) => {
@@ -84,6 +85,7 @@ const App = ({
     console.log({ title, message });
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handlePermission = (permissions) => {
     console.log({ permissions: JSON.stringify(permissions) });
   };
@@ -193,7 +195,7 @@ const App = ({
     return (
       <NavigationContainer>
         <OnboardingStack />
-        <Button mode="contained" style={{ marginBottom: 10 }} onPress={() => notif.localNotif()}>
+        {/* <Button mode="contained" style={{ marginBottom: 10 }} onPress={() => notif.localNotif()}>
           Local Notification (now)
         </Button>
         <Button
@@ -202,7 +204,7 @@ const App = ({
           onPress={() => notif.checkPermission(handlePermission)}
         >
           Check permissions
-        </Button>
+        </Button> */}
       </NavigationContainer>
     );
 
