@@ -7,6 +7,7 @@ import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import { createFontFormat } from 'utils';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 const ItemPreview = ({
   id,
@@ -18,6 +19,7 @@ const ItemPreview = ({
   handleSubscribeToItem,
   isNotificationActive
 }) => {
+  const navigation = useNavigation();
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   // const [isNotificationActive, setIsNotificationActive] = React.useState(true);
@@ -71,7 +73,7 @@ const ItemPreview = ({
         <TouchableHighlight
           underlayColor="rgba(255,255,255,0.1)"
           style={styles.buttonContainer}
-          onPress={() => handleSubscribeToItem(id)}
+          onPress={() => navigation.navigate('ProgramGuidScreen', { channelId: id })}
         >
           <Icon
             name="notifications"
