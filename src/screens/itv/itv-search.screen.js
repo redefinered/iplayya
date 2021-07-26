@@ -317,9 +317,9 @@ const ItvSearchScreen = ({
             <RNPTextInput.Icon
               name={() => {
                 return isFetching ? (
-                  <Icon name="search" size={30} style={{ marginRight: theme.spacing(0) }} />
+                  <Icon name="search" size={30} style={{ marginRight: theme.spacing(-0.3) }} />
                 ) : (
-                  <Icon name="search" size={30} style={{ marginRight: theme.spacing(0) }} />
+                  <Icon name="search" size={30} style={{ marginRight: theme.spacing(-0.3) }} />
                 );
               }}
               onPress={() => handleRecentSearch()}
