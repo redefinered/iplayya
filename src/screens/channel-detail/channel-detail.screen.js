@@ -7,7 +7,7 @@ import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
-import ProgramGuide from './program-guide.component';
+import ProgramGuide from 'components/program-guide/program-guide.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
@@ -94,7 +94,7 @@ const ChannelDetailScreen = ({
     // console.log({ isMovieDownloaded });
   }, [channel, isMovieDownloaded]);
 
-  const isFavorite = false;
+  // const isFavorite = false;
 
   const handleTogglePlay = () => {
     setLoading(true);
@@ -163,30 +163,22 @@ const ChannelDetailScreen = ({
                 {...currentlyPlaying}
                 channeltitle={channel.title}
                 onRightActionPress={handleFovoritePress}
-                isFavorite={isFavorite}
               />
             </View>
           </View>
         </ContentWrap>
         {/* program guide */}
 
-        <ProgramGuide channelId={channelId} />
+        <ProgramGuide channelId={channelId} title="Program Guide" />
       </ScrollView>
     </View>
   );
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({
-  channeltitle,
-  title,
-  epgtitle,
-  time,
-  time_to,
-  onRightActionPress,
-  isFavorite
-}) => {
+const Content = ({ channeltitle, title, epgtitle, time, time_to, onRightActionPress }) => {
   const theme = useTheme();
+  const [isFavorite] = React.useState(false);
   const renderEpgtitle = () => {
     if (!epgtitle)
       return (
@@ -249,38 +241,11 @@ const Content = ({
   );
 };
 
-// eslint-disable-next-line react/prop-types
-const CategoryPill = ({ id, name, selected, onSelect }) => {
-  const theme = useTheme();
-  return (
-    <Pressable
-      key={id}
-      onPress={() => onSelect(id)}
-      style={{
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        backgroundColor:
-          selected === id ? theme.iplayya.colors.vibrantpussy : theme.iplayya.colors.white25,
-        height: 34,
-        borderRadius: 34,
-        marginRight: 10,
-        marginBottom: 30
-      }}
-    >
-      <Text style={{ ...createFontFormat(12, 16) }}>{name}</Text>
-    </Pressable>
-  );
-};
-
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
     <ChannelDetailScreen {...props} />
   </ScreenContainer>
 );
-
-CategoryPill.defaultProps = {
-  selected: '1'
-};
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
