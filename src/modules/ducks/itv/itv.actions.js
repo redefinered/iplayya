@@ -52,6 +52,11 @@ const { Types, Creators } = createActions(
     searchFailure: ['error'],
     resetSearchResultsPaginator: null,
 
+    createNotification: ['notification'], /// an object
+    turnOffNotification: ['notificationId'],
+    turnOnNotification: ['notificationId'],
+    deleteNotification: ['notificationId'],
+
     // misc
     reset: null,
     setPaginatorInfo: ['data'],

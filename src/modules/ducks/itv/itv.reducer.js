@@ -2,7 +2,11 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './itv.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
-import { updateChannelsWithFavorited } from './itv.helpers';
+import {
+  updateChannelsWithFavorited,
+  turnOnNotificationById,
+  turnOffNotificationById
+} from './itv.helpers';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -54,12 +58,33 @@ const INITIAL_STATE = {
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
-  }
+  },
+
+  notifications: []
 };
 
 export default createReducer(INITIAL_STATE, {
   [Types.START]: (state) => {
     return { ...state, channel: null };
+  },
+  [Types.CREATE_NOTIFICATION]: (state, action) => {
+    /// always add the newest at the first position
+    // because that will be the next notification that will be created
+    return { ...state, notifications: [action.notification, ...state.notifications] };
+  },
+  [Types.TURN_OFF_NOTIFICATION]: (state, action) => {
+    const notifications = turnOffNotificationById(state, action);
+
+    return { ...state, notifications };
+  },
+  [Types.TURN_ON_NOTIFICATION]: (state, action) => {
+    const notifications = turnOnNotificationById(state, action);
+
+    return { ...state, notifications };
+  },
+  [Types.DELETE_NOTIFICATION]: (state, action) => {
+    const updatedNotifs = state.notifications.filter(({ id }) => id !== action.notificationId);
+    return { ...state, notifications: updatedNotifs };
   },
   [Types.GET_GENRES]: (state) => {
     return {
