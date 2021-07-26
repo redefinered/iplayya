@@ -11,6 +11,7 @@ import Icon from 'components/icon/icon.component.js';
 import HomeScreen from 'screens/home/home.screen';
 
 import ItvScreen from 'screens/itv/itv.screen';
+import ProgramGuidScreen from 'screens/itv/program-guide.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 // import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
@@ -180,6 +181,14 @@ const HomeStack = ({
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="ProgramGuidScreen"
+          component={ProgramGuidScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={{
+            title: 'Program Guide'
           }}
         />
         <Stack.Screen
