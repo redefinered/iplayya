@@ -142,6 +142,7 @@ export const getProgramsByChannel = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

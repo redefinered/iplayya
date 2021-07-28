@@ -11,6 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 // import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
+import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 // import { Creators as MusicCreator } from 'modules/ducks/music/music.actions';
@@ -20,31 +21,82 @@ import { compose } from 'redux';
 
 import HomeGuide from 'components/walkthrough-guide/home-guide.component';
 
+import NotifService from '../../../NotifService';
+import { selectNotifications } from 'modules/ducks/itv/itv.selectors.js';
+
 const Home = ({
   error,
   navigation,
   completedOnboarding,
   setBottomTabsVisibleAction,
-  // getCategoriesAction,
   getMoviesStartAction,
   resetCategoryPaginatorAction,
-  enableSwipeAction
-  // onboardingComplete
-  // getMusicGenresAction
+  enableSwipeAction,
+
+  isLoggedIn,
+  notifications
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
-  /// load categories here
+  const onRegister = ({ token }) => {
+    // setRegisterToken(token);
+    // setFcmRegistered(true);
+    console.log({ token });
+  };
+
+  const onNotif = ({ title, message, data: { channelId } }) => {
+    console.log({ title, message, channelId });
+    console.log('should render notifications page after this');
+    navigation.navigate('ChannelDetailScreen', { channelId });
+  };
+
+  const notif = new NotifService(onRegister, onNotif);
+
+  /// schedule a notification when a new one is created in state
+  React.useEffect(() => {
+    /// do nothing if there are no notifications
+    if (!notifications.length) return;
+
+    // notif.localNotif();
+
+    scheduleNotification(notifications);
+  }, [notifications]);
+
+  // eslint-disable-next-line no-unused-vars
+  const scheduleNotification = (notifications) => {
+    notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }));
+
+    const {
+      id,
+      channelId,
+      active,
+      program: { title: programTitle },
+      time
+    } = notifications[0];
+
+    /// if the notification is deactivated, do nothing
+    if (!active) return;
+
+    let title = `${programTitle} is now showing`;
+    let message = 'Watch it now before it is to late!';
+
+    const newScheduledNotif = { id, channelId, title, message, date: new Date(time) };
+
+    notif.scheduleNotif(newScheduledNotif);
+  };
+
+  /// when loggedout, cancel all notifications
+  React.useEffect(() => {
+    if (isLoggedIn) return;
+
+    notif.cancelAll();
+  }, [isLoggedIn]);
+
   React.useEffect(() => {
     getMoviesStartAction();
-    // getCategoriesAction();
-    // getMusicGenresAction();
-    // resetCategoryPaginatorAction();
     enableSwipeAction(true);
-
-    // console.log('xxxxxx');
   }, []);
 
   React.useEffect(() => {
@@ -59,12 +111,6 @@ const Home = ({
       setShowWelcomeDialog(true);
     }
   }, [completedOnboarding]);
-
-  // React.useEffect(() => {
-  //   if (route.params) {
-  //     setShowHomeGuide(route.params.openIptvGuide);
-  //   }
-  // }, [route]);
 
   const handleWelcomeHide = () => {
     setShowWelcomeDialog(false);
@@ -128,17 +174,14 @@ Home.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  // completedOnboarding: selectCompletedOnboarding,
-  // onboardingComplete: selectOnboardingComplete,
   error: selectError,
-
-  isFetching: selectIsFetching
+  isFetching: selectIsFetching,
+  isLoggedIn: selectIsLoggedIn,
+  notifications: selectNotifications
 });
 
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  // getCategoriesAction: Creators.getCategories,
-  // getMusicGenresAction: MusicCreator.getGenres,
   getMoviesStartAction: Creators.getMoviesStart,
   resetCategoryPaginatorAction: Creators.resetCategoryPaginator,
   enableSwipeAction: NavActionCreators.enableSwipe

@@ -80,6 +80,7 @@ const ProgramGuide = ({ programs, notifications, getProgramsByChannelAction, cha
       />
       {programs.map((program, key) => (
         <ProgramItem
+          channelId={channelId}
           exists={isInNotifications(program.id)}
           isActive={isNotificationActive(program.id)}
           key={key}

@@ -4,37 +4,32 @@ import 'react-native-gesture-handler';
 
 import React from 'react';
 import { View, Linking, Platform, StatusBar, StyleSheet } from 'react-native';
-import { Button, ActivityIndicator, useTheme } from 'react-native-paper';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
-// import HomeNavigationContainer from 'containers/home-navigation.container';
 import HomeTabs from 'navigators/home-tabs.navigator';
-// import IptvStack from 'navigators/iptv-stack.navigator';
-// import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators, selectIsLoading } from 'modules/app';
+import { selectIsLoading } from 'modules/app';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
-import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
-// import { selectProviders } from 'modules/ducks/provider/provider.selectors';
-// import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
 import SplashScreen from 'react-native-splash-screen';
-// import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import Test from './test.component.js';
-// eslint-disable-next-line no-unused-vars
-import { resetStore } from 'modules/store';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
 import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
-import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors.js';
 
-// import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import NotifService from './NotifService';
+// import NotifService from './NotifService';
+// import { selectNotifications } from 'modules/ducks/itv/itv.selectors.js';
+
+// eslint-disable-next-line no-unused-vars
+import { resetStore } from 'modules/store';
+
+// import { Button } from 'react-native-paper';
 
 const HomeComponent = () => (
   <NavigationContainer>
@@ -45,60 +40,76 @@ const HomeComponent = () => (
 
 const App = ({
   isLoading,
-
-  // purgeStoreAction,
-  // signOutAction,
-
   isLoggedIn,
   updatePasswordStartAction,
   passwordUpdateParams,
-  // passwordUpdated,
-  // passwordResetStart,
-  // providers,
-  // skippedProviderAdd,
-
   resetNowPlayingAction,
-
   currentUser,
   setProviderAction,
-
   getProfileAction,
   profileUpdated
-  // onboardinginfo,
-
-  // isProviderSetupSkipped
+  // notifications
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
-  const [notifRegisterToken, setNotifRegisterToken] = React.useState(null);
-  const [fcmRegistered, setFcmRegistered] = React.useState(null);
+  // const [fcmRegistered, setFcmRegistered] = React.useState(null);
+  // const [registerToken, setRegisterToken] = React.useState(null);
 
-  // eslint-disable-next-line no-unused-vars
-  const notif = new NotifService(onRegister, onNotif);
+  // const onRegister = ({ token }) => {
+  //   // setRegisterToken(token);
+  //   // setFcmRegistered(true);
+  //   console.log({ token });
+  // };
 
-  const onRegister = ({ token }) => {
-    setNotifRegisterToken(token);
-    setFcmRegistered(true);
-  };
+  // const onNotif = ({ title, message, data: { channelId } }) => {
+  //   console.log({ title, message, channelId });
+  //   console.log('should render notifications page after this');
+  // };
 
-  const onNotif = ({ title, message }) => {
-    console.log({ title, message });
-  };
+  // const notif = new NotifService(onRegister, onNotif);
 
-  // eslint-disable-next-line no-unused-vars
-  const handlePermission = (permissions) => {
-    console.log({ permissions: JSON.stringify(permissions) });
-  };
+  // /// schedule a notification when a new one is created in state
+  // React.useEffect(() => {
+  //   /// do nothing if there are no notifications
+  //   if (!notifications.length) return;
+
+  //   // notif.localNotif();
+
+  //   scheduleNotification(notifications);
+  // }, [notifications]);
+
+  // // eslint-disable-next-line no-unused-vars
+  // const scheduleNotification = (notifications) => {
+  //   notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }));
+
+  //   const {
+  //     id,
+  //     channelId,
+  //     active,
+  //     program: { title: programTitle },
+  //     time
+  //   } = notifications[0];
+
+  //   /// if the notification is deactivated, do nothing
+  //   if (!active) return;
+
+  //   let title = `${programTitle} is now showing`;
+  //   let message = 'Watch it now before it is to late!';
+
+  //   const newScheduledNotif = { id, channelId, title, message, date: new Date(time) };
+
+  //   notif.scheduleNotif(newScheduledNotif);
+  // };
+
+  // /// when loggedout, cancel all notifications
+  // React.useEffect(() => {
+  //   if (isLoggedIn) return;
+
+  //   notif.cancelAll();
+  // }, [isLoggedIn]);
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
-
-    // signOutAction(); // manual signout for debugging
-    // purgeStoreAction(); // manual state purge for debugging
-
-    // checkExistingDownloads();
-    // listDownloadedFiles();
-    // deleteFile('19_12_Angry_Men.mp4');
 
     // resetStore();
 
@@ -139,25 +150,6 @@ const App = ({
     }
   }, [profileUpdated]);
 
-  // React.useEffect(() => {
-  //   // might not be necessary
-  //   if (typeof onboardinginfo === 'undefined') return;
-
-  //   const { skippedProviderSetup } = onboardinginfo;
-
-  //   if (typeof skippedProviderSetup === 'undefined') return;
-
-  //   if (skippedProviderSetup) {
-  //     return setSkippedProviderAdd(true);
-  //   } else {
-  //     return setSkippedProviderAdd(false);
-  //   }
-
-  //   // setSkippedProviderAdd(false);
-  // });
-
-  console.log({ notifRegisterToken, fcmRegistered });
-
   React.useEffect(() => {
     if (isLoggedIn) {
       const { providers } = currentUser;
@@ -195,18 +187,14 @@ const App = ({
     return (
       <NavigationContainer>
         <OnboardingStack />
-        {/* <Button mode="contained" style={{ marginBottom: 10 }} onPress={() => notif.localNotif()}>
-          Local Notification (now)
-        </Button>
-        <Button
-          mode="contained"
-          style={{ marginBottom: 10 }}
-          onPress={() => notif.checkPermission(handlePermission)}
-        >
-          Check permissions
-        </Button> */}
       </NavigationContainer>
     );
+
+  // return (
+  //   <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
+  //     <Button onPress={() => notif.localNotif()}>Test notication</Button>
+  //   </View>
+  // );
 
   return <HomeComponent />;
 };
@@ -216,17 +204,11 @@ const mapStateToProps = createStructuredSelector({
   isLoading: selectIsLoading,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
-  // passwordUpdated: selectPasswordUpdated,
-  // providers: selectProviders,
-  // skippedProviderAdd: selectSkippedProviderAdd,
-  profileUpdated: selectUpdated,
-  // onboardinginfo: selectOnboardinginfo,
-  isProviderSetupSkipped: selectIsProviderSetupSkipped
+  profileUpdated: selectUpdated
+  // notifications: selectNotifications
 });
 
 const actions = {
-  purgeStoreAction: Creators.purgeStore, // for development and debugging
-  signOutAction: AuthActionCreators.signOut,
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   resetNowPlayingAction: MusicCreators.resetNowPlaying,
   setProviderAction: UserCreators.setProvider,
