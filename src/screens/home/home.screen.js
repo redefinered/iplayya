@@ -112,7 +112,7 @@ const Home = ({
   React.useEffect(() => {
     // makes sure main tab navigation is always visible on application mount
     setBottomTabsVisibleAction({ hideTabs: false });
-  });
+  }, []);
 
   React.useEffect(() => {
     if (completedOnboarding) {
