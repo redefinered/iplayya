@@ -23,6 +23,7 @@ import HomeGuide from 'components/walkthrough-guide/home-guide.component';
 
 import NotifService from '../../../NotifService';
 import { selectNotifications } from 'modules/ducks/itv/itv.selectors.js';
+import moment from 'moment';
 
 const Home = ({
   error,
@@ -71,18 +72,27 @@ const Home = ({
     const {
       id,
       channelId,
+      channelName,
       active,
-      program: { title: programTitle },
+      program: { title: programTitle, description },
       time
     } = notifications[0];
 
     /// if the notification is deactivated, do nothing
     if (!active) return;
 
-    let title = `${programTitle} is now showing`;
-    let message = 'Watch it now before it is to late!';
+    let title = `${programTitle} will start in 5 mins`;
 
-    const newScheduledNotif = { id, channelId, title, message, date: new Date(time) };
+    const date = new Date(time);
+
+    const newScheduledNotif = {
+      id,
+      channelId,
+      channelName,
+      title,
+      message: description,
+      date: moment(date).subtract(5, 'minutes')
+    };
 
     notif.scheduleNotif(newScheduledNotif);
   };

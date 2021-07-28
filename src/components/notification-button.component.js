@@ -13,14 +13,17 @@ const NotificationButton = ({ notifications }) => {
   const navigation = useNavigation();
 
   const renderIndicator = () => {
-    if (!notifications.length) return;
+    const someUnreadItem = notifications.find(({ read }) => read === false);
+
+    /// if no unread items found, do nothing
+    if (typeof someUnreadItem === 'undefined') return;
 
     return <View style={styles.indicator} />;
   };
   return (
     <TouchableRipple
       borderless={true}
-      onPress={() => navigation.navigate('ItvSearchScreen')}
+      onPress={() => navigation.navigate('NotificationsScreen')}
       style={{ borderRadius: 44, padding: 5 }}
       rippleColor="rgba(0,0,0,0.28)"
     >

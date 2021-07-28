@@ -10,6 +10,7 @@ import moment from 'moment';
 const ProgramItem = ({
   id,
   channelId,
+  channelName,
   title,
   time,
 
@@ -36,9 +37,11 @@ const ProgramItem = ({
     const now = new Date(Date.now());
     createNotificationAction({
       id,
+      channelName,
       channelId,
       active: true,
       time,
+      read: false,
       createdAt: now.getTime(), /// create a timestamp which is equal to the time at the moment
       program: { title, ...otherProgramProps }
     });
@@ -91,6 +94,7 @@ const ProgramItem = ({
 ProgramItem.propTypes = {
   id: PropTypes.string,
   channelId: PropTypes.string,
+  channelName: PropTypes.string,
   title: PropTypes.string,
   time: PropTypes.string,
   exists: PropTypes.bool,

@@ -13,7 +13,13 @@ import { selectPrograms, selectNotifications } from 'modules/ducks/itv/itv.selec
 import { createFontFormat } from 'utils';
 
 // eslint-disable-next-line no-unused-vars
-const ProgramGuide = ({ programs, notifications, getProgramsByChannelAction, channelId }) => {
+const ProgramGuide = ({
+  programs,
+  notifications,
+  getProgramsByChannelAction,
+  channelId,
+  channelName
+}) => {
   const theme = useTheme();
   // generates an array of dates 7 days from now
   const dates = generateDatesFromToday();
@@ -81,6 +87,7 @@ const ProgramGuide = ({ programs, notifications, getProgramsByChannelAction, cha
       {programs.map((program, key) => (
         <ProgramItem
           channelId={channelId}
+          channelName={channelName}
           exists={isInNotifications(program.id)}
           isActive={isNotificationActive(program.id)}
           key={key}
@@ -93,6 +100,7 @@ const ProgramGuide = ({ programs, notifications, getProgramsByChannelAction, cha
 
 ProgramGuide.propTypes = {
   channelId: PropTypes.string,
+  channelName: PropTypes.string,
   getProgramsByChannelAction: PropTypes.func,
   programs: PropTypes.array,
   notifications: PropTypes.array

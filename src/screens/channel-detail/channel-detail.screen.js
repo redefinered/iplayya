@@ -169,7 +169,7 @@ const ChannelDetailScreen = ({
         </ContentWrap>
         {/* program guide */}
 
-        <ProgramGuide channelId={channelId} title="Program Guide" />
+        <ProgramGuide channelId={channelId} channelName={channel.title} title="Program Guide" />
       </ScrollView>
     </View>
   );

@@ -16,6 +16,7 @@ import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 // import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
 import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
+import NotificationsScreen from 'screens/notifications/notifications.screen';
 
 import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 
@@ -59,6 +60,9 @@ import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
 import { Creators } from 'modules/ducks/profile/profile.actions';
 import { selectCreated } from 'modules/ducks/provider/provider.selectors';
+
+import NotificationButton from 'components/notification-button.component';
+
 import clone from 'lodash/clone';
 
 const Stack = createStackNavigator();
@@ -164,10 +168,11 @@ const HomeStack = ({
             animationEnabled: false,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
+                <NotificationButton />
                 <TouchableRipple
                   borderless={true}
                   onPress={() => navigation.navigate('ItvSearchScreen')}
-                  style={{ borderRadius: 44, padding: 8 }}
+                  style={{ borderRadius: 44, padding: 5 }}
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={{ ...styles.headerButtonContainer }}>
@@ -186,9 +191,15 @@ const HomeStack = ({
         <Stack.Screen
           name="ProgramGuidScreen"
           component={ProgramGuidScreen}
-          // eslint-disable-next-line no-unused-vars
           options={{
             title: 'Program Guide'
+          }}
+        />
+        <Stack.Screen
+          name="NotificationsScreen"
+          component={NotificationsScreen}
+          options={{
+            title: 'Notifications'
           }}
         />
         <Stack.Screen
@@ -790,7 +801,6 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center'
-    // marginLeft: 15
   },
   backButtonContainer: {
     width: 44,

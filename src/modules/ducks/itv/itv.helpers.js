@@ -63,3 +63,21 @@ export const turnOnNotificationById = (state, action) => {
 
   return notifications;
 };
+
+export const setNotificationToReadById = (state, action) => {
+  const { notifications } = state;
+
+  /// get the notification to modify
+  const notification = notifications.find(({ id }) => id === action.notificationId);
+
+  /// get the index of the notification to modify
+  const notificationIdex = notifications.findIndex(({ id }) => id === action.notificationId);
+
+  /// set read property of the target notification to true
+  const updatedNotif = Object.assign(notification, { read: true });
+
+  /// update notifications replacing the outdated one with the updated
+  notifications.splice(notificationIdex, 1, updatedNotif);
+
+  return notifications;
+};

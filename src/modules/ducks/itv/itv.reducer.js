@@ -5,7 +5,8 @@ import orderBy from 'lodash/orderBy';
 import {
   updateChannelsWithFavorited,
   turnOnNotificationById,
-  turnOffNotificationById
+  turnOffNotificationById,
+  setNotificationToReadById
 } from './itv.helpers';
 
 const INITIAL_STATE = {
@@ -79,6 +80,11 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.TURN_ON_NOTIFICATION]: (state, action) => {
     const notifications = turnOnNotificationById(state, action);
+
+    return { ...state, notifications };
+  },
+  [Types.SET_NOTIFICATION_TO_READ]: (state, action) => {
+    const notifications = setNotificationToReadById(state, action);
 
     return { ...state, notifications };
   },
