@@ -168,6 +168,7 @@ const Content = ({
             marginBottom: 5
           }}
         >{`${number}: ${title}`}</Text>
+
         {/* {onRightActionPress ? (
           <Pressable onPress={() => handleRightActionPress()}>
             <Icon
