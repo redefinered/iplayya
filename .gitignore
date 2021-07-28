@@ -62,3 +62,6 @@ buck-out/
 .env
 .env.*
 !.env.example
+
+# push notifications generated files
+/android/app/zo0r_react-native-push-notification_ React Native Local and Remote Notifications_files/*

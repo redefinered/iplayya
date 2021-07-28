@@ -1,5 +1,8 @@
 package com.iplayya;
 
+// for remote notifications
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
 import android.app.Application;
 import android.content.Context;
 
@@ -35,6 +38,8 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
 //          packages.add(new SystemSettingPackage());
+//            packages.add(new ReactNativePushNotificationPackage());
+
           return packages;
         }
 

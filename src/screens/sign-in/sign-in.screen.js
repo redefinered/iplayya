@@ -63,12 +63,6 @@ const SignInScreen = ({
     }
   }, [currentUser]);
 
-  // React.useEffect(() => {
-  //   if (currentUser) {
-  //     setUsername(currentUser.email);
-  //   }
-  // }, [loginError]);
-
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
     if (name === 'username') {

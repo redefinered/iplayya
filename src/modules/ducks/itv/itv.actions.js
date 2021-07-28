@@ -55,6 +55,12 @@ const { Types, Creators } = createActions(
     //recent search
     updateRecentSearch: ['term'],
 
+    createNotification: ['notification'], /// an object
+    setNotificationToRead: ['notificationId'],
+    turnOffNotification: ['notificationId'],
+    turnOnNotification: ['notificationId'],
+    deleteNotification: ['notificationId'],
+
     // misc
     reset: null,
     setPaginatorInfo: ['data'],
