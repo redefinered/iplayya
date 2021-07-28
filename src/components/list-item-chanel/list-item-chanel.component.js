@@ -162,8 +162,13 @@ const Content = ({
         }}
       >
         <Text
-          style={{ ...createFontFormat(12, 16), marginBottom: 5 }}
+          style={{
+            ...createFontFormat(12, 16),
+            color: theme.iplayya.colors.white80,
+            marginBottom: 5
+          }}
         >{`${number}: ${title}`}</Text>
+
         {/* {onRightActionPress ? (
           <Pressable onPress={() => handleRightActionPress()}>
             <Icon
@@ -175,13 +180,15 @@ const Content = ({
         ) : (
           renderCheckbox()
         )} */}
-        <Pressable onPress={() => handleRightActionPress()}>
-          <Icon
-            name="heart-solid"
-            size={24}
-            style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-          />
-        </Pressable>
+        {onRightActionPress ? (
+          <Pressable onPress={() => handleRightActionPress()}>
+            <Icon
+              name="heart-solid"
+              size={24}
+              style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
+            />
+          </Pressable>
+        ) : null}
       </View>
 
       {renderEpgtitle()}

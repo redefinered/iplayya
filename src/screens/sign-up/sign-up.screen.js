@@ -51,6 +51,10 @@ class SignUpScreen extends React.Component {
 
   componentDidMount() {
     this.props.registerStartAction();
+
+    this.props.navigation.addListener('beforeRemove', () => {
+      this.props.registerStartAction();
+    });
   }
 
   handleChange = (value, name) => {
