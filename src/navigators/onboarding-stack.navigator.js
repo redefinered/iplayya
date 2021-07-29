@@ -3,7 +3,11 @@
 
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+  TransitionSpecs
+} from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import SignInScreen from 'screens/sign-in/sign-in.screen';
 import SignUpScreen from 'screens/sign-up/sign-up.screen';
@@ -24,6 +28,11 @@ const OnboardingStack = () => {
   return (
     <Stack.Navigator
       screenOptions={{
+        transitionSpec: {
+          open: TransitionSpecs.TransitionIOSSpec,
+          close: TransitionSpecs.TransitionIOSSpec
+        },
+        cardStyleInterpolator: CardStyleInterpolators.FadeFromBottomAndroid,
         headerTransparent: true,
         headerTintColor: 'white',
         headerBackTitleVisible: false,

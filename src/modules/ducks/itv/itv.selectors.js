@@ -46,3 +46,7 @@ export const selectSearchResultsPaginator = createSelector(
   [itvState],
   ({ searchResultsPaginator }) => searchResultsPaginator
 );
+
+export const selectRecentSearch = createSelector([itvState], ({ recentSearch }) => recentSearch);
+
+export const selectNotifications = createSelector([itvState], ({ notifications }) => notifications);

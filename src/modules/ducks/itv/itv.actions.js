@@ -2,6 +2,8 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    start: null,
+
     /// query: GET_GENRES
     getGenres: null,
     getGenresSuccess: ['data'],
@@ -49,6 +51,15 @@ const { Types, Creators } = createActions(
     searchSuccess: ['results', 'nextPaginatorInfo'],
     searchFailure: ['error'],
     resetSearchResultsPaginator: null,
+
+    //recent search
+    updateRecentSearch: ['term'],
+
+    createNotification: ['notification'], /// an object
+    setNotificationToRead: ['notificationId'],
+    turnOffNotification: ['notificationId'],
+    turnOnNotification: ['notificationId'],
+    deleteNotification: ['notificationId'],
 
     // misc
     reset: null,

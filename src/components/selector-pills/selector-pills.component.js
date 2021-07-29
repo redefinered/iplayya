@@ -4,9 +4,9 @@ import { Pressable, ScrollView } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 
-const SelectorPills = ({ data, labelkey, onSelect, selected }) => {
+const SelectorPills = ({ data, labelkey, onSelect, selected, style }) => {
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 40 }}>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 40, ...style }}>
       {data.map((d) => {
         const { id, ...itemProps } = d;
         return (
@@ -28,7 +28,8 @@ SelectorPills.propTypes = {
   data: PropTypes.array,
   labelkey: PropTypes.string,
   onSelect: PropTypes.func,
-  selected: PropTypes.string
+  selected: PropTypes.string,
+  style: PropTypes.object
 };
 
 SelectorPills.defaultProps = {

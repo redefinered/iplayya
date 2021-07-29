@@ -124,7 +124,19 @@ export const SEARCH = gql`
     iptvs(input: $input) {
       id
       title
+      description
+      genre
       number
+      url
+      censored
+      hd
+      is_favorite
+      time
+      time_to
+      duration
+      epgtitle
+      epgdescription
+      archived_link
     }
   }
 `;

@@ -1,24 +1,49 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, useTheme } from 'react-native-paper';
+import { Text, Button, useTheme } from 'react-native-paper';
 import { Pressable, StyleSheet, Image, View } from 'react-native';
 import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import { createFontFormat } from 'utils';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
 const ItemPreview = ({
   id,
   title,
+  epgtitle,
   thumbnail,
   onSelect,
   variant,
   handleSubscribeToItem,
   isNotificationActive
 }) => {
+  const navigation = useNavigation();
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
   // const [isNotificationActive, setIsNotificationActive] = React.useState(true);
+
+  const renderEpgtitle = () => {
+    if (!epgtitle)
+      return (
+        <Text
+          numberOfLines={1}
+          style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}
+        >
+          Program title unavailable
+        </Text>
+      );
+
+    return (
+      <Text
+        numberOfLines={1}
+        style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}
+      >
+        {epgtitle}
+      </Text>
+    );
+  };
 
   if (variant === 'image')
     return (
@@ -27,28 +52,37 @@ const ItemPreview = ({
       </Pressable>
     );
   return (
-    <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
-      <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={thumbnail} />
-      {/* <View style={{ width: 240, height: 133, borderRadius: 8, backgroundColor: 'black' }} /> */}
+    <View style={{ marginRight: 10 }}>
+      <TouchableOpacity onPress={() => onSelect(id)}>
+        <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={thumbnail} />
+      </TouchableOpacity>
       <Spacer size={15} />
       <View
         style={{
+          flex: 1,
           flexDirection: 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingRight: 15
+          paddingRight: 15,
+          maxWidth: 240
         }}
       >
-        <Text style={styles.title}>{title}</Text>
-        <Pressable onPress={() => handleSubscribeToItem(id)}>
+        <TouchableOpacity onPress={() => onSelect(id)}>
+          <Text style={styles.title}>{title}</Text>
+          {renderEpgtitle()}
+        </TouchableOpacity>
+        <TouchableHighlight
+          underlayColor="rgba(255,255,255,0.1)"
+          style={styles.buttonContainer}
+          onPress={() => navigation.navigate('ProgramGuidScreen', { channelId: id })}
+        >
           <Icon
             name="notifications"
             size={24}
             color={isNotificationActive ? theme.iplayya.colors.vibrantpussy : 'white'}
           />
-        </Pressable>
+        </TouchableHighlight>
       </View>
-    </Pressable>
+    </View>
   );
 };
 
@@ -65,12 +99,20 @@ const styles = StyleSheet.create({
   date: {
     ...createFontFormat(12, 16),
     marginBottom: 4
+  },
+  buttonContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
 ItemPreview.propTypes = {
   id: PropTypes.string,
   title: PropTypes.string,
+  epgtitle: PropTypes.string,
   thumbnail: PropTypes.any,
   onSelect: PropTypes.func,
   variant: PropTypes.string,

@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { View, Pressable, FlatList } from 'react-native';
+import { View, Pressable, Image, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
+// import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -26,6 +26,7 @@ import { createFontFormat } from 'utils';
 import { selectFavoritesListUpdated } from 'modules/ducks/itv/itv.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
+import moment from 'moment';
 
 const ItvFavoritesScreen = ({
   theme,
@@ -46,9 +47,9 @@ const ItvFavoritesScreen = ({
   const [listData, setListData] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
-  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-    true
-  );
+  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+  //   true
+  // );
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
@@ -151,13 +152,13 @@ const ItvFavoritesScreen = ({
     handleRemoveItems();
   };
 
-  const handleEndReached = () => {
-    console.log({ favoritesPaginator });
-    if (!onEndReachedCalledDuringMomentum) {
-      getFavoritesAction(favoritesPaginator);
-      setOnEndReachedCalledDuringMomentum(true);
-    }
-  };
+  // const handleEndReached = () => {
+  //   console.log({ favoritesPaginator });
+  //   if (!onEndReachedCalledDuringMomentum) {
+  //     getFavoritesAction(favoritesPaginator);
+  //     setOnEndReachedCalledDuringMomentum(true);
+  //   }
+  // };
 
   const getDeleteAlertMessage = () => {
     if (selectedItems.length === listData.length)
@@ -171,7 +172,7 @@ const ItvFavoritesScreen = ({
 
   if (listData.length)
     return (
-      <View>
+      <ScrollView>
         {activateCheckboxes && (
           <ContentWrap style={{ marginTop: 30 }}>
             <View
@@ -198,8 +199,88 @@ const ItvFavoritesScreen = ({
             </View>
           </ContentWrap>
         )}
+        {listData.map(({ id, title, epgtitle, time, time_to }) => {
+          const getSchedule = (time, time_to) => {
+            if (!time || !time_to) return;
 
-        <View style={{ paddingTop: theme.spacing(4) }}>
+            return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+          };
+          return (
+            <ContentWrap style={{ marginTop: 20 }} key={id}>
+              <Pressable
+                // style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 5,
+                  marginLeft: 10
+                }}
+                onLongPress={() => handleLongPress(id)}
+                onPress={() => handleSelectItem(id)}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    marginBottom: 10,
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Image
+                    style={{
+                      width: 60,
+                      height: 60,
+                      borderRadius: 8,
+                      marginRight: 10
+                      // position: 'absolute',
+                      // top: 0,
+                      // left: 0
+                    }}
+                    source={channelplaceholder}
+                  />
+
+                  <View style={{ justifyContent: 'center' }}>
+                    <Text
+                      style={{
+                        fontWeight: '700',
+                        ...createFontFormat(12, 16),
+                        marginBottom: 5,
+                        color: theme.iplayya.colors.white50
+                      }}
+                    >
+                      {`${id}: ${title}`}
+                    </Text>
+                    <Text
+                      style={{
+                        fontWeight: '700',
+                        ...createFontFormat(12, 16),
+                        color: theme.iplayya.colors.white80,
+                        marginBottom: 5
+                      }}
+                    >
+                      {epgtitle}
+                    </Text>
+
+                    <Text
+                      style={{
+                        ...createFontFormat(12, 16),
+                        color: theme.iplayya.colors.white50,
+                        marginBottom: 5
+                      }}
+                    >
+                      {getSchedule(time, time_to)}
+                    </Text>
+                  </View>
+                </View>
+                {activateCheckboxes && (
+                  <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                )}
+              </Pressable>
+            </ContentWrap>
+          );
+        })}
+        {/* <View style={{ paddingTop: theme.spacing(4) }}>
           <FlatList
             data={listData}
             keyExtractor={(item) => item.id}
@@ -218,8 +299,8 @@ const ItvFavoritesScreen = ({
                 {...rest}
               />
             )}
-          />
-          {/* {listData.map(({ id, ...rest }) => (
+          /> */}
+        {/* {listData.map(({ id, ...rest }) => (
             <ListItemChanel
               key={id}
               id={id}
@@ -237,7 +318,7 @@ const ItvFavoritesScreen = ({
               full
             />
           ))} */}
-        </View>
+        {/* </View> */}
         {showDeleteConfirmation && (
           <AlertModal
             variant="danger"
@@ -249,7 +330,7 @@ const ItvFavoritesScreen = ({
             confirmAction={handleConfirmDelete}
           />
         )}
-      </View>
+      </ScrollView>
     );
 
   return <EmptyState theme={theme} navigation={navigation} />;
@@ -269,7 +350,7 @@ const EmptyState = ({ theme, navigation }) => (
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>
     <Spacer size={30} />
-    <Pressable onPress={() => navigation.navigate('ImovieScreen')}>
+    <Pressable onPress={() => navigation.navigate('ItvScreen')}>
       <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
         Heart a channel to add to your favorites list.
       </Text>

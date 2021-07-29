@@ -11,6 +11,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 // import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
+import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 // import { Creators as MusicCreator } from 'modules/ducks/music/music.actions';
@@ -20,37 +21,98 @@ import { compose } from 'redux';
 
 import HomeGuide from 'components/walkthrough-guide/home-guide.component';
 
+import NotifService from '../../../NotifService';
+import { selectNotifications } from 'modules/ducks/itv/itv.selectors.js';
+import moment from 'moment';
+
 const Home = ({
   error,
   navigation,
   completedOnboarding,
   setBottomTabsVisibleAction,
-  // getCategoriesAction,
   getMoviesStartAction,
   resetCategoryPaginatorAction,
-  enableSwipeAction
-  // onboardingComplete
-  // getMusicGenresAction
+  enableSwipeAction,
+
+  isLoggedIn,
+  notifications
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
-  /// load categories here
+  const onRegister = ({ token }) => {
+    // setRegisterToken(token);
+    // setFcmRegistered(true);
+    console.log({ token });
+  };
+
+  const onNotif = ({ title, message, data: { channelId } }) => {
+    console.log({ title, message, channelId });
+    console.log('should render notifications page after this');
+    navigation.navigate('ChannelDetailScreen', { channelId });
+  };
+
+  const notif = new NotifService(onRegister, onNotif);
+
+  /// schedule a notification when a new one is created in state
+  React.useEffect(() => {
+    /// do nothing if there are no notifications
+    if (!notifications.length) return;
+
+    // notif.localNotif();
+
+    scheduleNotification(notifications);
+  }, [notifications]);
+
+  // eslint-disable-next-line no-unused-vars
+  const scheduleNotification = (notifications) => {
+    notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }));
+
+    const {
+      id,
+      channelId,
+      channelName,
+      active,
+      program: { title: programTitle, description },
+      time
+    } = notifications[0];
+
+    /// if the notification is deactivated, do nothing
+    if (!active) return;
+
+    let title = `${programTitle} will start in 5 mins`;
+
+    const date = new Date(time);
+
+    const newScheduledNotif = {
+      id,
+      channelId,
+      channelName,
+      title,
+      message: description,
+      date: moment(date).subtract(5, 'minutes')
+    };
+
+    notif.scheduleNotif(newScheduledNotif);
+  };
+
+  /// when loggedout, cancel all notifications
+  React.useEffect(() => {
+    if (isLoggedIn) return;
+
+    notif.cancelAll();
+  }, [isLoggedIn]);
+
   React.useEffect(() => {
     getMoviesStartAction();
-    // getCategoriesAction();
-    // getMusicGenresAction();
-    // resetCategoryPaginatorAction();
     enableSwipeAction(true);
-
-    // console.log('xxxxxx');
   }, []);
 
   React.useEffect(() => {
     // makes sure main tab navigation is always visible on application mount
     setBottomTabsVisibleAction({ hideTabs: false });
-  });
+  }, []);
 
   React.useEffect(() => {
     if (completedOnboarding) {
@@ -59,12 +121,6 @@ const Home = ({
       setShowWelcomeDialog(true);
     }
   }, [completedOnboarding]);
-
-  // React.useEffect(() => {
-  //   if (route.params) {
-  //     setShowHomeGuide(route.params.openIptvGuide);
-  //   }
-  // }, [route]);
 
   const handleWelcomeHide = () => {
     setShowWelcomeDialog(false);
@@ -128,17 +184,14 @@ Home.propTypes = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  // completedOnboarding: selectCompletedOnboarding,
-  // onboardingComplete: selectOnboardingComplete,
   error: selectError,
-
-  isFetching: selectIsFetching
+  isFetching: selectIsFetching,
+  isLoggedIn: selectIsLoggedIn,
+  notifications: selectNotifications
 });
 
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  // getCategoriesAction: Creators.getCategories,
-  // getMusicGenresAction: MusicCreator.getGenres,
   getMoviesStartAction: Creators.getMoviesStart,
   resetCategoryPaginatorAction: Creators.resetCategoryPaginator,
   enableSwipeAction: NavActionCreators.enableSwipe

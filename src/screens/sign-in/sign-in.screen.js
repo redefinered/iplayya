@@ -31,7 +31,6 @@ import {
   selectIsLoggedIn,
   selectCurrentUser
 } from 'modules/ducks/auth/auth.selectors';
-import { useFocusEffect } from '@react-navigation/native';
 
 import styles from './sign-in.styles';
 import withLoader from 'components/with-loader.component';
@@ -45,8 +44,7 @@ const SignInScreen = ({
   currentUser,
   // appReadyAction,
   signInAction,
-  signInStartAction,
-  registerStartAction
+  signInStartAction
   // setProviderAction
 }) => {
   // const [state, setState] = React.useState({ username: '', password: '', showPassword });
@@ -64,16 +62,6 @@ const SignInScreen = ({
       setUsername(currentUser.email);
     }
   }, [currentUser]);
-
-  // React.useEffect(() => {
-  //   if (currentUser) {
-  //     setUsername(currentUser.email);
-  //   }
-  // }, [loginError]);
-
-  useFocusEffect(() => {
-    registerStartAction();
-  });
 
   const handleChangeText = (text, name) => {
     if (name === 'password') return setPassword(text);
