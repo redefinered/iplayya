@@ -31,7 +31,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   downloads: downloadsReducer,
   user: resettable(userReducer),
   password: resettable(passwordReducer),
-  itv: itvReducer,
+  itv: resettable(itvReducer),
   profile: profileReducer,
   movies: moviesReducer,
   music: resettable(musicReducer),

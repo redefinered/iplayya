@@ -318,11 +318,11 @@ class AddIptvScreen extends React.Component {
           />
         </ContentWrap>
 
-        <View style={{ flex: 10 }}>
+        <View style={{ flex: 10, alignItems: 'center' }}>
           {!this.props.isProviderSetupSkipped ? (
             <TouchableRipple
               rippleColor="rgba(0,0,0,0.28)"
-              style={styles.skip}
+              style={{ width: '25%', ...styles.skip }}
               onPress={() => this.handleSkip()}
             >
               <Text>Skip for now</Text>
