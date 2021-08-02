@@ -28,40 +28,58 @@ export const updateChannelsWithFavorited = (state, action) => {
  * @param {String} notificationId id of the notification to modify
  * @returns an updated array
  */
-export const turnOffNotificationById = (state, action) => {
-  const { notifications } = state;
+// export const turnOffNotificationById = (state, action) => {
+//   const { notifications } = state;
+
+//   /// get the notification to modify
+//   const notification = notifications.find(({ id }) => id === action.notificationId);
+
+//   /// get the index of the notification to modify
+//   const notificationIdex = notifications.findIndex(({ id }) => id === action.notificationId);
+
+//   /// set active property of the target notification to false
+//   const updatedNotif = Object.assign(notification, { active: false });
+
+//   /// update notifications replacing the outdated one with the updated
+//   notifications.splice(notificationIdex, 1, updatedNotif);
+
+//   return notifications;
+// };
+
+export const activateSubscriptionById = (state, action) => {
+  const { subscriptions } = state;
 
   /// get the notification to modify
-  const notification = notifications.find(({ id }) => id === action.notificationId);
+  const subscription = subscriptions.find(({ id }) => id === action.subscriptionId);
 
-  /// get the index of the notification to modify
-  const notificationIdex = notifications.findIndex(({ id }) => id === action.notificationId);
+  /// get the index of the subscription to modify
+  const subscriptionIdex = subscriptions.findIndex(({ id }) => id === action.subscriptionId);
 
-  /// set active property of the target notification to false
-  const updatedNotif = Object.assign(notification, { active: false });
+  /// set active property of the target subscription to true
+  const updatedSubscription = Object.assign(subscription, { status: 1 });
 
-  /// update notifications replacing the outdated one with the updated
-  notifications.splice(notificationIdex, 1, updatedNotif);
+  /// update subscriptions replacing the outdated one with the updated
+  subscriptions.splice(subscriptionIdex, 1, updatedSubscription);
 
-  return notifications;
+  return subscriptions;
 };
 
-export const turnOnNotificationById = (state, action) => {
-  const { notifications } = state;
+export const deactivateSubscriptionById = (state, action) => {
+  const { subscriptions } = state;
 
   /// get the notification to modify
-  const notification = notifications.find(({ id }) => id === action.notificationId);
+  const subscription = subscriptions.find(({ id }) => id === action.subscriptionId);
 
-  /// get the index of the notification to modify
-  const notificationIdex = notifications.findIndex(({ id }) => id === action.notificationId);
+  /// get the index of the subscription to modify
+  const subscriptionIdex = subscriptions.findIndex(({ id }) => id === action.subscriptionId);
 
-  /// set active property of the target notification to true
-  const updatedNotif = Object.assign(notification, { active: true });
+  /// set active property of the target subscription to true
+  const updatedSubscription = Object.assign(subscription, { status: 0 });
 
-  /// update notifications replacing the outdated one with the updated
-  notifications.splice(notificationIdex, 1, updatedNotif);
+  /// update subscriptions replacing the outdated one with the updated
+  subscriptions.splice(subscriptionIdex, 1, updatedSubscription);
 
-  return notifications;
+  return subscriptions;
 };
 
 export const setNotificationToReadById = (state, action) => {

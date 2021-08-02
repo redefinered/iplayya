@@ -19,7 +19,7 @@
     "deploy:android": "./bin/deploy android",
     "fastlane:android": "fastlane android beta",
     "install:apk": "adb -s 05401cc40206 install /Users/reddeguzman/Code/iplayya/android/app/release/app-release.apk",
-    "emulator:android": "emulator -avd Pixel_4_API_30 -dns-server 8.8.8.8"
+    "emulator:android": "emulator -avd Pixel_4_API_29 -dns-server 8.8.8.8"
   },
   "dependencies": {
     "@apollo/client": "^3.2.5",
