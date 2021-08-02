@@ -157,6 +157,7 @@ const ItvScreen = ({
     setFavorited(title);
 
     addToFavoritesAction(parseInt(channelId));
+    setShowSnackBar(true);
   };
 
   const hideSnackBar = () => {

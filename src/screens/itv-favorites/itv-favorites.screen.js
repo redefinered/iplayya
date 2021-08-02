@@ -172,9 +172,9 @@ const ItvFavoritesScreen = ({
 
   if (listData.length)
     return (
-      <ScrollView>
+      <ScrollView style={{ marginTop: 20 }}>
         {activateCheckboxes && (
-          <ContentWrap style={{ marginTop: 30 }}>
+          <ContentWrap style={{ marginTop: 10 }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -199,85 +199,110 @@ const ItvFavoritesScreen = ({
             </View>
           </ContentWrap>
         )}
-        {listData.map(({ id, title, epgtitle, time, time_to }) => {
+        {listData.map(({ id, title, epgtitle, number, time, time_to }) => {
           const getSchedule = (time, time_to) => {
             if (!time || !time_to) return;
 
             return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
           };
           return (
-            <ContentWrap style={{ marginTop: 20 }} key={id}>
-              <Pressable
-                // style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
-                style={{
+            <Pressable
+              key={id}
+              // style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
+              underlayColor={theme.iplayya.colors.black80}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   marginBottom: 5,
-                  marginLeft: 10
+                  padding: 8
+                  // backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent'
+                }
+              ]}
+              onLongPress={() => handleLongPress(id)}
+              onPress={() => handleSelectItem(id)}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  marginBottom: 10,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginLeft: 8
                 }}
-                onLongPress={() => handleLongPress(id)}
-                onPress={() => handleSelectItem(id)}
               >
-                <View
+                <Image
                   style={{
-                    flexDirection: 'row',
-                    marginBottom: 10,
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    marginRight: 1
+                    // position: 'absolute',
+                    // top: 0,
+                    // left: 0
                   }}
-                >
-                  <Image
+                  source={channelplaceholder}
+                />
+
+                <View style={{ justifyContent: 'center' }}>
+                  <Text
                     style={{
-                      width: 60,
-                      height: 60,
-                      borderRadius: 8,
-                      marginRight: 10
-                      // position: 'absolute',
-                      // top: 0,
-                      // left: 0
+                      fontWeight: '700',
+                      ...createFontFormat(12, 16),
+                      marginBottom: 5,
+                      color: theme.iplayya.colors.white50
                     }}
-                    source={channelplaceholder}
-                  />
-
-                  <View style={{ justifyContent: 'center' }}>
-                    <Text
-                      style={{
-                        fontWeight: '700',
-                        ...createFontFormat(12, 16),
-                        marginBottom: 5,
-                        color: theme.iplayya.colors.white50
-                      }}
-                    >
-                      {`${id}: ${title}`}
-                    </Text>
-                    <Text
-                      style={{
-                        fontWeight: '700',
-                        ...createFontFormat(12, 16),
-                        color: theme.iplayya.colors.white80,
-                        marginBottom: 5
-                      }}
-                    >
-                      {epgtitle}
-                    </Text>
-
-                    <Text
-                      style={{
-                        ...createFontFormat(12, 16),
-                        color: theme.iplayya.colors.white50,
-                        marginBottom: 5
-                      }}
-                    >
-                      {getSchedule(time, time_to)}
-                    </Text>
+                  >
+                    {`${number}: ${title}`}
+                  </Text>
+                  <Text
+                    style={{
+                      fontWeight: '700',
+                      ...createFontFormat(12, 16),
+                      color: theme.iplayya.colors.white80,
+                      marginBottom: 5
+                    }}
+                  >
+                    {epgtitle}
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center', width: '73%' }}>
+                      <Text
+                        style={{
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white50,
+                          marginBottom: 5
+                        }}
+                      >
+                        {getSchedule(time, time_to)}
+                      </Text>
+                    </View>
+                    {!activateCheckboxes && (
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          fontSize: 12,
+                          color: theme.iplayya.colors.white50
+                        }}
+                      >
+                        EPG
+                      </Text>
+                    )}
                   </View>
                 </View>
                 {activateCheckboxes && (
                   <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
                 )}
-              </Pressable>
-            </ContentWrap>
+              </View>
+            </Pressable>
           );
         })}
         {/* <View style={{ paddingTop: theme.spacing(4) }}>
@@ -359,7 +384,7 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <ItvFavoritesScreen {...props} />
   </ScreenContainer>
 );
