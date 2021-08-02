@@ -13,9 +13,9 @@ import { useNavigation } from '@react-navigation/native';
 
 const NotificationItem = ({
   id,
-  channelName,
-  channelId,
-  program,
+  title,
+  data: { channelId },
+  subtitle,
   createdAt,
   read,
   setNotificationToReadAction
@@ -32,7 +32,7 @@ const NotificationItem = ({
 
   // eslint-disable-next-line no-unused-vars
   const handleSelectItem = (id) => {
-    if (!unRead) return;
+    // if (!unRead) return;
 
     // set unread to false
     setUnread(false);
@@ -46,7 +46,6 @@ const NotificationItem = ({
 
   console.log({ unRead });
 
-  const { title } = program;
   return (
     <TouchableHighlight
       onPress={() => handleSelectItem(id)}
@@ -62,7 +61,7 @@ const NotificationItem = ({
         >
           <View>
             <Text style={{ fontSize: 14, fontWeight: '700', marginBottom: theme.spacing(1) }}>
-              {channelName}
+              {title}
             </Text>
             <Text
               style={{
@@ -72,7 +71,7 @@ const NotificationItem = ({
                 marginBottom: theme.spacing(1)
               }}
             >
-              {`${title} will start in 5 minutes`}
+              {`${subtitle} will start in 5 minutes`}
             </Text>
             <Text style={{ fontSize: 10, fontWeight: '300', color: theme.iplayya.colors.white50 }}>
               {moment(createdAt).fromNow()}

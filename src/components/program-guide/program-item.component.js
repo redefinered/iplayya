@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, View } from 'react-native';
@@ -9,42 +10,44 @@ import moment from 'moment';
 
 const ProgramItem = ({
   id,
-  channelId,
-  channelName,
+  // channelId,
+  // channelName,
   title,
   time,
 
-  createNotificationAction,
-  turnOnNotificationAction,
-  turnOffNotificationAction,
+  subscribeToProgramAction,
+  // // createNotificationAction,
+  activateSubscriptionAction,
+  deactivateSubscriptionAction,
 
-  exists,
+  // exists,
   isActive,
 
-  ...otherProgramProps
+  // // ...otherProgramProps,
+  // cancelNotificationAction,
+
+  createScheduledNotif,
+  cancelNotification,
+
+  ...rest
 }) => {
   const theme = useTheme();
-  const handleNotify = () => {
-    if (exists) {
-      if (isActive) {
-        turnOffNotificationAction(id);
-      } else {
-        turnOnNotificationAction(id);
-      }
+  const handleNotify = async () => {
+    console.log({ isActive });
+    const program = { id, title, time, ...rest };
+
+    if (isActive) {
+      deactivateSubscriptionAction(id);
+      cancelNotification(id);
+
       return;
     }
 
-    const now = new Date(Date.now());
-    createNotificationAction({
-      id,
-      channelName,
-      channelId,
-      active: true,
-      time,
-      read: false,
-      createdAt: now.getTime(), /// create a timestamp which is equal to the time at the moment
-      program: { title, ...otherProgramProps }
-    });
+    /// if subscription does not exist or inactive
+    await subscribeToProgramAction(1, id);
+
+    activateSubscriptionAction(id);
+    createScheduledNotif(program);
   };
 
   return (
@@ -99,15 +102,19 @@ ProgramItem.propTypes = {
   time: PropTypes.string,
   exists: PropTypes.bool,
   isActive: PropTypes.bool,
+  subscribeToProgramAction: PropTypes.func,
   createNotificationAction: PropTypes.func,
-  turnOnNotificationAction: PropTypes.func,
-  turnOffNotificationAction: PropTypes.func
+  activateSubscriptionAction: PropTypes.func,
+  deactivateSubscriptionAction: PropTypes.func,
+  cancelNotificationAction: PropTypes.func
 };
 
 const actions = {
+  subscribeToProgramAction: Creators.subscribeToProgram,
   createNotificationAction: Creators.createNotification,
-  turnOnNotificationAction: Creators.turnOnNotification,
-  turnOffNotificationAction: Creators.turnOffNotification
+  activateSubscriptionAction: Creators.activateSubscription,
+  deactivateSubscriptionAction: Creators.deactivateSubscription,
+  cancelNotificationAction: Creators.cancelNotification
 };
 
 export default connect(null, actions)(ProgramItem);
