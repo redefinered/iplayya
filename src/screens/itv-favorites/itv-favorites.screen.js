@@ -170,7 +170,7 @@ const ItvFavoritesScreen = ({
     return 'Are you sure you want to delete this channel from your favorites list?';
   };
 
-  if (listData.length)
+  if (favorites.length)
     return (
       <ScrollView style={{ marginTop: 20 }}>
         {activateCheckboxes && (
@@ -199,7 +199,7 @@ const ItvFavoritesScreen = ({
             </View>
           </ContentWrap>
         )}
-        {listData.map(({ id, title, epgtitle, number, time, time_to }) => {
+        {favorites.map(({ id, title, epgtitle, number, time, time_to }) => {
           const getSchedule = (time, time_to) => {
             if (!time || !time_to) return;
 
