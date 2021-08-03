@@ -13,11 +13,10 @@ import { useNavigation } from '@react-navigation/native';
 
 const NotificationItem = ({
   id,
-  title,
-  data: { channelId },
-  subtitle,
+  channelName,
+  data: { title, channelId },
   createdAt,
-  read,
+  status,
   setNotificationToReadAction
 }) => {
   const theme = useTheme();
@@ -25,10 +24,10 @@ const NotificationItem = ({
   const [unRead, setUnread] = React.useState(true);
 
   React.useEffect(() => {
-    if (read) return setUnread(false);
+    if (status) return setUnread(false);
 
     setUnread(true);
-  }, [read]);
+  }, [status]);
 
   // eslint-disable-next-line no-unused-vars
   const handleSelectItem = (id) => {
@@ -43,8 +42,6 @@ const NotificationItem = ({
     // set read to true in state
     setNotificationToReadAction(id);
   };
-
-  console.log({ unRead });
 
   return (
     <TouchableHighlight
@@ -61,7 +58,7 @@ const NotificationItem = ({
         >
           <View>
             <Text style={{ fontSize: 14, fontWeight: '700', marginBottom: theme.spacing(1) }}>
-              {title}
+              {channelName}
             </Text>
             <Text
               style={{
@@ -71,7 +68,7 @@ const NotificationItem = ({
                 marginBottom: theme.spacing(1)
               }}
             >
-              {`${subtitle} will start in 5 minutes`}
+              {`${title} will start in 5 minutes`}
             </Text>
             <Text style={{ fontSize: 10, fontWeight: '300', color: theme.iplayya.colors.white50 }}>
               {moment(createdAt).fromNow()}

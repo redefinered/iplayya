@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import NotificationItem from './notification-item.component';
-import { selectNotifications } from 'modules/ducks/itv/itv.selectors';
+import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import ContentWrap from 'components/content-wrap.component';

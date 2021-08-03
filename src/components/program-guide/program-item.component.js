@@ -1,53 +1,91 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { createStructuredSelector } from 'reselect';
+import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
 
 const ProgramItem = ({
   id,
-  // channelId,
-  // channelName,
+  channelId,
+  channelName,
   title,
   time,
 
   subscribeToProgramAction,
-  // // createNotificationAction,
-  activateSubscriptionAction,
-  deactivateSubscriptionAction,
-
-  // exists,
-  isActive,
-
-  // // ...otherProgramProps,
-  // cancelNotificationAction,
+  createNotificationAction,
+  activateNotificationAction,
+  deactivateNotificationAction,
 
   createScheduledNotif,
   cancelNotification,
 
+  showSnackBar,
+
+  notifications,
+
   ...rest
 }) => {
   const theme = useTheme();
-  const handleNotify = async () => {
-    console.log({ isActive });
+  const [active, setActive] = React.useState(false);
+  const [exists, setExists] = React.useState(false);
+
+  React.useEffect(() => {
+    if (notifications.length) {
+      const n = notifications.find((n) => n.id === id);
+
+      if (typeof n === 'undefined') {
+        return setExists(false);
+      } else {
+        setExists(true);
+
+        if (n.active) {
+          setActive(true);
+        } else {
+          setActive(false);
+        }
+      }
+    }
+  }, [notifications]);
+
+  const handleNotify = () => {
     const program = { id, title, time, ...rest };
 
-    if (isActive) {
-      deactivateSubscriptionAction(id);
-      cancelNotification(id);
+    if (exists) {
+      if (active) {
+        setActive(false);
+        deactivateNotificationAction(id);
+
+        cancelNotification(id);
+      } else {
+        showSnackBar();
+
+        setActive(true);
+        activateNotificationAction(id);
+
+        createScheduledNotif(program);
+      }
 
       return;
     }
 
-    /// if subscription does not exist or inactive
-    await subscribeToProgramAction(1, id);
+    showSnackBar();
 
-    activateSubscriptionAction(id);
     createScheduledNotif(program);
+    createNotificationAction({
+      id,
+      channelId,
+      channelName,
+      status: 0,
+      active: true,
+      data: program
+    });
   };
 
   return (
@@ -87,7 +125,7 @@ const ProgramItem = ({
         <Icon
           name="notifications"
           size={24}
-          color={isActive ? theme.iplayya.colors.vibrantpussy : 'white'}
+          color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
         />
       </Pressable>
     </View>
@@ -104,17 +142,20 @@ ProgramItem.propTypes = {
   isActive: PropTypes.bool,
   subscribeToProgramAction: PropTypes.func,
   createNotificationAction: PropTypes.func,
-  activateSubscriptionAction: PropTypes.func,
-  deactivateSubscriptionAction: PropTypes.func,
-  cancelNotificationAction: PropTypes.func
+  activateNotificationAction: PropTypes.func,
+  deactivateNotificationAction: PropTypes.func,
+  cancelNotificationAction: PropTypes.func,
+  showSnackBar: PropTypes.func
 };
 
 const actions = {
   subscribeToProgramAction: Creators.subscribeToProgram,
   createNotificationAction: Creators.createNotification,
-  activateSubscriptionAction: Creators.activateSubscription,
-  deactivateSubscriptionAction: Creators.deactivateSubscription,
+  activateNotificationAction: Creators.activateNotification,
+  deactivateNotificationAction: Creators.deactivateNotification,
   cancelNotificationAction: Creators.cancelNotification
 };
 
-export default connect(null, actions)(ProgramItem);
+const mapStateToProps = createStructuredSelector({ notifications: selectNotifications });
+
+export default connect(mapStateToProps, actions)(ProgramItem);
