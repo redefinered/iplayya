@@ -2,12 +2,7 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './itv.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
-import {
-  updateChannelsWithFavorited,
-  // activateSubscriptionById,
-  deactivateSubscriptionById,
-  setNotificationToReadById
-} from './itv.helpers';
+import { updateChannelsWithFavorited } from './itv.helpers';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -60,69 +55,12 @@ const INITIAL_STATE = {
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
-  },
-
-  subscriptions: [], // program schedule subscriptions
-  notifications: [], // notifications delivered
-
-  /**
-   * value is either a string which is the ID of a program or null
-   * used for cancelling a created push notification
-   * should always be set to null after cancelling the scheduled notification
-   */
-  activateNotification: null,
-  deactivateNotification: null
+  }
 };
 
 export default createReducer(INITIAL_STATE, {
   [Types.START]: (state) => {
     return { ...state, channel: null };
-  },
-  [Types.ON_NOTIF]: (state, action) => {
-    return {
-      ...state,
-      notifications: [
-        Object.assign(action.notification, {
-          read: false,
-          createdAt: new Date(Date.now).getTime()
-        }),
-        ...state.notifications
-      ]
-    };
-  },
-  [Types.SET_NOTIFICATION_TO_READ]: (state, action) => {
-    const notifications = setNotificationToReadById(state, action);
-
-    return { ...state, notifications };
-  },
-  [Types.CANCEL_NOTIFICATION]: (state, action) => {
-    return { ...state, deactivateNotification: action.notificationId };
-  },
-  [Types.CLEAR_DEACTIVATE_KEY]: (state) => {
-    return { ...state, deactivateNotification: null };
-  },
-  [Types.SUBSCRIBE_TO_PROGRAM]: (state, action) => {
-    const { status, programId } = action;
-    return { ...state, subscriptions: [{ status, id: programId }, ...state.subscriptions] };
-  },
-  [Types.CREATE_NOTIFICATION]: (state, action) => {
-    /// always add the newest at the first position
-    // because that will be the next notification that will be created
-    return { ...state, notifications: [action.notification, ...state.notifications] };
-  },
-  // [Types.ACTIVATE_SUBSCRIPTION]: (state, action) => {
-  //   const notifications = activateSubscriptionById(state, action);
-
-  //   return { ...state, notifications };
-  // },
-  [Types.DEACTIVATE_SUBSCRIPTION]: (state, action) => {
-    const subscriptions = deactivateSubscriptionById(state, action);
-
-    return { ...state, subscriptions };
-  },
-  [Types.DELETE_NOTIFICATION]: (state, action) => {
-    const updatedNotifs = state.notifications.filter(({ id }) => id !== action.notificationId);
-    return { ...state, notifications: updatedNotifs };
   },
   [Types.GET_GENRES]: (state) => {
     return {

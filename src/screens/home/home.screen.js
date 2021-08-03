@@ -36,113 +36,11 @@ const Home = ({
   setBottomTabsVisibleAction,
   getMoviesStartAction,
   resetCategoryPaginatorAction,
-  enableSwipeAction,
-
-  isLoggedIn,
-  notifications,
-  subscriptions,
-
-  createNotificationAction,
-
-  /// a string which is the ID of a scheduled notification
-  activateNotification,
-  deactivateNotification,
-  clearDeactivateKeyAction,
-  clearActivateKeyAction
+  enableSwipeAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
-
-  const onRegister = ({ token }) => {
-    // setRegisterToken(token);
-    // setFcmRegistered(true);
-    console.log({ token });
-  };
-
-  // React.useEffect(() => {
-  //   /// notifications are cleared on login so this will only navigate if
-  //   // user did not logout recently
-  //   if (notifications.length) navigation.navigate('NotificationsScreen');
-  // }, [notifications]);
-
-  const onNotif = ({ title, message, data: { channelId, program } }) => {
-    console.log({ title, message, channelId });
-    /// add a new notification before navigating to notifications screen
-    createNotificationAction({
-      title,
-      message,
-      channelId,
-      program,
-      createdAt: new Date(Date.now())
-    });
-
-    /// navigates to channel detail when a notification is clicked
-    // might be change to go to notifications page
-    navigation.navigate('NotificationsScreen', { channelId });
-
-    /// create a notification to display in notifications screen
-    const now = new Date(Date.now());
-    // createNotificationAction({
-    //   id,
-    //   channelName,
-    //   channelId,
-    //   time,
-    //   status: NOTIFICATION_STATUS.DELIVERED,
-    //   createdAt: now.getTime(), /// create a timestamp which is equal to the time at the moment
-    //   program: { title, ...otherProgramProps }
-    // });
-  };
-
-  // const notif = new NotifService(onRegister, onNotif);
-
-  /// schedule a notification when a new one is created in state
-  React.useEffect(() => {
-    /// do nothing if there are no notifications
-    if (!subscriptions.length) return;
-
-    // for development -- check active created notifications
-    // notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }));
-
-    // scheduleNotification(notifications);
-  }, [subscriptions]);
-
-  // eslint-disable-next-line no-unused-vars
-  // const scheduleNotification = (notifications) => {
-  //   const {
-  //     id,
-  //     channelId,
-  //     channelName,
-  //     active,
-  //     program: { title: programTitle, description },
-  //     time
-  //   } = notifications[0];
-
-  //   /// if the notification is deactivated, do nothing
-  //   if (!active) return;
-
-  //   let title = `${programTitle} will start in 5 mins`;
-
-  //   const date = new Date(time);
-
-  //   const newScheduledNotif = {
-  //     id,
-  //     channelId,
-  //     channelName,
-  //     title,
-  //     message: description,
-  //     date: moment(date).subtract(5, 'minutes')
-  //   };
-
-  //   notif.scheduleNotif(newScheduledNotif);
-  // };
-
-  /// when loggedout, cancel all notifications
-  // React.useEffect(() => {
-  //   if (isLoggedIn) return;
-
-  //   notif.cancelAll();
-  // }, [isLoggedIn]);
 
   React.useEffect(() => {
     getMoviesStartAction();
@@ -223,21 +121,14 @@ Home.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching,
-  isLoggedIn: selectIsLoggedIn,
-  notifications: selectNotifications,
-  subscriptions: selectSubscriptions
+  isFetching: selectIsFetching
 });
 
 const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   getMoviesStartAction: Creators.getMoviesStart,
   resetCategoryPaginatorAction: Creators.resetCategoryPaginator,
-  enableSwipeAction: NavActionCreators.enableSwipe,
-
-  /// action to create a notification to display to notifications screen
-  createNotificationAction: ItvCreators.createNotification,
-  clearDeactivateKeyAction: ItvCreators.clearDeactivateKey
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

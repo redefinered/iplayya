@@ -10,12 +10,12 @@ import SelectorPills from 'components/selector-pills/selector-pills.component';
 import { generateDatesFromToday } from 'utils';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/notifications/notifications.actions';
+import { selectPrograms } from 'modules/ducks/itv/itv.selectors';
 import {
-  selectPrograms,
   selectNotifications,
   selectSubscriptions
-} from 'modules/ducks/itv/itv.selectors';
+} from 'modules/ducks/notifications/notifications.selectors';
 import { createFontFormat } from 'utils';
 import NotifService from 'NotifService';
 
@@ -25,13 +25,15 @@ import { Button } from 'react-native-paper';
 const ProgramGuide = ({
   programs,
   // notifications,
-  subscriptions,
+  // subscriptions,
   getProgramsByChannelAction,
   channelId,
   channelName,
 
   onRegisterAction,
-  onNotifAction
+  onNotifAction,
+
+  showSnackBar
 }) => {
   const notif = new NotifService(onRegisterAction, onNotifAction);
   // notif.cancelAll();
@@ -61,7 +63,7 @@ const ProgramGuide = ({
     );
   };
 
-  /// CREATE A SCHEDULE NOTIFICATIONS
+  /// CREATE SCHEDULED NOTIFICATIONS
   const handleCreateScheduledNotif = ({ id, ...rest }) => {
     notif.scheduleNotif({ id, channelId, channelName, program: { id, ...rest } });
 
@@ -72,7 +74,7 @@ const ProgramGuide = ({
 
   /// CANCEL A NOTIFICATION
   const handleCancelScheduledNotif = (id) => {
-    console.log({ id });
+    // console.log({ id });
     notif.cancelNotif(id);
 
     notif.getScheduledLocalNotifications((notifications) => {
@@ -87,7 +89,7 @@ const ProgramGuide = ({
     });
   };
 
-  /// cancel all
+  // /// cancel all
   const cancelAllNotifications = () => {
     notif.cancelAll((notifications) => {
       console.log({ notifications });
@@ -100,30 +102,6 @@ const ProgramGuide = ({
 
   // return empty componet if no available programs
   if (!programs.length) return <View />;
-
-  const isSubscriptionActive = (id) => {
-    /// return false if notifications is empty
-    if (!subscriptions.length) return false;
-
-    const program = subscriptions.find((prog) => id === prog.id);
-
-    /// return false if the program is no yet in notifications
-    if (typeof program === 'undefined') return false;
-
-    // if status is falsy i.e. equal 0
-    if (!program.status) return false;
-
-    return true;
-  };
-
-  // const inSubscriptions = (subscriptionId) => {
-  //   const notif = subscriptions.find(({ id }) => id === subscriptionId);
-
-  //   /// if not found return false
-  //   if (typeof notif === 'undefined') return false;
-
-  //   return true;
-  // };
 
   return (
     <View>
@@ -141,10 +119,11 @@ const ProgramGuide = ({
       />
       {programs.map((program, key) => (
         <ProgramItem
+          channelId={channelId}
+          channelName={channelName}
+          showSnackBar={showSnackBar}
           createScheduledNotif={handleCreateScheduledNotif}
           cancelNotification={handleCancelScheduledNotif}
-          // exists={inSubscriptions(program.id)}
-          isActive={isSubscriptionActive(program.id)}
           key={key}
           {...program}
         />
@@ -159,7 +138,8 @@ ProgramGuide.propTypes = {
   getProgramsByChannelAction: PropTypes.func,
   programs: PropTypes.array,
   notifications: PropTypes.array,
-  subscriptions: PropTypes.array
+  subscriptions: PropTypes.array,
+  showSnackBar: PropTypes.func
 };
 
 const actions = {

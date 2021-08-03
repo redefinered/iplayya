@@ -8,6 +8,7 @@ import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ProgramGuide from 'components/program-guide/program-guide.component';
+import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
@@ -22,6 +23,7 @@ import {
   selectCurrentProgram
 } from 'modules/ducks/itv/itv.selectors';
 import moment from 'moment';
+import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
@@ -45,7 +47,7 @@ const ChannelDetailScreen = ({
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
-
+  const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
 
   React.useEffect(() => {
@@ -125,6 +127,20 @@ const ChannelDetailScreen = ({
     }
   };
 
+  const handleShowSnackBar = () => {
+    setShowSnackBar(true);
+  };
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowSnackBar(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (showSnackBar) hideSnackBar();
+  }, [showSnackBar]);
+
   if (!channel) return <View />;
 
   return (
@@ -169,8 +185,20 @@ const ChannelDetailScreen = ({
         </ContentWrap>
         {/* program guide */}
 
-        <ProgramGuide channelId={channelId} channelName={channel.title} title="Program Guide" />
+        <ProgramGuide
+          channelId={channelId}
+          channelName={channel.title}
+          title="Program Guide"
+          showSnackBar={handleShowSnackBar}
+        />
       </ScrollView>
+
+      <SnackBar
+        visible={showSnackBar}
+        message="We will remind you before the program start."
+        iconName="notifications"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
