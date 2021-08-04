@@ -14,7 +14,7 @@ const ActionSheet = ({ visible, actions, hideAction }) => {
     <Modal animationType="slide" visible={visible} transparent>
       <Pressable style={styles.container} onPress={() => hideAction()}>
         <View style={styles.contentWrap}>
-          {actions.map(({ key, icon, title, onPress, data }) => {
+          {actions.map(({ icon, title, onPress, data }, key) => {
             return (
               <Pressable key={key} style={styles.itemContainer} onPress={() => onPress(data)}>
                 <View style={styles.iconContainer}>
