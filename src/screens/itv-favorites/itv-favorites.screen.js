@@ -312,7 +312,7 @@ const ItvFavoritesScreen = ({
                   </View>
                 </View>
                 {activateCheckboxes && (
-                  <View style={{ paddingLeft: 9 }}>
+                  <View style={{ margin: 9 }}>
                     <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
                   </View>
                 )}

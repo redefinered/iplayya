@@ -151,10 +151,10 @@ const ItvScreen = ({
 
   const isFavorite = (id) => {
     if (!favorites.length) return false;
-    const fr = favorites.find(({ item }) => item.id === id);
-    console.log(favorites);
 
-    if (fr === 'undefined') return false;
+    const fr = favorites.find(({ item }) => item.id === id);
+
+    if (typeof fr === 'undefined') return false;
 
     return true;
   };
@@ -164,10 +164,8 @@ const ItvScreen = ({
   };
 
   const handleAddToFavorites = (channelId) => {
-    if (favorites) {
-      let title = channels.find(({ id }) => id === channelId).title;
-      setFavorited(title);
-    }
+    let title = channels.find(({ id }) => id === channelId).title;
+    setFavorited(title);
 
     addToFavoritesAction(parseInt(channelId));
     setShowSnackBar(true);
