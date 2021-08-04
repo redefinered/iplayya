@@ -39,6 +39,7 @@ const ItvScreen = ({
   error,
   genres,
   channels,
+  favorites,
   // getGenresAction,
   getChannelsByCategoriesStartAction,
   getChannelsStartAction,
@@ -148,6 +149,16 @@ const ItvScreen = ({
     }
   }, [params]);
 
+  const isFavorite = (id) => {
+    if (!favorites.length) return false;
+
+    const fr = favorites.find(({ item }) => item.id === id);
+
+    if (typeof fr === 'undefined') return false;
+
+    return true;
+  };
+
   const handleWalkthroughGuideHide = () => {
     setShowWalkthroughGuide(false);
   };
@@ -157,6 +168,7 @@ const ItvScreen = ({
     setFavorited(title);
 
     addToFavoritesAction(parseInt(channelId));
+    setShowSnackBar(true);
   };
 
   const hideSnackBar = () => {
@@ -251,6 +263,7 @@ const ItvScreen = ({
             renderItem={({ item: { epgtitle, ...itemProps } }) => (
               <ListItemChanel
                 // handleLongPress={}
+                is_favorite={isFavorite}
                 onSelect={handleItemSelect}
                 onRightActionPress={handleAddToFavorites}
                 full
