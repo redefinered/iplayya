@@ -70,7 +70,7 @@ const ItvFavoritesScreen = ({
 
   // setup channels data
   React.useEffect(() => {
-    if (favorites.length) {
+    if (favorites) {
       let data = favorites.map(({ id, title, ...rest }) => ({
         id,
         title,
@@ -83,7 +83,7 @@ const ItvFavoritesScreen = ({
 
   React.useEffect(() => {
     if (removedFromFavorites) {
-      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getFavoritesAction();
       // getChannelsAction({ limit: 10, pageNumber: 1 });
       setSelectedItems([]);
     }
@@ -170,7 +170,7 @@ const ItvFavoritesScreen = ({
     return 'Are you sure you want to delete this channel from your favorites list?';
   };
 
-  if (favorites.length)
+  if (listData.length)
     return (
       <ScrollView style={{ marginTop: 20 }}>
         {activateCheckboxes && (
@@ -194,12 +194,12 @@ const ItvFavoritesScreen = ({
                 style={{ flexDirection: 'row', alignItems: 'center' }}
               >
                 <Text style={{ marginRight: 10 }}>All</Text>
-                <RadioButton selected={selectedItems.length === favorites.length} />
+                <RadioButton selected={selectedItems.length === listData.length} />
               </Pressable>
             </View>
           </ContentWrap>
         )}
-        {favorites.map(({ id, title, epgtitle, number, time, time_to }) => {
+        {listData.map(({ id, title, epgtitle, number, time, time_to }) => {
           const getSchedule = (time, time_to) => {
             if (!time || !time_to) return;
 
@@ -286,20 +286,35 @@ const ItvFavoritesScreen = ({
                       </Text>
                     </View>
                     {!activateCheckboxes && (
-                      <Text
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: 12,
-                          color: theme.iplayya.colors.white50
-                        }}
+                      <Pressable
+                        underlayColor={theme.iplayya.colors.black80}
+                        onPress={() => navigation.navigate('ProgramGuidScreen', { channelId: id })}
+                        style={({ pressed }) => [
+                          {
+                            backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                            borderRadius: 12
+                          }
+                        ]}
                       >
-                        EPG
-                      </Text>
+                        <View style={{ borderRadius: 8, padding: 4 }}>
+                          <Text
+                            style={{
+                              fontWeight: 'bold',
+                              fontSize: 12,
+                              color: theme.iplayya.colors.white50
+                            }}
+                          >
+                            EPG
+                          </Text>
+                        </View>
+                      </Pressable>
                     )}
                   </View>
                 </View>
                 {activateCheckboxes && (
-                  <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                  <View style={{ paddingLeft: 9 }}>
+                    <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                  </View>
                 )}
               </View>
             </Pressable>
