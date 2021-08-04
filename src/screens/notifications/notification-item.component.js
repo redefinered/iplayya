@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
@@ -6,33 +5,53 @@ import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import moment from 'moment';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { connect } from 'react-redux';
-import { TouchableHighlight } from 'react-native-gesture-handler';
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
 const NotificationItem = ({
   id,
   channelName,
   channelId,
-  program,
+  data: { title },
   createdAt,
-  read,
-  setNotificationToReadAction
+  status,
+  updateNotificationStatusAction,
+  handleSelect
 }) => {
   const theme = useTheme();
   const navigtation = useNavigation();
-  const [unRead, setUnread] = React.useState(true);
+  const [unRead, setUnread] = React.useState(false);
 
   React.useEffect(() => {
-    if (read) return setUnread(false);
+    /**
+     * statuses
+     * 0: pending
+     * 1: delivered
+     * 2: read
+     */
+    switch (status) {
+      case 1:
+        setUnread(true);
+        break;
+      case 2:
+        setUnread(false);
+        break;
+      default:
+        setUnread(false);
+    }
+  }, [status]);
 
-    setUnread(true);
-  }, [read]);
+  const renderFromNow = () => {
+    if (!createdAt) return;
+
+    return moment(createdAt).fromNow();
+  };
 
   // eslint-disable-next-line no-unused-vars
   const handleSelectItem = (id) => {
-    if (!unRead) return;
+    // if (!unRead) return;
 
     // set unread to false
     setUnread(false);
@@ -40,13 +59,10 @@ const NotificationItem = ({
     // navigate to channel
     navigtation.navigate('ChannelDetailScreen', { channelId });
 
-    // set read to true in state
-    setNotificationToReadAction(id);
+    // set notification status to read
+    updateNotificationStatusAction(id, 2);
   };
 
-  console.log({ unRead });
-
-  const { title } = program;
   return (
     <TouchableHighlight
       onPress={() => handleSelectItem(id)}
@@ -75,10 +91,12 @@ const NotificationItem = ({
               {`${title} will start in 5 minutes`}
             </Text>
             <Text style={{ fontSize: 10, fontWeight: '300', color: theme.iplayya.colors.white50 }}>
-              {moment(createdAt).fromNow()}
+              {renderFromNow()}
             </Text>
           </View>
-          <Icon name="more" size={24} />
+          <TouchableOpacity onPress={() => handleSelect(id)}>
+            <Icon name="more" size={24} />
+          </TouchableOpacity>
         </View>
       </ContentWrap>
     </TouchableHighlight>
@@ -86,11 +104,18 @@ const NotificationItem = ({
 };
 
 NotificationItem.propTypes = {
-  setNotificationToReadAction: PropTypes.func
+  id: PropTypes.string,
+  channelName: PropTypes.string,
+  channelId: PropTypes.string,
+  data: PropTypes.object,
+  createdAt: PropTypes.number,
+  status: PropTypes.number,
+  handleSelect: PropTypes.func,
+  updateNotificationStatusAction: PropTypes.func
 };
 
 const actions = {
-  setNotificationToReadAction: Creators.setNotificationToRead
+  updateNotificationStatusAction: Creators.updateNotificationStatus
 };
 
 export default connect(null, actions)(NotificationItem);

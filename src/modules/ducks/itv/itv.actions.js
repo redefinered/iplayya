@@ -55,11 +55,26 @@ const { Types, Creators } = createActions(
     //recent search
     updateRecentSearch: ['term'],
 
+    /**
+     * status:
+     * 0 - inactive
+     * 1 - active
+     */
+    subscribeToProgram: ['status', 'programId'],
+
     createNotification: ['notification'], /// an object
+    activateSubscription: ['subscriptionId'],
+    deactivateSubscription: ['subscriptionId'],
     setNotificationToRead: ['notificationId'],
-    turnOffNotification: ['notificationId'],
-    turnOnNotification: ['notificationId'],
     deleteNotification: ['notificationId'],
+
+    /// set deactivateNotification state to null
+    clearActivateKey: null,
+    clearDeactivateKey: null,
+    cancelNotification: ['notificationId'],
+
+    onRegister: ['token'],
+    onNotif: ['notification'],
 
     // misc
     reset: null,

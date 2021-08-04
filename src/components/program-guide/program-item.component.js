@@ -1,11 +1,15 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { createStructuredSelector } from 'reselect';
+import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
 
 const ProgramItem = ({
   id,
@@ -14,36 +18,73 @@ const ProgramItem = ({
   title,
   time,
 
+  subscribeToProgramAction,
   createNotificationAction,
-  turnOnNotificationAction,
-  turnOffNotificationAction,
+  activateNotificationAction,
+  deactivateNotificationAction,
 
-  exists,
-  isActive,
+  createScheduledNotif,
+  cancelNotification,
 
-  ...otherProgramProps
+  showSnackBar,
+
+  notifications,
+
+  ...rest
 }) => {
   const theme = useTheme();
-  const handleNotify = () => {
-    if (exists) {
-      if (isActive) {
-        turnOffNotificationAction(id);
+  const [active, setActive] = React.useState(false);
+  const [exists, setExists] = React.useState(false);
+
+  React.useEffect(() => {
+    if (notifications.length) {
+      const n = notifications.find((n) => n.id === id);
+
+      if (typeof n === 'undefined') {
+        return setExists(false);
       } else {
-        turnOnNotificationAction(id);
+        setExists(true);
+
+        if (n.active) {
+          setActive(true);
+        } else {
+          setActive(false);
+        }
       }
+    }
+  }, [notifications]);
+
+  const handleNotify = () => {
+    const program = { id, title, time, ...rest };
+
+    if (exists) {
+      if (active) {
+        setActive(false);
+        deactivateNotificationAction(id);
+
+        cancelNotification(id);
+      } else {
+        showSnackBar();
+
+        setActive(true);
+        activateNotificationAction(id);
+
+        createScheduledNotif(program);
+      }
+
       return;
     }
 
-    const now = new Date(Date.now());
+    showSnackBar();
+
+    createScheduledNotif(program);
     createNotificationAction({
       id,
-      channelName,
       channelId,
+      channelName,
+      status: 0,
       active: true,
-      time,
-      read: false,
-      createdAt: now.getTime(), /// create a timestamp which is equal to the time at the moment
-      program: { title, ...otherProgramProps }
+      data: program
     });
   };
 
@@ -84,7 +125,7 @@ const ProgramItem = ({
         <Icon
           name="notifications"
           size={24}
-          color={isActive ? theme.iplayya.colors.vibrantpussy : 'white'}
+          color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
         />
       </Pressable>
     </View>
@@ -99,15 +140,22 @@ ProgramItem.propTypes = {
   time: PropTypes.string,
   exists: PropTypes.bool,
   isActive: PropTypes.bool,
+  subscribeToProgramAction: PropTypes.func,
   createNotificationAction: PropTypes.func,
-  turnOnNotificationAction: PropTypes.func,
-  turnOffNotificationAction: PropTypes.func
+  activateNotificationAction: PropTypes.func,
+  deactivateNotificationAction: PropTypes.func,
+  cancelNotificationAction: PropTypes.func,
+  showSnackBar: PropTypes.func
 };
 
 const actions = {
+  subscribeToProgramAction: Creators.subscribeToProgram,
   createNotificationAction: Creators.createNotification,
-  turnOnNotificationAction: Creators.turnOnNotification,
-  turnOffNotificationAction: Creators.turnOffNotification
+  activateNotificationAction: Creators.activateNotification,
+  deactivateNotificationAction: Creators.deactivateNotification,
+  cancelNotificationAction: Creators.cancelNotification
 };
 
-export default connect(null, actions)(ProgramItem);
+const mapStateToProps = createStructuredSelector({ notifications: selectNotifications });
+
+export default connect(mapStateToProps, actions)(ProgramItem);

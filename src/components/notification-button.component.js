@@ -6,14 +6,14 @@ import { useNavigation } from '@react-navigation/core';
 import Icon from 'components/icon/icon.component';
 import theme from 'common/theme';
 import { createStructuredSelector } from 'reselect';
-import { selectNotifications } from 'modules/ducks/itv/itv.selectors';
+import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
 import { connect } from 'react-redux';
 
 const NotificationButton = ({ notifications }) => {
   const navigation = useNavigation();
 
   const renderIndicator = () => {
-    const someUnreadItem = notifications.find(({ read }) => read === false);
+    const someUnreadItem = notifications.find(({ status }) => status === 1);
 
     /// if no unread items found, do nothing
     if (typeof someUnreadItem === 'undefined') return;

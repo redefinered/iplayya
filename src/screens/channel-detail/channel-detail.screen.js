@@ -8,9 +8,11 @@ import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ProgramGuide from 'components/program-guide/program-guide.component';
+import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -22,6 +24,7 @@ import {
   selectCurrentProgram
 } from 'modules/ducks/itv/itv.selectors';
 import moment from 'moment';
+import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
@@ -39,14 +42,21 @@ const ChannelDetailScreen = ({
   /// the program that is playing at this moment
   currentProgram,
 
-  startAction
+  startAction,
+
+  onNotifResetAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
-
+  const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
+
+  React.useEffect(() => {
+    /// clears the indicator that there is a new notification
+    onNotifResetAction();
+  });
 
   React.useEffect(() => {
     let date = new Date(Date.now());
@@ -125,6 +135,20 @@ const ChannelDetailScreen = ({
     }
   };
 
+  const handleShowSnackBar = () => {
+    setShowSnackBar(true);
+  };
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowSnackBar(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (showSnackBar) hideSnackBar();
+  }, [showSnackBar]);
+
   if (!channel) return <View />;
 
   return (
@@ -169,8 +193,20 @@ const ChannelDetailScreen = ({
         </ContentWrap>
         {/* program guide */}
 
-        <ProgramGuide channelId={channelId} channelName={channel.title} title="Program Guide" />
+        <ProgramGuide
+          channelId={channelId}
+          channelName={channel.title}
+          title="Program Guide"
+          showSnackBar={handleShowSnackBar}
+        />
       </ScrollView>
+
+      <SnackBar
+        visible={showSnackBar}
+        message="We will remind you before the program start."
+        iconName="notifications"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
@@ -257,7 +293,8 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
-  getProgramsByChannelAction: Creators.getProgramsByChannel
+  getProgramsByChannelAction: Creators.getProgramsByChannel,
+  onNotifResetAction: NotificationCreators.onNotifReset
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

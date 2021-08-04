@@ -9,6 +9,7 @@ import downloadsReducer from './ducks/downloads/downloads.reducer';
 import userReducer from './ducks/user/user.reducer';
 import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
+import notificationsReducer from './ducks/notifications/notifications.reducer';
 import profileReducer from './ducks/profile/profile.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
 import musicReducer from './ducks/music/music.reducer';
@@ -26,12 +27,14 @@ const resettable = resettableReducer('RESET');
 
 const rootReducer = persistCombineReducers(persistConfig, {
   app: appReducer,
-  auth: resettable(authReducer),
+  auth: authReducer,
+  // auth: resettable(authReducer),
   nav: navReducer,
   downloads: downloadsReducer,
   user: resettable(userReducer),
   password: resettable(passwordReducer),
   itv: resettable(itvReducer),
+  notifications: resettable(notificationsReducer),
   profile: profileReducer,
   movies: moviesReducer,
   music: resettable(musicReducer),

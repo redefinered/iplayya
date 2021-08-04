@@ -50,3 +50,4 @@ export const selectSearchResultsPaginator = createSelector(
 export const selectRecentSearch = createSelector([itvState], ({ recentSearch }) => recentSearch);
 
 export const selectNotifications = createSelector([itvState], ({ notifications }) => notifications);
+export const selectSubscriptions = createSelector([itvState], ({ subscriptions }) => subscriptions);

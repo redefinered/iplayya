@@ -152,7 +152,7 @@ class EditProfileScreen extends React.Component {
   render() {
     const { isFetching, profile } = this.props;
     const { errors, valid, showModal, ...form } = this.state;
-    console.log('yyy', errors);
+
     const actions = [
       {
         key: 'male',

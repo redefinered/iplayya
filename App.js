@@ -52,61 +52,6 @@ const App = ({
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
-  // const [fcmRegistered, setFcmRegistered] = React.useState(null);
-  // const [registerToken, setRegisterToken] = React.useState(null);
-
-  // const onRegister = ({ token }) => {
-  //   // setRegisterToken(token);
-  //   // setFcmRegistered(true);
-  //   console.log({ token });
-  // };
-
-  // const onNotif = ({ title, message, data: { channelId } }) => {
-  //   console.log({ title, message, channelId });
-  //   console.log('should render notifications page after this');
-  // };
-
-  // const notif = new NotifService(onRegister, onNotif);
-
-  // /// schedule a notification when a new one is created in state
-  // React.useEffect(() => {
-  //   /// do nothing if there are no notifications
-  //   if (!notifications.length) return;
-
-  //   // notif.localNotif();
-
-  //   scheduleNotification(notifications);
-  // }, [notifications]);
-
-  // // eslint-disable-next-line no-unused-vars
-  // const scheduleNotification = (notifications) => {
-  //   notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }));
-
-  //   const {
-  //     id,
-  //     channelId,
-  //     active,
-  //     program: { title: programTitle },
-  //     time
-  //   } = notifications[0];
-
-  //   /// if the notification is deactivated, do nothing
-  //   if (!active) return;
-
-  //   let title = `${programTitle} is now showing`;
-  //   let message = 'Watch it now before it is to late!';
-
-  //   const newScheduledNotif = { id, channelId, title, message, date: new Date(time) };
-
-  //   notif.scheduleNotif(newScheduledNotif);
-  // };
-
-  // /// when loggedout, cancel all notifications
-  // React.useEffect(() => {
-  //   if (isLoggedIn) return;
-
-  //   notif.cancelAll();
-  // }, [isLoggedIn]);
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
