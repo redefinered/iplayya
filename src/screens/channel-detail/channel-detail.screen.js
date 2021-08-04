@@ -12,6 +12,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -41,7 +42,9 @@ const ChannelDetailScreen = ({
   /// the program that is playing at this moment
   currentProgram,
 
-  startAction
+  startAction,
+
+  onNotifResetAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -49,6 +52,11 @@ const ChannelDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
+
+  React.useEffect(() => {
+    /// clears the indicator that there is a new notification
+    onNotifResetAction();
+  });
 
   React.useEffect(() => {
     let date = new Date(Date.now());
@@ -285,7 +293,8 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
-  getProgramsByChannelAction: Creators.getProgramsByChannel
+  getProgramsByChannelAction: Creators.getProgramsByChannel,
+  onNotifResetAction: NotificationCreators.onNotifReset
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

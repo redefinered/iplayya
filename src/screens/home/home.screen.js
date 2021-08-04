@@ -25,6 +25,7 @@ import HomeGuide from 'components/walkthrough-guide/home-guide.component';
 
 // import NotifService from 'NotifService';
 import { selectNotifications, selectSubscriptions } from 'modules/ducks/itv/itv.selectors.js';
+import { selectNewNotification } from 'modules/ducks/notifications/notifications.selectors.js';
 // import moment from 'moment';
 
 import { NOTIFICATION_STATUS } from 'common/values';
@@ -36,7 +37,8 @@ const Home = ({
   setBottomTabsVisibleAction,
   getMoviesStartAction,
   resetCategoryPaginatorAction,
-  enableSwipeAction
+  enableSwipeAction,
+  newNotification
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
@@ -57,6 +59,12 @@ const Home = ({
       setShowWelcomeDialog(true);
     }
   }, [completedOnboarding]);
+
+  React.useEffect(() => {
+    if (!newNotification) return;
+
+    navigation.navigate('ChannelDetailScreen', { channelId: newNotification.data.channelId });
+  }, [newNotification]);
 
   const handleWelcomeHide = () => {
     setShowWelcomeDialog(false);
@@ -121,7 +129,8 @@ Home.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching
+  isFetching: selectIsFetching,
+  newNotification: selectNewNotification
 });
 
 const actions = {

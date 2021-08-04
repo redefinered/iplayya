@@ -10,3 +10,13 @@ export const selectSubscriptions = createSelector(
   [notificationsState],
   ({ subscriptions }) => subscriptions
 );
+
+export const selectNewNotification = createSelector(
+  [notificationsState],
+  ({ newNotification }) => newNotification
+);
+
+export const selectSelectedForDeactivation = createSelector(
+  [notificationsState],
+  ({ selectedForDeactivation }) => selectedForDeactivation
+);

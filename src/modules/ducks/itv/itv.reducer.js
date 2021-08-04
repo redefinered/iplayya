@@ -285,7 +285,7 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: null,
       // addedToFavorites: false,
-      // removedFromFavorites: false,
+      favoritesListUpdated: false,
       favorites: orderBy(updatedData, 'number', 'asc'), /// overkill yata to
       favoritesPaginator: nextPaginator
     };

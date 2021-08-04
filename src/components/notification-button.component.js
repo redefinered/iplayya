@@ -13,7 +13,7 @@ const NotificationButton = ({ notifications }) => {
   const navigation = useNavigation();
 
   const renderIndicator = () => {
-    const someUnreadItem = notifications.find(({ read }) => read === false);
+    const someUnreadItem = notifications.find(({ status }) => status === 1);
 
     /// if no unread items found, do nothing
     if (typeof someUnreadItem === 'undefined') return;
