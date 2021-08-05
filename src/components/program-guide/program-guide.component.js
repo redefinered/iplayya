@@ -112,8 +112,8 @@ const ProgramGuide = ({
     <View>
       {renderTitle()}
 
-      <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
-      <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button>
+      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
+      <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button> */}
 
       <SelectorPills
         data={dates}

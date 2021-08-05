@@ -29,6 +29,9 @@ export const activateNotificationById = (state, action) => {
   /// get the notification to modify
   const notification = notifications.find(({ id }) => id === notificationId);
 
+  /// if not found return the current notifications
+  if (typeof notification === 'undefined') return notifications;
+
   /// get the index of the notification to modify
   const notificationIdex = notifications.findIndex(({ id }) => id === notificationId);
 
@@ -48,7 +51,8 @@ export const deactivateNotificationById = (state, action) => {
   /// get the notification to modify
   const notification = notifications.find(({ id }) => id === notificationId);
 
-  console.log({ notification, notificationId });
+  /// if not found return the current notifications
+  if (typeof notification === 'undefined') return notifications;
 
   /// get the index of the notification to modify
   const notificationIdex = notifications.findIndex(({ id }) => id === notificationId);
@@ -87,6 +91,9 @@ export const setNotificationToUnreadById = (state, action) => {
   /// get the notification to modify
   const notification = notifications.find(({ id }) => id === notificationId);
 
+  /// if not found return the current notifications
+  if (typeof notification === 'undefined') return notifications;
+
   /// get the index of the notification to modify
   const notificationIdex = notifications.findIndex(({ id }) => id === notificationId);
 
@@ -108,6 +115,9 @@ export const updateNotificationStatus = (state, action) => {
 
   /// get the notification to modify
   const notification = notifications.find(({ id }) => id === notificationId);
+
+  /// if not found return the current notifications
+  if (typeof notification === 'undefined') return notifications;
 
   /// get the index of the notification to modify
   const notificationIdex = notifications.findIndex(({ id }) => id === notificationId);
