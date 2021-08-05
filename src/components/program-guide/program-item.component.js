@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { createStructuredSelector } from 'reselect';
 import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
+import uuid from 'react-uuid';
 
 const ProgramItem = ({
   id,
@@ -55,6 +56,7 @@ const ProgramItem = ({
   }, [notifications]);
 
   const handleNotify = () => {
+    // const notifRepeatId = uuid();
     const program = { id, title, time, ...rest };
 
     if (exists) {

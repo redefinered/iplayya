@@ -56,7 +56,7 @@ const ChannelDetailScreen = ({
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
     onNotifResetAction();
-  });
+  }, []);
 
   React.useEffect(() => {
     let date = new Date(Date.now());

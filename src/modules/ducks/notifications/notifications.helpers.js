@@ -48,6 +48,8 @@ export const deactivateNotificationById = (state, action) => {
   /// get the notification to modify
   const notification = notifications.find(({ id }) => id === notificationId);
 
+  console.log({ notification, notificationId });
+
   /// get the index of the notification to modify
   const notificationIdex = notifications.findIndex(({ id }) => id === notificationId);
 

@@ -35,7 +35,6 @@ const ProgramGuide = ({
 
   showSnackBar
 }) => {
-  const notif = new NotifService(onRegisterAction, onNotifAction);
   // notif.cancelAll();
   const theme = useTheme();
   // generates an array of dates 7 days from now
@@ -43,6 +42,12 @@ const ProgramGuide = ({
   // console.log({ dates });
 
   const [selected, setSelected] = React.useState('1');
+  const [notifService, setNotifService] = React.useState(null);
+
+  React.useEffect(() => {
+    const notif = new NotifService(onRegisterAction, onNotifAction);
+    setNotifService(notif);
+  }, []);
 
   const handleSelect = (id) => {
     setSelected(id);
@@ -65,9 +70,9 @@ const ProgramGuide = ({
 
   /// CREATE SCHEDULED NOTIFICATIONS
   const handleCreateScheduledNotif = ({ id, ...rest }) => {
-    notif.scheduleNotif({ id, channelId, channelName, program: { id, ...rest } });
+    notifService.scheduleNotif({ id, channelId, channelName, program: { id, ...rest } });
 
-    notif.getScheduledLocalNotifications((notifications) => {
+    notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
     });
   };
@@ -75,27 +80,27 @@ const ProgramGuide = ({
   /// CANCEL A NOTIFICATION
   const handleCancelScheduledNotif = (id) => {
     // console.log({ id });
-    notif.cancelNotif(id);
+    notifService.cancelNotif(id);
 
-    notif.getScheduledLocalNotifications((notifications) => {
+    notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
     });
   };
 
   /// for testing
   const checkScheduledNotifs = () => {
-    notif.getScheduledLocalNotifications((notifications) => {
+    notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
     });
   };
 
   // /// cancel all
   const cancelAllNotifications = () => {
-    notif.cancelAll((notifications) => {
+    notifService.cancelAll((notifications) => {
       console.log({ notifications });
     });
 
-    notif.getScheduledLocalNotifications((notifications) => {
+    notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
     });
   };
@@ -107,8 +112,8 @@ const ProgramGuide = ({
     <View>
       {renderTitle()}
 
-      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
-      <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button> */}
+      <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
+      <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button>
 
       <SelectorPills
         data={dates}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -59,8 +60,19 @@ const NotificationsScreen = ({
     setShowActionSheet(false);
   };
 
-  // eslint-disable-next-line no-unused-vars
+  /// for testing
   const checkScheduledNotifs = () => {
+    notif.getScheduledLocalNotifications((notifications) => {
+      console.log({ notifications });
+    });
+  };
+
+  // /// cancel all
+  const cancelAllNotifications = () => {
+    notif.cancelAll((notifications) => {
+      console.log({ notifications });
+    });
+
     notif.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
     });
@@ -99,7 +111,8 @@ const NotificationsScreen = ({
 
   return (
     <View>
-      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button> */}
+      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
+      <Button onPress={() => cancelAllNotifications()}>cancel all scheduled notifications</Button> */}
       {notifications.map((item, key) => (
         <NotificationItem key={key} {...item} handleSelect={handleSelect} />
       ))}
