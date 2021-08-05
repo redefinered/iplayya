@@ -4,10 +4,9 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
-
 import rootReducer, { persistConfig } from './root.reducer';
-
 import rootSaga from 'modules/sagas/root.saga';
+import { NODE_ENV } from '@env';
 
 const logger = createLogger({
   collapsed: true,
@@ -22,7 +21,8 @@ const sagaMiddleware = createSagaMiddleware();
 
 const middlewares = [sagaMiddleware]; // makes middlewares scalable
 
-if (process.env.NODE_ENV === 'development') {
+console.log('x', NODE_ENV);
+if (NODE_ENV === 'development') {
   // add redux-logger as middleware on development
   middlewares.push(logger);
 }
