@@ -85,6 +85,11 @@ export const addToFavorites = async (videoId) => {
           query: GET_CHANNELS,
           variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
+        },
+        {
+          query: GET_CHANNEL,
+          variables: { input: { videoId } },
+          fetchPolicy: 'network-only'
         }
       ],
       awaitRefetchQueries: true

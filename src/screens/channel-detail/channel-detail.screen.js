@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, Pressable } from 'react-native';
+import { View, Image, Pressable, StyleSheet } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -21,10 +21,10 @@ import {
   selectError,
   selectIsFetching,
   selectChannel,
-  selectCurrentProgram
+  selectCurrentProgram,
+  selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import moment from 'moment';
-import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
@@ -38,14 +38,14 @@ const ChannelDetailScreen = ({
   channel,
   getProgramsByChannelAction,
   getChannelAction,
-
   /// the program that is playing at this moment
   currentProgram,
-
   startAction,
-
-  onNotifResetAction
+  onNotifResetAction,
+  addToFavoritesAction,
+  favoritesUpdated
 }) => {
+  const theme = useTheme();
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
@@ -69,6 +69,12 @@ const ChannelDetailScreen = ({
       startAction();
     });
   }, []);
+
+  React.useEffect(() => {
+    if (favoritesUpdated) {
+      getChannelAction({ videoId: channelId });
+    }
+  }, [favoritesUpdated]);
 
   React.useEffect(() => {
     if (channel && currentProgram) {
@@ -113,7 +119,9 @@ const ChannelDetailScreen = ({
   };
 
   const handleFovoritePress = () => {
-    console.log('add to favorites');
+    if (channel.is_favorite) return;
+
+    addToFavoritesAction(parseInt(channelId));
   };
 
   const renderPlayer = () => {
@@ -188,6 +196,7 @@ const ChannelDetailScreen = ({
                 {...currentlyPlaying}
                 channeltitle={channel.title}
                 onRightActionPress={handleFovoritePress}
+                isFavorite={channel.is_favorite}
               />
             </View>
           </View>
@@ -216,9 +225,18 @@ const ChannelDetailScreen = ({
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({ channeltitle, title, epgtitle, time, time_to, onRightActionPress }) => {
+const Content = ({
+  channeltitle,
+  title,
+  epgtitle,
+  time,
+  time_to,
+  onRightActionPress,
+  isFavorite
+}) => {
   const theme = useTheme();
-  const [isFavorite] = React.useState(false);
+  const [isPressed, setIsPressed] = React.useState(false);
+
   const renderEpgtitle = () => {
     if (!epgtitle)
       return (
@@ -252,7 +270,15 @@ const Content = ({ channeltitle, title, epgtitle, time, time_to, onRightActionPr
         <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>
           {title || channeltitle}
         </Text>
-        <Pressable onPress={() => onRightActionPress(title)}>
+        <Pressable
+          onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+          onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
+          style={{
+            backgroundColor: isPressed ? 'rgba(0,0,0,0.8)' : 'transparent', // not sure theme object is not working here
+            ...styles.favoriteButton
+          }}
+          onPress={() => onRightActionPress(title)}
+        >
           <Icon
             name="heart-solid"
             size={24}
@@ -281,6 +307,16 @@ const Content = ({ channeltitle, title, epgtitle, time, time_to, onRightActionPr
   );
 };
 
+const styles = StyleSheet.create({
+  favoriteButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
+
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
     <ChannelDetailScreen {...props} />
@@ -291,10 +327,12 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   channel: selectChannel,
-  currentProgram: selectCurrentProgram
+  currentProgram: selectCurrentProgram,
+  favoritesUpdated: selectFavoritesListUpdated
 });
 
 const actions = {
+  addToFavoritesAction: Creators.addToFavorites,
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
