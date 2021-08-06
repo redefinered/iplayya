@@ -6,7 +6,6 @@ import { createLogger } from 'redux-logger';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer, { persistConfig } from './root.reducer';
 import rootSaga from 'modules/sagas/root.saga';
-import { NODE_ENV } from '@env';
 
 const logger = createLogger({
   collapsed: true,
@@ -19,13 +18,11 @@ const logger = createLogger({
 
 const sagaMiddleware = createSagaMiddleware();
 
-const middlewares = [sagaMiddleware]; // makes middlewares scalable
-
-console.log('x', NODE_ENV);
-if (NODE_ENV === 'development') {
-  // add redux-logger as middleware on development
-  middlewares.push(logger);
-}
+/// in react web apps logger can be added on development only
+// react native works differently, we cannot check NODE_ENV as opposed to web so we add logger here
+// but we added babel-plugin-transform-remove-console to remove consoles in production
+// the reason we do that is because logs in production can cause performance issues
+const middlewares = [sagaMiddleware, logger]; // makes middlewares scalable
 
 // add Redux devtools
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
