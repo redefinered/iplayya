@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import ProgramItem from './program-item.component';
@@ -10,7 +8,8 @@ import SelectorPills from 'components/selector-pills/selector-pills.component';
 import { generateDatesFromToday } from 'utils';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/notifications/notifications.actions';
+import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators as NotifCreators } from 'modules/ducks/notifications/notifications.actions';
 import { selectPrograms } from 'modules/ducks/itv/itv.selectors';
 import {
   selectNotifications,
@@ -19,7 +18,14 @@ import {
 import { createFontFormat } from 'utils';
 import NotifService from 'NotifService';
 
+// eslint-disable-next-line no-unused-vars
 import { Button } from 'react-native-paper';
+import { FlatList } from 'react-native-gesture-handler';
+import { useHeaderHeight } from '@react-navigation/stack';
+
+const ITEM_HEIGHT = 50;
+const PLAYER_HEIGHT = 211;
+const PILLS_HEIGHT = 12 + 40;
 
 // eslint-disable-next-line no-unused-vars
 const ProgramGuide = ({
@@ -33,8 +39,11 @@ const ProgramGuide = ({
   onRegisterAction,
   onNotifAction,
 
-  showSnackBar
+  showSnackBar,
+
+  contentHeight
 }) => {
+  const headerHeight = useHeaderHeight();
   // notif.cancelAll();
   const theme = useTheme();
   // generates an array of dates 7 days from now
@@ -88,6 +97,7 @@ const ProgramGuide = ({
   };
 
   /// for testing
+  // eslint-disable-next-line no-unused-vars
   const checkScheduledNotifs = () => {
     notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
@@ -95,6 +105,7 @@ const ProgramGuide = ({
   };
 
   // /// cancel all
+  // eslint-disable-next-line no-unused-vars
   const cancelAllNotifications = () => {
     notifService.cancelAll((notifications) => {
       console.log({ notifications });
@@ -105,24 +116,58 @@ const ProgramGuide = ({
     });
   };
 
+  const getProgramListHeight = () => {
+    return (
+      Dimensions.get('window').height - contentHeight - headerHeight - PLAYER_HEIGHT - PILLS_HEIGHT
+    );
+  };
+
   // return empty componet if no available programs
   if (!programs.length) return <View />;
 
   return (
-    <View>
+    <React.Fragment>
       {renderTitle()}
 
       {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
       <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button> */}
 
       <SelectorPills
+        onLayout={({ nativeEvent }) => console.log({ x: nativeEvent.layout })}
         data={dates}
         labelkey="formatted"
         onSelect={handleSelect}
         selected={selected}
         style={{ marginBottom: theme.spacing(2) }}
       />
-      {programs.map((program, key) => (
+
+      <View
+        style={{
+          paddingBottom: 10,
+          height: getProgramListHeight()
+        }}
+      >
+        <FlatList
+          bounces={false}
+          scrollEnabled
+          data={programs}
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ProgramItem
+              channelId={channelId}
+              channelName={channelName}
+              showSnackBar={showSnackBar}
+              createScheduledNotif={handleCreateScheduledNotif}
+              cancelNotification={handleCancelScheduledNotif}
+              {...item}
+            />
+          )}
+        />
+      </View>
+      {/* {programs.map((program, key) => (
         <ProgramItem
           channelId={channelId}
           channelName={channelName}
@@ -132,8 +177,8 @@ const ProgramGuide = ({
           key={key}
           {...program}
         />
-      ))}
-    </View>
+      ))} */}
+    </React.Fragment>
   );
 };
 
@@ -144,13 +189,16 @@ ProgramGuide.propTypes = {
   programs: PropTypes.array,
   notifications: PropTypes.array,
   subscriptions: PropTypes.array,
-  showSnackBar: PropTypes.func
+  showSnackBar: PropTypes.func,
+  onRegisterAction: PropTypes.func,
+  onNotifAction: PropTypes.func,
+  contentHeight: PropTypes.number
 };
 
 const actions = {
   getProgramsByChannelAction: Creators.getProgramsByChannel,
-  onRegisterAction: Creators.onRegister,
-  onNotifAction: Creators.onNotif
+  onRegisterAction: NotifCreators.onRegister,
+  onNotifAction: NotifCreators.onNotif
 };
 
 const mapStateToProps = createStructuredSelector({

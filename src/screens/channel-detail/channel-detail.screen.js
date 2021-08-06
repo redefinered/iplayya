@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, Image, Pressable } from 'react-native';
+import { View, Image, Pressable } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -52,6 +52,7 @@ const ChannelDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
+  const [contentHeight, setContentHeight] = React.useState(null);
 
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
@@ -166,8 +167,8 @@ const ChannelDetailScreen = ({
         {renderPlayer()}
       </View>
 
-      <ScrollView showsHorizontalScrollIndicator={false} bounces={true}>
-        <ContentWrap>
+      <View>
+        <ContentWrap onLayout={({ nativeEvent }) => setContentHeight(nativeEvent.layout.height)}>
           <View
             style={{
               flexDirection: 'row',
@@ -193,13 +194,16 @@ const ChannelDetailScreen = ({
         </ContentWrap>
         {/* program guide */}
 
-        <ProgramGuide
-          channelId={channelId}
-          channelName={channel.title}
-          title="Program Guide"
-          showSnackBar={handleShowSnackBar}
-        />
-      </ScrollView>
+        <View>
+          <ProgramGuide
+            channelId={channelId}
+            channelName={channel.title}
+            title="Program Guide"
+            showSnackBar={handleShowSnackBar}
+            contentHeight={contentHeight}
+          />
+        </View>
+      </View>
 
       <SnackBar
         visible={showSnackBar}
