@@ -89,19 +89,28 @@ class SignUpScreen extends React.Component {
         this.setError('password', null);
         this.setState({ disable: false });
       }
+    }
 
-      if (name === 'first_name') {
-        if (value === '') {
-          this.setError('first_name', null);
-        }
-        return this.setState({ [name]: this.onlyOneSpace(value) });
+    if (name === 'first_name') {
+      if (value === '') {
+        this.setError('first_name', null);
       }
+
+      /// prevent special chars input
+      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
+
+      return this.setState({ [name]: this.onlyOneSpace(stripSpecChars) });
     }
 
     if (name === 'last_name') {
       if (value === '') {
         this.setError('last_name', null);
       }
+
+      /// prevent special chars input
+      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
+
+      return this.setState({ [name]: stripSpecChars });
     }
 
     if (name === 'password_confirmation') {
