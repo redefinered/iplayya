@@ -58,6 +58,26 @@ class SignUpScreen extends React.Component {
   }
 
   handleChange = (value, name) => {
+    if (name === 'first_name') {
+      if (value === '') {
+        this.setError('first_name', null);
+      }
+
+      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
+
+      return this.setState({ [name]: this.onlyOneSpace(stripSpecChars) });
+    }
+
+    if (name === 'last_name') {
+      if (value === '') {
+        this.setError('last_name', null);
+      }
+
+      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
+
+      return this.setState({ [name]: this.onlyOneSpace(stripSpecChars) });
+    }
+
     if (name === 'email') {
       if (value === '') {
         this.setError('email', null);
@@ -88,19 +108,6 @@ class SignUpScreen extends React.Component {
       if (value === '') {
         this.setError('password', null);
         this.setState({ disable: false });
-      }
-
-      if (name === 'first_name') {
-        if (value === '') {
-          this.setError('first_name', null);
-        }
-        return this.setState({ [name]: this.onlyOneSpace(value) });
-      }
-    }
-
-    if (name === 'last_name') {
-      if (value === '') {
-        this.setError('last_name', null);
       }
     }
 
