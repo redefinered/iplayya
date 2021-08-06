@@ -37,6 +37,7 @@ import {
 import NoProvider from 'assets/no_provider.svg';
 
 import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
+import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
 
 const IptvScreen = ({
   navigation,
@@ -52,6 +53,7 @@ const IptvScreen = ({
   createStartAction,
   deleteAction,
   deteteStartAction,
+  isInitialSignIn,
   route: { params }
   // isProviderSetupSkipped
 }) => {
@@ -109,8 +111,11 @@ const IptvScreen = ({
   };
 
   const handleAddProviderSuccess = () => {
-    setShowSuccessMessage(true);
     getProfileAction();
+
+    if (isInitialSignIn) return;
+
+    setShowSuccessMessage(true);
   };
 
   const handleProviderDeleteSuccess = () => {
@@ -291,7 +296,8 @@ const mapStateToProps = createStructuredSelector({
   providers: selectProviders,
   // skipped: selectSkipProviderAdd,
   onboardinginfo: selectOnboardinginfo,
-  isProviderSetupSkipped: selectIsProviderSetupSkipped
+  isProviderSetupSkipped: selectIsProviderSetupSkipped,
+  isInitialSignIn: selectIsInitialSignIn
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
