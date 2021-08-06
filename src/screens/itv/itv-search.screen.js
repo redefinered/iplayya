@@ -100,6 +100,15 @@ const ItvSearchScreen = ({
     [searchResultsPaginator]
   );
 
+  const onSubmitEditing = () => {
+    if (term.length) {
+      updateRecentSearchAction(term);
+      setTerm(term);
+    } else {
+      return;
+    }
+  };
+
   const handleRecentSearch = () => {
     if (term.length) {
       updateRecentSearchAction(term);
@@ -291,6 +300,7 @@ const ItvSearchScreen = ({
       <ContentWrap>
         <TextInput
           onFocus={() => setBottomTabsVisibleAction({ hideTabs: true })}
+          multiline={false}
           render={(props) => (
             <FormInput
               {...props}
@@ -306,6 +316,7 @@ const ItvSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
+          onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}
           autoCapitalize="none"
