@@ -20,6 +20,7 @@ const ListItemChanel = ({
   full,
   selected,
   activateCheckboxes,
+  handleProgramGuide,
   ...contentProps
 }) => {
   const [isPressed, setIsPressed] = React.useState(false);
@@ -63,6 +64,7 @@ const ListItemChanel = ({
             isFavorite={is_favorite}
             activateCheckboxes={activateCheckboxes}
             isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
+            handleProgramGuide={handleProgramGuide}
           />
         </View>
       </Pressable>
@@ -111,7 +113,8 @@ const Content = ({
   isFavorite,
   // selected,
   // activateCheckboxes,
-  isCatchUpAvailable
+  isCatchUpAvailable,
+  handleProgramGuide
 }) => {
   const theme = useTheme();
 
@@ -212,15 +215,27 @@ const Content = ({
           </Text>
           {renderCatchUpIndicator()}
         </View>
-        <Text
-          style={{
-            fontWeight: 'bold',
-            fontSize: 12,
-            color: theme.iplayya.colors.white50
-          }}
+        <Pressable
+          underlayColor={theme.iplayya.colors.black80}
+          onPress={() => handleProgramGuide()}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+            }
+          ]}
         >
-          EPG
-        </Text>
+          <View>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                fontSize: 12,
+                color: theme.iplayya.colors.white50
+              }}
+            >
+              EPG
+            </Text>
+          </View>
+        </Pressable>
       </View>
     </View>
   );
@@ -238,7 +253,8 @@ Content.propTypes = {
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   activateCheckboxes: PropTypes.bool,
-  isCatchUpAvailable: PropTypes.bool
+  isCatchUpAvailable: PropTypes.bool,
+  handleProgramGuide: PropTypes.func
 };
 
 ListItemChanel.propTypes = {
@@ -250,7 +266,8 @@ ListItemChanel.propTypes = {
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   handleLongPress: PropTypes.func,
-  activateCheckboxes: PropTypes.bool
+  activateCheckboxes: PropTypes.bool,
+  handleProgramGuide: PropTypes.func
 };
 
 export default ListItemChanel;
