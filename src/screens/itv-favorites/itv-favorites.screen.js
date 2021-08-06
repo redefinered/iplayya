@@ -140,6 +140,9 @@ const ItvFavoritesScreen = ({
     }
   };
 
+  console.log({ selectedItems });
+  console.log({ favorites });
+
   const handleHideConfirmDeleteModal = () => {
     setShowDeleteConfirmation(false);
   };
@@ -174,7 +177,7 @@ const ItvFavoritesScreen = ({
     return (
       <ScrollView style={{ marginTop: 20 }}>
         {activateCheckboxes && (
-          <ContentWrap style={{ marginTop: 10 }}>
+          <ContentWrap>
             <View
               style={{
                 flexDirection: 'row',
@@ -206,75 +209,74 @@ const ItvFavoritesScreen = ({
             return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
           };
           return (
-            <Pressable
-              key={id}
-              // style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
-              underlayColor={theme.iplayya.colors.black80}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: 5,
-                  padding: 8
-                  // backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent'
-                }
-              ]}
-              onLongPress={() => handleLongPress(id)}
-              onPress={() => handleSelectItem(id)}
-            >
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginBottom: 10,
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginLeft: 8
-                }}
+            <ContentWrap key={id} style={{ marginTop: 10 }}>
+              <Pressable
+                underlayColor={theme.iplayya.colors.black80}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                    // flexDirection: 'row',
+                    // alignItems: 'center',
+                    // justifyContent: 'space-between',
+                    // marginBottom: 5,
+                    position: 'relative',
+                    height: 80,
+                    paddingLeft: 75,
+                    marginBottom: 10
+                  }
+                ]}
+                onLongPress={() => handleLongPress(id)}
+                onPress={() => handleSelectItem(id)}
               >
                 <Image
                   style={{
                     width: 60,
                     height: 60,
                     borderRadius: 8,
-                    marginRight: 1
-                    // position: 'absolute',
-                    // top: 0,
-                    // left: 0
+                    position: 'absolute',
+                    top: 2,
+                    left: 2
                   }}
                   source={channelplaceholder}
                 />
 
-                <View style={{ justifyContent: 'center' }}>
-                  <Text
-                    style={{
-                      fontWeight: '700',
-                      ...createFontFormat(12, 16),
-                      marginBottom: 5,
-                      color: theme.iplayya.colors.white50
-                    }}
-                  >
-                    {`${number}: ${title}`}
-                  </Text>
-                  <Text
-                    style={{
-                      fontWeight: '700',
-                      ...createFontFormat(12, 16),
-                      color: theme.iplayya.colors.white80,
-                      marginBottom: 5
-                    }}
-                  >
-                    {epgtitle}
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                  >
-                    <View style={{ flexDirection: 'row', alignItems: 'center', width: '73%' }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <View style={{ justifyContent: 'center' }}>
+                    <View>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          marginBottom: 5,
+                          color: theme.iplayya.colors.white50
+                        }}
+                      >
+                        {`${number}: ${title}`}
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white80,
+                          marginBottom: 5
+                        }}
+                      >
+                        {epgtitle}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: '75%'
+                      }}
+                    >
                       <Text
                         style={{
                           ...createFontFormat(12, 16),
@@ -284,19 +286,26 @@ const ItvFavoritesScreen = ({
                       >
                         {getSchedule(time, time_to)}
                       </Text>
-                    </View>
-                    {!activateCheckboxes && (
-                      <Pressable
-                        underlayColor={theme.iplayya.colors.black80}
-                        onPress={() => navigation.navigate('ProgramGuidScreen', { channelId: id })}
-                        style={({ pressed }) => [
-                          {
-                            backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
-                            borderRadius: 12
+
+                      {!activateCheckboxes && (
+                        <Pressable
+                          underlayColor={theme.iplayya.colors.black80}
+                          onPress={() =>
+                            navigation.navigate('ProgramGuidScreen', { channelId: id })
                           }
-                        ]}
-                      >
-                        <View style={{ borderRadius: 8, padding: 4 }}>
+                          style={({ pressed }) => [
+                            {
+                              backgroundColor: pressed
+                                ? theme.iplayya.colors.black80
+                                : 'transparent',
+                              width: 44,
+                              height: 44,
+                              borderRadius: 22,
+                              justifyContent: 'center',
+                              alignItems: 'center'
+                            }
+                          ]}
+                        >
                           <Text
                             style={{
                               fontWeight: 'bold',
@@ -306,18 +315,16 @@ const ItvFavoritesScreen = ({
                           >
                             EPG
                           </Text>
-                        </View>
-                      </Pressable>
-                    )}
+                        </Pressable>
+                      )}
+                    </View>
                   </View>
-                </View>
-                {activateCheckboxes && (
-                  <View style={{ margin: 9 }}>
+                  {activateCheckboxes && (
                     <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                  </View>
-                )}
-              </View>
-            </Pressable>
+                  )}
+                </View>
+              </Pressable>
+            </ContentWrap>
           );
         })}
         {/* <View style={{ paddingTop: theme.spacing(4) }}>
