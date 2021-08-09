@@ -139,6 +139,7 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       channels: orderBy(updatedChannels, 'number', 'asc'),
       paginator: Object.assign(state.paginator, nextPaginatorInfo)
+
       // addedToFavorites: false,
       // removedFromFavorites: false
     };
@@ -173,7 +174,8 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: null,
       channels: orderBy(updatedChannels, 'number', 'asc'),
-      paginator: Object.assign(state.paginator, nextPaginatorInfo)
+      paginator: Object.assign(state.paginator, nextPaginatorInfo),
+      favoritesListUpdated: false
       // addedToFavorites: false
       // removedFromFavorites: false
     };

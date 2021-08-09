@@ -23,7 +23,8 @@ import {
   selectPaginator,
   selectGenres,
   selectChannels,
-  selectFavorites
+  selectFavorites,
+  selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
@@ -39,7 +40,7 @@ const ItvScreen = ({
   error,
   genres,
   channels,
-  favorites,
+  // favorites,
   // getGenresAction,
   getChannelsByCategoriesStartAction,
   getChannelsStartAction,
@@ -48,8 +49,8 @@ const ItvScreen = ({
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
-  // isFavoritesUpdated,
-  // getFavoritesAction,
+  isFavoritesUpdated,
+  getFavoritesAction,
   enableSwipeAction,
   route: { params },
 
@@ -106,6 +107,13 @@ const ItvScreen = ({
     }
   }, [genres]);
 
+  React.useEffect(() => {
+    if (isFavoritesUpdated) {
+      getFavoritesAction();
+      getChannelsAction({ paginator });
+    }
+  }, [isFavoritesUpdated]);
+
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
 
@@ -149,21 +157,20 @@ const ItvScreen = ({
     }
   }, [params]);
 
-  const isFavorite = (id) => {
-    if (!favorites.length) return false;
-
-    const fr = favorites.find(({ item }) => item.id === id);
-
-    if (typeof fr === 'undefined') return false;
-
-    return true;
-  };
-
   const handleWalkthroughGuideHide = () => {
     setShowWalkthroughGuide(false);
   };
 
   const handleAddToFavorites = (channelId) => {
+    let channel = channels.find(({ id }) => id === channelId);
+
+    // if channel is not found stop
+    if (typeof channel === 'undefined') return;
+
+    const { is_favorite } = channel;
+
+    if (is_favorite) return;
+
     let title = channels.find(({ id }) => id === channelId).title;
     setFavorited(title);
 
@@ -267,7 +274,6 @@ const ItvScreen = ({
             renderItem={({ item: { epgtitle, ...itemProps } }) => (
               <ListItemChanel
                 // handleLongPress={}
-                is_favorite={isFavorite}
                 onSelect={handleItemSelect}
                 onRightActionPress={handleAddToFavorites}
                 handleProgramGuide={handleProgramGuide}
@@ -413,7 +419,8 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   genres: selectGenres,
   paginator: selectPaginator,
-  channels: selectChannels
+  channels: selectChannels,
+  isFavoriteUpdated: selectFavoritesListUpdated
 });
 
 const actions = {

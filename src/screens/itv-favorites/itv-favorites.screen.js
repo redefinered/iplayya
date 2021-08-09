@@ -20,7 +20,9 @@ import {
   selectError,
   selectIsFetching,
   selectRemovedFromFavorites,
-  selectFavoritesPaginator
+  selectFavoritesPaginator,
+  selectPaginator,
+  selectChannels
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
 import { selectFavoritesListUpdated } from 'modules/ducks/itv/itv.selectors';
@@ -35,9 +37,10 @@ const ItvFavoritesScreen = ({
   getFavoritesAction,
   favoritesPaginator,
   favoritesListUpdated,
-  // getChannelsAction,
+  getChannelsAction,
   removeFromFavoritesAction,
   removedFromFavorites,
+  paginator,
 
   resetFavoritesPaginatorAction
 }) => {
@@ -65,6 +68,7 @@ const ItvFavoritesScreen = ({
     if (favoritesListUpdated) {
       setActivateCheckboxes(false);
       getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getChannelsAction({ paginator });
     }
   }, [favoritesListUpdated]);
 
@@ -84,7 +88,7 @@ const ItvFavoritesScreen = ({
   React.useEffect(() => {
     if (removedFromFavorites) {
       getFavoritesAction();
-      // getChannelsAction({ limit: 10, pageNumber: 1 });
+      getChannelsAction({ limit: 10, pageNumber: 1 });
       setSelectedItems([]);
     }
   }, [removedFromFavorites]);
@@ -139,9 +143,6 @@ const ItvFavoritesScreen = ({
       removeFromFavoritesAction(deleteItems);
     }
   };
-
-  console.log({ selectedItems });
-  console.log({ favorites });
 
   const handleHideConfirmDeleteModal = () => {
     setShowDeleteConfirmation(false);
@@ -417,7 +418,9 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
   removedFromFavorites: selectRemovedFromFavorites,
-  favoritesListUpdated: selectFavoritesListUpdated
+  favoritesListUpdated: selectFavoritesListUpdated,
+  paginator: selectPaginator,
+  channels: selectChannels
 });
 
 const actions = {
