@@ -79,8 +79,8 @@ export default class NotifService {
       channelId: soundName ? 'sound-channel-id' : 'default-channel-id',
       ticker: 'My Notification Ticker', // (optional)
       autoCancel: true, // (optional) default: true
-      largeIcon: 'ic_launcher', // (optional) default: "ic_launcher"
-      smallIcon: 'ic_notification', // (optional) default: "ic_notification" with fallback for "ic_launcher"
+      // largeIcon: 'ic_launcher', // (optional) default: "ic_launcher"
+      // smallIcon: 'ic_notification', // (optional) default: "ic_notification" with fallback for "ic_launcher"
       bigText: 'My big text that will be shown when notification is expanded', // (optional) default: "message" prop
       subText: 'This is a subText', // (optional) default: none
       color: 'red', // (optional) default: system default
@@ -90,7 +90,7 @@ export default class NotifService {
       group: 'group', // (optional) add group to message
       groupSummary: false, // (optional) set this notification to be the group summary for a group of notifications, default: false
       ongoing: false, // (optional) set whether this is an "ongoing" notification
-      actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
+      // actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
       invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
       when: null, // (optionnal) Add a timestamp pertaining to the notification (usually the time the event occurred). For apps targeting Build.VERSION_CODES.N and above, this time is not shown anymore by default and must be opted into by using `showWhen`, default: null.
@@ -126,8 +126,8 @@ export default class NotifService {
       channelId: soundName ? 'sound-channel-id' : 'default-channel-id',
       ticker: 'My Notification Ticker', // (optional)
       autoCancel: true, // (optional) default: true
-      largeIcon: 'ic_launcher', // (optional) default: "ic_launcher"
-      smallIcon: 'ic_notification', // (optional) default: "ic_notification" with fallback for "ic_launcher"
+      // largeIcon: 'ic_launcher', // (optional) default: "ic_launcher"
+      // smallIcon: 'ic_notification', // (optional) default: "ic_notification" with fallback for "ic_launcher"
       bigText: description || 'My big text that will be shown when notification is expanded', // (optional) default: "message" prop
       subText: title || 'This is a subText', // (optional) default: none
       color: theme.iplayya.colors.vibrantpussy, // (optional) default: system default

@@ -55,7 +55,7 @@ const App = ({
   onNotifAction
 }) => {
   const theme = useTheme();
-  const [testMode] = React.useState(false);
+  const [testMode] = React.useState(true);
   const [notif, setNotif] = React.useState(null);
 
   React.useEffect(() => {
@@ -117,6 +117,21 @@ const App = ({
     }
   }, [isLoggedIn, currentUser]);
 
+  if (testMode)
+    return (
+      <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
+        <Button onPress={() => notif.localNotif()}>Test notication</Button>
+        <Button
+          onPress={() =>
+            notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }))
+          }
+        >
+          check notifs notication
+        </Button>
+        <Button onPress={() => notif.cancelAll()}>cancel all notications</Button>
+      </View>
+    );
+
   if (isLoading && isLoggedIn)
     return (
       <View
@@ -145,21 +160,6 @@ const App = ({
       <NavigationContainer>
         <OnboardingStack />
       </NavigationContainer>
-    );
-
-  if (testMode)
-    return (
-      <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
-        <Button onPress={() => notif.localNotif()}>Test notication</Button>
-        <Button
-          onPress={() =>
-            notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }))
-          }
-        >
-          check notifs notication
-        </Button>
-        <Button onPress={() => notif.cancelAll()}>cancel all notications</Button>
-      </View>
     );
 
   return <HomeComponent />;

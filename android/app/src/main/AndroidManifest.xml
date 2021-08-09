@@ -52,6 +52,10 @@
       android:name="com.dieam.reactnativepushnotification.default_notification_channel_id"
       android:value="@string/default_notification_channel_id" />
 
+    <meta-data
+      android:name="com.dieam.reactnativepushnotification.default_notification_icon"
+      android:value="@mipmap/ic_launcher" />
+
     <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
     <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
     <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
