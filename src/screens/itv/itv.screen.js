@@ -110,7 +110,7 @@ const ItvScreen = ({
   React.useEffect(() => {
     if (isFavoritesUpdated) {
       getFavoritesAction();
-      getChannelsAction({ paginator });
+      getChannelsAction(paginator);
     }
   }, [isFavoritesUpdated]);
 

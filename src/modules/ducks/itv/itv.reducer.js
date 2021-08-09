@@ -213,6 +213,10 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
+  [Types.FAVORITES_START]: (state) => {
+    return { ...state, favoritesListUpdated: false };
+  },
+
   // add to favorites
   [Types.ADD_TO_FAVORITES]: (state, action) => {
     const channels = updateChannelsWithFavorited(state, action);

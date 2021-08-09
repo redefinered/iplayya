@@ -28,6 +28,7 @@ const { Types, Creators } = createActions(
     getChannelsByCategoriesSuccess: ['channels', 'nextPaginatorInfo'],
     getChannelsByCategoriesFailure: ['error'],
 
+    favoritesStart: null,
     // add to favorites
     addToFavorites: ['videoId'],
     addToFavoritesSuccess: null,

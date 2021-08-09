@@ -41,6 +41,9 @@ const ItvFavoritesScreen = ({
   removeFromFavoritesAction,
   removedFromFavorites,
   paginator,
+  channels,
+  getChannelsStartAction,
+  favoritesStartAction,
 
   resetFavoritesPaginatorAction
 }) => {
@@ -58,6 +61,10 @@ const ItvFavoritesScreen = ({
     resetFavoritesPaginatorAction();
   }, []);
 
+  // React.useEffect(() => {
+  //   favoritesStartAction();
+  // });
+
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
       getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
@@ -68,7 +75,7 @@ const ItvFavoritesScreen = ({
     if (favoritesListUpdated) {
       setActivateCheckboxes(false);
       getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-      getChannelsAction({ paginator });
+      getChannelsAction(paginator);
     }
   }, [favoritesListUpdated]);
 
@@ -88,7 +95,7 @@ const ItvFavoritesScreen = ({
   React.useEffect(() => {
     if (removedFromFavorites) {
       getFavoritesAction();
-      getChannelsAction({ limit: 10, pageNumber: 1 });
+      // getChannelsAction({ limit: 10, pageNumber: 1 });
       setSelectedItems([]);
     }
   }, [removedFromFavorites]);
@@ -152,6 +159,7 @@ const ItvFavoritesScreen = ({
     // do delete action here
     // console.log('delete action');
     // setShowDeleteConfirmation(false);
+
     setShowDeleteConfirmation(false);
     handleRemoveItems();
   };
@@ -427,7 +435,9 @@ const actions = {
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavorites,
   getChannelsAction: Creators.getChannels,
-  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
+  getChannelsStartAction: Creators.getChannelsStart,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
+  favoritesStartAction: Creators.favoritesStart
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
