@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +14,7 @@ import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import NotifService from 'NotifService';
 
+// eslint-disable-next-line no-unused-vars
 import { Button } from 'react-native-paper';
 
 const NotificationsScreen = ({
@@ -58,7 +60,19 @@ const NotificationsScreen = ({
     setShowActionSheet(false);
   };
 
+  /// for testing
   const checkScheduledNotifs = () => {
+    notif.getScheduledLocalNotifications((notifications) => {
+      console.log({ notifications });
+    });
+  };
+
+  // /// cancel all
+  const cancelAllNotifications = () => {
+    notif.cancelAll((notifications) => {
+      console.log({ notifications });
+    });
+
     notif.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
     });
@@ -97,7 +111,8 @@ const NotificationsScreen = ({
 
   return (
     <View>
-      <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
+      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
+      <Button onPress={() => cancelAllNotifications()}>cancel all scheduled notifications</Button> */}
       {notifications.map((item, key) => (
         <NotificationItem key={key} {...item} handleSelect={handleSelect} />
       ))}

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -16,6 +17,7 @@ import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actio
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as NotifCreators } from 'modules/ducks/notifications/notifications.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import SplashScreen from 'react-native-splash-screen';
@@ -23,14 +25,15 @@ import Test from './test.component.js';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
 import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
 
-// import NotifService from './NotifService';
+import NotifService from 'NotifService';
 // import { selectNotifications } from 'modules/ducks/itv/itv.selectors.js';
 
 // eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
 
-// import { Button } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 
+// eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
   <NavigationContainer>
     <StatusBar translucent backgroundColor="transparent" />
@@ -47,11 +50,21 @@ const App = ({
   currentUser,
   setProviderAction,
   getProfileAction,
-  profileUpdated
-  // notifications
+  profileUpdated,
+  onRegisterAction,
+  onNotifAction
 }) => {
   const theme = useTheme();
   const [testMode] = React.useState(false);
+  const [notif, setNotif] = React.useState(null);
+
+  React.useEffect(() => {
+    if (testMode) {
+      const notif = new NotifService(onRegisterAction, onNotifAction);
+
+      setNotif(notif);
+    }
+  }, [testMode]);
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
@@ -101,7 +114,6 @@ const App = ({
       if (providers.length) {
         setProviderAction(providers[0].id);
       }
-      // console.log('fua;dskljfas  ;alkdfj;alsdjf');
     }
   }, [isLoggedIn, currentUser]);
 
@@ -119,7 +131,7 @@ const App = ({
       </View>
     );
 
-  if (testMode) return <Test />;
+  // if (testMode) return <Test />;
 
   if (passwordUpdateParams)
     return (
@@ -135,11 +147,20 @@ const App = ({
       </NavigationContainer>
     );
 
-  // return (
-  //   <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
-  //     <Button onPress={() => notif.localNotif()}>Test notication</Button>
-  //   </View>
-  // );
+  if (testMode)
+    return (
+      <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
+        <Button onPress={() => notif.localNotif()}>Test notication</Button>
+        <Button
+          onPress={() =>
+            notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }))
+          }
+        >
+          check notifs notication
+        </Button>
+        <Button onPress={() => notif.cancelAll()}>cancel all notications</Button>
+      </View>
+    );
 
   return <HomeComponent />;
 };
@@ -157,7 +178,9 @@ const actions = {
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   resetNowPlayingAction: MusicCreators.resetNowPlaying,
   setProviderAction: UserCreators.setProvider,
-  getProfileAction: ProfileCreators.get
+  getProfileAction: ProfileCreators.get,
+  onRegisterAction: NotifCreators.onRegister,
+  onNotifAction: NotifCreators.onNotif
 };
 
 export default connect(mapStateToProps, actions)(App);

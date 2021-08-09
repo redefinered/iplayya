@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -22,6 +22,7 @@ const NotificationItem = ({
 }) => {
   const theme = useTheme();
   const navigtation = useNavigation();
+  const [isPressed, setIsPressed] = React.useState(false);
   const [unRead, setUnread] = React.useState(false);
 
   React.useEffect(() => {
@@ -63,12 +64,24 @@ const NotificationItem = ({
     updateNotificationStatusAction(id, 2);
   };
 
+  const backgroundColor = () => {
+    if (unRead) {
+      return theme.iplayya.colors.white10;
+    } else {
+      if (isPressed) return theme.iplayya.colors.black80;
+
+      return 'transparent';
+    }
+  };
+
   return (
-    <TouchableHighlight
+    <Pressable
+      onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+      onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
       onPress={() => handleSelectItem(id)}
       underlayColor={theme.iplayya.colors.black80}
       style={{
-        backgroundColor: unRead ? theme.iplayya.colors.white10 : 'transparent',
+        backgroundColor: backgroundColor(),
         paddingVertical: theme.spacing(2)
       }}
     >
@@ -94,14 +107,24 @@ const NotificationItem = ({
               {renderFromNow()}
             </Text>
           </View>
-          <TouchableOpacity onPress={() => handleSelect(id)}>
+          <Pressable onPress={() => handleSelect(id)} style={styles.buttonContainer}>
             <Icon name="more" size={24} />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </ContentWrap>
-    </TouchableHighlight>
+    </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
 
 NotificationItem.propTypes = {
   id: PropTypes.string,

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, View } from 'react-native';
+import { Pressable, View, StyleSheet } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
@@ -35,6 +35,7 @@ const ProgramItem = ({
   const theme = useTheme();
   const [active, setActive] = React.useState(false);
   const [exists, setExists] = React.useState(false);
+  const [isPressed, setIsPressed] = React.useState(false);
 
   React.useEffect(() => {
     if (notifications.length) {
@@ -55,6 +56,7 @@ const ProgramItem = ({
   }, [notifications]);
 
   const handleNotify = () => {
+    // const notifRepeatId = uuid();
     const program = { id, title, time, ...rest };
 
     if (exists) {
@@ -113,13 +115,13 @@ const ProgramItem = ({
         <Text>{title}</Text>
       </View>
       <Pressable
+        onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+        onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
         onPress={() => handleNotify()}
         style={{
-          flex: 1,
-          height: 50,
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingHorizontal: 12
+          marginRight: theme.spacing(2),
+          backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
+          ...styles.button
         }}
       >
         <Icon
@@ -131,6 +133,16 @@ const ProgramItem = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  button: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
 
 ProgramItem.propTypes = {
   id: PropTypes.string,

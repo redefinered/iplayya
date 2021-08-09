@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import withLoader from 'components/with-loader.component';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -61,7 +61,7 @@ const ProgramGuide = ({
   if (!channel) return <View />;
 
   return (
-    <ScrollView style={styles.root}>
+    <View style={styles.root}>
       <ContentWrap>
         <View
           style={{
@@ -89,7 +89,7 @@ const ProgramGuide = ({
       </ContentWrap>
 
       <ProgramGuideComponent channelId={channelId} />
-    </ScrollView>
+    </View>
   );
 };
 
