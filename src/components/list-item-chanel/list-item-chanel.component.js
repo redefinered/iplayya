@@ -49,7 +49,7 @@ const ListItemChanel = ({
             flex: 11,
             flexDirection: 'row',
             alignItems: 'center',
-            padding: theme.spacing(2)
+            padding: theme.spacing(1.9)
           }}
         >
           <Image
@@ -184,7 +184,16 @@ const Content = ({
           renderCheckbox()
         )} */}
         {onRightActionPress ? (
-          <Pressable onPress={() => handleRightActionPress()}>
+          <Pressable
+            onPress={() => handleRightActionPress()}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? 'rgba(255,255,255,0.1)' : 'transparent',
+                borderRadius: 22,
+                padding: 3
+              }
+            ]}
+          >
             <Icon
               name="heart-solid"
               size={24}
@@ -220,21 +229,22 @@ const Content = ({
           onPress={() => handleProgramGuide()}
           style={({ pressed }) => [
             {
-              backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+              backgroundColor: pressed ? 'rgba(255,255,255,0.1)' : 'transparent',
+              borderRadius: 22,
+              padding: 3,
+              paddingVertical: 5
             }
           ]}
         >
-          <View>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 12,
-                color: theme.iplayya.colors.white50
-              }}
-            >
-              EPG
-            </Text>
-          </View>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 12,
+              color: theme.iplayya.colors.white50
+            }}
+          >
+            EPG
+          </Text>
         </Pressable>
       </View>
     </View>
