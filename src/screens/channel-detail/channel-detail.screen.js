@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, Pressable, StyleSheet } from 'react-native';
+import { View, Image } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -225,18 +225,7 @@ const ChannelDetailScreen = ({
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({
-  channeltitle,
-  title,
-  epgtitle,
-  time,
-  time_to,
-  onRightActionPress,
-  isFavorite
-}) => {
-  const theme = useTheme();
-  const [isPressed, setIsPressed] = React.useState(false);
-
+const Content = ({ channeltitle, title, epgtitle, time, time_to }) => {
   const renderEpgtitle = () => {
     if (!epgtitle)
       return (
@@ -260,62 +249,19 @@ const Content = ({
 
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}
-      >
-        <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>
-          {title || channeltitle}
-        </Text>
-        <Pressable
-          onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
-          onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
-          style={{
-            backgroundColor: isPressed ? 'rgba(0,0,0,0.8)' : 'transparent', // not sure theme object is not working here
-            ...styles.favoriteButton
-          }}
-          onPress={() => onRightActionPress(title)}
-        >
-          <Icon
-            name="heart-solid"
-            size={24}
-            style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-          />
-        </Pressable>
-      </View>
+      <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title || channeltitle}</Text>
       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
         {renderEpgtitle()}
       </Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
-            {getSchedule(time, time_to)}
-          </Text>
-          <Icon name="history" color="#13BD38" />
-        </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
+          {getSchedule(time, time_to)}
+        </Text>
+        <Icon name="history" color="#13BD38" />
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  favoriteButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center'
-  }
-});
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
