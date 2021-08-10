@@ -260,7 +260,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      favorites: [],
+      // favorites: [],
       favoritesListUpdated: true
     };
   },
@@ -284,7 +284,8 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
     const { data, nextPaginator } = action;
 
-    const updatedData = uniqBy([...state.favorites, ...data], 'id');
+    // const updatedData = uniqBy([...state.favorites, ...data], 'id');
+    const updatedData = uniqBy(data, 'id');
 
     return {
       ...state,

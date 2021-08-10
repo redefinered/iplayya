@@ -40,10 +40,6 @@ const ItvFavoritesScreen = ({
   getChannelsAction,
   removeFromFavoritesAction,
   removedFromFavorites,
-  paginator,
-  channels,
-  getChannelsStartAction,
-  favoritesStartAction,
 
   resetFavoritesPaginatorAction
 }) => {
@@ -61,10 +57,6 @@ const ItvFavoritesScreen = ({
     resetFavoritesPaginatorAction();
   }, []);
 
-  // React.useEffect(() => {
-  //   favoritesStartAction();
-  // });
-
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
       getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
@@ -75,7 +67,7 @@ const ItvFavoritesScreen = ({
     if (favoritesListUpdated) {
       setActivateCheckboxes(false);
       getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-      getChannelsAction(paginator);
+      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
   }, [favoritesListUpdated]);
 
@@ -182,7 +174,7 @@ const ItvFavoritesScreen = ({
     return 'Are you sure you want to delete this channel from your favorites list?';
   };
 
-  if (listData.length)
+  if (listData.length || favorites.length)
     return (
       <ScrollView style={{ marginTop: 20 }}>
         {activateCheckboxes && (
@@ -196,7 +188,15 @@ const ItvFavoritesScreen = ({
             >
               <Pressable
                 onPress={() => setShowDeleteConfirmation(true)}
-                style={{ flexDirection: 'row', alignItems: 'center' }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 5
+                  }
+                ]}
+                // style={{ flexDirection: 'row', alignItems: 'center' }}
               >
                 <Icon name="delete" size={24} style={{ marginRight: 10 }} />
                 <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
@@ -218,24 +218,28 @@ const ItvFavoritesScreen = ({
             return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
           };
           return (
-            <ContentWrap key={id} style={{ marginTop: 10 }}>
-              <Pressable
-                underlayColor={theme.iplayya.colors.black80}
-                style={({ pressed }) => [
-                  {
-                    backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
-                    // flexDirection: 'row',
-                    // alignItems: 'center',
-                    // justifyContent: 'space-between',
-                    // marginBottom: 5,
-                    position: 'relative',
-                    height: 80,
-                    paddingLeft: 75,
-                    marginBottom: 10
-                  }
-                ]}
-                onLongPress={() => handleLongPress(id)}
-                onPress={() => handleSelectItem(id)}
+            <Pressable
+              key={id}
+              underlayColor={theme.iplayya.colors.black80}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+                  // flexDirection: 'row',
+                  // alignItems: 'center',
+                  // justifyContent: 'space-between',
+                  // marginBottom: 5,
+                }
+              ]}
+              onLongPress={() => handleLongPress(id)}
+              onPress={() => handleSelectItem(id)}
+            >
+              <ContentWrap
+                style={{
+                  marginTop: 10,
+                  position: 'relative',
+                  height: 80,
+                  paddingLeft: 75
+                }}
               >
                 <Image
                   style={{
@@ -244,7 +248,7 @@ const ItvFavoritesScreen = ({
                     borderRadius: 8,
                     position: 'absolute',
                     top: 2,
-                    left: 2
+                    left: 10
                   }}
                   source={channelplaceholder}
                 />
@@ -253,7 +257,9 @@ const ItvFavoritesScreen = ({
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    marginTop: 3,
+                    marginLeft: 5
                   }}
                 >
                   <View style={{ justifyContent: 'center' }}>
@@ -332,8 +338,8 @@ const ItvFavoritesScreen = ({
                     <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
                   )}
                 </View>
-              </Pressable>
-            </ContentWrap>
+              </ContentWrap>
+            </Pressable>
           );
         })}
         {/* <View style={{ paddingTop: theme.spacing(4) }}>
