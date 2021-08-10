@@ -109,7 +109,7 @@ const ItvScreen = ({
 
   React.useEffect(() => {
     if (isFavoritesUpdated) {
-      getFavoritesAction();
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
       getChannelsAction(paginator);
     }
   }, [isFavoritesUpdated]);
@@ -341,12 +341,12 @@ const ItvScreen = ({
       >
         <View style={{ flex: 4 }}>
           <TouchableRipple
-            style={{ marginHorizontal: 30, borderRadius: 100 }}
+            style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 32 }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('ItvFavoritesScreen')}
           >
-            <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+            <View style={{ alignItems: 'center' }}>
               <Icon name="heart-solid" size={24} />
               <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
                 Favorites
@@ -356,12 +356,12 @@ const ItvScreen = ({
         </View>
         <View style={{ flex: 4 }}>
           <TouchableRipple
-            style={{ marginHorizontal: 30, borderRadius: 100 }}
+            style={{ marginHorizontal: 30, borderRadius: 32, paddingVertical: 12 }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('HomeScreen')}
           >
-            <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+            <View style={{ alignItems: 'center' }}>
               <Icon name="iplayya" size={24} />
               <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
             </View>
@@ -369,14 +369,24 @@ const ItvScreen = ({
         </View>
         <View style={{ flex: 4 }}>
           <TouchableRipple
-            style={{ marginHorizontal: 30, borderRadius: 100 }}
+            style={{
+              marginHorizontal: 30,
+              borderRadius: 32,
+              paddingVertical: 12
+            }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('ItvDownloadsScreen')}
           >
-            <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+            <View style={{ alignItems: 'center' }}>
               <Icon name="download" size={24} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  textTransform: 'uppercase',
+                  marginTop: 5
+                }}
+              >
                 Downloads
               </Text>
             </View>
@@ -420,7 +430,7 @@ const mapStateToProps = createStructuredSelector({
   genres: selectGenres,
   paginator: selectPaginator,
   channels: selectChannels,
-  isFavoriteUpdated: selectFavoritesListUpdated
+  isFavoritesUpdated: selectFavoritesListUpdated
 });
 
 const actions = {
