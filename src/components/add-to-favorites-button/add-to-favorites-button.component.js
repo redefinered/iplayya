@@ -4,19 +4,39 @@ import { Pressable, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
+import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
 
-const AddToFavoritesButton = ({ videoId, addMovieToFavoritesAction, alreadyInFavorites }) => {
+const AddToFavoritesButton = ({
+  sub,
+  module,
+  addChannelToFavoritesAction,
+  addMovieToFavoritesAction,
+  inFavorites
+}) => {
   const theme = useTheme();
+
+  const handleAddAction = () => {
+    switch (module) {
+      case 'itv':
+        addChannelToFavoritesAction(sub);
+        break;
+      case 'imovie':
+        addMovieToFavoritesAction(sub);
+        break;
+      case 'imusic':
+        /// wip: add imusic module
+        break;
+      default:
+        break;
+    }
+  };
   return (
-    <Pressable
-      onPress={() => addMovieToFavoritesAction(videoId)}
-      style={styles.headerButtonContainer}
-    >
+    <Pressable onPress={() => handleAddAction()} style={styles.headerButtonContainer}>
       <Icon
         name="heart-solid"
         size={24}
-        style={{ color: alreadyInFavorites ? theme.iplayya.colors.vibrantpussy : 'white' }}
+        style={{ color: inFavorites ? theme.iplayya.colors.vibrantpussy : 'white' }}
       />
     </Pressable>
   );
@@ -39,13 +59,16 @@ const styles = StyleSheet.create({
 });
 
 AddToFavoritesButton.propTypes = {
-  alreadyInFavorites: PropTypes.bool,
-  videoId: PropTypes.number,
+  module: PropTypes.string,
+  inFavorites: PropTypes.bool,
+  sub: PropTypes.number,
+  addChannelToFavoritesAction: PropTypes.func,
   addMovieToFavoritesAction: PropTypes.func
 };
 
 const actions = {
-  addMovieToFavoritesAction: Creators.addMovieToFavorites
+  addChannelToFavoritesAction: ItvCreators.addToFavorites,
+  addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites
 };
 
 export default connect(null, actions)(AddToFavoritesButton);

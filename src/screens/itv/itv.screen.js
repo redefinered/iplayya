@@ -30,6 +30,7 @@ import uniq from 'lodash/uniq';
 
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
 import useComponentSize from 'hooks/use-component-size.hook';
+import { selectFavoritesListUpdated } from 'modules/ducks/itv/itv.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -37,6 +38,7 @@ const ItvScreen = ({
   // isFetching,
   navigation,
   error,
+  updated,
   genres,
   channels,
   favorites,
@@ -49,7 +51,7 @@ const ItvScreen = ({
   getChannelsByCategoriesAction,
   addToFavoritesAction,
   // isFavoritesUpdated,
-  // getFavoritesAction,
+  getFavoritesAction,
   enableSwipeAction,
   route: { params },
 
@@ -177,6 +179,14 @@ const ItvScreen = ({
       setShowNotificationSnackBar(false);
     }, 3000);
   };
+
+  /// if favorites update in backend get feavorites
+  React.useEffect(() => {
+    if (updated) {
+      getFavoritesAction({ pageNumber: 1 });
+      getChannelsAction({ pageNumber: 1 });
+    }
+  }, [updated]);
 
   React.useEffect(() => {
     if (showSnackBar) hideSnackBar();
@@ -408,7 +418,8 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   genres: selectGenres,
   paginator: selectPaginator,
-  channels: selectChannels
+  channels: selectChannels,
+  updated: selectFavoritesListUpdated
 });
 
 const actions = {
