@@ -227,7 +227,7 @@ const ItvSearchScreen = ({
   };
 
   const renderRecentSearch = () => {
-    if (term.length) {
+    if (term.length || !term.length) {
       if (results.length) return;
       return (
         <React.Fragment>
@@ -259,7 +259,7 @@ const ItvSearchScreen = ({
   };
 
   const renderSuggestedSearch = () => {
-    if (term.length) {
+    if (term.length || !term.length) {
       /// return if search results is not empty
       if (results.length) return;
 
