@@ -16,6 +16,7 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectError, selectSignedUp, selectIsFetching } from 'modules/ducks/auth/auth.selectors';
+import { validateName } from './sign-up.utils';
 
 import styles from './sign-up.styles';
 
@@ -58,24 +59,12 @@ class SignUpScreen extends React.Component {
   }
 
   handleChange = (value, name) => {
-    if (name === 'first_name') {
+    if (name === 'first_name' || name === 'last_name') {
       if (value === '') {
         this.setError('first_name', null);
       }
 
-      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
-
-      return this.setState({ [name]: this.onlyOneSpace(stripSpecChars) });
-    }
-
-    if (name === 'last_name') {
-      if (value === '') {
-        this.setError('last_name', null);
-      }
-
-      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
-
-      return this.setState({ [name]: this.onlyOneSpace(stripSpecChars) });
+      return this.setState({ [name]: validateName(value) });
     }
 
     if (name === 'email') {
@@ -91,10 +80,8 @@ class SignUpScreen extends React.Component {
         this.setError('username', null);
       }
 
-      /// prevent special chars input
-      const stripSpecChars = value.replace(/[^\w\s]/gi, '');
-
-      return this.setState({ username: this.onlyOneSpace(stripSpecChars) });
+      // prevent non-word characters
+      return this.setState({ username: value.replace(/[\W]/g, '') });
     }
 
     if (name === 'password') {
@@ -115,14 +102,10 @@ class SignUpScreen extends React.Component {
       if (value === '') {
         this.setError('password_confirmation', null);
       }
-      return this.setState({ [name]: this.onlyOneSpace(value) });
+      return this.setState({ [name]: trimWhiteSpaces(value) });
     }
 
     this.setState({ [name]: value });
-  };
-
-  onlyOneSpace = (str) => {
-    return str.trim();
   };
 
   handlePasswordFocus = () => {
