@@ -2,7 +2,7 @@
 /* eslint-disable react/display-name */
 
 import React from 'react';
-import { StyleSheet, View, Platform } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { withTheme, TouchableRipple } from 'react-native-paper';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
@@ -140,7 +140,7 @@ const HomeStack = ({
           headerBackTitleVisible: false,
           headerBackImage: () => <HeaderBackImage />,
           // headerStyle: { height: headerHeight },
-          safeAreaInsets: { bottom: Platform.OS === 'android' ? headerHeight : headerHeight },
+          safeAreaInsets: { bottom: headerHeight },
           headerTitleAlign: 'center',
           headerTitleStyle: { fontSize: 24, fontFamily: 'NotoSans' },
           headerTitleContainerStyle: { alignItems: 'center' },
