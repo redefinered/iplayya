@@ -6,6 +6,7 @@ import { Text, TouchableRipple } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
+import SnackBar from 'components/snackbar/snackbar.component';
 // import Button from 'components/button/button.component';
 import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
@@ -17,45 +18,48 @@ import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/profile/profile.actions';
-// import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
+import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectIsFetching,
   selectProviders,
-  selectCreated
+  selectCreated,
+  selectUpdated
 } from 'modules/ducks/provider/provider.selectors';
-import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
+import { selectIsInitialSignIn, selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
-import clone from 'lodash/clone';
-
 import styles from './add-iptv.styles';
+import clone from 'lodash/clone';
 
 // eslint-disable-next-line no-unused-vars
 import { isValidUsername, isValidWebsite } from 'common/validate';
-import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors';
+// import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors';
+// import { profileState } from 'modules/ducks/profile/profile.selectors';
+// import {  } from 'modules/ducks/auth/auth.selectors';
 class AddIptvScreen extends React.Component {
-  state = {
-    modalVisible: false,
-    name: '',
-    portal_address: '',
-    username: '',
-    password: '',
-    valid: true,
-    errors: {
-      name: null,
-      portal_address: null,
-      username: null,
-      password: null,
-      commonError: null
-    }
-  };
+  constructor(props) {
+    super(props);
 
-  static defaultProps = {
-    route: { params: { previousScreen: 'IPTV' } }
-  };
+    this.state = {
+      modalVisible: false,
+      showSuccessMessage: false,
+      name: '',
+      portal_address: '',
+      username: '',
+      password: '',
+      valid: true,
+      errors: {
+        name: null,
+        portal_address: null,
+        username: null,
+        password: null,
+        commonError: null
+      }
+    };
+  }
 
   componentDidMount() {
     // resets provider create state
@@ -63,34 +67,43 @@ class AddIptvScreen extends React.Component {
     this.props.enableSwipeAction(false);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.created !== this.props.created) {
-      const { created, navigation, route } = this.props;
-      if (created) {
-        const { params } = route;
-
-        /// if nextScreen param is not defined go back
-        // because that means the previous screen is the main IPTV screen
-        if (typeof params === 'undefined') return navigation.goBack();
-
-        if (params.nextScreen === 'home') {
-          /// go to home-stack
-          // return navigation.navigate('HomeScreen'); /// FOR TESTING
-          /// home stack should be rendered
-          // like magic
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.showSuccessMessage !== prevState.showSuccessMessage) {
+      if (!this.state.showSuccessMessage) {
+        if (typeof this.props.route.params === 'undefined') {
+          this.props.navigation.goBack();
         }
-
-        // if nextScreen is iptv
-        return navigation.goBack();
       }
     }
-    if (prevProps.error === this.props.error) return;
-    if (this.props.error) {
-      this.setState({ modalVisible: true });
-    } else {
-      this.setState({ modalVisible: false });
+
+    if (prevProps.created !== this.props.created) {
+      const { created } = this.props;
+      console.log({ created }); // returns true
+      if (created) {
+        this.setState({ showSuccessMessage: true }, () => this.handleUpdateSuccess());
+      }
+    }
+
+    /// handle error
+    if (prevProps.error !== this.props.error) {
+      if (this.props.error) {
+        this.setState({ modalVisible: true });
+      } else {
+        this.setState({ modalVisible: false });
+      }
     }
   }
+
+  handleUpdateSuccess = () => {
+    this.hideSnackBar();
+  };
+
+  hideSnackBar = () => {
+    this.props.getProfileAction();
+    setTimeout(() => {
+      this.setState({ showSuccessMessage: false });
+    }, 3000);
+  };
 
   handleSkip = () => {
     const { userId, onboardinginfo, updateProfileAction } = this.props;
@@ -138,7 +151,7 @@ class AddIptvScreen extends React.Component {
 
   handleSubmit = () => {
     // eslint-disable-next-line no-unused-vars
-    const { modalVisible, errors: stateError, valid, ...input } = this.state;
+    const { modalVisible, errors: stateError, valid, showSuccessMessage, ...input } = this.state;
 
     // console.log({ input, stateError });
 
@@ -244,17 +257,9 @@ class AddIptvScreen extends React.Component {
   };
 
   render() {
-    // const { skippedProviderAdd } = this.props;
-    const { errors, modalVisible, ...input } = this.state; // remove valid
+    const { errors, modalVisible, showSuccessMessage, ...input } = this.state;
 
-    // const [modalVisible, setModalVisible] = React.useState(false);
-
-    // let stateError = {};
-
-    // errors.map(({ key, val }) => {
-    //   Object.assign(stateError, { [key]: val });
-    // });
-
+    console.log({ showSuccessMessage });
     return (
       <React.Fragment>
         <ContentWrap scrollable style={{ paddingTop: 40 }}>
@@ -319,7 +324,7 @@ class AddIptvScreen extends React.Component {
         </ContentWrap>
 
         <View style={{ flex: 10, alignItems: 'center' }}>
-          {!this.props.isProviderSetupSkipped ? (
+          {this.props.isInitialSignIn ? (
             <TouchableRipple
               rippleColor="rgba(0,0,0,0.28)"
               style={{ width: '25%', ...styles.skip }}
@@ -337,6 +342,12 @@ class AddIptvScreen extends React.Component {
           confirmAction={() => this.handleComfirmAction()}
           visible={modalVisible}
         />
+        <SnackBar
+          visible={showSuccessMessage}
+          iconName="circular-check"
+          iconColor="#13BD38"
+          message="Changes saved successfully"
+        />
       </React.Fragment>
     );
   }
@@ -352,17 +363,20 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   created: selectCreated,
+  updated: selectUpdated,
   providers: selectProviders,
   // skippedProviderAdd: selectSkippedProviderAdd,
   userId: selectCurrentUserId,
   onboardinginfo: selectOnboardinginfo,
-  isProviderSetupSkipped: selectIsProviderSetupSkipped
+  isInitialSignIn: selectIsInitialSignIn
+  // isProviderSetupSkipped: selectIsProviderSetupSkipped
 });
 
 const actions = {
   createStartAction: ProviderCreators.createStart,
   createAction: ProviderCreators.create,
   // skipProviderAddAction: UserCreators.skipProviderAdd,
+  getProfileAction: ProfileCreators.get,
   enableSwipeAction: NavActionCreators.enableSwipe,
   updateProfileAction: Creators.update
 };

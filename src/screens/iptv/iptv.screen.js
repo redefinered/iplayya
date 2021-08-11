@@ -7,7 +7,7 @@ import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import IptvItem from 'components/iptv-item/iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
-import SnackBar from 'components/snackbar/snackbar.component';
+// import SnackBar from 'components/snackbar/snackbar.component';
 import { View, ScrollView } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
@@ -22,8 +22,8 @@ import {
   selectError,
   selectIsFetching,
   selectProviders,
-  selectCreated,
-  selectUpdated,
+  // selectCreated,
+  // selectUpdated,
   selectDeleted,
   // selectSkipProviderAdd
   selectIsProviderSetupSkipped
@@ -45,29 +45,28 @@ const IptvScreen = ({
   error,
   userError,
   providers,
-  created,
-  updated,
+  // created,
+  // updated,
   deleted,
   setProviderAction,
   getProfileAction,
   createStartAction,
   deleteAction,
   deteteStartAction,
-  isInitialSignIn,
+  // isInitialSignIn,
   route: { params }
   // isProviderSetupSkipped
 }) => {
-  const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
+  // const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
   const [selected, setSelected] = React.useState(null);
   const [showIptvGuide, setShowIptvGuide] = React.useState(false);
   const [showStepTwo, setShowStepTwo] = React.useState(false);
   const [showStepThree, setShowStepThree] = React.useState(false);
 
-  // const [redirect, setRedirect] = React.useState(false); /// hack!!!
-
   React.useEffect(() => {
     createStartAction();
+    // getProfileAction();
   }, []);
 
   React.useEffect(() => {
@@ -77,12 +76,12 @@ const IptvScreen = ({
   }, [params]);
 
   React.useEffect(() => {
-    if (created) handleAddProviderSuccess();
-    if (updated) handleAddProviderSuccess();
+    // if (created) handleAddProviderSuccess();
+    // if (updated) handleAddProviderSuccess();
     if (deleted) handleProviderDeleteSuccess();
     // hide the snackbar in 3 sec
-    hideSnackBar();
-  }, [created, updated, deleted]);
+    // hideSnackBar();
+  }, [deleted]);
 
   const handleVisibleWalkthrough = () => {
     setShowIptvGuide(false);
@@ -110,23 +109,21 @@ const IptvScreen = ({
     setProviderAction(id);
   };
 
-  const handleAddProviderSuccess = () => {
-    getProfileAction();
+  // const handleAddProviderSuccess = () => {
+  //   getProfileAction();
 
-    if (isInitialSignIn) return;
-
-    setShowSuccessMessage(true);
-  };
+  //   setShowSuccessMessage(true);
+  // };
 
   const handleProviderDeleteSuccess = () => {
     getProfileAction();
   };
 
-  const hideSnackBar = () => {
-    setTimeout(() => {
-      setShowSuccessMessage(false);
-    }, 3000);
-  };
+  // const hideSnackBar = () => {
+  //   setTimeout(() => {
+  //     setShowSuccessMessage(false);
+  //   }, 3000);
+  // };
 
   const handleDelete = ({ selected }) => {
     deteteStartAction();
@@ -234,14 +231,15 @@ const IptvScreen = ({
             rotateArrow="178deg"
           />
         </View>
-        <SnackBar
+        {/* <SnackBar
           visible={showSuccessMessage}
           iconName="circular-check"
           iconColor="#13BD38"
           message="Changes saved successfully"
-        />
+        /> */}
         <ActionSheet visible={actionSheetVisible} actions={actions} hideAction={hideActionSheet} />
       </ContentWrap>
+      // <Text>asd</Text>
     );
 
   return <NoProviders navigation={navigation} />;
@@ -290,8 +288,8 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   userError: selectUserError,
   userIsFetching: selectUserIsFetching,
-  created: selectCreated,
-  updated: selectUpdated,
+  // created: selectCreated,
+  // updated: selectUpdated,
   deleted: selectDeleted,
   providers: selectProviders,
   // skipped: selectSkipProviderAdd,

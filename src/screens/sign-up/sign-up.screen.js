@@ -96,13 +96,15 @@ class SignUpScreen extends React.Component {
         this.setError('password', null);
         this.setState({ disable: false });
       }
+
+      return this.setState({ [name]: value.replace(/\s/g, '') }); // don't allow spaces
     }
 
     if (name === 'password_confirmation') {
       if (value === '') {
         this.setError('password_confirmation', null);
       }
-      return this.setState({ [name]: trimWhiteSpaces(value) });
+      return this.setState({ [name]: value.replace(/\s/g, '') }); // don't allow spaces
     }
 
     this.setState({ [name]: value });
