@@ -55,7 +55,7 @@ const App = ({
   onNotifAction
 }) => {
   const theme = useTheme();
-  const [testMode] = React.useState(true);
+  const [testMode] = React.useState(false);
   const [notif, setNotif] = React.useState(null);
 
   React.useEffect(() => {
