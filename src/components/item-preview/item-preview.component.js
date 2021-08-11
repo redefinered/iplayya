@@ -73,7 +73,7 @@ const ItemPreview = ({
         <TouchableHighlight
           underlayColor="rgba(255,255,255,0.1)"
           style={styles.buttonContainer}
-          onPress={() => navigation.navigate('ProgramGuidScreen', { channelId: id })}
+          onPress={() => navigation.navigate('ProgramGuideScreen', { channelId: id })}
         >
           <Icon
             name="notifications"

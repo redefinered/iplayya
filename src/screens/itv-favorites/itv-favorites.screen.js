@@ -306,7 +306,7 @@ const ItvFavoritesScreen = ({
                         <Pressable
                           underlayColor={theme.iplayya.colors.black80}
                           onPress={() =>
-                            navigation.navigate('ProgramGuidScreen', { channelId: id })
+                            navigation.navigate('ProgramGuideScreen', { channelId: id })
                           }
                           style={({ pressed }) => [
                             {

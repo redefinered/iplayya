@@ -205,7 +205,7 @@ const ItvScreen = ({
   };
 
   const handleProgramGuide = (id) => {
-    navigation.navigate('ProgramGuidScreen', { channelId: id });
+    navigation.navigate('ProgramGuideScreen', { channelId: id });
   };
 
   const onCategorySelect = (id) => {

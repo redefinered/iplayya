@@ -11,7 +11,7 @@ import Icon from 'components/icon/icon.component.js';
 import HomeScreen from 'screens/home/home.screen';
 
 import ItvScreen from 'screens/itv/itv.screen';
-import ProgramGuidScreen from 'screens/itv/program-guide.screen';
+import ProgramGuideScreen from 'screens/itv/program-guide.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 // import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
@@ -192,8 +192,8 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ProgramGuidScreen"
-          component={ProgramGuidScreen}
+          name="ProgramGuideScreen"
+          component={ProgramGuideScreen}
           options={{
             title: 'Program Guide'
           }}
