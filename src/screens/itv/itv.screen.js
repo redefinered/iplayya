@@ -38,6 +38,7 @@ const ItvScreen = ({
   // isFetching,
   navigation,
   error,
+  updated,
   genres,
   channels,
   // favorites,
@@ -49,7 +50,7 @@ const ItvScreen = ({
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
-  isFavoritesUpdated,
+  // isFavoritesUpdated,
   getFavoritesAction,
   enableSwipeAction,
   route: { params },
@@ -107,12 +108,12 @@ const ItvScreen = ({
     }
   }, [genres]);
 
-  React.useEffect(() => {
-    if (isFavoritesUpdated) {
-      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-      getChannelsAction(paginator);
-    }
-  }, [isFavoritesUpdated]);
+  // React.useEffect(() => {
+  //   if (isFavoritesUpdated) {
+  //     getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+  //     getChannelsAction(paginator);
+  //   }
+  // }, [isFavoritesUpdated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -184,6 +185,14 @@ const ItvScreen = ({
       setShowNotificationSnackBar(false);
     }, 3000);
   };
+
+  /// if favorites update in backend get feavorites
+  React.useEffect(() => {
+    if (updated) {
+      getFavoritesAction({ pageNumber: 1 });
+      getChannelsAction({ pageNumber: 1 });
+    }
+  }, [updated]);
 
   React.useEffect(() => {
     if (showSnackBar) hideSnackBar();
@@ -430,7 +439,7 @@ const mapStateToProps = createStructuredSelector({
   genres: selectGenres,
   paginator: selectPaginator,
   channels: selectChannels,
-  isFavoritesUpdated: selectFavoritesListUpdated
+  updated: selectFavoritesListUpdated
 });
 
 const actions = {

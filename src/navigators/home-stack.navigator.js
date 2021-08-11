@@ -48,6 +48,7 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
+import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
 
@@ -72,6 +73,7 @@ const HomeStack = ({
   favorites,
   isInitialSignIn,
   created,
+  favoriteChannels,
   ...rest
 }) => {
   const navigation = useNavigation();
@@ -423,8 +425,9 @@ const HomeStack = ({
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
-                    videoId={parseInt(videoId)}
-                    alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                    sub={parseInt(videoId)}
+                    module="imovie"
+                    inFavorites={isInFavorites >= 0 ? true : false}
                   />
                   <DownloadButton videoId={videoId} />
                 </View>
@@ -454,8 +457,9 @@ const HomeStack = ({
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
-                    videoId={parseInt(videoId)}
-                    alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                    sub={parseInt(videoId)}
+                    module="imovie"
+                    inFavorites={isInFavorites >= 0 ? true : false}
                   />
                   <DownloadButton videoId={videoId} />
                 </View>
@@ -485,8 +489,9 @@ const HomeStack = ({
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <AddToFavoritesButton
-                  videoId={parseInt(videoId)}
-                  alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                  sub={parseInt(videoId)}
+                  module="imovie"
+                  inFavorites={isInFavorites >= 0 ? true : false}
                 />
                 <DownloadButton videoId={videoId} />
               </View>
@@ -589,7 +594,7 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     albumId={parseInt(albumId)}
-                    alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                    inFavorites={isInFavorites >= 0 ? true : false}
                   />
                   <DownloadButton albumId={albumId} />
                 </View>
@@ -725,22 +730,24 @@ const HomeStack = ({
         <Stack.Screen
           name="ChannelDetailScreen"
           component={ChannelDetailScreen}
-          // eslint-disable-next-line no-unused-vars
-          options={() => {
+          options={(props) => {
+            const {
+              route: {
+                params: { channelId }
+              }
+            } = props;
+
+            const isInFavorites = favoriteChannels.findIndex(({ id }) => id === channelId);
+
             return {
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
-                  <TouchableRipple
-                    borderless={true}
-                    style={{ borderRadius: 44, padding: 8 }}
-                    rippleColor="rgba(0,0,0,0.28)"
-                  >
-                    <View style={styles.headerButtonContainer}>
-                      <Icon name="heart-solid" size={24} />
-                    </View>
-                  </TouchableRipple>
-                  {/* <ChannelDownloadButton channelId={channelId} archived_link={archived_link} /> */}
+                  <AddToFavoritesButton
+                    sub={parseInt(channelId)}
+                    module="itv"
+                    inFavorites={isInFavorites >= 0 ? true : false}
+                  />
                 </View>
               )
             };
@@ -750,6 +757,7 @@ const HomeStack = ({
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
+        {/* <ChannelDetailsStackScreen /> */}
         <Stack.Screen
           name="MusicPlayerScreen"
           component={MusicPlayerScreen}
@@ -768,8 +776,9 @@ const HomeStack = ({
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
-                    albumId={parseInt(albumId)}
-                    alreadyInFavorites={isInFavorites >= 0 ? true : false}
+                    sub={parseInt(albumId)}
+                    module="imusic"
+                    inFavorites={isInFavorites >= 0 ? true : false}
                   />
                   <DownloadButton albumId={albumId} />
                 </View>
@@ -826,6 +835,7 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
+  favoriteChannels: selectFavoriteChannels,
   isInitialSignIn: selectIsInitialSignIn,
   onboardinginfo: selectOnboardinginfo,
   userId: selectCurrentUserId,
