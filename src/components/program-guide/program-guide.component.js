@@ -41,7 +41,9 @@ const ProgramGuide = ({
 
   showSnackBar,
 
-  contentHeight
+  contentHeight,
+
+  screen
 }) => {
   const headerHeight = useHeaderHeight();
   // notif.cancelAll();
@@ -117,6 +119,7 @@ const ProgramGuide = ({
   };
 
   const getProgramListHeight = () => {
+    if (screen) return 'auto';
     return (
       Dimensions.get('window').height - contentHeight - headerHeight - PLAYER_HEIGHT - PILLS_HEIGHT
     );
@@ -183,6 +186,7 @@ const ProgramGuide = ({
 };
 
 ProgramGuide.propTypes = {
+  screen: PropTypes.bool,
   channelId: PropTypes.string,
   channelName: PropTypes.string,
   getProgramsByChannelAction: PropTypes.func,

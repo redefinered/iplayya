@@ -88,7 +88,7 @@ const ProgramGuide = ({
         </View>
       </ContentWrap>
 
-      <ProgramGuideComponent channelId={channelId} />
+      <ProgramGuideComponent channelId={channelId} screen />
     </View>
   );
 };

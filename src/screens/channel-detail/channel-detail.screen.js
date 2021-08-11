@@ -210,6 +210,7 @@ const ChannelDetailScreen = ({
             title="Program Guide"
             showSnackBar={handleShowSnackBar}
             contentHeight={contentHeight}
+            screen={false}
           />
         </View>
       </View>
