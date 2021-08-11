@@ -204,10 +204,6 @@ const ItvScreen = ({
     navigation.navigate('ChannelDetailScreen', { channelId });
   };
 
-  const handleProgramGuide = (id) => {
-    navigation.navigate('ProgramGuideScreen', { channelId: id });
-  };
-
   const onCategorySelect = (id) => {
     // when changing category, reset the pagination info
     resetPaginatorAction();
@@ -285,7 +281,6 @@ const ItvScreen = ({
                 // handleLongPress={}
                 onSelect={handleItemSelect}
                 onRightActionPress={handleAddToFavorites}
-                handleProgramGuide={handleProgramGuide}
                 full
                 epgtitle={epgtitle}
                 {...itemProps}

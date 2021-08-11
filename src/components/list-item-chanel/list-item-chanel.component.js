@@ -9,6 +9,7 @@ import { urlEncodeTitle, createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
 import moment from 'moment';
 import theme from 'common/theme';
+import { useNavigation } from '@react-navigation/native';
 
 const spacer = 20;
 
@@ -20,7 +21,6 @@ const ListItemChanel = ({
   full,
   selected,
   activateCheckboxes,
-  handleProgramGuide,
   ...contentProps
 }) => {
   const [isPressed, setIsPressed] = React.useState(false);
@@ -64,7 +64,6 @@ const ListItemChanel = ({
             isFavorite={is_favorite}
             activateCheckboxes={activateCheckboxes}
             isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
-            handleProgramGuide={handleProgramGuide}
           />
         </View>
       </Pressable>
@@ -113,10 +112,10 @@ const Content = ({
   isFavorite,
   // selected,
   // activateCheckboxes,
-  isCatchUpAvailable,
-  handleProgramGuide
+  isCatchUpAvailable
 }) => {
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const renderCatchUpIndicator = () => {
     if (typeof isCatchUpAvailable === 'undefined') return;
@@ -126,7 +125,7 @@ const Content = ({
 
   const handleRightActionPress = () => {
     if (isFavorite) return;
-    onRightActionPress(id);
+    // onRightActionPress(id);
   };
 
   // const renderCheckbox = () => {
@@ -188,8 +187,13 @@ const Content = ({
             onPress={() => handleRightActionPress()}
             style={({ pressed }) => [
               {
-                backgroundColor: pressed ? 'rgba(255,255,255,0.1)' : 'transparent',
+                width: 44,
+                height: 44,
                 borderRadius: 22,
+                backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+                justifyContent: 'center',
+                alignItems: 'center',
+                // borderRadius: 22,
                 padding: 3
               }
             ]}
@@ -226,11 +230,16 @@ const Content = ({
         </View>
         <Pressable
           underlayColor={theme.iplayya.colors.black80}
-          onPress={() => handleProgramGuide()}
+          onPress={() => navigation.navigate('ProgramGuideScreen', { channelId: id })}
           style={({ pressed }) => [
             {
-              backgroundColor: pressed ? 'rgba(255,255,255,0.1)' : 'transparent',
+              width: 44,
+              height: 44,
               borderRadius: 22,
+              backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+              justifyContent: 'center',
+              alignItems: 'center',
+              // borderRadius: 22,
               padding: 3,
               paddingVertical: 5
             }
@@ -263,8 +272,7 @@ Content.propTypes = {
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   activateCheckboxes: PropTypes.bool,
-  isCatchUpAvailable: PropTypes.bool,
-  handleProgramGuide: PropTypes.func
+  isCatchUpAvailable: PropTypes.bool
 };
 
 ListItemChanel.propTypes = {
@@ -276,8 +284,7 @@ ListItemChanel.propTypes = {
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   handleLongPress: PropTypes.func,
-  activateCheckboxes: PropTypes.bool,
-  handleProgramGuide: PropTypes.func
+  activateCheckboxes: PropTypes.bool
 };
 
 export default ListItemChanel;
