@@ -232,7 +232,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
     return {
       ...state,
-      isFetching: false,
+      isFetching: true,
       error: null,
       favoritesListUpdated: true
     };
@@ -258,7 +258,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
     return {
       ...state,
-      isFetching: false,
+      isFetching: true,
       error: null,
       // favorites: [],
       favoritesListUpdated: true
