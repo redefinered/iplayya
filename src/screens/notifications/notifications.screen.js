@@ -3,8 +3,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
+import SnackBar from 'components/snackbar/snackbar.component';
 import NotificationItem from './notification-item.component';
 import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
 import { createStructuredSelector } from 'reselect';
@@ -23,14 +24,18 @@ const NotificationsScreen = ({
   onNotifAction,
   deleteNotificationAction
 }) => {
+  const theme = useTheme();
   const notif = new NotifService(onRegisterAction, onNotifAction);
   const [selected, setSelected] = React.useState(null);
   const [showActionSheet, setShowActionSheet] = React.useState(false);
+  const [showSnackBar, setShowSnackBar] = React.useState(true);
 
   console.log({ selected });
 
   const handleDeactivateNotification = () => {
     if (!selected) return;
+
+    setShowSnackBar(true);
 
     handleCancelScheduledNotif(selected);
   };
@@ -80,13 +85,13 @@ const NotificationsScreen = ({
 
   const actions = [
     {
-      icon: 'null',
+      icon: 'notifications-off',
       title: 'Turn off notification',
       onPress: handleDeactivateNotification,
       data: 'Male'
     },
     {
-      icon: 'null',
+      icon: 'delete',
       title: 'Remove notification',
       onPress: handleDeleteNotification,
       data: 'Female'
@@ -101,6 +106,16 @@ const NotificationsScreen = ({
   const hideActionSheet = () => {
     setShowActionSheet(false);
   };
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowSnackBar(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (showSnackBar) hideSnackBar();
+  }, [showSnackBar]);
 
   if (!notifications.length)
     return (
@@ -117,6 +132,12 @@ const NotificationsScreen = ({
         <NotificationItem key={key} {...item} handleSelect={handleSelect} />
       ))}
       <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
+      <SnackBar
+        visible={showSnackBar}
+        message="You now turned off the notifications from this program"
+        iconName="notifications-off"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
