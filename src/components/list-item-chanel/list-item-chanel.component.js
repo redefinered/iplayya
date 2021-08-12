@@ -127,7 +127,7 @@ const Content = ({
 
   const handleRightActionPress = () => {
     if (isFavorite) return;
-    // onRightActionPress(id);
+    onRightActionPress(id);
   };
 
   // const renderCheckbox = () => {
