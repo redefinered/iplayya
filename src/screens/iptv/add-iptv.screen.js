@@ -259,7 +259,6 @@ class AddIptvScreen extends React.Component {
   render() {
     const { errors, modalVisible, showSuccessMessage, ...input } = this.state;
 
-    console.log({ showSuccessMessage });
     return (
       <React.Fragment>
         <ContentWrap scrollable style={{ paddingTop: 40 }}>

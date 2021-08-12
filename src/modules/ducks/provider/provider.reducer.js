@@ -1,5 +1,6 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './provider.actions';
+import { Types as AuthTypes } from 'modules/ducks/auth/auth.actions';
 
 const INITIAL_STATE = {
   error: null,
@@ -12,6 +13,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [AuthTypes.REGISTER_START]: (state) => {
+    return { ...state, created: null };
+  },
   [Types.CREATE_START]: (state) => {
     return {
       ...state,

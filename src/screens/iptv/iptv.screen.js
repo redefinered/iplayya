@@ -22,7 +22,7 @@ import {
   selectError,
   selectIsFetching,
   selectProviders,
-  // selectCreated,
+  selectCreated,
   // selectUpdated,
   selectDeleted,
   // selectSkipProviderAdd
@@ -45,7 +45,7 @@ const IptvScreen = ({
   error,
   userError,
   providers,
-  // created,
+  created,
   // updated,
   deleted,
   setProviderAction,
@@ -76,12 +76,14 @@ const IptvScreen = ({
   }, [params]);
 
   React.useEffect(() => {
-    // if (created) handleAddProviderSuccess();
+    /// fetch profile again when a provider is created
+    if (created) getProfileAction();
+
     // if (updated) handleAddProviderSuccess();
     if (deleted) handleProviderDeleteSuccess();
     // hide the snackbar in 3 sec
     // hideSnackBar();
-  }, [deleted]);
+  }, [deleted, created]);
 
   const handleVisibleWalkthrough = () => {
     setShowIptvGuide(false);
@@ -109,11 +111,9 @@ const IptvScreen = ({
     setProviderAction(id);
   };
 
-  // const handleAddProviderSuccess = () => {
-  //   getProfileAction();
-
-  //   setShowSuccessMessage(true);
-  // };
+  const handleAddProviderSuccess = () => {
+    // setShowSuccessMessage(true);
+  };
 
   const handleProviderDeleteSuccess = () => {
     getProfileAction();
@@ -288,7 +288,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   userError: selectUserError,
   userIsFetching: selectUserIsFetching,
-  // created: selectCreated,
+  created: selectCreated,
   // updated: selectUpdated,
   deleted: selectDeleted,
   providers: selectProviders,
