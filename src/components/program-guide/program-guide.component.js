@@ -119,7 +119,9 @@ const ProgramGuide = ({
   };
 
   const getProgramListHeight = () => {
-    if (screen) return 'auto';
+    if (screen)
+      return Dimensions.get('window').height - contentHeight - headerHeight - PILLS_HEIGHT;
+
     return (
       Dimensions.get('window').height - contentHeight - headerHeight - PLAYER_HEIGHT - PILLS_HEIGHT
     );
@@ -127,7 +129,6 @@ const ProgramGuide = ({
 
   // return empty componet if no available programs
   if (!programs.length) return <View />;
-
   return (
     <React.Fragment>
       {renderTitle()}
@@ -136,22 +137,19 @@ const ProgramGuide = ({
       <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button> */}
 
       <SelectorPills
-        onLayout={({ nativeEvent }) => console.log({ x: nativeEvent.layout })}
         data={dates}
         labelkey="formatted"
         onSelect={handleSelect}
         selected={selected}
-        style={{ marginBottom: theme.spacing(2) }}
+        screen={screen}
       />
 
       <View
         style={{
-          paddingBottom: 10,
           height: getProgramListHeight()
         }}
       >
         <FlatList
-          bounces={false}
           scrollEnabled
           data={programs}
           getItemLayout={(data, index) => {
@@ -170,17 +168,6 @@ const ProgramGuide = ({
           )}
         />
       </View>
-      {/* {programs.map((program, key) => (
-        <ProgramItem
-          channelId={channelId}
-          channelName={channelName}
-          showSnackBar={showSnackBar}
-          createScheduledNotif={handleCreateScheduledNotif}
-          cancelNotification={handleCancelScheduledNotif}
-          key={key}
-          {...program}
-        />
-      ))} */}
     </React.Fragment>
   );
 };

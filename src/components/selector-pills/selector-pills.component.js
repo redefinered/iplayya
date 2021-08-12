@@ -1,26 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, ScrollView } from 'react-native';
+import { Pressable, FlatList } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 
-const SelectorPills = ({ data, labelkey, onSelect, selected, style }) => {
+const SelectorPills = ({ data, labelkey, onSelect, selected, screen }) => {
+  const theme = useTheme();
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 40, ...style }}>
-      {data.map((d) => {
-        const { id, ...itemProps } = d;
-        return (
-          <Pill
-            key={id}
-            id={id.toString()}
-            label={d[labelkey]}
-            onSelect={onSelect}
-            selected={selected}
-            {...itemProps}
-          />
-        );
-      })}
-    </ScrollView>
+    <FlatList
+      style={{ paddingBottom: screen ? 40 : 0, marginBottom: theme.spacing(2) }}
+      horizontal
+      data={data}
+      keyExtractor={(item) => item.id}
+      showsHorizontalScrollIndicator={false}
+      renderItem={({ item: { id, ...d } }) => (
+        <Pill
+          id={id.toString()}
+          label={d[labelkey]}
+          onSelect={onSelect}
+          selected={selected}
+          {...d}
+        />
+      )}
+    />
   );
 };
 
@@ -29,6 +31,7 @@ SelectorPills.propTypes = {
   labelkey: PropTypes.string,
   onSelect: PropTypes.func,
   selected: PropTypes.string,
+  screen: PropTypes.bool,
   style: PropTypes.object
 };
 
