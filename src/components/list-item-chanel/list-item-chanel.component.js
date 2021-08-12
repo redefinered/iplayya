@@ -49,7 +49,9 @@ const ListItemChanel = ({
             flex: 11,
             flexDirection: 'row',
             alignItems: 'center',
-            padding: theme.spacing(1.9)
+            paddingHorizontal: 10,
+            paddingVertical: 2
+            // padding: theme.spacing(2)
           }}
         >
           <Image
@@ -155,12 +157,11 @@ const Content = ({
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'center',
+          marginBottom: 5
         }}
       >
         <Text
@@ -182,6 +183,28 @@ const Content = ({
         ) : (
           renderCheckbox()
         )} */}
+        {/* </View> */}
+
+        {renderEpgtitle()}
+        {/* <View style={{ flexDirection: 'column', alignItems: 'center' }}> */}
+        <Text
+          style={{
+            ...createFontFormat(12, 16),
+            marginRight: 6,
+            color: theme.iplayya.colors.white80
+          }}
+        >
+          {getSchedule(time, time_to)}
+        </Text>
+        {renderCatchUpIndicator()}
+      </View>
+
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
         {onRightActionPress ? (
           <Pressable
             onPress={() => handleRightActionPress()}
@@ -192,9 +215,7 @@ const Content = ({
                 borderRadius: 22,
                 backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
                 justifyContent: 'center',
-                alignItems: 'center',
-                // borderRadius: 22,
-                padding: 3
+                alignItems: 'center'
               }
             ]}
           >
@@ -205,29 +226,7 @@ const Content = ({
             />
           </Pressable>
         ) : null}
-      </View>
 
-      {renderEpgtitle()}
-
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text
-            style={{
-              ...createFontFormat(12, 16),
-              marginRight: 6,
-              color: theme.iplayya.colors.white80
-            }}
-          >
-            {getSchedule(time, time_to)}
-          </Text>
-          {renderCatchUpIndicator()}
-        </View>
         <Pressable
           underlayColor={theme.iplayya.colors.black80}
           onPress={() => navigation.navigate('ProgramGuideScreen', { channelId: id })}
@@ -238,10 +237,7 @@ const Content = ({
               borderRadius: 22,
               backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
               justifyContent: 'center',
-              alignItems: 'center',
-              // borderRadius: 22,
-              padding: 3,
-              paddingVertical: 5
+              alignItems: 'center'
             }
           ]}
         >
