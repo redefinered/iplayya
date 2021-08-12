@@ -28,7 +28,7 @@ const NotificationsScreen = ({
   const notif = new NotifService(onRegisterAction, onNotifAction);
   const [selected, setSelected] = React.useState(null);
   const [showActionSheet, setShowActionSheet] = React.useState(false);
-  const [showSnackBar, setShowSnackBar] = React.useState(true);
+  const [showSnackBar, setShowSnackBar] = React.useState(false);
 
   console.log({ selected });
 
