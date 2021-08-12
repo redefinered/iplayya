@@ -33,6 +33,7 @@ const ProgramGuide = ({
 }) => {
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
   const [isFavorite] = React.useState(false);
+  const [contentHeight, setContentHeight] = React.useState(null);
 
   React.useEffect(() => {
     let date = new Date(Date.now());
@@ -62,7 +63,7 @@ const ProgramGuide = ({
 
   return (
     <View style={styles.root}>
-      <ContentWrap>
+      <ContentWrap onLayout={({ nativeEvent }) => setContentHeight(nativeEvent.layout.height)}>
         <View
           style={{
             flexDirection: 'row',
@@ -88,7 +89,7 @@ const ProgramGuide = ({
         </View>
       </ContentWrap>
 
-      <ProgramGuideComponent channelId={channelId} screen />
+      <ProgramGuideComponent contentHeight={contentHeight} channelId={channelId} screen />
     </View>
   );
 };
