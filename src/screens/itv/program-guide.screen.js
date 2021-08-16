@@ -14,6 +14,7 @@ import { selectChannel } from 'modules/ducks/itv/itv.selectors';
 import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
 import { urlEncodeTitle } from 'utils';
 import { compose } from 'redux';
+import moment from 'moment';
 
 const styles = StyleSheet.create({
   root: {
@@ -36,7 +37,7 @@ const ProgramGuide = ({
   const [contentHeight, setContentHeight] = React.useState(null);
 
   React.useEffect(() => {
-    let date = new Date(Date.now());
+    let date = new Date(moment().startOf('day'));
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
   }, []);

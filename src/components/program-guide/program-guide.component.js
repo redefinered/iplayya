@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
@@ -22,6 +22,7 @@ import NotifService from 'NotifService';
 import { Button } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 import { useHeaderHeight } from '@react-navigation/stack';
+import moment from 'moment';
 
 const ITEM_HEIGHT = 50;
 const PLAYER_HEIGHT = 211;
@@ -45,14 +46,13 @@ const ProgramGuide = ({
 
   screen
 }) => {
-  const headerHeight = useHeaderHeight();
-  // notif.cancelAll();
   const theme = useTheme();
+  const headerHeight = useHeaderHeight();
+
   // generates an array of dates 7 days from now
   const dates = generateDatesFromToday();
-  // console.log({ dates });
 
-  const [selected, setSelected] = React.useState('1');
+  const [selected, setSelected] = React.useState('8');
   const [notifService, setNotifService] = React.useState(null);
 
   React.useEffect(() => {
@@ -60,10 +60,11 @@ const ProgramGuide = ({
     setNotifService(notif);
   }, []);
 
-  const handleSelect = (id) => {
+  const handleDateSelect = (id) => {
     setSelected(id);
     const { value } = dates.find(({ id: dateId }) => dateId === parseInt(id));
     const date = new Date(value).toISOString();
+    console.log({ date });
     getProgramsByChannelAction({ channelId, date });
   };
 
@@ -127,6 +128,32 @@ const ProgramGuide = ({
     );
   };
 
+  const isCurrentlyPlaying = useCallback((time) => {
+    const a = moment().startOf('hour');
+    const b = moment().endOf('hour');
+
+    return moment(time).isBetween(a, b);
+  }, []);
+
+  const renderItem = (item) => {
+    // const now = new Date(Date.now());
+    // const date = new Date(item.time);
+    // const startOfHour = moment(now).startOf('hour');
+    // const endOfHour = moment(now).endOf('hour');
+
+    return (
+      <ProgramItem
+        channelId={channelId}
+        channelName={channelName}
+        showSnackBar={showSnackBar}
+        createScheduledNotif={handleCreateScheduledNotif}
+        cancelNotification={handleCancelScheduledNotif}
+        isCurrentlyPlaying={isCurrentlyPlaying}
+        {...item}
+      />
+    );
+  };
+
   // return empty componet if no available programs
   if (!programs.length) return <View />;
   return (
@@ -139,7 +166,7 @@ const ProgramGuide = ({
       <SelectorPills
         data={dates}
         labelkey="formatted"
-        onSelect={handleSelect}
+        onSelect={handleDateSelect}
         selected={selected}
         screen={screen}
       />
@@ -150,22 +177,14 @@ const ProgramGuide = ({
         }}
       >
         <FlatList
+          initialScrollIndex={0}
           scrollEnabled
           data={programs}
           getItemLayout={(data, index) => {
             return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
           }}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ProgramItem
-              channelId={channelId}
-              channelName={channelName}
-              showSnackBar={showSnackBar}
-              createScheduledNotif={handleCreateScheduledNotif}
-              cancelNotification={handleCancelScheduledNotif}
-              {...item}
-            />
-          )}
+          keyExtractor={(item) => `program_${item.id}`}
+          renderItem={({ item }) => renderItem(item)}
         />
       </View>
     </React.Fragment>
@@ -174,6 +193,7 @@ const ProgramGuide = ({
 
 ProgramGuide.propTypes = {
   screen: PropTypes.bool,
+  dates: PropTypes.array,
   channelId: PropTypes.string,
   channelName: PropTypes.string,
   getProgramsByChannelAction: PropTypes.func,

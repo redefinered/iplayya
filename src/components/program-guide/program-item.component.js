@@ -17,6 +17,7 @@ const ProgramItem = ({
   channelName,
   title,
   time,
+  isCurrentlyPlaying,
 
   subscribeToProgramAction,
   createNotificationAction,
@@ -90,6 +91,12 @@ const ProgramItem = ({
     });
   };
 
+  const getColor = (time) => {
+    return isCurrentlyPlaying(time)
+      ? theme.iplayya.colors.vibrantpussy
+      : theme.iplayya.colors.white100;
+  };
+
   return (
     <View
       style={{
@@ -109,10 +116,16 @@ const ProgramItem = ({
           backgroundColor: 'rgba(255, 255, 255, 0.05)'
         }}
       >
-        <Text>{moment(time).format('h:mm A')}</Text>
+        <Text
+          style={{
+            color: getColor(time)
+          }}
+        >
+          {moment(time).format('h:mm A')}
+        </Text>
       </View>
       <View style={{ flex: 8, paddingLeft: 12 }}>
-        <Text>{title}</Text>
+        <Text style={{ color: getColor(time) }}>{title}</Text>
       </View>
       <Pressable
         onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
@@ -126,7 +139,7 @@ const ProgramItem = ({
       >
         <Icon
           name="notifications"
-          size={24}
+          size={theme.iconSize(3)}
           color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
         />
       </Pressable>

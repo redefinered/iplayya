@@ -4,22 +4,19 @@ import { Pressable, FlatList } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 
-const ITEM_WIDTH = 110;
-const ITEM_WIDTH_WITH_OFFSET = 110 + 12 + 15;
 const ITEM_HEIGHT = 34;
 
-const SelectorPills = ({ data, labelkey, onSelect, selected, screen }) => {
+const CategorySelectorPills = ({ data, labelkey, onSelect, selected, screen }) => {
   const theme = useTheme();
 
   const getItemLayout = (data, index) => ({
-    length: ITEM_WIDTH_WITH_OFFSET,
-    offset: ITEM_WIDTH_WITH_OFFSET * index,
+    length: ITEM_HEIGHT,
+    offset: ITEM_HEIGHT * index,
     index
   });
 
   return (
     <FlatList
-      initialScrollIndex={6}
       style={{ paddingBottom: screen ? 40 : 0, marginBottom: theme.spacing(2) }}
       horizontal
       data={data}
@@ -39,7 +36,7 @@ const SelectorPills = ({ data, labelkey, onSelect, selected, screen }) => {
   );
 };
 
-SelectorPills.propTypes = {
+CategorySelectorPills.propTypes = {
   data: PropTypes.array,
   labelkey: PropTypes.string,
   onSelect: PropTypes.func,
@@ -48,7 +45,7 @@ SelectorPills.propTypes = {
   style: PropTypes.object
 };
 
-SelectorPills.defaultProps = {
+CategorySelectorPills.defaultProps = {
   labelkey: 'label'
 };
 
@@ -58,15 +55,14 @@ const Pill = ({ id, label, selected, onSelect }) => {
     <Pressable
       onPress={() => onSelect(id)}
       style={{
-        alignItems: 'center',
         justifyContent: 'center',
         marginLeft: theme.spacing(2),
         paddingHorizontal: 15,
         backgroundColor:
           selected === id ? theme.iplayya.colors.vibrantpussy : theme.iplayya.colors.white25,
         height: ITEM_HEIGHT,
-        width: ITEM_WIDTH,
-        borderRadius: 34
+        borderRadius: 34,
+        marginBottom: theme.spacing(2)
       }}
     >
       <Text style={{ ...createFontFormat(12, 16) }}>{label}</Text>
@@ -85,4 +81,4 @@ Pill.defaultProps = {
   selected: 'all'
 };
 
-export default React.memo(SelectorPills);
+export default React.memo(CategorySelectorPills);

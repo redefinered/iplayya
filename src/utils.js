@@ -25,11 +25,21 @@ export const toDateTime = (secs) => {
 export const generateDatesFromToday = (numberDays = 7) => {
   let dates = [];
 
-  for (let i = 0; i < numberDays; i++) {
+  /// include past days equal to number of days
+  let includePastNumberDays = numberDays * 2;
+
+  for (let i = 0; i < includePastNumberDays; i++) {
+    let startOfDay = moment().startOf('day');
+
+    let date = startOfDay.subtract(numberDays - i, 'day');
+
     dates.push({
       id: i + 1,
-      value: moment().add(i, 'days').valueOf(),
-      formatted: moment().add(i, 'days').format('ddd, MMM D')
+      // date: date.valueOf(),
+
+      longFormat: date.format('dddd, MMMM Do YYYY, h:mm:ss a'),
+      formatted: date.format('ddd, MMM D'),
+      value: date.valueOf()
     });
   }
 

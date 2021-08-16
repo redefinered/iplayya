@@ -6,8 +6,7 @@ import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
-// import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import SelectorPills from 'components/selector-pills/selector-pills.component';
+import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import withLoader from 'components/with-loader.component';
@@ -253,11 +252,24 @@ const ItvScreen = ({
       );
   };
 
+  const renderFeaturedItem = ({ item: { id, ...itemProps } }) => {
+    let isNotificationActive = notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
+    return (
+      <ItemPreview
+        id={id}
+        onSelect={handleItemSelect}
+        handleSubscribeToItem={handleSubscribeToItem}
+        isNotificationActive={isNotificationActive}
+        {...itemProps}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View>
         {/* {error && <Text>{error}</Text>} */}
-        <SelectorPills
+        <CategoryPills
           data={genresData}
           labelkey="title"
           onSelect={onCategorySelect}
@@ -278,7 +290,6 @@ const ItvScreen = ({
             onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
             renderItem={({ item: { epgtitle, ...itemProps } }) => (
               <ListItemChanel
-                // handleLongPress={}
                 onSelect={handleItemSelect}
                 onRightActionPress={handleAddToFavorites}
                 full
@@ -293,7 +304,15 @@ const ItvScreen = ({
                     Featured TV Channels
                   </Text>
                 </ContentWrap>
-                <ScrollView
+                <FlatList
+                  data={channelsData}
+                  horizontal
+                  bounces={false}
+                  renderItem={renderFeaturedItem}
+                  showsHorizontalScrollIndicator={false}
+                  style={{ paddingHorizontal: theme.spacing(2) }}
+                />
+                {/* <ScrollView
                   style={{ paddingHorizontal: 10 }}
                   horizontal
                   bounces={false}
@@ -313,7 +332,7 @@ const ItvScreen = ({
                       />
                     );
                   })}
-                </ScrollView>
+                </ScrollView> */}
               </View>
             }
             ListFooterComponent={
@@ -351,7 +370,7 @@ const ItvScreen = ({
             onPress={() => navigation.navigate('ItvFavoritesScreen')}
           >
             <View style={{ alignItems: 'center' }}>
-              <Icon name="heart-solid" size={24} />
+              <Icon name="heart-solid" size={theme.iconSize(3)} />
               <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
                 Favorites
               </Text>
@@ -366,7 +385,7 @@ const ItvScreen = ({
             onPress={() => navigation.navigate('HomeScreen')}
           >
             <View style={{ alignItems: 'center' }}>
-              <Icon name="iplayya" size={24} />
+              <Icon name="iplayya" size={theme.iconSize(3)} />
               <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
             </View>
           </TouchableRipple>
@@ -383,7 +402,7 @@ const ItvScreen = ({
             onPress={() => navigation.navigate('ItvDownloadsScreen')}
           >
             <View style={{ alignItems: 'center' }}>
-              <Icon name="download" size={24} />
+              <Icon name="download" size={theme.iconSize(3)} />
               <Text
                 style={{
                   fontSize: 10,
