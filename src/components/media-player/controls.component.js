@@ -136,46 +136,6 @@ const VideoControls = ({
     );
   };
 
-  // console.log('duration', duration);
-  // const screencastOptions = () => {
-  //   if (controlProps.showCastOptions) {
-  //     return castOptions.map(({ id, name, label }) => (
-  //       <Pressable
-  //         key={id}
-  //         onPressIn={() => controlProps.setScreencastActiveState(name)}
-  //         onPress={() => controlProps.handleSelectScreencastOption(name)}
-  //         style={{
-  //           flexDirection: 'row',
-  //           alignItems: 'center',
-  //           height: 50,
-  //           backgroundColor:
-  //             controlProps.screencastActiveState === name
-  //               ? theme.iplayya.colors.white10
-  //               : 'transparent',
-  //           paddingHorizontal: 15
-  //         }}
-  //       >
-  //         <View style={{ flex: 1.5 }}>
-  //           <Icon name="airplay" size={20} />
-  //         </View>
-  //         <View style={{ flex: 10.5, paddingLeft: 15 }}>
-  //           <Text
-  //             style={{
-  //               color:
-  //                 controlProps.screencastOption === name
-  //                   ? theme.iplayya.colors.vibrantpussy
-  //                   : theme.colors.text,
-  //               ...createFontFormat(16, 22)
-  //             }}
-  //           >
-  //             {label}
-  //           </Text>
-  //         </View>
-  //       </Pressable>
-  //     ));
-  //   }
-  // };
-
   const resolutionOptions = () => {
     const { resolutions } = controlProps;
 
@@ -327,25 +287,6 @@ const VideoControls = ({
           currentTime={currentTime}
           seriesTitle={controlProps.seriesTitle}
         />
-
-        {/* <Pressable
-          onPress={() => controlProps.toggleCastOptions()}
-          style={{ position: 'relative' }}
-        >
-          <Icon name="screencast" size={25} />
-
-          <View
-            style={{
-              backgroundColor: '#202530',
-              width: 250,
-              position: 'absolute',
-              top: '100%',
-              right: 0
-            }}
-          >
-            {screencastOptions()}
-          </View>
-        </Pressable> */}
       </View>
 
       <View
