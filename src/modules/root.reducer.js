@@ -27,8 +27,8 @@ const resettable = resettableReducer('RESET');
 
 const rootReducer = persistCombineReducers(persistConfig, {
   app: appReducer,
-  // auth: authReducer,
-  auth: resettable(authReducer),
+  auth: authReducer,
+  // auth: resettable(authReducer),
   nav: navReducer,
   downloads: downloadsReducer,
   user: resettable(userReducer),
@@ -36,7 +36,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   itv: resettable(itvReducer),
   notifications: resettable(notificationsReducer),
   profile: profileReducer,
-  movies: moviesReducer,
+  movies: resettable(moviesReducer),
   music: resettable(musicReducer),
   sports: isportsReducer,
   radios: iradioReducer,
