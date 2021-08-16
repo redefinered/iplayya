@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/nav/nav.actions';
 
 import { headerHeight } from 'common/values';
+import theme from 'common/theme';
 
 const Stack = createStackNavigator();
 
@@ -67,7 +68,7 @@ const AccountStack = ({ setBottomTabsVisibleAction, enableSwipeAction }) => (
             >
               <View>
                 <View style={styles.headerButtonContainer}>
-                  <Icon name="edit" size={24} />
+                  <Icon name="edit" size={theme.iconSize(3)} />
                 </View>
               </View>
             </TouchableRipple>

@@ -5,6 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 import moment from 'moment';
 import Icon from 'components/icon/icon.component';
+import theme from 'common/theme';
 
 const styles = StyleSheet.create({
   textContainer: {
@@ -88,7 +89,7 @@ const DatePicker = ({ setBirthdate, style }) => {
           {chosenDate}
         </Text>
         <View style={styles.dateIcon}>
-          <Icon name="birthday" size={24} />
+          <Icon name="birthday" size={theme.iconSize(3)} />
         </View>
         <DateTimePickerModal
           isVisible={isDatePickerVisible}

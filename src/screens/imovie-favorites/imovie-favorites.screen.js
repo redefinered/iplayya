@@ -130,7 +130,7 @@ const ImovieFavoritesScreen = ({
                   onPress={() => setShowDeleteConfirmation(true)}
                   style={{ flexDirection: 'row', alignItems: 'center' }}
                 >
-                  <Icon name="delete" size={24} style={{ marginRight: 10 }} />
+                  <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                   <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
                 </Pressable>
                 <Pressable

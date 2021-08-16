@@ -25,6 +25,7 @@ import {
 import { createFontFormat } from 'utils';
 import { selectPaginatorInfo } from 'modules/ducks/iradio/iradio.selectors';
 import withLoader from 'components/with-loader.component';
+import theme from 'common/theme';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -147,7 +148,7 @@ const IradioScreen = ({
           onPress={() => navigation.replace('HomeScreen')}
           style={{ alignItems: 'center' }}
         >
-          <Icon name="iplayya" size={24} />
+          <Icon name="iplayya" size={theme.iconSize(3)} />
           <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
         </TouchableWithoutFeedback>
       </View>

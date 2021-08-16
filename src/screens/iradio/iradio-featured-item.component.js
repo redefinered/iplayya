@@ -37,7 +37,7 @@ const IradioFeaturedItems = ({ theme, featuredItems, handleRadioSelect, addToFav
             >
               <Icon
                 name="heart-solid"
-                size={24}
+                size={theme.iconSize(3)}
                 style={{
                   color: is_favorite ? theme.iplayya.colors.vibrantpussy : 'white'
                 }}

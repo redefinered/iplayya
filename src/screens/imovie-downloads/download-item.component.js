@@ -110,21 +110,21 @@ const DownloadItem = ({
     if (paused)
       return (
         <Pressable onPress={() => handlePlay()} style={{ marginLeft: theme.spacing(4) }}>
-          <Icon name="circular-play" size={40} />
+          <Icon name="circular-play" size={theme.iconSize(5)} />
         </Pressable>
       );
 
     if (broken) {
       return (
         <Pressable style={{ marginLeft: theme.spacing(4) }}>
-          <Icon name="redo" size={40} />
+          <Icon name="redo" size={theme.iconSize(5)} />
         </Pressable>
       );
     }
 
     return (
       <Pressable onPress={() => handlePause()} style={{ marginLeft: theme.spacing(4) }}>
-        <Icon name="circular-pause" size={40} />
+        <Icon name="circular-pause" size={theme.iconSize(5)} />
       </Pressable>
     );
   };
@@ -148,7 +148,7 @@ const DownloadItem = ({
       >
         {renderPauseButton()}
         <Pressable style={{ marginLeft: theme.spacing(4) }}>
-          <Icon name="close" size={40} />
+          <Icon name="close" size={theme.iconSize(5)} />
         </Pressable>
         <View
           style={{

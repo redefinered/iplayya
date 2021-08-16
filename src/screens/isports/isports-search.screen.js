@@ -177,7 +177,11 @@ const ISportsSearchScreen = ({
               return isFetching ? (
                 <ActivityIndicator />
               ) : (
-                <Icon name="search" size={30} style={{ marginRight: theme.spacing(2) }} />
+                <Icon
+                  name="search"
+                  size={theme.iconSize(4)}
+                  style={{ marginRight: theme.spacing(2) }}
+                />
               );
             }}
           />

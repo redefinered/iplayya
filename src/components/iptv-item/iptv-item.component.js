@@ -7,6 +7,7 @@ import Icon from 'components/icon/icon.component';
 import MinistraThumbnail from 'assets/providers/ministra.svg';
 
 import styles from './iptv-item.styles';
+import theme from 'common/theme';
 
 const IptvItem = ({
   name,
@@ -48,7 +49,7 @@ const IptvItem = ({
     </View>
     <View style={styles.iconContainer}>
       <Pressable onPress={() => onActionPress(id)} style={styles.icon}>
-        <Icon name="more" size={24} />
+        <Icon name="more" size={theme.iconSize(3)} />
       </Pressable>
     </View>
   </Pressable>

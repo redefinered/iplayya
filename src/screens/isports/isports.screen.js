@@ -29,6 +29,7 @@ import {
 } from 'modules/ducks/isports/isports.selectors';
 import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
+import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -252,7 +253,7 @@ const IsportsScreen = ({
             style={{ alignItems: 'center' }}
             onPress={() => navigation.navigate('IsportsFavoritesScreen')}
           >
-            <Icon name="heart-solid" size={24} />
+            <Icon name="heart-solid" size={theme.iconSize(3)} />
             <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
               Favorites
             </Text>
@@ -263,7 +264,7 @@ const IsportsScreen = ({
             onPress={() => navigation.replace('HomeScreen')}
             style={{ alignItems: 'center' }}
           >
-            <Icon name="iplayya" size={24} />
+            <Icon name="iplayya" size={theme.iconSize(3)} />
             <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
           </TouchableWithoutFeedback>
         </View>
@@ -272,7 +273,7 @@ const IsportsScreen = ({
             style={{ alignItems: 'center' }}
             onPress={() => navigation.navigate('IsportsDownloadsScreen')}
           >
-            <Icon name="download" size={24} />
+            <Icon name="download" size={theme.iconSize(3)} />
             <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
               Downloaded
             </Text>

@@ -187,7 +187,7 @@ const MusicPlayerScreen = ({
           <Pressable style={{ marginRight: 20 }} onPress={() => toggleShuffleAction()}>
             <Icon
               name="shuffle"
-              size={24}
+              size={theme.iconSize(3)}
               style={{
                 color: isShuffled ? theme.iplayya.colors.vibrantpussy : 'white'
               }}
@@ -196,21 +196,21 @@ const MusicPlayerScreen = ({
           <Pressable onPress={playPrevious} disabled={disablePrevious}>
             <Icon
               name="previous"
-              size={40}
+              size={theme.iconSize(5)}
               style={{ color: disablePrevious ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>
           <Pressable onPress={() => setPausedAction(!paused)}>
             <Icon
               name={paused ? 'circular-play' : 'circular-pause'}
-              size={80}
+              size={theme.iconSize(10)}
               style={{ marginHorizontal: 20 }}
             />
           </Pressable>
           <Pressable onPress={playNext} disabled={disableNext}>
             <Icon
               name="next"
-              size={40}
+              size={theme.iconSize(5)}
               style={{ color: disableNext ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>
@@ -218,7 +218,7 @@ const MusicPlayerScreen = ({
             style={{ marginLeft: 20, position: 'relative' }}
             onPress={() => cycleRepeatAction()}
           >
-            <Icon name="repeat" size={24} style={{ color: getRepeatColor() }} />
+            <Icon name="repeat" size={theme.iconSize(3)} style={{ color: getRepeatColor() }} />
             <Text
               style={{
                 position: 'absolute',

@@ -108,7 +108,7 @@ const NotificationItem = ({
             </Text>
           </View>
           <Pressable onPress={() => handleSelect(id)} style={styles.buttonContainer}>
-            <Icon name="more" size={24} />
+            <Icon name="more" size={theme.iconSize(3)} />
           </Pressable>
         </View>
       </ContentWrap>

@@ -2,10 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 import Icon from 'components/icon/icon.component';
+import theme from 'common/theme';
 
 const HeaderBackImage = ({ vertical }) => (
   <View style={styles.backButtonContainer}>
-    <Icon name={vertical ? 'caret-down' : 'arrow-left'} style={{ color: 'white' }} size={24} />
+    <Icon
+      name={vertical ? 'caret-down' : 'arrow-left'}
+      style={{ color: 'white' }}
+      size={theme.iconSize(3)}
+    />
   </View>
 );
 

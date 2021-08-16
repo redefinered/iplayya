@@ -45,7 +45,7 @@ const AlertModal = ({
         <View style={styles.contentWrap}>
           <View style={styles.content}>
             <View style={styles.iconWrap}>
-              <Icon name={iconName} size={50} style={{ color: iconColor }} />
+              <Icon name={iconName} size={theme.iconSize(6)} style={{ color: iconColor }} />
             </View>
             <View style={styles.textWrap}>
               <Text style={styles.text}>{message}</Text>

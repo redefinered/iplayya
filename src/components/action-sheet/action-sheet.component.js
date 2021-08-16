@@ -7,6 +7,7 @@ import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 
 import styles from './action-sheet.styles';
+import theme from 'common/theme';
 
 const ActionSheet = ({ visible, actions, hideAction }) => {
   // console.log({actions})
@@ -18,7 +19,7 @@ const ActionSheet = ({ visible, actions, hideAction }) => {
             return (
               <Pressable key={key} style={styles.itemContainer} onPress={() => onPress(data)}>
                 <View style={styles.iconContainer}>
-                  <Icon name={icon} style={styles.iconColor} size={20} />
+                  <Icon name={icon} style={styles.iconColor} size={theme.iconSize(3)} />
                 </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.text}>{title}</Text>

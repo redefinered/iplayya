@@ -65,6 +65,7 @@ import { selectCreated } from 'modules/ducks/provider/provider.selectors';
 import NotificationButton from 'components/notification-button.component';
 
 import clone from 'lodash/clone';
+import theme from 'common/theme';
 
 const Stack = createStackNavigator();
 
@@ -179,7 +180,7 @@ const HomeStack = ({
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={{ ...styles.headerButtonContainer }}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -221,7 +222,7 @@ const HomeStack = ({
                   onPress={() => navigation.navigate('ItvSearchScreen')}
                 >
                   <View style={{ ...styles.headerButtonContainer }}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -276,7 +277,7 @@ const HomeStack = ({
                   onPress={() => navigation.goBack()}
                 >
                   <View style={{ ...styles.headerButtonContainer }}>
-                    <Icon name="close" size={24} />
+                    <Icon name="close" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -302,7 +303,7 @@ const HomeStack = ({
                   onPress={() => navigation.goBack()}
                 >
                   <View style={{ ...styles.headerButtonContainer }}>
-                    <Icon name="close" size={24} />
+                    <Icon name="close" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -328,7 +329,7 @@ const HomeStack = ({
                   onPress={() => navigation.navigate('ImovieSearchScreen')}
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -356,7 +357,7 @@ const HomeStack = ({
                   onPress={() => navigation.goBack()}
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="close" size={24} />
+                    <Icon name="close" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -383,7 +384,7 @@ const HomeStack = ({
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -530,7 +531,7 @@ const HomeStack = ({
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -553,7 +554,7 @@ const HomeStack = ({
             // headerLeft: () => <Text>asd</Text>,
             headerBackImage: () => (
               <View style={styles.backButtonContainer}>
-                <Icon name="close" style={{ color: 'white' }} size={24} />
+                <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />
               </View>
             ),
             headerRight: () => (
@@ -564,7 +565,7 @@ const HomeStack = ({
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -622,7 +623,7 @@ const HomeStack = ({
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -662,7 +663,7 @@ const HomeStack = ({
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -689,7 +690,7 @@ const HomeStack = ({
                   onPress={() => navigation.navigate('ItvSearchScreen')}
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>
@@ -716,7 +717,7 @@ const HomeStack = ({
                   onPress={() => navigation.navigate('ItvSearchScreen')}
                 >
                   <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={24} />
+                    <Icon name="search" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>

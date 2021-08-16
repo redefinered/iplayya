@@ -91,7 +91,7 @@ const ManageEmailScreen = ({
               rippleColor="rgba(0,0,0,0.28)"
             >
               <View style={{ padding: 4 }}>
-                <Icon name="edit" size={24} />
+                <Icon name="edit" size={theme.iconSize(3)} />
               </View>
             </TouchableRipple>
           </View>
@@ -104,7 +104,7 @@ const ManageEmailScreen = ({
           onPress={() => alert('You tapped the button!')}
         >
           <View style={{ flexDirection: 'row', padding: theme.spacing(2), marginLeft: 22 }}>
-            <Icon name="add" size={24} />
+            <Icon name="add" size={theme.iconSize(3)} />
             <Text
               style={{
                 fontSize: 14,

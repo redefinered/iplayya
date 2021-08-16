@@ -140,7 +140,7 @@ const DownloadButton = ({
       ) : (
         <Icon
           name="download"
-          size={24}
+          size={theme.iconSize(3)}
           // color={isChannelDownloaded ? theme.iplayya.colors.vibrantpussy : 'white'}
           color={theme.iplayya.colors.white25} /// disable temporarily
         />

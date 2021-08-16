@@ -90,5 +90,6 @@ export default {
       marginBottom: 15
     }
   },
-  spacing: (multiply) => 6 * multiply
+  spacing: (multiply) => 6 * multiply,
+  iconSize: (multiply) => 8 * multiply
 };

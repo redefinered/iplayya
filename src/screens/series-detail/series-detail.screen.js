@@ -419,7 +419,7 @@ const SeriesDetailScreen = ({
 
           <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
             <View style={styles.iconContainer}>
-              <Icon name="circular-play" size={24} />
+              <Icon name="circular-play" size={theme.iconSize(3)} />
             </View>
             <View>
               <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Play movie</Text>
@@ -427,7 +427,7 @@ const SeriesDetailScreen = ({
           </Pressable>
           <Pressable style={styles.settingItem}>
             <View style={styles.iconContainer}>
-              <Icon name="watch" size={24} />
+              <Icon name="watch" size={theme.iconSize(3)} />
             </View>
             <View>
               <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Watch trailer</Text>

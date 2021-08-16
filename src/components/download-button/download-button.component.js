@@ -236,7 +236,7 @@ const DownloadButton = ({
         onPress={() => setShowDownloadOptionsModal(true)}
         style={styles.headerButtonContainer}
       >
-        <Icon name="download" size={24} color={getColor()} />
+        <Icon name="download" size={theme.iconSize(3)} color={getColor()} />
       </Pressable>
 
       <Modal animationType="slide" visible={showDownloadOptionsModal} transparent>

@@ -273,7 +273,7 @@ const AccountScreen = ({
           >
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
-                <Icon name="change-password" size={24} />
+                <Icon name="change-password" size={theme.iconSize(3)} />
               </View>
               <View>
                 <Text style={{ fontSize: 16, lineHeight: 22 }}>Change Password</Text>
@@ -286,7 +286,7 @@ const AccountScreen = ({
           >
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
-                <Icon name="email" size={24} />
+                <Icon name="email" size={theme.iconSize(3)} />
               </View>
               <View>
                 <Text style={{ fontSize: 16, lineHeight: 22 }}>Manage Email</Text>
@@ -299,7 +299,7 @@ const AccountScreen = ({
           >
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
-                <Icon name="video-quality" size={24} />
+                <Icon name="video-quality" size={theme.iconSize(3)} />
               </View>
               <View>
                 <Text style={{ fontSize: 16, lineHeight: 22 }}>Playback</Text>
@@ -309,7 +309,7 @@ const AccountScreen = ({
           <TouchableRipple>
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
-                <Icon name="lock" size={24} />
+                <Icon name="lock" size={theme.iconSize(3)} />
               </View>
               <View>
                 <Text style={{ fontSize: 16, lineHeight: 22 }}>Parental Control</Text>
@@ -322,7 +322,7 @@ const AccountScreen = ({
           >
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
-                <Icon name="help" size={24} />
+                <Icon name="help" size={theme.iconSize(3)} />
               </View>
               <View>
                 <Text style={{ fontSize: 16, lineHeight: 22 }}>Need Help?</Text>
@@ -332,7 +332,7 @@ const AccountScreen = ({
           <TouchableRipple rippleColor="rgba(0,0,0,0.28)" onPress={() => setOnSigningOut(true)}>
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
-                <Icon name="logout" size={24} />
+                <Icon name="logout" size={theme.iconSize(3)} />
               </View>
               <View>
                 <Text style={{ fontSize: 16, lineHeight: 22 }}>

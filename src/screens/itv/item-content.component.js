@@ -52,7 +52,7 @@ const ItemContent = ({
         <Pressable onPress={() => onRightActionPress(title)}>
           <Icon
             name="heart-solid"
-            size={24}
+            size={theme.iconSize(3)}
             style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
           />
         </Pressable>

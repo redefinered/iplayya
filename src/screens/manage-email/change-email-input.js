@@ -21,6 +21,7 @@ import {
 } from 'modules/ducks/profile/profile.selectors';
 
 import { isValidPassword } from 'common/validate';
+import theme from 'common/theme';
 
 class ChangeEmailInput extends React.Component {
   constructor(props) {
@@ -125,7 +126,7 @@ class ChangeEmailInput extends React.Component {
           >
             <Icon
               name={showPassword ? 'close' : 'eye'}
-              size={showPassword ? 25 : 40}
+              size={showPassword ? theme.iconSize(3) : theme.iconSize(5)}
               style={{ color: 'rgba(0,0,0,0.8)' }}
             />
           </Pressable>

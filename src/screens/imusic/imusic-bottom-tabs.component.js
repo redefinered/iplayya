@@ -48,7 +48,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           onPress={() => navigation.navigate('ImovieFavoritesScreen')}
           style={{ alignItems: 'center' }}
         >
-          <Icon name="heart-solid" size={24} style={{ color: heartIconColor }} />
+          <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
           <Text
             style={{
               fontSize: 10,
@@ -66,7 +66,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           onPress={() => navigation.replace('HomeScreen')}
           style={{ flex: 4, alignItems: 'center' }}
         >
-          <Icon name="iplayya" size={24} />
+          <Icon name="iplayya" size={theme.iconSize(3)} />
           <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
         </TouchableWithoutFeedback>
       </View>
@@ -75,7 +75,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           onPress={() => navigation.navigate('ImovieDownloadsScreen')}
           style={{ alignItems: 'center' }}
         >
-          <Icon name="download" size={24} style={{ color: downloadIconColor }} />
+          <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />
           <Text
             style={{
               fontSize: 10,

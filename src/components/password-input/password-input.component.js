@@ -4,6 +4,7 @@ import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import theme from 'common/theme';
 
 const styles = StyleSheet.create({
   textField: {
@@ -74,7 +75,7 @@ const PasswordInput = ({ style, name, handleChangeText, focusAction, ...otherPro
       >
         <Icon
           name={showText ? 'eye-off' : 'eye'}
-          size={showText ? 40 : 40}
+          size={theme.iconSize(5)}
           style={{ color: 'rgba(255,255,255,0.5)' }}
         />
       </Pressable>

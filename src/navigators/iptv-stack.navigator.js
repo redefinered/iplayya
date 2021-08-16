@@ -20,6 +20,7 @@ import { createStructuredSelector } from 'reselect';
 // import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import { TouchableRipple } from 'react-native-paper';
+import theme from 'common/theme';
 
 const Stack = createStackNavigator();
 
@@ -111,7 +112,7 @@ const IptvStack = ({
                   style={{ borderRadius: 44, padding: 8 }}
                 >
                   <View style={{ ...styles.headerButtonContainer }}>
-                    <Icon name="add" size={24} />
+                    <Icon name="add" size={theme.iconSize(3)} />
                   </View>
                 </TouchableRipple>
               </View>

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Icon from 'components/icon/icon.component';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Text, Switch } from 'react-native-paper';
+import theme from 'common/theme';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -24,7 +25,7 @@ const SettingItem = ({ icon, label, onPress }) => {
     if (icon)
       return (
         <View style={styles.iconContainer}>
-          <Icon name={icon} size={24} />
+          <Icon name={icon} size={theme.iconSize(3)} />
         </View>
       );
   };

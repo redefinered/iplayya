@@ -325,7 +325,7 @@ const NowPlaying = ({
             <Pressable onPress={() => setPausedAction(!paused)}>
               <Icon
                 name={paused ? 'circular-play' : 'circular-pause'}
-                size={32}
+                size={theme.iconSize(4)}
                 style={{ marginHorizontal: 10 }}
               />
             </Pressable>

@@ -230,7 +230,7 @@ const VideoControls = ({
           <Pressable>
             <Icon
               name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
-              size={25}
+              size={theme.iconSize(3)}
               style={{ marginRight: 15 }}
             />
           </Pressable>
@@ -239,7 +239,7 @@ const VideoControls = ({
             </Pressable> */}
           {controlProps.typename !== 'Iptv' ? (
             <Pressable onPress={() => controlProps.toggleVideoOptions()}>
-              <Icon name="video-quality" size={25} />
+              <Icon name="video-quality" size={theme.iconSize(3)} />
               <View
                 style={{
                   backgroundColor: '#202530',
@@ -255,7 +255,7 @@ const VideoControls = ({
           ) : null}
         </View>
         <Pressable onPress={() => controlProps.toggleFullscreen()}>
-          <Icon name="fullscreen" size={25} />
+          <Icon name="fullscreen" size={theme.iconSize(3)} />
         </Pressable>
       </View>
     );
@@ -362,7 +362,7 @@ const VideoControls = ({
           <Pressable onPress={() => previousAction()} disabled={isFirstEpisode}>
             <Icon
               name="previous"
-              size={35}
+              size={theme.iconSize(4)}
               style={{ color: isFirstEpisode ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>
@@ -373,7 +373,7 @@ const VideoControls = ({
           ) : (
             <Icon
               name={controlProps.paused ? 'circular-play' : 'circular-pause'}
-              size={60}
+              size={theme.iconSize(7)}
               style={{ marginHorizontal: 20 }}
             />
           )}
@@ -382,7 +382,7 @@ const VideoControls = ({
           <Pressable onPress={() => nextAction()} disabled={isLastEpisode}>
             <Icon
               name="next"
-              size={35}
+              size={theme.iconSize(4)}
               style={{ color: isLastEpisode ? theme.iplayya.colors.white25 : 'white' }}
             />
           </Pressable>

@@ -248,7 +248,11 @@ class EditProfileScreen extends React.Component {
                       {form.gender}
                     </Text>
                     <View style={{ marginRight: 10, marginTop: -2 }}>
-                      <Icon name="account" size={25} style={{ color: 'rgba(255,255,255,1)' }} />
+                      <Icon
+                        name="account"
+                        size={theme.iconSize(3)}
+                        style={{ color: 'rgba(255,255,255,1)' }}
+                      />
                     </View>
                   </View>
                 </TouchableRipple>

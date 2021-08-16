@@ -131,7 +131,7 @@ const AlbumDetail = ({
 
       <ContentWrap style={{ marginBottom: theme.spacing(2) }}>
         <Button mode="contained" onPress={handleShufflePlay}>
-          <Icon name="shuffle" size={20} />
+          <Icon name="shuffle" size={theme.iconSize(3)} />
           <View style={{ width: theme.spacing(1) }} />
           <Text style={{ fontWeight: 'bold' }}>Shuffle Play</Text>
         </Button>

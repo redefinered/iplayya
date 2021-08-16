@@ -95,7 +95,7 @@ const ImusicScreen = ({ navigation }) => {
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Icon name="delete" size={24} style={{ marginRight: 10 }} />
+                  <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                   <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
                 </View>
                 <Pressable
@@ -194,7 +194,7 @@ const ImusicScreen = ({ navigation }) => {
                 onPress={() => navigation.replace('HomeScreen')}
                 style={{ alignItems: 'center' }}
               >
-                <Icon name="iplayya" size={24} />
+                <Icon name="iplayya" size={theme.iconSize(3)} />
                 <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
               </TouchableWithoutFeedback>
             </View>

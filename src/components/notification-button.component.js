@@ -28,7 +28,7 @@ const NotificationButton = ({ notifications }) => {
       rippleColor="rgba(0,0,0,0.28)"
     >
       <View style={{ ...styles.button }}>
-        <Icon name="notifications" size={24} />
+        <Icon name="notifications" size={theme.iconSize(3)} />
         {renderIndicator()}
       </View>
     </TouchableRipple>

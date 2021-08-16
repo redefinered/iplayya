@@ -36,6 +36,7 @@ import styles from './sign-in.styles';
 import withLoader from 'components/with-loader.component';
 
 import { isValidEmail } from 'common/validate';
+import theme from 'common/theme';
 
 const SignInScreen = ({
   error: loginError,
@@ -171,7 +172,7 @@ const SignInScreen = ({
               >
                 <Icon
                   name={showPassword ? 'eye-off' : 'eye'}
-                  size={showPassword ? 40 : 40}
+                  size={theme.iconSize(3)}
                   style={styles.showToggleIcon}
                 />
               </Pressable>

@@ -166,7 +166,7 @@ const ImagePick = ({ hideModalCamera, setProfileImage }) => {
             height: 70
           }}
         >
-          <Icon name="camera" size={30} style={{ marginRight: 10 }} />
+          <Icon name="camera" size={theme.iconSize(4)} style={{ marginRight: 10 }} />
           <Text style={styles.textStyle}>Take Picture</Text>
         </View>
       </TouchableRipple>
@@ -186,7 +186,7 @@ const ImagePick = ({ hideModalCamera, setProfileImage }) => {
             borderRadius: 10
           }}
         >
-          <Icon name="add-file" size={30} style={{ marginRight: 10 }} />
+          <Icon name="add-file" size={theme.iconSize(4)} style={{ marginRight: 10 }} />
           <Text style={styles.textStyle}>Browse Image</Text>
         </View>
       </TouchableRipple>

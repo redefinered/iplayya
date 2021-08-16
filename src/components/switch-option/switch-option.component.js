@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Icon from 'components/icon/icon.component';
 import { View, StyleSheet } from 'react-native';
 import { Text, Switch } from 'react-native-paper';
+import theme from 'common/theme';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -20,7 +21,7 @@ const SwitchOption = ({ name, icon, label, value, toggleAction }) => {
     if (icon)
       return (
         <View style={styles.iconContainer}>
-          <Icon name={icon} size={24} />
+          <Icon name={icon} size={theme.iconSize(3)} />
         </View>
       );
   };

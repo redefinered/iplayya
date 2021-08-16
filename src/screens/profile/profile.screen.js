@@ -233,7 +233,7 @@ const ProfileScreen = ({
                 justifyContent: 'center'
               }}
             >
-              <Icon name="camera" size={26} onPress={() => setModalOpen(true)} />
+              <Icon name="camera" size={theme.iconSize(3)} onPress={() => setModalOpen(true)} />
             </Pressable>
           </View>
           <Title
@@ -255,7 +255,7 @@ const ProfileScreen = ({
         <View style={styles.bodyContainer}>
           <View style={{ backgroundColor: colors.vibrantpussy, alignItems: 'center', padding: 15 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Icon name="iplayya" size={21} />
+              <Icon name="iplayya" size={theme.iconSize(3)} />
               <Text
                 style={{
                   fontSize: 24,
@@ -279,7 +279,7 @@ const ProfileScreen = ({
             return (
               <Pressable key={key} style={styles.settingItem}>
                 <View style={styles.iconContainer}>
-                  <Icon name={icon} size={24} />
+                  <Icon name={icon} size={theme.iconSize(3)} />
                 </View>
                 <View>
                   <Text style={{ fontSize: 16, lineHeight: 22 }}>

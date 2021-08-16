@@ -5,6 +5,7 @@ import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 
 import styles from './snackbar.styles';
+import theme from 'common/theme';
 
 const SnackBar = ({ visible, message, iconName, iconColor }) => {
   return (
@@ -13,7 +14,7 @@ const SnackBar = ({ visible, message, iconName, iconColor }) => {
         <View style={styles.contentWrap}>
           <View style={styles.content}>
             <View style={styles.iconWrap}>
-              <Icon name={iconName} size={50} style={{ color: iconColor }} />
+              <Icon name={iconName} size={theme.iconSize(6)} style={{ color: iconColor }} />
             </View>
             <View style={styles.textWrap}>
               <Text style={styles.text}>{message}</Text>
