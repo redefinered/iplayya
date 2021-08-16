@@ -1,15 +1,17 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Platform, Modal } from 'react-native';
+import { View, ScrollView, Pressable, Platform, Modal } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
+import PlayMovieButton from './play-movie-button.component';
+import PlayTrailerButton from './play-trailer-button.component';
 import withLoader from 'components/with-loader.component';
 import { useTheme } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+// import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -241,13 +243,6 @@ const MovieDetailScreen = ({
     ...otherFields
   } = movie;
 
-  // const timeToDate = toDateTime(otherFields.time * 60);
-  // Object.assign(otherFields, {
-  //   time: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
-  // });
-
-  console.log({ otherFields });
-
   const readMoreData = Object.keys(otherFields).map((key) => {
     if (key === 'time') {
       const timeToDate = toDateTime(otherFields.time * 60);
@@ -289,6 +284,10 @@ const MovieDetailScreen = ({
       value: otherFields[key]
     };
   });
+
+  const playTrailer = () => {
+    console.log('playing trailer');
+  };
 
   const renderMediaPlayer = () => {
     if (!source)
@@ -357,7 +356,9 @@ const MovieDetailScreen = ({
           <Text
             style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
           >{`${title} (${year})`}</Text>
-          <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
+          <Text numberOfLines={4} style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
+            {description}
+          </Text>
           <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
             <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
               Director{' '}
@@ -394,15 +395,13 @@ const MovieDetailScreen = ({
               })}
             </List.Accordion>
           </List.Section>
+        </ContentWrap>
 
-          <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
-            <View style={styles.iconContainer}>
-              <Icon name="circular-play" size={theme.iconSize(3)} />
-            </View>
-            <View>
-              <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Play movie</Text>
-            </View>
-          </Pressable>
+        <PlayMovieButton setPaused={setPaused} />
+
+        <PlayTrailerButton playTrailer={playTrailer} />
+
+        {/* <ContentWrap>
           <Pressable style={styles.settingItem}>
             <View style={styles.iconContainer}>
               <Icon name="watch" size={theme.iconSize(3)} />
@@ -411,7 +410,7 @@ const MovieDetailScreen = ({
               <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Watch trailer</Text>
             </View>
           </Pressable>
-        </ContentWrap>
+        </ContentWrap> */}
       </ScrollView>
 
       {/* loader for download starting */}
@@ -444,19 +443,19 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
-const styles = StyleSheet.create({
-  settingItem: {
-    flexDirection: 'row',
-    paddingVertical: 10
-  },
-  iconContainer: {
-    width: 42,
-    justifyContent: 'center'
-  },
-  controls: {
-    position: 'absolute'
-  }
-});
+// const styles = StyleSheet.create({
+//   settingItem: {
+//     flexDirection: 'row',
+//     paddingVertical: 10
+//   },
+//   iconContainer: {
+//     width: 42,
+//     justifyContent: 'center'
+//   },
+//   controls: {
+//     position: 'absolute'
+//   }
+// });
 
 const actions = {
   getMovieAction: Creators.getMovie,
