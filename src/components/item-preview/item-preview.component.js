@@ -51,10 +51,23 @@ const ItemPreview = ({
         <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={thumbnail} />
       </Pressable>
     );
+
   return (
     <View style={{ marginRight: 10 }}>
       <TouchableOpacity onPress={() => onSelect(id)}>
-        <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={thumbnail} />
+        <View
+          style={{
+            width: 240,
+            height: 133,
+            borderRadius: 8,
+            backgroundColor: theme.iplayya.colors.white10,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Icon name="iplayya" size={theme.iconSize(6)} color="white" />
+        </View>
+        {/* <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={thumbnail} /> */}
       </TouchableOpacity>
       <Spacer size={15} />
       <View
@@ -77,7 +90,7 @@ const ItemPreview = ({
         >
           <Icon
             name="notifications"
-            size={24}
+            size={theme.iconSize(3)}
             color={isNotificationActive ? theme.iplayya.colors.vibrantpussy : 'white'}
           />
         </TouchableHighlight>

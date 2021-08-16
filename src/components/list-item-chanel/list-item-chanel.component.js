@@ -54,10 +54,23 @@ const ListItemChanel = ({
             // padding: theme.spacing(2)
           }}
         >
-          <Image
+          {/* <Image
             style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
             source={contentProps.thumbnail}
-          />
+          /> */}
+          <View
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 8,
+              marginRight: 10,
+              backgroundColor: theme.iplayya.colors.white10,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+          </View>
           <Content
             {...contentProps}
             id={id}
@@ -94,7 +107,7 @@ const ListItemChanel = ({
           </Text>
         </View>
         <Pressable onPress={() => onRightActionPress(contentProps.title)}>
-          <Icon name="heart-solid" size={24} style={{ color: 'red' }} />
+          <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: 'red' }} />
         </Pressable>
       </Pressable>
       <Spacer size={spacer} />
@@ -172,21 +185,8 @@ const Content = ({
           }}
         >{`${number}: ${title}`}</Text>
 
-        {/* {onRightActionPress ? (
-          <Pressable onPress={() => handleRightActionPress()}>
-            <Icon
-              name="heart-solid"
-              size={24}
-              style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-            />
-          </Pressable>
-        ) : (
-          renderCheckbox()
-        )} */}
-        {/* </View> */}
-
         {renderEpgtitle()}
-        {/* <View style={{ flexDirection: 'column', alignItems: 'center' }}> */}
+
         <Text
           style={{
             ...createFontFormat(12, 16),
@@ -221,7 +221,7 @@ const Content = ({
           >
             <Icon
               name="heart-solid"
-              size={24}
+              size={theme.iconSize(3)}
               style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
             />
           </Pressable>
