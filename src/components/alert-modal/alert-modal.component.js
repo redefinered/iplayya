@@ -13,6 +13,7 @@ const AlertModal = ({
   visible,
   confirmText,
   confirmAction,
+  cancelText,
   onCancel,
   hideAction,
   message,
@@ -59,7 +60,7 @@ const AlertModal = ({
                   labelStyle={{ ...styles.button, color: theme.iplayya.colors.black50 }}
                   onPress={() => onCancel()}
                 >
-                  Cancel
+                  {cancelText}
                 </Button>
               </View>
             )}
@@ -84,6 +85,7 @@ AlertModal.propTypes = {
   visible: PropTypes.bool.isRequired,
   confirmText: PropTypes.string,
   confirmAction: PropTypes.func,
+  cancelText: PropTypes.string,
   onCancel: PropTypes.func,
   hideAction: PropTypes.func,
   message: PropTypes.string.isRequired,
@@ -91,7 +93,8 @@ AlertModal.propTypes = {
 };
 
 AlertModal.defaultProps = {
-  confirmText: 'Got it'
+  confirmText: 'Got it',
+  cancelText: 'Cancel'
 };
 
 export default withTheme(AlertModal);
