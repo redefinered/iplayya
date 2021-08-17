@@ -3,8 +3,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, View, Image, Dimensions } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Pressable, View, Image, Dimensions, StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
 import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
@@ -19,10 +19,10 @@ import { Creators } from 'modules/ducks/downloads/downloads.actions';
 import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import getConfig from 'utils';
 import RNBackgroundDownloader from 'react-native-background-downloader';
+import theme from 'common/theme';
 
 const DownloadItem = ({
   id,
-  theme,
   title,
   ep,
   year,
@@ -55,6 +55,7 @@ const DownloadItem = ({
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [broken, setBroken] = React.useState(false);
+  const [isPressed, setIsPressed] = React.useState(false);
 
   React.useEffect(() => {
     if (typeof task === 'undefined') return setIsDownloaded(true);
@@ -109,23 +110,36 @@ const DownloadItem = ({
   const renderPauseButton = () => {
     if (paused)
       return (
-        <Pressable onPress={() => handlePlay()} style={{ marginLeft: theme.spacing(4) }}>
+        <Pressable onPress={() => handlePlay()}>
           <Icon name="circular-play" size={theme.iconSize(5)} />
         </Pressable>
       );
 
     if (broken) {
       return (
-        <Pressable style={{ marginLeft: theme.spacing(4) }}>
+        <Pressable>
           <Icon name="redo" size={theme.iconSize(5)} />
         </Pressable>
       );
     }
 
     return (
-      <Pressable onPress={() => handlePause()} style={{ marginLeft: theme.spacing(4) }}>
+      <Pressable onPress={() => handlePause()}>
         <Icon name="circular-pause" size={theme.iconSize(5)} />
       </Pressable>
+    );
+  };
+
+  const renderDownloadControls = () => {
+    if (isDownloaded) return;
+
+    return (
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {renderPauseButton()}
+        <Pressable style={{ marginLeft: 10 }}>
+          <Icon name="close" size={theme.iconSize(5)} />
+        </Pressable>
+      </View>
     );
   };
 
@@ -135,50 +149,32 @@ const DownloadItem = ({
     return (
       <View
         style={{
+          backgroundColor: theme.iplayya.colors.white10,
           position: 'absolute',
-          top: 0,
-          left: 0,
-          width: Dimensions.get('window').width,
-          height: '100%',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          paddingHorizontal: theme.spacing(4),
-          flexDirection: 'row'
+          bottom: 0,
+          left: 0
         }}
       >
-        {renderPauseButton()}
-        <Pressable style={{ marginLeft: theme.spacing(4) }}>
-          <Icon name="close" size={theme.iconSize(5)} />
-        </Pressable>
         <View
           style={{
+            width: (progress * Dimensions.get('window').width) / 100,
+            height: 2,
+            backgroundColor: theme.iplayya.colors.vibrantpussy,
+            position: 'absolute',
+            left: 0,
+            bottom: 0
+          }}
+        />
+        <View
+          style={{
+            width: Dimensions.get('window').width,
+            height: 2,
             backgroundColor: theme.iplayya.colors.white10,
             position: 'absolute',
-            bottom: 0,
-            left: 0
+            left: 0,
+            bottom: 0
           }}
-        >
-          <View
-            style={{
-              width: (progress * Dimensions.get('window').width) / 100,
-              height: 2,
-              backgroundColor: theme.iplayya.colors.vibrantpussy,
-              position: 'absolute',
-              left: 0,
-              bottom: 0
-            }}
-          />
-          <View
-            style={{
-              width: Dimensions.get('window').width,
-              height: 2,
-              backgroundColor: theme.iplayya.colors.white10,
-              position: 'absolute',
-              left: 0,
-              bottom: 0
-            }}
-          />
-        </View>
+        />
       </View>
     );
   };
@@ -243,68 +239,77 @@ const DownloadItem = ({
   //   }
   // };
 
+  const handlePress = (e) => {
+    if (!isDownloaded) return;
+
+    handleSelectItem(id);
+  };
+
   return (
-    <ContentWrap style={{ position: 'relative', marginBottom: 20 }}>
-      {/* <View
-        style={{
-          width: '100%',
-          height: 1,
-          backgroundColor: theme.iplayya.colors.vibrantpussy
-        }}
-      /> */}
+    <View style={{ marginBottom: theme.spacing(3) }}>
       <Pressable
+        onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+        onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
         style={{
-          position: 'relative',
-          paddingLeft: 75,
           opacity: isDownloaded ? 1 : 0.5,
-          paddingVertical: 10
+          paddingVertical: theme.spacing(1),
+          paddingHorizontal: theme.spacing(2),
+          flexDirection: 'row',
+          // backgroundColor: 'red'
+          backgroundColor: isPressed ? theme.iplayya.colors.white10 : 'transparent'
         }}
         onLongPress={() => handleLongPress(id)}
-        onPress={() => handleSelectItem(id)}
+        onPress={handlePress}
+        // onPress={() => console.log('fuck')}
       >
         <Image
           style={{
+            marginRight: theme.spacing(2),
             width: 65,
             height: 96,
-            borderRadius: 8,
-            position: 'absolute',
-            top: 10,
-            left: 0
+            borderRadius: 8
           }}
           source={{ uri }}
         />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-        >
-          <View style={{ height: 96, justifyContent: 'center' }}>
-            <Text
-              style={{
-                fontWeight: '700',
-                ...createFontFormat(16, 22),
-                marginBottom: 5
-              }}
-            >
-              {`${title} ${ep}`}
-            </Text>
-            <Text
-              style={{
-                ...createFontFormat(12, 16),
-                color: theme.iplayya.colors.white50,
-                marginBottom: 5
-              }}
-            >{`${year}, ${Math.floor(time / 60)}h ${time % 60}m`}</Text>
-            <Text
-              style={{
-                ...createFontFormat(12, 16),
-                color: theme.iplayya.colors.white50,
-                marginBottom: 5
-              }}
-            >{`${rating_mpaa}-${age_rating}, ${category}`}</Text>
-          </View>
+
+        {/* content */}
+        <View style={{ flex: 1, height: 96, justifyContent: 'center' }}>
+          {/* title */}
+          <Text
+            numberOfLines={1}
+            style={{
+              fontWeight: '700',
+              marginBottom: 5,
+              ...createFontFormat(16, 22)
+            }}
+          >
+            {`${title} ${ep}`}
+          </Text>
+
+          {/* year and duration */}
+          <Text
+            style={{
+              ...createFontFormat(12, 16),
+              color: theme.iplayya.colors.white50,
+              marginBottom: 5
+            }}
+          >{`${year}, ${Math.floor(time / 60)}h ${time % 60}m`}</Text>
+
+          {/* ratings */}
+          <Text
+            style={{
+              ...createFontFormat(12, 16),
+              color: theme.iplayya.colors.white50,
+              marginBottom: 5
+            }}
+          >{`${rating_mpaa}-${age_rating}, ${category}`}</Text>
+        </View>
+
+        {/* buttons */}
+        {renderDownloadControls()}
+
+        {/* radtio buttons for selection */}
+        <View style={{ justifyContent: 'center' }}>
           {activateCheckboxes && (
             <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
           )}
@@ -312,7 +317,7 @@ const DownloadItem = ({
       </Pressable>
 
       {renderProgress()}
-    </ContentWrap>
+    </View>
   );
 };
 
@@ -350,6 +355,6 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(DownloadItem);

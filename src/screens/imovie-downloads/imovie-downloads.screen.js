@@ -32,6 +32,9 @@ import {
   selectDownloadsData
 } from 'modules/ducks/downloads/downloads.selectors';
 import uuid from 'react-uuid';
+import { FlatList } from 'react-native-gesture-handler';
+
+const ITEM_HEIGHT = 156;
 
 // eslint-disable-next-line no-unused-vars
 const ImovieDownloadsScreen = ({
@@ -187,47 +190,87 @@ const ImovieDownloadsScreen = ({
     }
   };
 
+  const renderItem = ({ item: { id, thumbnail, ...otherProps } }) => {
+    let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
+
+    let progress = null;
+
+    if (downloadsProgress.length) {
+      let progressData = downloadsProgress.filter(({ id: progressId }) => id === progressId);
+
+      let currentProgress = progressData[progressData.length - 1];
+
+      if (typeof currentProgress !== 'undefined') {
+        // progress = currentProgress.received / currentProgress.total;
+        progress = currentProgress.progress;
+      }
+    }
+
+    let task = activeDownloads.find((d) => d.id === id);
+
+    return (
+      <DownloadItem
+        id={id}
+        progress={progress}
+        imageUrl={imageUrl}
+        handleSelectItem={handleSelectItem}
+        task={task}
+        handleLongPress={handleLongPress}
+        activateCheckboxes={activateCheckboxes}
+        selectedItems={selectedItems}
+        {...otherProps}
+      />
+    );
+  };
+
   const renderMain = () => {
     if (list.length)
       return (
-        <ScrollView>
-          {list.map(({ id, thumbnail, ...otherProps }) => {
-            let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
+        <FlatList
+          data={list}
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+          renderItem={renderItem}
+        />
+        // <ScrollView>
+        //   {list.map(({ id, thumbnail, ...otherProps }) => {
+        //     let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
 
-            let progress = null;
+        //     let progress = null;
 
-            if (downloadsProgress.length) {
-              let progressData = downloadsProgress.filter(
-                ({ id: progressId }) => id === progressId
-              );
+        //     if (downloadsProgress.length) {
+        //       let progressData = downloadsProgress.filter(
+        //         ({ id: progressId }) => id === progressId
+        //       );
 
-              let currentProgress = progressData[progressData.length - 1];
+        //       let currentProgress = progressData[progressData.length - 1];
 
-              if (typeof currentProgress !== 'undefined') {
-                // progress = currentProgress.received / currentProgress.total;
-                progress = currentProgress.progress;
-              }
-            }
+        //       if (typeof currentProgress !== 'undefined') {
+        //         // progress = currentProgress.received / currentProgress.total;
+        //         progress = currentProgress.progress;
+        //       }
+        //     }
 
-            let task = activeDownloads.find((d) => d.id === id);
+        //     let task = activeDownloads.find((d) => d.id === id);
 
-            return (
-              <DownloadItem
-                key={id}
-                id={id}
-                progress={progress}
-                imageUrl={imageUrl}
-                handleSelectItem={handleSelectItem}
-                task={task}
-                handleLongPress={handleLongPress}
-                activateCheckboxes={activateCheckboxes}
-                selectedItems={selectedItems}
-                {...otherProps}
-              />
-            );
-          })}
-          {/* <Spacer size={100} /> */}
-        </ScrollView>
+        //     return (
+        //       <DownloadItem
+        //         key={id}
+        //         id={id}
+        //         progress={progress}
+        //         imageUrl={imageUrl}
+        //         handleSelectItem={handleSelectItem}
+        //         task={task}
+        //         handleLongPress={handleLongPress}
+        //         activateCheckboxes={activateCheckboxes}
+        //         selectedItems={selectedItems}
+        //         {...otherProps}
+        //       />
+        //     );
+        //   })}
+        //   {/* <Spacer size={100} /> */}
+        // </ScrollView>
       );
     return <EmptyState theme={theme} navigation={navigation} />;
   };
