@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { moviesState } from 'modules/ducks/movies/movies.selectors';
 
 export const downloadsState = (state) => state.downloads;
 
@@ -29,11 +30,14 @@ const selectTaskById = ({ downloads: { downloads } }, props) => {
 
 export const selectTask = createSelector([selectTaskById], (task) => task);
 
-const selectDownloadData = ({ downloads: { downloadsData } }, props) => {
-  return downloadsData.find(({ id }) => id === props.id);
-};
-
-export const selectVideoForDownloadInfo = createSelector([selectDownloadData], (video) => video);
+export const selectMovies = createSelector([moviesState], ({ movies }) => {
+  let collection = [];
+  for (let i = 0; i < movies.length; i++) {
+    const categoriesWithMovies = movies[i];
+    collection = [...collection, ...categoriesWithMovies.videos];
+  }
+  return collection;
+});
 
 export const selectDownloadStarted = createSelector(
   [downloadsState],

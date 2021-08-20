@@ -80,8 +80,8 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: false,
-      error: null,
-      movies: []
+      error: null
+      // movies: []
       // paginatorInfo
     };
   },

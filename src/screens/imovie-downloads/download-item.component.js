@@ -1,25 +1,23 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, View, Image, Dimensions, StyleSheet } from 'react-native';
+import { Pressable, View, Image, Dimensions } from 'react-native';
 import { Text } from 'react-native-paper';
 import RadioButton from 'components/radio-button/radio-button.component';
-import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
-import Icon from 'components/icon/icon.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
+import SnackBar from 'components/snackbar/snackbar.component';
+// eslint-disable-next-line no-unused-vars
+import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
+import theme from 'common/theme';
+import RetryDownloadButton from './retry-download-button.component';
+import ButtonClose from './button-close.component';
+import ButtonPause from './button-pause.component';
+import ButtonRetry from './button-retry.component';
+import { createStructuredSelector } from 'reselect';
+import { Creators } from 'modules/ducks/downloads/downloads.actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import {
-  selectTask,
-  selectVideoForDownloadInfo
-} from 'modules/ducks/downloads/downloads.selectors';
-import { Creators } from 'modules/ducks/downloads/downloads.actions';
-import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
-import getConfig from 'utils';
-import RNBackgroundDownloader from 'react-native-background-downloader';
-import theme from 'common/theme';
+import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
 
 const DownloadItem = ({
   id,
@@ -31,32 +29,48 @@ const DownloadItem = ({
   age_rating,
   category,
   handleSelectItem,
-  downloadsProgress,
-
-  // url is the thumbnail url
   imageUrl: uri,
-
-  // progress,
-
   task,
-
-  handleLongPress,
+  longPressAction,
   activateCheckboxes,
-  selectedItems
-  // video,
-
-  // deleteAction
-  // updateDownloadsAction,
-  // updateDownloadsProgressAction,
-  // cleanUpDownloadsProgressAction
+  selectedItems,
+  handleStopDownload,
+  handleDownloadMovie,
+  downloadProgress,
+  updateDownloadsProgressAction
 }) => {
-  // const [isDownloaded] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
   const [broken, setBroken] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
+  const [showDownloadSuccessModal, setShowDownloadSuccessModal] = React.useState(false);
+  const [showStopDownloadModal, setShowStopDownloadModal] = React.useState(false);
+  const [showDownloadFailureModal, setShowDownloadFailureModal] = React.useState(false);
 
+  React.useEffect(() => {
+    if (downloadProgress.length) {
+      const p = downloadProgress.find(({ id: pid }) => pid === id);
+
+      if (typeof p !== 'undefined') setProgress(p.progress);
+    }
+  }, [downloadProgress]);
+
+  React.useEffect(() => {
+    // if (downloadProgress.length) {
+    //   const p = downloadProgress.find(({ id: pid }) => pid === id);
+
+    //   if (typeof p !== 'undefined') setProgress(p.progress);
+    // }
+    console.log({ progress, isDownloaded });
+    if (progress === 100) {
+      if (isDownloaded) return;
+      setShowDownloadSuccessModal(true);
+      setIsDownloaded(true);
+    }
+  }, [progress]);
+
+  /// modifies state on taks changes
   React.useEffect(() => {
     if (typeof task === 'undefined') return setIsDownloaded(true);
     if (task.state === 'PAUSED') return setPaused(true);
@@ -64,25 +78,46 @@ const DownloadItem = ({
     if (task.state === 'FAILED') return setBroken(true);
     if (task.state === 'DONE') return setIsDownloaded(true);
 
-    setProgress(task.percent * 100);
+    // setProgress(task.percent * 100);
     task
       .progress((percent) => {
         console.log(`progress: ${percent * 100}%`);
-        setProgress(percent * 100);
+        updateDownloadsProgressAction({ id, progress: percent * 100 });
       })
       .done(() => {
         setIsDownloaded(true);
+        setShowDownloadSuccessModal(true);
         console.log('Download is done!');
       })
       .error((error) => {
         setIsDownloaded(false);
         setBroken(true);
+        setShowDownloadFailureModal(true);
         console.log('Download canceled due to error: ', error);
       });
     // setPaused(false);
 
     setIsDownloaded(false);
   }, [task]);
+
+  // React.useEffect(() => {
+  //   checkDownloads();
+  // });
+
+  // const checkDownloads = async () => {
+  //   await checkExistingDownloads();
+  // };
+
+  // hide download success modal if true
+  React.useEffect(() => {
+    if (showDownloadSuccessModal) hideSnackBar();
+  }, [showDownloadSuccessModal]);
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowDownloadSuccessModal(false);
+    }, 3000);
+  };
 
   const handleRetry = () => {
     // initialise download here
@@ -102,32 +137,20 @@ const DownloadItem = ({
   const handlePlay = async () => {
     if (typeof task === 'undefined') return;
 
-    task.resume();
+    await task.resume();
 
+    // setProgress(task.percent * 100);
     setPaused(false);
   };
 
-  const renderPauseButton = () => {
-    if (paused)
-      return (
-        <Pressable onPress={() => handlePlay()}>
-          <Icon name="circular-play" size={theme.iconSize(5)} />
-        </Pressable>
-      );
+  // const handleStopDownload = () => {
+  //   if (typeof task === 'undefined') return;
 
-    if (broken) {
-      return (
-        <Pressable>
-          <Icon name="redo" size={theme.iconSize(5)} />
-        </Pressable>
-      );
-    }
+  //   task.stop();
+  // };
 
-    return (
-      <Pressable onPress={() => handlePause()}>
-        <Icon name="circular-pause" size={theme.iconSize(5)} />
-      </Pressable>
-    );
+  const hideStopDownloadModal = () => {
+    setShowStopDownloadModal(true);
   };
 
   const renderDownloadControls = () => {
@@ -135,10 +158,33 @@ const DownloadItem = ({
 
     return (
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {renderPauseButton()}
-        <Pressable style={{ marginLeft: 10 }}>
+        <ButtonPause
+          broken={broken}
+          paused={paused}
+          handlePause={handlePause}
+          handlePlay={handlePlay}
+        />
+        <ButtonRetry
+          broken={broken}
+          handlePress={handleRetry}
+          handleDownloadMovie={handleDownloadMovie}
+        />
+        {/* <Pressable onPress={() => setShowStopDownloadModal(true)} style={{ marginLeft: 10 }}>
           <Icon name="close" size={theme.iconSize(5)} />
-        </Pressable>
+        </Pressable> */}
+        <ButtonClose onPressAction={hideStopDownloadModal} />
+      </View>
+    );
+  };
+
+  const renderRadioButton = () => {
+    if (!isDownloaded) return;
+
+    return (
+      <View style={{ justifyContent: 'center' }}>
+        {activateCheckboxes && (
+          <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+        )}
       </View>
     );
   };
@@ -179,70 +225,59 @@ const DownloadItem = ({
     );
   };
 
-  // const handleDownloadMovie = async (video) => {
-  //   const { videoId, url, is_series, currentEpisode } = video;
-
-  //   let ep = '';
-
-  //   if (is_series) {
-  //     ep = `SO${currentEpisode.season}E${currentEpisode.episode}`;
-  //   }
-
-  //   const downloadId = `${videoId}${ep}`;
-
-  //   // return if movie is already downloaded
-  //   if (isMovieDownloaded) {
-  //     console.log('already downloaded');
-  //     return;
-  //   }
-
-  //   // return if there is no available source to download
-  //   if (typeof url === 'undefined') {
-  //     console.log('no source');
-  //     return;
-  //   }
-
-  //   try {
-  //     let config = getConfig(video);
-
-  //     let task = RNBackgroundDownloader.download(config)
-  //       .begin((expectedBytes) => {
-  //         console.log(`Going to download ${expectedBytes} bytes!`);
-  //         downloadStartedAction();
-  //       })
-  //       .progress((percent) => {
-  //         updateDownloadsProgressAction({ id: downloadId, progress: percent * 100 });
-  //       })
-  //       .done(() => {
-  //         console.log('Download is done!');
-
-  //         let completedItems = downloadsProgress.filter(
-  //           ({ received, total }) => received === total
-  //         );
-  //         completedItems = completedItems.map(({ id }) => id);
-
-  //         cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
-  //       })
-  //       .error((error) => {
-  //         console.log('Download canceled due to error: ', error);
-  //         downloadStartFailureAction(error.message);
-  //       });
-
-  //     updateDownloadsAction({
-  //       id: downloadId,
-  //       ep,
-  //       task,
-  //       movie
-  //     });
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
-  const handlePress = (e) => {
+  const handlePress = () => {
     if (!isDownloaded) return;
 
     handleSelectItem(id);
+  };
+
+  const handleHideStopDownloadingModal = () => {
+    setShowStopDownloadModal(false);
+  };
+
+  const confirmStopDownload = () => {
+    // stop donwloading task
+    task.stop();
+
+    handleStopDownload(id);
+  };
+
+  const hideDownloadFailureModal = () => {
+    setShowDownloadFailureModal(false);
+  };
+
+  const renderDownloadErrorModal = () => {
+    if (!broken) return;
+
+    return (
+      <AlertModal
+        iconName="download"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+        message={`Error downloading ${title}`}
+        visible={showDownloadFailureModal}
+        hideAction={hideDownloadFailureModal}
+        onCancel={hideDownloadFailureModal}
+        cancelText="Try later"
+        // confirmText="Reload"
+        confirmTextCompomponent={() => (
+          <RetryDownloadButton
+            ep={ep}
+            videoId={id}
+            movieTitle={title}
+            handleDownloadMovie={handleDownloadMovie}
+            setShowDownloadFailureModal={setShowDownloadFailureModal}
+            setBroken={setBroken}
+          />
+        )}
+        confirmAction={handleRetry}
+      />
+    );
+  };
+
+  const handleLongPress = (id) => {
+    if (!isDownloaded) return;
+
+    longPressAction(id);
   };
 
   return (
@@ -252,15 +287,12 @@ const DownloadItem = ({
         onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
         style={{
           opacity: isDownloaded ? 1 : 0.5,
-          paddingVertical: theme.spacing(1),
-          paddingHorizontal: theme.spacing(2),
+          padding: theme.spacing(2),
           flexDirection: 'row',
-          // backgroundColor: 'red'
           backgroundColor: isPressed ? theme.iplayya.colors.white10 : 'transparent'
         }}
         onLongPress={() => handleLongPress(id)}
         onPress={handlePress}
-        // onPress={() => console.log('fuck')}
       >
         <Image
           style={{
@@ -309,21 +341,38 @@ const DownloadItem = ({
         {renderDownloadControls()}
 
         {/* radtio buttons for selection */}
-        <View style={{ justifyContent: 'center' }}>
-          {activateCheckboxes && (
-            <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-          )}
-        </View>
+        {renderRadioButton()}
       </Pressable>
 
       {renderProgress()}
+
+      {renderDownloadErrorModal()}
+
+      <AlertModal
+        iconName="download"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+        message={`Are you sure you want to stop downloading "${title}"?`}
+        visible={showStopDownloadModal}
+        hideAction={handleHideStopDownloadingModal}
+        onCancel={handleHideStopDownloadingModal}
+        // cancelText="Joke lang pala"
+        confirmText="Confirm"
+        confirmAction={confirmStopDownload}
+      />
+
+      <SnackBar
+        visible={showDownloadSuccessModal}
+        iconName="circular-check"
+        iconColor={theme.iplayya.colors.success}
+        message="Download complete"
+      />
     </View>
   );
 };
 
 DownloadItem.propTypes = {
   id: PropTypes.string,
-  theme: PropTypes.object,
+  ep: PropTypes.string,
   handleSelectItem: PropTypes.func,
   title: PropTypes.string,
   year: PropTypes.string,
@@ -332,28 +381,21 @@ DownloadItem.propTypes = {
   age_rating: PropTypes.string,
   category: PropTypes.string,
   imageUrl: PropTypes.string,
-  isDownloaded: PropTypes.bool,
-  progress: PropTypes.number,
-  updateDownloadsAction: PropTypes.func,
-  updateDownloadsProgressAction: PropTypes.func,
-  cleanUpDownloadsProgressAction: PropTypes.func,
-  downloadsProgress: PropTypes.any
+  downloadProgress: PropTypes.array,
+  task: PropTypes.object,
+  longPressAction: PropTypes.func,
+  activateCheckboxes: PropTypes.bool,
+  selectedItems: PropTypes.array,
+  handleStopDownload: PropTypes.func,
+  handleDownloadMovie: PropTypes.func,
+  donwloadStarted: PropTypes.bool,
+  updateDownloadsProgressAction: PropTypes.func
 };
 
 const actions = {
-  updateDownloadsAction: Creators.updateDownloads,
-  updateDownloadsProgressAction: Creators.updateDownloadsProgress,
-  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress
+  updateDownloadsProgressAction: Creators.updateDownloadsProgress
 };
-
-const mapStateToProps = (state, props) => {
-  const { downloadsProgress } = state.downloads;
-  return {
-    downloadsProgress,
-    // task: selectTask(state, props),
-    video: selectVideoForDownloadInfo(state, props)
-  };
-};
+const mapStateToProps = createStructuredSelector({ downloadProgress: selectDownloadsProgress });
 
 const enhance = compose(connect(mapStateToProps, actions));
 

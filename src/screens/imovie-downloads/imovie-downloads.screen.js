@@ -8,7 +8,6 @@ import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import NoDownloads from 'assets/downloads-empty.svg';
-import { createFontFormat } from 'utils';
 import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -19,9 +18,8 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import DownloadItem from './download-item.component';
 import { Creators } from 'modules/ducks/downloads/downloads.actions';
 import { deleteFile, listDownloadedFiles, checkExistingDownloads } from 'services/download.service';
-import { getFilename } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath } from 'utils';
+import { createFontFormat, getFilename, downloadPath, getConfig } from 'utils';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
 import {
@@ -33,8 +31,9 @@ import {
 } from 'modules/ducks/downloads/downloads.selectors';
 import uuid from 'react-uuid';
 import { FlatList } from 'react-native-gesture-handler';
+import RNBackgroundDownloader, { download } from 'react-native-background-downloader';
 
-const ITEM_HEIGHT = 156;
+const ITEM_HEIGHT = 144;
 
 // eslint-disable-next-line no-unused-vars
 const ImovieDownloadsScreen = ({
@@ -47,7 +46,12 @@ const ImovieDownloadsScreen = ({
 
   downloads,
   removeDownloadsByIdsAction,
-  downloadStartAction
+  downloadStartAction,
+  downloadStartedAction,
+  updateDownloadsProgressAction,
+  cleanUpDownloadsProgressAction,
+  downloadStartFailureAction,
+  updateDownloadsAction
 }) => {
   const [activeDownloads, setActiveDownloads] = React.useState([]);
 
@@ -56,6 +60,74 @@ const ImovieDownloadsScreen = ({
   const [selectAll, setSellectAll] = React.useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
+
+  /**
+   * downloads a movie
+   * @param {Object} video contains ep, videoId, title, url, is_series, currentEpisode properties that are required for the download aciton
+   * @returns void
+   */
+  const handleDownloadMovie = React.useCallback((video) => {
+    const { ep, videoId, url, movie } = video;
+
+    // let ep = '';
+
+    // if (is_series) {
+    //   ep = `SO${currentEpisode.season}E${currentEpisode.episode}`;
+    // }
+
+    const downloadId = `${videoId}${ep}`;
+
+    // return if movie is already downloaded
+    // if (isMovieDownloaded) {
+    //   console.log('already downloaded');
+    //   return;
+    // }
+
+    // return if there is no available source to download
+    if (typeof url === 'undefined') {
+      console.log('no source');
+      return;
+    }
+
+    try {
+      let config = getConfig(video);
+
+      let task = RNBackgroundDownloader.download(config)
+        .begin((expectedBytes) => {
+          console.log(`Going to download ${expectedBytes} bytes!`);
+          downloadStartedAction();
+        })
+        .progress((percent) => {
+          updateDownloadsProgressAction({ id: downloadId, progress: percent * 100 });
+        })
+        .done(() => {
+          console.log('Download is done!');
+
+          updateDownloadsProgressAction({ id: downloadId, progress: 100 });
+
+          let completedItems = downloadsProgress.filter(
+            ({ received, total }) => received === total
+          );
+          completedItems = completedItems.map(({ id }) => id);
+
+          cleanUpDownloadsProgressAction([video.videoId, ...completedItems]);
+        })
+        .error((error) => {
+          console.log('Download canceled due to error: ', error);
+          downloadStartFailureAction(error.message);
+        });
+
+      updateDownloadsAction({
+        id: downloadId,
+        ep,
+        url,
+        task,
+        movie
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, []);
 
   React.useEffect(() => {
     downloadStartAction();
@@ -138,33 +210,72 @@ const ImovieDownloadsScreen = ({
       // check for active downloads in the background
       const existingDownloads = await checkExistingDownloads();
 
-      // console.log({ existingDownloads });
+      console.log({ existingDownloads });
 
       // set active downloads list to get the download tasks
       setActiveDownloads(existingDownloads);
 
       // add existing download ids to ids array
       const existingDownloadIds = existingDownloads.map(({ id }) => id);
-      ids = [...existingDownloadIds];
 
       // add downloaded files ids to ids array
-      const donwloadedFiles = await RNFetchBlob.fs.ls(downloadPath);
-      const donwloadedFilesIds = donwloadedFiles.map((filename) => filename.split('_')[0]);
+      const downloadedFiles = await RNFetchBlob.fs.ls(downloadPath);
+
+      /// remove downloaded files that are not included in state download list
+      // because not doing so, the screen will display items that have undefined info like title and time
+      const promises = [];
+      for (let i = 0; i < downloadedFiles.length; i++) {
+        const d = downloadedFiles[i];
+        const downloadId = d.split('_')[0];
+        const download = downloads.find(({ id }) => id === downloadId);
+        if (typeof download === 'undefined') promises.push(deleteFile(d));
+      }
+      // const promises = downloadedFiles.map((d) => deleteFile(d));
+      await Promise.all(promises);
+
+      // console.log({ downloadedFiles });
+
+      const donwloadedFilesIds = downloadedFiles.map((filename) => filename.split('_')[0]);
+
       ids = [...existingDownloadIds, ...donwloadedFilesIds];
 
-      data = ids.map((id) => {
+      for (let i = 0; i < ids.length; i++) {
+        const id = ids[i];
+
         const download = downloads.find((d) => d.id === id);
-        if (typeof download === 'undefined') return { id: uuid() };
 
-        const { id: itemId, movie, ep } = download;
+        if (typeof download !== 'undefined') {
+          const { movie, ep } = download;
 
-        let movieClone = clone(movie);
+          let movieClone = clone(movie);
 
-        /// change the movie id to be the download id from redux state
-        return Object.assign(movieClone, { id: itemId, ep });
-      });
+          /// change the movie id to be the download id from redux state
+          data.push(Object.assign(movieClone, { ep }));
+        }
+      }
+
+      // data = ids.map((id) => {
+      //   const download = downloads.find((d) => d.id === id);
+      //   if (typeof download === 'undefined') {
+      //     /// remove broken file
+      //     // console.log({ id });
+      //     return { id };
+      //   }
+
+      //   const { id: itemId, movie, ep } = download;
+
+      //   let movieClone = clone(movie);
+
+      //   /// change the movie id to be the download id from redux state
+      //   return Object.assign(movieClone, { id: itemId, ep });
+      // });
 
       data = uniqBy(data, 'id');
+
+      // console.log({ downloadedFiles });
+
+      /// remove all empty downloads
+      // data = data.filter(({ title }) => typeof title !== 'undefined');
 
       setList(data);
     } catch (error) {
@@ -188,6 +299,12 @@ const ImovieDownloadsScreen = ({
 
       navigation.navigate('MovieDetailDownloadedScreen', { movie: { ep, ...movieFields } });
     }
+  };
+
+  const handleStopDownload = (id) => {
+    const updatedList = list.filter(({ id: itemId }) => itemId !== id);
+
+    setList(updatedList);
   };
 
   const renderItem = ({ item: { id, thumbnail, ...otherProps } }) => {
@@ -215,9 +332,11 @@ const ImovieDownloadsScreen = ({
         imageUrl={imageUrl}
         handleSelectItem={handleSelectItem}
         task={task}
-        handleLongPress={handleLongPress}
+        longPressAction={handleLongPress}
         activateCheckboxes={activateCheckboxes}
         selectedItems={selectedItems}
+        handleStopDownload={handleStopDownload}
+        handleDownloadMovie={handleDownloadMovie}
         {...otherProps}
       />
     );
@@ -356,7 +475,12 @@ const Container = (props) => (
 const actions = {
   getDownloadsAction: Creators.getDownloads,
   removeDownloadsByIdsAction: Creators.removeDownloadsByIds,
-  downloadStartAction: Creators.downloadStart
+  downloadStartAction: Creators.downloadStart,
+  downloadStartedAction: Creators.downloadStarted,
+  updateDownloadsAction: Creators.updateDownloads,
+  updateDownloadsProgressAction: Creators.updateDownloadsProgress,
+  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress,
+  downloadStartFailureAction: Creators.downloadStartFailure
 };
 
 const mapStateToProps = createStructuredSelector({

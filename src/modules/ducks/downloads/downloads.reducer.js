@@ -1,5 +1,6 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './downloads.actions';
+import { updateDownloadsCollection } from './downloads.utils';
 
 const INITIAL_STATE = {
   error: null,
@@ -27,11 +28,14 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.UPDATE_DOWNLOADS]: (state, action) => {
-    const { downloadTask } = action;
+    const downloads = updateDownloadsCollection(state, action);
+    // const { downloadTask } = action;
+
     return {
       ...state,
       isFetching: true,
-      downloads: [downloadTask, ...state.downloads]
+      downloads
+      // downloads: [downloadTask, ...state.downloads]
     };
   },
   [Types.DOWNLOAD_STARTED]: (state) => {
@@ -54,7 +58,7 @@ export default createReducer(INITIAL_STATE, {
     const { id, ...progress } = action.data;
     return {
       ...state,
-      downloadsProgress: [...state.downloadsProgress, { id, ...progress }]
+      downloadsProgress: [{ id, ...progress }, ...state.downloadsProgress]
     };
   },
 

@@ -11,19 +11,19 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
 import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
-import { getConfig, downloadPath } from 'utils';
+import { getConfig, downloadPath, createFontFormat } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
-import { createFontFormat } from 'utils';
 import {
   selectMovieTitle,
-  selectDownloadUrl,
+  // selectDownloadUrl,
   selectMovie,
   selectCurrentEpisode
 } from 'modules/ducks/movies/movies.selectors';
 import { selectNetworkInfo } from 'modules/app';
 import { checkExistingDownloads } from 'services/download.service';
 import uuid from 'react-uuid';
+import DeviceInfo from 'react-native-device-info';
 
 const DownloadButton = ({
   videoId, // from navigation parameters
@@ -31,7 +31,7 @@ const DownloadButton = ({
   theme,
   movie,
   movieTitle,
-  donwloadUrl,
+  // donwloadUrl,
 
   currentEpisode,
 
@@ -52,10 +52,12 @@ const DownloadButton = ({
 
   networkInfo
 }) => {
+  // console.log({ donwloadUrl });
   const [files, setFiles] = React.useState([]);
   // const [downloading, setDownloading] = React.useState(false);
   const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
   const [sources, setSources] = React.useState([]);
+  const [selectedDownloadUrl, setSelectedDownloadUrl] = React.useState(null);
   const [showDownloadOptionsModal, setShowDownloadOptionsModal] = React.useState(false);
 
   React.useEffect(() => {
@@ -99,15 +101,6 @@ const DownloadButton = ({
         return setSources(downloadSources);
       }
     }
-
-    // if (currentEpisode && movie) {
-    //   // is_series should be true at this point
-
-    // }
-
-    // if (movie) {
-
-    // }
   }, [movie, currentEpisode]);
 
   const handleDownloadMovie = async (video) => {
@@ -136,6 +129,7 @@ const DownloadButton = ({
     try {
       let config = getConfig(video);
 
+      // eslint-disable-next-line no-unused-vars
       let task = RNBackgroundDownloader.download(config)
         .begin((expectedBytes) => {
           console.log(`Going to download ${expectedBytes} bytes!`);
@@ -146,6 +140,8 @@ const DownloadButton = ({
         })
         .done(() => {
           console.log('Download is done!');
+
+          updateDownloadsProgressAction({ id: downloadId, progress: 100 });
 
           let completedItems = downloadsProgress.filter(
             ({ received, total }) => received === total
@@ -162,7 +158,7 @@ const DownloadButton = ({
       updateDownloadsAction({
         id: downloadId,
         ep,
-        task,
+        url,
         movie
       });
     } catch (error) {
@@ -191,15 +187,21 @@ const DownloadButton = ({
     }
   }, [files]);
 
+  React.useEffect(() => {
+    if (!selectedDownloadUrl) return;
+
+    execDownload(selectedDownloadUrl);
+  }, [selectedDownloadUrl]);
+
   const hideDownloadOptions = () => {
     setShowDownloadOptionsModal(false);
   };
 
   // console.log('sources', sources);
   // eslint-disable-next-line no-unused-vars
-  const confirmDownload = async () => {
+  const execDownload = async (url) => {
     // hide resolution options for download
-    hideDownloadOptions(false);
+    hideDownloadOptions();
 
     // don't download if not connected to internet
     console.log('videoId', videoId);
@@ -217,7 +219,7 @@ const DownloadButton = ({
     handleDownloadMovie({
       videoId,
       title: movieTitle,
-      url: donwloadUrl,
+      url,
       is_series: movie.is_series,
       currentEpisode
     });
@@ -242,10 +244,10 @@ const DownloadButton = ({
       <Modal animationType="slide" visible={showDownloadOptionsModal} transparent>
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
           <View style={{ backgroundColor: '#202530', paddingTop: 20 }}>
-            {sources.map(({ id, label }) => (
+            {sources.map(({ id, label, link }) => (
               <TouchableRipple
                 key={id}
-                onPress={confirmDownload}
+                onPress={() => setSelectedDownloadUrl(link.split(' ')[1])}
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
@@ -263,11 +265,16 @@ const DownloadButton = ({
             <View
               style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}
             />
-            <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-              <TouchableOpacity onPress={() => hideDownloadOptions()}>
-                <Text>Cancel</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableRipple
+              style={{
+                alignItems: 'center',
+                paddingTop: 20,
+                paddingBottom: DeviceInfo.hasNotch() ? 33 : 20
+              }}
+              onPress={() => hideDownloadOptions()}
+            >
+              <Text>Cancel</Text>
+            </TouchableRipple>
           </View>
         </View>
       </Modal>
@@ -318,7 +325,7 @@ const mapStateToProps = createStructuredSelector({
   // get movie from state to add to downloads data for offline use
   movie: selectMovie,
   // movieUrl: selectMovieUrl,
-  donwloadUrl: selectDownloadUrl,
+  // donwloadUrl: selectDownloadUrl,
   movieTitle: selectMovieTitle,
   downloadsProgress: selectDownloadsProgress,
   networkInfo: selectNetworkInfo,
