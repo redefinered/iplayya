@@ -17,10 +17,9 @@ import Spacer from 'components/spacer.component';
 import { VLCPlayer } from 'react-native-vlc-media-player';
 import Video from 'react-native-video';
 import uuid from 'react-uuid';
-
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
-
 import SystemSetting from 'react-native-system-setting';
+import DeviceInfo from 'react-native-device-info';
 
 const MediaPlayer = ({
   videoplayer,
@@ -475,7 +474,11 @@ const MediaPlayer = ({
             />
             <TouchableRipple
               onPress={() => setShowVideoOptions(false)}
-              style={{ alignItems: 'center', paddingVertical: 20 }}
+              style={{
+                alignItems: 'center',
+                paddingVertical: 20,
+                paddingBottom: DeviceInfo.hasNotch() ? 33 : 20
+              }}
             >
               <Text>Cancel</Text>
             </TouchableRipple>
