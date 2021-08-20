@@ -18,6 +18,7 @@ const AlertModal = ({
   hideAction,
   message,
   variant,
+  confirmTextCompomponent,
   ...otherProps
 }) => {
   let { iconName, iconColor } = otherProps;
@@ -40,6 +41,21 @@ const AlertModal = ({
       iconColor = iconColor || null;
       break;
   }
+
+  const renderConfirmation = () => {
+    if (typeof confirmTextCompomponent === 'undefined')
+      return (
+        <Button
+          style={{ width: '100%', textAlign: 'center' }}
+          labelStyle={styles.button}
+          onPress={() => confirmAction()}
+        >
+          {confirmText}
+        </Button>
+      );
+
+    return <React.Fragment>{confirmTextCompomponent()}</React.Fragment>;
+  };
   return (
     <Modal animationType="slide" visible={visible} transparent>
       <Pressable onPress={() => hideAction()} style={styles.container}>
@@ -64,15 +80,7 @@ const AlertModal = ({
                 </Button>
               </View>
             )}
-            <View style={{ flex: 12 }}>
-              <Button
-                style={{ width: '100%', textAlign: 'center' }}
-                labelStyle={styles.button}
-                onPress={() => confirmAction()}
-              >
-                {confirmText}
-              </Button>
-            </View>
+            <View style={{ flex: 12 }}>{renderConfirmation()}</View>
           </View>
         </View>
       </Pressable>
@@ -89,7 +97,8 @@ AlertModal.propTypes = {
   onCancel: PropTypes.func,
   hideAction: PropTypes.func,
   message: PropTypes.string.isRequired,
-  variant: PropTypes.string
+  variant: PropTypes.string,
+  confirmTextCompomponent: PropTypes.func
 };
 
 AlertModal.defaultProps = {
