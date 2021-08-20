@@ -356,7 +356,7 @@ const MovieDetailScreen = ({
           <Text
             style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
           >{`${title} (${year})`}</Text>
-          <Text numberOfLines={4} style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
+          <Text numberOfLines={3} style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
             {description}
           </Text>
           <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
