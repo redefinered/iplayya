@@ -57,6 +57,7 @@ export default {
   },
   iplayya: {
     colors: {
+      success: '#13BD38',
       gooddawn: ['#F54997', '#3D06FF'],
       twilight: ['#2D1449', '#0D0637'],
       midnight: ['#0D111D', '#3D099D'],
