@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { StatusBar, View, ImageBackground, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTheme } from 'react-native-paper';
-import { useHeaderHeight } from '@react-navigation/stack';
+import { createStructuredSelector } from 'reselect';
+import { selectHeaderHeight } from 'modules/app';
+import { connect } from 'react-redux';
 
-const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
+const ScreenContainer = ({ children, backgroundType, withHeaderPush, headerHeight }) => {
   const theme = useTheme();
-  const headerHeight = useHeaderHeight();
-
   const containerWithBackground = () => {
     if (backgroundType === 'solid') {
       return (
@@ -89,7 +89,10 @@ ScreenContainer.propTypes = {
   withHeaderPush: PropTypes.bool,
   children: PropTypes.any.isRequired,
   backgroundType: PropTypes.string,
-  gradientTypeColors: PropTypes.array
+  gradientTypeColors: PropTypes.array,
+  headerHeight: PropTypes.numb
 };
 
-export default ScreenContainer;
+const mapStateToProps = createStructuredSelector({ headerHeight: selectHeaderHeight });
+
+export default connect(mapStateToProps)(ScreenContainer);

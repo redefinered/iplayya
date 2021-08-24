@@ -8,6 +8,7 @@ const { Types, Creators } = createActions(
     appReadySuccess: null,
     appReadyFailure: ['error'],
     setNetworkInfo: ['networkInfo'],
+    setHeaderHeight: ['height'],
     default: null,
     purgeStore: null
   },
@@ -21,6 +22,7 @@ const INITIAL_STATE = {
   isLoading: true,
   error: null,
   networkInfo: null,
+  headerHeight: null,
   vodCategories: [],
   musicGenres: []
 };
@@ -31,6 +33,9 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isLoading: true
     };
+  },
+  [Types.SET_HEADER_HEIGHT]: (state, action) => {
+    return { ...state, headerHeight: action.height };
   },
   [Types.APP_READY]: (state) => {
     return {
@@ -69,3 +74,4 @@ const appState = (state) => state.app;
 
 export const selectIsLoading = createSelector([appState], ({ isLoading }) => isLoading);
 export const selectNetworkInfo = createSelector([appState], ({ networkInfo }) => networkInfo);
+export const selectHeaderHeight = createSelector([appState], ({ headerHeight }) => headerHeight);
