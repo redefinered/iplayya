@@ -24,13 +24,9 @@ import SplashScreen from 'react-native-splash-screen';
 import Test from './test.component.js';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
 import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
-
 import NotifService from 'NotifService';
-// import { selectNotifications } from 'modules/ducks/itv/itv.selectors.js';
-
 // eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
-
 import { Button } from 'react-native-paper';
 
 // eslint-disable-next-line no-unused-vars
