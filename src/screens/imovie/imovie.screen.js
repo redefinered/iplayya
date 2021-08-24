@@ -92,10 +92,10 @@ const ImovieScreen = ({
   // console.log({ paginatorInfo });
   // get movies on mount
   React.useEffect(() => {
-    if (paginatorInfo.length) {
+    if (categoryPaginator.page === 1) {
       getMoviesAction(paginatorInfo, categoryPaginator);
     }
-  }, [paginatorInfo]);
+  }, [categoryPaginator]);
 
   const handleMovieSelect = ({ id: videoId, is_series }) => {
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
