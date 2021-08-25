@@ -128,7 +128,15 @@ const ImovieFavoritesScreen = ({
               >
                 <Pressable
                   onPress={() => setShowDeleteConfirmation(true)}
-                  style={{ flexDirection: 'row', alignItems: 'center' }}
+                  underlayColor={theme.iplayya.colors.black80}
+                  style={({ pressed }) => [
+                    {
+                      backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      padding: 5
+                    }
+                  ]}
                 >
                   <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                   <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
@@ -142,18 +150,26 @@ const ImovieFavoritesScreen = ({
                 </Pressable>
               </View>
 
-              <Spacer size={30} />
+              <Spacer size={20} />
             </ContentWrap>
           )}
           {favorites.map(
             ({ id, title, year, time, rating_mpaa, age_rating, category, thumbnail }) => {
-              let url = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
+              let uri = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
               return (
-                <ContentWrap key={id}>
-                  <Pressable
+                <Pressable
+                  key={id}
+                  underlayColor={theme.iplayya.colors.black80}
+                  style={({ pressed }) => [
+                    {
+                      backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+                    }
+                  ]}
+                  onLongPress={() => handleLongPress(id)}
+                  onPress={() => handleSelectItem(id)}
+                >
+                  <ContentWrap
                     style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
-                    onLongPress={() => handleLongPress(id)}
-                    onPress={() => handleSelectItem(id)}
                   >
                     <Image
                       style={{
@@ -161,10 +177,10 @@ const ImovieFavoritesScreen = ({
                         height: 96,
                         borderRadius: 8,
                         position: 'absolute',
-                        top: 0,
-                        left: 0
+                        top: 10,
+                        left: 4
                       }}
-                      source={{ url }}
+                      source={{ uri }}
                     />
                     <View
                       style={{
@@ -174,8 +190,9 @@ const ImovieFavoritesScreen = ({
                         alignItems: 'center'
                       }}
                     >
-                      <View style={{ height: 96, justifyContent: 'center' }}>
+                      <View style={{ height: 96, justifyContent: 'center', flexShrink: 1 }}>
                         <Text
+                          numberOfLines={1}
                           style={{
                             fontWeight: '700',
                             ...createFontFormat(16, 22),
@@ -203,8 +220,8 @@ const ImovieFavoritesScreen = ({
                         <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
                       )}
                     </View>
-                  </Pressable>
-                </ContentWrap>
+                  </ContentWrap>
+                </Pressable>
               );
             }
           )}
@@ -214,7 +231,7 @@ const ImovieFavoritesScreen = ({
               variant="danger"
               message={`Are you sure you want to delete ${
                 selectedItems.length > 1 ? 'these' : 'this'
-              } channel in your download list?`}
+              } movie in your download list?`}
               visible={showDeleteConfirmation}
               onCancel={handleHideConfirmDeleteModal}
               hideAction={handleHideConfirmDeleteModal}
@@ -259,7 +276,7 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const Container = (props) => (
-  <ScreenContainer backgroundType="solid" withHeaderPush>
+  <ScreenContainer withHeaderPush>
     <ImovieFavoritesScreen {...props} />
   </ScreenContainer>
 );
