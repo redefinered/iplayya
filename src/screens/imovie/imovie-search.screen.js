@@ -1,24 +1,43 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, ScrollView, TextInput as FormInput } from 'react-native';
-import { Text, ActivityIndicator, TouchableRipple, useTheme } from 'react-native-paper';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Image,
+  TouchableOpacity,
+  FlatList,
+  TextInput as FormInput
+} from 'react-native';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
 import ContentWrap from 'components/content-wrap.component';
+import withLoader from 'components/with-loader.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
+import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators } from 'modules/ducks/movies-search/moviesSearch.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
+import {
+  selectCategoriesOf
+  // selectError,
+  // selectSearchResults,
+  // selectIsFetching,
+  // selectRecentSearch
+} from 'modules/ducks/movies/movies.selectors';
 import {
   selectError,
   selectSearchResults,
   selectIsFetching,
-  selectCategoriesOf
-} from 'modules/ducks/movies/movies.selectors';
+  selectRecentSearch
+} from 'modules/ducks/movies-search/moviesSearch.selectors';
+
+const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieSearchScreen = ({
   navigation,
@@ -27,7 +46,10 @@ const ImovieSearchScreen = ({
   searchAction,
   results,
   categories,
-  isFetching
+  isFetching,
+
+  updateRecentSearchAction,
+  recentSearch
 }) => {
   const theme = useTheme();
   const [term, setTerm] = React.useState('');
@@ -65,6 +87,13 @@ const ImovieSearchScreen = ({
     navigation.navigate('MovieDetailScreen', { videoId });
   };
 
+  // React.useEffect(() => {
+  //   const getResults = results.map(({ category }) => category);
+  //   console.log(getResults);
+  //   const getTitle = categories.filter((categories) => getResults.includes(categories.title));
+  //   console.log(getTitle);
+  // });
+
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
   //   console.log({ videoId, is_series });
   //   if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
@@ -72,10 +101,57 @@ const ImovieSearchScreen = ({
   // };
 
   const handleCategoryPress = (categoryId, title) => {
-    navigation.navigate('ImovieScreen', { categoryId, categoryName: title });
+    navigation.navigate('ImovieScreen', {
+      categoryId,
+      categoryName: title,
+      openImoviesGuide: false
+    });
+  };
+
+  const handleRecentSearch = () => {
+    if (term.length) {
+      updateRecentSearchAction(term);
+    } else {
+      return;
+    }
   };
 
   // console.log({ results });
+
+  const renderThumbnail = (uri, title) => {
+    if (!uri) {
+      return (
+        <View
+          style={{
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
+            backgroundColor: theme.iplayya.colors.white10,
+            borderRadius: 8,
+            padding: theme.spacing(1)
+          }}
+        >
+          <Text style={{ fontSize: 16, color: theme.iplayya.colors.vibrantpussy }}>{title}</Text>
+        </View>
+      );
+    }
+    return (
+      <Image
+        style={{ width: CARD_DIMENSIONS.WIDTH, height: CARD_DIMENSIONS.HEIGHT, borderRadius: 8 }}
+        source={{ uri }}
+      />
+    );
+  };
+
+  const renderItem = ({ item: { id, thumbnail: uri, title, is_series } }) => {
+    return (
+      <TouchableOpacity
+        style={{ marginRight: 10, marginBottom: 10 }}
+        onPress={() => handleItemPress({ id, is_series })}
+      >
+        {renderThumbnail(uri, title)}
+      </TouchableOpacity>
+    );
+  };
 
   const renderResult = () => {
     if (error)
@@ -98,15 +174,33 @@ const ImovieSearchScreen = ({
             style={{
               ...createFontFormat(14, 19),
               fontWeight: '700',
-              color: theme.iplayya.colors.white50,
+              color: theme.iplayya.colors.white80,
               paddingVertical: 15
             }}
           >
             Search Results
           </Text>
-          <ScrollView>
-            {results.map(({ id, title, is_series }) => (
-              // Set is_series to true fron now
+          <FlatList
+            scrollEnabled
+            showsVerticalScrollIndicator={false}
+            data={results}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            numColumns={3}
+          />
+          {/* <FlatList
+              data={results}
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item: { id } }) => (
+                <CategoryScrollList key={id} data={results} onSelect={handleItemPress} />
+              )}
+              // initialScrollIndex={scrollIndex}
+              // onEndReached={(info) => handleEndReached(info)}
+              onEndReachedThreshold={0.5}
+              // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+            /> */}
+          {/* {results.map(({ id, title, is_series }) => (
               <TouchableRipple key={id} onPress={() => handleItemPress({ id, is_series })}>
                 <Text
                   style={{
@@ -118,14 +212,41 @@ const ImovieSearchScreen = ({
                   {title}
                 </Text>
               </TouchableRipple>
-            ))}
-          </ScrollView>
+            ))} */}
         </React.Fragment>
       );
   };
 
+  const renderRecentSearch = () => {
+    if (term.length || !term.length) {
+      if (results.length) return;
+      return (
+        <React.Fragment>
+          <Text
+            style={{
+              ...createFontFormat(14, 19),
+              fontWeight: '700',
+              color: theme.iplayya.colors.white50,
+              paddingVertical: 15
+            }}
+          >
+            Recent Search
+          </Text>
+          <ScrollView>
+            {recentSearch.map((term, index) => (
+              <TouchableRipple key={index} onPress={() => setTerm(term)}>
+                <Text style={{ ...createFontFormat(16, 22), paddingVertical: 10 }}>{term}</Text>
+              </TouchableRipple>
+            ))}
+          </ScrollView>
+        </React.Fragment>
+      );
+    }
+  };
+
   const renderSuggestedSearch = () => {
-    if (term.length > 0 && term.length <= 3) {
+    // > 0 && term.length <= 3
+    if (term.length || !term.length) {
       /// return if search results is not empty
       if (results.length) return;
 
@@ -184,7 +305,11 @@ const ImovieSearchScreen = ({
           <RNPTextInput.Icon
             name={() => {
               return isFetching ? (
-                <ActivityIndicator />
+                <Icon
+                  name="search"
+                  size={theme.iconSize(4)}
+                  style={{ marginRight: theme.spacing(-0.3) }}
+                />
               ) : (
                 <Icon
                   name="search"
@@ -193,19 +318,21 @@ const ImovieSearchScreen = ({
                 />
               );
             }}
+            onPress={() => handleRecentSearch()}
           />
         }
         // onFocus={() => this.setState({ isolatedInputs: true })}
         // onBlur={() => this.setState({ isolatedInputs: false })}
       />
       {renderResult()}
+      {renderRecentSearch()}
       {renderSuggestedSearch()}
     </ContentWrap>
   );
 };
 
 const Container = (props) => (
-  <ScreenContainer backgroundType="solid" withHeaderPush>
+  <ScreenContainer withHeaderPush>
     <ImovieSearchScreen {...props} />
   </ScreenContainer>
 );
@@ -219,14 +346,18 @@ const styles = StyleSheet.create({
 
 const actions = {
   searchAction: Creators.search,
-  searchStartAction: Creators.searchStart
+  searchStartAction: Creators.searchStart,
+  updateRecentSearchAction: Creators.updateRecentSearch
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
-  categories: selectCategoriesOf('movies')
+  categories: selectCategoriesOf('movies'),
+  recentSearch: selectRecentSearch
 });
 
-export default connect(mapStateToProps, actions)(Container);
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
+
+export default enhance(Container);

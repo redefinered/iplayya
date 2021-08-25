@@ -84,6 +84,7 @@ const ImovieScreen = ({
     // console.log({ data });
     if (typeof params !== 'undefined') {
       const { categoryName } = params;
+
       return setScrollIndex(data.findIndex((c) => c.category === categoryName));
     }
     setScrollIndex(0);
@@ -156,8 +157,10 @@ const ImovieScreen = ({
   };
 
   React.useEffect(() => {
-    if (params) {
-      setShowWalkthroughGuide(params.openImoviesGuide);
+    if (typeof params !== 'undefined') {
+      const { openImoviesGuide } = params;
+      if (!openImoviesGuide) return;
+      setShowWalkthroughGuide(true);
     }
   }, [params]);
 
@@ -214,7 +217,7 @@ const ImovieScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer backgroundType="solid" withHeaderPush>
+  <ScreenContainer withHeaderPush>
     <ImovieScreen {...props} />
   </ScreenContainer>
 );
