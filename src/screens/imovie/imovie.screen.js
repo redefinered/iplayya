@@ -25,7 +25,7 @@ import {
 // import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
-
+// import uniq
 import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
 
 const ImovieScreen = ({
@@ -76,6 +76,8 @@ const ImovieScreen = ({
 
   React.useEffect(() => {
     if (!movies) return;
+
+    console.log({ movies });
 
     setData(movies);
   }, [movies]);
