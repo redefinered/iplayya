@@ -11,7 +11,7 @@ const { Types, Creators } = createActions(
     getMovies: ['paginatorInfo', 'categoryPaginator'],
     getMoviesSuccess: ['movies', 'categoryPaginator'],
     getMoviesFailure: ['error'],
-    resetCategoryPaginator: [],
+    resetCategoryPaginator: null,
 
     //recent search
     updateRecentSearch: ['term']
