@@ -17,6 +17,9 @@ const AddToFavoritesButton = ({
   const theme = useTheme();
 
   const handleAddAction = () => {
+    /// stop if already in favorites
+    if (inFavorites) return;
+
     switch (module) {
       case 'itv':
         addChannelToFavoritesAction(sub);
