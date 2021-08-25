@@ -259,6 +259,7 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: null,
       removedFromFavorites: false,
+      updatedFavorites: false,
       favoriteVideos
     };
   },
