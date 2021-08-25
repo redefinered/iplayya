@@ -87,12 +87,12 @@ const ImovieSearchScreen = ({
     navigation.navigate('MovieDetailScreen', { videoId });
   };
 
-  React.useEffect(() => {
-    const getResults = results.map(({ category }) => category);
-    console.log(getResults);
-    const getTitle = categories.filter((categories) => getResults.includes(categories.title));
-    console.log(getTitle);
-  });
+  // React.useEffect(() => {
+  //   const getResults = results.map(({ category }) => category);
+  //   console.log(getResults);
+  //   const getTitle = categories.filter((categories) => getResults.includes(categories.title));
+  //   console.log(getTitle);
+  // });
 
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
   //   console.log({ videoId, is_series });

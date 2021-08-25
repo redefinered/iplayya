@@ -2,12 +2,12 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    searchStart: [],
+    searchStart: null,
     search: ['input'],
     searchSuccess: ['data'],
     searchFailure: ['error'],
 
-    getMoviesStart: [],
+    getMoviesStart: null,
     getMovies: ['paginatorInfo', 'categoryPaginator'],
     getMoviesSuccess: ['movies', 'categoryPaginator'],
     getMoviesFailure: ['error'],
