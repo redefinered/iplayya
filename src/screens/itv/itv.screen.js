@@ -92,8 +92,14 @@ const ItvScreen = ({
 
   React.useEffect(() => {
     if (typeof params !== 'undefined') {
-      setSelectedCategory(params.genreId);
-      getChannelsByCategoriesAction({ categories: [parseInt(params.genreId)] });
+      const { openItvGuide, genreId } = params;
+
+      setSelectedCategory(genreId);
+      getChannelsByCategoriesAction({ categories: [parseInt(genreId)] });
+
+      if (!openItvGuide) return;
+
+      setShowWalkthroughGuide(true);
     }
   }, [params]);
 
@@ -106,13 +112,6 @@ const ItvScreen = ({
       setGenresData(data);
     }
   }, [genres]);
-
-  // React.useEffect(() => {
-  //   if (isFavoritesUpdated) {
-  //     getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-  //     getChannelsAction(paginator);
-  //   }
-  // }, [isFavoritesUpdated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -150,12 +149,6 @@ const ItvScreen = ({
       setChannelsData([]);
     }
   }, [channels]);
-
-  React.useEffect(() => {
-    if (params) {
-      setShowWalkthroughGuide(params.openItvGuide);
-    }
-  }, [params]);
 
   const handleWalkthroughGuideHide = () => {
     setShowWalkthroughGuide(false);
@@ -354,8 +347,6 @@ const ItvScreen = ({
           borderTopRightRadius: 24,
           borderTopLeftRadius: 24,
           paddingHorizontal: 4,
-          paddingTop: 2,
-          paddingBottom: 2,
           position: 'absolute',
           width: '100%',
           bottom: 0,
@@ -382,7 +373,7 @@ const ItvScreen = ({
             style={{ marginHorizontal: 30, borderRadius: 32, paddingVertical: 12 }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.navigate('HomeScreen')}
+            onPress={() => navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] })}
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="iplayya" size={theme.iconSize(3)} />
