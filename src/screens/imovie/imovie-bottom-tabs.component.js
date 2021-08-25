@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+// import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import theme from 'common/theme';
 
 // eslint-disable-next-line no-unused-vars
@@ -35,58 +35,68 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         backgroundColor: '#202530',
         borderTopRightRadius: 24,
         borderTopLeftRadius: 24,
-        paddingHorizontal: 15,
-        paddingTop: 10,
-        paddingBottom: 10,
+        paddingHorizontal: 4,
         position: 'absolute',
         width: '100%',
         bottom: 0
       }}
     >
       <View style={{ flex: 4 }}>
-        <TouchableWithoutFeedback
+        <TouchableRipple
+          style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 32 }}
+          borderless={true}
+          rippleColor="rgba(255,255,255,0.25)"
           onPress={() => navigation.navigate('ImovieFavoritesScreen')}
-          style={{ alignItems: 'center' }}
         >
-          <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
-          <Text
-            style={{
-              fontSize: 10,
-              textTransform: 'uppercase',
-              marginTop: 5,
-              color: heartIconColor
-            }}
-          >
-            Favorites
-          </Text>
-        </TouchableWithoutFeedback>
+          <View style={{ alignItems: 'center' }}>
+            <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
+            <Text
+              style={{
+                fontSize: 10,
+                textTransform: 'uppercase',
+                marginTop: 5,
+                color: heartIconColor
+              }}
+            >
+              Favorites
+            </Text>
+          </View>
+        </TouchableRipple>
       </View>
       <View style={{ flex: 4 }}>
-        <TouchableWithoutFeedback
+        <TouchableRipple
+          style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 32 }}
+          borderless={true}
+          rippleColor="rgba(255,255,255,0.25)"
           onPress={() => navigation.replace('HomeScreen')}
-          style={{ flex: 4, alignItems: 'center' }}
         >
-          <Icon name="iplayya" size={theme.iconSize(3)} />
-          <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-        </TouchableWithoutFeedback>
+          <View style={{ alignItems: 'center' }}>
+            <Icon name="iplayya" size={theme.iconSize(3)} />
+            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+          </View>
+        </TouchableRipple>
       </View>
       <View style={{ flex: 4 }}>
-        <TouchableWithoutFeedback
+        <TouchableRipple
+          style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 30 }}
+          borderless={true}
+          rippleColor="rgba(255,255,255,0.25)"
           onPress={() => navigation.navigate('ImovieDownloadsScreen')}
-          style={{ alignItems: 'center' }}
         >
-          <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />
-          <Text
-            style={{
-              fontSize: 10,
-              textTransform: 'uppercase',
-              marginTop: 5,
-              color: downloadIconColor
-            }}
-          >
-            Downloads
-          </Text>
-        </TouchableWithoutFeedback>
+          <View style={{ alignItems: 'center' }}>
+            <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />
+            <Text
+              style={{
+                fontSize: 10,
+                textTransform: 'uppercase',
+                marginTop: 5,
+                color: downloadIconColor
+              }}
+            >
+              Downloads
+            </Text>
+          </View>
+        </TouchableRipple>
       </View>
     </SafeAreaView>
   );

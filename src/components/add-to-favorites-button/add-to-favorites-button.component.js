@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
@@ -32,12 +32,25 @@ const AddToFavoritesButton = ({
     }
   };
   return (
-    <Pressable onPress={() => handleAddAction()} style={styles.headerButtonContainer}>
-      <Icon
-        name="heart-solid"
-        size={theme.iconSize(3)}
-        style={{ color: inFavorites ? theme.iplayya.colors.vibrantpussy : 'white' }}
-      />
+    <Pressable
+      underlayColor={theme.iplayya.colors.black80}
+      onPress={() => handleAddAction()}
+      style={({ pressed }) => [
+        {
+          backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+          borderRadius: 44,
+          padding: 8
+          // ...styles.headerButtonContainer
+        }
+      ]}
+    >
+      <View style={styles.headerButtonContainer}>
+        <Icon
+          name="heart-solid"
+          size={theme.iconSize(3)}
+          style={{ color: inFavorites ? theme.iplayya.colors.vibrantpussy : 'white' }}
+        />
+      </View>
     </Pressable>
   );
 };
@@ -53,8 +66,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 22,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 15
+    alignItems: 'center'
+    // marginLeft: 15
   }
 });
 
