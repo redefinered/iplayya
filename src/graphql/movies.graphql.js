@@ -116,6 +116,8 @@ export const SEARCH = gql`
       id
       title
       is_series
+      thumbnail
+      category
     }
   }
 `;

@@ -123,7 +123,7 @@ const ItvSearchScreen = ({
   };
 
   const handleGenrePress = (genreId) => {
-    navigation.navigate('ItvScreen', { genreId });
+    navigation.navigate('ItvScreen', { genreId, openItvGuide: false });
   };
 
   const handleEndReached = () => {
@@ -248,7 +248,7 @@ const ItvSearchScreen = ({
             {recentSearch.map((term, index) => (
               <ContentWrap key={index}>
                 <TouchableRipple onPress={() => setTerm(term)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{term}</Text>
+                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 10 }}>{term}</Text>
                 </TouchableRipple>
               </ContentWrap>
             ))}

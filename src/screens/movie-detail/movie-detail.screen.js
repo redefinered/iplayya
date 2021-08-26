@@ -66,6 +66,7 @@ const MovieDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
+  const [showFavoriteSnackBar, setShowFavoriteSnackBar] = React.useState(false);
 
   /// stop music player when a video is played
   React.useEffect(() => {
@@ -114,7 +115,10 @@ const MovieDetailScreen = ({
     if (showSnackbar) {
       hideSnackbar();
     }
-  }, [showSnackbar]);
+    if (showFavoriteSnackBar) {
+      hideSnackbar();
+    }
+  }, [showSnackbar, showFavoriteSnackBar]);
 
   React.useEffect(() => {
     if (downloadStarted) {
@@ -131,6 +135,7 @@ const MovieDetailScreen = ({
   const hideSnackbar = () => {
     setTimeout(() => {
       setShowSnackbar(false);
+      setShowFavoriteSnackBar(false);
     }, 3000);
   };
 
@@ -194,6 +199,7 @@ const MovieDetailScreen = ({
   React.useEffect(() => {
     if (isFavListUpdated) {
       getFavoriteMoviesAction();
+      setShowFavoriteSnackBar(true);
     }
   }, [isFavListUpdated]);
 
@@ -428,6 +434,12 @@ const MovieDetailScreen = ({
       </Modal>
 
       <SnackBar
+        visible={showFavoriteSnackBar}
+        message={`${title} is added to your favorites list`}
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+      <SnackBar
         visible={showSnackbar}
         message="Downloading movie. You can check the progress in Downloaded section."
         iconName="download"
@@ -438,7 +450,7 @@ const MovieDetailScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <MovieDetailScreen {...props} />
   </ScreenContainer>
 );

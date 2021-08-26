@@ -7,6 +7,7 @@ import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import ProgramGuideComponent from 'components/program-guide/program-guide.component';
 import ItemContent from './item-content.component';
+import SnackBar from 'components/snackbar/snackbar.component';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createStructuredSelector } from 'reselect';
@@ -15,6 +16,7 @@ import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
 import { urlEncodeTitle } from 'utils';
 import { compose } from 'redux';
 import moment from 'moment';
+import theme from 'common/theme';
 
 const styles = StyleSheet.create({
   root: {
@@ -35,6 +37,7 @@ const ProgramGuide = ({
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
   const [isFavorite] = React.useState(false);
   const [contentHeight, setContentHeight] = React.useState(null);
+  const [showSnackBar, setShowSnackBar] = React.useState(false);
 
   React.useEffect(() => {
     let date = new Date(moment().startOf('day'));
@@ -59,6 +62,20 @@ const ProgramGuide = ({
   const handleFovoritePress = () => {
     console.log('add to favorites');
   };
+
+  const handleShowSnackBar = () => {
+    setShowSnackBar(true);
+  };
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowSnackBar(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (showSnackBar) hideSnackBar();
+  }, [showSnackBar]);
 
   if (!channel) return <View />;
 
@@ -90,7 +107,20 @@ const ProgramGuide = ({
         </View>
       </ContentWrap>
 
-      <ProgramGuideComponent contentHeight={contentHeight} channelId={channelId} screen />
+      <ProgramGuideComponent
+        contentHeight={contentHeight}
+        channelId={channelId}
+        channelName={channel.title}
+        showSnackBar={handleShowSnackBar}
+        screen
+      />
+
+      <SnackBar
+        visible={showSnackBar}
+        message="We will remind you before the program start."
+        iconName="notifications"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };

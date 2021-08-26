@@ -257,7 +257,7 @@ const Content = ({
 };
 
 Content.propTypes = {
-  number: PropTypes.number,
+  number: PropTypes.string,
   time: PropTypes.string,
   time_to: PropTypes.string,
   chanel: PropTypes.string,

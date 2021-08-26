@@ -57,6 +57,7 @@ const ProgramItem = ({
   }, [notifications]);
 
   const handleNotify = () => {
+    console.log({ id, title, channelName, time, ...rest });
     // const notifRepeatId = uuid();
     const program = { id, title, time, ...rest };
 

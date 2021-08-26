@@ -236,9 +236,18 @@ const DownloadButton = ({
       <Pressable
         disabled={!networkInfo.isConnected}
         onPress={() => setShowDownloadOptionsModal(true)}
-        style={styles.headerButtonContainer}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+            borderRadius: 44,
+            padding: 8
+            // ...styles.headerButtonContainer
+          }
+        ]}
       >
-        <Icon name="download" size={theme.iconSize(3)} color={getColor()} />
+        <View style={styles.headerButtonContainer}>
+          <Icon name="download" size={theme.iconSize(3)} color={getColor()} />
+        </View>
       </Pressable>
 
       <Modal animationType="slide" visible={showDownloadOptionsModal} transparent>
@@ -289,8 +298,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 22,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 15
+    alignItems: 'center'
+    // marginLeft: 15
   }
 });
 
