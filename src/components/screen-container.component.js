@@ -90,7 +90,7 @@ ScreenContainer.propTypes = {
   children: PropTypes.any.isRequired,
   backgroundType: PropTypes.string,
   gradientTypeColors: PropTypes.array,
-  headerHeight: PropTypes.numb
+  headerHeight: PropTypes.number
 };
 
 const mapStateToProps = createStructuredSelector({ headerHeight: selectHeaderHeight });
