@@ -119,6 +119,7 @@ const ProgramGuide = ({
     });
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getProgramListHeight = () => {
     if (screen)
       return Dimensions.get('window').height - contentHeight - headerHeight - PILLS_HEIGHT;
@@ -136,11 +137,6 @@ const ProgramGuide = ({
   }, []);
 
   const renderItem = (item) => {
-    // const now = new Date(Date.now());
-    // const date = new Date(item.time);
-    // const startOfHour = moment(now).startOf('hour');
-    // const endOfHour = moment(now).endOf('hour');
-
     return (
       <ProgramItem
         channelId={channelId}
@@ -156,12 +152,10 @@ const ProgramGuide = ({
 
   // return empty componet if no available programs
   if (!programs.length) return <View />;
+
   return (
     <React.Fragment>
       {renderTitle()}
-
-      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
-      <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button> */}
 
       <SelectorPills
         data={dates}
@@ -171,7 +165,21 @@ const ProgramGuide = ({
         screen={screen}
       />
 
-      <View
+      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
+      <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button> */}
+
+      <FlatList
+        initialScrollIndex={0}
+        scrollEnabled
+        data={programs}
+        getItemLayout={(data, index) => {
+          return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+        }}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => renderItem(item)}
+      />
+
+      {/* <View
         style={{
           height: getProgramListHeight()
         }}
@@ -186,7 +194,7 @@ const ProgramGuide = ({
           keyExtractor={(item) => `program_${item.id}`}
           renderItem={({ item }) => renderItem(item)}
         />
-      </View>
+      </View> */}
     </React.Fragment>
   );
 };

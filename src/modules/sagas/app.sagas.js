@@ -36,7 +36,8 @@ export function* appReady() {
     //   yield put(MusicCreators.getGenresSuccess(albumGenres));
     // }
 
-    const HEADER_HEIGHT = HEADER_BUTTON_HEIGHT + HEADER_SPACE_FROM_TOP_BUTTONS - STATUSBAR_HEIGHT;
+    let HEADER_HEIGHT = HEADER_BUTTON_HEIGHT + HEADER_SPACE_FROM_TOP_BUTTONS - STATUSBAR_HEIGHT;
+    // HEADER_HEIGHT = HEADER_HEIGHT + 20;
 
     // call setHeaderHeight function to set height on app ready
     yield put(Creators.setHeaderHeight(parseInt(HEADER_HEIGHT.toFixed(2))));
