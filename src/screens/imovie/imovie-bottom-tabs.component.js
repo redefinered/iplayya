@@ -41,9 +41,15 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         bottom: 0
       }}
     >
-      <View style={{ flex: 4 }}>
+      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
         <TouchableRipple
-          style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 32 }}
+          style={{
+            borderRadius: 34,
+            height: 67,
+            width: 67,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
           borderless={true}
           rippleColor="rgba(255,255,255,0.25)"
           onPress={() => navigation.navigate('ImovieFavoritesScreen')}
@@ -63,9 +69,15 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           </View>
         </TouchableRipple>
       </View>
-      <View style={{ flex: 4 }}>
+      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
         <TouchableRipple
-          style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 32 }}
+          style={{
+            borderRadius: 34,
+            height: 67,
+            width: 67,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
           borderless={true}
           rippleColor="rgba(255,255,255,0.25)"
           onPress={() => navigation.replace('HomeScreen')}
@@ -76,9 +88,15 @@ const ImovieBottomTabs = ({ navigation, route }) => {
           </View>
         </TouchableRipple>
       </View>
-      <View style={{ flex: 4 }}>
+      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
         <TouchableRipple
-          style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 30 }}
+          style={{
+            borderRadius: 34,
+            height: 67,
+            width: 67,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
           borderless={true}
           rippleColor="rgba(255,255,255,0.25)"
           onPress={() => navigation.navigate('ImovieDownloadsScreen')}
