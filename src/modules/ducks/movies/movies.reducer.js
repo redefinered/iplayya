@@ -31,6 +31,7 @@ const INITIAL_STATE = {
   removedFromFavorites: false,
 
   searchResults: [],
+  similarMovies: [],
 
   currentEpisode: null
 };
@@ -112,6 +113,31 @@ export default createReducer(INITIAL_STATE, {
       movies: []
     };
   },
+
+  [Types.GET_SIMILAR_MOVIES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_SIMILAR_MOVIES_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      similarMovies: action.data
+    };
+  },
+  [Types.GET_SIMILAR_MOVIES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      similarMovies: []
+    };
+  },
+
   [Types.RESET_CATEGORY_PAGINATOR]: (state) => {
     return {
       ...state,

@@ -21,6 +21,7 @@ import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies-search/moviesSearch.actions';
+import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import { selectCategoriesOf } from 'modules/ducks/movies/movies.selectors';
@@ -31,6 +32,8 @@ import {
   selectRecentSearch,
   selectPaginatorInfo
 } from 'modules/ducks/movies-search/moviesSearch.selectors';
+import { selectCategories } from 'modules/ducks/movies/movies.selectors';
+import uniq from 'lodash/uniq';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -47,7 +50,10 @@ const ImovieSearchScreen = ({
   recentSearch,
   getMoviesAction,
   paginatorInfo,
-  getMoviesStartAction
+  getMoviesStartAction,
+
+  allCategories,
+  getSimilarMoviesAction
 }) => {
   const theme = useTheme();
   const [term, setTerm] = React.useState('');
@@ -88,15 +94,24 @@ const ImovieSearchScreen = ({
 
   React.useEffect(() => {
     if (results.length) {
-      const getResults = results.map(({ category }) => category);
-      console.log(getResults);
-      const getTitle = categories.filter((categories) => getResults.includes(categories.title));
-      console.log(getTitle);
-      const getId = getTitle.map(({ id }) => id);
-      console.log(getId);
-      getMoviesAction(paginatorInfo);
+      // const getResults = results.map(({ category }) => category);
+      // console.log(getResults);
+      // const getTitle = categories.filter((categories) => getResults.includes(categories.title));
+      // console.log(getTitle);
+      // const getId = getTitle.map(({ id }) => id);
+      // console.log(getId);
+      // getMoviesAction(paginatorInfo);
+
+      let cats = results.map(({ category }) => {
+        const { id } = allCategories.find(({ title }) => title === category);
+        return parseInt(id);
+      });
+      cats = uniq(cats);
+      getSimilarMoviesAction({ limit: 6, categories: cats });
     }
   }, [results]);
+
+  console.log({ categories, results });
 
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
   //   console.log({ videoId, is_series });
@@ -353,7 +368,8 @@ const actions = {
   searchStartAction: Creators.searchStart,
   updateRecentSearchAction: Creators.updateRecentSearch,
   getMoviesAction: Creators.getMovies,
-  getMoviesStartAction: Creators.getMoviesStart
+  getMoviesStartAction: Creators.getMoviesStart,
+  getSimilarMoviesAction: MoviesCreators.getSimilarMovies
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -362,7 +378,8 @@ const mapStateToProps = createStructuredSelector({
   results: selectSearchResults,
   categories: selectCategoriesOf('movies'),
   recentSearch: selectRecentSearch,
-  paginatorInfo: selectPaginatorInfo
+  paginatorInfo: selectPaginatorInfo,
+  allCategories: selectCategories
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
