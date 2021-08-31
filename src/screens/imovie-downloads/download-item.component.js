@@ -281,7 +281,12 @@ const DownloadItem = ({
   };
 
   return (
-    <View style={{ marginBottom: theme.spacing(3) }}>
+    <View
+      style={{
+        marginBottom: theme.spacing(3),
+        backgroundColor: 'transparent'
+      }}
+    >
       <Pressable
         onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
         onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
