@@ -146,6 +146,8 @@ export const selectSearchResults = createSelector(
   ({ searchResults }) => searchResults
 );
 
+export const selectRecentSearch = createSelector([moviesState], ({ recentSearch }) => recentSearch);
+
 export const selectSeekableDuration = createSelector([moviesState], ({ playbackInfo }) => {
   console.log({ playbackInfo });
   if (!playbackInfo) return 0;

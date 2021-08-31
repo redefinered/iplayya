@@ -31,6 +31,7 @@ const INITIAL_STATE = {
   removedFromFavorites: false,
 
   searchResults: [],
+  recentSearch: [],
 
   currentEpisode: null
 };
@@ -300,6 +301,18 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: action.error,
       searchResults: []
+    };
+  },
+  [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
+    let newRecentSearch = [];
+    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+      newRecentSearch = state.recentSearch;
+    } else {
+      newRecentSearch = [action.term, ...state.recentSearch];
+    }
+    return {
+      ...state,
+      recentSearch: newRecentSearch.splice(0, 10)
     };
   },
   [Types.RESET]: (state) => {

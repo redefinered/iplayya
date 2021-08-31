@@ -52,6 +52,9 @@ const { Types, Creators } = createActions(
     searchSuccess: ['data'],
     searchFailure: ['error'],
 
+    //recent search
+    updateRecentSearch: ['term'],
+
     setPermissionError: ['error'],
 
     reset: null

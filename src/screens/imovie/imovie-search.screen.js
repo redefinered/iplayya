@@ -20,17 +20,16 @@ import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/movies-search/moviesSearch.actions';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
-import { selectCategoriesOf } from 'modules/ducks/movies/movies.selectors';
 import {
+  selectCategoriesOf,
   selectError,
   selectSearchResults,
   selectIsFetching,
-  selectRecentSearch,
-  selectPaginatorInfo
-} from 'modules/ducks/movies-search/moviesSearch.selectors';
+  selectRecentSearch
+} from 'modules/ducks/movies/movies.selectors';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -45,8 +44,6 @@ const ImovieSearchScreen = ({
 
   updateRecentSearchAction,
   recentSearch,
-  getMoviesAction,
-  paginatorInfo,
   getMoviesStartAction
 }) => {
   const theme = useTheme();
@@ -94,7 +91,6 @@ const ImovieSearchScreen = ({
       console.log(getTitle);
       const getId = getTitle.map(({ id }) => id);
       console.log(getId);
-      getMoviesAction(paginatorInfo);
     }
   }, [results]);
 
@@ -351,9 +347,7 @@ const styles = StyleSheet.create({
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
-  updateRecentSearchAction: Creators.updateRecentSearch,
-  getMoviesAction: Creators.getMovies,
-  getMoviesStartAction: Creators.getMoviesStart
+  updateRecentSearchAction: Creators.updateRecentSearch
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -361,8 +355,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   results: selectSearchResults,
   categories: selectCategoriesOf('movies'),
-  recentSearch: selectRecentSearch,
-  paginatorInfo: selectPaginatorInfo
+  recentSearch: selectRecentSearch
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
