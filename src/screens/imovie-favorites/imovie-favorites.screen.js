@@ -228,10 +228,10 @@ const ImovieFavoritesScreen = ({
           {/* <Spacer size={100} /> */}
           {showDeleteConfirmation && (
             <AlertModal
-              variant="danger"
+              variant="confirmation"
               message={`Are you sure you want to delete ${
                 selectedItems.length > 1 ? 'these' : 'this'
-              } movie in your download list?`}
+              } movie/s in your Favorites list?`}
               visible={showDeleteConfirmation}
               onCancel={handleHideConfirmDeleteModal}
               hideAction={handleHideConfirmDeleteModal}

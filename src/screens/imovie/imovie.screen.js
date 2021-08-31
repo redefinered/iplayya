@@ -40,7 +40,8 @@ const ImovieScreen = ({
   categoryPaginator,
   movies,
   enableSwipeAction,
-  setNetworkInfoAction
+  setNetworkInfoAction,
+  getFavoritesAction
 }) => {
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -63,6 +64,7 @@ const ImovieScreen = ({
 
   React.useEffect(() => {
     addMovieToFavoritesStartAction();
+    getFavoritesAction();
     enableSwipeAction(false);
 
     // Subscribe to network changes
@@ -245,7 +247,8 @@ const actions = {
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
-  enableSwipeAction: NavActionCreators.enableSwipe
+  enableSwipeAction: NavActionCreators.enableSwipe,
+  getFavoritesAction: Creators.getFavoriteMovies
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
