@@ -113,7 +113,13 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_CHANNELS_START]: (state) => {
     return {
       ...state,
-      channels: []
+      // channels: [],
+      paginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
     };
   },
   [Types.GET_CHANNELS]: (state) => {

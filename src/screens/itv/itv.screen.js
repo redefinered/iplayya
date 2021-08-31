@@ -76,12 +76,12 @@ const ItvScreen = ({
   // get genres on mount
   React.useEffect(() => {
     resetPaginatorAction(); // for debugging
-    // getGenresAction();
     enableSwipeAction(false);
-
     getChannelsStartAction();
 
-    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    if (!channels.length) {
+      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    }
   }, []);
 
   // React.useEffect(() => {
@@ -258,6 +258,49 @@ const ItvScreen = ({
     );
   };
 
+  const renderChannels = () => {
+    if (!channelsData) return;
+
+    return (
+      <React.Fragment>
+        <View style={{ marginBottom: theme.spacing(2) }}>
+          <ContentWrap>
+            <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+              Featured TV Channels
+            </Text>
+          </ContentWrap>
+          <FlatList
+            data={channelsData}
+            horizontal
+            bounces={false}
+            renderItem={renderFeaturedItem}
+            showsHorizontalScrollIndicator={false}
+            style={{ paddingHorizontal: theme.spacing(2) }}
+          />
+        </View>
+        <FlatList
+          data={channelsData}
+          keyExtractor={(item) => item.id}
+          onEndReached={() => handleEndReached()}
+          onEndReachedThreshold={0.5}
+          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          renderItem={({ item: { epgtitle, ...itemProps } }) => (
+            <ListItemChanel
+              onSelect={handleItemSelect}
+              onRightActionPress={handleAddToFavorites}
+              full
+              epgtitle={epgtitle}
+              {...itemProps}
+            />
+          )}
+          ListFooterComponent={
+            <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
+          }
+        />
+      </React.Fragment>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View>
@@ -272,67 +315,7 @@ const ItvScreen = ({
 
         {renderError()}
 
-        {!channelsData.length ? (
-          <View />
-        ) : (
-          <FlatList
-            data={channelsData}
-            keyExtractor={(item) => item.id}
-            onEndReached={() => handleEndReached()}
-            onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-            renderItem={({ item: { epgtitle, ...itemProps } }) => (
-              <ListItemChanel
-                onSelect={handleItemSelect}
-                onRightActionPress={handleAddToFavorites}
-                full
-                epgtitle={epgtitle}
-                {...itemProps}
-              />
-            )}
-            ListHeaderComponent={
-              <View style={{ marginBottom: theme.spacing(2) }}>
-                <ContentWrap>
-                  <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                    Featured TV Channels
-                  </Text>
-                </ContentWrap>
-                <FlatList
-                  data={channelsData}
-                  horizontal
-                  bounces={false}
-                  renderItem={renderFeaturedItem}
-                  showsHorizontalScrollIndicator={false}
-                  style={{ paddingHorizontal: theme.spacing(2) }}
-                />
-                {/* <ScrollView
-                  style={{ paddingHorizontal: 10 }}
-                  horizontal
-                  bounces={false}
-                  showsHorizontalScrollIndicator={false}
-                >
-                  {channelsData.map(({ id, ...itemProps }) => {
-                    let isNotificationActive =
-                      notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
-                    return (
-                      <ItemPreview
-                        id={id}
-                        key={id}
-                        onSelect={handleItemSelect}
-                        handleSubscribeToItem={handleSubscribeToItem}
-                        isNotificationActive={isNotificationActive}
-                        {...itemProps}
-                      />
-                    );
-                  })}
-                </ScrollView> */}
-              </View>
-            }
-            ListFooterComponent={
-              <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
-            }
-          />
-        )}
+        {renderChannels()}
       </View>
 
       <Spacer size={50} />
