@@ -166,12 +166,12 @@ const ItvFavoritesScreen = ({
 
   const getDeleteAlertMessage = () => {
     if (selectedItems.length === listData.length)
-      return 'Are you sure you want to delete all channels from your favorites list?';
+      return 'Are you sure you want to delete all channels from your Favorites list?';
 
     if (selectedItems.length > 1)
-      return 'Are you sure you want to delete these channels from your favorites list?';
+      return 'Are you sure you want to delete these channels from your Favorites list?';
 
-    return 'Are you sure you want to delete this channel from your favorites list?';
+    return 'Are you sure you want to delete this channel from your Favorites list?';
   };
 
   if (listData.length || favorites.length)
@@ -383,7 +383,7 @@ const ItvFavoritesScreen = ({
         {/* </View> */}
         {showDeleteConfirmation && (
           <AlertModal
-            variant="danger"
+            variant="confirmation"
             message={getDeleteAlertMessage()}
             visible={showDeleteConfirmation}
             onCancel={handleHideConfirmDeleteModal}
