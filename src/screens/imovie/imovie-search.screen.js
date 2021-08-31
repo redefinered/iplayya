@@ -23,18 +23,13 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies-search/moviesSearch.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
-import {
-  selectCategoriesOf
-  // selectError,
-  // selectSearchResults,
-  // selectIsFetching,
-  // selectRecentSearch
-} from 'modules/ducks/movies/movies.selectors';
+import { selectCategoriesOf } from 'modules/ducks/movies/movies.selectors';
 import {
   selectError,
   selectSearchResults,
   selectIsFetching,
-  selectRecentSearch
+  selectRecentSearch,
+  selectPaginatorInfo
 } from 'modules/ducks/movies-search/moviesSearch.selectors';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
@@ -49,7 +44,10 @@ const ImovieSearchScreen = ({
   isFetching,
 
   updateRecentSearchAction,
-  recentSearch
+  recentSearch,
+  getMoviesAction,
+  paginatorInfo,
+  getMoviesStartAction
 }) => {
   const theme = useTheme();
   const [term, setTerm] = React.useState('');
@@ -57,6 +55,7 @@ const ImovieSearchScreen = ({
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
+    getMoviesStartAction();
   }, []);
 
   const handleChange = (value) => {
@@ -87,12 +86,17 @@ const ImovieSearchScreen = ({
     navigation.navigate('MovieDetailScreen', { videoId });
   };
 
-  // React.useEffect(() => {
-  //   const getResults = results.map(({ category }) => category);
-  //   console.log(getResults);
-  //   const getTitle = categories.filter((categories) => getResults.includes(categories.title));
-  //   console.log(getTitle);
-  // });
+  React.useEffect(() => {
+    if (results.length) {
+      const getResults = results.map(({ category }) => category);
+      console.log(getResults);
+      const getTitle = categories.filter((categories) => getResults.includes(categories.title));
+      console.log(getTitle);
+      const getId = getTitle.map(({ id }) => id);
+      console.log(getId);
+      getMoviesAction(paginatorInfo);
+    }
+  }, [results]);
 
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
   //   console.log({ videoId, is_series });
@@ -347,7 +351,9 @@ const styles = StyleSheet.create({
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
-  updateRecentSearchAction: Creators.updateRecentSearch
+  updateRecentSearchAction: Creators.updateRecentSearch,
+  getMoviesAction: Creators.getMovies,
+  getMoviesStartAction: Creators.getMoviesStart
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -355,7 +361,8 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   results: selectSearchResults,
   categories: selectCategoriesOf('movies'),
-  recentSearch: selectRecentSearch
+  recentSearch: selectRecentSearch,
+  paginatorInfo: selectPaginatorInfo
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

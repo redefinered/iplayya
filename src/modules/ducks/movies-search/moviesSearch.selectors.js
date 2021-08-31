@@ -17,3 +17,8 @@ export const selectRecentSearch = createSelector(
 );
 
 export const selectMovies = createSelector([moviesSearchState], ({ movies }) => movies);
+
+export const selectPaginatorInfo = createSelector(
+  [moviesSearchState],
+  ({ paginatorInfo }) => paginatorInfo
+);

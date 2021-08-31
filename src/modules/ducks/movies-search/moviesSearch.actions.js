@@ -8,8 +8,8 @@ const { Types, Creators } = createActions(
     searchFailure: ['error'],
 
     getMoviesStart: null,
-    getMovies: ['paginatorInfo', 'categoryPaginator'],
-    getMoviesSuccess: ['movies', 'categoryPaginator'],
+    getMovies: ['paginatorInfo'],
+    getMoviesSuccess: ['movies'],
     getMoviesFailure: ['error'],
     resetCategoryPaginator: null,
 

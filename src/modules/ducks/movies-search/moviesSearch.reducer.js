@@ -8,10 +8,7 @@ const INITIAL_STATE = {
   searchResults: [],
   recentSearch: [],
   movies: [],
-  categoryPaginator: {
-    page: 1,
-    limit: 5
-  }
+  paginatorInfo: []
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -59,7 +56,6 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_MOVIES_START]: (state) => {
-    // const { paginatorInfo } = INITIAL_STATE;
     return {
       ...state,
       isFetching: false,
@@ -68,7 +64,7 @@ export default createReducer(INITIAL_STATE, {
       // paginatorInfo
     };
   },
-  // get movies and update paginator i.e. increment pageNumber
+
   [Types.GET_MOVIES]: (state) => {
     return {
       ...state,
@@ -77,13 +73,12 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_MOVIES_SUCCESS]: (state, action) => {
-    const { movies, categoryPaginator } = action;
+    const { movies } = action;
     return {
       ...state,
       isFetching: false,
       error: null,
-      movies: uniq([...state.movies, ...movies]),
-      categoryPaginator
+      movies: uniq([...state.movies, ...movies])
     };
   },
   [Types.GET_MOVIES_FAILURE]: (state, action) => {
