@@ -8,7 +8,9 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
-  TextInput as FormInput
+  SectionList,
+  TextInput as FormInput,
+  Keyboard
 } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
@@ -28,8 +30,11 @@ import {
   selectError,
   selectSearchResults,
   selectIsFetching,
-  selectRecentSearch
+  selectRecentSearch,
+  selectSimilarMovies,
+  selectCategories
 } from 'modules/ducks/movies/movies.selectors';
+import uniq from 'lodash/uniq';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -44,7 +49,11 @@ const ImovieSearchScreen = ({
 
   updateRecentSearchAction,
   recentSearch,
-  getMoviesStartAction
+
+  allCategories,
+  similarMovies,
+  getSimilarMoviesAction,
+  getSimilarMoviesStartAction
 }) => {
   const theme = useTheme();
   const [term, setTerm] = React.useState('');
@@ -52,7 +61,7 @@ const ImovieSearchScreen = ({
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
-    getMoviesStartAction();
+    getSimilarMoviesStartAction();
   }, []);
 
   const handleChange = (value) => {
@@ -85,14 +94,28 @@ const ImovieSearchScreen = ({
 
   React.useEffect(() => {
     if (results.length) {
-      const getResults = results.map(({ category }) => category);
-      console.log(getResults);
-      const getTitle = categories.filter((categories) => getResults.includes(categories.title));
-      console.log(getTitle);
-      const getId = getTitle.map(({ id }) => id);
-      console.log(getId);
+      let getSimilarMovies = results.map(({ category }) => {
+        const { id } = allCategories.find(({ title }) => title === category);
+        return parseInt(id);
+      });
+      getSimilarMovies = uniq(getSimilarMovies);
+      getSimilarMoviesAction({ limit: 6, categories: getSimilarMovies });
+      Keyboard.dismiss();
+    } else {
+      getSimilarMoviesStartAction();
     }
   }, [results]);
+
+  const DATA = [
+    {
+      title: 'Search Results',
+      data: [results]
+    },
+    {
+      title: 'Similar Movies',
+      data: [similarMovies]
+    }
+  ];
 
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
   //   console.log({ videoId, is_series });
@@ -170,7 +193,27 @@ const ImovieSearchScreen = ({
     if (results.length)
       return (
         <React.Fragment>
-          <Text
+          <SectionList
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
+            sections={DATA}
+            renderItem={renderSection}
+            renderSectionHeader={({ section }) => (
+              <View>
+                <Text
+                  style={{
+                    ...createFontFormat(14, 19),
+                    fontWeight: '700',
+                    color: theme.iplayya.colors.white80,
+                    paddingVertical: 15
+                  }}
+                >
+                  {section.title}
+                </Text>
+              </View>
+            )}
+          />
+          {/* <Text
             style={{
               ...createFontFormat(14, 19),
               fontWeight: '700',
@@ -181,13 +224,19 @@ const ImovieSearchScreen = ({
             Search Results
           </Text>
           <FlatList
+            getItemLayout={(data, index) => ({
+              length: CARD_DIMENSIONS.HEIGHT,
+              offset: CARD_DIMENSIONS.HEIGHT * index,
+              index
+            })}
             scrollEnabled
             showsVerticalScrollIndicator={false}
             data={results}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             numColumns={3}
-          />
+            // ListFooterComponent={<View>{renderSimilarMovies()}</View>}
+          /> */}
           {/* <FlatList
               data={results}
               showsVerticalScrollIndicator={false}
@@ -217,6 +266,24 @@ const ImovieSearchScreen = ({
       );
   };
 
+  const renderSection = ({ item }) => {
+    return (
+      <React.Fragment>
+        <FlatList
+          getItemLayout={(data, index) => ({
+            length: CARD_DIMENSIONS.HEIGHT,
+            offset: CARD_DIMENSIONS.HEIGHT * index,
+            index
+          })}
+          data={item}
+          numColumns={3}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </React.Fragment>
+    );
+  };
+
   const renderRecentSearch = () => {
     if (term.length || !term.length) {
       if (results.length) return;
@@ -232,10 +299,10 @@ const ImovieSearchScreen = ({
           >
             Recent Search
           </Text>
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {recentSearch.map((term, index) => (
               <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                <Text style={{ ...createFontFormat(16, 22), paddingVertical: 10 }}>{term}</Text>
+                <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{term}</Text>
               </TouchableRipple>
             ))}
           </ScrollView>
@@ -263,7 +330,7 @@ const ImovieSearchScreen = ({
             >
               Suggested Search
             </Text>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
               {categories.map(({ id, title }) => (
                 <TouchableRipple key={id} onPress={() => handleCategoryPress(id, title)}>
                   <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{title}</Text>
@@ -347,7 +414,9 @@ const styles = StyleSheet.create({
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
-  updateRecentSearchAction: Creators.updateRecentSearch
+  updateRecentSearchAction: Creators.updateRecentSearch,
+  getSimilarMoviesAction: Creators.getSimilarMovies,
+  getSimilarMoviesStartAction: Creators.getSimilarMoviesStart
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -355,7 +424,9 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   results: selectSearchResults,
   categories: selectCategoriesOf('movies'),
-  recentSearch: selectRecentSearch
+  recentSearch: selectRecentSearch,
+  similarMovies: selectSimilarMovies,
+  allCategories: selectCategories
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

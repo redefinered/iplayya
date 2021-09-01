@@ -148,6 +148,11 @@ export const selectSearchResults = createSelector(
 
 export const selectRecentSearch = createSelector([moviesState], ({ recentSearch }) => recentSearch);
 
+export const selectSimilarMovies = createSelector(
+  [moviesState],
+  ({ similarMovies }) => similarMovies
+);
+
 export const selectSeekableDuration = createSelector([moviesState], ({ playbackInfo }) => {
   console.log({ playbackInfo });
   if (!playbackInfo) return 0;
