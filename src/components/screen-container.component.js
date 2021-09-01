@@ -6,8 +6,12 @@ import { useTheme } from 'react-native-paper';
 import { createStructuredSelector } from 'reselect';
 import { selectHeaderHeight } from 'modules/app';
 import { connect } from 'react-redux';
+import { useHeaderHeight } from '@react-navigation/stack';
 
-const ScreenContainer = ({ children, backgroundType, withHeaderPush, headerHeight }) => {
+const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
+  // console.log({ headerHeight });
+  const headerHeight = useHeaderHeight();
+  // console.log({ x });
   const theme = useTheme();
   const containerWithBackground = () => {
     if (backgroundType === 'solid') {
@@ -45,10 +49,13 @@ const ScreenContainer = ({ children, backgroundType, withHeaderPush, headerHeigh
     }
     return (
       <LinearGradient
-        style={{ flex: 1, paddingTop: withHeaderPush ? headerHeight : 0 }}
+        style={{
+          flex: 1,
+          paddingTop: withHeaderPush ? headerHeight : 0
+        }}
         colors={['#2D1449', '#0D0637']}
       >
-        <View style={{ flex: 1 }}>{children}</View>
+        <View style={{ flex: 1, marginTop: theme.spacing(3) }}>{children}</View>
       </LinearGradient>
     );
   };
