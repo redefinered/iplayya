@@ -62,6 +62,7 @@ const DownloadItem = ({
 
     //   if (typeof p !== 'undefined') setProgress(p.progress);
     // }
+
     console.log({ progress, isDownloaded });
     if (progress === 100) {
       if (isDownloaded) return;
@@ -191,15 +192,18 @@ const DownloadItem = ({
 
   const renderProgress = () => {
     if (isDownloaded) return;
-
     return (
       <View
-        style={{
-          backgroundColor: theme.iplayya.colors.white10,
-          position: 'absolute',
-          bottom: 0,
-          left: 0
-        }}
+        style={
+          {
+            // backgroundColor: theme.iplayya.colors.white10,
+            // backgroundColor: 'red'
+            // height: 10,
+            // position: 'absolute',
+            // bottom: 0,
+            // left: 0
+          }
+        }
       >
         <View
           style={{
@@ -253,7 +257,8 @@ const DownloadItem = ({
       <AlertModal
         iconName="download"
         iconColor={theme.iplayya.colors.vibrantpussy}
-        message={`Error downloading ${title}`}
+        // message={`Error downloading ${title}`}
+        message="An unexpected error has occured. Download is interrupted."
         visible={showDownloadFailureModal}
         hideAction={hideDownloadFailureModal}
         onCancel={hideDownloadFailureModal}

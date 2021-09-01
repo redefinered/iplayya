@@ -430,9 +430,10 @@ const ImovieDownloadsScreen = ({
       {showDeleteConfirmation && (
         <AlertModal
           variant="danger"
-          message={`Are you sure you want to delete ${
-            selectedItems.length > 1 ? 'these' : 'this'
-          } items in your download list?`}
+          // message={`Are you sure you want to delete ${
+          //   selectedItems.length > 1 ? 'these' : 'this'
+          // } items in your download list?`}
+          message="Are you sure you want to delete this movie/s from your Downloads list?"
           visible={showDeleteConfirmation}
           onCancel={handleHideConfirmDeleteModal}
           hideAction={handleHideConfirmDeleteModal}
