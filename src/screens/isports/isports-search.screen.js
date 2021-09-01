@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { StyleSheet, TextInput as FormInput } from 'react-native';
-import { Text, useTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
+import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
 import ContentWrap from 'components/content-wrap.component';
+import withLoader from 'components/with-loader.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
@@ -175,12 +176,16 @@ const ISportsSearchScreen = ({
           <RNPTextInput.Icon
             name={() => {
               return isFetching ? (
-                <ActivityIndicator />
+                <Icon
+                  name="search"
+                  size={theme.iconSize(4)}
+                  style={{ marginRight: theme.spacing(-0.3) }}
+                />
               ) : (
                 <Icon
                   name="search"
                   size={theme.iconSize(4)}
-                  style={{ marginRight: theme.spacing(2) }}
+                  style={{ marginRight: theme.spacing(-0.3) }}
                 />
               );
             }}
@@ -196,7 +201,7 @@ const ISportsSearchScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <ISportsSearchScreen {...props} />
   </ScreenContainer>
 );
@@ -219,6 +224,6 @@ const mapStateToProps = createStructuredSelector({
   genres: selectGenres
 });
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
 
 export default enhance(Container);

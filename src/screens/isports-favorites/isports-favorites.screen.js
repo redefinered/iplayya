@@ -222,7 +222,7 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <IsportsFavoritesScreen {...props} />
   </ScreenContainer>
 );
