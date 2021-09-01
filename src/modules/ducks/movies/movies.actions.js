@@ -52,6 +52,14 @@ const { Types, Creators } = createActions(
     searchSuccess: ['data'],
     searchFailure: ['error'],
 
+    //recent search
+    updateRecentSearch: ['term'],
+
+    getSimilarMoviesStart: [],
+    getSimilarMovies: ['input'],
+    getSimilarMoviesSuccess: ['data'],
+    getSimilarMoviesFailure: ['error'],
+
     setPermissionError: ['error'],
 
     reset: null

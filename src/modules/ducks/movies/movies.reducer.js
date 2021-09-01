@@ -31,6 +31,8 @@ const INITIAL_STATE = {
   removedFromFavorites: false,
 
   searchResults: [],
+  recentSearch: [],
+  similarMovies: [],
 
   currentEpisode: null
 };
@@ -112,6 +114,39 @@ export default createReducer(INITIAL_STATE, {
       movies: []
     };
   },
+
+  [Types.GET_SIMILAR_MOVIES_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      similarMovies: []
+    };
+  },
+  [Types.GET_SIMILAR_MOVIES]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_SIMILAR_MOVIES_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      similarMovies: action.data
+    };
+  },
+  [Types.GET_SIMILAR_MOVIES_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      similarMovies: []
+    };
+  },
+
   [Types.RESET_CATEGORY_PAGINATOR]: (state) => {
     return {
       ...state,
@@ -300,6 +335,18 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: action.error,
       searchResults: []
+    };
+  },
+  [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
+    let newRecentSearch = [];
+    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+      newRecentSearch = state.recentSearch;
+    } else {
+      newRecentSearch = [action.term, ...state.recentSearch];
+    }
+    return {
+      ...state,
+      recentSearch: newRecentSearch.splice(0, 10)
     };
   },
   [Types.RESET]: (state) => {

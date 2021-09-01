@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { View, ScrollView, Platform, Pressable } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { Text, TouchableRipple, withTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
@@ -152,6 +152,7 @@ class EditProfileScreen extends React.Component {
   render() {
     const { isFetching, profile } = this.props;
     const { errors, valid, showModal, ...form } = this.state;
+    const { theme } = this.props;
 
     const actions = [
       {
@@ -300,6 +301,6 @@ const mapStateToProps = createStructuredSelector({
 
 // export default withFormWrap()(EditProfileScreen);
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withFormWrap);
 
 export default enhance(Container);

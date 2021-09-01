@@ -123,6 +123,16 @@ export function* searchRequest(action) {
   }
 }
 
+export function* getSimilarMoviesRequest(action) {
+  try {
+    const { videoByCategory: results } = yield call(getMoviesByCategories, { input: action.input });
+    // console.log({ results });
+    yield put(Creators.getSimilarMoviesSuccess(results));
+  } catch (error) {
+    yield put(Creators.getSimilarMoviesFailure(error.message));
+  }
+}
+
 export default function* movieSagas() {
   yield takeLatest(Types.GET_MOVIE, getMovieRequest);
   yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
@@ -131,5 +141,6 @@ export default function* movieSagas() {
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
+  yield takeLatest(Types.GET_SIMILAR_MOVIES, getSimilarMoviesRequest);
   yield takeLatest(Types.GET_CATEGORIES, getCategoriesRequest);
 }

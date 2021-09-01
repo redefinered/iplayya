@@ -25,7 +25,7 @@ import {
   selectFavorites,
   selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
-import Spacer from 'components/spacer.component';
+// import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
@@ -336,9 +336,15 @@ const ItvScreen = ({
           zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
-        <View style={{ flex: 4 }}>
+        <View style={{ flex: 4, alignItems: 'center' }}>
           <TouchableRipple
-            style={{ borderRadius: 32, paddingVertical: 12, marginHorizontal: 32 }}
+            style={{
+              borderRadius: 34,
+              height: 67,
+              width: 67,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('ItvFavoritesScreen')}
@@ -351,9 +357,15 @@ const ItvScreen = ({
             </View>
           </TouchableRipple>
         </View>
-        <View style={{ flex: 4 }}>
+        <View style={{ flex: 4, alignItems: 'center' }}>
           <TouchableRipple
-            style={{ marginHorizontal: 30, borderRadius: 32, paddingVertical: 12 }}
+            style={{
+              borderRadius: 33,
+              height: 67,
+              width: 67,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] })}
@@ -364,12 +376,14 @@ const ItvScreen = ({
             </View>
           </TouchableRipple>
         </View>
-        <View style={{ flex: 4 }}>
+        <View style={{ flex: 4, alignItems: 'center' }}>
           <TouchableRipple
             style={{
-              marginHorizontal: 30,
-              borderRadius: 32,
-              paddingVertical: 12
+              borderRadius: 34,
+              height: 67,
+              width: 67,
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"

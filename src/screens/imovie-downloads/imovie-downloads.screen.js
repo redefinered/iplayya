@@ -468,7 +468,7 @@ const EmptyState = ({ theme, navigation }) => (
 );
 
 const Container = (props) => (
-  <ScreenContainer backgroundType="solid" withHeaderPush>
+  <ScreenContainer withHeaderPush>
     <ImovieDownloadsScreen {...props} />
   </ScreenContainer>
 );
