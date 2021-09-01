@@ -72,7 +72,6 @@ const ItemPreview = ({
       <Spacer size={15} />
       <View
         style={{
-          flex: 1,
           flexDirection: 'row',
           justifyContent: 'space-between',
           paddingRight: 15,

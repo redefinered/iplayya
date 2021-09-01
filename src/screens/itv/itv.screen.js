@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -25,11 +25,13 @@ import {
   selectFavorites,
   selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
-import Spacer from 'components/spacer.component';
+// import Spacer from 'components/spacer.component';
 import uniq from 'lodash/uniq';
 
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
 import useComponentSize from 'hooks/use-component-size.hook';
+// import { headerHeight } from 'common/values';
+import { selectHeaderHeight } from 'modules/app';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -53,6 +55,7 @@ const ItvScreen = ({
   getFavoritesAction,
   enableSwipeAction,
   route: { params },
+  headerHeight,
 
   // eslint-disable-next-line no-unused-vars
   reset
@@ -76,9 +79,7 @@ const ItvScreen = ({
   // get genres on mount
   React.useEffect(() => {
     resetPaginatorAction(); // for debugging
-    // getGenresAction();
     enableSwipeAction(false);
-
     getChannelsStartAction();
 
     getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
@@ -258,10 +259,52 @@ const ItvScreen = ({
     );
   };
 
+  const renderChannels = () => {
+    if (!channelsData) return;
+
+    return (
+      <React.Fragment>
+        <View style={{ marginBottom: theme.spacing(2) }}>
+          <ContentWrap>
+            <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+              Featured TV Channels
+            </Text>
+          </ContentWrap>
+          <FlatList
+            data={channelsData}
+            horizontal
+            bounces={false}
+            renderItem={renderFeaturedItem}
+            showsHorizontalScrollIndicator={false}
+            style={{ paddingHorizontal: theme.spacing(2) }}
+          />
+        </View>
+        <FlatList
+          data={channelsData}
+          keyExtractor={(item) => item.id}
+          onEndReached={() => handleEndReached()}
+          onEndReachedThreshold={0.5}
+          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          renderItem={({ item: { epgtitle, ...itemProps } }) => (
+            <ListItemChanel
+              onSelect={handleItemSelect}
+              onRightActionPress={handleAddToFavorites}
+              full
+              epgtitle={epgtitle}
+              {...itemProps}
+            />
+          )}
+          ListFooterComponent={
+            <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
+          }
+        />
+      </React.Fragment>
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
-        {/* {error && <Text>{error}</Text>} */}
         <CategoryPills
           data={genresData}
           labelkey="title"
@@ -269,87 +312,27 @@ const ItvScreen = ({
           selected={selectedCategory}
           style={{ marginBottom: theme.spacing(2) }}
         />
+      </View>
+      <View style={{ flex: 1 }}>
+        {renderError()}
 
-        {/* {renderError()} errors should give more information rather than just saying "empty" */}
-
-        {!channelsData.length ? (
-          <View />
-        ) : (
-          <FlatList
-            data={channelsData}
-            keyExtractor={(item) => item.id}
-            onEndReached={() => handleEndReached()}
-            onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-            renderItem={({ item: { epgtitle, ...itemProps } }) => (
-              <ListItemChanel
-                onSelect={handleItemSelect}
-                onRightActionPress={handleAddToFavorites}
-                full
-                epgtitle={epgtitle}
-                {...itemProps}
-              />
-            )}
-            ListHeaderComponent={
-              <View style={{ marginBottom: theme.spacing(2) }}>
-                <ContentWrap>
-                  <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                    Featured TV Channels
-                  </Text>
-                </ContentWrap>
-                <FlatList
-                  data={channelsData}
-                  horizontal
-                  bounces={false}
-                  renderItem={renderFeaturedItem}
-                  showsHorizontalScrollIndicator={false}
-                  style={{ paddingHorizontal: theme.spacing(2) }}
-                />
-                {/* <ScrollView
-                  style={{ paddingHorizontal: 10 }}
-                  horizontal
-                  bounces={false}
-                  showsHorizontalScrollIndicator={false}
-                >
-                  {channelsData.map(({ id, ...itemProps }) => {
-                    let isNotificationActive =
-                      notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
-                    return (
-                      <ItemPreview
-                        id={id}
-                        key={id}
-                        onSelect={handleItemSelect}
-                        handleSubscribeToItem={handleSubscribeToItem}
-                        isNotificationActive={isNotificationActive}
-                        {...itemProps}
-                      />
-                    );
-                  })}
-                </ScrollView> */}
-              </View>
-            }
-            ListFooterComponent={
-              <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
-            }
-          />
-        )}
+        {renderChannels()}
       </View>
 
-      <Spacer size={50} />
+      {/* <Spacer size={50} /> */}
 
       <View
         onLayout={onLayout}
         style={{
-          flex: 1,
           flexDirection: 'row',
           justifyContent: 'space-between',
           backgroundColor: '#202530',
           borderTopRightRadius: 24,
           borderTopLeftRadius: 24,
           paddingHorizontal: 4,
-          position: 'absolute',
+          // position: 'absolute',
           width: '100%',
-          bottom: 0,
+          // bottom: 0,
           zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
@@ -446,8 +429,7 @@ const Container = (props) => (
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 20
+    flex: 1
   }
 });
 
@@ -458,7 +440,8 @@ const mapStateToProps = createStructuredSelector({
   genres: selectGenres,
   paginator: selectPaginator,
   channels: selectChannels,
-  updated: selectFavoritesListUpdated
+  updated: selectFavoritesListUpdated,
+  headerHeight: selectHeaderHeight
 });
 
 const actions = {

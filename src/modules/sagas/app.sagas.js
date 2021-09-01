@@ -8,8 +8,8 @@ const STATUSBAR_HEIGHT = getStatusBarHeight();
 
 console.log({ STATUSBAR_HEIGHT });
 
-const HEADER_BUTTON_HEIGHT = 54; //44
-const HEADER_SPACE_FROM_TOP_BUTTONS = 94; //74
+const HEADER_BUTTON_HEIGHT = 44; //44
+const HEADER_SPACE_FROM_TOP_BUTTONS = 74; //74
 
 // console.log({ STATUSBAR_HEIGHT, HEADER_HEIGHT: HEADER_HEIGHT.toFixed(2) });
 
@@ -36,7 +36,8 @@ export function* appReady() {
     //   yield put(MusicCreators.getGenresSuccess(albumGenres));
     // }
 
-    const HEADER_HEIGHT = HEADER_BUTTON_HEIGHT + HEADER_SPACE_FROM_TOP_BUTTONS - STATUSBAR_HEIGHT;
+    let HEADER_HEIGHT = HEADER_BUTTON_HEIGHT + HEADER_SPACE_FROM_TOP_BUTTONS - STATUSBAR_HEIGHT;
+    // HEADER_HEIGHT = HEADER_HEIGHT + 20;
 
     // call setHeaderHeight function to set height on app ready
     yield put(Creators.setHeaderHeight(parseInt(HEADER_HEIGHT.toFixed(2))));
