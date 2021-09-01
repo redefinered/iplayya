@@ -271,6 +271,7 @@ const MediaPlayer = ({
   };
 
   const renderPlayer = () => {
+    // console.log({ source });
     if (castSessionActive)
       return (
         <ImageBackground
@@ -279,22 +280,25 @@ const MediaPlayer = ({
         />
       );
 
-    if (typename === 'Iptv' || videoplayer === 'vlc')
-      return (
-        <VLCPlayer
-          ref={player}
-          paused={paused}
-          seek={sliderPosition}
-          onProgress={handleProgress}
-          onPlaying={() => handlePlaying}
-          source={{ uri: source }}
-          // volume={volume} /// this library might work: https://github.com/c19354837/react-native-system-setting
-          onBuffering={onBuffer}
-          onError={videoError}
-          resizeMode="contain"
-          style={{ width: Dimensions.get('window').width, height: 211 }}
-        />
-      );
+    // if (typename === 'Iptv' || videoplayer === 'vlc') return;
+    // if (typename === 'Iptv' || videoplayer === 'vlc')
+    //   return (
+    //     <VLCPlayer
+    //       ref={player}
+    //       paused={paused}
+    //       seek={sliderPosition}
+    //       onProgress={handleProgress}
+    //       onPlaying={() => handlePlaying}
+    //       source={{
+    //         uri: 'http://vod6.freeddns.org:4080/boxoffice/sorted/Alive-2020-1080p.mp4/video.m3u8'
+    //       }}
+    //       volume={volume} /// this library might work: https://github.com/c19354837/react-native-system-setting
+    //       onBuffering={onBuffer}
+    //       onError={videoError}
+    //       resizeMode="contain"
+    //       style={{ width: Dimensions.get('window').width, height: 211 }}
+    //     />
+    //   );
 
     return (
       <Video
@@ -334,6 +338,7 @@ const MediaPlayer = ({
     );
 
   return (
+    // <Text>asdasd</Text>
     <View style={{ position: 'relative', backgroundColor: 'black' }}>
       {error && (
         <View
@@ -505,4 +510,4 @@ const actions = {
   updatePlaybackInfoAction: Creators.updatePlaybackInfo
 };
 
-export default connect(null, actions)(MediaPlayer);
+export default connect(null, actions)(React.memo(MediaPlayer));
