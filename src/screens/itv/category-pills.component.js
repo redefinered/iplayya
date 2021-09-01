@@ -17,7 +17,11 @@ const CategorySelectorPills = ({ data, labelkey, onSelect, selected, screen }) =
 
   return (
     <FlatList
-      style={{ paddingBottom: screen ? 40 : 0, marginBottom: theme.spacing(2) }}
+      style={{
+        height: 34,
+        paddingBottom: screen ? 40 : 0,
+        marginBottom: theme.spacing(2)
+      }}
       horizontal
       data={data}
       keyExtractor={(item) => item.id}
@@ -61,8 +65,8 @@ const Pill = ({ id, label, selected, onSelect }) => {
         backgroundColor:
           selected === id ? theme.iplayya.colors.vibrantpussy : theme.iplayya.colors.white25,
         height: ITEM_HEIGHT,
-        borderRadius: 34,
-        marginBottom: theme.spacing(2)
+        borderRadius: 34
+        // marginBottom: theme.spacing(3)
       }}
     >
       <Text style={{ ...createFontFormat(12, 16) }}>{label}</Text>

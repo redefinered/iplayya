@@ -8,8 +8,8 @@ const STATUSBAR_HEIGHT = getStatusBarHeight();
 
 console.log({ STATUSBAR_HEIGHT });
 
-const HEADER_BUTTON_HEIGHT = 54; //44
-const HEADER_SPACE_FROM_TOP_BUTTONS = 94; //74
+const HEADER_BUTTON_HEIGHT = 44; //44
+const HEADER_SPACE_FROM_TOP_BUTTONS = 74; //74
 
 // console.log({ STATUSBAR_HEIGHT, HEADER_HEIGHT: HEADER_HEIGHT.toFixed(2) });
 

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -30,6 +30,8 @@ import uniq from 'lodash/uniq';
 
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
 import useComponentSize from 'hooks/use-component-size.hook';
+// import { headerHeight } from 'common/values';
+import { selectHeaderHeight } from 'modules/app';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -53,6 +55,7 @@ const ItvScreen = ({
   getFavoritesAction,
   enableSwipeAction,
   route: { params },
+  headerHeight,
 
   // eslint-disable-next-line no-unused-vars
   reset
@@ -79,9 +82,7 @@ const ItvScreen = ({
     enableSwipeAction(false);
     getChannelsStartAction();
 
-    if (!channels.length) {
-      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-    }
+    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
   }, []);
 
   // React.useEffect(() => {
@@ -302,9 +303,8 @@ const ItvScreen = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
-        {/* {error && <Text>{error}</Text>} */}
         <CategoryPills
           data={genresData}
           labelkey="title"
@@ -312,27 +312,27 @@ const ItvScreen = ({
           selected={selectedCategory}
           style={{ marginBottom: theme.spacing(2) }}
         />
-
+      </View>
+      <View style={{ flex: 1 }}>
         {renderError()}
 
         {renderChannels()}
       </View>
 
-      <Spacer size={50} />
+      {/* <Spacer size={50} /> */}
 
       <View
         onLayout={onLayout}
         style={{
-          flex: 1,
           flexDirection: 'row',
           justifyContent: 'space-between',
           backgroundColor: '#202530',
           borderTopRightRadius: 24,
           borderTopLeftRadius: 24,
           paddingHorizontal: 4,
-          position: 'absolute',
+          // position: 'absolute',
           width: '100%',
-          bottom: 0,
+          // bottom: 0,
           zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
@@ -415,8 +415,7 @@ const Container = (props) => (
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 6
+    flex: 1
   }
 });
 
@@ -427,7 +426,8 @@ const mapStateToProps = createStructuredSelector({
   genres: selectGenres,
   paginator: selectPaginator,
   channels: selectChannels,
-  updated: selectFavoritesListUpdated
+  updated: selectFavoritesListUpdated,
+  headerHeight: selectHeaderHeight
 });
 
 const actions = {
