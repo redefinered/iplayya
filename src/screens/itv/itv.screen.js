@@ -51,7 +51,6 @@ const ItvScreen = ({
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
-  // isFavoritesUpdated,
   getFavoritesAction,
   enableSwipeAction,
   route: { params },
@@ -169,7 +168,7 @@ const ItvScreen = ({
     setFavorited(title);
 
     addToFavoritesAction(parseInt(channelId));
-    setShowSnackBar(true);
+    // setShowSnackBar(true);
   };
 
   const hideSnackBar = () => {
@@ -182,6 +181,7 @@ const ItvScreen = ({
   /// if favorites update in backend get feavorites
   React.useEffect(() => {
     if (updated) {
+      handleShowSnackBar();
       getFavoritesAction({ pageNumber: 1 });
       getChannelsAction({ pageNumber: 1 });
     }
@@ -191,6 +191,10 @@ const ItvScreen = ({
     if (showSnackBar) hideSnackBar();
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
+
+  const handleShowSnackBar = () => {
+    setShowSnackBar(true);
+  };
 
   const handleItemSelect = (channelId) => {
     // navigate to chanel details screen with `id` parameter
