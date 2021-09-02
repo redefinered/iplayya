@@ -102,6 +102,16 @@ export function* searchRequest(action) {
   }
 }
 
+export function* getSimilarChannelRequest(action) {
+  try {
+    const { isportsByCategory: results } = yield call(getChannelsByCategory, action.input);
+    // console.log({ results });
+    yield put(Creators.getSimilarChannelSuccess(results));
+  } catch (error) {
+    yield put(Creators.getSimilarChannelFailure(error.message));
+  }
+}
+
 export default function* itvSagas() {
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
   yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
@@ -111,4 +121,5 @@ export default function* itvSagas() {
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
+  yield takeLatest(Types.GET_SIMILAR_CHANNEL, getSimilarChannelRequest);
 }
