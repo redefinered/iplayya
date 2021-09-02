@@ -182,7 +182,7 @@ const ItvSearchScreen = ({
                   ...createFontFormat(14, 19),
                   fontWeight: '700',
                   color: theme.iplayya.colors.white50,
-                  paddingVertical: 15
+                  paddingVertical: theme.spacing(2)
                 }}
               >
                 Search Results
@@ -236,7 +236,7 @@ const ItvSearchScreen = ({
                 ...createFontFormat(14, 19),
                 fontWeight: '700',
                 color: theme.iplayya.colors.white50,
-                paddingVertical: 15
+                paddingVertical: theme.spacing(2)
               }}
             >
               Recent Search
@@ -244,7 +244,9 @@ const ItvSearchScreen = ({
             <ScrollView showsVerticalScrollIndicator={false}>
               {recentSearch.map((term, index) => (
                 <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{term}</Text>
+                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+                    {term}
+                  </Text>
                 </TouchableRipple>
               ))}
             </ScrollView>
@@ -268,7 +270,7 @@ const ItvSearchScreen = ({
                   ...createFontFormat(14, 19),
                   fontWeight: '700',
                   color: theme.iplayya.colors.white50,
-                  paddingVertical: 15
+                  paddingVertical: theme.spacing(2)
                 }}
               >
                 Suggested Search
@@ -278,7 +280,9 @@ const ItvSearchScreen = ({
               {genres.map(({ id, title }) => (
                 <ContentWrap key={id}>
                   <TouchableRipple onPress={() => handleGenrePress(id)}>
-                    <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>
+                    <Text
+                      style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
+                    >
                       {title}
                     </Text>
                   </TouchableRipple>

@@ -152,7 +152,7 @@ const ISportsSearchScreen = ({
               ...createFontFormat(14, 19),
               fontWeight: '700',
               color: theme.iplayya.colors.white50,
-              paddingVertical: 15
+              paddingVertical: theme.spacing(2)
             }}
           >
             Zero result
@@ -178,7 +178,7 @@ const ISportsSearchScreen = ({
                     ...createFontFormat(14, 19),
                     fontWeight: '700',
                     color: theme.iplayya.colors.white80,
-                    paddingVertical: 15
+                    paddingVertical: theme.spacing(2)
                   }}
                 >
                   {section.title}
@@ -271,7 +271,7 @@ const ISportsSearchScreen = ({
                 ...createFontFormat(14, 19),
                 fontWeight: '700',
                 color: theme.iplayya.colors.white50,
-                paddingVertical: 15
+                paddingVertical: theme.spacing(2)
               }}
             >
               Recent Search
@@ -279,7 +279,9 @@ const ISportsSearchScreen = ({
             <ScrollView showsVerticalScrollIndicator={false}>
               {recentSearch.map((term, index) => (
                 <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{term}</Text>
+                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+                    {term}
+                  </Text>
                 </TouchableRipple>
               ))}
             </ScrollView>
@@ -304,7 +306,7 @@ const ISportsSearchScreen = ({
                   ...createFontFormat(14, 19),
                   fontWeight: '700',
                   color: theme.iplayya.colors.white50,
-                  paddingVertical: 15
+                  paddingVertical: theme.spacing(2)
                 }}
               >
                 Suggested Search
@@ -312,7 +314,9 @@ const ISportsSearchScreen = ({
               <ScrollView showsVerticalScrollIndicator={false}>
                 {genres.map(({ id, title }) => (
                   <TouchableRipple key={id} onPress={() => handleGenrePress(id)}>
-                    <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>
+                    <Text
+                      style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
+                    >
                       {title}
                     </Text>
                   </TouchableRipple>

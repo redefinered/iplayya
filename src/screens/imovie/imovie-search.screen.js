@@ -193,7 +193,7 @@ const ImovieSearchScreen = ({
             ...createFontFormat(14, 19),
             fontWeight: '700',
             color: theme.iplayya.colors.white50,
-            paddingVertical: 15
+            paddingVertical: theme.spacing(2)
           }}
         >
           Zero result
@@ -219,7 +219,7 @@ const ImovieSearchScreen = ({
                     ...createFontFormat(14, 19),
                     fontWeight: '700',
                     color: theme.iplayya.colors.white80,
-                    paddingVertical: 15
+                    paddingVertical: theme.spacing(2)
                   }}
                 >
                   {section.title}
@@ -309,7 +309,7 @@ const ImovieSearchScreen = ({
               ...createFontFormat(14, 19),
               fontWeight: '700',
               color: theme.iplayya.colors.white50,
-              paddingVertical: 15
+              paddingVertical: theme.spacing(2)
             }}
           >
             Recent Search
@@ -317,7 +317,9 @@ const ImovieSearchScreen = ({
           <ScrollView showsVerticalScrollIndicator={false}>
             {recentSearch.map((term, index) => (
               <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{term}</Text>
+                <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+                  {term}
+                </Text>
               </TouchableRipple>
             ))}
           </ScrollView>
@@ -340,7 +342,7 @@ const ImovieSearchScreen = ({
                 ...createFontFormat(14, 19),
                 fontWeight: '700',
                 color: theme.iplayya.colors.white50,
-                paddingVertical: 15
+                paddingVertical: theme.spacing(2)
               }}
             >
               Suggested Search
@@ -348,7 +350,9 @@ const ImovieSearchScreen = ({
             <ScrollView showsVerticalScrollIndicator={false}>
               {categories.map(({ id, title }) => (
                 <TouchableRipple key={id} onPress={() => handleCategoryPress(id, title)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{title}</Text>
+                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+                    {title}
+                  </Text>
                 </TouchableRipple>
               ))}
             </ScrollView>
@@ -397,7 +401,7 @@ const ImovieSearchScreen = ({
                 <Icon
                   name="search"
                   size={theme.iconSize(4)}
-                  style={{ marginRight: theme.spacing(0) }}
+                  style={{ marginRight: theme.spacing(-0.3) }}
                 />
               );
             }}
