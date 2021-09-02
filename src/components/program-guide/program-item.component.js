@@ -126,7 +126,7 @@ const ProgramItem = ({
         </Text>
       </View>
       <View style={{ flex: 8, paddingLeft: 12 }}>
-        <Text style={{ color: getColor(time) }}>{title}</Text>
+        <Text style={{ color: getColor(time, rest.time_to) }}>{title}</Text>
       </View>
       <Pressable
         onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight

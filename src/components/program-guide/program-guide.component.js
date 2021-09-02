@@ -123,6 +123,11 @@ const ProgramGuide = ({
   };
 
   const isCurrentlyPlaying = useCallback((startTime, endTime) => {
+    const today = moment().format('dddd, MMMM Do YYYY');
+    const day = moment(startTime).format('dddd, MMMM Do YYYY');
+
+    if (today !== day) return false;
+
     const a = moment(startTime).startOf('hour');
     const b = moment(endTime).endOf('hour');
 
