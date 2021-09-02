@@ -16,7 +16,7 @@ export const GET_CHANNEL = gql`
       title
       description
       genre
-      numer
+      number
       url
       censored
       hd
@@ -36,6 +36,7 @@ export const GET_CHANNELS = gql`
       id
       title
       description
+      number
       time
       time_to
       epgtitle
@@ -72,6 +73,7 @@ export const GET_FAVORITES = gql`
       id
       title
       description
+      number
       time
       time_to
       epgtitle

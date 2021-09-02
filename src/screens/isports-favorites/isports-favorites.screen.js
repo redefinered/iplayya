@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { View, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView, Image } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
+// import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
 // import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -23,6 +23,7 @@ import {
 } from 'modules/ducks/isports/isports.selectors';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import { Creators } from 'modules/ducks/isports/isports.actions';
+import moment from 'moment';
 
 const IsportsFavoritesScreen = ({
   theme,
@@ -49,7 +50,7 @@ const IsportsFavoritesScreen = ({
       let data = favorites.map(({ id, title }) => ({
         id,
         title,
-        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
+        thumbnail: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(title)}`
       }));
       setListData(data);
     }
@@ -142,7 +143,14 @@ const IsportsFavoritesScreen = ({
             >
               <Pressable
                 onPress={() => setShowDeleteConfirmation(true)}
-                style={{ flexDirection: 'row', alignItems: 'center' }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 5
+                  }
+                ]}
               >
                 <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                 <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
@@ -156,11 +164,139 @@ const IsportsFavoritesScreen = ({
               </Pressable>
             </View>
 
-            <Spacer size={30} />
+            {/* <Spacer size={30} /> */}
           </ContentWrap>
         )}
 
-        <View style={{ marginTop: 30 }}>
+        {listData.map(({ id, title, epgtitle, number, time, time_to, thumbnail }) => {
+          const getSchedule = (time, time_to) => {
+            if (!time || !time_to) return;
+
+            return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+          };
+          return (
+            <Pressable
+              key={id}
+              underlayColor={theme.iplayya.colors.black80}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+                }
+              ]}
+              onLongPress={() => handleLongPress(id)}
+              onPress={() => handleSelectItem(id)}
+            >
+              <ContentWrap
+                style={{
+                  marginTop: 10,
+                  position: 'relative',
+                  height: 80,
+                  paddingLeft: 75
+                }}
+              >
+                <Image
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    position: 'absolute',
+                    top: 2,
+                    left: 10
+                  }}
+                  source={{ uri: thumbnail }}
+                />
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: 3,
+                    marginLeft: 5
+                  }}
+                >
+                  <View style={{ justifyContent: 'center' }}>
+                    <View>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          marginBottom: 5,
+                          color: theme.iplayya.colors.white50
+                        }}
+                      >
+                        {`${number}: ${title}`}
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white80,
+                          marginBottom: 5
+                        }}
+                      >
+                        {epgtitle}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: '75%'
+                      }}
+                    >
+                      <Text
+                        style={{
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white50,
+                          marginBottom: 5
+                        }}
+                      >
+                        {getSchedule(time, time_to)}
+                      </Text>
+
+                      {!activateCheckboxes && (
+                        <Pressable
+                          underlayColor={theme.iplayya.colors.black80}
+                          onPress={() =>
+                            navigation.navigate('ProgramGuideScreen', { channelId: id })
+                          }
+                          style={({ pressed }) => [
+                            {
+                              backgroundColor: pressed
+                                ? theme.iplayya.colors.black80
+                                : 'transparent',
+                              width: 44,
+                              height: 44,
+                              borderRadius: 22,
+                              justifyContent: 'center',
+                              alignItems: 'center'
+                            }
+                          ]}
+                        >
+                          <Text
+                            style={{
+                              fontWeight: 'bold',
+                              fontSize: 12,
+                              color: theme.iplayya.colors.white50
+                            }}
+                          >
+                            EPG
+                          </Text>
+                        </Pressable>
+                      )}
+                    </View>
+                  </View>
+                  {activateCheckboxes && (
+                    <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                  )}
+                </View>
+              </ContentWrap>
+            </Pressable>
+          );
+        })}
+
+        {/* <View style={{ marginTop: 30 }}>
           {listData.map(({ id, ...itemProps }) => (
             <ListItemChanel
               key={id}
@@ -179,13 +315,13 @@ const IsportsFavoritesScreen = ({
               full
             />
           ))}
-        </View>
+        </View> */}
         {showDeleteConfirmation && (
           <AlertModal
             variant="danger"
             message={`Are you sure you want to delete ${
               selectedItems.length > 1 ? 'these' : 'this'
-            } channel in your download list?`}
+            } channel from your Favorite list?`}
             visible={showDeleteConfirmation}
             onCancel={handleHideConfirmDeleteModal}
             hideAction={handleHideConfirmDeleteModal}
