@@ -38,10 +38,18 @@ const { Types, Creators } = createActions(
     setPaginatorInfo: ['data'],
     resetPaginator: [],
 
-    searchStart: [],
+    searchStart: null,
     search: ['input'],
     searchSuccess: ['data'],
-    searchFailure: ['error']
+    searchFailure: ['error'],
+
+    //recent search
+    updateRecentSearch: ['term'],
+
+    getSimilarChannelStart: null,
+    getSimilarChannel: ['input'],
+    getSimilarChannelSuccess: ['data'],
+    getSimilarChannelFailure: ['error']
   },
   { prefix: '@Isports/' }
 );

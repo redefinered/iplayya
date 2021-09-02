@@ -126,7 +126,7 @@ export function* searchRequest(action) {
 export function* getSimilarMoviesRequest(action) {
   try {
     const { videoByCategory: results } = yield call(getMoviesByCategories, { input: action.input });
-    // console.log({ results });
+    console.log({ results });
     yield put(Creators.getSimilarMoviesSuccess(results));
   } catch (error) {
     yield put(Creators.getSimilarMoviesFailure(error.message));

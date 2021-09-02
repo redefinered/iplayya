@@ -23,7 +23,9 @@ const INITIAL_STATE = {
 
   favorites: [],
 
-  searchResults: []
+  searchResults: [],
+  recentSearch: [],
+  similarChannel: []
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -239,6 +241,51 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       error: action.error,
       searchResults: []
+    };
+  },
+
+  [Types.GET_SIMILAR_CHANNEL_START]: (state) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      similarChannel: []
+    };
+  },
+  [Types.GET_SIMILAR_CHANNEL]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_SIMILAR_CHANNEL_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      similarChannel: action.data
+    };
+  },
+  [Types.GET_SIMILAR_CHANNEL_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      similarChannel: []
+    };
+  },
+
+  [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
+    let newRecentSearch = [];
+    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+      newRecentSearch = state.recentSearch;
+    } else {
+      newRecentSearch = [action.term, ...state.recentSearch];
+    }
+    return {
+      ...state,
+      recentSearch: newRecentSearch.splice(0, 10)
     };
   },
 
