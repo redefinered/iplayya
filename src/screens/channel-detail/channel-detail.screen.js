@@ -171,8 +171,8 @@ const ChannelDetailScreen = ({
   };
 
   React.useEffect(() => {
-    if (showSnackBar) hideFavSnackBar();
-  }, [showSnackBar]);
+    if (showFavSnackBar) hideFavSnackBar();
+  }, [showFavSnackBar]);
 
   if (!channel) return <View />;
 

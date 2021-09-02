@@ -120,8 +120,10 @@ const DownloadItem = ({
   React.useEffect(() => {
     if (isConnected) {
       setBroken(false);
+      setShowDownloadFailureModal(false);
     } else {
       setBroken(true);
+      setShowDownloadFailureModal(true);
     }
   }, [isConnected]);
 
@@ -261,34 +263,13 @@ const DownloadItem = ({
     setShowDownloadFailureModal(false);
   };
 
-  const renderDownloadErrorModal = () => {
-    if (!broken) return;
+  // const renderDownloadErrorModal = () => {
+  //   if (!broken) return;
 
-    return (
-      <AlertModal
-        iconName="download"
-        iconColor={theme.iplayya.colors.vibrantpussy}
-        // message={`Error downloading ${title}`}
-        message="An unexpected error has occured. Download is interrupted."
-        visible={showDownloadFailureModal}
-        hideAction={hideDownloadFailureModal}
-        onCancel={hideDownloadFailureModal}
-        cancelText="Try later"
-        // confirmText="Reload"
-        confirmTextCompomponent={() => (
-          <RetryDownloadButton
-            ep={ep}
-            videoId={id}
-            movieTitle={title}
-            handleDownloadMovie={handleDownloadMovie}
-            setShowDownloadFailureModal={setShowDownloadFailureModal}
-            setBroken={setBroken}
-          />
-        )}
-        confirmAction={handleRetry}
-      />
-    );
-  };
+  //   return (
+
+  //   );
+  // };
 
   const handleLongPress = (id) => {
     if (!isDownloaded) return;
@@ -367,7 +348,30 @@ const DownloadItem = ({
 
       {renderProgress()}
 
-      {renderDownloadErrorModal()}
+      {/* {renderDownloadErrorModal()} */}
+
+      <AlertModal
+        iconName="download"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+        // message={`Error downloading ${title}`}
+        message="An unexpected error has occured. Download is interrupted."
+        visible={showDownloadFailureModal}
+        hideAction={hideDownloadFailureModal}
+        onCancel={hideDownloadFailureModal}
+        cancelText="Try later"
+        // confirmText="Reload"
+        confirmTextCompomponent={() => (
+          <RetryDownloadButton
+            ep={ep}
+            videoId={id}
+            movieTitle={title}
+            handleDownloadMovie={handleDownloadMovie}
+            setShowDownloadFailureModal={setShowDownloadFailureModal}
+            setBroken={setBroken}
+          />
+        )}
+        confirmAction={handleRetry}
+      />
 
       <AlertModal
         iconName="download"

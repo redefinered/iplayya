@@ -16,7 +16,7 @@ export const GET_CHANNEL = gql`
       title
       description
       genre
-      numer
+      number
       url
       censored
       hd
@@ -26,6 +26,7 @@ export const GET_CHANNEL = gql`
       duration
       epgtitle
       epgdescription
+      archived_link
     }
   }
 `;
@@ -34,6 +35,7 @@ export const GET_CHANNELS = gql`
   query GET_CHANNELS($input: videoRequest) {
     isports(input: $input) {
       id
+      number
       title
       description
       time
@@ -41,6 +43,7 @@ export const GET_CHANNELS = gql`
       epgtitle
       epgdescription
       is_favorite
+      archived_link
     }
   }
 `;
@@ -49,10 +52,15 @@ export const GET_SPORTS_CHANNELS_BY_CATEGORIES = gql`
   query GET_SPORTS_CHANNELS_BY_CATEGORIES($input: videoRequestByGenre) {
     isportsByCategory(input: $input) {
       id
+      number
       title
       description
-      number
-      genre
+      time
+      time_to
+      epgtitle
+      epgdescription
+      is_favorite
+      archived_link
     }
   }
 `;
@@ -70,6 +78,7 @@ export const GET_FAVORITES = gql`
   query GET_FAVORITE_CHANNELS($input: videoRequest) {
     favoriteIsports(input: $input) {
       id
+      number
       title
       description
       time
