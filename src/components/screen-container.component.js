@@ -80,10 +80,10 @@ const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
   // };
 
   return (
-    <React.Fragment>
+    <View style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
       {containerWithBackground()}
-    </React.Fragment>
+    </View>
   );
 };
 
