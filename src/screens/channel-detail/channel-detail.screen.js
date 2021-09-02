@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { View, Image, StyleSheet } from 'react-native';
+import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -25,6 +25,7 @@ import {
   selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import moment from 'moment';
+import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
@@ -45,7 +46,6 @@ const ChannelDetailScreen = ({
   addToFavoritesAction,
   favoritesListUpdated
 }) => {
-  const theme = useTheme();
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
@@ -177,7 +177,7 @@ const ChannelDetailScreen = ({
   if (!channel) return <View />;
 
   return (
-    <View style={{ marginTop: 10, paddingBottom: 220 }}>
+    <View style={styles.root}>
       {/* Player */}
       <View
         style={{
@@ -198,7 +198,7 @@ const ChannelDetailScreen = ({
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              marginBottom: 20
+              marginBottom: theme.spacing(2)
             }}
           >
             <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
@@ -219,16 +219,14 @@ const ChannelDetailScreen = ({
         </ContentWrap>
         {/* program guide */}
 
-        <View>
-          <ProgramGuide
-            channelId={channelId}
-            channelName={channel.title}
-            title="Program Guide"
-            showSnackBar={handleShowSnackBar}
-            contentHeight={contentHeight}
-            screen={false}
-          />
-        </View>
+        <ProgramGuide
+          channelId={channelId}
+          channelName={channel.title}
+          title="Program Guide"
+          showSnackBar={handleShowSnackBar}
+          contentHeight={contentHeight}
+          screen={false}
+        />
       </View>
 
       <SnackBar
@@ -287,6 +285,8 @@ const Content = ({ channeltitle, title, epgtitle, time, time_to }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2) } });
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">

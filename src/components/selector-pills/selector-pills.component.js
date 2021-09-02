@@ -21,22 +21,21 @@ const SelectorPills = ({ data, labelkey, onSelect, selected, screen }) => {
 
   return (
     <FlatList
-      initialScrollIndex={7}
-      style={{
-        // paddingBottom: screen ? 40 : 0,
-        marginBottom: theme.spacing(2),
-        height: 44
-      }}
       horizontal
       data={data}
       keyExtractor={(item) => `date-${item.id}`}
       showsHorizontalScrollIndicator={false}
       getItemLayout={getItemLayout}
+      initialScrollIndex={7}
       renderItem={({ item: { id, ...d } }) => (
         <Pill id={id} label={d[labelkey]} onSelect={onSelect} selected={selected} {...d} />
       )}
+      style={{
+        marginBottom: theme.spacing(2),
+        height: ITEM_HEIGHT
+      }}
     />
-    // <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    // <ScrollView scroll horizontal showsHorizontalScrollIndicator={false}>
     //   {data.map(({ id, ...d }) => {
     //     return (
     //       <Pill
@@ -75,14 +74,14 @@ const Pill = ({ id, label, selected, onSelect }) => {
         alignItems: 'center',
         justifyContent: 'center',
         marginLeft: theme.spacing(2),
-        paddingHorizontal: 15,
+        // paddingHorizontal: 15,
         backgroundColor:
           selected === id.toString()
             ? theme.iplayya.colors.vibrantpussy
             : theme.iplayya.colors.white25,
         height: ITEM_HEIGHT,
         width: ITEM_WIDTH,
-        borderRadius: 34
+        borderRadius: ITEM_HEIGHT
       }}
     >
       <Text style={{ ...createFontFormat(12, 16) }}>{label}</Text>
