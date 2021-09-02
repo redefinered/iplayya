@@ -31,29 +31,22 @@ const PILLS_HEIGHT = 12 + 40;
 // eslint-disable-next-line no-unused-vars
 const ProgramGuide = ({
   programs,
-  // notifications,
-  // subscriptions,
   getProgramsByChannelAction,
   channelId,
   channelName,
-
   onRegisterAction,
   onNotifAction,
-
   showSnackBar,
-
   contentHeight,
-
   screen
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
-
   // generates an array of dates 7 days from now
   const dates = generateDatesFromToday();
-
   const [selected, setSelected] = React.useState('8');
   const [notifService, setNotifService] = React.useState(null);
+  const [programsPageYOffset, setProgramsPageYOffset] = React.useState(null);
 
   React.useEffect(() => {
     const notif = new NotifService(onRegisterAction, onNotifAction);
@@ -129,11 +122,16 @@ const ProgramGuide = ({
     );
   };
 
-  const isCurrentlyPlaying = useCallback((time) => {
-    const a = moment().startOf('hour');
-    const b = moment().endOf('hour');
+  const isCurrentlyPlaying = useCallback((startTime, endTime) => {
+    const today = moment().format('dddd, MMMM Do YYYY');
+    const day = moment(startTime).format('dddd, MMMM Do YYYY');
 
-    return moment(time).isBetween(a, b);
+    if (today !== day) return false;
+
+    const a = moment(startTime).startOf('hour');
+    const b = moment(endTime).endOf('hour');
+
+    return moment().isBetween(a, b);
   }, []);
 
   const renderItem = (item) => {
@@ -150,38 +148,36 @@ const ProgramGuide = ({
     );
   };
 
+  // const handleLayoutChange = () => {
+  //   flatlistref.current.measure((fx, fy, width, height, px, py) => {
+  //     console.log('Component width is: ' + width);
+  //     console.log('Component height is: ' + height);
+  //     console.log('X offset to page: ' + px);
+  //     console.log('Y offset to page: ' + py);
+  //   });
+  // };
+
   // return empty componet if no available programs
   if (!programs.length) return <View />;
 
   return (
-    <React.Fragment>
+    <View>
       {renderTitle()}
 
-      <SelectorPills
-        data={dates}
-        labelkey="formatted"
-        onSelect={handleDateSelect}
-        selected={selected}
-        screen={screen}
-      />
-
-      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
-      <Button onPress={() => cancelAllNotifications()}>cancel all notifications</Button> */}
-
-      <FlatList
-        initialScrollIndex={0}
-        scrollEnabled
-        data={programs}
-        getItemLayout={(data, index) => {
-          return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-        }}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => renderItem(item)}
-      />
-
-      {/* <View
-        style={{
-          height: getProgramListHeight()
+      <View>
+        <SelectorPills
+          data={dates}
+          labelkey="formatted"
+          onSelect={handleDateSelect}
+          selected={selected}
+          screen={screen}
+        />
+      </View>
+      <View
+        onLayout={(event) => {
+          event.target.measure((x, y, width, height, pageX, pageY) => {
+            setProgramsPageYOffset(pageY);
+          });
         }}
       >
         <FlatList
@@ -191,11 +187,12 @@ const ProgramGuide = ({
           getItemLayout={(data, index) => {
             return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
           }}
-          keyExtractor={(item) => `program_${item.id}`}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => renderItem(item)}
+          style={{ height: Dimensions.get('window').height - programsPageYOffset }}
         />
-      </View> */}
-    </React.Fragment>
+      </View>
+    </View>
   );
 };
 

@@ -29,9 +29,10 @@ export const generateDatesFromToday = (numberDays = 7) => {
   let includePastNumberDays = numberDays * 2;
 
   for (let i = 0; i < includePastNumberDays; i++) {
-    let startOfDay = moment().startOf('day');
+    // let time = moment().startOf('day');
+    let time = moment();
 
-    let date = startOfDay.subtract(numberDays - i, 'day');
+    let date = time.subtract(numberDays - i, 'day');
 
     dates.push({
       id: i + 1,

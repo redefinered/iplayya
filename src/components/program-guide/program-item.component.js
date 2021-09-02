@@ -92,8 +92,8 @@ const ProgramItem = ({
     });
   };
 
-  const getColor = (time) => {
-    return isCurrentlyPlaying(time)
+  const getColor = (time, time_to) => {
+    return isCurrentlyPlaying(time, time_to)
       ? theme.iplayya.colors.vibrantpussy
       : theme.iplayya.colors.white100;
   };
@@ -119,14 +119,14 @@ const ProgramItem = ({
       >
         <Text
           style={{
-            color: getColor(time)
+            color: getColor(time, rest.time_to)
           }}
         >
           {moment(time).format('h:mm A')}
         </Text>
       </View>
       <View style={{ flex: 8, paddingLeft: 12 }}>
-        <Text style={{ color: getColor(time) }}>{title}</Text>
+        <Text style={{ color: getColor(time, rest.time_to) }}>{title}</Text>
       </View>
       <Pressable
         onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight

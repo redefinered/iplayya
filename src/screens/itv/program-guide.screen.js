@@ -40,7 +40,8 @@ const ProgramGuide = ({
   const [showSnackBar, setShowSnackBar] = React.useState(false);
 
   React.useEffect(() => {
-    let date = new Date(moment().startOf('day'));
+    // let date = new Date(moment().startOf('day'));
+    let date = new Date(moment());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
   }, []);
