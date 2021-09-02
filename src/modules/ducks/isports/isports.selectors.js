@@ -25,3 +25,13 @@ export const selectSearchResults = createSelector(
   [iSportsState],
   ({ searchResults }) => searchResults
 );
+
+export const selectRecentSearch = createSelector(
+  [iSportsState],
+  ({ recentSearch }) => recentSearch
+);
+
+export const selectSimilarChannel = createSelector(
+  [iSportsState],
+  ({ similarChannel }) => similarChannel
+);

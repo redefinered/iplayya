@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { createStructuredSelector } from 'reselect';
 import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
+import SnackBar from 'components/snackbar/snackbar.component';
 
 const ProgramItem = ({
   id,
@@ -23,6 +24,7 @@ const ProgramItem = ({
   createNotificationAction,
   activateNotificationAction,
   deactivateNotificationAction,
+  deleteNotificationAction,
 
   createScheduledNotif,
   cancelNotification,
@@ -37,6 +39,7 @@ const ProgramItem = ({
   const [active, setActive] = React.useState(false);
   const [exists, setExists] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
+  const [showCancelSnackBar, setShowCancelSnackBar] = React.useState(false);
 
   React.useEffect(() => {
     if (notifications.length) {
@@ -57,8 +60,6 @@ const ProgramItem = ({
   }, [notifications]);
 
   const handleNotify = () => {
-    console.log({ id, title, channelName, time, ...rest });
-    // const notifRepeatId = uuid();
     const program = { id, title, time, ...rest };
 
     if (exists) {
@@ -67,6 +68,9 @@ const ProgramItem = ({
         deactivateNotificationAction(id);
 
         cancelNotification(id);
+        deleteNotificationAction(id);
+
+        setShowCancelSnackBar(true);
       } else {
         showSnackBar();
 
@@ -91,6 +95,16 @@ const ProgramItem = ({
       data: program
     });
   };
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowCancelSnackBar(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (showCancelSnackBar) hideSnackBar();
+  }, [showCancelSnackBar]);
 
   const getColor = (time, time_to) => {
     return isCurrentlyPlaying(time, time_to)
@@ -144,6 +158,13 @@ const ProgramItem = ({
           color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
         />
       </Pressable>
+
+      <SnackBar
+        visible={showCancelSnackBar}
+        message="You now turned off the notifications from this program"
+        iconName="notifications-off"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
@@ -179,7 +200,8 @@ const actions = {
   createNotificationAction: Creators.createNotification,
   activateNotificationAction: Creators.activateNotification,
   deactivateNotificationAction: Creators.deactivateNotification,
-  cancelNotificationAction: Creators.cancelNotification
+  cancelNotificationAction: Creators.cancelNotification,
+  deleteNotificationAction: Creators.deleteNotification
 };
 
 const mapStateToProps = createStructuredSelector({ notifications: selectNotifications });

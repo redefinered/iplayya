@@ -128,8 +128,8 @@ const ProgramGuide = ({
 
     if (today !== day) return false;
 
-    const a = moment(startTime).startOf('hour');
-    const b = moment(endTime).endOf('hour');
+    const a = moment(startTime);
+    const b = moment(endTime);
 
     return moment().isBetween(a, b);
   }, []);

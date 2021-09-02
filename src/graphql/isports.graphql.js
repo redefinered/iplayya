@@ -96,6 +96,9 @@ export const SEARCH = gql`
     isports(input: $input) {
       id
       title
+      genre
+      epgtitle
+      number
     }
   }
 `;

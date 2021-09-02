@@ -294,22 +294,22 @@ const HomeStack = ({
           // eslint-disable-next-line no-unused-vars
           options={({ navigation }) => ({
             title: 'Search',
-            headerLeft: null, // hide back button
-            // animationEnabled: false,
-            headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <TouchableRipple
-                  borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
-                  rippleColor="rgba(0,0,0,0.28)"
-                  onPress={() => navigation.goBack()}
-                >
-                  <View style={{ ...styles.headerButtonContainer }}>
-                    <Icon name="close" size={theme.iconSize(3)} />
-                  </View>
-                </TouchableRipple>
-              </View>
-            ),
+            // headerLeft: null, // hide back button
+            // // animationEnabled: false,
+            // headerRight: () => (
+            //   <View style={{ flexDirection: 'row' }}>
+            //     <TouchableRipple
+            //       borderless={true}
+            //       style={{ borderRadius: 44, padding: 8 }}
+            //       rippleColor="rgba(0,0,0,0.28)"
+            //       onPress={() => navigation.goBack()}
+            //     >
+            //       <View style={{ ...styles.headerButtonContainer }}>
+            //         <Icon name="close" size={theme.iconSize(3)} />
+            //       </View>
+            //     </TouchableRipple>
+            //   </View>
+            // ),
             ...TransitionPresets.ModalSlideFromBottomIOS
           })}
         />

@@ -300,7 +300,7 @@ const IsportsScreen = ({
             <View style={{ alignItems: 'center' }}>
               <Icon name="download" size={theme.iconSize(3)} />
               <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
-                Downloaded
+                Downloads
               </Text>
             </View>
           </TouchableRipple>
