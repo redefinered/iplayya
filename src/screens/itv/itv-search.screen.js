@@ -35,7 +35,6 @@ import {
   selectGenres
 } from 'modules/ducks/itv/itv.selectors';
 import { ScrollView } from 'react-native-gesture-handler';
-import Spacer from '../../components/spacer.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -66,9 +65,9 @@ const ItvSearchScreen = ({
   //   true
   // );
 
-  React.useEffect(() => {
-    setBottomTabsVisibleAction({ hideTabs: true }); // does not work here!!!
-  });
+  // React.useEffect(() => {
+  //   setBottomTabsVisibleAction({ hideTabs: true }); // does not work here!!!
+  // });
 
   /// clear previous search result
   React.useEffect(() => {
@@ -237,22 +236,19 @@ const ItvSearchScreen = ({
                 ...createFontFormat(14, 19),
                 fontWeight: '700',
                 color: theme.iplayya.colors.white50,
-                paddingVertical: 15,
-                paddingBottom: 10
+                paddingVertical: 15
               }}
             >
               Recent Search
             </Text>
-          </ContentWrap>
-          <ScrollView>
-            {recentSearch.map((term, index) => (
-              <ContentWrap key={index}>
-                <TouchableRipple onPress={() => setTerm(term)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 10 }}>{term}</Text>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {recentSearch.map((term, index) => (
+                <TouchableRipple key={index} onPress={() => setTerm(term)}>
+                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: 15 }}>{term}</Text>
                 </TouchableRipple>
-              </ContentWrap>
-            ))}
-          </ScrollView>
+              ))}
+            </ScrollView>
+          </ContentWrap>
         </React.Fragment>
       );
     }
@@ -296,7 +292,6 @@ const ItvSearchScreen = ({
 
   return (
     <View style={styles.container}>
-      <Spacer />
       <ContentWrap>
         <TextInput
           onFocus={() => setBottomTabsVisibleAction({ hideTabs: true })}

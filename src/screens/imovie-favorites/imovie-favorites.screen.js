@@ -231,7 +231,7 @@ const ImovieFavoritesScreen = ({
               variant="confirmation"
               message={`Are you sure you want to delete ${
                 selectedItems.length > 1 ? 'these' : 'this'
-              } movie/s in your Favorites list?`}
+              } movie/s from your Favorites list?`}
               visible={showDeleteConfirmation}
               onCancel={handleHideConfirmDeleteModal}
               hideAction={handleHideConfirmDeleteModal}

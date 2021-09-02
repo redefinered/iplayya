@@ -131,6 +131,15 @@ const ImovieSearchScreen = ({
     });
   };
 
+  const onSubmitEditing = () => {
+    if (term.length) {
+      updateRecentSearchAction(term);
+      setTerm(term);
+    } else {
+      return;
+    }
+  };
+
   const handleRecentSearch = () => {
     if (term.length) {
       updateRecentSearchAction(term);
@@ -195,6 +204,11 @@ const ImovieSearchScreen = ({
         <React.Fragment>
           <SectionList
             showsVerticalScrollIndicator={false}
+            getItemLayout={(data, index) => ({
+              length: CARD_DIMENSIONS.HEIGHT,
+              offset: CARD_DIMENSIONS.HEIGHT * index,
+              index
+            })}
             keyExtractor={(item) => item.id}
             sections={DATA}
             renderItem={renderSection}
@@ -213,6 +227,7 @@ const ImovieSearchScreen = ({
               </View>
             )}
           />
+
           {/* <Text
             style={{
               ...createFontFormat(14, 19),
@@ -360,7 +375,8 @@ const ImovieSearchScreen = ({
         name="search"
         returnKeyType="search"
         autoFocus
-        handleChangeText={handleChange}
+        onSubmitEditing={(term) => onSubmitEditing(term)}
+        handleChangeText={(term) => handleChange(term)}
         value={term}
         autoCapitalize="none"
         clearButtonMode="while-editing"

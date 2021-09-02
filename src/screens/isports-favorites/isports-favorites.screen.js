@@ -185,7 +185,7 @@ const IsportsFavoritesScreen = ({
             variant="danger"
             message={`Are you sure you want to delete ${
               selectedItems.length > 1 ? 'these' : 'this'
-            } channel in your download list?`}
+            } channel from your Favorites list?`}
             visible={showDeleteConfirmation}
             onCancel={handleHideConfirmDeleteModal}
             hideAction={handleHideConfirmDeleteModal}
