@@ -18,6 +18,7 @@ import { Creators } from 'modules/ducks/downloads/downloads.actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
+import { selectIsConnected } from 'modules/app';
 
 const DownloadItem = ({
   id,
@@ -37,7 +38,8 @@ const DownloadItem = ({
   handleStopDownload,
   handleDownloadMovie,
   downloadProgress,
-  updateDownloadsProgressAction
+  updateDownloadsProgressAction,
+  isConnected
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
@@ -113,6 +115,15 @@ const DownloadItem = ({
   React.useEffect(() => {
     if (showDownloadSuccessModal) hideSnackBar();
   }, [showDownloadSuccessModal]);
+
+  console.log({ isConnected });
+  React.useEffect(() => {
+    if (isConnected) {
+      setBroken(false);
+    } else {
+      setBroken(true);
+    }
+  }, [isConnected]);
 
   const hideSnackBar = () => {
     setTimeout(() => {
@@ -399,13 +410,17 @@ DownloadItem.propTypes = {
   handleStopDownload: PropTypes.func,
   handleDownloadMovie: PropTypes.func,
   donwloadStarted: PropTypes.bool,
-  updateDownloadsProgressAction: PropTypes.func
+  updateDownloadsProgressAction: PropTypes.func,
+  isConnected: PropTypes.bool
 };
 
 const actions = {
   updateDownloadsProgressAction: Creators.updateDownloadsProgress
 };
-const mapStateToProps = createStructuredSelector({ downloadProgress: selectDownloadsProgress });
+const mapStateToProps = createStructuredSelector({
+  downloadProgress: selectDownloadsProgress,
+  isConnected: selectIsConnected
+});
 
 const enhance = compose(connect(mapStateToProps, actions));
 

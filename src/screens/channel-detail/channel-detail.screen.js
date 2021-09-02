@@ -43,7 +43,7 @@ const ChannelDetailScreen = ({
   startAction,
   onNotifResetAction,
   addToFavoritesAction,
-  favoritesUpdated
+  favoritesListUpdated
 }) => {
   const theme = useTheme();
   const [paused, setPaused] = React.useState(false);
@@ -51,6 +51,7 @@ const ChannelDetailScreen = ({
   const [isMovieDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
+  const [showFavSnackBar, setShowFavSnackBar] = React.useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
   const [contentHeight, setContentHeight] = React.useState(null);
 
@@ -71,10 +72,11 @@ const ChannelDetailScreen = ({
   }, []);
 
   React.useEffect(() => {
-    if (favoritesUpdated) {
+    if (favoritesListUpdated) {
       getChannelAction({ videoId: channelId });
+      handleShowFavSnackBar();
     }
-  }, [favoritesUpdated]);
+  }, [favoritesListUpdated]);
 
   React.useEffect(() => {
     if (channel && currentProgram) {
@@ -158,6 +160,20 @@ const ChannelDetailScreen = ({
     if (showSnackBar) hideSnackBar();
   }, [showSnackBar]);
 
+  const handleShowFavSnackBar = () => {
+    setShowFavSnackBar(true);
+  };
+
+  const hideFavSnackBar = () => {
+    setTimeout(() => {
+      setShowFavSnackBar(false);
+    }, 3000);
+  };
+
+  React.useEffect(() => {
+    if (showSnackBar) hideFavSnackBar();
+  }, [showSnackBar]);
+
   if (!channel) return <View />;
 
   return (
@@ -221,6 +237,14 @@ const ChannelDetailScreen = ({
         iconName="notifications"
         iconColor={theme.iplayya.colors.vibrantpussy}
       />
+
+      <SnackBar
+        visible={showFavSnackBar}
+        // message={`${channel.title} is added to your favorites list`}
+        message="Channel has been added to Favorites list"
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
@@ -275,7 +299,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   channel: selectChannel,
   currentProgram: selectCurrentProgram,
-  favoritesUpdated: selectFavoritesListUpdated
+  favoritesListUpdated: selectFavoritesListUpdated
 });
 
 const actions = {
