@@ -42,11 +42,13 @@ const ProgramGuide = ({
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
-  // generates an array of dates 7 days from now
-  const dates = generateDatesFromToday();
   const [selected, setSelected] = React.useState('8');
   const [notifService, setNotifService] = React.useState(null);
   const [programsPageYOffset, setProgramsPageYOffset] = React.useState(null);
+
+  // generates an array of dates 7 days from now
+  let dates = generateDatesFromToday();
+  dates = dates.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
 
   React.useEffect(() => {
     const notif = new NotifService(onRegisterAction, onNotifAction);
@@ -55,7 +57,7 @@ const ProgramGuide = ({
 
   const handleDateSelect = (id) => {
     setSelected(id);
-    const { value } = dates.find(({ id: dateId }) => dateId === parseInt(id));
+    const { value } = dates.find(({ id: dateId }) => dateId === id);
     const date = new Date(value).toISOString();
     console.log({ date });
     getProgramsByChannelAction({ channelId, date });
