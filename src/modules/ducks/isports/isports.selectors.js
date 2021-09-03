@@ -4,6 +4,7 @@ export const iSportsState = (state) => state.sports;
 
 export const selectIsFetching = createSelector([iSportsState], ({ isFetching }) => isFetching);
 export const selectError = createSelector([iSportsState], ({ error }) => error);
+export const selectPaginator = createSelector([iSportsState], ({ paginator }) => paginator);
 export const selectPaginatorInfo = createSelector(
   [iSportsState],
   ({ paginatorInfo }) => paginatorInfo

@@ -2,6 +2,8 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    start: null,
+
     /// query: GET_GENRES
     getGenres: [],
     getGenresSuccess: ['data'],

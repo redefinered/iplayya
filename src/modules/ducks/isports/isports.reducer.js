@@ -5,6 +5,14 @@ const INITIAL_STATE = {
   isFetching: false,
   error: null,
   genres: [],
+
+  paginator: {
+    limit: 10,
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
+  },
+
   paginatorInfo: {
     limit: 10,
     pageNumber: 1

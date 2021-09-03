@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+// eslint-disable-next-line no-unused-vars
+import { View, ScrollView, StyleSheet, FlatList } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -20,7 +21,7 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectPaginatorInfo,
+  // selectPaginatorInfo,
   selectGenres,
   selectChannels,
   selectAddedToFavorites,
@@ -56,6 +57,10 @@ const IsportsScreen = ({
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
+
+  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+  //   true
+  // );
 
   // get genres on mount
   React.useEffect(() => {
@@ -164,13 +169,71 @@ const IsportsScreen = ({
     }
   }, [selectedCategory]);
 
-  // console.log({ channelsData, favorites, paginatorInfo });
+  // const handleEndReached = () => {
+  //   if (!onEndReachedCalledDuringMomentum) {
+  //     if (selectedCategory === 'all') {
+  //       getChannelsAction(paginator);
+  //       setOnEndReachedCalledDuringMomentum(true);
+  //       return;
+  //     }
+
+  //     /// if selected category is anything other than 'all'
+  //     getChannelsByCategoriesAction({
+  //       categories: [parseInt(selectedCategory)],
+  //       ...paginator
+  //     });
+  //     setOnEndReachedCalledDuringMomentum(true);
+  //   }
+  // };
 
   const renderEmpty = () => {
     if (error) return <Text>{error}</Text>;
     // this should only be returned if user did not subscribe to any channels
     return <Text>no channels found</Text>;
   };
+
+  // const renderChannels = () => {
+  //   if (!channelsData) return;
+
+  //   return (
+  //     <React.Fragment>
+  //       <View style={{ marginBottom: theme.spacing(2) }}>
+  //         <ContentWrap>
+  //           <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+  //             Featured TV Channels
+  //           </Text>
+  //         </ContentWrap>
+  //         <FlatList
+  //           data={channelsData}
+  //           horizontal
+  //           bounces={false}
+  //           renderItem={renderFeaturedItem}
+  //           showsHorizontalScrollIndicator={false}
+  //           style={{ paddingHorizontal: theme.spacing(2) }}
+  //         />
+  //       </View>
+  //       <FlatList
+  //         data={channelsData}
+  //         keyExtractor={(item) => item.id}
+  //         onEndReached={() => handleEndReached()}
+  //         onEndReachedThreshold={0.5}
+  //         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+  //         renderItem={({ item: { epgtitle, ...itemProps } }) => (
+  //           <ListItemChanel
+  //             onSelect={handleItemSelect}
+  //             onRightActionPress={handleAddToFavorites}
+  //             full
+  //             epgtitle={epgtitle}
+  //             {...itemProps}
+  //           />
+  //         )}
+  //         ListFooterComponent={
+  //           <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
+  //         }
+  //       />
+  //     </React.Fragment>
+  //   );
+  // };
 
   return (
     <View style={styles.container}>
@@ -189,7 +252,7 @@ const IsportsScreen = ({
             <View style={{ marginBottom: 30 }}>
               <ContentWrap>
                 <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                  Featured TV Channels
+                  Featured Live Sports
                 </Text>
               </ContentWrap>
               <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
@@ -341,7 +404,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   genres: selectGenres,
-  paginatorInfo: selectPaginatorInfo,
+  // paginator: selectPaginator,
   channels: selectChannels,
   isFavoritesUpdated: selectAddedToFavorites
 });

@@ -30,7 +30,6 @@ import theme from 'common/theme';
 const dirs = RNFetchBlob.fs.dirs;
 
 const ChannelDetailScreen = ({
-  navigation,
   route: {
     params: { channelId }
   },
@@ -65,10 +64,10 @@ const ChannelDetailScreen = ({
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
 
-    /// clear channel data before going back
-    navigation.addListener('beforeRemove', () => {
+    return () => {
+      /// this will set the channel to null so that when viewing a channel there is no UI flickering
       startAction();
-    });
+    };
   }, []);
 
   React.useEffect(() => {
