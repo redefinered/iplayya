@@ -90,7 +90,7 @@ const Pill = ({ id, label, selected, onSelect }) => {
 };
 
 Pill.propTypes = {
-  id: PropTypes.number,
+  id: PropTypes.string,
   label: PropTypes.string,
   selected: PropTypes.string,
   onSelect: PropTypes.func
