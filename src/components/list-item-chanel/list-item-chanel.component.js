@@ -118,6 +118,7 @@ const ListItemChanel = ({
 // eslint-disable-next-line react/prop-types
 const Content = ({
   id,
+  // eslint-disable-next-line react/prop-types
   number,
   title,
   epgtitle,
@@ -257,11 +258,11 @@ const Content = ({
 };
 
 Content.propTypes = {
-  number: PropTypes.number,
+  // number: PropTypes.string,
   time: PropTypes.string,
   time_to: PropTypes.string,
   chanel: PropTypes.string,
-  id: PropTypes.any,
+  id: PropTypes.string,
   title: PropTypes.string,
   epgtitle: PropTypes.string,
   isFavorite: PropTypes.bool,
@@ -272,7 +273,7 @@ Content.propTypes = {
 };
 
 ListItemChanel.propTypes = {
-  id: PropTypes.any,
+  id: PropTypes.string,
   title: PropTypes.string,
   is_favorite: PropTypes.bool,
   full: PropTypes.bool,
