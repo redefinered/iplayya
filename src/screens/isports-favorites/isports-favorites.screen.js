@@ -1,12 +1,13 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { View, Pressable, ScrollView, Image } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 // import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
 // import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
@@ -46,10 +47,11 @@ const IsportsFavoritesScreen = ({
 
   // setup channels data
   React.useEffect(() => {
-    if (favorites.length) {
-      let data = favorites.map(({ id, title }) => ({
+    if (favorites) {
+      let data = favorites.map(({ id, title, number }) => ({
         id,
         title,
+        number,
         thumbnail: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(title)}`
       }));
       setListData(data);
@@ -129,7 +131,7 @@ const IsportsFavoritesScreen = ({
     handleRemoveItems();
   };
 
-  if (listData.length)
+  if (listData.length || favorites.length)
     return (
       <ScrollView>
         {activateCheckboxes && (
@@ -168,7 +170,7 @@ const IsportsFavoritesScreen = ({
           </ContentWrap>
         )}
 
-        {listData.map(({ id, title, epgtitle, number, time, time_to, thumbnail }) => {
+        {listData.map(({ id, title, epgtitle, number, time, time_to }) => {
           const getSchedule = (time, time_to) => {
             if (!time || !time_to) return;
 
@@ -194,7 +196,7 @@ const IsportsFavoritesScreen = ({
                   paddingLeft: 75
                 }}
               >
-                <Image
+                {/* <Image
                   style={{
                     width: 60,
                     height: 60,
@@ -203,8 +205,24 @@ const IsportsFavoritesScreen = ({
                     top: 2,
                     left: 10
                   }}
-                  source={{ uri: thumbnail }}
-                />
+                  source={channelplaceholder}
+                /> */}
+                <View
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    marginRight: 10,
+                    backgroundColor: theme.iplayya.colors.white10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    top: 2,
+                    left: 10
+                  }}
+                >
+                  <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+                </View>
 
                 <View
                   style={{
@@ -377,6 +395,6 @@ const actions = {
   getChannelsAction: Creators.getChannels
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
 export default enhance(Container);
