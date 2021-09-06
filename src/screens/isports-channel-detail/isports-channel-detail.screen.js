@@ -11,7 +11,7 @@ import ProgramGuide from 'components/program-guide/program-guide.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
@@ -22,14 +22,14 @@ import {
   selectIsFetching,
   selectChannel,
   selectCurrentProgram,
-  selectFavoritesListUpdated
-} from 'modules/ducks/itv/itv.selectors';
+  selectAddedToFavorites
+} from 'modules/ducks/isports/isports.selectors';
 import moment from 'moment';
 import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
-const ChannelDetailScreen = ({
+const IsportsChannelDetailsScreen = ({
   route: {
     params: { channelId }
   },
@@ -43,7 +43,7 @@ const ChannelDetailScreen = ({
   startAction,
   onNotifResetAction,
   addToFavoritesAction,
-  favoritesListUpdated
+  isFavoritesUpdated
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -71,11 +71,11 @@ const ChannelDetailScreen = ({
   }, []);
 
   React.useEffect(() => {
-    if (favoritesListUpdated) {
+    if (isFavoritesUpdated) {
       getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
-  }, [favoritesListUpdated]);
+  }, [isFavoritesUpdated]);
 
   React.useEffect(() => {
     if (channel && currentProgram) {
@@ -122,7 +122,7 @@ const ChannelDetailScreen = ({
   const handleFovoritePress = () => {
     if (channel.is_favorite) return;
 
-    addToFavoritesAction(parseInt(channelId));
+    addToFavoritesAction({ videoId: parseInt(channelId) });
   };
 
   const renderPlayer = () => {
@@ -169,7 +169,6 @@ const ChannelDetailScreen = ({
     }, 3000);
   };
 
-  // hide fav snackbar
   React.useEffect(() => {
     if (showFavSnackBar) hideFavSnackBar();
   }, [showFavSnackBar]);
@@ -202,7 +201,6 @@ const ChannelDetailScreen = ({
             }}
           >
             <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-              {/* added icon placeholder */}
               <View
                 style={{
                   width: 60,
@@ -303,8 +301,8 @@ const Content = ({ channeltitle, title, epgtitle, time, time_to }) => {
 const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2) } });
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
-    <ChannelDetailScreen {...props} />
+  <ScreenContainer withHeaderPush>
+    <IsportsChannelDetailsScreen {...props} />
   </ScreenContainer>
 );
 
@@ -313,7 +311,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   channel: selectChannel,
   currentProgram: selectCurrentProgram,
-  favoritesListUpdated: selectFavoritesListUpdated
+  isFavoritesUpdated: selectAddedToFavorites
 });
 
 const actions = {

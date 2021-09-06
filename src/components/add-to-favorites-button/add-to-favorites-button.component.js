@@ -6,12 +6,14 @@ import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
 import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
 
 const AddToFavoritesButton = ({
   sub,
   module,
   addChannelToFavoritesAction,
   addMovieToFavoritesAction,
+  addIsportChannelToFavoritesAction,
   inFavorites
 }) => {
   const theme = useTheme();
@@ -26,6 +28,9 @@ const AddToFavoritesButton = ({
         break;
       case 'imovie':
         addMovieToFavoritesAction(sub);
+        break;
+      case 'isports':
+        addIsportChannelToFavoritesAction(sub);
         break;
       case 'imusic':
         /// wip: add imusic module
@@ -79,12 +84,14 @@ AddToFavoritesButton.propTypes = {
   inFavorites: PropTypes.bool,
   sub: PropTypes.number,
   addChannelToFavoritesAction: PropTypes.func,
-  addMovieToFavoritesAction: PropTypes.func
+  addMovieToFavoritesAction: PropTypes.func,
+  addIsportChannelToFavoritesAction: PropTypes.func
 };
 
 const actions = {
   addChannelToFavoritesAction: ItvCreators.addToFavorites,
-  addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites
+  addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites,
+  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites
 };
 
 export default connect(null, actions)(AddToFavoritesButton);

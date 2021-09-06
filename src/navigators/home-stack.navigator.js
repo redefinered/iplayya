@@ -41,6 +41,7 @@ import IsportsScreen from 'screens/isports/isports.screen';
 import IsportsSearchScreen from 'screens/isports/isports-search.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
+import IsportsChannelDetailsScreen from 'screens/isports-channel-detail/isports-channel-detail.screen';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -725,6 +726,37 @@ const HomeStack = ({
               </View>
             )
           })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        {/* added isportschannelscreen */}
+        <Stack.Screen
+          name="IsportsChannelDetailsScreen"
+          component={IsportsChannelDetailsScreen}
+          options={(props) => {
+            const {
+              route: {
+                params: { channelId }
+              }
+            } = props;
+
+            const isInFavorites = favoriteChannels.findIndex(({ id }) => id === channelId);
+            console.log('www', isInFavorites);
+            return {
+              title: null,
+              headerRight: () => (
+                <View style={{ flexDirection: 'row' }}>
+                  <AddToFavoritesButton
+                    sub={{ videoId: parseInt(channelId) }}
+                    module="isports"
+                    inFavorites={isInFavorites >= 0 ? true : false}
+                  />
+                </View>
+              )
+            };
+          }}
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })

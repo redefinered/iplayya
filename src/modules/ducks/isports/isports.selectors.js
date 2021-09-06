@@ -13,6 +13,8 @@ export const selectGenres = createSelector([iSportsState], ({ genres }) => genre
 export const selectChannels = createSelector([iSportsState], ({ channels }) => channels);
 export const selectChannel = createSelector([iSportsState], ({ channel }) => channel);
 export const selectFavorites = createSelector([iSportsState], ({ favorites }) => favorites);
+// added getProgram delete if conflict
+export const selectPrograms = createSelector([iSportsState], ({ programs }) => programs);
 export const selectAddedToFavorites = createSelector(
   [iSportsState],
   ({ addedToFavorites }) => addedToFavorites
@@ -21,6 +23,12 @@ export const selectRemovedFromFavorites = createSelector(
   [iSportsState],
   ({ removedFromFavorites }) => removedFromFavorites
 );
+// added getProgram delete if conflict
+export const selectCurrentProgram = createSelector([iSportsState], ({ programs }) => {
+  if (!programs.length) return;
+
+  return programs[0];
+});
 
 export const selectSearchResults = createSelector(
   [iSportsState],

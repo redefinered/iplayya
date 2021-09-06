@@ -26,6 +26,10 @@ const INITIAL_STATE = {
   // changes depending on user click in itv screen
   channels: [],
 
+  // programs per selected channel
+  // delete if conflict
+  programs: [],
+
   addedToFavorites: false,
   removedFromFavorites: false,
 
@@ -37,6 +41,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.START]: (state) => {
+    return { ...state, channel: null };
+  },
   [Types.GET_GENRES]: (state) => {
     return {
       ...state,
@@ -67,11 +74,13 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_CHANNEL_SUCCESS]: (state, action) => {
+    const { channel, token } = action;
+    // added token delete if conflict
     return {
       ...state,
       isFetching: false,
       error: null,
-      channel: action.data
+      channel: { token, ...channel }
     };
   },
   [Types.GET_CHANNEL_FAILURE]: (state, action) => {
@@ -143,6 +152,32 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error
+    };
+  },
+
+  // get programs by channel
+  // added if conflict delete
+  [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {
+    return {
+      ...state,
+      isFetching: true,
+      error: null
+    };
+  },
+  [Types.GET_PROGRAMS_BY_CHANNEL_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: null,
+      programs: action.data
+    };
+  },
+  [Types.GET_PROGRAMS_BY_CHANNEL_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      error: action.error,
+      programs: []
     };
   },
 

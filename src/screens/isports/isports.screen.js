@@ -147,7 +147,7 @@ const IsportsScreen = ({
 
   const handleItemSelect = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChannelDetailScreen', { channelId });
+    navigation.navigate('IsportsChannelDetailsScreen', { channelId });
   };
 
   const onCategorySelect = (id) => {
