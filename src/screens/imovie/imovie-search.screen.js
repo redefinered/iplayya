@@ -379,6 +379,7 @@ const ImovieSearchScreen = ({
         name="search"
         returnKeyType="search"
         autoFocus
+        showSoftInputOnFocus={false}
         onSubmitEditing={(term) => onSubmitEditing(term)}
         handleChangeText={(term) => handleChange(term)}
         value={term}
