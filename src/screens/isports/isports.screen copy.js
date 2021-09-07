@@ -1,25 +1,23 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet, FlatList, Dimensions } from 'react-native';
-import { Text, useTheme, TouchableRipple } from 'react-native-paper';
+// eslint-disable-next-line no-unused-vars
+import { View, ScrollView, StyleSheet, FlatList, Dimensions } from 'react-native';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
-import withLoader from 'components/with-loader.component';
 import ScreenContainer from 'components/screen-container.component';
+import withLoader from 'components/with-loader.component';
+import useComponentSize from 'hooks/use-component-size.hook';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
-import useComponentSize from 'hooks/use-component-size.hook';
-import { selectHeaderHeight } from 'modules/app';
-import uniq from 'lodash/uniq';
 import {
   selectError,
   selectIsFetching,
@@ -28,26 +26,26 @@ import {
   selectChannels,
   selectFavorites,
   selectFavoritesListUpdated
-} from 'modules/ducks/itv/itv.selectors';
+} from 'modules/ducks/isports/isports.selectors';
+import { selectHeaderHeight } from 'modules/app';
+import uniq from 'lodash/uniq';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
-const ItvScreen = ({
+const IsportsScreen = ({
   navigation,
   error,
-  updated,
   genres,
   channels,
-  getChannelsByCategoriesStartAction,
-  getChannelsStartAction,
+  getGenresAction,
   getChannelsAction,
   paginator,
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
+  isFavoritesUpdated,
   getFavoritesAction,
   enableSwipeAction,
-  route: { params },
   headerHeight
 }) => {
   const theme = useTheme();
@@ -60,7 +58,6 @@ const ItvScreen = ({
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
-  const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -69,46 +66,37 @@ const ItvScreen = ({
   // get genres on mount
   React.useEffect(() => {
     resetPaginatorAction(); // for debugging
+    getGenresAction();
     enableSwipeAction(false);
-    getChannelsStartAction();
-
-    // get channels on mount
-    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
   }, []);
-
-  React.useEffect(() => {
-    if (typeof params !== 'undefined') {
-      const { openItvGuide, genreId } = params;
-
-      setSelectedCategory(genreId);
-      getChannelsByCategoriesAction({ categories: [parseInt(genreId)] });
-
-      if (!openItvGuide) return;
-
-      setShowWalkthroughGuide(true);
-    }
-  }, [params]);
 
   // setup genres data
   React.useEffect(() => {
     if (genres.length) {
       let data = genres.map(({ id, title }) => ({ id, title }));
       data.unshift({ id: 'all', title: 'All channels' });
-
       setGenresData(data);
+
+      // fetch data from all channels initially
+      // getChannelsAction({ ...paginatorInfo });
     }
   }, [genres]);
+
+  // get favorites if an item is added
+  React.useEffect(() => {
+    if (isFavoritesUpdated) {
+      setShowSnackBar(true);
+      getFavoritesAction();
+      getChannelsAction({ limit: 10, pageNumber: 1 });
+    }
+  }, [isFavoritesUpdated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
 
-    if (index >= 0) return removeChannelFromNotifyIds(channelId);
+    if (index >= 0) return;
 
     setNotifyIds(uniq([...notifyIds, parseInt(channelId)]));
-  };
-
-  const removeChannelFromNotifyIds = (channelId) => {
-    setNotifyIds(notifyIds.filter((id) => id !== parseInt(channelId)));
   };
 
   React.useEffect(() => {
@@ -127,34 +115,19 @@ const ItvScreen = ({
       let data = channels.map(({ id, title, ...rest }) => ({
         id,
         title,
+        // thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
         thumbnail: channelplaceholder,
         ...rest
       }));
       setChannelsData(data);
-    } else {
-      setChannelsData([]);
     }
   }, [channels]);
 
-  const handleWalkthroughGuideHide = () => {
-    setShowWalkthroughGuide(false);
-  };
-
   const handleAddToFavorites = (channelId) => {
-    let channel = channels.find(({ id }) => id === channelId);
-
-    // if channel is not found stop
-    if (typeof channel === 'undefined') return;
-
-    const { is_favorite } = channel;
-
-    if (is_favorite) return;
-
     let title = channels.find(({ id }) => id === channelId).title;
     setFavorited(title);
 
-    addToFavoritesAction(parseInt(channelId));
-    // setShowSnackBar(true);
+    addToFavoritesAction({ videoId: parseInt(channelId) });
   };
 
   const hideSnackBar = () => {
@@ -164,23 +137,10 @@ const ItvScreen = ({
     }, 3000);
   };
 
-  /// if favorites update in backend get feavorites
-  React.useEffect(() => {
-    if (updated) {
-      handleShowSnackBar();
-      getFavoritesAction({ pageNumber: 1 });
-      getChannelsAction({ pageNumber: 1 });
-    }
-  }, [updated]);
-
   React.useEffect(() => {
     if (showSnackBar) hideSnackBar();
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
-
-  const handleShowSnackBar = () => {
-    setShowSnackBar(true);
-  };
 
   const handleItemSelect = (channelId) => {
     // navigate to chanel details screen with `id` parameter
@@ -196,16 +156,13 @@ const ItvScreen = ({
   };
 
   React.useEffect(() => {
-    getChannelsByCategoriesStartAction();
-
-    if (paginator.pageNumber > 1) return;
     if (selectedCategory === 'all') {
-      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      // get channels with pageNumber set to 1
+      // because at this point we are not paginating
+      // we will paginate on scrollEndreached or on a "load more" button is clicked
+      getChannelsAction({ limit: 10, pageNumber: 1 });
     } else {
-      getChannelsByCategoriesAction({
-        categories: [parseInt(selectedCategory)],
-        ...paginator
-      });
+      getChannelsByCategoriesAction({ ...paginator, categories: [parseInt(selectedCategory)] });
     }
   }, [selectedCategory]);
 
@@ -226,7 +183,12 @@ const ItvScreen = ({
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
+  // const renderEmpty = () => {
+  //   if (error) return <Text>{error}</Text>;
+  //   // this should only be returned if user did not subscribe to any channels
+  //   return <Text>no channels found</Text>;
+  // };
+
   const renderError = () => {
     if (error)
       return (
@@ -333,7 +295,7 @@ const ItvScreen = ({
             }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.navigate('ItvFavoritesScreen')}
+            onPress={() => navigation.navigate('IsportsFavoritesScreen')}
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="heart-solid" size={theme.iconSize(3)} />
@@ -346,7 +308,7 @@ const ItvScreen = ({
         <View style={{ flex: 4, alignItems: 'center' }}>
           <TouchableRipple
             style={{
-              borderRadius: 33,
+              borderRadius: 34,
               height: 67,
               width: 67,
               alignItems: 'center',
@@ -355,6 +317,7 @@ const ItvScreen = ({
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] })}
+            // onPress={() => navigation.replace('HomeScreen')}
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="iplayya" size={theme.iconSize(3)} />
@@ -373,35 +336,29 @@ const ItvScreen = ({
             }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.navigate('ItvDownloadsScreen')}
+            onPress={() => navigation.navigate('IsportsDownloadsScreen')}
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="download" size={theme.iconSize(3)} />
-              <Text
-                style={{
-                  fontSize: 10,
-                  textTransform: 'uppercase',
-                  marginTop: 5
-                }}
-              >
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
                 Downloads
               </Text>
             </View>
           </TouchableRipple>
         </View>
-        <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
       </View>
+
       <SnackBar
         visible={showSnackBar}
         message={`${favorited} is added to your favorites list`}
         iconName="heart-solid"
-        iconColor={theme.iplayya.colors.vibrantpussy}
+        iconColor="#FF5050"
       />
       <SnackBar
         visible={showNotificationSnackBar}
         message={`You will now receive notifications from ${subscribed}`}
         iconName="notifications"
-        iconColor={theme.iplayya.colors.vibrantpussy}
+        iconColor="#FF5050"
       />
     </View>
   );
@@ -409,13 +366,14 @@ const ItvScreen = ({
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush>
-    <ItvScreen {...props} />
+    <IsportsScreen {...props} />
   </ScreenContainer>
 );
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 5
   }
 });
 
@@ -431,17 +389,14 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  // getGenresAction: Creators.getGenres,
-  getChannelsStartAction: Creators.getChannelsStart,
+  getGenresAction: Creators.getGenres,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   resetPaginatorAction: Creators.resetPaginator,
-  getChannelsByCategoriesStartAction: Creators.getChannelsByCategoriesStart,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
   addToFavoritesAction: Creators.addToFavorites,
-  enableSwipeAction: NavActionCreators.enableSwipe,
-  reset: Creators.reset
+  enableSwipeAction: NavActionCreators.enableSwipe
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

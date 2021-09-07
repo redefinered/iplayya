@@ -39,6 +39,8 @@ export function* getChannelsRequest(action) {
 export function* getChannelRequest(action) {
   try {
     const { iptv: channel } = yield call(getChannel, action.input);
+
+    /// get token
     const {
       getItvChannelToken: { token }
     } = yield call(getChannelToken, { channelId: action.input.videoId });

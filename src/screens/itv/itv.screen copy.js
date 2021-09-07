@@ -72,9 +72,14 @@ const ItvScreen = ({
     enableSwipeAction(false);
     getChannelsStartAction();
 
-    // get channels on mount
     getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
   }, []);
+
+  // React.useEffect(() => {
+  //   if (genreRefreshed) {
+  //     getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+  //   }
+  // }, [genreRefreshed]);
 
   React.useEffect(() => {
     if (typeof params !== 'undefined') {
@@ -431,7 +436,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  // getGenresAction: Creators.getGenres,
+  getGenresAction: Creators.getGenres,
   getChannelsStartAction: Creators.getChannelsStart,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,

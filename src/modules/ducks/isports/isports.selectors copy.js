@@ -5,38 +5,20 @@ export const iSportsState = (state) => state.sports;
 export const selectIsFetching = createSelector([iSportsState], ({ isFetching }) => isFetching);
 export const selectError = createSelector([iSportsState], ({ error }) => error);
 export const selectPaginator = createSelector([iSportsState], ({ paginator }) => paginator);
-export const selectPaginatorInfo = createSelector(
-  [iSportsState],
-  ({ paginatorInfo }) => paginatorInfo
-);
 export const selectGenres = createSelector([iSportsState], ({ genres }) => genres);
 export const selectChannels = createSelector([iSportsState], ({ channels }) => channels);
 export const selectChannel = createSelector([iSportsState], ({ channel }) => channel);
 export const selectFavorites = createSelector([iSportsState], ({ favorites }) => favorites);
 export const selectPrograms = createSelector([iSportsState], ({ programs }) => programs);
-export const selectAddedToFavorites = createSelector(
+
+export const selectSearchResults = createSelector(
   [iSportsState],
-  ({ addedToFavorites }) => addedToFavorites
-);
-export const selectRemovedFromFavorites = createSelector(
-  [iSportsState],
-  ({ removedFromFavorites }) => removedFromFavorites
+  ({ searchResults }) => searchResults
 );
 
 export const selectFavoritesListUpdated = createSelector(
   [iSportsState],
   ({ favoritesListUpdated }) => favoritesListUpdated
-);
-
-export const selectCurrentProgram = createSelector([iSportsState], ({ programs }) => {
-  if (!programs.length) return;
-
-  return programs[0];
-});
-
-export const selectSearchResults = createSelector(
-  [iSportsState],
-  ({ searchResults }) => searchResults
 );
 
 export const selectRecentSearch = createSelector(
