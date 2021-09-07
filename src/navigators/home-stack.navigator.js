@@ -661,10 +661,11 @@ const HomeStack = ({
             animationEnabled: false,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
+                <NotificationButton />
                 <TouchableRipple
                   onPress={() => navigation.navigate('IsportsSearchScreen')}
                   borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
+                  style={{ borderRadius: 44, padding: 5 }}
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>

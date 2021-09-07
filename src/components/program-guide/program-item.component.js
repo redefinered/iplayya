@@ -19,6 +19,7 @@ const ProgramItem = ({
   title,
   time,
   isCurrentlyPlaying,
+  parentType,
 
   subscribeToProgramAction,
   createNotificationAction,
@@ -92,6 +93,7 @@ const ProgramItem = ({
       channelName,
       status: 0,
       active: true,
+      parentType,
       data: program
     });
   };
@@ -192,7 +194,8 @@ ProgramItem.propTypes = {
   activateNotificationAction: PropTypes.func,
   deactivateNotificationAction: PropTypes.func,
   cancelNotificationAction: PropTypes.func,
-  showSnackBar: PropTypes.func
+  showSnackBar: PropTypes.func,
+  parentType: PropTypes.string
 };
 
 const actions = {

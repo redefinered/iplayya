@@ -247,6 +247,7 @@ const ItvChannelDetailScreen = ({
           showSnackBar={handleShowSnackBar}
           contentHeight={contentHeight}
           screen={false}
+          parentType="ITV"
         />
       </View>
 

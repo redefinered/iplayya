@@ -251,6 +251,7 @@ const IsportsChannelDetailScreen = ({
           showSnackBar={handleShowSnackBar}
           contentHeight={contentHeight}
           screen={false}
+          parentType="ISPORTS"
         />
       </View>
 

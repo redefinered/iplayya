@@ -119,7 +119,7 @@ const ItvSearchScreen = ({
 
   const handleItemPress = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChannelDetailScreen', { channelId });
+    navigation.navigate('ItvChannelDetailScreen', { channelId });
   };
 
   const handleGenrePress = (genreId) => {
