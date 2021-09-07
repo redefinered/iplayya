@@ -166,8 +166,6 @@ export default createReducer(INITIAL_STATE, {
       channels: orderBy(updatedChannels, 'number', 'asc'),
       paginator: Object.assign(state.paginator, nextPaginatorInfo),
       favoritesListUpdated: false
-      // addedToFavorites: false
-      // removedFromFavorites: false
     };
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_FAILURE]: (state, action) => {
