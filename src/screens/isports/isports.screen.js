@@ -37,6 +37,7 @@ const IsportsScreen = ({
   error,
   genres,
   channels,
+  getChannelsByCategoriesStartAction,
   getChannelsStartAction,
   getChannelsAction,
   paginator,
@@ -155,14 +156,28 @@ const IsportsScreen = ({
     setSelectedCategory(id);
   };
 
+  // React.useEffect(() => {
+  //   if (selectedCategory === 'all') {
+  //     // get channels with pageNumber set to 1
+  //     // because at this point we are not paginating
+  //     // we will paginate on scrollEndreached or on a "load more" button is clicked
+  //     getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+  //   } else {
+  //     getChannelsByCategoriesAction({ ...paginator, categories: [parseInt(selectedCategory)] });
+  //   }
+  // }, [selectedCategory]);
+
   React.useEffect(() => {
+    getChannelsByCategoriesStartAction();
+
+    if (paginator.pageNumber > 1) return;
     if (selectedCategory === 'all') {
-      // get channels with pageNumber set to 1
-      // because at this point we are not paginating
-      // we will paginate on scrollEndreached or on a "load more" button is clicked
       getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     } else {
-      getChannelsByCategoriesAction({ ...paginator, categories: [parseInt(selectedCategory)] });
+      getChannelsByCategoriesAction({
+        categories: [parseInt(selectedCategory)],
+        ...paginator
+      });
     }
   }, [selectedCategory]);
 
@@ -399,6 +414,7 @@ const actions = {
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   resetPaginatorAction: Creators.resetPaginator,
+  getChannelsByCategoriesStartAction: Creators.getChannelsByCategoriesStart,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
   addToFavoritesAction: Creators.addToFavorites,

@@ -133,6 +133,13 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  [Types.GET_CHANNELS_BY_CATEGORIES_START]: (state) => {
+    return {
+      ...state,
+      channels: []
+    };
+  },
   [Types.GET_CHANNELS_BY_CATEGORIES]: (state) => {
     return {
       ...state,
@@ -142,19 +149,31 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_SUCCESS]: (state, action) => {
     const { channels, nextPaginatorInfo } = action.data;
+    // console.log({ nextPaginatorInfo });
 
-    /// reference to current state paginator info object
-    const currentPaginator = state.paginatorInfo;
+    // /// reference to current state paginator info object
+    // const currentPaginator = state.paginatorInfo;
 
-    /// update paginator info
-    const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
+    // /// update paginator info
+    // const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
+
+    // return {
+    //   ...state,
+    //   isFetching: false,
+    //   error: null,
+    //   channels,
+    //   paginatorInfo
+    // };
+
+    const updatedChannels = uniqBy([...channels, ...state.channels], 'id');
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      channels,
-      paginatorInfo
+      channels: orderBy(updatedChannels, 'number', 'asc'),
+      paginator: Object.assign(state.paginator, nextPaginatorInfo),
+      favoritesListUpdated: false
     };
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_FAILURE]: (state, action) => {
@@ -351,7 +370,12 @@ export default createReducer(INITIAL_STATE, {
   [Types.RESET_PAGINATOR]: (state) => {
     return {
       ...state,
-      paginatorInfo: { limit: 10, pageNumber: 1 }
+      paginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
     };
   },
   [Types.RESET]: (state) => {
