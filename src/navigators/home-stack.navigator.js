@@ -43,7 +43,7 @@ import IsportsSearchScreen from 'screens/isports/isports-search.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
 import IsportsChannelDetailScreen from 'screens/isports/isports-channel-detail.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
-import IsportsChannelDetailsScreen from 'screens/isports-channel-detail/isports-channel-detail.screen';
+import IsportsChannelDetailsScreen from 'screens/isports/isports-channel-detail.screen';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';

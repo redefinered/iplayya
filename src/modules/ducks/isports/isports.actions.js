@@ -28,10 +28,6 @@ const { Types, Creators } = createActions(
     getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],
 
-    getProgramsByChannel: ['input'],
-    getProgramsByChannelSuccess: ['data'],
-    getProgramsByChannelFailure: ['error'],
-
     // add to favorites
     addToFavorites: ['input'],
     addToFavoritesSuccess: [],
