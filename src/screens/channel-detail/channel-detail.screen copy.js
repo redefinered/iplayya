@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -11,7 +11,8 @@ import ProgramGuide from 'components/program-guide/program-guide.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators as ItvActionCreators } from 'modules/ducks/itv/itv.actions';
+import { Creators as IsportsActionCreators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
@@ -20,11 +21,15 @@ import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectIsFetching,
-  selectChannel,
-  selectPrograms,
   selectCurrentProgram,
-  selectFavoritesListUpdated
+  selectFavoritesListUpdated,
+  selectChannel as selectItvChannel,
+  selectPrograms as selectItvPrograms
 } from 'modules/ducks/itv/itv.selectors';
+import {
+  selectPrograms as selectIsportsPrograms,
+  selectChannel as selectIsportsChannel
+} from 'modules/ducks/isports/isports.selectors';
 import moment from 'moment';
 import theme from 'common/theme';
 
@@ -32,14 +37,18 @@ const dirs = RNFetchBlob.fs.dirs;
 
 const ChannelDetailScreen = ({
   route: {
-    params: { channelId }
+    params: { channelId, type }
   },
   // eslint-disable-next-line no-unused-vars
   error,
-  channel,
-  programs,
-  getProgramsByChannelAction,
-  getChannelAction,
+  itvChannel,
+  // isportsChannel,
+  itvPrograms,
+  isportsPrograms,
+  getItvProgramsByChannelAction,
+  getIsportsProgramsByChannelAction,
+  getItvChannelAction,
+  getIsportsChannelAction,
   /// the program that is playing at this moment
   currentProgram,
   startAction,
@@ -55,16 +64,16 @@ const ChannelDetailScreen = ({
   const [showFavSnackBar, setShowFavSnackBar] = React.useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
   const [contentHeight, setContentHeight] = React.useState(null);
+  const [programsData, setProgramsData] = React.useState([]);
 
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
     onNotifResetAction();
-  }, []);
 
-  React.useEffect(() => {
-    let date = new Date(Date.now());
-    getProgramsByChannelAction({ channelId, date: date.toISOString() });
-    getChannelAction({ videoId: channelId });
+    // let date = new Date(Date.now());
+    //Itv getProgramsByChannelAction({ channelId, date: date.toISOString() });
+    // getItvChannelAction({ videoId: channelId });
+    // getIsportsChannelAction({ videoId: channelId })
 
     return () => {
       /// this will set the channel to null so that when viewing a channel there is no UI flickering
@@ -73,17 +82,32 @@ const ChannelDetailScreen = ({
   }, []);
 
   React.useEffect(() => {
+    let date = new Date(Date.now());
+
+    if (type === 'ITV') {
+      setProgramsData(itvPrograms);
+      getItvChannelAction({ videoId: channelId });
+      getItvProgramsByChannelAction({ channelId, date: date.toISOString() });
+      return;
+    }
+
+    setProgramsData(isportsPrograms);
+    getIsportsChannelAction({ videoId: channelId });
+    getIsportsProgramsByChannelAction({ channelId, date: date.toISOString() });
+  }, [type]);
+
+  React.useEffect(() => {
     if (favoritesListUpdated) {
-      getChannelAction({ videoId: channelId });
+      getItvChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
 
   React.useEffect(() => {
-    if (channel && currentProgram) {
+    if (itvChannel && currentProgram) {
       const { title: epgtitle, time, time_to } = currentProgram;
       const data = {
-        title: channel.title,
+        title: itvChannel.title,
         epgtitle,
         time,
         time_to,
@@ -91,11 +115,11 @@ const ChannelDetailScreen = ({
       };
       setCurrentlyPlaying(data);
     }
-  }, [channel, currentProgram]);
+  }, [itvChannel, currentProgram]);
 
   React.useEffect(() => {
-    if (channel) {
-      const { token, url, title: channelName } = channel;
+    if (itvChannel) {
+      const { token, url, title: channelName } = itvChannel;
       const titlesplit = channelName.split(' ');
       const title = titlesplit.join('_');
       const filename = `${channelId}_${title}.m3u8`;
@@ -112,7 +136,7 @@ const ChannelDetailScreen = ({
       }
     }
     // console.log({ isMovieDownloaded });
-  }, [channel, isMovieDownloaded]);
+  }, [itvChannel, isMovieDownloaded]);
 
   // const isFavorite = false;
 
@@ -122,7 +146,7 @@ const ChannelDetailScreen = ({
   };
 
   const handleFovoritePress = () => {
-    if (channel.is_favorite) return;
+    if (itvChannel.is_favorite) return;
 
     addToFavoritesAction(parseInt(channelId));
   };
@@ -140,7 +164,7 @@ const ChannelDetailScreen = ({
           togglePlay={handleTogglePlay}
           loading={loading}
           setLoading={setLoading}
-          typename={channel.__typename}
+          typename={itvChannel.__typename}
           setPaused={setPaused}
         />
       );
@@ -171,16 +195,11 @@ const ChannelDetailScreen = ({
     }, 3000);
   };
 
-  // hide fav snackbar
   React.useEffect(() => {
-    if (showFavSnackBar) hideFavSnackBar();
-  }, [showFavSnackBar]);
+    if (showSnackBar) hideFavSnackBar();
+  }, [showSnackBar]);
 
-  const handleDateSelect = React.useCallback((date) => {
-    getProgramsByChannelAction({ channelId, date });
-  }, []);
-
-  if (!channel) return <View />;
+  if (!itvChannel) return <View />;
 
   return (
     <View style={styles.root}>
@@ -208,31 +227,17 @@ const ChannelDetailScreen = ({
             }}
           >
             <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-              {/* added icon placeholder */}
-              <View
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 8,
-                  marginRight: 10,
-                  backgroundColor: theme.iplayya.colors.white10,
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
-              </View>
-              {/* <Image
+              <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
                   url: 'http://via.placeholder.com/60x60.png'
                 }}
-              /> */}
+              />
               <Content
                 {...currentlyPlaying}
-                channeltitle={channel.title}
+                channeltitle={itvChannel.title}
                 onRightActionPress={handleFovoritePress}
-                isFavorite={channel.is_favorite}
+                isFavorite={itvChannel.is_favorite}
               />
             </View>
           </View>
@@ -240,10 +245,9 @@ const ChannelDetailScreen = ({
         {/* program guide */}
 
         <ProgramGuide
-          programs={programs}
-          onDateSelect={handleDateSelect}
+          programs={programsData}
           channelId={channelId}
-          channelName={channel.title}
+          channelName={itvChannel.title}
           title="Program Guide"
           showSnackBar={handleShowSnackBar}
           contentHeight={contentHeight}
@@ -319,17 +323,21 @@ const Container = (props) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  channel: selectChannel,
-  programs: selectPrograms,
   currentProgram: selectCurrentProgram,
-  favoritesListUpdated: selectFavoritesListUpdated
+  favoritesListUpdated: selectFavoritesListUpdated,
+  itvChannel: selectItvChannel,
+  isportsChannel: selectIsportsChannel,
+  itvPrograms: selectItvPrograms,
+  isportsPrograms: selectIsportsPrograms
 });
 
 const actions = {
-  addToFavoritesAction: Creators.addToFavorites,
-  startAction: Creators.start,
-  getChannelAction: Creators.getChannel,
-  getProgramsByChannelAction: Creators.getProgramsByChannel,
+  addToFavoritesAction: ItvActionCreators.addToFavorites,
+  startAction: ItvActionCreators.start,
+  getItvChannelAction: ItvActionCreators.getChannel,
+  getIsportsChannelAction: IsportsActionCreators.getChannel,
+  getItvProgramsByChannelAction: ItvActionCreators.getProgramsByChannel,
+  getIsportsProgramsByChannelAction: IsportsActionCreators.getProgramsByChannel,
   onNotifResetAction: NotificationCreators.onNotifReset
 };
 

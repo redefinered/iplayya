@@ -18,8 +18,8 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectFavorites,
   selectError,
-  selectIsFetching,
-  selectRemovedFromFavorites
+  selectIsFetching
+  // selectRemovedFromFavorites
 } from 'modules/ducks/isports/isports.selectors';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import { Creators } from 'modules/ducks/isports/isports.actions';
@@ -231,8 +231,8 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   paginatorInfo: selectPaginatorInfo,
-  favorites: selectFavorites,
-  removedFromFavorites: selectRemovedFromFavorites
+  favorites: selectFavorites
+  // removedFromFavorites: selectRemovedFromFavorites
 });
 
 const actions = {

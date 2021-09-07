@@ -28,9 +28,6 @@ const INITIAL_STATE = {
   // programs per selected channel
   programs: [],
 
-  // addedToFavorites: false,
-  // removedFromFavorites: false,
-
   favorites: [],
   favoritesPaginator: {
     limit: 10,
@@ -39,15 +36,6 @@ const INITIAL_STATE = {
     order: 'asc'
   },
   favoritesListUpdated: false,
-
-  // download tasks
-  downloads: {},
-
-  // downloads progress
-  downloadsProgress: {},
-
-  // data for downloaded movies where we get properties like title, id, etc...
-  downloadsData: [],
 
   searchResults: [],
   searchResultsPaginator: {
@@ -113,7 +101,6 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_CHANNELS_START]: (state) => {
     return {
       ...state,
-      // channels: [],
       paginator: {
         limit: 10,
         pageNumber: 1,
@@ -145,9 +132,6 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       channels: orderBy(updatedChannels, 'number', 'asc'),
       paginator: Object.assign(state.paginator, nextPaginatorInfo)
-
-      // addedToFavorites: false,
-      // removedFromFavorites: false
     };
   },
   [Types.GET_CHANNELS_FAILURE]: (state, action) => {

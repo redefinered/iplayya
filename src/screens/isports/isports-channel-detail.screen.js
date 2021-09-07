@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -11,11 +11,12 @@ import ProgramGuide from 'components/program-guide/program-guide.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
+// import { generateDatesFromToday } from 'utils';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -24,13 +25,17 @@ import {
   selectPrograms,
   selectCurrentProgram,
   selectFavoritesListUpdated
-} from 'modules/ducks/itv/itv.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import moment from 'moment';
 import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
-const ChannelDetailScreen = ({
+// generates an array of dates 7 days from now
+// let DATES = generateDatesFromToday();
+// DATES = DATES.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
+
+const IsportsChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
@@ -171,10 +176,9 @@ const ChannelDetailScreen = ({
     }, 3000);
   };
 
-  // hide fav snackbar
   React.useEffect(() => {
-    if (showFavSnackBar) hideFavSnackBar();
-  }, [showFavSnackBar]);
+    if (showSnackBar) hideFavSnackBar();
+  }, [showSnackBar]);
 
   const handleDateSelect = React.useCallback((date) => {
     getProgramsByChannelAction({ channelId, date });
@@ -208,26 +212,12 @@ const ChannelDetailScreen = ({
             }}
           >
             <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-              {/* added icon placeholder */}
-              <View
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: 8,
-                  marginRight: 10,
-                  backgroundColor: theme.iplayya.colors.white10,
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
-              </View>
-              {/* <Image
+              <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
                   url: 'http://via.placeholder.com/60x60.png'
                 }}
-              /> */}
+              />
               <Content
                 {...currentlyPlaying}
                 channeltitle={channel.title}
@@ -312,7 +302,7 @@ const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2)
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
-    <ChannelDetailScreen {...props} />
+    <IsportsChannelDetailScreen {...props} />
   </ScreenContainer>
 );
 

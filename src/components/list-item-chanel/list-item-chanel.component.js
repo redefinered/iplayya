@@ -9,7 +9,7 @@ import { urlEncodeTitle, createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
 import moment from 'moment';
 import theme from 'common/theme';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 
 const spacer = 20;
 
@@ -21,6 +21,7 @@ const ListItemChanel = ({
   full,
   selected,
   activateCheckboxes,
+  onEpgButtonPressed,
   ...contentProps
 }) => {
   const [isPressed, setIsPressed] = React.useState(false);
@@ -79,6 +80,7 @@ const ListItemChanel = ({
             isFavorite={is_favorite}
             activateCheckboxes={activateCheckboxes}
             isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
+            onEpgButtonPressed={onEpgButtonPressed}
           />
         </View>
       </Pressable>
@@ -126,12 +128,10 @@ const Content = ({
   time_to,
   onRightActionPress,
   isFavorite,
-  // selected,
-  // activateCheckboxes,
-  isCatchUpAvailable
+  isCatchUpAvailable,
+  onEpgButtonPressed
 }) => {
   const theme = useTheme();
-  const navigation = useNavigation();
 
   const renderCatchUpIndicator = () => {
     if (typeof isCatchUpAvailable === 'undefined') return;
@@ -143,11 +143,6 @@ const Content = ({
     if (isFavorite) return;
     onRightActionPress(id);
   };
-
-  // const renderCheckbox = () => {
-  //   if (!activateCheckboxes) return;
-  //   return <RadioButton selected={selected} />;
-  // };
 
   const renderEpgtitle = () => {
     if (!epgtitle)
@@ -230,7 +225,7 @@ const Content = ({
 
         <Pressable
           underlayColor={theme.iplayya.colors.black80}
-          onPress={() => navigation.navigate('ProgramGuideScreen', { channelId: id })}
+          onPress={() => onEpgButtonPressed(id)}
           style={({ pressed }) => [
             {
               width: 44,
@@ -269,7 +264,8 @@ Content.propTypes = {
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   activateCheckboxes: PropTypes.bool,
-  isCatchUpAvailable: PropTypes.bool
+  isCatchUpAvailable: PropTypes.bool,
+  onEpgButtonPressed: PropTypes.func
 };
 
 ListItemChanel.propTypes = {
@@ -281,7 +277,8 @@ ListItemChanel.propTypes = {
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   handleLongPress: PropTypes.func,
-  activateCheckboxes: PropTypes.bool
+  activateCheckboxes: PropTypes.bool,
+  onEpgButtonPressed: PropTypes.func
 };
 
 export default ListItemChanel;

@@ -9,10 +9,13 @@ import ProgramGuideComponent from 'components/program-guide/program-guide.compon
 import ItemContent from './item-content.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectChannel } from 'modules/ducks/itv/itv.selectors';
-import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
+import {
+  selectChannel,
+  selectPrograms,
+  selectCurrentProgram
+} from 'modules/ducks/isports/isports.selectors';
 import { urlEncodeTitle } from 'utils';
 import { compose } from 'redux';
 import moment from 'moment';
@@ -26,6 +29,7 @@ const styles = StyleSheet.create({
 
 const ProgramGuide = ({
   channel,
+  programs,
   currentProgram,
   route: {
     params: { channelId }
@@ -107,15 +111,14 @@ const ProgramGuide = ({
           </View>
         </View>
       </ContentWrap>
-
       <ProgramGuideComponent
         contentHeight={contentHeight}
         channelId={channelId}
+        programs={programs}
         channelName={channel.title}
         showSnackBar={handleShowSnackBar}
         screen
       />
-
       <SnackBar
         visible={showSnackBar}
         message="We will remind you before the program start."
@@ -138,6 +141,7 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  programs: selectPrograms,
   channel: selectChannel,
   currentProgram: selectCurrentProgram
 });

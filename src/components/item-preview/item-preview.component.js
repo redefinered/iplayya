@@ -67,7 +67,6 @@ const ItemPreview = ({
         >
           <Icon name="iplayya" size={theme.iconSize(6)} color="white" />
         </View>
-        {/* <Image style={{ width: 240, height: 133, borderRadius: 8 }} source={thumbnail} /> */}
       </TouchableOpacity>
       <Spacer size={15} />
       <View
@@ -85,7 +84,7 @@ const ItemPreview = ({
         <TouchableHighlight
           underlayColor="rgba(255,255,255,0.1)"
           style={styles.buttonContainer}
-          onPress={() => navigation.navigate('ProgramGuideScreen', { channelId: id })}
+          onPress={() => navigation.navigate('ItvProgramGuideScreen', { channelId: id })}
         >
           <Icon
             name="notifications"

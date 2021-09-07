@@ -1,5 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './isports.actions';
+import uniqBy from 'lodash/unionBy';
+import orderBy from 'lodash/orderBy';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -13,11 +15,6 @@ const INITIAL_STATE = {
     order: 'asc'
   },
 
-  paginatorInfo: {
-    limit: 10,
-    pageNumber: 1
-  },
-
   // random channels from getChannelsByCategory
   featuredChannels: [],
 
@@ -27,13 +24,16 @@ const INITIAL_STATE = {
   channels: [],
 
   // programs per selected channel
-  // delete if conflict
   programs: [],
 
-  addedToFavorites: false,
-  removedFromFavorites: false,
-
   favorites: [],
+  favoritesPaginator: {
+    limit: 10,
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
+  },
+  favoritesListUpdated: false,
 
   searchResults: [],
   recentSearch: [],
@@ -75,7 +75,6 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.GET_CHANNEL_SUCCESS]: (state, action) => {
     const { channel, token } = action;
-    // added token delete if conflict
     return {
       ...state,
       isFetching: false,
@@ -90,6 +89,18 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  [Types.GET_CHANNELS_START]: (state) => {
+    return {
+      ...state,
+      paginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
+    };
+  },
   [Types.GET_CHANNELS]: (state) => {
     return {
       ...state,
@@ -100,20 +111,19 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_CHANNELS_SUCCESS]: (state, action) => {
     const { channels, nextPaginatorInfo } = action.data;
 
-    /// reference to current state paginator info object
-    const currentPaginator = state.paginatorInfo;
+    let updatedChannels = uniqBy([...channels, ...state.channels], 'id');
 
-    /// update paginator info
-    const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
+    /// convert number property to Int for orderBy function to work
+    updatedChannels = updatedChannels.map(({ number, ...rest }) => {
+      return { number: parseInt(number), ...rest };
+    });
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      channels,
-      paginatorInfo,
-      addedToFavorites: false,
-      removedFromFavorites: false
+      channels: orderBy(updatedChannels, 'number', 'asc'),
+      paginator: Object.assign(state.paginator, nextPaginatorInfo)
     };
   },
   [Types.GET_CHANNELS_FAILURE]: (state, action) => {
@@ -156,7 +166,6 @@ export default createReducer(INITIAL_STATE, {
   },
 
   // get programs by channel
-  // added if conflict delete
   [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {
     return {
       ...state,
