@@ -131,4 +131,4 @@ ItemPreview.propTypes = {
   isNotificationActive: PropTypes.bool
 };
 
-export default ItemPreview;
+export default React.memo(ItemPreview);

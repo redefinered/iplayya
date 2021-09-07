@@ -281,4 +281,4 @@ ListItemChanel.propTypes = {
   onEpgButtonPressed: PropTypes.func
 };
 
-export default ListItemChanel;
+export default React.memo(ListItemChanel);
