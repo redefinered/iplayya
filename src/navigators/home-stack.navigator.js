@@ -15,7 +15,7 @@ import ItvProgramGuideScreen from 'screens/itv/itv-program-guide.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 // import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
-import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
+import ItvChannelDetailScreen from 'screens/itv/itv-channel-detail.screen';
 import NotificationsScreen from 'screens/notifications/notifications.screen';
 
 import AddIptvScreen from 'screens/iptv/add-iptv.screen';
@@ -740,8 +740,8 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ChannelDetailScreen"
-          component={ChannelDetailScreen}
+          name="ItvChannelDetailScreen"
+          component={ItvChannelDetailScreen}
           options={(props) => {
             const {
               route: {

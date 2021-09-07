@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -30,7 +30,7 @@ import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
-const ChannelDetailScreen = ({
+const ItvChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
@@ -207,12 +207,25 @@ const ChannelDetailScreen = ({
             }}
           >
             <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-              <Image
+              {/* <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
                   url: 'http://via.placeholder.com/60x60.png'
                 }}
-              />
+              /> */}
+              <View
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 8,
+                  marginRight: 10,
+                  backgroundColor: theme.iplayya.colors.white10,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+              </View>
               <Content
                 {...currentlyPlaying}
                 channeltitle={channel.title}
@@ -297,7 +310,7 @@ const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2)
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
-    <ChannelDetailScreen {...props} />
+    <ItvChannelDetailScreen {...props} />
   </ScreenContainer>
 );
 

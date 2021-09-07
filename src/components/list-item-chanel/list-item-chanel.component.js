@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, View, Image } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 // import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
-import { urlEncodeTitle, createFontFormat } from 'utils';
+import { createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
 import moment from 'moment';
 import theme from 'common/theme';
@@ -98,12 +98,25 @@ const ListItemChanel = ({
         }}
       >
         <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
-          <Image
+          {/* <Image
             style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
             source={{
               url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(contentProps.title)}`
             }}
-          />
+          /> */}
+          <View
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 8,
+              marginRight: 10,
+              backgroundColor: theme.iplayya.colors.white10,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+          </View>
           <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
             {contentProps.title}
           </Text>
