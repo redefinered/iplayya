@@ -57,6 +57,7 @@ const ImovieSearchScreen = ({
 }) => {
   const theme = useTheme();
   const [term, setTerm] = React.useState('');
+  const [showKeyboard, setShowKeyboard] = React.useState(false);
 
   /// clear previous search result
   React.useEffect(() => {
@@ -146,6 +147,10 @@ const ImovieSearchScreen = ({
     } else {
       return;
     }
+  };
+
+  const handleShowKeyboard = () => {
+    setShowKeyboard(true);
   };
 
   // console.log({ results });
@@ -379,7 +384,8 @@ const ImovieSearchScreen = ({
         name="search"
         returnKeyType="search"
         autoFocus
-        showSoftInputOnFocus={false}
+        showSoftInputOnFocus={showKeyboard}
+        focusAction={handleShowKeyboard}
         onSubmitEditing={(term) => onSubmitEditing(term)}
         handleChangeText={(term) => handleChange(term)}
         value={term}
