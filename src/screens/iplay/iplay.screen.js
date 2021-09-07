@@ -2,9 +2,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -121,9 +120,9 @@ const IplayScreen = ({
     }
 
     if (selectedItems.length === videoFiles.length) {
-      setDeleteMessage('Are you sure you want to delete all videos in your library list?');
+      setDeleteMessage('Are you sure you want to delete this video/s from your library?');
     } else {
-      setDeleteMessage('Are you sure you want to delete these videos in your library?');
+      setDeleteMessage('Are you sure you want to delete this video/s from your library?');
     }
   }, [selectedItems]);
 
@@ -225,7 +224,15 @@ const IplayScreen = ({
                 >
                   <Pressable
                     onPress={() => handleShowAlertMessage()}
-                    style={{ flexDirection: 'row', alignItems: 'center' }}
+                    // style={{ flexDirection: 'row', alignItems: 'center' }}
+                    style={({ pressed }) => [
+                      {
+                        padding: 5,
+                        backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                      }
+                    ]}
                   >
                     <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                     <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
@@ -243,41 +250,54 @@ const IplayScreen = ({
               </React.Fragment>
             )}
           </ContentWrap>
-          <ContentWrap scrollable>
+          <ScrollView>
             {videoFiles.map(({ id, name, size, ...rest }) => {
               const filesize = size / 1e6;
               return (
                 <Pressable
+                  style={({ pressed }) => [
+                    {
+                      paddingTop: 5,
+                      backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
+                    }
+                  ]}
                   key={id}
                   onLongPress={() => handleLongPress(id)}
                   onPress={() => handleSelectItem({ id, name, size, ...rest })}
                 >
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      marginBottom: 20,
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <View>
-                      <Text
-                        style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}
-                      >
-                        {name}
-                      </Text>
-                      <Text style={{ ...createFontFormat(12, 16) }}>{`${filesize.toFixed(
-                        1
-                      )} mb`}</Text>
+                  <ContentWrap>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        marginBottom: 20,
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <View>
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                            marginBottom: 5,
+                            ...createFontFormat(12, 16),
+                            color: theme.iplayya.colors.white90
+                          }}
+                        >
+                          {name}
+                        </Text>
+                        <Text style={{ ...createFontFormat(12, 16) }}>{`${filesize.toFixed(
+                          1
+                        )} mb`}</Text>
+                      </View>
+                      {activateCheckboxes && (
+                        <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                      )}
                     </View>
-                    {activateCheckboxes && (
-                      <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                    )}
-                  </View>
+                  </ContentWrap>
                 </Pressable>
               );
             })}
-          </ContentWrap>
+          </ScrollView>
         </React.Fragment>
       ) : (
         <View
@@ -315,21 +335,30 @@ const IplayScreen = ({
               backgroundColor: '#202530',
               borderTopRightRadius: 24,
               borderTopLeftRadius: 24,
-              paddingHorizontal: 15,
-              paddingTop: 10,
-              paddingBottom: 10,
+              paddingHorizontal: 4,
               position: 'absolute',
               width: '100%',
-              bottom: 0
+              bottom: 0,
+              zIndex: theme.iplayya.zIndex.bottomTabs
             }}
           >
-            <TouchableWithoutFeedback
+            <Pressable
               onPress={() => navigation.replace('HomeScreen')}
-              style={{ alignItems: 'center' }}
+              // style={{ alignItems: 'center' }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? theme.iplayya.colors.white25 : 'transparent',
+                  borderRadius: 34,
+                  height: 67,
+                  width: 67,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }
+              ]}
             >
               <Icon name="iplayya" size={theme.iconSize(3)} />
               <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-            </TouchableWithoutFeedback>
+            </Pressable>
           </View>
         </View>
       </React.Fragment>
@@ -393,7 +422,7 @@ const IplayScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <IplayScreen {...props} />
   </ScreenContainer>
 );
