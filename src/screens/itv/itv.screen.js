@@ -184,7 +184,7 @@ const ItvScreen = ({
 
   const handleItemSelect = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChannelDetailScreen', { channelId });
+    navigation.navigate('ItvChannelDetailScreen', { channelId });
   };
 
   const onCategorySelect = (id) => {

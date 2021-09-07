@@ -104,7 +104,7 @@ const ItvFavoritesScreen = ({
       }
     } else {
       // navigation.navigate('MovieDetailScreen', { videoId: item });
-      navigation.navigate('ChannelDetailScreen', { channelId: item });
+      navigation.navigate('ItvChannelDetailScreen', { channelId: item });
     }
   };
 
