@@ -13,14 +13,14 @@ const AddToFavoritesButton = ({
   module,
   addChannelToFavoritesAction,
   addMovieToFavoritesAction,
-  addIsportChannelToFavoritesAction,
-  inFavorites
+  addIsportChannelToFavoritesAction
 }) => {
   const theme = useTheme();
+  const [favorited, setFavorited] = React.useState(false);
 
   const handleAddAction = () => {
     /// stop if already in favorites
-    if (inFavorites) return;
+    if (!favorited) setFavorited(true);
 
     switch (module) {
       case 'itv':
@@ -56,7 +56,7 @@ const AddToFavoritesButton = ({
         <Icon
           name="heart-solid"
           size={theme.iconSize(3)}
-          style={{ color: inFavorites ? theme.iplayya.colors.vibrantpussy : 'white' }}
+          style={{ color: favorited ? theme.iplayya.colors.vibrantpussy : 'white' }}
         />
       </View>
     </Pressable>
@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
 
 AddToFavoritesButton.propTypes = {
   module: PropTypes.string,
-  inFavorites: PropTypes.bool,
   sub: PropTypes.number,
   addChannelToFavoritesAction: PropTypes.func,
   addMovieToFavoritesAction: PropTypes.func,
