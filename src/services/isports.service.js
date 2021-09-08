@@ -52,8 +52,7 @@ export const getChannels = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_CHANNELS,
-      variables: { input },
-      fetchPolicy: 'network-only'
+      variables: { input }
     });
     return data;
   } catch (error) {

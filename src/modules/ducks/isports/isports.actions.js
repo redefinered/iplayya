@@ -5,7 +5,7 @@ const { Types, Creators } = createActions(
     start: null,
 
     /// query: GET_GENRES
-    getGenres: null,
+    getGenres: [],
     getGenresSuccess: ['data'],
     getGenresFailure: ['error'],
 
@@ -16,7 +16,7 @@ const { Types, Creators } = createActions(
     /// get channels
     getChannelsStart: null,
     getChannels: ['input'],
-    getChannelsSuccess: ['data', 'nextPaginatorInfo'],
+    getChannelsSuccess: ['data'],
     getChannelsFailure: ['error'],
 
     getProgramsByChannelStart: null,
@@ -26,7 +26,7 @@ const { Types, Creators } = createActions(
 
     getChannelsByCategoriesStart: null,
     getChannelsByCategories: ['input'],
-    getChannelsByCategoriesSuccess: ['data', 'nextPaginatorInfo'],
+    getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],
 
     favoritesStart: null,
