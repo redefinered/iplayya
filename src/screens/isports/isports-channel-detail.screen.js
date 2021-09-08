@@ -50,7 +50,9 @@ const IsportsChannelDetailScreen = ({
   startAction,
   onNotifResetAction,
   addToFavoritesAction,
-  favoritesListUpdated
+  favoritesListUpdated,
+  getProgramsByChannelStartAction,
+  navigation
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -64,6 +66,9 @@ const IsportsChannelDetailScreen = ({
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
     onNotifResetAction();
+    navigation.addListener('beforeRemove', () => {
+      getProgramsByChannelStartAction();
+    });
   }, []);
 
   React.useEffect(() => {
@@ -79,7 +84,7 @@ const IsportsChannelDetailScreen = ({
 
   React.useEffect(() => {
     if (favoritesListUpdated) {
-      getChannelAction({ videoId: channelId });
+      // getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
@@ -177,8 +182,8 @@ const IsportsChannelDetailScreen = ({
   };
 
   React.useEffect(() => {
-    if (showSnackBar) hideFavSnackBar();
-  }, [showSnackBar]);
+    if (showFavSnackBar) hideFavSnackBar();
+  }, [showFavSnackBar]);
 
   const handleDateSelect = React.useCallback((date) => {
     getProgramsByChannelAction({ channelId, date });
@@ -334,6 +339,7 @@ const actions = {
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
+  getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset
 };
 

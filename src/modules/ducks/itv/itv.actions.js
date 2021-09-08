@@ -19,6 +19,7 @@ const { Types, Creators } = createActions(
     getChannelsSuccess: ['channels', 'nextPaginatorInfo'],
     getChannelsFailure: ['error'],
 
+    getProgramsByChannelStart: null,
     getProgramsByChannel: ['input'],
     getProgramsByChannelSuccess: ['data'],
     getProgramsByChannelFailure: ['error'],

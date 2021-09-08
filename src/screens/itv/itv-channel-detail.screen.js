@@ -39,7 +39,9 @@ const ItvChannelDetailScreen = ({
   channel,
   programs,
   getProgramsByChannelAction,
+  getProgramsByChannelStartAction,
   getChannelAction,
+  navigation,
   /// the program that is playing at this moment
   currentProgram,
   startAction,
@@ -59,6 +61,9 @@ const ItvChannelDetailScreen = ({
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
     onNotifResetAction();
+    navigation.addListener('beforeRemove', () => {
+      getProgramsByChannelStartAction();
+    });
   }, []);
 
   React.useEffect(() => {
@@ -74,7 +79,7 @@ const ItvChannelDetailScreen = ({
 
   React.useEffect(() => {
     if (favoritesListUpdated) {
-      getChannelAction({ videoId: channelId });
+      // getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
@@ -171,9 +176,10 @@ const ItvChannelDetailScreen = ({
     }, 3000);
   };
 
+  // hide fav snackbar
   React.useEffect(() => {
-    if (showSnackBar) hideFavSnackBar();
-  }, [showSnackBar]);
+    if (showFavSnackBar) hideFavSnackBar();
+  }, [showFavSnackBar]);
 
   const handleDateSelect = React.useCallback((date) => {
     getProgramsByChannelAction({ channelId, date });
@@ -329,6 +335,7 @@ const actions = {
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
+  getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset
 };
 

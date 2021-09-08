@@ -44,7 +44,7 @@ const IsportsScreen = ({
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
-  isFavoritesUpdated,
+  updated,
   getFavoritesAction,
   enableSwipeAction,
   headerHeight
@@ -69,7 +69,7 @@ const IsportsScreen = ({
     resetPaginatorAction(); // for debugging
     enableSwipeAction(false);
     getChannelsStartAction();
-
+    getFavoritesAction({ pageNumber: 1 });
     // get channels on mount
     getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
   }, []);
@@ -85,12 +85,12 @@ const IsportsScreen = ({
 
   // get favorites if an item is added
   React.useEffect(() => {
-    if (isFavoritesUpdated) {
+    if (updated) {
       setShowSnackBar(true);
-      getFavoritesAction();
-      getChannelsAction({ limit: 10, pageNumber: 1 });
+      getFavoritesAction({ pageNumber: 1 });
+      getChannelsAction({ pageNumber: 1 });
     }
-  }, [isFavoritesUpdated]);
+  }, [updated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -125,10 +125,24 @@ const IsportsScreen = ({
   }, [channels]);
 
   const handleAddToFavorites = (channelId) => {
+    let channel = channels.find(({ id }) => id === channelId);
+
+    // if channel is not found stop
+    if (typeof channel === 'undefined') return;
+
+    const { is_favorite } = channel;
+
+    if (is_favorite) return;
+
     let title = channels.find(({ id }) => id === channelId).title;
     setFavorited(title);
 
-    addToFavoritesAction({ videoId: parseInt(channelId) });
+    addToFavoritesAction(parseInt(channelId));
+
+    // let title = channels.find(({ id }) => id === channelId).title;
+    // setFavorited(title);
+
+    // addToFavoritesAction({ videoId: parseInt(channelId) });
   };
 
   const hideSnackBar = () => {
