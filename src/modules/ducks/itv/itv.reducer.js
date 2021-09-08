@@ -177,6 +177,12 @@ export default createReducer(INITIAL_STATE, {
   },
 
   // get programs by channel
+  [Types.GET_PROGRAMS_BY_CHANNEL_START]: (state) => {
+    return {
+      ...state,
+      programs: []
+    };
+  },
   [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {
     return {
       ...state,
