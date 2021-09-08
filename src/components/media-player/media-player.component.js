@@ -9,12 +9,7 @@ import Controls from './controls.component';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { createFontFormat } from 'utils';
-// import ContentWrap from 'components/content-wrap.component';
-// import { TouchableOpacity } from 'react-native-gesture-handler';
-// import resolutions from './video-resolutions.json';
-// import castOptions from './screencast-options.json';
 import Spacer from 'components/spacer.component';
-import { VLCPlayer } from 'react-native-vlc-media-player';
 import Video from 'react-native-video';
 import uuid from 'react-uuid';
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
@@ -22,7 +17,6 @@ import SystemSetting from 'react-native-system-setting';
 import DeviceInfo from 'react-native-device-info';
 
 const MediaPlayer = ({
-  videoplayer,
   updatePlaybackInfoAction,
   source,
   thumbnail,
@@ -54,8 +48,6 @@ const MediaPlayer = ({
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
   const [activeState, setActiveState] = React.useState(null);
-  // const [screencastActiveState, setScreencastActiveState] = React.useState(null);
-  // const [screencastOption, setScreencastOption] = React.useState(null);
   const [resolution, setResolution] = React.useState('auto');
   const [resolutions, setResolutions] = React.useState([]);
   const [buffering, setBuffering] = React.useState(false);
@@ -63,7 +55,6 @@ const MediaPlayer = ({
   const [timer, setTimer] = React.useState();
 
   React.useEffect(() => {
-    // console.log({ x: volume });
     SystemSetting.setVolume(volume, { showUI: false });
   }, [volume]);
 
@@ -180,28 +171,6 @@ const MediaPlayer = ({
     }, duration * 1000);
   };
 
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-
-  // const handleOnPlaying = (data) => {
-  //   console.log('onPlaying callback', data);
-  //   setPaused(false);
-  //   setTimer(hideControls(10));
-  // };
-
-  // const handleOnPause = () => {
-  //   console.log('paused');
-  //   setShowControls(true);
-  //   if (timer) clearTimeout(timer);
-  // };
-
   React.useEffect(() => {
     if (paused) {
       // console.log('paused');
@@ -222,15 +191,6 @@ const MediaPlayer = ({
     }
   }, [castSessionActive]);
 
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-  /// needs to be converted to effect since events are not available in react-native-video
-
   const videoError = () => {
     setError(true);
   };
@@ -244,17 +204,9 @@ const MediaPlayer = ({
     setVolumeSliderVisible(!volumeSliderVisible);
   };
 
-  // const handleHideCastOptions = () => {
-  //   setShowCastOptions(false);
-  // };
-
   const handleToggleCastOptions = () => {
     setShowCastOptions(!showCastOptions);
   };
-
-  // const handleHideVideoOptions = () => {
-
-  // };
 
   const handleToggleVideoOptions = () => {
     setShowVideoOptions(!showVideoOptions);
@@ -264,10 +216,6 @@ const MediaPlayer = ({
     setShowVideoOptions(false);
     setResolution(value);
     setActiveState(null);
-  };
-
-  const handlePlaying = () => {
-    setPaused(false);
   };
 
   const renderPlayer = () => {
@@ -338,7 +286,6 @@ const MediaPlayer = ({
     );
 
   return (
-    // <Text>asdasd</Text>
     <View style={{ position: 'relative', backgroundColor: 'black' }}>
       {error && (
         <View
