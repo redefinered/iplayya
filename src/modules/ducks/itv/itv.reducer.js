@@ -180,7 +180,8 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_PROGRAMS_BY_CHANNEL_START]: (state) => {
     return {
       ...state,
-      programs: []
+      programs: [],
+      error: null
     };
   },
   [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {

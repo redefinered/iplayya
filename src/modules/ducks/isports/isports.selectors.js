@@ -9,18 +9,19 @@ export const selectPaginatorInfo = createSelector(
   [iSportsState],
   ({ paginatorInfo }) => paginatorInfo
 );
+export const selectFavoritesPaginator = createSelector(
+  [iSportsState],
+  ({ favoritesPaginator }) => favoritesPaginator
+);
+
 export const selectGenres = createSelector([iSportsState], ({ genres }) => genres);
 export const selectChannels = createSelector([iSportsState], ({ channels }) => channels);
 export const selectChannel = createSelector([iSportsState], ({ channel }) => channel);
 export const selectFavorites = createSelector([iSportsState], ({ favorites }) => favorites);
 export const selectPrograms = createSelector([iSportsState], ({ programs }) => programs);
-export const selectAddedToFavorites = createSelector(
+export const selectFavoritesListRemoveUpdated = createSelector(
   [iSportsState],
-  ({ addedToFavorites }) => addedToFavorites
-);
-export const selectRemovedFromFavorites = createSelector(
-  [iSportsState],
-  ({ removedFromFavorites }) => removedFromFavorites
+  ({ favoritesListRemoveUpdated }) => favoritesListRemoveUpdated
 );
 
 export const selectFavoritesListUpdated = createSelector(

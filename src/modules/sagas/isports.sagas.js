@@ -66,9 +66,8 @@ export function* getChannelsByCategoriesRequest(action) {
 }
 
 export function* addToFavoritesRequest(action) {
-  const { input } = action;
   try {
-    const { addIsportToFavorites } = yield call(addToFavorites, input);
+    const { addIsportToFavorites } = yield call(addToFavorites, action.videoId);
     if (addIsportToFavorites.status !== 'success')
       throw new Error('Error adding item to favorites');
     yield put(Creators.addToFavoritesSuccess());
@@ -93,7 +92,11 @@ export function* getFavoritesRequest(action) {
   const { input } = action;
   try {
     const { favoriteIsports } = yield call(getFavorites, input);
-    yield put(Creators.getFavoritesSuccess(favoriteIsports));
+
+    /// increment paginator pageNumber
+    Object.assign(input, { pageNumber: input.pageNumber + 1 });
+
+    yield put(Creators.getFavoritesSuccess(favoriteIsports, input));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
   }

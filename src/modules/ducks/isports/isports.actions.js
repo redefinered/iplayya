@@ -5,7 +5,7 @@ const { Types, Creators } = createActions(
     start: null,
 
     /// query: GET_GENRES
-    getGenres: [],
+    getGenres: null,
     getGenresSuccess: ['data'],
     getGenresFailure: ['error'],
 
@@ -16,35 +16,38 @@ const { Types, Creators } = createActions(
     /// get channels
     getChannelsStart: null,
     getChannels: ['input'],
-    getChannelsSuccess: ['data'],
+    getChannelsSuccess: ['data', 'nextPaginatorInfo'],
     getChannelsFailure: ['error'],
 
+    getProgramsByChannelStart: null,
     getProgramsByChannel: ['input'],
     getProgramsByChannelSuccess: ['data'],
     getProgramsByChannelFailure: ['error'],
 
     getChannelsByCategoriesStart: null,
     getChannelsByCategories: ['input'],
-    getChannelsByCategoriesSuccess: ['data'],
+    getChannelsByCategoriesSuccess: ['data', 'nextPaginatorInfo'],
     getChannelsByCategoriesFailure: ['error'],
 
+    favoritesStart: null,
     // add to favorites
-    addToFavorites: ['input'],
-    addToFavoritesSuccess: [],
+    addToFavorites: ['videoId'],
+    addToFavoritesSuccess: null,
     addToFavoritesFailure: ['error'],
 
     removeFromFavorites: ['channelIds'],
-    removeFromFavoritesSuccess: [],
+    removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],
 
     getFavorites: ['input'],
-    getFavoritesSuccess: ['data'],
+    getFavoritesSuccess: ['data', 'nextPaginator'],
     getFavoritesFailure: ['error'],
+    resetFavoritesPaginator: null,
 
     // misc
     reset: null,
     setPaginatorInfo: ['data'],
-    resetPaginator: [],
+    resetPaginator: null,
 
     searchStart: null,
     search: ['input'],

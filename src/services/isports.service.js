@@ -52,7 +52,8 @@ export const getChannels = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_CHANNELS,
-      variables: { input }
+      variables: { input },
+      fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
@@ -72,20 +73,25 @@ export const getChannelsByCategory = async (input) => {
   }
 };
 
-export const addToFavorites = async (input) => {
+export const addToFavorites = async (videoId) => {
   try {
     const { data } = await client.mutate({
       mutation: ADD_TO_FAVORITES,
-      variables: { input },
+      variables: { input: { videoId } },
       refetchQueries: [
         {
           query: GET_FAVORITES,
-          variables: { input: { limit: 10, pageNumber: 1 } },
+          // variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
           query: GET_CHANNELS,
           variables: { input: { limit: 10, pageNumber: 1 } },
+          fetchPolicy: 'network-only'
+        },
+        {
+          query: GET_CHANNEL,
+          variables: { input: { videoId } },
           fetchPolicy: 'network-only'
         }
       ],
@@ -107,12 +113,12 @@ export const removeFromFavorites = async (input) => {
       refetchQueries: [
         {
           query: GET_FAVORITES,
-          variables: { input: { limit: 10, pageNumber: 1 } },
+          // variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
           query: GET_CHANNELS,
-          variables: { input: { limit: 10, pageNumber: 1 } },
+          // variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         }
       ],
@@ -130,7 +136,9 @@ export const getFavorites = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_FAVORITES,
-      variables: { input: { limit: 10, pageNumber: 1 } }
+      // variables: { input: { limit: 10, pageNumber: 1 } }
+      fetchPolicy: 'network-only',
+      variables: { input }
     });
     return data;
   } catch (error) {
