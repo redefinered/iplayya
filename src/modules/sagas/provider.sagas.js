@@ -22,15 +22,24 @@ export function* createRequest(action) {
     const { createUserProvider } = yield call(createProvider, input);
     // console.log({ createUserProvider });
 
+    const { isportsGenres } = yield call(getIsportsGenres);
     const { iptvGenres } = yield call(getItvGenres);
     const { categories } = yield call(getCategories);
-    const { isportsGenres } = yield call(getIsportsGenres);
     const { albumGenres } = yield call(getMusicGenres);
 
-    yield put(ItvCreators.getGenresSuccess(iptvGenres));
     yield put(MoviesCreators.getCategoriesSuccess(categories));
     yield put(IsportsCreators.getGenresSuccess(isportsGenres));
     yield put(MusicCreators.getGenresSuccess(albumGenres));
+
+    /// filters out isports from itv channels
+    let filteredItvGenres = [];
+    for (let i = 0; i < iptvGenres.length; i++) {
+      const genre = iptvGenres[i];
+      let x = isportsGenres.find(({ id }) => id === genre.id);
+      if (typeof x === 'undefined') filteredItvGenres.push(genre);
+    }
+
+    yield put(ItvCreators.getGenresSuccess(filteredItvGenres));
 
     yield put(Creators.createSuccess({ createUserProvider }));
   } catch (error) {
