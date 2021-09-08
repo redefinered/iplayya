@@ -7,13 +7,28 @@ import {
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITES,
+  GET_PROGRAMS_BY_CHANNEL,
   SEARCH
 } from 'graphql/isports.graphql';
+
+import { GET_CHANNEL_TOKEN } from 'graphql/itv.graphql';
 
 export const getGenres = async () => {
   try {
     const { data } = await client.query({
       query: GET_GENRES
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getChannelToken = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_CHANNEL_TOKEN,
+      variables: { input }
     });
     return data;
   } catch (error) {
@@ -119,6 +134,19 @@ export const getFavorites = async (input) => {
     });
     return data;
   } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getProgramsByChannel = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_PROGRAMS_BY_CHANNEL,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

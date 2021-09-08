@@ -73,7 +73,7 @@ const ISportsSearchScreen = ({
 
   const handleItemPress = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChannelDetailScreen', { channelId });
+    navigation.navigate('IsportsChannelDetailScreen', { channelId });
   };
 
   React.useEffect(() => {

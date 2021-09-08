@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -11,32 +11,38 @@ import ProgramGuide from 'components/program-guide/program-guide.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
 import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
+// import { generateDatesFromToday } from 'utils';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectIsFetching,
   selectChannel,
+  selectPrograms,
   selectCurrentProgram,
   selectFavoritesListUpdated
-} from 'modules/ducks/itv/itv.selectors';
+} from 'modules/ducks/isports/isports.selectors';
 import moment from 'moment';
 import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
-const ChannelDetailScreen = ({
-  navigation,
+// generates an array of dates 7 days from now
+// let DATES = generateDatesFromToday();
+// DATES = DATES.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
+
+const IsportsChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
   // eslint-disable-next-line no-unused-vars
   error,
   channel,
+  programs,
   getProgramsByChannelAction,
   getChannelAction,
   /// the program that is playing at this moment
@@ -65,10 +71,10 @@ const ChannelDetailScreen = ({
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
 
-    /// clear channel data before going back
-    navigation.addListener('beforeRemove', () => {
+    return () => {
+      /// this will set the channel to null so that when viewing a channel there is no UI flickering
       startAction();
-    });
+    };
   }, []);
 
   React.useEffect(() => {
@@ -174,6 +180,10 @@ const ChannelDetailScreen = ({
     if (showSnackBar) hideFavSnackBar();
   }, [showSnackBar]);
 
+  const handleDateSelect = React.useCallback((date) => {
+    getProgramsByChannelAction({ channelId, date });
+  }, []);
+
   if (!channel) return <View />;
 
   return (
@@ -202,12 +212,25 @@ const ChannelDetailScreen = ({
             }}
           >
             <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-              <Image
+              {/* <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
                   url: 'http://via.placeholder.com/60x60.png'
                 }}
-              />
+              /> */}
+              <View
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 8,
+                  marginRight: 10,
+                  backgroundColor: theme.iplayya.colors.white10,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+              </View>
               <Content
                 {...currentlyPlaying}
                 channeltitle={channel.title}
@@ -220,12 +243,15 @@ const ChannelDetailScreen = ({
         {/* program guide */}
 
         <ProgramGuide
+          programs={programs}
+          onDateSelect={handleDateSelect}
           channelId={channelId}
           channelName={channel.title}
           title="Program Guide"
           showSnackBar={handleShowSnackBar}
           contentHeight={contentHeight}
           screen={false}
+          parentType="ISPORTS"
         />
       </View>
 
@@ -290,7 +316,7 @@ const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2)
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
-    <ChannelDetailScreen {...props} />
+    <IsportsChannelDetailScreen {...props} />
   </ScreenContainer>
 );
 
@@ -298,6 +324,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   channel: selectChannel,
+  programs: selectPrograms,
   currentProgram: selectCurrentProgram,
   favoritesListUpdated: selectFavoritesListUpdated
 });

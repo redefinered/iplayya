@@ -11,11 +11,11 @@ import Icon from 'components/icon/icon.component.js';
 import HomeScreen from 'screens/home/home.screen';
 
 import ItvScreen from 'screens/itv/itv.screen';
-import ProgramGuideScreen from 'screens/itv/program-guide.screen';
+import ItvProgramGuideScreen from 'screens/itv/itv-program-guide.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 // import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
-import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
+import ItvChannelDetailScreen from 'screens/itv/itv-channel-detail.screen';
 import NotificationsScreen from 'screens/notifications/notifications.screen';
 
 import AddIptvScreen from 'screens/iptv/add-iptv.screen';
@@ -38,8 +38,10 @@ import IplayScreen from 'screens/iplay/iplay.screen';
 import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
 
 import IsportsScreen from 'screens/isports/isports.screen';
+import IsportsProgramGuideScreen from 'screens/isports/isports-program-guide.screen';
 import IsportsSearchScreen from 'screens/isports/isports-search.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
+import IsportsChannelDetailScreen from 'screens/isports/isports-channel-detail.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 
 import { compose } from 'redux';
@@ -193,8 +195,8 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ProgramGuideScreen"
-          component={ProgramGuideScreen}
+          name="ItvProgramGuideScreen"
+          component={ItvProgramGuideScreen}
           options={{
             title: 'Program Guide'
           }}
@@ -658,10 +660,11 @@ const HomeStack = ({
             animationEnabled: false,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
+                <NotificationButton />
                 <TouchableRipple
                   onPress={() => navigation.navigate('IsportsSearchScreen')}
                   borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
+                  style={{ borderRadius: 44, padding: 5 }}
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>
@@ -674,6 +677,13 @@ const HomeStack = ({
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="IsportsProgramGuideScreen"
+          component={IsportsProgramGuideScreen}
+          options={{
+            title: 'Program Guide'
           }}
         />
         <Stack.Screen
@@ -731,8 +741,8 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ChannelDetailScreen"
-          component={ChannelDetailScreen}
+          name="ItvChannelDetailScreen"
+          component={ItvChannelDetailScreen}
           options={(props) => {
             const {
               route: {
@@ -760,6 +770,38 @@ const HomeStack = ({
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
+
+        <Stack.Screen
+          name="IsportsChannelDetailScreen"
+          component={IsportsChannelDetailScreen}
+          options={(props) => {
+            const {
+              route: {
+                params: { channelId }
+              }
+            } = props;
+
+            const isInFavorites = favoriteChannels.findIndex(({ id }) => id === channelId);
+
+            return {
+              title: null,
+              headerRight: () => (
+                <View style={{ flexDirection: 'row' }}>
+                  <AddToFavoritesButton
+                    sub={parseInt(channelId)}
+                    module="itv"
+                    inFavorites={isInFavorites >= 0 ? true : false}
+                  />
+                </View>
+              )
+            };
+          }}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
         {/* <ChannelDetailsStackScreen /> */}
         <Stack.Screen
           name="MusicPlayerScreen"

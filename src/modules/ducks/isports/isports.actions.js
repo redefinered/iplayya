@@ -2,20 +2,28 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    start: null,
+
     /// query: GET_GENRES
     getGenres: [],
     getGenresSuccess: ['data'],
     getGenresFailure: ['error'],
 
     getChannel: ['input'],
-    getChannelSuccess: ['data'],
+    getChannelSuccess: ['channel', 'token'],
     getChannelFailure: ['error'],
 
     /// get channels
+    getChannelsStart: null,
     getChannels: ['input'],
     getChannelsSuccess: ['data'],
     getChannelsFailure: ['error'],
 
+    getProgramsByChannel: ['input'],
+    getProgramsByChannelSuccess: ['data'],
+    getProgramsByChannelFailure: ['error'],
+
+    getChannelsByCategoriesStart: null,
     getChannelsByCategories: ['input'],
     getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],

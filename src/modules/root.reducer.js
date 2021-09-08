@@ -38,7 +38,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   profile: profileReducer,
   movies: resettable(moviesReducer),
   music: resettable(musicReducer),
-  sports: isportsReducer,
+  sports: resettable(isportsReducer),
   radios: iradioReducer,
   provider: providerReducer,
   iplay: iplayReducer

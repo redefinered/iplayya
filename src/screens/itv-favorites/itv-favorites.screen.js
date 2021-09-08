@@ -19,7 +19,7 @@ import {
   selectFavorites,
   selectError,
   selectIsFetching,
-  selectRemovedFromFavorites,
+  // selectRemovedFromFavorites,
   selectFavoritesPaginator,
   selectPaginator,
   selectChannels
@@ -107,7 +107,7 @@ const ItvFavoritesScreen = ({
       }
     } else {
       // navigation.navigate('MovieDetailScreen', { videoId: item });
-      navigation.navigate('ChannelDetailScreen', { channelId: item });
+      navigation.navigate('ItvChannelDetailScreen', { channelId: item });
     }
   };
 
@@ -325,7 +325,7 @@ const ItvFavoritesScreen = ({
                         <Pressable
                           underlayColor={theme.iplayya.colors.black80}
                           onPress={() =>
-                            navigation.navigate('ProgramGuideScreen', { channelId: id })
+                            navigation.navigate('ItvProgramGuideScreen', { channelId: id })
                           }
                           style={({ pressed }) => [
                             {
@@ -450,7 +450,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
-  removedFromFavorites: selectRemovedFromFavorites,
+  // removedFromFavorites: selectRemovedFromFavorites,
   favoritesListUpdated: selectFavoritesListUpdated,
   favoritesListRemoveUpdated: selectfavoritesListRemoveUpdated,
   paginator: selectPaginator,

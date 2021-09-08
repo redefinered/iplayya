@@ -65,7 +65,7 @@ const App = ({
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
 
-    // resetStore();
+    resetStore();
 
     resetNowPlayingAction();
 

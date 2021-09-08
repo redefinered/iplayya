@@ -1,17 +1,18 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+// eslint-disable-next-line no-unused-vars
+import { View, ScrollView, StyleSheet, FlatList, Dimensions } from 'react-native';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
-import SelectorPills from 'components/selector-pills/selector-pills.component';
+import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
-// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
+import useComponentSize from 'hooks/use-component-size.hook';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -20,34 +21,36 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectPaginatorInfo,
+  selectPaginator,
   selectGenres,
   selectChannels,
-  selectAddedToFavorites,
-  selectFavorites
+  selectFavorites,
+  selectFavoritesListUpdated
 } from 'modules/ducks/isports/isports.selectors';
-import Spacer from 'components/spacer.component';
+import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
-import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const IsportsScreen = ({
-  isFetching,
   navigation,
   error,
   genres,
   channels,
-  getGenresAction,
+  getChannelsByCategoriesStartAction,
+  getChannelsStartAction,
   getChannelsAction,
-  paginatorInfo,
+  paginator,
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
   isFavoritesUpdated,
   getFavoritesAction,
-  enableSwipeAction
+  enableSwipeAction,
+  headerHeight
 }) => {
+  const theme = useTheme();
+  const [size, onLayout] = useComponentSize();
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -57,11 +60,18 @@ const IsportsScreen = ({
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
 
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
+
   // get genres on mount
   React.useEffect(() => {
     resetPaginatorAction(); // for debugging
-    getGenresAction();
     enableSwipeAction(false);
+    getChannelsStartAction();
+
+    // get channels on mount
+    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
   }, []);
 
   // setup genres data
@@ -70,9 +80,6 @@ const IsportsScreen = ({
       let data = genres.map(({ id, title }) => ({ id, title }));
       data.unshift({ id: 'all', title: 'All channels' });
       setGenresData(data);
-
-      // fetch data from all channels initially
-      // getChannelsAction({ ...paginatorInfo });
     }
   }, [genres]);
 
@@ -136,13 +143,9 @@ const IsportsScreen = ({
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
 
-  if (error) {
-    <Text>{error}</Text>;
-  }
-
   const handleItemSelect = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ChannelDetailScreen', { channelId });
+    navigation.navigate('IsportsChannelDetailScreen', { channelId });
   };
 
   const onCategorySelect = (id) => {
@@ -153,97 +156,151 @@ const IsportsScreen = ({
     setSelectedCategory(id);
   };
 
+  // React.useEffect(() => {
+  //   if (selectedCategory === 'all') {
+  //     // get channels with pageNumber set to 1
+  //     // because at this point we are not paginating
+  //     // we will paginate on scrollEndreached or on a "load more" button is clicked
+  //     getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+  //   } else {
+  //     getChannelsByCategoriesAction({ ...paginator, categories: [parseInt(selectedCategory)] });
+  //   }
+  // }, [selectedCategory]);
+
   React.useEffect(() => {
+    getChannelsByCategoriesStartAction();
+
+    if (paginator.pageNumber > 1) return;
     if (selectedCategory === 'all') {
-      // get channels with pageNumber set to 1
-      // because at this point we are not paginating
-      // we will paginate on scrollEndreached or on a "load more" button is clicked
-      getChannelsAction({ limit: 10, pageNumber: 1 });
+      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     } else {
-      getChannelsByCategoriesAction({ ...paginatorInfo, categories: [parseInt(selectedCategory)] });
+      getChannelsByCategoriesAction({
+        categories: [parseInt(selectedCategory)],
+        ...paginator
+      });
     }
   }, [selectedCategory]);
 
-  // console.log({ channelsData, favorites, paginatorInfo });
+  const handleEndReached = () => {
+    if (!onEndReachedCalledDuringMomentum) {
+      if (selectedCategory === 'all') {
+        getChannelsAction(paginator);
+        setOnEndReachedCalledDuringMomentum(true);
+        return;
+      }
 
-  const renderEmpty = () => {
-    if (error) return <Text>{error}</Text>;
-    // this should only be returned if user did not subscribe to any channels
-    return <Text>no channels found</Text>;
+      /// if selected category is anything other than 'all'
+      getChannelsByCategoriesAction({
+        categories: [parseInt(selectedCategory)],
+        ...paginator
+      });
+      setOnEndReachedCalledDuringMomentum(true);
+    }
+  };
+
+  // const renderEmpty = () => {
+  //   if (error) return <Text>{error}</Text>;
+  //   // this should only be returned if user did not subscribe to any channels
+  //   return <Text>no channels found</Text>;
+  // };
+
+  const renderError = () => {
+    if (error)
+      return (
+        <ContentWrap>
+          <Text>{error}</Text>
+        </ContentWrap>
+      );
+  };
+
+  const renderFeaturedItem = ({ item: { id, ...itemProps } }) => {
+    let isNotificationActive = notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
+    return (
+      <ItemPreview
+        id={id}
+        onSelect={handleItemSelect}
+        handleSubscribeToItem={handleSubscribeToItem}
+        isNotificationActive={isNotificationActive}
+        {...itemProps}
+      />
+    );
+  };
+
+  const handleEpgButtonPress = (id) => {
+    navigation.navigate('IsportsProgramGuideScreen', { channelId: id });
+  };
+
+  const renderChannels = () => {
+    if (!channelsData) return;
+
+    return (
+      <React.Fragment>
+        <View style={{ marginBottom: theme.spacing(2) }}>
+          <ContentWrap>
+            <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+              Featured TV Channels
+            </Text>
+          </ContentWrap>
+          <FlatList
+            data={channelsData}
+            horizontal
+            bounces={false}
+            renderItem={renderFeaturedItem}
+            showsHorizontalScrollIndicator={false}
+            style={{ paddingHorizontal: theme.spacing(2) }}
+          />
+        </View>
+        <FlatList
+          data={channelsData}
+          keyExtractor={(item) => item.id}
+          onEndReached={() => handleEndReached()}
+          onEndReachedThreshold={0.5}
+          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          renderItem={({ item: { epgtitle, ...itemProps } }) => (
+            <ListItemChanel
+              onSelect={handleItemSelect}
+              onRightActionPress={handleAddToFavorites}
+              onEpgButtonPressed={handleEpgButtonPress}
+              full
+              epgtitle={epgtitle}
+              {...itemProps}
+            />
+          )}
+          ListFooterComponent={
+            <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
+          }
+        />
+      </React.Fragment>
+    );
   };
 
   return (
-    <View style={styles.container}>
-      {channelsData.length ? (
-        <React.Fragment>
-          {error && <Text>{error}</Text>}
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <SelectorPills
-              data={genresData}
-              labelkey="title"
-              onSelect={onCategorySelect}
-              selected={selectedCategory}
-            />
-            <Spacer size={2} />
-            {/* featured items section */}
-            <View style={{ marginBottom: 30 }}>
-              <ContentWrap>
-                <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-                  Featured TV Channels
-                </Text>
-              </ContentWrap>
-              <ScrollView style={{ paddingHorizontal: 10 }} horizontal bounces={false}>
-                {channelsData.map(({ id, ...itemProps }) => {
-                  let isNotificationActive =
-                    notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
-                  return (
-                    <ItemPreview
-                      id={id}
-                      onSelect={handleItemSelect}
-                      handleSubscribeToItem={handleSubscribeToItem}
-                      isNotificationActive={isNotificationActive}
-                      key={id}
-                      {...itemProps}
-                    />
-                  );
-                })}
-              </ScrollView>
-            </View>
+    <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
+      <View>
+        <CategoryPills
+          data={genresData}
+          labelkey="title"
+          onSelect={onCategorySelect}
+          selected={selectedCategory}
+          style={{ marginBottom: theme.spacing(2) }}
+        />
+      </View>
+      <View style={{ flex: 1 }}>
+        {renderError()}
 
-            <View>
-              {channelsData.map(({ id, ...itemProps }) => (
-                <ListItemChanel
-                  key={id}
-                  id={id}
-                  onSelect={handleItemSelect}
-                  onRightActionPress={handleAddToFavorites}
-                  {...itemProps}
-                  full
-                />
-              ))}
-            </View>
-            <Spacer size={100} />
-          </ScrollView>
-        </React.Fragment>
-      ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {!isFetching ? renderEmpty() : null}
-          <Spacer size={100} />
-        </View>
-      )}
+        {renderChannels()}
+      </View>
 
       <View
+        onLayout={onLayout}
         style={{
-          flex: 1,
           flexDirection: 'row',
           justifyContent: 'space-between',
           backgroundColor: '#202530',
           borderTopRightRadius: 24,
           borderTopLeftRadius: 24,
           paddingHorizontal: 4,
-          position: 'absolute',
           width: '100%',
-          bottom: 0,
           zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
@@ -257,6 +314,7 @@ const IsportsScreen = ({
               justifyContent: 'center'
             }}
             borderless={true}
+            rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('IsportsFavoritesScreen')}
           >
             <View style={{ alignItems: 'center' }}>
@@ -277,7 +335,9 @@ const IsportsScreen = ({
               justifyContent: 'center'
             }}
             borderless={true}
-            onPress={() => navigation.replace('HomeScreen')}
+            rippleColor="rgba(255,255,255,0.25)"
+            onPress={() => navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] })}
+            // onPress={() => navigation.replace('HomeScreen')}
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="iplayya" size={theme.iconSize(3)} />
@@ -295,6 +355,7 @@ const IsportsScreen = ({
               justifyContent: 'center'
             }}
             borderless={true}
+            rippleColor="rgba(255,255,255,0.25)"
             onPress={() => navigation.navigate('IsportsDownloadsScreen')}
           >
             <View style={{ alignItems: 'center' }}>
@@ -341,16 +402,19 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   genres: selectGenres,
-  paginatorInfo: selectPaginatorInfo,
+  paginator: selectPaginator,
   channels: selectChannels,
-  isFavoritesUpdated: selectAddedToFavorites
+  updated: selectFavoritesListUpdated,
+  headerHeight: selectHeaderHeight
 });
 
 const actions = {
+  getChannelsStartAction: Creators.getChannelsStart,
   getGenresAction: Creators.getGenres,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   resetPaginatorAction: Creators.resetPaginator,
+  getChannelsByCategoriesStartAction: Creators.getChannelsByCategoriesStart,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
   addToFavoritesAction: Creators.addToFavorites,

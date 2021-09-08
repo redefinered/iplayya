@@ -5,9 +5,11 @@ import {
   getChannel,
   getChannels,
   getChannelsByCategory,
+  getChannelToken,
   addToFavorites,
   removeFromFavorites,
   getFavorites,
+  getProgramsByChannel,
   search
 } from 'services/isports.service';
 
@@ -37,7 +39,12 @@ export function* getChannelsRequest(action) {
 export function* getChannelRequest(action) {
   try {
     const { isport: channel } = yield call(getChannel, action.input);
-    yield put(Creators.getChannelSuccess(channel));
+
+    const {
+      getItvChannelToken: { token }
+    } = yield call(getChannelToken, { channelId: action.input.videoId });
+
+    yield put(Creators.getChannelSuccess(channel, token));
   } catch (error) {
     yield put(Creators.getChannelFailure(error.message));
   }
@@ -93,6 +100,16 @@ export function* getFavoritesRequest(action) {
   }
 }
 
+export function* getProgramsByChannelRequest(action) {
+  const { input } = action;
+  try {
+    const { getPrograms: programs } = yield call(getProgramsByChannel, input);
+    yield put(Creators.getProgramsByChannelSuccess(programs));
+  } catch (error) {
+    yield put(Creators.getProgramsByChannelFailure(error.message));
+  }
+}
+
 export function* searchRequest(action) {
   try {
     const { isports: results } = yield call(search, action.input);
@@ -120,6 +137,7 @@ export default function* itvSagas() {
   yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
+  yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_SIMILAR_CHANNEL, getSimilarChannelRequest);
 }
