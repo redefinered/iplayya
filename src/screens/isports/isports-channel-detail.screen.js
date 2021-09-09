@@ -84,12 +84,13 @@ const IsportsChannelDetailScreen = ({
 
   React.useEffect(() => {
     if (favoritesListUpdated) {
-      // getChannelAction({ videoId: channelId });
+      getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
 
   React.useEffect(() => {
+    if (channel) navigation.setParams({ channel });
     if (channel && currentProgram) {
       const { title: epgtitle, time, time_to } = currentProgram;
       const data = {

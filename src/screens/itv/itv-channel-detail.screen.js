@@ -100,6 +100,7 @@ const ItvChannelDetailScreen = ({
   }, [channel, currentProgram]);
 
   React.useEffect(() => {
+    if (channel) navigation.setParams({ channel });
     if (channel) {
       const { token, url, title: channelName } = channel;
       const titlesplit = channelName.split(' ');

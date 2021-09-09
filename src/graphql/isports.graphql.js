@@ -46,6 +46,7 @@ export const GET_CHANNELS = gql`
       number
       title
       description
+      number
       time
       time_to
       epgtitle
@@ -89,6 +90,7 @@ export const GET_FAVORITES = gql`
       number
       title
       description
+      number
       time
       time_to
       epgtitle

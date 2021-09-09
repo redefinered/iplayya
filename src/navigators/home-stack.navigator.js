@@ -419,11 +419,11 @@ const HomeStack = ({
           options={(props) => {
             const {
               route: {
-                params: { videoId }
+                params: { videoId, movie }
               }
             } = props;
 
-            const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+            // const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
 
             return {
               title: null,
@@ -432,7 +432,8 @@ const HomeStack = ({
                   <AddToFavoritesButton
                     sub={parseInt(videoId)}
                     module="imovie"
-                    inFavorites={isInFavorites >= 0 ? true : false}
+                    // inFavorites={isInFavorites >= 0 ? true : false}
+                    isFavorite={typeof movie === 'undefined' ? false : movie.is_favorite}
                   />
                   <DownloadButton videoId={videoId} />
                 </View>
@@ -746,7 +747,7 @@ const HomeStack = ({
           options={(props) => {
             const {
               route: {
-                params: { channelId }
+                params: { channelId, channel }
               }
             } = props;
 
@@ -754,7 +755,11 @@ const HomeStack = ({
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton sub={parseInt(channelId)} module="itv" />
+                  <AddToFavoritesButton
+                    sub={parseInt(channelId)}
+                    module="itv"
+                    isFavorite={typeof channel === 'undefined' ? false : channel.is_favorite}
+                  />
                 </View>
               )
             };
@@ -771,7 +776,7 @@ const HomeStack = ({
           options={(props) => {
             const {
               route: {
-                params: { channelId }
+                params: { channelId, channel }
               }
             } = props;
 
@@ -779,7 +784,11 @@ const HomeStack = ({
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton sub={parseInt(channelId)} module="isports" />
+                  <AddToFavoritesButton
+                    sub={parseInt(channelId)}
+                    isFavorite={typeof channel === 'undefined' ? false : channel.is_favorite}
+                    module="isports"
+                  />
                 </View>
               )
             };

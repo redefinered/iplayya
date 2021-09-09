@@ -264,7 +264,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
     return {
       ...state,
-      isFetching: false,
+      isFetching: true,
       error: null,
       favoritesListRemoveUpdated: true
     };

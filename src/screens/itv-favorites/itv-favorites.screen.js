@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { View, Pressable, Image, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
@@ -19,13 +19,12 @@ import {
   selectFavorites,
   selectError,
   selectIsFetching,
-  // selectRemovedFromFavorites,
   selectFavoritesPaginator,
   selectPaginator,
-  selectChannels
+  selectChannels,
+  selectfavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
-import { selectFavoritesListUpdated } from 'modules/ducks/itv/itv.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 import moment from 'moment';
@@ -36,10 +35,9 @@ const ItvFavoritesScreen = ({
   favorites,
   getFavoritesAction,
   favoritesPaginator,
-  favoritesListUpdated,
+  favoritesListRemoveUpdated,
   getChannelsAction,
   removeFromFavoritesAction,
-  removedFromFavorites,
 
   resetFavoritesPaginatorAction
 }) => {
@@ -64,12 +62,12 @@ const ItvFavoritesScreen = ({
   }, [favoritesPaginator]);
 
   React.useEffect(() => {
-    if (favoritesListUpdated) {
+    if (favoritesListRemoveUpdated) {
       setActivateCheckboxes(false);
       getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
       getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
-  }, [favoritesListUpdated]);
+  }, [favoritesListRemoveUpdated]);
 
   // setup channels data
   React.useEffect(() => {
@@ -83,14 +81,6 @@ const ItvFavoritesScreen = ({
       setListData(data);
     }
   }, [favorites]);
-
-  React.useEffect(() => {
-    if (removedFromFavorites) {
-      getFavoritesAction();
-      // getChannelsAction({ limit: 10, pageNumber: 1 });
-      setSelectedItems([]);
-    }
-  }, [removedFromFavorites]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -241,7 +231,7 @@ const ItvFavoritesScreen = ({
                   paddingLeft: 75
                 }}
               >
-                <Image
+                {/* <Image
                   style={{
                     width: 60,
                     height: 60,
@@ -251,7 +241,23 @@ const ItvFavoritesScreen = ({
                     left: 10
                   }}
                   source={channelplaceholder}
-                />
+                /> */}
+                <View
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    marginRight: 10,
+                    backgroundColor: theme.iplayya.colors.white10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    top: 2,
+                    left: 10
+                  }}
+                >
+                  <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+                </View>
 
                 <View
                   style={{
@@ -431,8 +437,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
-  // removedFromFavorites: selectRemovedFromFavorites,
-  favoritesListUpdated: selectFavoritesListUpdated,
+  favoritesListRemoveUpdated: selectfavoritesListRemoveUpdated,
   paginator: selectPaginator,
   channels: selectChannels
 });
