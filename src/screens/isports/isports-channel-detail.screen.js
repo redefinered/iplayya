@@ -84,7 +84,7 @@ const IsportsChannelDetailScreen = ({
 
   React.useEffect(() => {
     if (favoritesListUpdated) {
-      // getChannelAction({ videoId: channelId });
+      getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
