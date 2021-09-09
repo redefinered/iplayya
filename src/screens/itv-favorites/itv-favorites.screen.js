@@ -19,16 +19,12 @@ import {
   selectFavorites,
   selectError,
   selectIsFetching,
-  // selectRemovedFromFavorites,
   selectFavoritesPaginator,
   selectPaginator,
-  selectChannels
-} from 'modules/ducks/itv/itv.selectors';
-import { createFontFormat } from 'utils';
-import {
-  selectFavoritesListUpdated,
+  selectChannels,
   selectfavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
+import { createFontFormat } from 'utils';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 import moment from 'moment';
@@ -42,7 +38,6 @@ const ItvFavoritesScreen = ({
   favoritesListRemoveUpdated,
   getChannelsAction,
   removeFromFavoritesAction,
-  removedFromFavorites,
 
   resetFavoritesPaginatorAction
 }) => {
@@ -86,14 +81,6 @@ const ItvFavoritesScreen = ({
       setListData(data);
     }
   }, [favorites]);
-
-  React.useEffect(() => {
-    if (removedFromFavorites) {
-      getFavoritesAction();
-      // getChannelsAction({ limit: 10, pageNumber: 1 });
-      setSelectedItems([]);
-    }
-  }, [removedFromFavorites]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -450,8 +437,6 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
-  // removedFromFavorites: selectRemovedFromFavorites,
-  favoritesListUpdated: selectFavoritesListUpdated,
   favoritesListRemoveUpdated: selectfavoritesListRemoveUpdated,
   paginator: selectPaginator,
   channels: selectChannels

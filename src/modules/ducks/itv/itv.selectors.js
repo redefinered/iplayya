@@ -17,10 +17,6 @@ export const selectChannels = createSelector([itvState], ({ channels }) => chann
 export const selectChannel = createSelector([itvState], ({ channel }) => channel);
 export const selectFavorites = createSelector([itvState], ({ favorites }) => favorites);
 export const selectPrograms = createSelector([itvState], ({ programs }) => programs);
-export const selectRemovedFromFavorites = createSelector(
-  [itvState],
-  ({ removedFromFavorites }) => removedFromFavorites
-);
 export const selectDownloads = createSelector([itvState], ({ downloads }) => downloads);
 export const selectChannelName = createSelector([itvState], ({ channel }) => {
   if (!channel) return;
