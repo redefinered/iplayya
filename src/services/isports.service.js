@@ -53,6 +53,7 @@ export const getChannels = async (input) => {
     const { data } = await client.query({
       query: GET_CHANNELS,
       variables: { input }
+      // fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
@@ -112,12 +113,12 @@ export const removeFromFavorites = async (input) => {
       refetchQueries: [
         {
           query: GET_FAVORITES,
-          // variables: { input: { limit: 10, pageNumber: 1 } },
+          variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
           query: GET_CHANNELS,
-          // variables: { input: { limit: 10, pageNumber: 1 } },
+          variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         }
       ],
@@ -135,9 +136,9 @@ export const getFavorites = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_FAVORITES,
-      // variables: { input: { limit: 10, pageNumber: 1 } }
-      fetchPolicy: 'network-only',
-      variables: { input }
+      variables: { input: { limit: 10, pageNumber: 1 } },
+      fetchPolicy: 'network-only'
+      // variables: { input }
     });
     return data;
   } catch (error) {

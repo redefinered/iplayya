@@ -19,8 +19,10 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectFavorites,
   selectError,
-  selectIsFetching
-  // selectRemovedFromFavorites
+  selectIsFetching,
+  selectFavoritesPaginator,
+  selectFavoritesListRemoveUpdated,
+  selectPaginator
 } from 'modules/ducks/isports/isports.selectors';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import { Creators } from 'modules/ducks/isports/isports.actions';
@@ -33,7 +35,10 @@ const IsportsFavoritesScreen = ({
   getChannelsAction,
   getFavoritesAction,
   removeFromFavoritesAction,
-  removedFromFavorites
+  favoritesPaginator,
+  favoriteListsRemoveUpdated,
+
+  resetFavoritesPaginatorAction
 }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
@@ -42,8 +47,14 @@ const IsportsFavoritesScreen = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
-    getFavoritesAction({ limit: 10, pageNumber: 1 });
+    resetFavoritesPaginatorAction();
   }, []);
+
+  React.useEffect(() => {
+    if (favoritesPaginator.pageNumber === 1) {
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    }
+  }, [favoritesPaginator]);
 
   // setup channels data
   React.useEffect(() => {
@@ -59,12 +70,12 @@ const IsportsFavoritesScreen = ({
   }, [favorites]);
 
   React.useEffect(() => {
-    if (removedFromFavorites) {
-      getFavoritesAction({ limit: 10, pageNumber: 1 });
-      getChannelsAction({ limit: 10, pageNumber: 1 });
-      setSelectedItems([]);
+    if (favoriteListsRemoveUpdated) {
+      setActivateCheckboxes(false);
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
-  }, [removedFromFavorites]);
+  }, [favoriteListsRemoveUpdated]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -336,7 +347,7 @@ const IsportsFavoritesScreen = ({
         </View> */}
         {showDeleteConfirmation && (
           <AlertModal
-            variant="danger"
+            variant="confirmation"
             message={`Are you sure you want to delete ${
               selectedItems.length > 1 ? 'these' : 'this'
             } channel/s from your Favorites list?`}
@@ -385,14 +396,19 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   paginatorInfo: selectPaginatorInfo,
-  favorites: selectFavorites
-  // removedFromFavorites: selectRemovedFromFavorites
+  favorites: selectFavorites,
+  favoritesPaginator: selectFavoritesPaginator,
+  favoriteListsRemoveUpdated: selectFavoritesListRemoveUpdated,
+  paginator: selectPaginator
 });
 
 const actions = {
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavorites,
-  getChannelsAction: Creators.getChannels
+  getChannelsAction: Creators.getChannels,
+  getChannelsStartAction: Creators.getChannelsStart,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
+  favoritesStartAction: Creators.favoritesStart
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
