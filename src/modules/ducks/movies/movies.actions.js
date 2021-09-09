@@ -37,7 +37,7 @@ const { Types, Creators } = createActions(
     getFavoriteMoviesSuccess: ['data'],
     getFavoriteMoviesFailure: ['error'],
 
-    addMovieToFavoritesStart: [],
+    addToFavoritesStart: [],
     addToFavorites: ['videoId'],
     addToFavoritesSuccess: [],
     addToFavoritesFailure: ['error'],
