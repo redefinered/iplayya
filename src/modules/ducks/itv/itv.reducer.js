@@ -28,9 +28,6 @@ const INITIAL_STATE = {
   // programs per selected channel
   programs: [],
 
-  // addedToFavorites: false,
-  // removedFromFavorites: false,
-
   favorites: [],
   favoritesPaginator: {
     limit: 10,
@@ -39,15 +36,7 @@ const INITIAL_STATE = {
     order: 'asc'
   },
   favoritesListUpdated: false,
-
-  // download tasks
-  downloads: {},
-
-  // downloads progress
-  downloadsProgress: {},
-
-  // data for downloaded movies where we get properties like title, id, etc...
-  downloadsData: [],
+  favoritesListRemoveUpdated: false,
 
   searchResults: [],
   searchResultsPaginator: {
@@ -113,7 +102,6 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_CHANNELS_START]: (state) => {
     return {
       ...state,
-      // channels: [],
       paginator: {
         limit: 10,
         pageNumber: 1,
@@ -145,9 +133,6 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       channels: orderBy(updatedChannels, 'number', 'asc'),
       paginator: Object.assign(state.paginator, nextPaginatorInfo)
-
-      // addedToFavorites: false,
-      // removedFromFavorites: false
     };
   },
   [Types.GET_CHANNELS_FAILURE]: (state, action) => {
@@ -181,9 +166,8 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       channels: orderBy(updatedChannels, 'number', 'asc'),
       paginator: Object.assign(state.paginator, nextPaginatorInfo),
-      favoritesListUpdated: false
-      // addedToFavorites: false
-      // removedFromFavorites: false
+      favoritesListUpdated: false,
+      favoritesListRemoveUpdated: false
     };
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_FAILURE]: (state, action) => {
@@ -195,6 +179,13 @@ export default createReducer(INITIAL_STATE, {
   },
 
   // get programs by channel
+  [Types.GET_PROGRAMS_BY_CHANNEL_START]: (state) => {
+    return {
+      ...state,
+      programs: [],
+      error: null
+    };
+  },
   [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {
     return {
       ...state,
@@ -220,7 +211,7 @@ export default createReducer(INITIAL_STATE, {
   },
 
   [Types.FAVORITES_START]: (state) => {
-    return { ...state, favoritesListUpdated: false };
+    return { ...state, favoritesListUpdated: false, favoritesListRemoveUpdated: false };
   },
 
   // add to favorites
@@ -258,7 +249,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: true,
       error: null,
-      favoritesListUpdated: false
+      favoritesListRemoveUpdated: false
     };
   },
   [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
@@ -267,7 +258,7 @@ export default createReducer(INITIAL_STATE, {
       isFetching: true,
       error: null,
       // favorites: [],
-      favoritesListUpdated: true
+      favoritesListRemoveUpdated: true
     };
   },
   [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {
@@ -275,7 +266,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error,
-      favoritesListUpdated: false
+      favoritesListRemoveUpdated: false
     };
   },
 
@@ -299,6 +290,7 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       // addedToFavorites: false,
       favoritesListUpdated: false,
+      favoritesListRemoveUpdated: false,
       favorites: orderBy(updatedData, 'number', 'asc'), /// overkill yata to
       favoritesPaginator: nextPaginator
     };

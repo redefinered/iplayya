@@ -20,11 +20,11 @@ import {
   selectRemainingTime,
   selectDuration
 } from 'modules/ducks/movies/movies.selectors';
-
 import CastButton from 'components/cast-button/cast-button.component';
 import { useRemoteMediaClient } from 'react-native-google-cast';
-
 import SystemSetting from 'react-native-system-setting';
+import NextButton from './next-button.component';
+import PrevButton from './prev-button.component';
 
 const VideoControls = ({
   theme,
@@ -300,13 +300,14 @@ const VideoControls = ({
         }}
       >
         {multipleMedia && (
-          <Pressable onPress={() => previousAction()} disabled={isFirstEpisode}>
-            <Icon
-              name="previous"
-              size={theme.iconSize(4)}
-              style={{ color: isFirstEpisode ? theme.iplayya.colors.white25 : 'white' }}
-            />
-          </Pressable>
+          <PrevButton onPress={previousAction} disabled={isFirstEpisode} />
+          // <Pressable onPress={() => previousAction()} disabled={isFirstEpisode}>
+          //   <Icon
+          //     name="previous"
+          //     size={theme.iconSize(4)}
+          //     style={{ color: isFirstEpisode ? theme.iplayya.colors.white25 : 'white' }}
+          //   />
+          // </Pressable>
         )}
         <Pressable onPress={() => controlProps.togglePlay()}>
           {buffering ? (
@@ -320,13 +321,18 @@ const VideoControls = ({
           )}
         </Pressable>
         {multipleMedia && (
-          <Pressable onPress={() => nextAction()} disabled={isLastEpisode}>
-            <Icon
-              name="next"
-              size={theme.iconSize(4)}
-              style={{ color: isLastEpisode ? theme.iplayya.colors.white25 : 'white' }}
-            />
-          </Pressable>
+          <NextButton onPress={nextAction} disabled={isLastEpisode} />
+          // <Pressable
+          //   style={styles.buttonContainer}
+          //   onPress={() => nextAction()}
+          //   disabled={isLastEpisode}
+          // >
+          //   <Icon
+          //     name="next"
+          //     size={theme.iconSize(4)}
+          //     style={{ color: isLastEpisode ? theme.iplayya.colors.white25 : 'white' }}
+          //   />
+          // </Pressable>
         )}
       </View>
 
@@ -346,6 +352,13 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: 'space-between',
     zIndex: 99
+  },
+  buttonContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

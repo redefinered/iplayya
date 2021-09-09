@@ -1,5 +1,13 @@
 import { gql } from '@apollo/client';
 
+export const GET_CHANNEL_TOKEN = gql`
+  query GET_CHANNEL_TOKEN($input: tokenRequest) {
+    getItvChannelToken(input: $input) {
+      token
+    }
+  }
+`;
+
 export const GET_GENRES = gql`
   query GET_GENRES {
     isportsGenres {
@@ -38,6 +46,7 @@ export const GET_CHANNELS = gql`
       number
       title
       description
+      number
       time
       time_to
       epgtitle
@@ -81,6 +90,7 @@ export const GET_FAVORITES = gql`
       number
       title
       description
+      number
       time
       time_to
       epgtitle
@@ -98,14 +108,37 @@ export const REMOVE_FROM_FAVORITES = gql`
   }
 `;
 
+export const GET_PROGRAMS_BY_CHANNEL = gql`
+  query GET_PROGRAMS_BY_CHANNEL($input: channelRequestId) {
+    getPrograms(input: $input) {
+      id
+      title
+      time
+      time_to
+      duration
+      description
+    }
+  }
+`;
+
 export const SEARCH = gql`
   query SEARCH_ISPORTS($input: videoRequest) {
     isports(input: $input) {
       id
       title
+      description
       genre
-      epgtitle
       number
+      url
+      censored
+      hd
+      is_favorite
+      time
+      time_to
+      duration
+      epgtitle
+      epgdescription
+      archived_link
     }
   }
 `;

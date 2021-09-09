@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, View, Image } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 // import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
-import { urlEncodeTitle, createFontFormat } from 'utils';
+import { createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
 import moment from 'moment';
 import theme from 'common/theme';
-import { useNavigation } from '@react-navigation/native';
+// import { useNavigation } from '@react-navigation/native';
 
 const spacer = 20;
 
@@ -21,6 +21,7 @@ const ListItemChanel = ({
   full,
   selected,
   activateCheckboxes,
+  onEpgButtonPressed,
   ...contentProps
 }) => {
   const [isPressed, setIsPressed] = React.useState(false);
@@ -79,6 +80,7 @@ const ListItemChanel = ({
             isFavorite={is_favorite}
             activateCheckboxes={activateCheckboxes}
             isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
+            onEpgButtonPressed={onEpgButtonPressed}
           />
         </View>
       </Pressable>
@@ -96,12 +98,25 @@ const ListItemChanel = ({
         }}
       >
         <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
-          <Image
+          {/* <Image
             style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
             source={{
               url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(contentProps.title)}`
             }}
-          />
+          /> */}
+          <View
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 8,
+              marginRight: 10,
+              backgroundColor: theme.iplayya.colors.white10,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+          </View>
           <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
             {contentProps.title}
           </Text>
@@ -118,6 +133,7 @@ const ListItemChanel = ({
 // eslint-disable-next-line react/prop-types
 const Content = ({
   id,
+  // eslint-disable-next-line react/prop-types
   number,
   title,
   epgtitle,
@@ -125,12 +141,10 @@ const Content = ({
   time_to,
   onRightActionPress,
   isFavorite,
-  // selected,
-  // activateCheckboxes,
-  isCatchUpAvailable
+  isCatchUpAvailable,
+  onEpgButtonPressed
 }) => {
   const theme = useTheme();
-  const navigation = useNavigation();
 
   const renderCatchUpIndicator = () => {
     if (typeof isCatchUpAvailable === 'undefined') return;
@@ -142,11 +156,6 @@ const Content = ({
     if (isFavorite) return;
     onRightActionPress(id);
   };
-
-  // const renderCheckbox = () => {
-  //   if (!activateCheckboxes) return;
-  //   return <RadioButton selected={selected} />;
-  // };
 
   const renderEpgtitle = () => {
     if (!epgtitle)
@@ -229,7 +238,7 @@ const Content = ({
 
         <Pressable
           underlayColor={theme.iplayya.colors.black80}
-          onPress={() => navigation.navigate('ProgramGuideScreen', { channelId: id })}
+          onPress={() => onEpgButtonPressed(id)}
           style={({ pressed }) => [
             {
               width: 44,
@@ -257,22 +266,23 @@ const Content = ({
 };
 
 Content.propTypes = {
-  number: PropTypes.number,
+  // number: PropTypes.string,
   time: PropTypes.string,
   time_to: PropTypes.string,
   chanel: PropTypes.string,
-  id: PropTypes.any,
+  id: PropTypes.string,
   title: PropTypes.string,
   epgtitle: PropTypes.string,
   isFavorite: PropTypes.bool,
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   activateCheckboxes: PropTypes.bool,
-  isCatchUpAvailable: PropTypes.bool
+  isCatchUpAvailable: PropTypes.bool,
+  onEpgButtonPressed: PropTypes.func
 };
 
 ListItemChanel.propTypes = {
-  id: PropTypes.any,
+  id: PropTypes.string,
   title: PropTypes.string,
   is_favorite: PropTypes.bool,
   full: PropTypes.bool,
@@ -280,7 +290,8 @@ ListItemChanel.propTypes = {
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
   handleLongPress: PropTypes.func,
-  activateCheckboxes: PropTypes.bool
+  activateCheckboxes: PropTypes.bool,
+  onEpgButtonPressed: PropTypes.func
 };
 
-export default ListItemChanel;
+export default React.memo(ListItemChanel);

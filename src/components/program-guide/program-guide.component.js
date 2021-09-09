@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NotifCreators } from 'modules/ducks/notifications/notifications.actions';
-import { selectPrograms } from 'modules/ducks/itv/itv.selectors';
 import {
   selectNotifications,
   selectSubscriptions
@@ -31,7 +30,8 @@ const PILLS_HEIGHT = 12 + 40;
 // eslint-disable-next-line no-unused-vars
 const ProgramGuide = ({
   programs,
-  getProgramsByChannelAction,
+  onDateSelect,
+  // getProgramsByChannelAction,
   channelId,
   channelName,
   onRegisterAction,
@@ -42,11 +42,12 @@ const ProgramGuide = ({
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
-  // generates an array of dates 7 days from now
-  const dates = generateDatesFromToday();
-  const [selected, setSelected] = React.useState('8');
   const [notifService, setNotifService] = React.useState(null);
   const [programsPageYOffset, setProgramsPageYOffset] = React.useState(null);
+
+  // generates an array of dates 7 days from now
+  let dates = generateDatesFromToday();
+  dates = dates.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
 
   React.useEffect(() => {
     const notif = new NotifService(onRegisterAction, onNotifAction);
@@ -54,11 +55,11 @@ const ProgramGuide = ({
   }, []);
 
   const handleDateSelect = (id) => {
-    setSelected(id);
-    const { value } = dates.find(({ id: dateId }) => dateId === parseInt(id));
+    const { value } = dates.find(({ id: dateId }) => dateId === id);
     const date = new Date(value).toISOString();
-    console.log({ date });
-    getProgramsByChannelAction({ channelId, date });
+    onDateSelect(date);
+    // console.log({ date });
+    // getProgramsByChannelAction({ channelId, date });
   };
 
   const renderTitle = () => {
@@ -169,7 +170,6 @@ const ProgramGuide = ({
           data={dates}
           labelkey="formatted"
           onSelect={handleDateSelect}
-          selected={selected}
           screen={screen}
         />
       </View>
@@ -208,7 +208,8 @@ ProgramGuide.propTypes = {
   showSnackBar: PropTypes.func,
   onRegisterAction: PropTypes.func,
   onNotifAction: PropTypes.func,
-  contentHeight: PropTypes.number
+  contentHeight: PropTypes.number,
+  onDateSelect: PropTypes.func
 };
 
 const actions = {
@@ -218,7 +219,6 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  programs: selectPrograms,
   notifications: selectNotifications,
   subscriptions: selectSubscriptions
 });

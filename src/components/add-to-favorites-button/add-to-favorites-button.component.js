@@ -6,19 +6,32 @@ import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
 import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
 
 const AddToFavoritesButton = ({
   sub,
   module,
   addChannelToFavoritesAction,
   addMovieToFavoritesAction,
-  inFavorites
+  addIsportChannelToFavoritesAction,
+  isFavorite
 }) => {
   const theme = useTheme();
+  const [favorited, setFavorited] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isFavorite) {
+      setFavorited(true);
+    } else {
+      setFavorited(false);
+    }
+  }, [isFavorite]);
 
   const handleAddAction = () => {
     /// stop if already in favorites
-    if (inFavorites) return;
+    if (!favorited) setFavorited(true);
+
+    if (favorited === true) return;
 
     switch (module) {
       case 'itv':
@@ -26,6 +39,9 @@ const AddToFavoritesButton = ({
         break;
       case 'imovie':
         addMovieToFavoritesAction(sub);
+        break;
+      case 'isports':
+        addIsportChannelToFavoritesAction(sub);
         break;
       case 'imusic':
         /// wip: add imusic module
@@ -51,7 +67,7 @@ const AddToFavoritesButton = ({
         <Icon
           name="heart-solid"
           size={theme.iconSize(3)}
-          style={{ color: inFavorites ? theme.iplayya.colors.vibrantpussy : 'white' }}
+          style={{ color: favorited ? theme.iplayya.colors.vibrantpussy : 'white' }}
         />
       </View>
     </Pressable>
@@ -76,15 +92,17 @@ const styles = StyleSheet.create({
 
 AddToFavoritesButton.propTypes = {
   module: PropTypes.string,
-  inFavorites: PropTypes.bool,
   sub: PropTypes.number,
+  isFavorite: PropTypes.bool,
   addChannelToFavoritesAction: PropTypes.func,
-  addMovieToFavoritesAction: PropTypes.func
+  addMovieToFavoritesAction: PropTypes.func,
+  addIsportChannelToFavoritesAction: PropTypes.func
 };
 
 const actions = {
   addChannelToFavoritesAction: ItvCreators.addToFavorites,
-  addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites
+  addMovieToFavoritesAction: MoviesCreators.addToFavorites,
+  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites
 };
 
 export default connect(null, actions)(AddToFavoritesButton);

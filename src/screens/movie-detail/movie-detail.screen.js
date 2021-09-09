@@ -56,7 +56,8 @@ const MovieDetailScreen = ({
   downloadStartAction,
   downloadStarted,
   videoUrls,
-  setMusicNowPlaying
+  setMusicNowPlaying,
+  navigation
 }) => {
   const client = useRemoteMediaClient();
 
@@ -145,6 +146,7 @@ const MovieDetailScreen = ({
   };
 
   React.useEffect(() => {
+    if (movie) navigation.setParams({ movie });
     if (movie) {
       const titlesplit = movie.title.split(' ');
       const title = titlesplit.join('_');

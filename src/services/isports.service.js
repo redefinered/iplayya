@@ -7,13 +7,28 @@ import {
   ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITES,
+  GET_PROGRAMS_BY_CHANNEL,
   SEARCH
 } from 'graphql/isports.graphql';
+
+import { GET_CHANNEL_TOKEN } from 'graphql/itv.graphql';
 
 export const getGenres = async () => {
   try {
     const { data } = await client.query({
       query: GET_GENRES
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getChannelToken = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_CHANNEL_TOKEN,
+      variables: { input }
     });
     return data;
   } catch (error) {
@@ -37,7 +52,8 @@ export const getChannels = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_CHANNELS,
-      variables: { input }
+      variables: { input },
+      fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
@@ -57,20 +73,25 @@ export const getChannelsByCategory = async (input) => {
   }
 };
 
-export const addToFavorites = async (input) => {
+export const addToFavorites = async (videoId) => {
   try {
     const { data } = await client.mutate({
       mutation: ADD_TO_FAVORITES,
-      variables: { input },
+      variables: { input: { videoId } },
       refetchQueries: [
         {
           query: GET_FAVORITES,
-          variables: { input: { limit: 10, pageNumber: 1 } },
+          // variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
           query: GET_CHANNELS,
           variables: { input: { limit: 10, pageNumber: 1 } },
+          fetchPolicy: 'network-only'
+        },
+        {
+          query: GET_CHANNEL,
+          variables: { input: { videoId } },
           fetchPolicy: 'network-only'
         }
       ],
@@ -115,10 +136,25 @@ export const getFavorites = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_FAVORITES,
-      variables: { input: { limit: 10, pageNumber: 1 } }
+      // variables: { input: { limit: 10, pageNumber: 1 } },
+      fetchPolicy: 'network-only',
+      variables: { input }
     });
     return data;
   } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getProgramsByChannel = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_PROGRAMS_BY_CHANNEL,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
