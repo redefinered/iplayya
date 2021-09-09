@@ -4,9 +4,10 @@ import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
+// import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
 // import withHeaderPush from 'components/with-header-push/with-header-push.component';
+import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
@@ -19,10 +20,13 @@ import {
   selectFavorites,
   selectError,
   selectIsFetching,
-  selectRemovedFromFavorites
+  selectFavoritesPaginator,
+  selectFavoritesListRemoveUpdated,
+  selectPaginator
 } from 'modules/ducks/isports/isports.selectors';
 import { urlEncodeTitle, createFontFormat } from 'utils';
 import { Creators } from 'modules/ducks/isports/isports.actions';
+import moment from 'moment';
 
 const IsportsFavoritesScreen = ({
   theme,
@@ -31,7 +35,10 @@ const IsportsFavoritesScreen = ({
   getChannelsAction,
   getFavoritesAction,
   removeFromFavoritesAction,
-  removedFromFavorites
+  favoritesPaginator,
+  favoriteListsRemoveUpdated,
+
+  resetFavoritesPaginatorAction
 }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
@@ -40,28 +47,35 @@ const IsportsFavoritesScreen = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
-    getFavoritesAction({ limit: 10, pageNumber: 1 });
+    resetFavoritesPaginatorAction();
   }, []);
+
+  React.useEffect(() => {
+    if (favoritesPaginator.pageNumber === 1) {
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    }
+  }, [favoritesPaginator]);
 
   // setup channels data
   React.useEffect(() => {
-    if (favorites.length) {
-      let data = favorites.map(({ id, title }) => ({
+    if (favorites) {
+      let data = favorites.map(({ id, title, number }) => ({
         id,
         title,
-        thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`
+        number,
+        thumbnail: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(title)}`
       }));
       setListData(data);
     }
   }, [favorites]);
 
   React.useEffect(() => {
-    if (removedFromFavorites) {
-      getFavoritesAction({ limit: 10, pageNumber: 1 });
-      getChannelsAction({ limit: 10, pageNumber: 1 });
-      setSelectedItems([]);
+    if (favoriteListsRemoveUpdated) {
+      setActivateCheckboxes(false);
+      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
-  }, [removedFromFavorites]);
+  }, [favoriteListsRemoveUpdated]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -75,7 +89,7 @@ const IsportsFavoritesScreen = ({
       }
     } else {
       // navigation.navigate('MovieDetailScreen', { videoId: item });
-      navigation.navigate('ChannelDetailScreen', { channelId: item });
+      navigation.navigate('IsportsChannelDetailScreen', { channelId: item });
     }
   };
 
@@ -128,7 +142,7 @@ const IsportsFavoritesScreen = ({
     handleRemoveItems();
   };
 
-  if (listData.length)
+  if (listData.length || favorites.length)
     return (
       <ScrollView>
         {activateCheckboxes && (
@@ -142,7 +156,14 @@ const IsportsFavoritesScreen = ({
             >
               <Pressable
                 onPress={() => setShowDeleteConfirmation(true)}
-                style={{ flexDirection: 'row', alignItems: 'center' }}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 5
+                  }
+                ]}
               >
                 <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                 <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
@@ -156,11 +177,155 @@ const IsportsFavoritesScreen = ({
               </Pressable>
             </View>
 
-            <Spacer size={30} />
+            {/* <Spacer size={30} /> */}
           </ContentWrap>
         )}
 
-        <View style={{ marginTop: 30 }}>
+        {listData.map(({ id, title, epgtitle, number, time, time_to }) => {
+          const getSchedule = (time, time_to) => {
+            if (!time || !time_to) return;
+
+            return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+          };
+          return (
+            <Pressable
+              key={id}
+              underlayColor={theme.iplayya.colors.black80}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+                }
+              ]}
+              onLongPress={() => handleLongPress(id)}
+              onPress={() => handleSelectItem(id)}
+            >
+              <ContentWrap
+                style={{
+                  marginTop: 10,
+                  position: 'relative',
+                  height: 80,
+                  paddingLeft: 75
+                }}
+              >
+                {/* <Image
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    position: 'absolute',
+                    top: 2,
+                    left: 10
+                  }}
+                  source={channelplaceholder}
+                /> */}
+                <View
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    marginRight: 10,
+                    backgroundColor: theme.iplayya.colors.white10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    top: 2,
+                    left: 10
+                  }}
+                >
+                  <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: 3,
+                    marginLeft: 5
+                  }}
+                >
+                  <View style={{ justifyContent: 'center' }}>
+                    <View>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          marginBottom: 5,
+                          color: theme.iplayya.colors.white50
+                        }}
+                      >
+                        {`${number}: ${title}`}
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white80,
+                          marginBottom: 5
+                        }}
+                      >
+                        {epgtitle}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: '75%'
+                      }}
+                    >
+                      <Text
+                        style={{
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white50,
+                          marginBottom: 5
+                        }}
+                      >
+                        {getSchedule(time, time_to)}
+                      </Text>
+
+                      {!activateCheckboxes && (
+                        <Pressable
+                          underlayColor={theme.iplayya.colors.black80}
+                          onPress={() =>
+                            navigation.navigate('ProgramGuideScreen', { channelId: id })
+                          }
+                          style={({ pressed }) => [
+                            {
+                              backgroundColor: pressed
+                                ? theme.iplayya.colors.black80
+                                : 'transparent',
+                              width: 44,
+                              height: 44,
+                              borderRadius: 22,
+                              justifyContent: 'center',
+                              alignItems: 'center'
+                            }
+                          ]}
+                        >
+                          <Text
+                            style={{
+                              fontWeight: 'bold',
+                              fontSize: 12,
+                              color: theme.iplayya.colors.white50
+                            }}
+                          >
+                            EPG
+                          </Text>
+                        </Pressable>
+                      )}
+                    </View>
+                  </View>
+                  {activateCheckboxes && (
+                    <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                  )}
+                </View>
+              </ContentWrap>
+            </Pressable>
+          );
+        })}
+
+        {/* <View style={{ marginTop: 30 }}>
           {listData.map(({ id, ...itemProps }) => (
             <ListItemChanel
               key={id}
@@ -179,13 +344,13 @@ const IsportsFavoritesScreen = ({
               full
             />
           ))}
-        </View>
+        </View> */}
         {showDeleteConfirmation && (
           <AlertModal
-            variant="danger"
+            variant="confirmation"
             message={`Are you sure you want to delete ${
               selectedItems.length > 1 ? 'these' : 'this'
-            } channel from your Favorites list?`}
+            } channel/s from your Favorites list?`}
             visible={showDeleteConfirmation}
             onCancel={handleHideConfirmDeleteModal}
             hideAction={handleHideConfirmDeleteModal}
@@ -232,15 +397,20 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   paginatorInfo: selectPaginatorInfo,
   favorites: selectFavorites,
-  removedFromFavorites: selectRemovedFromFavorites
+  favoritesPaginator: selectFavoritesPaginator,
+  favoriteListsRemoveUpdated: selectFavoritesListRemoveUpdated,
+  paginator: selectPaginator
 });
 
 const actions = {
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavorites,
-  getChannelsAction: Creators.getChannels
+  getChannelsAction: Creators.getChannels,
+  getChannelsStartAction: Creators.getChannelsStart,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
+  favoritesStartAction: Creators.favoritesStart
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
 
 export default enhance(Container);

@@ -7,7 +7,7 @@ import Icon from 'components/icon/icon.component';
 import moment from 'moment';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { connect } from 'react-redux';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
+// import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
 const NotificationItem = ({
@@ -18,7 +18,8 @@ const NotificationItem = ({
   createdAt,
   status,
   updateNotificationStatusAction,
-  handleSelect
+  handleSelect,
+  parentType
 }) => {
   const theme = useTheme();
   const navigtation = useNavigation();
@@ -52,16 +53,17 @@ const NotificationItem = ({
 
   // eslint-disable-next-line no-unused-vars
   const handleSelectItem = (id) => {
-    // if (!unRead) return;
+    if (!unRead) return;
 
     // set unread to false
     setUnread(false);
 
-    // navigate to channel
-    navigtation.navigate('ChannelDetailScreen', { channelId });
-
     // set notification status to read
     updateNotificationStatusAction(id, 2);
+
+    // navigate to channel
+    if (parentType === 'ITV') return navigtation.navigate('ItvChannelDetailScreen', { channelId });
+    return navigtation.navigate('IsportsChannelDetailScreen', { channelId });
   };
 
   const backgroundColor = () => {
@@ -134,7 +136,8 @@ NotificationItem.propTypes = {
   createdAt: PropTypes.number,
   status: PropTypes.number,
   handleSelect: PropTypes.func,
-  updateNotificationStatusAction: PropTypes.func
+  updateNotificationStatusAction: PropTypes.func,
+  parentType: PropTypes.string
 };
 
 const actions = {

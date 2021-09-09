@@ -5,9 +5,11 @@ import {
   getChannel,
   getChannels,
   getChannelsByCategory,
+  getChannelToken,
   addToFavorites,
   removeFromFavorites,
   getFavorites,
+  getProgramsByChannel,
   search
 } from 'services/isports.service';
 
@@ -37,7 +39,11 @@ export function* getChannelsRequest(action) {
 export function* getChannelRequest(action) {
   try {
     const { isport: channel } = yield call(getChannel, action.input);
-    yield put(Creators.getChannelSuccess(channel));
+    const {
+      getItvChannelToken: { token }
+    } = yield call(getChannelToken, { channelId: action.input.videoId });
+
+    yield put(Creators.getChannelSuccess(channel, token));
   } catch (error) {
     yield put(Creators.getChannelFailure(error.message));
   }
@@ -60,9 +66,8 @@ export function* getChannelsByCategoriesRequest(action) {
 }
 
 export function* addToFavoritesRequest(action) {
-  const { input } = action;
   try {
-    const { addIsportToFavorites } = yield call(addToFavorites, input);
+    const { addIsportToFavorites } = yield call(addToFavorites, action.videoId);
     if (addIsportToFavorites.status !== 'success')
       throw new Error('Error adding item to favorites');
     yield put(Creators.addToFavoritesSuccess());
@@ -87,9 +92,23 @@ export function* getFavoritesRequest(action) {
   const { input } = action;
   try {
     const { favoriteIsports } = yield call(getFavorites, input);
-    yield put(Creators.getFavoritesSuccess(favoriteIsports));
+
+    /// increment paginator pageNumber
+    Object.assign(input, { pageNumber: input.pageNumber + 1 });
+
+    yield put(Creators.getFavoritesSuccess(favoriteIsports, input));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
+  }
+}
+
+export function* getProgramsByChannelRequest(action) {
+  const { input } = action;
+  try {
+    const { getPrograms: programs } = yield call(getProgramsByChannel, input);
+    yield put(Creators.getProgramsByChannelSuccess(programs));
+  } catch (error) {
+    yield put(Creators.getProgramsByChannelFailure(error.message));
   }
 }
 
@@ -120,6 +139,8 @@ export default function* itvSagas() {
   yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
+  yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_SIMILAR_CHANNEL, getSimilarChannelRequest);
+  yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
 }

@@ -17,10 +17,6 @@ export const selectChannels = createSelector([itvState], ({ channels }) => chann
 export const selectChannel = createSelector([itvState], ({ channel }) => channel);
 export const selectFavorites = createSelector([itvState], ({ favorites }) => favorites);
 export const selectPrograms = createSelector([itvState], ({ programs }) => programs);
-export const selectRemovedFromFavorites = createSelector(
-  [itvState],
-  ({ removedFromFavorites }) => removedFromFavorites
-);
 export const selectDownloads = createSelector([itvState], ({ downloads }) => downloads);
 export const selectChannelName = createSelector([itvState], ({ channel }) => {
   if (!channel) return;
@@ -42,6 +38,11 @@ export const selectFavoritesListUpdated = createSelector(
   ({ favoritesListUpdated }) => favoritesListUpdated
 );
 
+export const selectfavoritesListRemoveUpdated = createSelector(
+  [itvState],
+  ({ favoritesListRemoveUpdated }) => favoritesListRemoveUpdated
+);
+
 export const selectSearchResultsPaginator = createSelector(
   [itvState],
   ({ searchResultsPaginator }) => searchResultsPaginator
@@ -51,3 +52,27 @@ export const selectRecentSearch = createSelector([itvState], ({ recentSearch }) 
 
 export const selectNotifications = createSelector([itvState], ({ notifications }) => notifications);
 export const selectSubscriptions = createSelector([itvState], ({ subscriptions }) => subscriptions);
+
+const selectChannelsAndCurrentChannelNumberForFilter = (
+  { itv: { channels } },
+  { channel: { number } }
+) => {
+  const currentChannelNumber = parseInt(number);
+  return { channels, currentChannelNumber };
+};
+
+export const selectNextChannel = createSelector(
+  [selectChannelsAndCurrentChannelNumberForFilter],
+  ({ channels, currentChannelNumber }) => {
+    const nextChannel = channels.find(({ number }) => number === currentChannelNumber + 1);
+    return nextChannel;
+  }
+);
+
+export const selectPreviousChannel = createSelector(
+  [selectChannelsAndCurrentChannelNumberForFilter],
+  ({ channels, currentChannelNumber }) => {
+    const previousChannel = channels.find(({ number }) => number === currentChannelNumber - 1);
+    return previousChannel;
+  }
+);

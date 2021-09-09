@@ -11,11 +11,11 @@ import Icon from 'components/icon/icon.component.js';
 import HomeScreen from 'screens/home/home.screen';
 
 import ItvScreen from 'screens/itv/itv.screen';
-import ProgramGuideScreen from 'screens/itv/program-guide.screen';
+import ItvProgramGuideScreen from 'screens/itv/itv-program-guide.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 // import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
-import ChannelDetailScreen from 'screens/channel-detail/channel-detail.screen';
+import ItvChannelDetailScreen from 'screens/itv/itv-channel-detail.screen';
 import NotificationsScreen from 'screens/notifications/notifications.screen';
 
 import AddIptvScreen from 'screens/iptv/add-iptv.screen';
@@ -38,8 +38,10 @@ import IplayScreen from 'screens/iplay/iplay.screen';
 import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
 
 import IsportsScreen from 'screens/isports/isports.screen';
+import IsportsProgramGuideScreen from 'screens/isports/isports-program-guide.screen';
 import IsportsSearchScreen from 'screens/isports/isports-search.screen';
 import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
+import IsportsChannelDetailScreen from 'screens/isports/isports-channel-detail.screen';
 import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 
 import { compose } from 'redux';
@@ -49,6 +51,7 @@ import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.ac
 import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
+import { selectFavorites as selectFavoriteIsportChannels } from 'modules/ducks/isports/isports.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
 
@@ -74,7 +77,6 @@ const HomeStack = ({
   favorites,
   isInitialSignIn,
   created,
-  favoriteChannels,
   ...rest
 }) => {
   const navigation = useNavigation();
@@ -193,8 +195,8 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ProgramGuideScreen"
-          component={ProgramGuideScreen}
+          name="ItvProgramGuideScreen"
+          component={ItvProgramGuideScreen}
           options={{
             title: 'Program Guide'
           }}
@@ -417,11 +419,11 @@ const HomeStack = ({
           options={(props) => {
             const {
               route: {
-                params: { videoId }
+                params: { videoId, movie }
               }
             } = props;
 
-            const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+            // const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
 
             return {
               title: null,
@@ -430,7 +432,8 @@ const HomeStack = ({
                   <AddToFavoritesButton
                     sub={parseInt(videoId)}
                     module="imovie"
-                    inFavorites={isInFavorites >= 0 ? true : false}
+                    // inFavorites={isInFavorites >= 0 ? true : false}
+                    isFavorite={typeof movie === 'undefined' ? false : movie.is_favorite}
                   />
                   <DownloadButton videoId={videoId} />
                 </View>
@@ -658,10 +661,11 @@ const HomeStack = ({
             animationEnabled: false,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
+                <NotificationButton />
                 <TouchableRipple
                   onPress={() => navigation.navigate('IsportsSearchScreen')}
                   borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
+                  style={{ borderRadius: 44, padding: 5 }}
                   rippleColor="rgba(0,0,0,0.28)"
                 >
                   <View style={styles.headerButtonContainer}>
@@ -674,6 +678,13 @@ const HomeStack = ({
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="IsportsProgramGuideScreen"
+          component={IsportsProgramGuideScreen}
+          options={{
+            title: 'Program Guide'
           }}
         />
         <Stack.Screen
@@ -731,16 +742,14 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ChannelDetailScreen"
-          component={ChannelDetailScreen}
+          name="ItvChannelDetailScreen"
+          component={ItvChannelDetailScreen}
           options={(props) => {
             const {
               route: {
-                params: { channelId }
+                params: { channelId, channel }
               }
             } = props;
-
-            const isInFavorites = favoriteChannels.findIndex(({ id }) => id === channelId);
 
             return {
               title: null,
@@ -749,7 +758,7 @@ const HomeStack = ({
                   <AddToFavoritesButton
                     sub={parseInt(channelId)}
                     module="itv"
-                    inFavorites={isInFavorites >= 0 ? true : false}
+                    isFavorite={typeof channel === 'undefined' ? false : channel.is_favorite}
                   />
                 </View>
               )
@@ -760,6 +769,36 @@ const HomeStack = ({
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
+
+        <Stack.Screen
+          name="IsportsChannelDetailScreen"
+          component={IsportsChannelDetailScreen}
+          options={(props) => {
+            const {
+              route: {
+                params: { channelId, channel }
+              }
+            } = props;
+
+            return {
+              title: null,
+              headerRight: () => (
+                <View style={{ flexDirection: 'row' }}>
+                  <AddToFavoritesButton
+                    sub={parseInt(channelId)}
+                    isFavorite={typeof channel === 'undefined' ? false : channel.is_favorite}
+                    module="isports"
+                  />
+                </View>
+              )
+            };
+          }}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
         {/* <ChannelDetailsStackScreen /> */}
         <Stack.Screen
           name="MusicPlayerScreen"
@@ -839,6 +878,7 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   favoriteChannels: selectFavoriteChannels,
+  favoriteIsportsChannels: selectFavoriteIsportChannels,
   isInitialSignIn: selectIsInitialSignIn,
   onboardinginfo: selectOnboardinginfo,
   userId: selectCurrentUserId,

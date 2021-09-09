@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -14,13 +14,15 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
-import MediaPlayer from 'components/media-player/media-player.component';
+// import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
+import ItvPlayer from './itv-player.component';
 import {
   selectError,
   selectIsFetching,
   selectChannel,
+  selectPrograms,
   selectCurrentProgram,
   selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
@@ -29,15 +31,18 @@ import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
 
-const ChannelDetailScreen = ({
+const ItvChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
   // eslint-disable-next-line no-unused-vars
   error,
   channel,
+  programs,
   getProgramsByChannelAction,
+  getProgramsByChannelStartAction,
   getChannelAction,
+  navigation,
   /// the program that is playing at this moment
   currentProgram,
   startAction,
@@ -57,6 +62,9 @@ const ChannelDetailScreen = ({
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
     onNotifResetAction();
+    navigation.addListener('beforeRemove', () => {
+      getProgramsByChannelStartAction();
+    });
   }, []);
 
   React.useEffect(() => {
@@ -72,7 +80,7 @@ const ChannelDetailScreen = ({
 
   React.useEffect(() => {
     if (favoritesListUpdated) {
-      getChannelAction({ videoId: channelId });
+      // getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
@@ -92,6 +100,7 @@ const ChannelDetailScreen = ({
   }, [channel, currentProgram]);
 
   React.useEffect(() => {
+    if (channel) navigation.setParams({ channel });
     if (channel) {
       const { token, url, title: channelName } = channel;
       const titlesplit = channelName.split(' ');
@@ -125,21 +134,37 @@ const ChannelDetailScreen = ({
     addToFavoritesAction(parseInt(channelId));
   };
 
+  const handleNextChannel = (nextChannelId) => {
+    if (!channel) return;
+
+    let date = new Date(Date.now());
+
+    getChannelAction({ videoId: nextChannelId });
+    getProgramsByChannelAction({ channelId: nextChannelId, date: date.toISOString() });
+  };
+
+  const handlePreviousChannel = (previousChannelId) => {
+    if (!channel) return;
+
+    let date = new Date(Date.now());
+
+    getChannelAction({ videoId: previousChannelId });
+    getProgramsByChannelAction({ channelId: previousChannelId, date: date.toISOString() });
+  };
+
   const renderPlayer = () => {
-    // if (!currentlyPlaying) return;
     if (source) {
       return (
-        <MediaPlayer
-          isSeries={false}
+        <ItvPlayer
+          channel={channel}
           paused={paused}
           source={source}
-          // thumbnail={currentlyPlaying.thumbnail}
-          // title={currentlyPlaying.title}
-          togglePlay={handleTogglePlay}
+          handleNextChannel={handleNextChannel}
+          handlePreviousChannel={handlePreviousChannel}
           loading={loading}
           setLoading={setLoading}
-          typename={channel.__typename}
           setPaused={setPaused}
+          handleTogglePlay={handleTogglePlay}
         />
       );
     }
@@ -169,9 +194,14 @@ const ChannelDetailScreen = ({
     }, 3000);
   };
 
+  // hide fav snackbar
   React.useEffect(() => {
-    if (showSnackBar) hideFavSnackBar();
-  }, [showSnackBar]);
+    if (showFavSnackBar) hideFavSnackBar();
+  }, [showFavSnackBar]);
+
+  const handleDateSelect = React.useCallback((date) => {
+    getProgramsByChannelAction({ channelId, date });
+  }, []);
 
   if (!channel) return <View />;
 
@@ -201,12 +231,25 @@ const ChannelDetailScreen = ({
             }}
           >
             <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-              <Image
+              {/* <Image
                 style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
                 source={{
                   url: 'http://via.placeholder.com/60x60.png'
                 }}
-              />
+              /> */}
+              <View
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: 8,
+                  marginRight: 10,
+                  backgroundColor: theme.iplayya.colors.white10,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+              </View>
               <Content
                 {...currentlyPlaying}
                 channeltitle={channel.title}
@@ -219,12 +262,15 @@ const ChannelDetailScreen = ({
         {/* program guide */}
 
         <ProgramGuide
+          programs={programs}
+          onDateSelect={handleDateSelect}
           channelId={channelId}
           channelName={channel.title}
           title="Program Guide"
           showSnackBar={handleShowSnackBar}
           contentHeight={contentHeight}
           screen={false}
+          parentType="ITV"
         />
       </View>
 
@@ -289,7 +335,7 @@ const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2)
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
-    <ChannelDetailScreen {...props} />
+    <ItvChannelDetailScreen {...props} />
   </ScreenContainer>
 );
 
@@ -297,6 +343,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   channel: selectChannel,
+  programs: selectPrograms,
   currentProgram: selectCurrentProgram,
   favoritesListUpdated: selectFavoritesListUpdated
 });
@@ -306,6 +353,7 @@ const actions = {
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
+  getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset
 };
 
