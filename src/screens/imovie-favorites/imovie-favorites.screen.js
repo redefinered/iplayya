@@ -155,7 +155,7 @@ const ImovieFavoritesScreen = ({
           )}
           {favorites.map(
             ({ id, title, year, time, rating_mpaa, age_rating, category, thumbnail }) => {
-              let uri = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
+              let uri = thumbnail;
               return (
                 <Pressable
                   key={id}
@@ -171,17 +171,35 @@ const ImovieFavoritesScreen = ({
                   <ContentWrap
                     style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
                   >
-                    <Image
-                      style={{
-                        width: 65,
-                        height: 96,
-                        borderRadius: 8,
-                        position: 'absolute',
-                        top: 10,
-                        left: 4
-                      }}
-                      source={{ uri }}
-                    />
+                    {thumbnail.length ? (
+                      <Image
+                        style={{
+                          width: 65,
+                          height: 96,
+                          borderRadius: 8,
+                          position: 'absolute',
+                          top: 10,
+                          left: 4
+                        }}
+                        source={{ uri }}
+                      />
+                    ) : (
+                      <View
+                        style={{
+                          width: 65,
+                          height: 96,
+                          borderRadius: 8,
+                          backgroundColor: theme.iplayya.colors.white10,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          position: 'absolute',
+                          top: 10,
+                          left: 4
+                        }}
+                      >
+                        <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+                      </View>
+                    )}
                     <View
                       style={{
                         flexDirection: 'row',
