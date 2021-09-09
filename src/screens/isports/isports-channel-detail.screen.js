@@ -90,6 +90,7 @@ const IsportsChannelDetailScreen = ({
   }, [favoritesListUpdated]);
 
   React.useEffect(() => {
+    if (channel) navigation.setParams({ channel });
     if (channel && currentProgram) {
       const { title: epgtitle, time, time_to } = currentProgram;
       const data = {

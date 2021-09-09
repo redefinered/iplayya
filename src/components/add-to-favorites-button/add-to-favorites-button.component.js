@@ -13,14 +13,25 @@ const AddToFavoritesButton = ({
   module,
   addChannelToFavoritesAction,
   addMovieToFavoritesAction,
-  addIsportChannelToFavoritesAction
+  addIsportChannelToFavoritesAction,
+  isFavorite
 }) => {
   const theme = useTheme();
   const [favorited, setFavorited] = React.useState(false);
 
+  React.useEffect(() => {
+    if (isFavorite) {
+      setFavorited(true);
+    } else {
+      setFavorited(false);
+    }
+  }, [isFavorite]);
+
   const handleAddAction = () => {
     /// stop if already in favorites
     if (!favorited) setFavorited(true);
+
+    if (favorited === true) return;
 
     switch (module) {
       case 'itv':
@@ -82,6 +93,7 @@ const styles = StyleSheet.create({
 AddToFavoritesButton.propTypes = {
   module: PropTypes.string,
   sub: PropTypes.number,
+  isFavorite: PropTypes.bool,
   addChannelToFavoritesAction: PropTypes.func,
   addMovieToFavoritesAction: PropTypes.func,
   addIsportChannelToFavoritesAction: PropTypes.func
@@ -90,7 +102,8 @@ AddToFavoritesButton.propTypes = {
 const actions = {
   addChannelToFavoritesAction: ItvCreators.addToFavorites,
   addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites,
-  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites
+  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites,
+  activateFavoritesButtonAction: ItvCreators.activateFavoritesButton
 };
 
 export default connect(null, actions)(AddToFavoritesButton);
