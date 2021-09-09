@@ -14,9 +14,10 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { createFontFormat, urlEncodeTitle } from 'utils';
-import MediaPlayer from 'components/media-player/media-player.component';
+// import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
+import ItvPlayer from './itv-player.component';
 import {
   selectError,
   selectIsFetching,
@@ -133,21 +134,37 @@ const ItvChannelDetailScreen = ({
     addToFavoritesAction(parseInt(channelId));
   };
 
+  const handleNextChannel = (nextChannelId) => {
+    if (!channel) return;
+
+    let date = new Date(Date.now());
+
+    getChannelAction({ videoId: nextChannelId });
+    getProgramsByChannelAction({ channelId: nextChannelId, date: date.toISOString() });
+  };
+
+  const handlePreviousChannel = (previousChannelId) => {
+    if (!channel) return;
+
+    let date = new Date(Date.now());
+
+    getChannelAction({ videoId: previousChannelId });
+    getProgramsByChannelAction({ channelId: previousChannelId, date: date.toISOString() });
+  };
+
   const renderPlayer = () => {
-    // if (!currentlyPlaying) return;
     if (source) {
       return (
-        <MediaPlayer
-          isSeries={false}
+        <ItvPlayer
+          channel={channel}
           paused={paused}
           source={source}
-          // thumbnail={currentlyPlaying.thumbnail}
-          // title={currentlyPlaying.title}
-          togglePlay={handleTogglePlay}
+          handleNextChannel={handleNextChannel}
+          handlePreviousChannel={handlePreviousChannel}
           loading={loading}
           setLoading={setLoading}
-          typename={channel.__typename}
           setPaused={setPaused}
+          handleTogglePlay={handleTogglePlay}
         />
       );
     }

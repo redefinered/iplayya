@@ -190,9 +190,9 @@ const SeriesDetailScreen = ({
     setEpisode(episode - 1);
   };
 
-  const handleSourceSet = (src) => {
+  const handleSourceSet = React.useCallback((src) => {
     setSource(src);
-  };
+  }, []);
 
   const hideSnackbar = () => {
     setTimeout(() => {
