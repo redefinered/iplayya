@@ -51,6 +51,7 @@ import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.ac
 import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
+import { selectFavorites as selectFavoriteIsportChannels } from 'modules/ducks/isports/isports.selectors';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import DownloadButton from 'components/download-button/download-button.component';
 
@@ -76,7 +77,6 @@ const HomeStack = ({
   favorites,
   isInitialSignIn,
   created,
-  favoriteChannels,
   ...rest
 }) => {
   const navigation = useNavigation();
@@ -750,17 +750,11 @@ const HomeStack = ({
               }
             } = props;
 
-            const isInFavorites = favoriteChannels.findIndex(({ id }) => id === channelId);
-
             return {
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton
-                    sub={parseInt(channelId)}
-                    module="itv"
-                    inFavorites={isInFavorites >= 0 ? true : false}
-                  />
+                  <AddToFavoritesButton sub={parseInt(channelId)} module="itv" />
                 </View>
               )
             };
@@ -781,17 +775,11 @@ const HomeStack = ({
               }
             } = props;
 
-            const isInFavorites = favoriteChannels.findIndex(({ id }) => id === channelId);
-
             return {
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton
-                    sub={parseInt(channelId)}
-                    module="itv"
-                    inFavorites={isInFavorites >= 0 ? true : false}
-                  />
+                  <AddToFavoritesButton sub={parseInt(channelId)} module="isports" />
                 </View>
               )
             };
@@ -881,6 +869,7 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   favoriteChannels: selectFavoriteChannels,
+  favoriteIsportsChannels: selectFavoriteIsportChannels,
   isInitialSignIn: selectIsInitialSignIn,
   onboardinginfo: selectOnboardinginfo,
   userId: selectCurrentUserId,

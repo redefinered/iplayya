@@ -60,6 +60,7 @@ const ItvSearchScreen = ({
 }) => {
   // console.log({ loc: 'screen', ...searchResultsPaginator });
   const [term, setTerm] = React.useState('');
+  const [showKeyboard, setShowKeyboard] = React.useState(false);
 
   // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
   //   true
@@ -146,6 +147,10 @@ const ItvSearchScreen = ({
     Keyboard.dismiss();
     // setOnEndReachedCalledDuringMomentum(false);
     setBottomTabsVisibleAction({ hideTabs: true });
+  };
+
+  const handleShowKeyboard = () => {
+    setShowKeyboard(true);
   };
 
   const renderListLoader = () => {
@@ -298,7 +303,7 @@ const ItvSearchScreen = ({
     <View style={styles.container}>
       <ContentWrap>
         <TextInput
-          onFocus={() => setBottomTabsVisibleAction({ hideTabs: true })}
+          // onFocus={() => setBottomTabsVisibleAction({ hideTabs: true })}
           multiline={false}
           render={(props) => (
             <FormInput
@@ -315,6 +320,8 @@ const ItvSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
+          showSoftInputOnFocus={showKeyboard}
+          focusAction={handleShowKeyboard}
           onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}

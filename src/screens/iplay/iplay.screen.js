@@ -262,7 +262,11 @@ const IplayScreen = ({
                   >
                     <View>
                       <Text
-                        style={{ fontWeight: 'bold', marginBottom: 5, ...createFontFormat(12, 16) }}
+                        style={{
+                          fontWeight: 'bold',
+                          marginBottom: 5,
+                          ...createFontFormat(12, 16)
+                        }}
                       >
                         {name}
                       </Text>
