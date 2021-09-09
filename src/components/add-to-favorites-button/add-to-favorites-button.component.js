@@ -89,7 +89,7 @@ AddToFavoritesButton.propTypes = {
 
 const actions = {
   addChannelToFavoritesAction: ItvCreators.addToFavorites,
-  addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites,
+  addMovieToFavoritesAction: MoviesCreators.addToFavorites,
   addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites
 };
 
