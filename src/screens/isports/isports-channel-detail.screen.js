@@ -312,7 +312,7 @@ const Content = ({ channeltitle, title, epgtitle, time, time_to }) => {
         <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
           {getSchedule(time, time_to)}
         </Text>
-        <Icon name="history" color="#13BD38" />
+        {/* <Icon name="history" color="#13BD38" /> */}
       </View>
     </View>
   );

@@ -239,6 +239,7 @@ const IsportsScreen = ({
           onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
           renderItem={({ item: { epgtitle, ...itemProps } }) => (
             <ListItemChanel
+              isCatchUpAvailable={false}
               onSelect={handleItemSelect}
               onRightActionPress={handleAddToFavorites}
               full

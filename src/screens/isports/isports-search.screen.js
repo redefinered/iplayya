@@ -256,6 +256,7 @@ const ISportsSearchScreen = ({
   const renderSection = ({ item: { id, epgtitle, ...itemProps } }) => {
     return (
       <ListItemChanel
+        isCatchUpAvailable={false}
         onSelect={() => handleItemPress(id)}
         full
         thumbnail={channelplaceholder}
