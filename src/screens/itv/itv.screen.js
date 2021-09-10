@@ -393,7 +393,7 @@ const ItvScreen = ({
       </View>
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your favorites list`}
+        message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
       />

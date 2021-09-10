@@ -384,7 +384,7 @@ const IsportsScreen = ({
 
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your favorites list`}
+        message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor="#FF5050"
       />
