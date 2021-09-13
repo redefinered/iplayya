@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
-import { Text, TouchableRipple, withTheme } from 'react-native-paper';
+import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { createFontFormat } from 'utils';
@@ -15,6 +15,7 @@ import {
   selectPaginatorInfo
 } from 'modules/ducks/iradio/iradio.selectors';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
+import ContentWrap from 'components/content-wrap.component';
 
 const RadioStationsTab = ({
   theme,
@@ -60,20 +61,39 @@ const RadioStationsTab = ({
 
   return radioStations.map(({ id, name, is_favorite, ...rest }) => (
     <React.Fragment key={id}>
-      <TouchableRipple onPress={() => handleSelectItem({ id, name, is_favorite, ...rest })}>
-        <View
+      <Pressable
+        onPress={() => handleSelectItem({ id, name, is_favorite, ...rest })}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
+          }
+        ]}
+      >
+        <ContentWrap
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: theme.spacing(2)
+            justifyContent: 'space-between'
+            // padding: theme.spacing(2)
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
           </View>
           <View>
-            <Pressable onPress={() => handleAddToFavorites(id, name)}>
+            <Pressable
+              onPress={() => handleAddToFavorites(id, name)}
+              style={({ pressed }) => [
+                {
+                  width: 44,
+                  height: 44,
+                  borderRadius: 22,
+                  backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }
+              ]}
+            >
               <Icon
                 name="heart-solid"
                 size={theme.iconSize(3)}
@@ -81,8 +101,8 @@ const RadioStationsTab = ({
               />
             </Pressable>
           </View>
-        </View>
-      </TouchableRipple>
+        </ContentWrap>
+      </Pressable>
       <SnackBar
         visible={showSnackBar}
         message={`${favorited} is added to your favorites list`}
