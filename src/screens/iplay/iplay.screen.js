@@ -120,9 +120,9 @@ const IplayScreen = ({
     }
 
     if (selectedItems.length === videoFiles.length) {
-      setDeleteMessage('Are you sure you want to delete this video/s from your library?');
+      setDeleteMessage('Are you sure you want to delete this Video/s from your library?');
     } else {
-      setDeleteMessage('Are you sure you want to delete this video/s from your library?');
+      setDeleteMessage('Are you sure you want to delete this Video/s from your library?');
     }
   }, [selectedItems]);
 
@@ -202,16 +202,37 @@ const IplayScreen = ({
         <React.Fragment>
           <ContentWrap>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ ...createFontFormat(16, 22) }}>Video Library</Text>
-              <Pressable onPress={pickFiles}>
+              <Text
+                style={{
+                  ...createFontFormat(16, 22),
+                  fontWeight: '400',
+                  fontFamily: 'NotoSans-Normal'
+                }}
+              >
+                Video Library
+              </Text>
+              <Pressable
+                onPress={pickFiles}
+                style={({ pressed }) => [
+                  {
+                    padding: 2,
+                    backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
+                  }
+                ]}
+              >
                 <Text
-                  style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(16, 22) }}
+                  style={{
+                    color: theme.iplayya.colors.vibrantpussy,
+                    ...createFontFormat(16, 22),
+                    fontWeight: '400',
+                    fontFamily: 'NotoSans-Normal'
+                  }}
                 >
-                  Add video
+                  Add Video
                 </Text>
               </Pressable>
             </View>
-            <Spacer size={35} />
+            <Spacer size={20} />
 
             {activateCheckboxes && (
               <React.Fragment>
@@ -246,7 +267,7 @@ const IplayScreen = ({
                   </Pressable>
                 </View>
 
-                <Spacer size={30} />
+                <Spacer size={20} />
               </React.Fragment>
             )}
           </ContentWrap>
@@ -278,6 +299,7 @@ const IplayScreen = ({
                         <Text
                           style={{
                             fontWeight: 'bold',
+                            fontFamily: 'NotoSans-Bold',
                             marginBottom: 5,
                             ...createFontFormat(12, 16),
                             color: theme.iplayya.colors.white90
@@ -285,13 +307,15 @@ const IplayScreen = ({
                         >
                           {name}
                         </Text>
-                        <Text style={{ ...createFontFormat(12, 16) }}>{`${filesize.toFixed(
-                          1
-                        )} mb`}</Text>
+                        <Text
+                          style={{ ...createFontFormat(10, 16), fontFamily: 'NotoSans-Regular' }}
+                        >{`${filesize.toFixed(1)} mb`}</Text>
                       </View>
-                      {activateCheckboxes && (
-                        <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                      )}
+                      <View style={{ paddingRight: 10 }}>
+                        {activateCheckboxes && (
+                          <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                        )}
+                      </View>
                     </View>
                   </ContentWrap>
                 </Pressable>
