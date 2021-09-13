@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { View, ScrollView, Pressable, StyleSheet, Dimensions } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { Text, useTheme } from 'react-native-paper';
+// import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { TabView } from 'react-native-tab-view';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -131,9 +131,9 @@ const IradioScreen = ({
           backgroundColor: '#202530',
           // borderTopRightRadius: 24,
           // borderTopLeftRadius: 24,
-          paddingHorizontal: 15,
-          paddingTop: 10,
-          paddingBottom: 10,
+          paddingHorizontal: 4,
+          // paddingTop: 10,
+          // paddingBottom: 10,
           borderTopRightRadius: !nowPlaying ? 24 : 0,
           borderTopLeftRadius: !nowPlaying ? 24 : 0,
           // paddingHorizontal: 30,
@@ -144,13 +144,24 @@ const IradioScreen = ({
           bottom: 0
         }}
       >
-        <TouchableWithoutFeedback
+        <TouchableRipple
           onPress={() => navigation.replace('HomeScreen')}
-          style={{ alignItems: 'center' }}
+          // style={{ alignItems: 'center' }}
+          style={{
+            borderRadius: 34,
+            height: 67,
+            width: 67,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+          borderless={true}
+          rippleColor="rgba(255,255,255,0.25)"
         >
-          <Icon name="iplayya" size={theme.iconSize(3)} />
-          <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-        </TouchableWithoutFeedback>
+          <View style={{ alignItems: 'center' }}>
+            <Icon name="iplayya" size={theme.iconSize(3)} />
+            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+          </View>
+        </TouchableRipple>
       </View>
     </View>
   );
@@ -221,7 +232,7 @@ const TabBars = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <IradioScreen {...props} />
   </ScreenContainer>
 );
