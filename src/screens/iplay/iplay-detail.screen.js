@@ -8,7 +8,7 @@ const IplayDetailScreen = ({ route }) => {
   const theme = useTheme();
   const { file } = route.params;
 
-  const [paused, setPaused] = React.useState(true);
+  const [paused, setPaused] = React.useState(false);
 
   const handleTogglePlay = () => {
     setPaused(!paused);

@@ -241,6 +241,7 @@ const VideoControls = ({
             style={{ width: '100%', height: 10 }}
             minimumValue={0}
             maximumValue={duration}
+            thumbTintColor={theme.iplayya.colors.vibrantpussy}
             minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
             maximumTrackTintColor="white"
           />
