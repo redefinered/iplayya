@@ -227,21 +227,21 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   /// add to favorites
-  [Types.ADD_TO_FAVORITES]: (state) => {
+  [Types.ADD_MOVIE_TO_FAVORITES]: (state) => {
     return {
       ...state,
       isFetching: true,
       error: null
     };
   },
-  [Types.ADD_TO_FAVORITES_START]: (state) => {
+  [Types.ADD_MOVIE_TO_FAVORITES_START]: (state) => {
     return {
       ...state,
       error: null,
       updatedFavorites: false
     };
   },
-  [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
+  [Types.ADD_MOVIE_TO_FAVORITES_SUCCESS]: (state) => {
     return {
       ...state,
       isFetching: false,
@@ -249,7 +249,7 @@ export default createReducer(INITIAL_STATE, {
       updatedFavorites: true
     };
   },
-  [Types.ADD_TO_FAVORITES_FAILURE]: (state, action) => {
+  [Types.ADD_MOVIE_TO_FAVORITES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,

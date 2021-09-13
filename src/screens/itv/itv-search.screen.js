@@ -216,6 +216,7 @@ const ItvSearchScreen = ({
             // </TouchableRipple>
             <ListItemChanel
               onSelect={() => handleItemPress(id)}
+              isCatchUpAvailable={false}
               // onRightActionPress={handleAddToFavorites}
               full
               thumbnail={channelplaceholder}
