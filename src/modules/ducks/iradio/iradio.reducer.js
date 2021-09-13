@@ -9,7 +9,7 @@ const INITIAL_STATE = {
   favorites: [],
   playbackInfo: null,
   addedToFavorites: false,
-  removedFromFavorites: null,
+  removedFromFavorites: false,
   searchResults: [],
   paginatorInfo: {
     limit: 10,
@@ -97,15 +97,16 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      removedFromFavorites: false
     };
   },
-  [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state, action) => {
+  [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
     return {
       ...state,
       isFetching: false,
       error: null,
-      removedFromFavorites: action.radioId
+      removedFromFavorites: true
     };
   },
   [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {
@@ -113,7 +114,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error,
-      removedFromFavorites: null
+      removedFromFavorites: false
     };
   },
   [Types.PLAYBACK_START]: (state) => {

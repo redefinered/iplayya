@@ -22,8 +22,8 @@ const { Types, Creators } = createActions(
     addToFavoritesFailure: ['error'],
 
     // remove from favorites
-    removeFromFavorites: ['radioId'],
-    removeFromFavoritesSuccess: ['radioId'],
+    removeFromFavorites: ['radioIds'],
+    removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],
 
     // misc

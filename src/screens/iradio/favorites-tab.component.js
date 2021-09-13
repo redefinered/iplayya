@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable } from 'react-native';
-import { Text, TouchableRipple, withTheme } from 'react-native-paper';
-import SnackBar from 'components/snackbar/snackbar.component';
+import { View, Pressable, ScrollView } from 'react-native';
+import { Text, withTheme } from 'react-native-paper';
+// import SnackBar from 'components/snackbar/snackbar.component';
 import Icon from 'components/icon/icon.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { createFontFormat } from 'utils';
@@ -17,101 +17,251 @@ import {
 } from 'modules/ducks/iradio/iradio.selectors';
 import { selectRadioStations } from 'modules/ducks/iradio/iradio.selectors';
 
+import Spacer from 'components/spacer.component';
+import ContentWrap from 'components/content-wrap.component';
+import RadioButton from 'components/radio-button/radio-button.component';
+import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+
 const FavoritesTab = ({
   theme,
-  radioStations,
+  // radioStations,
   favorites,
   paginatorInfo,
   getFavoritesAction,
   removedFromFavorites,
   removeFromFavoritesAction,
-  handleSelectItem
+  // handleSelectItem,
+  navigation
 }) => {
-  const [showSnackBar, setShowSnackBar] = React.useState(false);
-  const [showConfirm, setShowConfirm] = React.useState(false);
-  const [removedItemName, setRemovedItemName] = React.useState('');
-  const [selectedIdToRemove, serSelectedIdToremove] = React.useState(null);
+  // const [showSnackBar, setShowSnackBar] = React.useState(false);
+  // const [showConfirm, setShowConfirm] = React.useState(false);
+  // const [removedItemName, setRemovedItemName] = React.useState('');
+  // const [selectedIdToRemove, serSelectedIdToremove] = React.useState(null);
+  const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
+  const [selectedItems, setSelectedItems] = React.useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+  const [selectAll, setSellectAll] = React.useState(false);
 
-  const handleRemovePressed = (id) => {
-    serSelectedIdToremove(id);
-    setShowConfirm(true);
-  };
+  // const handleRemovePressed = (id) => {
+  //   serSelectedIdToremove(id);
+  //   setShowConfirm(true);
+  // };
 
-  const confirmRemove = (id) => {
-    // add channel to favorites
-    removeFromFavoritesAction(id);
+  // const confirmRemove = (id) => {
+  //   // add channel to favorites
+  //   removeFromFavoritesAction(id);
 
-    setShowConfirm(false);
-  };
+  //   setShowConfirm(false);
+  // };
 
   // get favorites on mount
-  // React.useEffect(() => {
-  //   getFavoritesAction(paginatorInfo);
-  // }, []);
+  React.useEffect(() => {
+    getFavoritesAction(paginatorInfo);
+  }, []);
 
   React.useEffect(() => {
     if (removedFromFavorites) {
-      const name = radioStations.find(({ id }) => id === removedFromFavorites).name;
-      setRemovedItemName(name);
-      setShowSnackBar(true);
+      // const name = radioStations.find(({ id }) => id === removedFromFavorites).name;
+      // setRemovedItemName(name);
+      // setShowSnackBar(true);
       getFavoritesAction(paginatorInfo);
     }
   }, [removedFromFavorites]);
 
-  const hideSnackBar = () => {
-    setTimeout(() => {
-      setShowSnackBar(false);
-    }, 3000);
+  // const hideSnackBar = () => {
+  //   setTimeout(() => {
+  //     setShowSnackBar(false);
+  //   }, 3000);
+  // };
+
+  const handleSelectItem = (item) => {
+    if (activateCheckboxes) {
+      const newItems = selectedItems;
+      const index = selectedItems.findIndex((i) => i === item);
+      if (index >= 0) {
+        newItems.splice(index, 1);
+        setSelectedItems([...newItems]);
+      } else {
+        setSelectedItems([item, ...selectedItems]);
+      }
+    } else {
+      // navigation.navigate('MovieDetailScreen', { videoId: item });
+      navigation.navigate('IsportsChannelDetailScreen', { channelId: item });
+    }
   };
 
   React.useEffect(() => {
-    if (showSnackBar) hideSnackBar();
-  }, [showSnackBar]);
+    if (selectedItems.length === 0) {
+      setActivateCheckboxes(false);
+    }
+  }, [selectedItems]);
 
-  return (
-    <React.Fragment>
-      <AlertModal
-        iconName="unfavorite"
-        iconColor="#FF5050"
-        confirmText="Remove"
-        message="Do you want to remove this station to your Favorite list?"
-        hideAction={() => setShowConfirm(false)}
-        confirmAction={() => confirmRemove(selectedIdToRemove)}
-        visible={showConfirm}
-      />
-      <SnackBar
-        visible={showSnackBar}
-        message={`${removedItemName} is removed to your favorites list`}
-        iconName="heart-solid"
-        iconColor="#FF5050"
-      />
-      {favorites.map(({ id, name, ...rest }) => (
-        <TouchableRipple key={id} onPress={() => handleSelectItem({ id, name, ...rest })}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: theme.spacing(2)
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
-            </View>
-            <View>
-              <Pressable onPress={() => handleRemovePressed(id)}>
-                <Icon
-                  name="heart-solid"
-                  size={24}
-                  style={{ color: theme.iplayya.colors.vibrantpussy }}
-                />
+  React.useEffect(() => {
+    if (selectAll) {
+      let collection = favorites.map(({ id }) => {
+        return id;
+      });
+      setSelectedItems(collection);
+    } else {
+      setSelectedItems([]);
+    }
+  }, [selectAll]);
+
+  const handleSelectAll = () => {
+    setSellectAll(!selectAll);
+  };
+
+  const handleLongPress = (id) => {
+    setSelectedItems([id]);
+    setActivateCheckboxes(true);
+  };
+
+  const handleRemoveItems = () => {
+    if (selectedItems.length) {
+      let deleteItems = selectedItems.map((id) => parseInt(id));
+      removeFromFavoritesAction(deleteItems);
+    }
+  };
+
+  const handleHideConfirmDeleteModal = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleConfirmDelete = () => {
+    // do delete action here
+    // console.log('delete action');
+    // setShowDeleteConfirmation(false);
+    setShowDeleteConfirmation(false);
+    handleRemoveItems();
+  };
+
+  // React.useEffect(() => {
+  //   if (showSnackBar) hideSnackBar();
+  // }, [showSnackBar]);
+
+  const EmptyState = ({ theme, navigation }) => (
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 15,
+        paddingBottom: 100
+      }}
+    >
+      <NoFavorites />
+      <Spacer />
+      <Text style={{ fontSize: 24 }}>No favorites yet</Text>
+      <Spacer size={30} />
+      <Pressable onPress={() => navigation.navigate('IsportsScreen')}>
+        <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
+          Heart a channel to add to your Favorites list.
+        </Text>
+      </Pressable>
+    </View>
+  );
+
+  if (favorites.length)
+    return (
+      <ScrollView>
+        {activateCheckboxes && (
+          <ContentWrap>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+            >
+              <Pressable
+                onPress={() => setShowDeleteConfirmation(true)}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 5
+                  }
+                ]}
+              >
+                <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
+                <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => handleSelectAll()}
+                style={{ flexDirection: 'row', alignItems: 'center' }}
+              >
+                <Text style={{ marginRight: 10 }}>All</Text>
+                <RadioButton selected={selectedItems.length === favorites.length} />
               </Pressable>
             </View>
-          </View>
-        </TouchableRipple>
-      ))}
-    </React.Fragment>
-  );
+
+            <Spacer size={20} />
+          </ContentWrap>
+        )}
+        {/* <AlertModal
+          iconName="unfavorite"
+          iconColor="#FF5050"
+          confirmText="Remove"
+          message="Do you want to remove this station to your Favorite list?"
+          hideAction={() => setShowConfirm(false)}
+          confirmAction={() => confirmRemove(selectedIdToRemove)}
+          visible={showConfirm}
+        /> */}
+        {/* <SnackBar
+          visible={showSnackBar}
+          message={`${removedItemName} is removed to your favorites list`}
+          iconName="heart-solid"
+          iconColor="#FF5050"
+        /> */}
+        {favorites.map(({ id, name }) => (
+          <Pressable
+            key={id}
+            underlayColor={theme.iplayya.colors.black80}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+              }
+            ]}
+            onLongPress={() => handleLongPress(id)}
+            onPress={() => handleSelectItem(id)}
+          >
+            <ContentWrap
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: theme.spacing(2)
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
+              </View>
+              <View style={{ paddingRight: 10 }}>
+                {activateCheckboxes && (
+                  <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                )}
+              </View>
+            </ContentWrap>
+            <Spacer />
+          </Pressable>
+        ))}
+        {showDeleteConfirmation && (
+          <AlertModal
+            variant="confirmation"
+            message={`Are you sure you want to delete ${
+              selectedItems.length > 1 ? 'these' : 'this'
+            } channel/s from your Favorites list?`}
+            visible={showDeleteConfirmation}
+            onCancel={handleHideConfirmDeleteModal}
+            hideAction={handleHideConfirmDeleteModal}
+            confirmText="Delete"
+            confirmAction={handleConfirmDelete}
+          />
+        )}
+      </ScrollView>
+    );
+  return <EmptyState theme={theme} navigation={navigation} />;
 };
 
 FavoritesTab.propTypes = {
@@ -119,11 +269,12 @@ FavoritesTab.propTypes = {
   radioStations: PropTypes.array,
   favorites: PropTypes.array,
   paginatorInfo: PropTypes.object,
-  removedFromFavorites: PropTypes.string,
+  removedFromFavorites: PropTypes.bool,
   getFavorites: PropTypes.func,
   removeFromFavoritesAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
-  handleSelectItem: PropTypes.func
+  // handleSelectItem: PropTypes.func,
+  navigation: PropTypes.object
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -139,3 +290,29 @@ const actions = {
 };
 
 export default compose(connect(mapStateToProps, actions), withTheme)(FavoritesTab);
+
+{
+  /* <TouchableRipple key={id} onPress={() => handleSelectItem({ id, name, ...rest })}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: theme.spacing(2)
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
+              </View>
+              <View>
+                <Pressable onPress={() => handleRemovePressed(id)}>
+                  <Icon
+                    name="heart-solid"
+                    size={24}
+                    style={{ color: theme.iplayya.colors.vibrantpussy }}
+                  />
+                </Pressable>
+              </View>
+            </View>
+          </TouchableRipple> */
+}

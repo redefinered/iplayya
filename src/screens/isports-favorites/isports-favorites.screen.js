@@ -378,9 +378,9 @@ const EmptyState = ({ theme, navigation }) => (
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>
     <Spacer size={30} />
-    <Pressable onPress={() => navigation.navigate('ImovieScreen')}>
+    <Pressable onPress={() => navigation.navigate('IsportsScreen')}>
       <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
-        Heart a channel to add to your favorites list.
+        Heart a channel to add to your Favorites list.
       </Text>
     </Pressable>
   </View>

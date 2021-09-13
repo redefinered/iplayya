@@ -56,11 +56,11 @@ export const addToFavorites = async (radioId) => {
   }
 };
 
-export const removeFromFavorites = async (radioId) => {
+export const removeFromFavorites = async (input) => {
   try {
     const { data } = await client.mutate({
       mutation: REMOVE_RADIO_FROM_FAVORITES,
-      variables: { input: { radioId } },
+      variables: { input },
       refetchQueries: [
         /// TODO: input variables should come from this function's arguments
         // form pagination to work
