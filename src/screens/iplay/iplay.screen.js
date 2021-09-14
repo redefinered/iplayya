@@ -257,7 +257,7 @@ const IplayScreen = ({
                     justifyContent: 'space-between'
                   }}
                 >
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() => handleShowAlertMessage()}
                     // style={{ flexDirection: 'row', alignItems: 'center' }}
                     style={({ pressed }) => [
@@ -271,7 +271,7 @@ const IplayScreen = ({
                   >
                     <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                     <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                   <Pressable
                     onPress={() => handleSelectAll()}
                     style={{ flexDirection: 'row', alignItems: 'center' }}
