@@ -221,21 +221,22 @@ const FavoritesTab = ({
             underlayColor={theme.iplayya.colors.black80}
             style={({ pressed }) => [
               {
-                backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+                backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                paddingHorizontal: theme.spacing(2),
+                paddingVertical: theme.spacing(2)
               }
             ]}
             onLongPress={() => handleLongPress(id)}
             onPress={() => handleSelectItem(id)}
           >
-            <ContentWrap
+            <View
               style={{
                 flexDirection: 'row',
-                alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: theme.spacing(2)
+                alignItems: 'center'
               }}
             >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View>
                 <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
               </View>
               <View>
@@ -243,8 +244,7 @@ const FavoritesTab = ({
                   <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
                 )}
               </View>
-            </ContentWrap>
-            <Spacer />
+            </View>
           </Pressable>
         ))}
         {showDeleteConfirmation && (
