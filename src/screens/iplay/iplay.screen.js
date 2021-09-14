@@ -2,8 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, StyleSheet, Pressable, FlatList } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -24,6 +25,7 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import RNFetchBlob from 'rn-fetch-blob';
 import withLoader from 'components/with-loader.component';
 import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
+import MediaItem from './media-item.component';
 
 const IplayScreen = ({
   navigation,
@@ -49,31 +51,42 @@ const IplayScreen = ({
   const [showStepTwo, setShowStepTwo] = React.useState(false);
 
   const pickFiles = async () => {
+    setError(null);
     setLoading(true);
 
-    const newFiles = [];
+    // const newFiles = [];
+
     // Pick multiple files
     try {
-      const results = await DocumentPicker.pickMultiple({
+      const video = await DocumentPicker.pick({
         mode: 'import',
         type: [DocumentPicker.types.video],
         copyTo: 'documentDirectory'
       });
-      for (const result of results) {
-        console.log({ result });
-        newFiles.push({ id: uuid(), ...result });
+
+      if (typeof video.copyError !== 'undefined') {
+        /// an error has occured
+        throw new Error(video.copyError);
       }
 
-      setLoading(false);
+      // for (const result of results) {
+      //   newFiles.push({ id: uuid(), ...result });
+      // }
 
-      addVideoFilesAction([...newFiles]);
+      addVideoFilesAction([{ id: uuid(), ...video }]);
+
+      setLoading(false);
+      setError(null);
       // setFiles([...newFiles, ...files]);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
+        setError('Cancelled');
         // User cancelled the picker, exit any dialogs or menus and move on
       } else {
-        throw err;
+        setError(err.message);
+        // throw err;
       }
+      setLoading(false);
     }
   };
 
@@ -189,48 +202,49 @@ const IplayScreen = ({
     setShowStepTwo(false);
   };
 
-  if (loading)
+  const renderError = () => {
+    if (!error) return;
+
     return (
-      <ContentWrap>
-        <Text>Adding...</Text>
+      <ContentWrap style={{ alignItems: 'center', marginBottom: theme.spacing(2) }}>
+        <Text>{error}</Text>
       </ContentWrap>
     );
+  };
+
+  const renderProcess = () => {
+    if (!loading) return;
+
+    return (
+      <ContentWrap style={{ alignItems: 'center', marginBottom: theme.spacing(2) }}>
+        <Text>Processing...</Text>
+      </ContentWrap>
+    );
+  };
+
+  if (!videoFiles.length && loading) {
+    return <View>{renderProcess()}</View>;
+  }
 
   return (
     <View style={styles.container}>
+      {renderError()}
+      {renderProcess()}
       {videoFiles.length ? (
         <React.Fragment>
           <ContentWrap>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text
-                style={{
-                  ...createFontFormat(16, 22),
-                  fontWeight: '400',
-                  fontFamily: 'NotoSans-Normal'
-                }}
-              >
-                Video Library
-              </Text>
-              <Pressable
-                onPress={pickFiles}
-                style={({ pressed }) => [
-                  {
-                    padding: 2,
-                    backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
-                  }
-                ]}
-              >
+              <Text style={{ ...createFontFormat(16, 22) }}>Video Library</Text>
+              <TouchableOpacity onPress={pickFiles} disabled={loading}>
                 <Text
                   style={{
-                    color: theme.iplayya.colors.vibrantpussy,
-                    ...createFontFormat(16, 22),
-                    fontWeight: '400',
-                    fontFamily: 'NotoSans-Normal'
+                    color: loading ? 'gray' : theme.iplayya.colors.vibrantpussy,
+                    ...createFontFormat(16, 22)
                   }}
                 >
                   Add Video
                 </Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
             <Spacer size={20} />
 
@@ -243,7 +257,7 @@ const IplayScreen = ({
                     justifyContent: 'space-between'
                   }}
                 >
-                  <Pressable
+                  <TouchableOpacity
                     onPress={() => handleShowAlertMessage()}
                     // style={{ flexDirection: 'row', alignItems: 'center' }}
                     style={({ pressed }) => [
@@ -257,7 +271,7 @@ const IplayScreen = ({
                   >
                     <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                     <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
-                  </Pressable>
+                  </TouchableOpacity>
                   <Pressable
                     onPress={() => handleSelectAll()}
                     style={{ flexDirection: 'row', alignItems: 'center' }}
@@ -271,57 +285,39 @@ const IplayScreen = ({
               </React.Fragment>
             )}
           </ContentWrap>
-          <ScrollView>
-            {videoFiles.map(({ id, name, size, ...rest }) => {
-              const filesize = size / 1e6;
+          <FlatList
+            data={videoFiles}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item: { ...video } }) => {
+              const filesize = video.size / 1e6;
               return (
-                <Pressable
-                  style={({ pressed }) => [
-                    {
-                      paddingTop: 5,
-                      backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
-                    }
-                  ]}
-                  key={id}
-                  onLongPress={() => handleLongPress(id)}
-                  onPress={() => handleSelectItem({ id, name, size, ...rest })}
-                >
-                  <ContentWrap>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        marginBottom: 20,
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <View>
-                        <Text
-                          style={{
-                            fontWeight: 'bold',
-                            fontFamily: 'NotoSans-Bold',
-                            marginBottom: 5,
-                            ...createFontFormat(12, 16),
-                            color: theme.iplayya.colors.white90
-                          }}
-                        >
-                          {name}
-                        </Text>
-                        <Text
-                          style={{ ...createFontFormat(10, 16), fontFamily: 'NotoSans-Regular' }}
-                        >{`${filesize.toFixed(1)} mb`}</Text>
-                      </View>
-                      <View style={{ paddingRight: 10 }}>
-                        {activateCheckboxes && (
-                          <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                        )}
-                      </View>
-                    </View>
-                  </ContentWrap>
-                </Pressable>
+                <MediaItem
+                  visible={activateCheckboxes}
+                  selected={selectedItems.findIndex((i) => i === video.id) >= 0}
+                  filesize={filesize}
+                  onLongPress={handleLongPress}
+                  onSelect={handleSelectItem}
+                  {...video}
+                />
+              );
+            }}
+          />
+          {/* <ContentWrap scrollable>
+            {videoFiles.map((video, index) => {
+              const filesize = video.size / 1e6;
+              return (
+                <MediaItem
+                  key={index}
+                  visible={activateCheckboxes}
+                  selected={selectedItems.findIndex((i) => i === video.id) >= 0}
+                  filesize={filesize}
+                  onLongPress={handleLongPress}
+                  onSelect={handleSelectItem}
+                  {...video}
+                />
               );
             })}
-          </ScrollView>
+          </ContentWrap> */}
         </React.Fragment>
       ) : (
         <View
