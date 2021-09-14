@@ -31,7 +31,8 @@ const FavoritesTab = ({
   removedFromFavorites,
   removeFromFavoritesAction,
   // handleSelectItem,
-  navigation
+  navigation,
+  setIndex
 }) => {
   // const [showSnackBar, setShowSnackBar] = React.useState(false);
   // const [showConfirm, setShowConfirm] = React.useState(false);
@@ -139,7 +140,7 @@ const FavoritesTab = ({
   //   if (showSnackBar) hideSnackBar();
   // }, [showSnackBar]);
 
-  const EmptyState = ({ theme, navigation }) => (
+  const EmptyState = ({ theme }) => (
     <View
       style={{
         flex: 1,
@@ -153,9 +154,9 @@ const FavoritesTab = ({
       <Spacer />
       <Text style={{ fontSize: 24 }}>No favorites yet</Text>
       <Spacer size={30} />
-      <Pressable onPress={() => navigation.navigate('IsportsScreen')}>
+      <Pressable onPress={() => setIndex(0)}>
         <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
-          Heart a channel to add to your Favorites list.
+          Heart a station to add to your Favorites list.
         </Text>
       </Pressable>
     </View>
@@ -237,7 +238,7 @@ const FavoritesTab = ({
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
               </View>
-              <View style={{ paddingRight: 10 }}>
+              <View>
                 {activateCheckboxes && (
                   <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
                 )}
@@ -274,7 +275,8 @@ FavoritesTab.propTypes = {
   removeFromFavoritesAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
   // handleSelectItem: PropTypes.func,
-  navigation: PropTypes.object
+  navigation: PropTypes.object,
+  setIndex: PropTypes.func
 };
 
 const mapStateToProps = createStructuredSelector({

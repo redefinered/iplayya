@@ -79,7 +79,7 @@ const IradioScreen = ({
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'favorites':
-        return <FavoritesTab handleSelectItem={handleSelectItem} />;
+        return <FavoritesTab setIndex={setIndex} handleSelectItem={handleSelectItem} />;
       default:
         return <RadioStationsTab handleSelectItem={handleSelectItem} />;
     }
