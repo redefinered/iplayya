@@ -2,7 +2,7 @@
 
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
-import { View, ScrollView, StyleSheet, FlatList, Dimensions } from 'react-native';
+import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -76,11 +76,13 @@ const IsportsScreen = ({
 
   // setup genres data
   React.useEffect(() => {
-    if (genres.length) {
-      let data = genres.map(({ id, title }) => ({ id, title }));
-      data.unshift({ id: 'all', title: 'All channels' });
-      setGenresData(data);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      if (genres.length) {
+        let data = genres.map(({ id, title }) => ({ id, title }));
+        data.unshift({ id: 'all', title: 'All channels' });
+        setGenresData(data);
+      }
+    });
   }, [genres]);
 
   // get favorites if an item is added
@@ -112,16 +114,18 @@ const IsportsScreen = ({
 
   // setup channels data
   React.useEffect(() => {
-    if (channels.length) {
-      let data = channels.map(({ id, title, ...rest }) => ({
-        id,
-        title,
-        // thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
-        thumbnail: channelplaceholder,
-        ...rest
-      }));
-      setChannelsData(data);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      if (channels.length) {
+        let data = channels.map(({ id, title, ...rest }) => ({
+          id,
+          title,
+          // thumbnail: `http://via.placeholder.com/336x190.png?text=${urlEncodeTitle(title)}`,
+          thumbnail: channelplaceholder,
+          ...rest
+        }));
+        setChannelsData(data);
+      }
+    });
   }, [channels]);
 
   const handleAddToFavorites = (channelId) => {
@@ -182,17 +186,19 @@ const IsportsScreen = ({
   // }, [selectedCategory]);
 
   React.useEffect(() => {
-    getChannelsByCategoriesStartAction();
+    InteractionManager.runAfterInteractions(() => {
+      getChannelsByCategoriesStartAction();
 
-    if (paginator.pageNumber > 1) return;
-    if (selectedCategory === 'all') {
-      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-    } else {
-      getChannelsByCategoriesAction({
-        categories: [parseInt(selectedCategory)],
-        ...paginator
-      });
-    }
+      if (paginator.pageNumber > 1) return;
+      if (selectedCategory === 'all') {
+        getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      } else {
+        getChannelsByCategoriesAction({
+          categories: [parseInt(selectedCategory)],
+          ...paginator
+        });
+      }
+    });
   }, [selectedCategory]);
 
   const handleEndReached = () => {
