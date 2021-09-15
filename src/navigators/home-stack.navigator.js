@@ -29,6 +29,7 @@ import SeriesDetailScreen from 'screens/series-detail/series-detail.screen';
 import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-detail-downloaded.screen';
 
 import IradioScreen from 'screens/iradio/iradio.screen';
+import IradioSearchScreen from 'screens/iradio/iradio-search.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
@@ -531,6 +532,7 @@ const HomeStack = ({
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple
+                  onPress={() => navigation.navigate('IradioSearchScreen')}
                   borderless={true}
                   style={{ borderRadius: 44, padding: 8 }}
                   rippleColor="rgba(0,0,0,0.28)"
@@ -546,6 +548,16 @@ const HomeStack = ({
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
+        />
+
+        <Stack.Screen
+          name="IradioSearchScreen"
+          component={IradioSearchScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={({ navigation }) => ({
+            title: 'Search',
+            ...TransitionPresets.ModalSlideFromBottomIOS
+          })}
         />
 
         {/* iMusic */}
