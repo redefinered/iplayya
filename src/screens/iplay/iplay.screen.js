@@ -231,7 +231,7 @@ const IplayScreen = ({
       {renderProcess()}
       {videoFiles.length ? (
         <React.Fragment>
-          <ContentWrap style={{ paddingVertical: theme.spacing(3) }}>
+          <ContentWrap style={{ paddingVertical: theme.spacing(2) }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ ...createFontFormat(16, 22) }}>Video Library</Text>
               <TouchableOpacity onPress={pickFiles} disabled={loading}>
@@ -253,7 +253,7 @@ const IplayScreen = ({
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    paddingVertical: theme.spacing(3)
+                    paddingVertical: theme.spacing(2)
                   }}
                 >
                   <Pressable
