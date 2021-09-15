@@ -232,7 +232,7 @@ const IplayScreen = ({
       {renderProcess()}
       {videoFiles.length ? (
         <React.Fragment>
-          <ContentWrap>
+          <ContentWrap style={{ paddingVertical: theme.spacing(3) }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ ...createFontFormat(16, 22) }}>Video Library</Text>
               <TouchableOpacity onPress={pickFiles} disabled={loading}>
@@ -246,7 +246,6 @@ const IplayScreen = ({
                 </Text>
               </TouchableOpacity>
             </View>
-            <Spacer size={20} />
 
             {activateCheckboxes && (
               <React.Fragment>
@@ -254,7 +253,8 @@ const IplayScreen = ({
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    paddingVertical: theme.spacing(3)
                   }}
                 >
                   <Pressable
@@ -280,8 +280,6 @@ const IplayScreen = ({
                     <RadioButton selected={selectedItems.length === videoFiles.length} />
                   </Pressable>
                 </View>
-
-                <Spacer size={20} />
               </React.Fragment>
             )}
           </ContentWrap>
