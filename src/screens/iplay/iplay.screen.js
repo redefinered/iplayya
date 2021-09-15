@@ -8,7 +8,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
-import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -242,7 +241,7 @@ const IplayScreen = ({
                     ...createFontFormat(16, 22)
                   }}
                 >
-                  Add Video
+                  Add video
                 </Text>
               </TouchableOpacity>
             </View>
@@ -327,17 +326,18 @@ const IplayScreen = ({
           }}
         >
           <EmptyLibrary />
-          <Spacer size={30} />
-          <Text style={{ fontWeight: 'bold', ...createFontFormat(20, 27) }}>Play Your Video</Text>
-          <Spacer size={20} />
-          <ContentWrap style={{ maxWidth: '80%' }}>
+          <View style={{ paddingVertical: theme.spacing(3) }}>
+            <Text style={{ fontWeight: 'bold', ...createFontFormat(20, 27) }}>Play Your Video</Text>
+          </View>
+          <ContentWrap style={{ maxWidth: '80%', paddingVertical: theme.spacing(3) }}>
             <Text style={{ textAlign: 'center', ...createFontFormat(14, 19) }}>
               Add video from your media gallery and play it here on your video library
             </Text>
-            <Spacer size={20} />
-            <Button mode="contained" onPress={pickFiles}>
-              Add video
-            </Button>
+            <View style={{ paddingVertical: theme.spacing(2) }}>
+              <Button mode="contained" onPress={pickFiles}>
+                Add video
+              </Button>
+            </View>
           </ContentWrap>
         </View>
       )}
