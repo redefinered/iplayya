@@ -1,10 +1,8 @@
-/* eslint-disable react/prop-types */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, View, Modal, Pressable, ImageBackground } from 'react-native';
-import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-import FullScreenPlayer from './fullscreen-player.component';
+import { Text, TouchableRipple } from 'react-native-paper';
+// import FullScreenPlayer from './fullscreen-player.component';
 import Controls from './controls.component';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -15,10 +13,29 @@ import uuid from 'react-uuid';
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
 import SystemSetting from 'react-native-system-setting';
 import DeviceInfo from 'react-native-device-info';
+import theme from 'common/theme';
+
+const VIDEO_HEIGHT = 211;
+
+const VIDEO_STYLE = {
+  width: Dimensions.get('window').width,
+  height: VIDEO_HEIGHT,
+  // marginBottom: theme.spacing(2),
+  backgroundColor: 'black'
+};
+const VIDEO_STYLE_FULLSCREEN = {
+  width: Dimensions.get('window').height,
+  height: Dimensions.get('window').width
+};
 
 const MediaPlayer = ({
-  updatePlaybackInfoAction,
+  // playbackInfo,
+  // updatePlaybackInfoAction,
+  // containerStyle,
+  fullscreen,
+  setFullscreen,
   source,
+  qualitySwitchable,
   thumbnail,
   title,
   seriesTitle,
@@ -34,14 +51,12 @@ const MediaPlayer = ({
   isLastEpisode,
   typename
 }) => {
-  // console.log({ source });
-  const theme = useTheme();
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
-
+  // eslint-disable-next-line no-unused-vars
   const [error, setError] = React.useState(false);
+  const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [showControls, setShowControls] = React.useState(true);
-  const [fullscreen, setFullscreen] = React.useState(false);
   const [sliderPosition, setSliderPosition] = React.useState(null);
   const [volume, setVolume] = React.useState(0.6);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
@@ -53,6 +68,16 @@ const MediaPlayer = ({
   const [buffering, setBuffering] = React.useState(false);
   const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [timer, setTimer] = React.useState();
+  const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
+
+  /// switches root container style depending on screen orientation
+  React.useEffect(() => {
+    if (fullscreen) return setVideoStyle(VIDEO_STYLE_FULLSCREEN);
+
+    return setVideoStyle(VIDEO_STYLE);
+  }, [fullscreen]);
+
+  // console.log('test');
 
   React.useEffect(() => {
     SystemSetting.setVolume(volume, { showUI: false });
@@ -151,6 +176,7 @@ const MediaPlayer = ({
   }, [resolution]);
 
   const handleFullscreenToggle = () => {
+    setShowControls(true);
     setFullscreen(!fullscreen);
   };
 
@@ -183,6 +209,10 @@ const MediaPlayer = ({
     }
   }, [paused]);
 
+  React.useEffect(() => {
+    if (showControls) hideControls();
+  }, [showControls]);
+
   /// cancel hide control timeout if cast session is active
   React.useEffect(() => {
     if (castSessionActive) {
@@ -197,7 +227,8 @@ const MediaPlayer = ({
 
   const handleProgress = (playbackInfo) => {
     setBuffering(false);
-    updatePlaybackInfoAction({ playbackInfo });
+    // updatePlaybackInfoAction({ playbackInfo });
+    setPlaybackInfo(playbackInfo);
   };
 
   const toggleVolumeSliderVisible = () => {
@@ -228,66 +259,44 @@ const MediaPlayer = ({
         />
       );
 
-    // if (typename === 'Iptv' || videoplayer === 'vlc') return;
-    // if (typename === 'Iptv' || videoplayer === 'vlc')
-    //   return (
-    //     <VLCPlayer
-    //       ref={player}
-    //       paused={paused}
-    //       seek={sliderPosition}
-    //       onProgress={handleProgress}
-    //       onPlaying={() => handlePlaying}
-    //       source={{
-    //         uri: 'http://vod6.freeddns.org:4080/boxoffice/sorted/Alive-2020-1080p.mp4/video.m3u8'
-    //       }}
-    //       volume={volume} /// this library might work: https://github.com/c19354837/react-native-system-setting
-    //       onBuffering={onBuffer}
-    //       onError={videoError}
-    //       resizeMode="contain"
-    //       style={{ width: Dimensions.get('window').width, height: 211 }}
-    //     />
-    //   );
-
     return (
-      <Video
-        ref={player}
-        paused={paused}
-        onProgress={handleProgress}
-        source={{ uri: source }}
-        volume={volume}
-        onBuffer={onBuffer}
-        onError={videoError}
-        resizeMode="contain"
-        style={{ width: Dimensions.get('window').width, height: 211 }}
-      />
+      <Pressable
+        onPress={() => setShowControls(true)}
+        style={{ alignItems: 'center', justifyContent: 'center' }}
+      >
+        <Video
+          ref={player}
+          paused={paused}
+          onProgress={handleProgress}
+          source={{ uri: source }}
+          volume={volume}
+          onBuffer={onBuffer}
+          onError={videoError}
+          resizeMode="contain"
+          style={videoStyle}
+        />
+      </Pressable>
     );
   };
 
-  if (fullscreen)
-    return (
-      <FullScreenPlayer
-        title={title}
-        seriesTitle={seriesTitle}
-        multipleMedia={multipleMedia}
-        source={source}
-        handleFullscreenToggle={handleFullscreenToggle}
-        previousAction={previousAction}
-        nextAction={nextAction}
-        isFirstEpisode={isFirstEpisode}
-        isLastEpisode={isLastEpisode}
-        setSliderPosition={setSliderPosition}
-        setPaused={setPaused}
-        volume={volume}
-        setVolume={setVolume}
-        resolutions={resolutions}
-        setSource={setSource}
-        typename={typename}
-      />
-    );
+  const setFullScreenVideoContainerStyle = () => {
+    if (!fullscreen) return {};
+    return {
+      transform: [{ rotate: '90deg' }],
+      width: Dimensions.get('window').height,
+      height: Dimensions.get('window').width
+    };
+  };
 
   return (
-    <View style={{ position: 'relative', backgroundColor: 'black' }}>
-      {error && (
+    <View
+      style={{
+        marginTop: fullscreen ? 0 : theme.spacing(2),
+        marginBottom: fullscreen ? 0 : theme.spacing(2)
+      }}
+    >
+      {/* <Button onPress={() => setFullscreen(!fullscreen)}>fullscreen</Button> */}
+      {/* {error && (
         <View
           style={{
             position: 'absolute',
@@ -300,40 +309,50 @@ const MediaPlayer = ({
         >
           <Text>VIDEO ERROR</Text>
         </View>
-      )}
-      {renderPlayer()}
+      )} */}
+      <View
+        style={{
+          backgroundColor: 'black',
+          ...setFullScreenVideoContainerStyle()
+        }}
+      >
+        {renderPlayer()}
+        <Controls
+          // visible
+          visible={showControls}
+          playbackInfo={playbackInfo}
+          qualitySwitchable={qualitySwitchable}
+          volume={volume}
+          setVolume={setVolume}
+          buffering={buffering}
+          multipleMedia={multipleMedia}
+          title={title}
+          seriesTitle={seriesTitle}
+          togglePlay={togglePlay}
+          paused={paused}
+          setPaused={setPaused}
+          toggleFullscreen={handleFullscreenToggle}
+          setSliderPosition={setSliderPosition}
+          toggleVolumeSliderVisible={toggleVolumeSliderVisible}
+          toggleCastOptions={handleToggleCastOptions}
+          toggleVideoOptions={handleToggleVideoOptions}
+          previousAction={previousAction}
+          nextAction={nextAction}
+          isFirstEpisode={isFirstEpisode}
+          isLastEpisode={isLastEpisode}
+          resolutions={resolutions}
+          resolution={resolution}
+          activeState={activeState}
+          setActiveState={setActiveState}
+          handleSelectResolution={handleSelectResolution}
+          typename={typename}
+          source={source}
+          castSessionActive={castSessionActive}
+          isFullscreen={fullscreen}
+          style={{ position: 'absolute' }}
+        />
+      </View>
 
-      {/* media player controls */}
-      <Controls
-        volume={volume}
-        setVolume={setVolume}
-        buffering={buffering}
-        multipleMedia={multipleMedia}
-        title={title}
-        seriesTitle={seriesTitle}
-        togglePlay={togglePlay}
-        paused={paused}
-        setPaused={setPaused}
-        toggleFullscreen={handleFullscreenToggle}
-        style={{ position: 'absolute' }}
-        visible={showControls}
-        setSliderPosition={setSliderPosition}
-        toggleVolumeSliderVisible={toggleVolumeSliderVisible}
-        toggleCastOptions={handleToggleCastOptions}
-        toggleVideoOptions={handleToggleVideoOptions}
-        previousAction={previousAction}
-        nextAction={nextAction}
-        isFirstEpisode={isFirstEpisode}
-        isLastEpisode={isLastEpisode}
-        resolutions={resolutions}
-        resolution={resolution}
-        activeState={activeState}
-        setActiveState={setActiveState}
-        handleSelectResolution={handleSelectResolution}
-        typename={typename}
-        source={source}
-        castSessionActive={castSessionActive}
-      />
       {/* screencast option */}
       {/* <Modal animationType="slide" visible={showCastOptions} transparent>
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
@@ -441,16 +460,31 @@ const MediaPlayer = ({
   );
 };
 
+MediaPlayer.defaultProps = {
+  qualitySwitchable: false
+};
+
 MediaPlayer.propTypes = {
+  fullscreen: PropTypes.bool,
   title: PropTypes.string,
+  seriesTitle: PropTypes.string,
   source: PropTypes.string,
   thumbnail: PropTypes.string,
   paused: PropTypes.bool,
   togglePlay: PropTypes.func,
   setPaused: PropTypes.func,
+  setSource: PropTypes.func,
+  setFullscreen: PropTypes.func,
+  previousAction: PropTypes.func,
+  nextAction: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
   multipleMedia: PropTypes.bool,
-  videoSource: PropTypes.string
+  isFirstEpisode: PropTypes.bool,
+  isLastEpisode: PropTypes.bool,
+  videoSource: PropTypes.string,
+  videoUrls: PropTypes.array,
+  qualitySwitchable: PropTypes.bool,
+  typename: PropTypes.string
 };
 
 const actions = {

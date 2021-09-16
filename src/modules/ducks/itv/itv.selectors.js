@@ -26,11 +26,17 @@ export const selectChannelUrl = createSelector([itvState], ({ channel }) => {
   if (!channel) return;
   return channel.archived_link;
 });
-export const selectCurrentProgram = createSelector([itvState], ({ programs }) => {
-  if (!programs.length) return;
 
-  return programs[0];
+const selectChannelForFilter = (state, props) => {
+  return state.itv.channels.find(({ id }) => id === props.channelId);
+};
+
+export const selectCurrentProgram = createSelector([selectChannelForFilter], (channel) => {
+  if (!channel) return;
+
+  return channel;
 });
+
 export const selectSearchResults = createSelector([itvState], ({ searchResults }) => searchResults);
 
 export const selectFavoritesListUpdated = createSelector(
@@ -53,12 +59,18 @@ export const selectRecentSearch = createSelector([itvState], ({ recentSearch }) 
 export const selectNotifications = createSelector([itvState], ({ notifications }) => notifications);
 export const selectSubscriptions = createSelector([itvState], ({ subscriptions }) => subscriptions);
 
+// const selectChannelForFilter = (state, props) => {
+//   return state.itv.channels.find(({ id }) => id === props.channelId)
+// }
+
+// const selectCurrentProgram
+
 const selectChannelsAndCurrentChannelNumberForFilter = (
   { itv: { channels } },
   { channel: { number } }
 ) => {
   const currentChannelNumber = parseInt(number);
-  return { channels, currentChannelNumber };
+  return { channels: channels.map(({ id, number }) => ({ id, number })), currentChannelNumber };
 };
 
 export const selectNextChannel = createSelector(

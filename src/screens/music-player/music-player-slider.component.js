@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import Slider from '@react-native-community/slider';
 import thumbImage from 'assets/player-thumb-image.png';
 import { createStructuredSelector } from 'reselect';
@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
 import { createFontFormat, toDateTime } from 'utils';
 import { Creators } from 'modules/ducks/music/music.actions';
 import moment from 'moment';
+import theme from 'common/theme';
 
 const MusicPlayerSlider = ({ progress, playbackInfo, setPauseAction, setSeekvalueAction }) => {
-  const theme = useTheme();
   const [value, setValue] = React.useState();
   const [remainingTime, setRemainingTime] = React.useState(0);
   const [currentTime, setCurrentTime] = React.useState(0);

@@ -1,14 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, StatusBar } from 'react-native';
+import ScreenContainer from 'components/screen-container.component';
 import MediaPlayer from 'components/media-player/media-player.component';
-import { useTheme } from 'react-native-paper';
+import theme from 'common/theme';
 
+// eslint-disable-next-line react/prop-types
 const IplayDetailScreen = ({ route }) => {
-  const theme = useTheme();
   const { file } = route.params;
 
-  const [paused, setPaused] = React.useState(true);
+  React.useEffect(() => {
+    // eslint-disable-next-line react/prop-types
+    // navigation.setOptions({ headerShown: false });
+  }, []);
+
+  const [paused, setPaused] = React.useState(false);
 
   const handleTogglePlay = () => {
     setPaused(!paused);
@@ -18,10 +24,19 @@ const IplayDetailScreen = ({ route }) => {
 
   return (
     <View
-      style={{ flex: 1, justifyContent: 'center', backgroundColor: theme.iplayya.colors.goodnight }}
+      // style={{ flex: 1, justifyContent: 'center', backgroundColor: theme.iplayya.colors.goodnight }}
+      style={
+        {
+          // flex: 1,
+          // backgroundColor: theme.iplayya.colors.goodnight
+          // alignItems: 'center',
+          // justifyContent: 'center'
+        }
+      }
     >
+      {/* <StatusBar hidden /> */}
       <MediaPlayer
-        // videoplayer="vlc"
+        containerStyle={{ backgroundColor: 'red' }}
         paused={paused}
         source={fileCopyUri}
         title={name}
@@ -36,4 +51,11 @@ IplayDetailScreen.propTypes = {
   route: PropTypes.object
 };
 
-export default IplayDetailScreen;
+const Container = (props) => (
+  <ScreenContainer withHeaderPush>
+    <IplayDetailScreen {...props} />
+  </ScreenContainer>
+);
+
+// export default IplayDetailScreen;
+export default Container;
