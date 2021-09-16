@@ -81,7 +81,7 @@ const CategoryScrollList = ({
       }}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
-      style={{ paddingHorizontal: 10 }}
+      // style={{ paddingHorizontal: 0 }}
       onEndReached={() => handleOnEndReached()}
       onEndReachedThreshold={0}
     />
