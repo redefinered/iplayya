@@ -12,6 +12,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/isports/isports.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 // import { createFontFormat } from 'utils';
 // import MediaPlayer from 'components/media-player/media-player.component';
@@ -51,7 +52,8 @@ const IsportsChannelDetailScreen = ({
   // addToFavoritesAction,
   favoritesListUpdated,
   getProgramsByChannelStartAction,
-  navigation
+  navigation,
+  setMusicNowPlaying
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -73,6 +75,13 @@ const IsportsChannelDetailScreen = ({
 
     navigation.setOptions({ headerShown: true });
   }, [fullscreen]);
+
+  /// stop music player when a video is played
+  React.useEffect(() => {
+    if (!paused) {
+      setMusicNowPlaying(null);
+    }
+  }, [paused]);
 
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
@@ -391,7 +400,8 @@ const actions = {
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
-  onNotifResetAction: NotificationCreators.onNotifReset
+  onNotifResetAction: NotificationCreators.onNotifReset,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

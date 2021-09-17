@@ -11,6 +11,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 // import { urlEncodeTitle } from 'utils';
 // import MediaPlayer from 'components/media-player/media-player.component';
@@ -47,7 +48,8 @@ const ItvChannelDetailScreen = ({
   startAction,
   onNotifResetAction,
   // addToFavoritesAction,
-  favoritesListUpdated
+  favoritesListUpdated,
+  setMusicNowPlaying
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -70,6 +72,13 @@ const ItvChannelDetailScreen = ({
 
     navigation.setOptions({ headerShown: true });
   }, [fullscreen]);
+
+  /// stop music player when a video is played
+  React.useEffect(() => {
+    if (!paused) {
+      setMusicNowPlaying(null);
+    }
+  }, [paused]);
 
   React.useEffect(() => {
     /// clears the indicator that there is a new notification
@@ -396,7 +405,8 @@ const mapStateToProps = createStructuredSelector({
   channel: selectChannel,
   programs: selectPrograms,
   currentProgram: selectCurrentProgram,
-  favoritesListUpdated: selectFavoritesListUpdated
+  favoritesListUpdated: selectFavoritesListUpdated,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 });
 
 const actions = {

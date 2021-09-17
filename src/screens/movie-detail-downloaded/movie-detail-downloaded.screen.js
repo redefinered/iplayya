@@ -10,6 +10,7 @@ import { withTheme } from 'react-native-paper';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -42,7 +43,8 @@ const MovieDetailScreen = ({
   downloadsIsFetching,
   downloadStarted,
 
-  videoUrls
+  videoUrls,
+  setMusicNowPlaying
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [title, setTitle] = React.useState('');
@@ -61,6 +63,13 @@ const MovieDetailScreen = ({
 
     navigation.setOptions({ headerShown: true });
   }, [fullscreen]);
+
+  /// stop music player when a video is played
+  React.useEffect(() => {
+    if (!paused) {
+      setMusicNowPlaying(null);
+    }
+  }, [paused]);
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -347,7 +356,8 @@ const actions = {
   updatePlaybackInfoAction: Creators.updatePlaybackInfo,
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
-  downloadStartAction: DownloadsCreators.downloadStart
+  downloadStartAction: DownloadsCreators.downloadStart,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
 const mapStateToProps = createStructuredSelector({

@@ -72,18 +72,19 @@ const MovieDetailScreen = ({
   const renderStatusbar = () => {
     if (fullscreen) return <StatusBar hidden />;
   };
-  /// stop music player when a video is played
-  React.useEffect(() => {
-    if (!paused) {
-      setMusicNowPlaying(null);
-    }
-  }, [paused]);
 
   React.useEffect(() => {
     if (fullscreen) return navigation.setOptions({ headerShown: false });
 
     navigation.setOptions({ headerShown: true });
   }, [fullscreen]);
+
+  /// stop music player when a video is played
+  React.useEffect(() => {
+    if (!paused) {
+      setMusicNowPlaying(null);
+    }
+  }, [paused]);
 
   React.useEffect(() => {
     listDownloadedFiles();

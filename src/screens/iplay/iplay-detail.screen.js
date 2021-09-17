@@ -3,11 +3,14 @@ import PropTypes from 'prop-types';
 import { View, StatusBar } from 'react-native';
 import ScreenContainer from 'components/screen-container.component';
 import MediaPlayer from 'components/media-player/media-player.component';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { connect } from 'react-redux';
 
 // eslint-disable-next-line react/prop-types
-const IplayDetailScreen = ({ navigation, route }) => {
+const IplayDetailScreen = ({ navigation, route, setMusicNowPlaying }) => {
   const { file } = route.params;
   const [fullscreen, setFullscreen] = React.useState(false);
+  const [paused, setPaused] = React.useState(false);
 
   const renderStatusbar = () => {
     if (fullscreen) return <StatusBar hidden />;
@@ -19,7 +22,12 @@ const IplayDetailScreen = ({ navigation, route }) => {
     navigation.setOptions({ headerShown: true });
   }, [fullscreen]);
 
-  const [paused, setPaused] = React.useState(false);
+  /// stop music player when a video is played
+  React.useEffect(() => {
+    if (!paused) {
+      setMusicNowPlaying(null);
+    }
+  }, [paused]);
 
   const handleTogglePlay = () => {
     setPaused(!paused);
@@ -73,5 +81,9 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
+const actions = {
+  setMusicNowPlaying: MusicCreators.setNowPlaying
+};
+
 // export default IplayDetailScreen;
-export default Container;
+export default connect(null, actions)(Container);
