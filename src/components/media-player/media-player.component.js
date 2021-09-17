@@ -320,6 +320,7 @@ const MediaPlayer = ({
         <Controls
           // visible
           visible={showControls}
+          setShowControls={setShowControls}
           playbackInfo={playbackInfo}
           qualitySwitchable={qualitySwitchable}
           volume={volume}

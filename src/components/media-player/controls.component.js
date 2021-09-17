@@ -78,6 +78,16 @@ const VideoControls = ({
     }
   });
 
+  const handleNextButtonPress = () => {
+    nextAction();
+    controlProps.setShowControls(true);
+  };
+
+  const handlePreviousButtonPress = () => {
+    previousAction();
+    controlProps.setShowControls(true);
+  };
+
   const getMediaStatus = async () => {
     if (!client) return;
     const { mediaInfo } = await client.getMediaStatus();
@@ -289,7 +299,9 @@ const VideoControls = ({
           zIndex: 100
         }}
       >
-        {multipleMedia && <PrevButton onPress={previousAction} disabled={isFirstEpisode} />}
+        {multipleMedia && (
+          <PrevButton onPress={handlePreviousButtonPress} disabled={isFirstEpisode} />
+        )}
         <Pressable onPress={() => controlProps.togglePlay()}>
           {buffering ? (
             <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />
@@ -301,7 +313,7 @@ const VideoControls = ({
             />
           )}
         </Pressable>
-        {multipleMedia && <NextButton onPress={nextAction} disabled={isLastEpisode} />}
+        {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
 
       <View style={{ position: 'relative', zIndex: 101 }}>
