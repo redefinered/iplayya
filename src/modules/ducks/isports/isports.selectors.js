@@ -29,10 +29,14 @@ export const selectFavoritesListUpdated = createSelector(
   ({ favoritesListUpdated }) => favoritesListUpdated
 );
 
-export const selectCurrentProgram = createSelector([iSportsState], ({ programs }) => {
-  if (!programs.length) return;
+const selectChannelForFilter = (state, props) => {
+  return state.sports.channels.find(({ id }) => id === props.channelId);
+};
 
-  return programs[0];
+export const selectCurrentProgram = createSelector([selectChannelForFilter], (channel) => {
+  if (!channel) return;
+
+  return channel;
 });
 
 export const selectSearchResults = createSelector(

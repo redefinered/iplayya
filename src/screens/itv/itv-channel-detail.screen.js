@@ -77,9 +77,7 @@ const ItvChannelDetailScreen = ({
     navigation.addListener('beforeRemove', () => {
       getProgramsByChannelStartAction();
     });
-  }, []);
 
-  React.useEffect(() => {
     let date = new Date(Date.now());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StatusBar, Dimensions } from 'react-native';
-import { Text } from 'react-native-paper';
+// import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -13,21 +13,21 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
-import { createFontFormat } from 'utils';
+// import { createFontFormat } from 'utils';
 // import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
 // import { generateDatesFromToday } from 'utils';
 import { createStructuredSelector } from 'reselect';
 import IsportsPlayer from './isports-player.component';
+import CurrentProgram from './isports-current-program.component';
 import {
   selectError,
   selectIsFetching,
   selectChannel,
   selectPrograms,
-  selectCurrentProgram,
   selectFavoritesListUpdated
 } from 'modules/ducks/isports/isports.selectors';
-import moment from 'moment';
+// import moment from 'moment';
 import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
@@ -46,16 +46,13 @@ const IsportsChannelDetailScreen = ({
   programs,
   getProgramsByChannelAction,
   getChannelAction,
-  /// the program that is playing at this moment
-  currentProgram,
   startAction,
   onNotifResetAction,
-  addToFavoritesAction,
+  // addToFavoritesAction,
   favoritesListUpdated,
   getProgramsByChannelStartAction,
   navigation
 }) => {
-  console.log({ currentProgram });
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(false);
@@ -83,9 +80,7 @@ const IsportsChannelDetailScreen = ({
     navigation.addListener('beforeRemove', () => {
       getProgramsByChannelStartAction();
     });
-  }, []);
 
-  React.useEffect(() => {
     let date = new Date(Date.now());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
@@ -146,11 +141,11 @@ const IsportsChannelDetailScreen = ({
     setPaused(!paused);
   };
 
-  const handleFovoritePress = () => {
-    if (channel.is_favorite) return;
+  // const handleFovoritePress = () => {
+  //   if (channel.is_favorite) return;
 
-    addToFavoritesAction(parseInt(channelId));
-  };
+  //   addToFavoritesAction(parseInt(channelId));
+  // };
 
   const handleNextChannel = (nextChannelId) => {
     if (!channel) return;
@@ -159,6 +154,8 @@ const IsportsChannelDetailScreen = ({
 
     getChannelAction({ videoId: nextChannelId });
     getProgramsByChannelAction({ channelId: nextChannelId, date: date.toISOString() });
+
+    navigation.setParams({ channelId: nextChannelId });
   };
 
   const handlePreviousChannel = (previousChannelId) => {
@@ -168,6 +165,8 @@ const IsportsChannelDetailScreen = ({
 
     getChannelAction({ videoId: previousChannelId });
     getProgramsByChannelAction({ channelId: previousChannelId, date: date.toISOString() });
+
+    navigation.setParams({ channelId: previousChannelId });
   };
 
   const handleShowSnackBar = () => {
@@ -238,7 +237,7 @@ const IsportsChannelDetailScreen = ({
                   >
                     <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
                   </View>
-                  <Content onRightActionPress={handleFovoritePress} {...channel} />
+                  <CurrentProgram channelId={channelId} />
                 </View>
               </View>
             </ContentWrap>
@@ -332,43 +331,43 @@ const IsportsChannelDetailScreen = ({
 };
 
 // eslint-disable-next-line react/prop-types
-const Content = ({ title, epgtitle, time, time_to }) => {
-  const renderEpgtitle = () => {
-    if (!epgtitle)
-      return (
-        <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-          Program title unavailable
-        </Text>
-      );
+// const Content = ({ title, epgtitle, time, time_to }) => {
+//   const renderEpgtitle = () => {
+//     if (!epgtitle)
+//       return (
+//         <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+//           Program title unavailable
+//         </Text>
+//       );
 
-    return (
-      <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-        {epgtitle}
-      </Text>
-    );
-  };
+//     return (
+//       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+//         {epgtitle}
+//       </Text>
+//     );
+//   };
 
-  const getSchedule = (time, time_to) => {
-    if (!time || !time_to) return;
+//   const getSchedule = (time, time_to) => {
+//     if (!time || !time_to) return;
 
-    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
-  };
+//     return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+//   };
 
-  return (
-    <View style={{ flex: 1 }}>
-      <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
-      <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-        {renderEpgtitle()}
-      </Text>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
-          {getSchedule(time, time_to)}
-        </Text>
-        {/* <Icon name="history" color="#13BD38" /> */}
-      </View>
-    </View>
-  );
-};
+//   return (
+//     <View style={{ flex: 1 }}>
+//       <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
+//       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+//         {renderEpgtitle()}
+//       </Text>
+//       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+//         <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
+//           {getSchedule(time, time_to)}
+//         </Text>
+//         {/* <Icon name="history" color="#13BD38" /> */}
+//       </View>
+//     </View>
+//   );
+// };
 
 // const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2) } });
 
@@ -383,7 +382,6 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   channel: selectChannel,
   programs: selectPrograms,
-  currentProgram: selectCurrentProgram,
   favoritesListUpdated: selectFavoritesListUpdated
 });
 

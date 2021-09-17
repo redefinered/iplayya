@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import moment from 'moment';
-import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
+import { selectCurrentProgram } from 'modules/ducks/isports/isports.selectors';
 import { connect } from 'react-redux';
 
 const CurrentProgram = ({ currentProgram }) => {

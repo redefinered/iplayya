@@ -19,7 +19,6 @@ const IsportsPlayer = ({
   fullscreen,
   setFullscreen
 }) => {
-  console.log({ nextChannel });
   const [isFirstChannel, setIsFirstChannel] = React.useState(false);
   const [isLastChannel, setIsLastChannel] = React.useState(false);
 
