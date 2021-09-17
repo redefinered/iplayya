@@ -1,7 +1,16 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Platform, Modal } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  Platform,
+  Modal,
+  StatusBar,
+  Dimensions
+} from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
@@ -13,6 +22,7 @@ import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -64,12 +74,14 @@ const SeriesDetailScreen = ({
   downloadStartAction,
   downloadStarted,
 
-  setEpisodeAction
+  setMusicNowPlaying,
+  setEpisodeAction,
+  navigation
 }) => {
   // const dummyvideo = dummydata.video;
   const client = useRemoteMediaClient();
 
-  const [paused, setPaused] = React.useState(true);
+  const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
   const [downloadedFiles, setDownloadedFiles] = React.useState([]);
@@ -80,6 +92,23 @@ const SeriesDetailScreen = ({
   const [isFirstEpisode, setIsFirstEpisode] = React.useState(true);
   const [isLastEpisode, setIsLastEpisode] = React.useState(false);
   const [seriesTitle, setSeriesTitle] = React.useState();
+  const [fullscreen, setFullscreen] = React.useState(false);
+
+  const renderStatusbar = () => {
+    if (fullscreen) return <StatusBar hidden />;
+  };
+  /// stop music player when a video is played
+  React.useEffect(() => {
+    if (!paused) {
+      setMusicNowPlaying(null);
+    }
+  }, [paused]);
+
+  React.useEffect(() => {
+    if (fullscreen) return navigation.setOptions({ headerShown: false });
+
+    navigation.setOptions({ headerShown: true });
+  }, [fullscreen]);
 
   React.useEffect(() => {
     listDownloadedFiles();
@@ -317,53 +346,45 @@ const SeriesDetailScreen = ({
       </ContentWrap>
     );
 
-  // console.log('xxxxxx', series);
-
-  return (
-    <View style={{ flex: 1, marginTop: 10 }}>
-      {/* Player */}
-      <View>
-        <Pressable
-          onPress={() => handleTogglePlay()}
+  const renderMediaPlayer = () => {
+    if (!source)
+      return (
+        <View
           style={{
-            width: '100%',
+            width: Dimensions.get('window').width,
             height: 211,
-            marginBottom: 10,
+            alignItems: 'center',
             justifyContent: 'center',
-            alignItems: 'center'
+            backgroundColor: 'black'
           }}
-        >
-          {source !== '' ? (
-            <MediaPlayer
-              multipleMedia={true}
-              paused={paused}
-              source={source}
-              thumbnail={thumbnail}
-              title={title}
-              seriesTitle={seriesTitle}
-              togglePlay={handleTogglePlay}
-              setPaused={setPaused}
-              setSource={handleSourceSet}
-              videoUrls={videoUrls}
-              previousAction={handlePreviousEpisode}
-              nextAction={handleNextEpisode}
-              isFirstEpisode={isFirstEpisode}
-              isLastEpisode={isLastEpisode}
-            />
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'black'
-              }}
-            >
-              <Text>NO SOURCE</Text>
-            </View>
-          )}
-        </Pressable>
+        />
+      );
+
+    return (
+      <MediaPlayer
+        multipleMedia={true}
+        paused={paused}
+        source={source}
+        thumbnail={thumbnail}
+        title={title}
+        seriesTitle={seriesTitle}
+        togglePlay={handleTogglePlay}
+        setPaused={setPaused}
+        setSource={handleSourceSet}
+        videoUrls={videoUrls}
+        previousAction={handlePreviousEpisode}
+        nextAction={handleNextEpisode}
+        isFirstEpisode={isFirstEpisode}
+        isLastEpisode={isLastEpisode}
+        fullscreen={fullscreen}
+        setFullscreen={setFullscreen}
+      />
+    );
+  };
+
+  const renderVideoCaption = () => {
+    if (!fullscreen)
+      return (
         <ContentWrap>
           <Text
             style={{
@@ -372,117 +393,156 @@ const SeriesDetailScreen = ({
             }}
           >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
         </ContentWrap>
+      );
+  };
+
+  const renderScreenContent = () => {
+    if (!fullscreen)
+      return (
+        <React.Fragment>
+          {/* content */}
+          <ScrollView style={{ height: 300 }}>
+            <ContentWrap>
+              <Text
+                style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
+              >{`${title} (${year})`}</Text>
+              <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
+              <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
+                <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
+                  Director{' '}
+                </Text>
+                {director}
+              </Text>
+              <List.Section>
+                <List.Accordion
+                  title="Read more"
+                  style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+                  titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+                >
+                  {Object.keys(otherFields).map((key) => {
+                    return (
+                      <List.Item
+                        key={key}
+                        titleStyle={{ marginBottom: -10 }}
+                        title={
+                          <Text style={{ ...createFontFormat(14, 20) }}>
+                            <Text
+                              style={{
+                                color: theme.iplayya.colors.white50,
+                                ...createFontFormat(14, 20)
+                              }}
+                            >
+                              {key}{' '}
+                            </Text>
+                            {otherFields[key]}
+                          </Text>
+                        }
+                      />
+                    );
+                  })}
+                </List.Accordion>
+              </List.Section>
+
+              <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
+                <View style={styles.iconContainer}>
+                  <Icon name="circular-play" size={theme.iconSize(3)} />
+                </View>
+                <View>
+                  <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>
+                    Play movie
+                  </Text>
+                </View>
+              </Pressable>
+              <Pressable style={styles.settingItem}>
+                <View style={styles.iconContainer}>
+                  <Icon name="watch" size={theme.iconSize(3)} />
+                </View>
+                <View>
+                  <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>
+                    Watch trailer
+                  </Text>
+                </View>
+              </Pressable>
+            </ContentWrap>
+
+            <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
+              {series.map(({ season }, index) => {
+                const { episodes } = series[index];
+                return (
+                  <List.Accordion
+                    key={index}
+                    title={`Season ${season}`}
+                    style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+                    titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+                  >
+                    {episodes.map(({ episode }, index) => {
+                      return (
+                        <List.Item
+                          key={index}
+                          onPress={() => handleEpisodeSelect({ season, episode })}
+                          titleStyle={{ marginBottom: -10 }}
+                          title={
+                            <Text
+                              style={{ ...createFontFormat(14, 20) }}
+                            >{`Episode ${episode}`}</Text>
+                          }
+                        />
+                      );
+                    })}
+                  </List.Accordion>
+                );
+              })}
+            </ContentWrap>
+          </ScrollView>
+
+          {/* loader for download starting */}
+          <Modal transparent visible={downloadsIsFetching}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: theme.iplayya.colors.black50
+              }}
+            >
+              <ActivityIndicator color={theme.iplayya.colors.vibrantpussy} />
+            </View>
+          </Modal>
+
+          <SnackBar
+            visible={showSnackbar}
+            message="Downloading movie. You can check the progress in Downloaded section."
+            iconName="download"
+            iconColor={theme.iplayya.colors.vibrantpussy}
+          />
+        </React.Fragment>
+      );
+  };
+
+  const setFullScreenPlayerStyle = () => {
+    if (fullscreen)
+      return {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+      };
+
+    return {};
+  };
+
+  /// MAIN
+  return (
+    <View style={{ flex: 1 }}>
+      {renderStatusbar()}
+
+      {/* Player */}
+      <View style={{ ...setFullScreenPlayerStyle() }}>
+        {renderMediaPlayer()}
+        {renderVideoCaption()}
       </View>
 
       {/* content */}
-      <ScrollView style={{ height: 300 }}>
-        <ContentWrap>
-          <Text
-            style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
-          >{`${title} (${year})`}</Text>
-          <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
-          <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
-            <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
-              Director{' '}
-            </Text>
-            {director}
-          </Text>
-          <List.Section>
-            <List.Accordion
-              title="Read more"
-              style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
-              titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
-            >
-              {Object.keys(otherFields).map((key) => {
-                return (
-                  <List.Item
-                    key={key}
-                    titleStyle={{ marginBottom: -10 }}
-                    title={
-                      <Text style={{ ...createFontFormat(14, 20) }}>
-                        <Text
-                          style={{
-                            color: theme.iplayya.colors.white50,
-                            ...createFontFormat(14, 20)
-                          }}
-                        >
-                          {key}{' '}
-                        </Text>
-                        {otherFields[key]}
-                      </Text>
-                    }
-                  />
-                );
-              })}
-            </List.Accordion>
-          </List.Section>
-
-          <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
-            <View style={styles.iconContainer}>
-              <Icon name="circular-play" size={theme.iconSize(3)} />
-            </View>
-            <View>
-              <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Play movie</Text>
-            </View>
-          </Pressable>
-          <Pressable style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="watch" size={theme.iconSize(3)} />
-            </View>
-            <View>
-              <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Watch trailer</Text>
-            </View>
-          </Pressable>
-        </ContentWrap>
-
-        <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
-          {series.map(({ season }, index) => {
-            const { episodes } = series[index];
-            return (
-              <List.Accordion
-                key={index}
-                title={`Season ${season}`}
-                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
-                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
-              >
-                {episodes.map(({ episode }, index) => {
-                  return (
-                    <List.Item
-                      key={index}
-                      onPress={() => handleEpisodeSelect({ season, episode })}
-                      titleStyle={{ marginBottom: -10 }}
-                      title={
-                        <Text style={{ ...createFontFormat(14, 20) }}>{`Episode ${episode}`}</Text>
-                      }
-                    />
-                  );
-                })}
-              </List.Accordion>
-            );
-          })}
-        </ContentWrap>
-      </ScrollView>
-
-      {/* loader for download starting */}
-      <Modal transparent visible={downloadsIsFetching}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: theme.iplayya.colors.black50
-          }}
-        >
-          <ActivityIndicator color={theme.iplayya.colors.vibrantpussy} />
-        </View>
-      </Modal>
-
-      <SnackBar
-        visible={showSnackbar}
-        message="Downloading movie. You can check the progress in Downloaded section."
-        iconName="download"
-        iconColor={theme.iplayya.colors.vibrantpussy}
-      />
+      {renderScreenContent()}
     </View>
   );
 };
@@ -515,7 +575,8 @@ const actions = {
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   downloadStartAction: DownloadsCreators.downloadStart,
-  setEpisodeAction: Creators.setEpisode
+  setEpisodeAction: Creators.setEpisode,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
 const mapStateToProps = createStructuredSelector({

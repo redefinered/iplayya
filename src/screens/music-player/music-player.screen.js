@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, Image, Pressable } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -20,6 +20,7 @@ import {
   selectShuffle,
   selectRepeat
 } from 'modules/ducks/music/music.selectors';
+import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
@@ -36,7 +37,6 @@ const MusicPlayerScreen = ({
   cycleRepeatAction,
   repeat
 }) => {
-  const theme = useTheme();
   const [disablePrevious, setDisablePrevious] = React.useState(true);
   const [disableNext, setDisableNext] = React.useState(false);
 

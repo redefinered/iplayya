@@ -145,8 +145,6 @@ const HomeStack = ({
           headerTintColor: 'white',
           headerBackTitleVisible: false,
           headerBackImage: () => <HeaderBackImage />,
-          // headerStyle: { height: headerHeight },
-          // safeAreaInsets: { bottom: headerHeight },
           headerTitleAlign: 'center',
           headerTitleStyle: { fontSize: 24, fontFamily: 'NotoSans' },
           headerTitleContainerStyle: { alignItems: 'center' },

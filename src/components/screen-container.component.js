@@ -2,17 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StatusBar, View, ImageBackground, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useTheme } from 'react-native-paper';
 import { createStructuredSelector } from 'reselect';
 import { selectHeaderHeight } from 'modules/app';
 import { connect } from 'react-redux';
 import { useHeaderHeight } from '@react-navigation/stack';
+import theme from 'common/theme';
 
 const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
-  // console.log({ headerHeight });
   const headerHeight = useHeaderHeight();
-  // console.log({ x });
-  const theme = useTheme();
   const containerWithBackground = () => {
     if (backgroundType === 'solid') {
       return (
@@ -55,7 +52,7 @@ const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
         }}
         colors={['#2D1449', '#0D0637']}
       >
-        <View style={{ flex: 1, marginTop: theme.spacing(3) }}>{children}</View>
+        <View style={{ flex: 1 }}>{children}</View>
       </LinearGradient>
     );
   };

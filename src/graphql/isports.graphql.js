@@ -21,20 +21,9 @@ export const GET_CHANNEL = gql`
   query GET_CHANNEL($input: videoRequestById) {
     isport(input: $input) {
       id
-      title
-      description
-      genre
       number
+      title
       url
-      censored
-      hd
-      is_favorite
-      time
-      time_to
-      duration
-      epgtitle
-      epgdescription
-      archived_link
     }
   }
 `;

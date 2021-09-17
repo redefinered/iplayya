@@ -3,7 +3,7 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -29,6 +29,7 @@ import {
 } from 'modules/ducks/isports/isports.selectors';
 import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
+import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -49,7 +50,6 @@ const IsportsScreen = ({
   enableSwipeAction,
   headerHeight
 }) => {
-  const theme = useTheme();
   const [size, onLayout] = useComponentSize();
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
@@ -414,7 +414,7 @@ const Container = (props) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 5
+    marginTop: theme.spacing(2)
   }
 });
 

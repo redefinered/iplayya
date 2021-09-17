@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import MediaPlayer from 'components/media-player/media-player.component';
-import { selectNextChannel, selectPreviousChannel } from 'modules/ducks/itv/itv.selectors';
+import { selectNextChannel, selectPreviousChannel } from 'modules/ducks/isports/isports.selectors';
 import { connect } from 'react-redux';
 
-const ItvPlayer = ({
+const IsportsPlayer = ({
   channel,
   paused,
   source,
@@ -68,7 +68,7 @@ const ItvPlayer = ({
   );
 };
 
-ItvPlayer.propTypes = {
+IsportsPlayer.propTypes = {
   channel: PropTypes.object,
   nextChannel: PropTypes.object,
   previousChannel: PropTypes.object,
@@ -91,4 +91,4 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps)(React.memo(ItvPlayer));
+export default connect(mapStateToProps)(React.memo(IsportsPlayer));

@@ -6,15 +6,16 @@ import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
-import moment from 'moment';
+// import moment from 'moment';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { createFontFormat, toDateTime } from 'utils';
+import { createFontFormat } from 'utils';
 import VerticalSlider from 'rn-vertical-slider';
+import MediaPlayerSlider from './media-player-slider.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
-  selectPlaybackInfo,
+  // selectPlaybackInfo,
   // selectCurrentPosition,
   selectCurrentTime,
   selectRemainingTime,
@@ -27,16 +28,17 @@ import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
 
 const VideoControls = ({
+  playbackInfo,
   theme,
   currentTime,
-  remainingTime,
+  // remainingTime,
   buffering,
   previousAction,
   nextAction,
   isFirstEpisode,
   isLastEpisode,
   multipleMedia,
-  duration,
+  // duration,
   setVolume,
   isFullscreen,
   source,
@@ -76,26 +78,36 @@ const VideoControls = ({
     }
   });
 
+  const handleNextButtonPress = () => {
+    nextAction();
+    controlProps.setShowControls(true);
+  };
+
+  const handlePreviousButtonPress = () => {
+    previousAction();
+    controlProps.setShowControls(true);
+  };
+
   const getMediaStatus = async () => {
     if (!client) return;
     const { mediaInfo } = await client.getMediaStatus();
     setMediaInfo(mediaInfo);
   };
 
-  const handleSlidingStart = () => {
-    controlProps.setPaused(true);
-  };
+  // const handleSlidingStart = () => {
+  //   controlProps.setPaused(true);
+  // };
 
-  const handleSlidingComplete = async (position) => {
-    if (castSessionActive) {
-      if (!client) return;
+  // const handleSlidingComplete = async (position) => {
+  //   if (castSessionActive) {
+  //     if (!client) return;
 
-      await client.seek({ position });
-    }
+  //     await client.seek({ position });
+  //   }
 
-    controlProps.setSliderPosition(position);
-    controlProps.setPaused(false);
-  };
+  //   controlProps.setSliderPosition(position);
+  //   controlProps.setPaused(false);
+  // };
 
   const renderVolumeSlider = () => {
     if (castSessionActive) return;
@@ -197,7 +209,7 @@ const VideoControls = ({
           {/* <Pressable>
               <Icon name="caption" size={25} style={{ marginRight: 15 }} />
             </Pressable> */}
-          {controlProps.typename !== 'Iptv' ? (
+          {controlProps.qualitySwitchable ? (
             <Pressable onPress={() => controlProps.toggleVideoOptions()}>
               <Icon name="video-quality" size={theme.iconSize(3)} />
               <View
@@ -222,33 +234,13 @@ const VideoControls = ({
   };
 
   const renderProgressSlider = () => {
-    const timeRemaining = isNaN(remainingTime)
-      ? '0:00:00'
-      : moment(toDateTime(remainingTime)).format('H:mm:ss');
-
     return (
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <View style={{ flex: 1.5 }}>
-          <Text style={{ ...createFontFormat(10, 14) }}>
-            {moment(toDateTime(currentTime)).format('H:mm:ss')}
-          </Text>
-        </View>
-        <View style={{ flex: 7 }}>
-          <Slider
-            value={currentTime}
-            onSlidingStart={handleSlidingStart}
-            onSlidingComplete={(value) => handleSlidingComplete(value)}
-            style={{ width: '100%', height: 10 }}
-            minimumValue={0}
-            maximumValue={duration}
-            thumbTintColor={theme.iplayya.colors.vibrantpussy}
-            minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
-            maximumTrackTintColor="white"
-          />
-        </View>
-        <View style={{ flex: 1.5, alignItems: 'flex-end' }}>
-          <Text style={{ ...createFontFormat(10, 14) }}>{`-${timeRemaining}`}</Text>
-        </View>
+        <MediaPlayerSlider
+          playbackInfo={playbackInfo}
+          setPausedAction={controlProps.setPaused}
+          setSliderPosition={controlProps.setSliderPosition}
+        />
       </View>
     );
   };
@@ -259,13 +251,20 @@ const VideoControls = ({
     return controlProps.seriesTitle || controlProps.title;
   };
 
+  const setConditionalStyle = () => {
+    if (isFullscreen) return styles.containerStyleFullScreen;
+    return styles.containerStyle;
+  };
+
+  if (!controlProps.visible) return <View />;
+
   return (
     <View
       style={{
         backgroundColor: theme.iplayya.colors.black50,
-        ...styles.controls,
+        opacity: controlProps.visible ? 1 : 0,
         ...controlProps.style,
-        opacity: controlProps.visible ? 1 : 0
+        ...setConditionalStyle()
       }}
     >
       {/* volume slider */}
@@ -301,14 +300,7 @@ const VideoControls = ({
         }}
       >
         {multipleMedia && (
-          <PrevButton onPress={previousAction} disabled={isFirstEpisode} />
-          // <Pressable onPress={() => previousAction()} disabled={isFirstEpisode}>
-          //   <Icon
-          //     name="previous"
-          //     size={theme.iconSize(4)}
-          //     style={{ color: isFirstEpisode ? theme.iplayya.colors.white25 : 'white' }}
-          //   />
-          // </Pressable>
+          <PrevButton onPress={handlePreviousButtonPress} disabled={isFirstEpisode} />
         )}
         <Pressable onPress={() => controlProps.togglePlay()}>
           {buffering ? (
@@ -321,20 +313,7 @@ const VideoControls = ({
             />
           )}
         </Pressable>
-        {multipleMedia && (
-          <NextButton onPress={nextAction} disabled={isLastEpisode} />
-          // <Pressable
-          //   style={styles.buttonContainer}
-          //   onPress={() => nextAction()}
-          //   disabled={isLastEpisode}
-          // >
-          //   <Icon
-          //     name="next"
-          //     size={theme.iconSize(4)}
-          //     style={{ color: isLastEpisode ? theme.iplayya.colors.white25 : 'white' }}
-          //   />
-          // </Pressable>
-        )}
+        {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
 
       <View style={{ position: 'relative', zIndex: 101 }}>
@@ -347,9 +326,16 @@ const VideoControls = ({
 };
 
 const styles = StyleSheet.create({
-  controls: {
+  containerStyle: {
     width: Dimensions.get('window').width,
     height: 211,
+    padding: 10,
+    justifyContent: 'space-between',
+    zIndex: 99
+  },
+  containerStyleFullScreen: {
+    width: Dimensions.get('window').height,
+    height: Dimensions.get('window').width,
     padding: 10,
     justifyContent: 'space-between',
     zIndex: 99
@@ -371,18 +357,19 @@ VideoControls.propTypes = {
   playbackInfo: PropTypes.object,
   style: PropTypes.object,
   togglePlay: PropTypes.func.isRequired,
-  paused: PropTypes.bool.isRequired,
+  // paused: PropTypes.bool.isRequired,
   multipleMedia: PropTypes.bool,
   toggleVolumeSliderVisible: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func
 };
 
 VideoControls.defaultProps = {
-  multipleMedia: false
+  multipleMedia: false,
+  qualitySwitchable: false
 };
 
 const mapStateToProps = createStructuredSelector({
-  playbackInfo: selectPlaybackInfo,
+  // playbackInfo: selectPlaybackInfo,
   currentTime: selectCurrentTime,
   remainingTime: selectRemainingTime,
   duration: selectDuration

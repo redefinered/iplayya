@@ -77,12 +77,13 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      programs: []
     };
   },
   [Types.GET_CHANNEL_SUCCESS]: (state, action) => {
     const { channel, token } = action;
-
+    console.log({ channel });
     return {
       ...state,
       isFetching: false,
