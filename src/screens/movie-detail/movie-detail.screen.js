@@ -447,23 +447,6 @@ const MovieDetailScreen = ({
     return {};
   };
 
-  // const oldMediaplayerWrap = () => {
-  //   return (
-  //     <Pressable
-  //       onPress={() => handleTogglePlay()}
-  //       style={{
-  //         width: '100%',
-  //         height: 211,
-  //         marginBottom: 10
-  //         // justifyContent: 'center'
-  //         // alignItems: 'center'
-  //       }}
-  //     >
-  //       {renderMediaPlayer()}
-  //     </Pressable>
-  //   );
-  // };
-
   /// MAIN
   return (
     <View style={{ flex: 1 }}>

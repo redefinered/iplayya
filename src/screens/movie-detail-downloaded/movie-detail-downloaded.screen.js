@@ -1,15 +1,12 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-
 import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Platform, Modal } from 'react-native';
+import { View, ScrollView, Dimensions, StatusBar, Platform, Modal } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import { withTheme } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -28,7 +25,6 @@ import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
 } from 'modules/ducks/downloads/downloads.selectors';
-import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 import withLoader from 'components/with-loader.component';
@@ -41,38 +37,30 @@ const MovieDetailScreen = ({
   route: {
     params: { movie }
   },
-  videoSource,
-  playbackStartAction,
-  getMovieAction,
-  getMovieStartAction,
   isFavListUpdated,
   getFavoriteMoviesAction,
-  addMovieToFavoritesStartAction,
-
   downloadsIsFetching,
-  downloadStartAction,
   downloadStarted,
 
   videoUrls
 }) => {
-  const [paused, setPaused] = React.useState(true);
+  const [paused, setPaused] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [isMovieDownloaded] = React.useState(true);
   const [source, setSource] = React.useState('');
-  const [downloadedFiles, setDownloadedFiles] = React.useState([]);
   const [showSnackbar, setShowSnackbar] = React.useState(false);
+  const [fullscreen, setFullscreen] = React.useState(false);
+
+  const renderStatusbar = () => {
+    if (fullscreen) return <StatusBar hidden />;
+  };
 
   React.useEffect(() => {
-    // listDownloadedFiles();
-    // downloadStartAction();
-    // playbackStartAction();
-    // getMovieStartAction();
-    // addMovieToFavoritesStartAction();
-    // if (typeof videoId !== 'undefined') {
-    //   getMovieAction(movie.id);
-    // }
-  }, []);
+    if (fullscreen) return navigation.setOptions({ headerShown: false });
+
+    navigation.setOptions({ headerShown: true });
+  }, [fullscreen]);
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -94,23 +82,8 @@ const MovieDetailScreen = ({
     }, 3000);
   };
 
-  const listDownloadedFiles = async () => {
-    const ls = await RNFetchBlob.fs.ls(downloadPath);
-    setDownloadedFiles(ls);
-  };
-
   React.useEffect(() => {
     if (movie) {
-      const { is_series } = movie;
-      let videoUrl = '';
-
-      if (is_series) {
-        /// for testing
-        videoUrl = 'http://84.17.37.2/boxoffice/1080p/GodzillaVsKong-2021-1080p.mp4/index.m3u8';
-      } else {
-        videoUrl = videoSource;
-      }
-
       const { title: movieTitle } = movie;
       const titlesplit = movieTitle.split(' ');
       const title = titlesplit.join('_');
@@ -155,7 +128,6 @@ const MovieDetailScreen = ({
   if (!movie) return <View />;
 
   const {
-    id,
     year,
     description,
     rating_mpaa,
@@ -163,16 +135,154 @@ const MovieDetailScreen = ({
     director,
     thumbnail,
     is_series,
-    series,
-    video_urls,
-    __typename,
     ...otherFields
   } = movie;
 
+  const renderMediaPlayer = () => {
+    if (!source)
+      return (
+        <View
+          style={{
+            width: Dimensions.get('window').width,
+            height: 211,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'black'
+          }}
+        />
+      );
+
+    return (
+      <MediaPlayer
+        isSeries={is_series}
+        paused={paused}
+        source={source}
+        thumbnail={thumbnail}
+        title={title}
+        togglePlay={handleTogglePlay}
+        setPaused={setPaused}
+        loading={loading}
+        videoUrls={videoUrls}
+        fullscreen={fullscreen}
+        setFullscreen={setFullscreen}
+      />
+    );
+  };
+
+  const renderVideoCaption = () => {
+    if (!fullscreen)
+      return (
+        <ContentWrap>
+          <Text
+            style={{
+              ...createFontFormat(12, 16),
+              color: theme.iplayya.colors.white50
+            }}
+          >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
+        </ContentWrap>
+      );
+  };
+
+  console.log({ xxx: source });
+
+  const renderScreenContent = () => {
+    if (fullscreen) return;
+
+    return (
+      <React.Fragment>
+        {/* content */}
+        <ScrollView style={{ height: 300 }}>
+          <ContentWrap>
+            {/* <Pressable onPress={() => toggleControlVisible()}>
+            <Text>toggle control</Text>
+          </Pressable> */}
+            <Text style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}>{title}</Text>
+            <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
+            <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
+              <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
+                Director{' '}
+              </Text>
+              {director}
+            </Text>
+            <List.Section>
+              <List.Accordion
+                title="Read more"
+                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
+                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
+              >
+                {Object.keys(otherFields).map((key) => {
+                  return (
+                    <List.Item
+                      key={key}
+                      titleStyle={{ marginBottom: -10 }}
+                      title={
+                        <Text style={{ ...createFontFormat(14, 20) }}>
+                          <Text
+                            style={{
+                              color: theme.iplayya.colors.white50,
+                              ...createFontFormat(14, 20)
+                            }}
+                          >
+                            {key}{' '}
+                          </Text>
+                          {otherFields[key]}
+                        </Text>
+                      }
+                    />
+                  );
+                })}
+              </List.Accordion>
+            </List.Section>
+          </ContentWrap>
+        </ScrollView>
+
+        {/* loader for download starting */}
+        <Modal transparent visible={downloadsIsFetching}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: theme.iplayya.colors.black50
+            }}
+          >
+            <ActivityIndicator color={theme.iplayya.colors.vibrantpussy} />
+          </View>
+        </Modal>
+
+        <SnackBar
+          visible={showSnackbar}
+          message="Downloading movie. You can check the progress in Downloaded section."
+          iconName="download"
+          iconColor={theme.iplayya.colors.vibrantpussy}
+        />
+      </React.Fragment>
+    );
+  };
+
+  const setFullScreenPlayerStyle = () => {
+    if (fullscreen)
+      return {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+      };
+
+    return {};
+  };
+
   return (
-    <View style={{ marginTop: 10 }}>
+    <View style={{ flex: 1 }}>
+      {renderStatusbar()}
+
       {/* Player */}
-      <View>
+      <View style={{ ...setFullScreenPlayerStyle() }}>
+        {renderMediaPlayer()}
+        {renderVideoCaption()}
+      </View>
+
+      {/* Player */}
+      {/* <View>
         <Pressable
           onPress={() => handleTogglePlay()}
           style={{
@@ -217,122 +327,9 @@ const MovieDetailScreen = ({
             }}
           >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
         </ContentWrap>
-      </View>
+      </View> */}
 
-      {/* content */}
-      <ScrollView style={{ height: 300 }}>
-        <ContentWrap>
-          {/* <Pressable onPress={() => toggleControlVisible()}>
-            <Text>toggle control</Text>
-          </Pressable> */}
-          <Text style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}>{title}</Text>
-          <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
-          <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
-            <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
-              Director{' '}
-            </Text>
-            {director}
-          </Text>
-          <List.Section>
-            <List.Accordion
-              title="Read more"
-              style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
-              titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
-            >
-              {Object.keys(otherFields).map((key) => {
-                return (
-                  <List.Item
-                    key={key}
-                    titleStyle={{ marginBottom: -10 }}
-                    title={
-                      <Text style={{ ...createFontFormat(14, 20) }}>
-                        <Text
-                          style={{
-                            color: theme.iplayya.colors.white50,
-                            ...createFontFormat(14, 20)
-                          }}
-                        >
-                          {key}{' '}
-                        </Text>
-                        {otherFields[key]}
-                      </Text>
-                    }
-                  />
-                );
-              })}
-            </List.Accordion>
-          </List.Section>
-
-          {/* <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
-            <View style={styles.iconContainer}>
-              <Icon name="circular-play" size={24} />
-            </View>
-            <View>
-              <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Play movie</Text>
-            </View>
-          </Pressable>
-          <Pressable style={styles.settingItem}>
-            <View style={styles.iconContainer}>
-              <Icon name="watch" size={24} />
-            </View>
-            <View>
-              <Text style={{ ...createFontFormat(16, 22), fontWeight: 'bold' }}>Watch trailer</Text>
-            </View>
-          </Pressable> */}
-        </ContentWrap>
-
-        {/* <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
-          {series.map(({ season }, index) => {
-            const { episodes } = series[index];
-            return (
-              <List.Accordion
-                key={index}
-                title={`Season ${season}`}
-                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
-                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
-              >
-                {episodes.map(({ episode }, index) => {
-                  return (
-                    <List.Item
-                      key={index}
-                      onPress={() =>
-                        navigation.navigate('SeriesDetailScreen', {
-                          episodeFromParams: { season, episode }
-                        })
-                      }
-                      titleStyle={{ marginBottom: -10 }}
-                      title={
-                        <Text style={{ ...createFontFormat(14, 20) }}>{`Episode ${episode}`}</Text>
-                      }
-                    />
-                  );
-                })}
-              </List.Accordion>
-            );
-          })}
-        </ContentWrap> */}
-      </ScrollView>
-
-      {/* loader for download starting */}
-      <Modal transparent visible={downloadsIsFetching}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: theme.iplayya.colors.black50
-          }}
-        >
-          <ActivityIndicator color={theme.iplayya.colors.vibrantpussy} />
-        </View>
-      </Modal>
-
-      <SnackBar
-        visible={showSnackbar}
-        message="Downloading movie. You can check the progress in Downloaded section."
-        iconName="download"
-        iconColor={theme.iplayya.colors.vibrantpussy}
-      />
+      {renderScreenContent()}
     </View>
   );
 };
@@ -342,20 +339,6 @@ const Container = (props) => (
     <MovieDetailScreen {...props} />
   </ScreenContainer>
 );
-
-// const styles = StyleSheet.create({
-//   settingItem: {
-//     flexDirection: 'row',
-//     paddingVertical: 10
-//   },
-//   iconContainer: {
-//     width: 42,
-//     justifyContent: 'center'
-//   },
-//   controls: {
-//     position: 'absolute'
-//   }
-// });
 
 const actions = {
   getMovieAction: Creators.getMovie,
