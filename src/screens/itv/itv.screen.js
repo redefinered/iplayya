@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet, FlatList, Dimensions } from 'react-native';
+import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -91,12 +91,14 @@ const ItvScreen = ({
 
   // setup genres data
   React.useEffect(() => {
-    if (genres.length) {
-      let data = genres.map(({ id, title }) => ({ id, title }));
-      data.unshift({ id: 'all', title: 'All channels' });
+    InteractionManager.runAfterInteractions(() => {
+      if (genres.length) {
+        let data = genres.map(({ id, title }) => ({ id, title }));
+        data.unshift({ id: 'all', title: 'All channels' });
 
-      setGenresData(data);
-    }
+        setGenresData(data);
+      }
+    });
   }, [genres]);
 
   const handleSubscribeToItem = (channelId) => {
@@ -112,28 +114,34 @@ const ItvScreen = ({
   };
 
   React.useEffect(() => {
-    if (notifyIds.length) {
-      // set the subscribed variable for the snackbar
-      let latestItem = channels.find(({ id }) => parseInt(id) === notifyIds[notifyIds.length - 1]);
-      setSubscribed(latestItem.title);
+    InteractionManager.runAfterInteractions(() => {
+      if (notifyIds.length) {
+        // set the subscribed variable for the snackbar
+        let latestItem = channels.find(
+          ({ id }) => parseInt(id) === notifyIds[notifyIds.length - 1]
+        );
+        setSubscribed(latestItem.title);
 
-      setShowNotificationSnackBar(true);
-    }
+        setShowNotificationSnackBar(true);
+      }
+    });
   }, [notifyIds]);
 
   // setup channels data
   React.useEffect(() => {
-    if (channels.length) {
-      let data = channels.map(({ id, title, ...rest }) => ({
-        id,
-        title,
-        thumbnail: channelplaceholder,
-        ...rest
-      }));
-      setChannelsData(data);
-    } else {
-      setChannelsData([]);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      if (channels.length) {
+        let data = channels.map(({ id, title, ...rest }) => ({
+          id,
+          title,
+          thumbnail: channelplaceholder,
+          ...rest
+        }));
+        setChannelsData(data);
+      } else {
+        setChannelsData([]);
+      }
+    });
   }, [channels]);
 
   const handleWalkthroughGuideHide = () => {
@@ -196,17 +204,19 @@ const ItvScreen = ({
   };
 
   React.useEffect(() => {
-    getChannelsByCategoriesStartAction();
+    InteractionManager.runAfterInteractions(() => {
+      getChannelsByCategoriesStartAction();
 
-    if (paginator.pageNumber > 1) return;
-    if (selectedCategory === 'all') {
-      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-    } else {
-      getChannelsByCategoriesAction({
-        categories: [parseInt(selectedCategory)],
-        ...paginator
-      });
-    }
+      if (paginator.pageNumber > 1) return;
+      if (selectedCategory === 'all') {
+        getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      } else {
+        getChannelsByCategoriesAction({
+          categories: [parseInt(selectedCategory)],
+          ...paginator
+        });
+      }
+    });
   }, [selectedCategory]);
 
   const handleEndReached = () => {
@@ -394,7 +404,7 @@ const ItvScreen = ({
       </View>
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your favorites list`}
+        message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
       />

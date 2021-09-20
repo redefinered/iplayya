@@ -22,7 +22,7 @@ const MediaItem = ({ index, onLongPress, onSelect, filesize, selected, visible, 
       style={{
         paddingHorizontal: theme.spacing(2),
         paddingVertical: theme.spacing(2),
-        backgroundColor: isPressed ? theme.iplayya.colors.white10 : 'transparent'
+        backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent'
       }}
     >
       <View

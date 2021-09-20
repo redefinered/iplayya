@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, Banner, withTheme } from 'react-native-paper';
+import { View, StyleSheet, FlatList, InteractionManager } from 'react-native';
+import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -63,25 +63,29 @@ const ImovieScreen = ({
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   React.useEffect(() => {
-    addMovieToFavoritesStartAction();
-    getFavoritesAction();
-    enableSwipeAction(false);
+    InteractionManager.runAfterInteractions(() => {
+      addMovieToFavoritesStartAction();
+      getFavoritesAction();
+      enableSwipeAction(false);
 
-    // Subscribe to network changes
-    const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
-      setNetworkInfoAction({ type, isConnected });
+      // Subscribe to network changes
+      const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
+        setNetworkInfoAction({ type, isConnected });
+      });
+
+      // Unsubscribe
+      return () => unsubscribe();
     });
-
-    // Unsubscribe
-    return () => unsubscribe();
   }, []);
 
   React.useEffect(() => {
-    if (!movies) return;
+    InteractionManager.runAfterInteractions(() => {
+      if (!movies) return;
 
-    console.log({ movies });
+      console.log({ movies });
 
-    setData(movies);
+      setData(movies);
+    });
   }, [movies]);
 
   React.useEffect(() => {
@@ -97,9 +101,11 @@ const ImovieScreen = ({
   // console.log({ paginatorInfo });
   // get movies on mount
   React.useEffect(() => {
-    if (categoryPaginator.page === 1) {
-      getMoviesAction(paginatorInfo, categoryPaginator);
-    }
+    InteractionManager.runAfterInteractions(() => {
+      if (categoryPaginator.page === 1) {
+        getMoviesAction(paginatorInfo, categoryPaginator);
+      }
+    });
   }, [categoryPaginator]);
 
   const handleMovieSelect = ({ id: videoId, is_series }) => {
@@ -108,7 +114,7 @@ const ImovieScreen = ({
   };
 
   const renderEmpty = () => {
-    return <Text>No movies found</Text>;
+    return <ActivityIndicator size="small" />;
   };
 
   const handleRetry = () => {

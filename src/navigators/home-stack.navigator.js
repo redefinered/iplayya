@@ -36,6 +36,7 @@ import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
 import IplayScreen from 'screens/iplay/iplay.screen';
 import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
+import IplaySearchScreen from 'screens/iplay/iplay-search.screen';
 
 import IsportsScreen from 'screens/isports/isports.screen';
 import IsportsProgramGuideScreen from 'screens/isports/isports-program-guide.screen';
@@ -621,6 +622,7 @@ const HomeStack = ({
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple
+                  onPress={() => navigation.navigate('IplaySearchScreen')}
                   borderless={true}
                   style={{ borderRadius: 44, padding: 8 }}
                   rippleColor="rgba(0,0,0,0.28)"
@@ -636,6 +638,15 @@ const HomeStack = ({
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
+        />
+        <Stack.Screen
+          name="IplaySearchScreen"
+          component={IplaySearchScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={({ navigation }) => ({
+            title: 'Search',
+            ...TransitionPresets.ModalSlideFromBottomIOS
+          })}
         />
         <Stack.Screen
           name="IplayDetailScreen"
