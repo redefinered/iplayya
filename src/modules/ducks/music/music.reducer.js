@@ -7,6 +7,7 @@ import {
   shuffleTrackNumbers
 } from './music.utils';
 import uniqBy from 'lodash/uniqBy';
+import orderBy from 'lodash/orderBy';
 import { repeatTypes } from './music.utils';
 
 const INITIAL_STATE = {
@@ -229,13 +230,21 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_ALBUMS_SUCCESS]: (state, action) => {
-    const { albums, genrePaginator } = action;
+    const { genrePaginator } = action;
+    let { albums } = action;
+
+    // fixes issue where genre with spaces are ordered first
+    albums = albums.map(({ genre, ...rest }) => ({ genre: genre.trim(), ...rest }));
+
+    albums = uniqBy([...state.albums, ...albums], 'id');
+    albums = orderBy(albums, 'genre', 'asc');
+
     // console.log({ albums });
     return {
       ...state,
       isFetching: false,
       error: null,
-      albums: uniqBy([...state.albums, ...albums], 'id'),
+      albums,
       genrePaginator
     };
   },
