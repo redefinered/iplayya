@@ -287,7 +287,7 @@ const EmptyState = ({ theme, navigation }) => (
     <Spacer size={30} />
     <Pressable onPress={() => navigation.navigate('ImovieScreen')}>
       <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
-        Heart a movie to add to your favorites list.
+        Heart a movie to add in your Favorites list.
       </Text>
     </Pressable>
   </View>

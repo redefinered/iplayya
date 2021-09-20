@@ -4,11 +4,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Pressable, FlatList } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
-import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -133,9 +132,9 @@ const IplayScreen = ({
     }
 
     if (selectedItems.length === videoFiles.length) {
-      setDeleteMessage('Are you sure you want to delete all videos in your library list?');
+      setDeleteMessage('Are you sure you want to delete this Video/s from your library?');
     } else {
-      setDeleteMessage('Are you sure you want to delete these videos in your library?');
+      setDeleteMessage('Are you sure you want to delete this Video/s from your library?');
     }
   }, [selectedItems]);
 
@@ -232,7 +231,7 @@ const IplayScreen = ({
       {renderProcess()}
       {videoFiles.length ? (
         <React.Fragment>
-          <ContentWrap>
+          <ContentWrap style={{ paddingVertical: theme.spacing(2) }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ ...createFontFormat(16, 22) }}>Video Library</Text>
               <TouchableOpacity onPress={pickFiles} disabled={loading}>
@@ -246,7 +245,6 @@ const IplayScreen = ({
                 </Text>
               </TouchableOpacity>
             </View>
-            <Spacer size={35} />
 
             {activateCheckboxes && (
               <React.Fragment>
@@ -254,16 +252,25 @@ const IplayScreen = ({
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    paddingVertical: theme.spacing(2)
                   }}
                 >
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() => handleShowAlertMessage()}
-                    style={{ flexDirection: 'row', alignItems: 'center' }}
+                    // style={{ flexDirection: 'row', alignItems: 'center' }}
+                    style={({ pressed }) => [
+                      {
+                        padding: 5,
+                        backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                      }
+                    ]}
                   >
                     <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
                     <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
-                  </TouchableOpacity>
+                  </Pressable>
                   <Pressable
                     onPress={() => handleSelectAll()}
                     style={{ flexDirection: 'row', alignItems: 'center' }}
@@ -272,8 +279,6 @@ const IplayScreen = ({
                     <RadioButton selected={selectedItems.length === videoFiles.length} />
                   </Pressable>
                 </View>
-
-                <Spacer size={30} />
               </React.Fragment>
             )}
           </ContentWrap>
@@ -321,17 +326,18 @@ const IplayScreen = ({
           }}
         >
           <EmptyLibrary />
-          <Spacer size={30} />
-          <Text style={{ fontWeight: 'bold', ...createFontFormat(20, 27) }}>Play Your Video</Text>
-          <Spacer size={20} />
-          <ContentWrap style={{ maxWidth: '80%' }}>
+          <View style={{ paddingVertical: theme.spacing(3) }}>
+            <Text style={{ fontWeight: 'bold', ...createFontFormat(20, 27) }}>Play Your Video</Text>
+          </View>
+          <ContentWrap style={{ maxWidth: '80%', paddingVertical: theme.spacing(3) }}>
             <Text style={{ textAlign: 'center', ...createFontFormat(14, 19) }}>
               Add video from your media gallery and play it here on your video library
             </Text>
-            <Spacer size={20} />
-            <Button mode="contained" onPress={pickFiles}>
-              Add video
-            </Button>
+            <View style={{ paddingVertical: theme.spacing(2) }}>
+              <Button mode="contained" onPress={pickFiles}>
+                Add video
+              </Button>
+            </View>
           </ContentWrap>
         </View>
       )}
@@ -347,21 +353,30 @@ const IplayScreen = ({
               backgroundColor: '#202530',
               borderTopRightRadius: 24,
               borderTopLeftRadius: 24,
-              paddingHorizontal: 15,
-              paddingTop: 10,
-              paddingBottom: 10,
+              paddingHorizontal: 4,
               position: 'absolute',
               width: '100%',
-              bottom: 0
+              bottom: 0,
+              zIndex: theme.iplayya.zIndex.bottomTabs
             }}
           >
-            <TouchableWithoutFeedback
+            <Pressable
               onPress={() => navigation.replace('HomeScreen')}
-              style={{ alignItems: 'center' }}
+              // style={{ alignItems: 'center' }}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? theme.iplayya.colors.white25 : 'transparent',
+                  borderRadius: 34,
+                  height: 67,
+                  width: 67,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }
+              ]}
             >
               <Icon name="iplayya" size={theme.iconSize(3)} />
               <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-            </TouchableWithoutFeedback>
+            </Pressable>
           </View>
         </View>
       </React.Fragment>
@@ -425,7 +440,7 @@ const IplayScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <IplayScreen {...props} />
   </ScreenContainer>
 );
