@@ -156,12 +156,12 @@ const ItvFavoritesScreen = ({
 
   const getDeleteAlertMessage = () => {
     if (selectedItems.length === listData.length)
-      return 'Are you sure you want to delete all channels from your Favorites list?';
+      return 'Are you sure you want to delete this channel/s from your Favorites list?';
 
     if (selectedItems.length > 1)
-      return 'Are you sure you want to delete these channels from your Favorites list?';
+      return 'Are you sure you want to delete this channel/s from your Favorites list?';
 
-    return 'Are you sure you want to delete this channel from your Favorites list?';
+    return 'Are you sure you want to delete this channel/s from your Favorites list?';
   };
 
   if (listData.length || favorites.length)
@@ -420,7 +420,7 @@ const EmptyState = ({ theme, navigation }) => (
     <Spacer size={30} />
     <Pressable onPress={() => navigation.navigate('ItvScreen', { openItvGuide: false })}>
       <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
-        Heart a channel to add to your favorites list.
+        Heart a channel to add in your Favorites list.
       </Text>
     </Pressable>
   </View>

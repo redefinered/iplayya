@@ -53,7 +53,7 @@ const ItemPreview = ({
     );
 
   return (
-    <View style={{ marginRight: 10 }}>
+    <View style={{ marginRight: 10, flex: 1 }}>
       <TouchableOpacity onPress={() => onSelect(id)}>
         <View
           style={{
@@ -73,14 +73,18 @@ const ItemPreview = ({
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          paddingRight: 15,
-          maxWidth: 240
+          // paddingRight: 15,
+          width: 240
         }}
       >
-        <TouchableOpacity onPress={() => onSelect(id)}>
-          <Text style={styles.title}>{title}</Text>
-          {renderEpgtitle()}
-        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity onPress={() => onSelect(id)}>
+            <Text numberOfLines={1} style={styles.title}>
+              {title}
+            </Text>
+            {renderEpgtitle()}
+          </TouchableOpacity>
+        </View>
         <TouchableHighlight
           underlayColor="rgba(255,255,255,0.1)"
           style={styles.buttonContainer}

@@ -111,10 +111,12 @@ export const removeFromFavorites = async (input) => {
       refetchQueries: [
         {
           query: GET_FAVORITES,
+          // ariables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
           query: GET_CHANNELS,
+          // ariables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         }
       ],
