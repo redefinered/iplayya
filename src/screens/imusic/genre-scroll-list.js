@@ -8,10 +8,11 @@ import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selectors';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { useTheme } from 'react-native-paper';
+import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
-const SPACING_FOR_CARD_INSET = 15;
+const SPACING_FOR_CARD_INSET = theme.spacing(2);
 const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
 const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginatorOfCategory }) => {
@@ -58,7 +59,11 @@ const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginato
         >
           {name}
         </Text>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={{ fontSize: 12, maxWidth: 148 }}>
+        <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={{ fontSize: 12, maxWidth: 148, color: theme.iplayya.colors.white50 }}
+        >
           {performer}
         </Text>
       </React.Fragment>
@@ -86,14 +91,14 @@ const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginato
       data={data}
       showsHorizontalScrollIndicator={false}
       horizontal
-      // bounces={false}
+      bounces={false}
       // decelerationRate={0}
       snapToInterval={CARD_DIMENSIONS.WIDTH + 10}
       snapToAlignment="start"
       contentInset={{
         top: 0,
         bottom: 0,
-        left: SPACING_FOR_CARD_INSET,
+        // left: SPACING_FOR_CARD_INSET,
         right: SPACING_FOR_CARD_INSET
       }}
       contentContainerStyle={{
