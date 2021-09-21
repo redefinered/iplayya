@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, View, Image, ScrollView } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { StyleSheet, View, Image } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Button from 'components/button/button.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -20,8 +20,12 @@ import {
 import { connect } from 'react-redux';
 import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
+import { FlatList } from 'react-native-gesture-handler';
+import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
+
+const ITEM_HEIGHT = 64;
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
@@ -48,7 +52,6 @@ const AlbumDetail = ({
   isBackgroundMode,
   setNowPlayingAction,
   nowPlaying,
-  // setNowPlayingBackgroundModeAction,
   nowPlayingLayoutInfo,
   setShuffleOnAction,
   setShuffleOffAction,
@@ -56,7 +59,6 @@ const AlbumDetail = ({
   setPausedAction,
   clearRepeatAction
 }) => {
-  const theme = useTheme();
   const { album: albumData } = route.params;
 
   React.useEffect(() => {
@@ -103,6 +105,33 @@ const AlbumDetail = ({
     setNowPlayingAction(null, true); // select a random track from album
   };
 
+  const renderItem = ({ item: { name, ...rest } }) => (
+    <TouchableRipple onPress={() => handleSelectItem({ name, ...rest })}>
+      <View
+        style={{
+          flexDirection: 'row',
+          paddingHorizontal: theme.spacing(2),
+          paddingVertical: theme.spacing(1)
+        }}
+      >
+        <Image source={coverplaceholder} style={{ width: 40, height: 40 }} />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'space-between',
+            paddingVertical: 3,
+            paddingLeft: theme.spacing(1)
+          }}
+        >
+          <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{name}</Text>
+          <Text style={{ fontSize: 12, color: theme.iplayya.colors.white50 }}>
+            {`${album.performer} • 4:04 min`}
+          </Text>
+        </View>
+      </View>
+    </TouchableRipple>
+  );
+
   if (!album) return <View />;
 
   return (
@@ -137,7 +166,18 @@ const AlbumDetail = ({
         </Button>
       </ContentWrap>
 
-      <ScrollView>
+      <View style={{ flex: 1, paddingVertical: theme.spacing(1) }}>
+        <FlatList
+          data={album.tracks}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+        />
+        {renderBottomPadding()}
+      </View>
+      {/* <ScrollView>
         {album.tracks.map(({ name, number, ...rest }) => (
           <TouchableRipple key={number} onPress={() => handleSelectItem({ number, name, ...rest })}>
             <View
@@ -164,8 +204,8 @@ const AlbumDetail = ({
             </View>
           </TouchableRipple>
         ))}
-        {renderBottomPadding()}
-      </ScrollView>
+        
+      </ScrollView> */}
     </View>
   );
 };

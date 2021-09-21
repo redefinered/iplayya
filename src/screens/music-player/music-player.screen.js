@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, Pressable } from 'react-native';
+import { View, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
-import Icon from 'components/icon/icon.component';
 import { createFontFormat } from 'utils';
 import MusicPlayerSlider from './music-player-slider.component';
 import { compose } from 'redux';
@@ -13,6 +12,11 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import withLoader from 'components/with-loader.component';
 import { createStructuredSelector } from 'reselect';
+import ShuffleButton from 'components/button-shuffle/shuffle-button.component';
+import PrevButton from 'components/button-prev/prev-button.component';
+import NextButton from 'components/button-next/next-button.component';
+import RepeatButton from 'components/button-repeat/repeat-button.component';
+import PlayButton from 'components/button-play/play-button.component';
 import {
   selectNowPlaying,
   selectPaused,
@@ -110,6 +114,10 @@ const MusicPlayerScreen = ({
     );
   };
 
+  const handleTogglePlayAction = () => {
+    setPausedAction(!paused);
+  };
+
   const playPrevious = () => {
     /// set now playing to the next item in the selected album
     const nextTrackNumber = nowPlaying.sequence - 1;
@@ -143,13 +151,6 @@ const MusicPlayerScreen = ({
     );
   };
 
-  const getRepeatColor = () => {
-    if (repeat.order !== 1) return theme.iplayya.colors.vibrantpussy;
-
-    /// normal color
-    return 'white';
-  };
-
   if (nowPlaying) {
     const { name, performer } = nowPlaying;
     return (
@@ -160,6 +161,7 @@ const MusicPlayerScreen = ({
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <View style={{ marginBottom: 30 }}>
             <Text
+              numberOfLines={2}
               style={{
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -170,6 +172,7 @@ const MusicPlayerScreen = ({
               {name}
             </Text>
             <Text
+              numberOfLines={2}
               style={{
                 textAlign: 'center',
                 color: theme.iplayya.colors.vibrantpussy,
@@ -184,54 +187,11 @@ const MusicPlayerScreen = ({
         <MusicPlayerSlider />
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Pressable style={{ marginRight: 20 }} onPress={() => toggleShuffleAction()}>
-            <Icon
-              name="shuffle"
-              size={theme.iconSize(3)}
-              style={{
-                color: isShuffled ? theme.iplayya.colors.vibrantpussy : 'white'
-              }}
-            />
-          </Pressable>
-          <Pressable onPress={playPrevious} disabled={disablePrevious}>
-            <Icon
-              name="previous"
-              size={theme.iconSize(5)}
-              style={{ color: disablePrevious ? theme.iplayya.colors.white25 : 'white' }}
-            />
-          </Pressable>
-          <Pressable onPress={() => setPausedAction(!paused)}>
-            <Icon
-              name={paused ? 'circular-play' : 'circular-pause'}
-              size={theme.iconSize(10)}
-              style={{ marginHorizontal: 20 }}
-            />
-          </Pressable>
-          <Pressable onPress={playNext} disabled={disableNext}>
-            <Icon
-              name="next"
-              size={theme.iconSize(5)}
-              style={{ color: disableNext ? theme.iplayya.colors.white25 : 'white' }}
-            />
-          </Pressable>
-          <Pressable
-            style={{ marginLeft: 20, position: 'relative' }}
-            onPress={() => cycleRepeatAction()}
-          >
-            <Icon name="repeat" size={theme.iconSize(3)} style={{ color: getRepeatColor() }} />
-            <Text
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: -8,
-                fontWeight: 'bold',
-                color: getRepeatColor(),
-                opacity: repeat.order === 3 ? 1 : 0
-              }}
-            >
-              1
-            </Text>
-          </Pressable>
+          <ShuffleButton active={isShuffled} pressAction={toggleShuffleAction} />
+          <PrevButton pressAction={playPrevious} disabled={disablePrevious} />
+          <PlayButton paused={paused} pressAction={handleTogglePlayAction} />
+          <NextButton pressAction={playNext} disabled={disableNext} />
+          <RepeatButton repeat={repeat} pressAction={cycleRepeatAction} />
         </View>
       </ContentWrap>
     );

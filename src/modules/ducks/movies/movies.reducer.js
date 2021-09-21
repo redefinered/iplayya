@@ -78,14 +78,12 @@ export default createReducer(INITIAL_STATE, {
   },
   /// reset paginatorInfo so initial query
   [Types.GET_MOVIES_START]: (state) => {
-    // const { paginatorInfo } = INITIAL_STATE;
     return {
       ...state,
       isFetching: false,
       error: null,
-      categoryPaginator: { page: 1, limit: 10 }
-      // movies: []
-      // paginatorInfo
+      categoryPaginator: { page: 1, limit: 5 },
+      movies: []
     };
   },
   // get movies and update paginator i.e. increment pageNumber

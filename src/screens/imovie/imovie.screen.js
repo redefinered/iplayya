@@ -47,20 +47,22 @@ const ImovieScreen = ({
     true
   );
   const [data, setData] = React.useState([]);
-  /**
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   * TODO: scroll index is one render late -- fix!
-   */
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  console.log({ paginatorInfo });
+  // get movies on mount
+  React.useEffect(() => {
+    if (!paginatorInfo.length) return;
+
+    getMoviesAction(paginatorInfo, categoryPaginator);
+
+    // InteractionManager.runAfterInteractions(() => {
+    //   if (categoryPaginator.page === 1) {
+    //     getMoviesAction(paginatorInfo, categoryPaginator);
+    //   }
+    // });
+  }, []);
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
@@ -97,16 +99,6 @@ const ImovieScreen = ({
     }
     setScrollIndex(0);
   }, [params, data]);
-
-  // console.log({ paginatorInfo });
-  // get movies on mount
-  React.useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      if (categoryPaginator.page === 1) {
-        getMoviesAction(paginatorInfo, categoryPaginator);
-      }
-    });
-  }, [categoryPaginator]);
 
   const handleMovieSelect = ({ id: videoId, is_series }) => {
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });

@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selectors';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-import { useTheme } from 'react-native-paper';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
@@ -16,24 +15,45 @@ const SPACING_FOR_CARD_INSET = theme.spacing(2);
 const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
 const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginatorOfCategory }) => {
-  const theme = useTheme();
   const brand = theme.iplayya.colors;
 
   // eslint-disable-next-line react/prop-types
   const renderThumbnail = ({ cover, name, performer }) => {
     if (!cover) {
       return (
-        <View
-          style={{
-            width: CARD_DIMENSIONS.WIDTH,
-            height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
-            borderRadius: 8,
-            padding: theme.spacing(1)
-          }}
-        >
-          <Text style={{ fontSize: 16, color: brand.vibrantpussy }}>{name}</Text>
-        </View>
+        <React.Fragment>
+          <View
+            style={{
+              width: CARD_DIMENSIONS.WIDTH,
+              height: CARD_DIMENSIONS.HEIGHT,
+              backgroundColor: brand.white10,
+              borderRadius: 8,
+              padding: 10,
+              marginBottom: theme.spacing(1)
+            }}
+          >
+            <Text style={{ fontSize: 16, color: brand.vibrantpussy }}>{name}</Text>
+          </View>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 14,
+              marginBottom: theme.spacing(1),
+              maxWidth: 148
+            }}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {name}
+          </Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{ fontSize: 12, maxWidth: 148, color: theme.iplayya.colors.white50 }}
+          >
+            {performer}
+          </Text>
+        </React.Fragment>
       );
     }
     return (

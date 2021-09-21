@@ -29,7 +29,6 @@ const IplaySearchScreen = ({ navigation, isFetching, videoFiles }) => {
       const d = videoFiles.filter(
         ({ name }) => name.toLowerCase().search(term.toLowerCase()) !== -1
       );
-      console.log('ww', d);
       setData(d);
     } else {
       setData([]);

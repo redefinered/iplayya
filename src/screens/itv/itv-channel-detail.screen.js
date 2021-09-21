@@ -405,8 +405,7 @@ const mapStateToProps = createStructuredSelector({
   channel: selectChannel,
   programs: selectPrograms,
   currentProgram: selectCurrentProgram,
-  favoritesListUpdated: selectFavoritesListUpdated,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  favoritesListUpdated: selectFavoritesListUpdated
 });
 
 const actions = {
@@ -415,7 +414,8 @@ const actions = {
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
-  onNotifResetAction: NotificationCreators.onNotifReset
+  onNotifResetAction: NotificationCreators.onNotifReset,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
