@@ -20,6 +20,10 @@ const { Types, Creators } = createActions(
     getAlbumsByGenreSuccess: ['data'],
     getAlbumsByGenreFailure: ['error'],
 
+    addToFavorites: ['input'],
+    addToFavoritesSuccess: ['data'],
+    addToFavoritesFailure: ['error'],
+
     setNowPlaying: ['track', 'newPlaylist'],
     setProgress: ['progress'], // progress in percentage
     setPaused: ['isPaused'], // boolean

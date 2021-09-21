@@ -7,6 +7,7 @@ import Button from 'components/button/button.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
+import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -21,6 +22,7 @@ import { connect } from 'react-redux';
 import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { FlatList } from 'react-native-gesture-handler';
+import MoreButton from 'components/button-more/more-button.component';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
@@ -60,10 +62,15 @@ const AlbumDetail = ({
   clearRepeatAction
 }) => {
   const { album: albumData } = route.params;
+  const [showActionSheet, setShowActionSheet] = React.useState(false);
 
   React.useEffect(() => {
     if (albumData) getAlbumAction(albumData);
   }, [albumData]);
+
+  const hideActionSheet = () => {
+    setShowActionSheet(false);
+  };
 
   const handleSelectItem = (item) => {
     clearRepeatAction();
@@ -105,6 +112,34 @@ const AlbumDetail = ({
     setNowPlayingAction(null, true); // select a random track from album
   };
 
+  const handlePressAction = () => {
+    console.log('xxxxx');
+    setShowActionSheet(true);
+  };
+
+  const handleAddToFacoritesPress = () => {
+    console.log('add to favorites');
+    hideActionSheet();
+  };
+
+  const handleDownloadItem = () => {
+    console.log('download item');
+    hideActionSheet();
+  };
+
+  const actions = [
+    {
+      icon: 'heart-solid',
+      title: 'Add to favorites',
+      onPress: handleAddToFacoritesPress
+    },
+    {
+      icon: 'download',
+      title: 'Download',
+      onPress: handleDownloadItem
+    }
+  ];
+
   const renderItem = ({ item: { name, ...rest } }) => (
     <TouchableRipple onPress={() => handleSelectItem({ name, ...rest })}>
       <View
@@ -120,14 +155,18 @@ const AlbumDetail = ({
             flex: 1,
             justifyContent: 'space-between',
             paddingVertical: 3,
-            paddingLeft: theme.spacing(1)
+            paddingLeft: theme.spacing(1),
+            paddingRight: 5
           }}
         >
-          <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{name}</Text>
+          <Text numberOfLines={1} style={{ fontWeight: 'bold', fontSize: 14 }}>
+            {name}
+          </Text>
           <Text style={{ fontSize: 12, color: theme.iplayya.colors.white50 }}>
             {`${album.performer} • 4:04 min`}
           </Text>
         </View>
+        <MoreButton pressAction={handlePressAction} />
       </View>
     </TouchableRipple>
   );
@@ -168,6 +207,7 @@ const AlbumDetail = ({
 
       <View style={{ flex: 1, paddingVertical: theme.spacing(1) }}>
         <FlatList
+          bounces={false}
           data={album.tracks}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
@@ -177,35 +217,7 @@ const AlbumDetail = ({
         />
         {renderBottomPadding()}
       </View>
-      {/* <ScrollView>
-        {album.tracks.map(({ name, number, ...rest }) => (
-          <TouchableRipple key={number} onPress={() => handleSelectItem({ number, name, ...rest })}>
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingHorizontal: theme.spacing(2),
-                paddingVertical: theme.spacing(1)
-              }}
-            >
-              <Image source={coverplaceholder} style={{ width: 40, height: 40 }} />
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'space-between',
-                  paddingVertical: 3,
-                  paddingLeft: theme.spacing(1)
-                }}
-              >
-                <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{name}</Text>
-                <Text style={{ fontSize: 12, color: theme.iplayya.colors.white50 }}>
-                  {`${album.performer} • 4:04 min`}
-                </Text>
-              </View>
-            </View>
-          </TouchableRipple>
-        ))}
-        
-      </ScrollView> */}
+      <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
     </View>
   );
 };
