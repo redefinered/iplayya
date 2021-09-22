@@ -57,9 +57,14 @@ const ItvChannelDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showFavSnackBar, setShowFavSnackBar] = React.useState(false);
-  // const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
   const [contentHeight, setContentHeight] = React.useState(null);
   const [fullscreen, setFullscreen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!channel) return;
+
+    navigation.setParams({ channel });
+  }, [channel]);
 
   /// hide status bar if fullscreen
   const renderStatusbar = () => {
