@@ -22,13 +22,16 @@ import {
   selectPaused,
   selectPlaylist,
   selectShuffle,
-  selectRepeat
+  selectRepeat,
+  selectAlbumId,
+  selectTrack
 } from 'modules/ducks/music/music.selectors';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const MusicPlayerScreen = ({
+  navigation,
   playlist,
   nowPlaying,
   setNowPlayingAction,
@@ -39,7 +42,10 @@ const MusicPlayerScreen = ({
   isShuffled,
   toggleShuffleAction,
   cycleRepeatAction,
-  repeat
+  repeat,
+  getAlbumDetailsAction,
+  albumId,
+  track
 }) => {
   const [disablePrevious, setDisablePrevious] = React.useState(true);
   const [disableNext, setDisableNext] = React.useState(false);
@@ -49,13 +55,25 @@ const MusicPlayerScreen = ({
 
     updateButtons(nowPlaying);
 
+    /// set track as navigation parameter for use of the add to favorites button
+    navigation.setParams({ track });
+
     // Unsubscribe
-    return () => setNowPlayingBackgroundModeAction(false);
+    return () => {
+      setNowPlayingBackgroundModeAction(false);
+      getAlbumDetailsAction(albumId);
+    };
   }, []);
 
   React.useEffect(() => {
     updateButtons(nowPlaying);
+
+    navigation.setParams({ track });
   }, [nowPlaying]);
+
+  // React.useCallback(() => {
+
+  // }, [track]);
 
   const updateButtons = (nowPlaying) => {
     setProgressAction(0);
@@ -208,6 +226,7 @@ const Container = (props) => (
 
 const actions = {
   setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  getAlbumDetailsAction: Creators.getAlbumDetails,
   setPausedAction: Creators.setPaused,
   setProgressAction: Creators.setProgress,
   setNowPlayingAction: Creators.setNowPlaying,
@@ -217,6 +236,8 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  track: selectTrack,
+  albumId: selectAlbumId,
   playlist: selectPlaylist,
   paused: selectPaused,
   nowPlaying: selectNowPlaying,

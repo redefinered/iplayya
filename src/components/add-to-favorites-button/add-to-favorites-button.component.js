@@ -1,15 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
 import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
 import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
+import theme from 'common/theme';
 
 const AddToFavoritesButton = ({ sub, pressAction, active }) => {
-  const theme = useTheme();
   const [colored, setColored] = React.useState(false);
 
   React.useEffect(() => {
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
 });
 
 AddToFavoritesButton.propTypes = {
-  sub: PropTypes.number,
+  sub: PropTypes.any,
   pressAction: PropTypes.func,
   active: PropTypes.bool
 };

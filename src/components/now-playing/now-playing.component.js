@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Image, Pressable, Dimensions } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
@@ -15,19 +15,19 @@ import {
   selectPaused,
   selectPlaybackProgress,
   selectRepeat,
-  selectSeekValue
+  selectSeekValue,
+  selectAlbumId
 } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import DeviceInfo from 'react-native-device-info';
 import clone from 'lodash/clone';
-
-// const coverplaceholder = require('assets/imusic-placeholder.png');
+import theme from 'common/theme';
 
 const NowPlaying = ({
-  // eslint-disable-next-line react/prop-types
   navigation,
+  albumId,
   nowPlaying,
   playlist,
   progress,
@@ -41,8 +41,6 @@ const NowPlaying = ({
   repeat,
   seekValue
 }) => {
-  // console.log({ playbackCounter });
-  const theme = useTheme();
   const rootComponent = React.useRef();
   const player = React.useRef();
 
@@ -224,8 +222,7 @@ const NowPlaying = ({
   };
 
   const handlePress = () => {
-    const { number } = nowPlaying;
-    navigation.navigate('MusicPlayerScreen', { number });
+    navigation.navigate('MusicPlayerScreen', { trackId: nowPlaying.id, albumId });
   };
 
   const visibilityStyles = () => {
@@ -328,8 +325,10 @@ const NowPlaying = ({
 };
 
 NowPlaying.propTypes = {
+  track: PropTypes.object,
   navigation: PropTypes.object,
   theme: PropTypes.object,
+  albumId: PropTypes.string,
   paused: PropTypes.bool,
   setPausedAction: PropTypes.func,
   nowPlaying: PropTypes.object,
@@ -353,6 +352,7 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  albumId: selectAlbumId,
   paused: selectPaused,
   progress: selectPlaybackProgress,
   nowPlaying: selectNowPlaying,
@@ -363,4 +363,4 @@ const mapStateToProps = createStructuredSelector({
   seekValue: selectSeekValue
 });
 
-export default connect(mapStateToProps, actions)(NowPlaying);
+export default connect(mapStateToProps, actions)(React.memo(NowPlaying));

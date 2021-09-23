@@ -3,8 +3,13 @@ import { Types, Creators } from 'modules/ducks/imusic-favorites/imusic-favorites
 import { addTrackToFavorites, addAlbumToFavorites } from 'services/imusic-favorites.service';
 
 export function* addTrackToFavoritesRequest(action) {
+  const { trackId, albumId } = action.data;
   try {
-    const { addImusicToFavorites: responseData } = yield call(addTrackToFavorites, action.trackId);
+    const { addImusicToFavorites: responseData } = yield call(
+      addTrackToFavorites,
+      trackId,
+      albumId
+    );
 
     // if request is not successful
     if (responseData.status !== 'success')

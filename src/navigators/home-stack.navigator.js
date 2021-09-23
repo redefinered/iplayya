@@ -695,7 +695,6 @@ const HomeStack = ({
           }}
         />
 
-        {/* <ChannelDetailsStackScreen /> */}
         <Stack.Screen
           name="MusicPlayerScreen"
           component={MusicPlayerScreen}
@@ -703,9 +702,10 @@ const HomeStack = ({
           options={(props) => {
             const {
               route: {
-                params: { trackId }
+                params: { trackId, albumId, track }
               }
             } = props;
+            console.log({ track });
 
             // const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
             return {
@@ -714,9 +714,9 @@ const HomeStack = ({
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
-                    sub={parseInt(trackId)}
-                    module="imusic"
-                    // inFavorites={isInFavorites >= 0 ? true : false}
+                    sub={{ trackId: parseInt(trackId), albumId: parseInt(albumId) }}
+                    pressAction={rest.addTrackToFavoritesAction}
+                    active={typeof track === 'undefined' ? false : track.is_favorite}
                   />
                   <DownloadButton albumId={trackId} />
                 </View>

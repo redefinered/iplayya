@@ -81,15 +81,6 @@ const AlbumDetail = ({
     navigation.setParams({ album });
   }, [album]);
 
-  // React.useEffect(() => {
-  //   if (!updated) return;
-
-  //   getAlbumDetailsAction(albumId);
-
-  //   /// reset update checker
-  //   addAlbumToFavoritesStartAction();
-  // }, [updated]);
-
   const hideActionSheet = () => {
     setShowActionSheet(false);
   };

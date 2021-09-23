@@ -6,7 +6,7 @@ const { Types, Creators } = createActions(
     getFavoritesSuccess: ['data', 'nextPaginator'],
     getFavoritesFailure: ['error'],
 
-    addTrackToFavorites: ['trackId'],
+    addTrackToFavorites: ['data'],
     addTrackToFavoritesSuccess: null,
     addTrackToFavoritesFailure: ['error'],
 
