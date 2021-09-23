@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Banner, withTheme } from 'react-native-paper';
+import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -63,6 +63,11 @@ const ImusicScreen = ({
     };
   }, []);
 
+  /// retry get data if empty
+  React.useEffect(() => {
+    if (!albums.length) handleRetry();
+  }, [albums]);
+
   React.useEffect(() => {
     if (paginatorInfo.length) {
       getAlbumsAction(paginatorInfo, { page: 1, limit: 10 });
@@ -70,11 +75,11 @@ const ImusicScreen = ({
   }, [paginatorInfo]);
 
   const handleSelect = (album) => {
-    navigation.navigate('AlbumDetailScreen', { album });
+    navigation.navigate('AlbumDetailScreen', { albumId: album.id });
   };
 
   const renderEmpty = () => {
-    return <Text>No music found</Text>;
+    return <ActivityIndicator />;
   };
 
   const handleRetry = () => {

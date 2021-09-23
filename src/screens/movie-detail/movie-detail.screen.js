@@ -69,6 +69,12 @@ const MovieDetailScreen = ({
   const [showFavoriteSnackBar, setShowFavoriteSnackBar] = React.useState(false);
   const [fullscreen, setFullscreen] = React.useState(false);
 
+  React.useEffect(() => {
+    if (!movie) return;
+
+    navigation.setParams({ movie });
+  }, [movie]);
+
   const renderStatusbar = () => {
     if (fullscreen) return <StatusBar hidden />;
   };

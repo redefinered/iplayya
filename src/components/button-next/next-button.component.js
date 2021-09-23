@@ -20,7 +20,7 @@ const NextButton = ({ disabled, pressAction }) => (
     <Icon
       name="next"
       size={theme.iconSize(5)}
-      style={{ color: disabled ? theme.iplayya.colors.white25 : 'white' }}
+      color={disabled ? theme.iplayya.colors.white25 : 'white'}
     />
   </TouchableRipple>
 );

@@ -4,7 +4,7 @@ import { TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import theme from 'common/theme';
 
-const MoreButton = ({ disabled, pressAction }) => (
+const MoreButton = ({ disabled, pressAction, data }) => (
   <TouchableRipple
     borderless
     style={{
@@ -14,20 +14,21 @@ const MoreButton = ({ disabled, pressAction }) => (
       alignItems: 'center',
       justifyContent: 'center'
     }}
-    onPress={() => pressAction()}
+    onPress={() => pressAction(data)}
     disabled={disabled}
   >
     <Icon
       name="more"
       size={theme.iconSize(3)}
-      style={{ color: disabled ? theme.iplayya.colors.white25 : 'white' }}
+      color={disabled ? theme.iplayya.colors.white25 : 'white'}
     />
   </TouchableRipple>
 );
 
 MoreButton.propTypes = {
   disabled: PropTypes.bool,
-  pressAction: PropTypes.func
+  pressAction: PropTypes.func,
+  data: PropTypes.object
 };
 
 export default MoreButton;

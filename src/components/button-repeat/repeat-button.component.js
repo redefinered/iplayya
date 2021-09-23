@@ -26,7 +26,7 @@ const RepeatButton = ({ repeat, pressAction }) => {
       onPress={() => pressAction()}
     >
       <View>
-        <Icon name="repeat" size={theme.iconSize(3)} style={{ color: getRepeatColor() }} />
+        <Icon name="repeat" size={theme.iconSize(3)} color={getRepeatColor()} />
         <Text
           style={{
             position: 'absolute',

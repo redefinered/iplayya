@@ -24,6 +24,7 @@ export const GET_CHANNEL = gql`
       number
       title
       url
+      is_favorite
     }
   }
 `;

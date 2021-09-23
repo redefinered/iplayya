@@ -19,9 +19,7 @@ const ShuffleButton = ({ active, pressAction }) => (
     <Icon
       name="shuffle"
       size={theme.iconSize(3)}
-      style={{
-        color: active ? theme.iplayya.colors.vibrantpussy : 'white'
-      }}
+      color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
     />
   </TouchableRipple>
 );

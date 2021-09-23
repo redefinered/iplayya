@@ -11,18 +11,19 @@ const { Types, Creators } = createActions(
     getAlbumsSuccess: ['albums', 'genrePaginator'],
     getAlbumsFailure: ['error'],
 
-    getAlbumStart: null,
-    getAlbum: ['album'],
-    getAlbumSuccess: ['album'],
-    getAlbumFailure: ['error'],
+    // getTracksByAlbumStart: null,
+    // getTracksByAlbum: ['album'],
+    // getTracksByAlbumSuccess: ['album'],
+    // getTracksByAlbumFailure: ['error'],
+
+    getAlbumDetailsStart: null,
+    getAlbumDetails: ['albumId'],
+    getAlbumDetailsSuccess: ['album'],
+    getAlbumDetailsFailure: ['error'],
 
     getAlbumsByGenre: ['input'],
     getAlbumsByGenreSuccess: ['data'],
     getAlbumsByGenreFailure: ['error'],
-
-    addToFavorites: ['input'],
-    addToFavoritesSuccess: ['data'],
-    addToFavoritesFailure: ['error'],
 
     setNowPlaying: ['track', 'newPlaylist'],
     setProgress: ['progress'], // progress in percentage

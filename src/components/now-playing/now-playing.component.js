@@ -257,8 +257,6 @@ const NowPlaying = ({
   };
 
   if (nowPlaying) {
-    // const { url: uri } = nowPlaying;
-
     return (
       <Pressable
         onPress={handlePress}
@@ -275,16 +273,6 @@ const NowPlaying = ({
         }}
       >
         {renderPlayer()}
-
-        {/* <Video
-          ref={player}
-          paused={paused}
-          source={{ uri }}
-          onBuffer={handleBuffer}
-          onError={handleError}
-          onProgress={handleProgress}
-          playInBackground
-        /> */}
 
         <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
           <View
@@ -331,11 +319,6 @@ const NowPlaying = ({
             </Pressable>
           </View>
         </View>
-        {/* {hasNotch && (
-          <View style={{ height: 20, backgroundColor: '#202530' }}>
-            <View style={{ height: 1, backgroundColor: theme.iplayya.colors.white10 }} />
-          </View>
-        )} */}
       </Pressable>
     );
   }

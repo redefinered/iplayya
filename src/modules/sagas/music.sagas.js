@@ -1,6 +1,11 @@
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/music/music.actions';
-import { getGenres, getAlbum, getAlbumsByGenre } from 'services/music.service';
+import {
+  getAlbumDetails,
+  getGenres,
+  getTracksByAlbum,
+  getAlbumsByGenre
+} from 'services/music.service';
 
 export function* getGenresRequest() {
   try {
@@ -48,18 +53,33 @@ export function* getAlbumsRequest(action) {
   }
 }
 
-export function* getAlbumRequest(action) {
-  const { id: albumId, ...rest } = action.album;
+// export function* getTracksByAlbumRequest(action) {
+//   try {
+//     const { musicsByAlbum: tracks } = yield call(getTracksByAlbum, { albumId: action.album.id });
+//     yield put(Creators.getTracksByAlbumSuccess({ ...action.album, tracks }));
+//   } catch (error) {
+//     yield put(Creators.getTracksByAlbumFailure(error.message));
+//   }
+// }
+
+export function* getAlbumDetailsRequest(action) {
   try {
-    const { musicsByAlbum: tracks } = yield call(getAlbum, { albumId });
-    yield put(Creators.getAlbumSuccess({ tracks, ...rest }));
+    /// get album information
+    const { album } = yield call(getAlbumDetails, action.albumId);
+
+    // then get tracks
+    const { musicsByAlbum: tracks } = yield call(getTracksByAlbum, { albumId: action.albumId });
+
+    // set album and tracks as 1 album object
+    yield put(Creators.getAlbumDetailsSuccess({ ...album, tracks }));
   } catch (error) {
-    yield put(Creators.getAlbumFailure(error.message));
+    yield put(Creators.getAlbumDetailsFailure(error.message));
   }
 }
 
 export default function* musicSagas() {
-  yield takeLatest(Types.GET_ALBUM, getAlbumRequest);
+  yield takeLatest(Types.GET_ALBUM_DETAILS, getAlbumDetailsRequest);
+  // yield takeLatest(Types.GET_TRACKS_BY_ALBUM, getTracksByAlbumRequest);
   yield takeLatest(Types.GET_ALBUMS, getAlbumsRequest);
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
 }

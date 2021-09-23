@@ -1,5 +1,10 @@
 import client from 'apollo/client';
-import { GET_GENRES, GET_ALBUM, GET_ALBUMS_BY_GENRE } from 'graphql/music.graphql';
+import {
+  GET_GENRES,
+  GET_TRACKS_BY_ALBUM,
+  GET_ALBUM_DETAILS,
+  GET_ALBUMS_BY_GENRE
+} from 'graphql/music.graphql';
 
 export const getGenres = async () => {
   try {
@@ -24,10 +29,22 @@ export const getAlbumsByGenre = async (input) => {
   }
 };
 
-export const getAlbum = async (input) => {
+export const getAlbumDetails = async (albumId) => {
   try {
     const { data } = await client.query({
-      query: GET_ALBUM,
+      query: GET_ALBUM_DETAILS,
+      variables: { input: { albumId } }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getTracksByAlbum = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_TRACKS_BY_ALBUM,
       variables: { input }
     });
     return data;

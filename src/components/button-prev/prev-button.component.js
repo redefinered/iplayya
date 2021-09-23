@@ -20,7 +20,7 @@ const PrevButton = ({ disabled, pressAction }) => (
     <Icon
       name="previous"
       size={theme.iconSize(5)}
-      style={{ color: disabled ? theme.iplayya.colors.white25 : 'white' }}
+      color={disabled ? theme.iplayya.colors.white25 : 'white'}
     />
   </TouchableRipple>
 );

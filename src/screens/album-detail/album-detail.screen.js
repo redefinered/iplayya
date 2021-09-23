@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, FlatList } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Button from 'components/button/button.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -9,6 +9,7 @@ import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { Creators } from 'modules/ducks/music/music.actions';
+import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -18,10 +19,10 @@ import {
   selectIsBackgroundMode,
   selectNowPlayingLayoutInfo
 } from 'modules/ducks/music/music.selectors';
+import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.selectors';
 import { connect } from 'react-redux';
 import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
-import { FlatList } from 'react-native-gesture-handler';
 import MoreButton from 'components/button-more/more-button.component';
 import theme from 'common/theme';
 
@@ -30,7 +31,7 @@ const coverplaceholder = require('assets/imusic-placeholder.png');
 const ITEM_HEIGHT = 64;
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: { flex: 1, marginTop: theme.spacing(2) },
   cover: {
     width: 148,
     height: 148,
@@ -46,11 +47,12 @@ const styles = StyleSheet.create({
 });
 
 const AlbumDetail = ({
-  // eslint-disable-next-line no-unused-vars
   navigation,
   route,
   album,
-  getAlbumAction,
+  // updated,
+  getAlbumDetailsStartAction,
+  // addAlbumToFavoritesStartAction,
   isBackgroundMode,
   setNowPlayingAction,
   nowPlaying,
@@ -59,14 +61,34 @@ const AlbumDetail = ({
   setShuffleOffAction,
   setProgressAction,
   setPausedAction,
-  clearRepeatAction
+  clearRepeatAction,
+  addTrackToFavoritesAction,
+  getAlbumDetailsAction
 }) => {
-  const { album: albumData } = route.params;
+  const { albumId } = route.params;
   const [showActionSheet, setShowActionSheet] = React.useState(false);
+  const [selectedTrack, setSelectedTrack] = React.useState(null);
 
   React.useEffect(() => {
-    if (albumData) getAlbumAction(albumData);
-  }, [albumData]);
+    getAlbumDetailsAction(albumId);
+    /// clean up
+    return () => getAlbumDetailsStartAction();
+  }, []);
+
+  React.useEffect(() => {
+    if (!album) return;
+
+    navigation.setParams({ album });
+  }, [album]);
+
+  // React.useEffect(() => {
+  //   if (!updated) return;
+
+  //   getAlbumDetailsAction(albumId);
+
+  //   /// reset update checker
+  //   addAlbumToFavoritesStartAction();
+  // }, [updated]);
 
   const hideActionSheet = () => {
     setShowActionSheet(false);
@@ -112,13 +134,16 @@ const AlbumDetail = ({
     setNowPlayingAction(null, true); // select a random track from album
   };
 
-  const handlePressAction = () => {
-    console.log('xxxxx');
+  const handlePressAction = (data) => {
+    setSelectedTrack(data);
     setShowActionSheet(true);
   };
 
   const handleAddToFacoritesPress = () => {
-    console.log('add to favorites');
+    if (!selectedTrack) return;
+
+    addTrackToFavoritesAction(selectedTrack.id);
+
     hideActionSheet();
   };
 
@@ -140,8 +165,10 @@ const AlbumDetail = ({
     }
   ];
 
+  if (!album) return <View />;
+
   const renderItem = ({ item: { name, ...rest } }) => (
-    <TouchableRipple onPress={() => handleSelectItem({ name, ...rest })}>
+    <TouchableRipple onPress={() => handleSelectItem({ ...rest, name })}>
       <View
         style={{
           flexDirection: 'row',
@@ -166,12 +193,29 @@ const AlbumDetail = ({
             {`${album.performer} • 4:04 min`}
           </Text>
         </View>
-        <MoreButton pressAction={handlePressAction} />
+        <MoreButton pressAction={handlePressAction} data={{ name, ...rest }} />
       </View>
     </TouchableRipple>
   );
 
-  if (!album) return <View />;
+  const renderPrograms = () => {
+    if (typeof album.tracks === 'undefined') return;
+
+    return (
+      <View style={{ flex: 1, paddingVertical: theme.spacing(1) }}>
+        <FlatList
+          bounces={false}
+          data={album.tracks}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+        />
+        {renderBottomPadding()}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.root}>
@@ -205,18 +249,7 @@ const AlbumDetail = ({
         </Button>
       </ContentWrap>
 
-      <View style={{ flex: 1, paddingVertical: theme.spacing(1) }}>
-        <FlatList
-          bounces={false}
-          data={album.tracks}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          getItemLayout={(data, index) => {
-            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-          }}
-        />
-        {renderBottomPadding()}
-      </View>
+      {renderPrograms()}
       <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
     </View>
   );
@@ -229,21 +262,25 @@ const Container = (props) => (
 );
 
 const actions = {
-  getAlbumStartAction: Creators.getAlbumStart,
-  getAlbumAction: Creators.getAlbum,
+  getAlbumDetailsStartAction: Creators.getAlbumDetailsStart,
+  getAlbumDetailsAction: Creators.getAlbumDetails,
   setNowPlayingAction: Creators.setNowPlaying,
-  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  // setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
   setPausedAction: Creators.setPaused,
   setShuffleOnAction: Creators.setShuffleOn,
   setShuffleOffAction: Creators.setShuffleOff,
   setProgressAction: Creators.setProgress,
-  clearRepeatAction: Creators.clearRepeat
+  clearRepeatAction: Creators.clearRepeat,
+  addTrackToFavoritesAction: FavoritesCreators.addTrackToFavorites,
+  addAlbumToFavoritesStartAction: FavoritesCreators.addAlbumToFavoritesStart
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   album: selectAlbum,
+  updated: selectUpdated,
+  // isFavorite: selectIsFavorite,
   nowPlaying: selectNowPlaying,
   isBackgroundMode: selectIsBackgroundMode,
   nowPlayingLayoutInfo: selectNowPlayingLayoutInfo

@@ -117,17 +117,33 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  /// get album
-  [Types.GET_ALBUM_START]: (state) => {
-    return { ...state, album: null };
+  /// get tracks by album
+  // [Types.GET_TRACKS_BY_ALBUM_START]: (state) => {
+  //   return { ...state, album: null };
+  // },
+  // [Types.GET_TRACKS_BY_ALBUM]: (state) => {
+  //   return { ...state, isFetching: true, error: null, album: null };
+  // },
+  // [Types.GET_TRACKS_BY_ALBUM_SUCCESS]: (state, action) => {
+  //   return { ...state, isFetching: false, album: action.album };
+  // },
+  // [Types.GET_TRACKS_BY_ALBUM_FAILURE]: (state, action) => {
+  //   return { ...state, isFetching: false, album: null, error: action.error };
+  // },
+
+  /// album details
+  [Types.GET_ALBUM_DETAILS_START]: (state) => ({ ...state, album: null }),
+  [Types.GET_ALBUM_DETAILS]: (state) => {
+    return { ...state, isFetching: true, error: null };
   },
-  [Types.GET_ALBUM]: (state) => {
-    return { ...state, isFetching: true, error: null, album: null };
+  [Types.GET_ALBUM_DETAILS_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      album: action.album
+    };
   },
-  [Types.GET_ALBUM_SUCCESS]: (state, action) => {
-    return { ...state, isFetching: false, album: action.album };
-  },
-  [Types.GET_ALBUM_FAILURE]: (state, action) => {
+  [Types.GET_ALBUM_DETAILS_FAILURE]: (state, action) => {
     return { ...state, isFetching: false, album: null, error: action.error };
   },
 
