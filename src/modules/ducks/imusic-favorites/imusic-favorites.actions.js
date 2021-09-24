@@ -2,6 +2,8 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    start: null,
+
     getFavorites: ['trackId'],
     getFavoritesSuccess: ['data', 'nextPaginator'],
     getFavoritesFailure: ['error'],

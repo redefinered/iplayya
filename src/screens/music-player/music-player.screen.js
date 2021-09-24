@@ -7,16 +7,18 @@ import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
 import MusicPlayerSlider from './music-player-slider.component';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/music/music.actions';
+import SnackBar from 'components/snackbar/snackbar.component';
 import withLoader from 'components/with-loader.component';
-import { createStructuredSelector } from 'reselect';
 import ShuffleButton from 'components/button-shuffle/shuffle-button.component';
 import PrevButton from 'components/button-prev/prev-button.component';
 import NextButton from 'components/button-next/next-button.component';
 import RepeatButton from 'components/button-repeat/repeat-button.component';
 import PlayButton from 'components/button-play/play-button.component';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/music/music.actions';
+import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
+import { createStructuredSelector } from 'reselect';
 import {
   selectNowPlaying,
   selectPaused,
@@ -26,6 +28,7 @@ import {
   selectAlbumId,
   selectTrack
 } from 'modules/ducks/music/music.selectors';
+import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.selectors';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
@@ -45,10 +48,14 @@ const MusicPlayerScreen = ({
   repeat,
   getAlbumDetailsAction,
   albumId,
-  track
+  track,
+  updated,
+  favoritesStartAction,
+  route
 }) => {
   const [disablePrevious, setDisablePrevious] = React.useState(true);
   const [disableNext, setDisableNext] = React.useState(false);
+  const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
 
   React.useEffect(() => {
     setNowPlayingBackgroundModeAction(true);
@@ -65,15 +72,49 @@ const MusicPlayerScreen = ({
     };
   }, []);
 
+  /// show update notification
+  React.useEffect(() => {
+    if (updated) {
+      setShowUpdateNotification(true);
+    }
+  }, [updated]);
+
+  /// hide update notification when it displays
+  React.useEffect(() => {
+    if (showUpdateNotification) {
+      hideUpdateNotification();
+    }
+  }, [showUpdateNotification]);
+
   React.useEffect(() => {
     updateButtons(nowPlaying);
 
     navigation.setParams({ track });
   }, [nowPlaying]);
 
-  // React.useCallback(() => {
+  const hideUpdateNotification = () => {
+    /// reset updated check
+    favoritesStartAction();
 
-  // }, [track]);
+    setTimeout(() => {
+      setShowUpdateNotification(false);
+    }, 3000);
+  };
+
+  console.log({ route });
+
+  const renderUpdateNotification = () => {
+    if (!track) return;
+
+    return (
+      <SnackBar
+        visible={showUpdateNotification}
+        message={`${track.name} is added to your favorites list`}
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+    );
+  };
 
   const updateButtons = (nowPlaying) => {
     setProgressAction(0);
@@ -211,6 +252,8 @@ const MusicPlayerScreen = ({
           <NextButton pressAction={playNext} disabled={disableNext} />
           <RepeatButton repeat={repeat} pressAction={cycleRepeatAction} />
         </View>
+
+        {renderUpdateNotification()}
       </ContentWrap>
     );
   }
@@ -225,6 +268,7 @@ const Container = (props) => (
 );
 
 const actions = {
+  favoritesStartAction: FavoritesCreators.start,
   setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
   getAlbumDetailsAction: Creators.getAlbumDetails,
   setPausedAction: Creators.setPaused,
@@ -240,6 +284,7 @@ const mapStateToProps = createStructuredSelector({
   albumId: selectAlbumId,
   playlist: selectPlaylist,
   paused: selectPaused,
+  updated: selectUpdated,
   nowPlaying: selectNowPlaying,
   isShuffled: selectShuffle,
   repeat: selectRepeat

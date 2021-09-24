@@ -10,6 +10,8 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.START]: (state) => ({ ...state, updated: false }),
+
   [Types.GET_FAVORITES]: (state) => {
     return { ...state, isFetching: true, error: null };
   },
@@ -22,7 +24,7 @@ export default createReducer(INITIAL_STATE, {
   },
 
   [Types.ADD_TRACK_TO_FAVORITES]: (state) => {
-    return { ...state, isFetching: true, error: null, updated: false };
+    return { ...state, isFetching: true, error: null };
   },
   [Types.ADD_TRACK_TO_FAVORITES_SUCCESS]: (state) => {
     return { ...state, isFetching: false, updated: true };
@@ -31,9 +33,8 @@ export default createReducer(INITIAL_STATE, {
     return { ...state, isFetching: false, updated: false, error: action.error };
   },
 
-  [Types.ADD_ALBUM_TO_FAVORITES_START]: (state) => ({ ...state, updated: false }),
   [Types.ADD_ALBUM_TO_FAVORITES]: (state) => {
-    return { ...state, isFetching: true, error: null, updated: false };
+    return { ...state, isFetching: true, error: null };
   },
   [Types.ADD_ALBUM_TO_FAVORITES_SUCCESS]: (state) => {
     return { ...state, isFetching: false, updated: true };

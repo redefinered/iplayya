@@ -8,6 +8,11 @@ import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
+import Icon from 'components/icon/icon.component';
+import SnackBar from 'components/snackbar/snackbar.component';
+import MoreButton from 'components/button-more/more-button.component';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
 import { createStructuredSelector } from 'reselect';
@@ -20,10 +25,6 @@ import {
   selectNowPlayingLayoutInfo
 } from 'modules/ducks/music/music.selectors';
 import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.selectors';
-import { connect } from 'react-redux';
-import Icon from 'components/icon/icon.component';
-import { compose } from 'redux';
-import MoreButton from 'components/button-more/more-button.component';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
@@ -48,11 +49,11 @@ const styles = StyleSheet.create({
 
 const AlbumDetail = ({
   navigation,
+  favoritesStartAction,
   route,
   album,
-  // updated,
+  updated,
   getAlbumDetailsStartAction,
-  // addAlbumToFavoritesStartAction,
   isBackgroundMode,
   setNowPlayingAction,
   nowPlaying,
@@ -68,6 +69,7 @@ const AlbumDetail = ({
   const { albumId } = route.params;
   const [showActionSheet, setShowActionSheet] = React.useState(false);
   const [selectedTrack, setSelectedTrack] = React.useState(null);
+  const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
 
   React.useEffect(() => {
     getAlbumDetailsAction(albumId);
@@ -80,6 +82,20 @@ const AlbumDetail = ({
 
     navigation.setParams({ album });
   }, [album]);
+
+  /// show update notification
+  React.useEffect(() => {
+    if (updated) {
+      setShowUpdateNotification(true);
+    }
+  }, [updated]);
+
+  /// hide update notification when it displays
+  React.useEffect(() => {
+    if (showUpdateNotification) {
+      hideUpdateNotification();
+    }
+  }, [showUpdateNotification]);
 
   const hideActionSheet = () => {
     setShowActionSheet(false);
@@ -156,6 +172,15 @@ const AlbumDetail = ({
     }
   ];
 
+  const hideUpdateNotification = () => {
+    /// reset updated check
+    favoritesStartAction();
+
+    setTimeout(() => {
+      setShowUpdateNotification(false);
+    }, 3000);
+  };
+
   if (!album) return <View />;
 
   const renderItem = ({ item: { name, ...rest } }) => (
@@ -188,6 +213,20 @@ const AlbumDetail = ({
       </View>
     </TouchableRipple>
   );
+
+  const renderUpdateNotification = () => {
+    if (route.name !== 'MusicPlayerScreen') return;
+    if (!album) return;
+
+    return (
+      <SnackBar
+        visible={showUpdateNotification}
+        message={`${album.name} is added to your favorites list`}
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+    );
+  };
 
   const renderPrograms = () => {
     if (typeof album.tracks === 'undefined') return;
@@ -242,6 +281,8 @@ const AlbumDetail = ({
 
       {renderPrograms()}
       <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
+
+      {renderUpdateNotification()}
     </View>
   );
 };
@@ -253,10 +294,10 @@ const Container = (props) => (
 );
 
 const actions = {
+  favoritesStartAction: FavoritesCreators.start,
   getAlbumDetailsStartAction: Creators.getAlbumDetailsStart,
   getAlbumDetailsAction: Creators.getAlbumDetails,
   setNowPlayingAction: Creators.setNowPlaying,
-  // setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
   setPausedAction: Creators.setPaused,
   setShuffleOnAction: Creators.setShuffleOn,
   setShuffleOffAction: Creators.setShuffleOff,
@@ -271,7 +312,6 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   album: selectAlbum,
   updated: selectUpdated,
-  // isFavorite: selectIsFavorite,
   nowPlaying: selectNowPlaying,
   isBackgroundMode: selectIsBackgroundMode,
   nowPlayingLayoutInfo: selectNowPlayingLayoutInfo

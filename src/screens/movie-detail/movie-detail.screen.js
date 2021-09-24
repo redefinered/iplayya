@@ -34,7 +34,6 @@ import {
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
-
 import { useRemoteMediaClient } from 'react-native-google-cast';
 import moment from 'moment';
 import theme from 'common/theme';
