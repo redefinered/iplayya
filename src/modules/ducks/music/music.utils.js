@@ -1,4 +1,4 @@
-import uniqBy from 'lodash/unionBy';
+import uniqBy from 'lodash/uniqBy';
 
 export const repeatTypes = [
   { order: 1, value: 'none' },
@@ -12,11 +12,11 @@ export const updateMusicState = (state, newAlbums) => {
   if (!newAlbums.length) return albums;
 
   const index = albums.findIndex(({ genre }) => genre === newAlbums[0].genre);
-  const moviesToUpdate = albums.find(({ genre }) => genre === newAlbums[0].genre);
-  const mergedMovies = [...moviesToUpdate.videos, ...newAlbums];
+  const albumsToUpdate = albums.find(({ genre }) => genre === newAlbums[0].genre);
+  const mergedAlbums = [...albumsToUpdate.albums, ...newAlbums];
 
   // update albums
-  albums.splice(index, 1, { genre: albums[index].genre, videos: uniqBy(mergedMovies, 'id') });
+  albums.splice(index, 1, { genre: albums[index].genre, albums: uniqBy(mergedAlbums, 'id') });
 
   return albums;
 };

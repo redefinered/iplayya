@@ -1,7 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './music.actions';
 import {
-  updateMoviesState,
+  updateMusicState,
   updatePaginatorInfo,
   setupPaginator,
   shuffleTrackNumbers
@@ -272,16 +272,16 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  [Types.GET_ALBUMS_BY_GENRE]: (state) => {
+  [Types.GET_ALBUMS_BY_GENRES]: (state) => {
     return {
       ...state,
       isFetching: true,
       error: null
     };
   },
-  [Types.GET_ALBUMS_BY_GENRE_SUCCESS]: (state, action) => {
-    const { newAlbums, nextPaginator } = action.data;
-    const albums = updateMoviesState(state, newAlbums);
+  [Types.GET_ALBUMS_BY_GENRES_SUCCESS]: (state, action) => {
+    const { data: newAlbums, nextPaginator } = action;
+    const albums = updateMusicState(state, newAlbums);
     const paginatorInfo = updatePaginatorInfo(state, newAlbums, nextPaginator);
     return {
       ...state,
@@ -291,7 +291,7 @@ export default createReducer(INITIAL_STATE, {
       paginatorInfo
     };
   },
-  [Types.GET_ALBUMS_BY_GENRE_FAILURE]: (state, action) => {
+  [Types.GET_ALBUMS_BY_GENRES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,

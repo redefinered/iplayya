@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import GenreScrollList from './genre-scroll-list';
+import GenreScrollList from './genre-scroll-list.component';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import { selectAlbumsByGenre, selectPaginatorOfGenre } from 'modules/ducks/music/music.selectors';
@@ -33,4 +33,4 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps)(GenreScroll);
+export default connect(mapStateToProps)(React.memo(GenreScroll));

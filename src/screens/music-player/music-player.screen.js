@@ -50,8 +50,7 @@ const MusicPlayerScreen = ({
   albumId,
   track,
   updated,
-  favoritesStartAction,
-  route
+  favoritesStartAction
 }) => {
   const [disablePrevious, setDisablePrevious] = React.useState(true);
   const [disableNext, setDisableNext] = React.useState(false);
@@ -100,8 +99,6 @@ const MusicPlayerScreen = ({
       setShowUpdateNotification(false);
     }, 3000);
   };
-
-  console.log({ route });
 
   const renderUpdateNotification = () => {
     if (!track) return;

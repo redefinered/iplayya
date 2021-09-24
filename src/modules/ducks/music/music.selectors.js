@@ -29,7 +29,7 @@ export const selectAlbumsByGenre = createSelector([selectAlbumsForFilter], (albu
 });
 
 const selectPaginatorInfoForFilter = ({ music: { paginatorInfo } }, props) => {
-  return paginatorInfo.find(({ title }) => title === props.genre);
+  return paginatorInfo.find(({ title }) => title.trim() === props.genre);
 };
 
 export const selectPaginatorOfGenre = createSelector(

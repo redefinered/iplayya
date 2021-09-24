@@ -3,7 +3,7 @@ import {
   GET_GENRES,
   GET_TRACKS_BY_ALBUM,
   GET_ALBUM_DETAILS,
-  GET_ALBUMS_BY_GENRE
+  GET_ALBUMS_BY_GENRES
 } from 'graphql/music.graphql';
 
 export const getGenres = async () => {
@@ -17,10 +17,10 @@ export const getGenres = async () => {
   }
 };
 
-export const getAlbumsByGenre = async (input) => {
+export const getAlbumsByGenres = async (input) => {
   try {
     const { data } = await client.query({
-      query: GET_ALBUMS_BY_GENRE,
+      query: GET_ALBUMS_BY_GENRES,
       variables: { input }
     });
     return data;

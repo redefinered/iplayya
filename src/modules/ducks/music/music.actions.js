@@ -21,9 +21,9 @@ const { Types, Creators } = createActions(
     getAlbumDetailsSuccess: ['album'],
     getAlbumDetailsFailure: ['error'],
 
-    getAlbumsByGenre: ['input'],
-    getAlbumsByGenreSuccess: ['data'],
-    getAlbumsByGenreFailure: ['error'],
+    getAlbumsByGenres: ['input'],
+    getAlbumsByGenresSuccess: ['data', 'nextPaginator'],
+    getAlbumsByGenresFailure: ['error'],
 
     setNowPlaying: ['track', 'newPlaylist'],
     setProgress: ['progress'], // progress in percentage

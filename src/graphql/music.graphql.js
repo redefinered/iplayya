@@ -9,8 +9,8 @@ export const GET_GENRES = gql`
   }
 `;
 
-export const GET_ALBUMS_BY_GENRE = gql`
-  query GET_ALBUMS_BY_GENRE($input: albumRequestByGenre) {
+export const GET_ALBUMS_BY_GENRES = gql`
+  query GET_ALBUMS_BY_GENRES($input: albumRequestByGenre) {
     albumByGenre(input: $input) {
       id
       name

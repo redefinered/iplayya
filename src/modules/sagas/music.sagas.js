@@ -4,7 +4,7 @@ import {
   getAlbumDetails,
   getGenres,
   getTracksByAlbum,
-  getAlbumsByGenre
+  getAlbumsByGenres
 } from 'services/music.service';
 
 export function* getGenresRequest() {
@@ -28,7 +28,7 @@ export function* getAlbumsRequest(action) {
 
   try {
     const response = yield all(
-      paginator.map(({ paginator: input }) => call(getAlbumsByGenre, input))
+      paginator.map(({ paginator: input }) => call(getAlbumsByGenres, input))
     );
 
     // // remove items that have 0 content
@@ -53,14 +53,17 @@ export function* getAlbumsRequest(action) {
   }
 }
 
-// export function* getTracksByAlbumRequest(action) {
-//   try {
-//     const { musicsByAlbum: tracks } = yield call(getTracksByAlbum, { albumId: action.album.id });
-//     yield put(Creators.getTracksByAlbumSuccess({ ...action.album, tracks }));
-//   } catch (error) {
-//     yield put(Creators.getTracksByAlbumFailure(error.message));
-//   }
-// }
+export function* getAlbumsByGenresRequest(action) {
+  try {
+    const { pageNumber } = action.input;
+
+    const nextPaginator = Object.assign(action.input, { pageNumber: pageNumber + 1 });
+    const { albumByGenre: albums } = yield call(getAlbumsByGenres, action.input);
+    yield put(Creators.getAlbumsByGenresSuccess(albums, nextPaginator));
+  } catch (error) {
+    yield put(Creators.getAlbumsByGenresFailure(error.message));
+  }
+}
 
 export function* getAlbumDetailsRequest(action) {
   try {
@@ -79,7 +82,7 @@ export function* getAlbumDetailsRequest(action) {
 
 export default function* musicSagas() {
   yield takeLatest(Types.GET_ALBUM_DETAILS, getAlbumDetailsRequest);
-  // yield takeLatest(Types.GET_TRACKS_BY_ALBUM, getTracksByAlbumRequest);
   yield takeLatest(Types.GET_ALBUMS, getAlbumsRequest);
+  yield takeLatest(Types.GET_ALBUMS_BY_GENRES, getAlbumsByGenresRequest);
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
 }

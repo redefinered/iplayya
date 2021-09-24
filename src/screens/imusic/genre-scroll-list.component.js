@@ -5,8 +5,8 @@ import { TouchableOpacity, Image, FlatList, Platform, View } from 'react-native'
 import { Text } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selectors';
-import { Creators } from 'modules/ducks/movies/movies.actions';
+import { selectIsFetching, selectError } from 'modules/ducks/music/music.selectors';
+import { Creators } from 'modules/ducks/music/music.actions';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
@@ -14,7 +14,7 @@ const coverplaceholder = require('assets/imusic-placeholder.png');
 const SPACING_FOR_CARD_INSET = theme.spacing(2);
 const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
-const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginatorOfCategory }) => {
+const GenreScrollList = ({ data, onSelect, getAlbumsByGenresAction, paginatorOfGenre }) => {
   const brand = theme.iplayya.colors;
 
   // eslint-disable-next-line react/prop-types
@@ -101,9 +101,9 @@ const GenreScrollList = ({ data, onSelect, getMoviesByCategoriesAction, paginato
 
   const handleOnEndReached = () => {
     // set pageNumber prop to get the next n albums
-    if (typeof paginatorOfCategory === 'undefined') return;
-    const { paginator } = paginatorOfCategory;
-    getMoviesByCategoriesAction(paginator);
+    if (typeof paginatorOfGenre === 'undefined') return;
+    const { paginator } = paginatorOfGenre;
+    getAlbumsByGenresAction(paginator);
   };
 
   return (
@@ -140,8 +140,8 @@ GenreScrollList.propTypes = {
   error: PropTypes.string,
   data: PropTypes.array,
   onSelect: PropTypes.func,
-  paginatorOfCategory: PropTypes.object,
-  getMoviesByCategoriesAction: PropTypes.func
+  paginatorOfGenre: PropTypes.object,
+  getAlbumsByGenresAction: PropTypes.func
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -150,7 +150,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  getMoviesByCategoriesAction: Creators.getMoviesByCategories
+  getAlbumsByGenresAction: Creators.getAlbumsByGenres
 };
 
 export default connect(mapStateToProps, actions)(GenreScrollList);
