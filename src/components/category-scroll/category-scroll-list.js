@@ -106,4 +106,4 @@ const actions = {
   getMoviesByCategoriesAction: Creators.getMoviesByCategories
 };
 
-export default connect(mapStateToProps, actions)(CategoryScrollList);
+export default connect(mapStateToProps, actions)(React.memo(CategoryScrollList));
