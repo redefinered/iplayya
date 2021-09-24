@@ -197,6 +197,9 @@ const DownloadButton = ({
     setShowDownloadOptionsModal(false);
   };
 
+  /// return an empty div early if networkInfo is null
+  if (!networkInfo) return <View />;
+
   // console.log('sources', sources);
   // eslint-disable-next-line no-unused-vars
   const execDownload = async (url) => {
