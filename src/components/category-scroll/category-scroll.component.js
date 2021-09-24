@@ -49,4 +49,4 @@ const mapStateToProps = (state, props) => {
   };
 };
 
-export default connect(mapStateToProps)(CategoryScroll);
+export default connect(mapStateToProps)(React.memo(CategoryScroll));
