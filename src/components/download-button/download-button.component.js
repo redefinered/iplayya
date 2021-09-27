@@ -234,6 +234,8 @@ const DownloadButton = ({
     return 'white';
   };
 
+  if (!networkInfo) return <View />;
+
   return (
     <React.Fragment>
       <Pressable
