@@ -39,7 +39,14 @@ const RadioStationsTab = ({
   React.useEffect(() => {
     getRadioStationsAction(paginator);
   }, []);
-  console.log(radioStations);
+
+  // React.useEffect(() => {
+  //   if (radioStations.length === 10) {
+  //     getRadioStationsAction(paginator);
+  //   } else {
+  //     return;
+  //   }
+  // }, []);
 
   // setup radio data
   React.useEffect(() => {
@@ -58,6 +65,7 @@ const RadioStationsTab = ({
   }, [radioStations]);
 
   const handleEndReached = () => {
+    console.log('ditoako');
     if (!onEndReachedCalledDuringMomentum) {
       getRadioStationsAction(paginator);
       setOnEndReachedCalledDuringMomentum(true);
@@ -84,7 +92,7 @@ const RadioStationsTab = ({
     if (addedToFavorites) {
       setShowSnackBar(true);
       getFavoritesAction(paginatorInfo);
-      getRadioStationsAction({ pageNumber: 1 });
+      getRadioStationsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
   }, [addedToFavorites]);
 
@@ -164,7 +172,7 @@ const RadioStationsTab = ({
   // return radioStations.map(({ id, name, is_favorite, number, ...rest }) => (
   //   <React.Fragment key={id}>
   return (
-    <View style={{ flex: 1, marginBottom: 20 }}>
+    <View style={{ flex: 1 }}>
       <FlatList
         data={radioStationsData}
         keyExtractor={(item) => item.id}

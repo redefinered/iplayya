@@ -27,7 +27,7 @@ const FavoritesTab = ({
   theme,
   // radioStations,
   favorites,
-  paginator,
+  // paginator,
   paginatorInfo,
   getFavoritesAction,
   getRadioStationsAction,
@@ -69,7 +69,7 @@ const FavoritesTab = ({
       // setRemovedItemName(name);
       // setShowSnackBar(true);
       getFavoritesAction(paginatorInfo);
-      getRadioStationsAction(paginator);
+      getRadioStationsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
   }, [removedFromFavorites]);
 
@@ -79,19 +79,19 @@ const FavoritesTab = ({
   //   }, 3000);
   // };
 
-  const handleSelectItems = (item) => {
+  const handleSelectItems = ({ id, cmd, name, number }) => {
     if (activateCheckboxes) {
       const newItems = selectedItems;
-      const index = selectedItems.findIndex((i) => i === item);
+      const index = selectedItems.findIndex((i) => i === id);
       if (index >= 0) {
         newItems.splice(index, 1);
         setSelectedItems([...newItems]);
       } else {
-        setSelectedItems([item, ...selectedItems]);
+        setSelectedItems([id, ...selectedItems]);
       }
     } else {
       // navigation.navigate('MovieDetailScreen', { videoId: item })
-      const { cmd, name, number } = item;
+      // const { cmd, name, number } = item;
       handleSelectItem({ number, cmd, name });
     }
   };
