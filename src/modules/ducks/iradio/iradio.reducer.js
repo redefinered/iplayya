@@ -1,5 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './iradio.actions';
+import uniqBy from 'lodash/unionBy';
+import orderBy from 'lodash/orderBy';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -7,17 +9,40 @@ const INITIAL_STATE = {
   radioStation: null,
   radioStations: [],
   favorites: [],
-  playbackInfo: null,
+  playbackInfo: {},
   addedToFavorites: false,
   removedFromFavorites: false,
   searchResults: [],
+  paginator: {
+    limit: 10,
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
+  },
   paginatorInfo: {
     limit: 10,
     pageNumber: 1
-  }
+  },
+
+  paused: false,
+  nowPlaying: null,
+  nowPlayingLayoutInfo: null,
+  isBackgroundMode: false,
+  playbackProgress: 0
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.GET_START]: (state) => {
+    return {
+      ...state,
+      paginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
+    };
+  },
   [Types.GET]: (state) => {
     return {
       ...state,
@@ -26,15 +51,23 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_SUCCESS]: (state, action) => {
-    const { radioStations } = action.data;
+    const { radioStations, nextPaginatorInfo } = action;
+
+    let updatedRadios = uniqBy([...radioStations, ...state.radioStations], 'id');
+
+    /// convert number property to Int for orderBy function to work
+    updatedRadios = updatedRadios.map(({ number, ...rest }) => {
+      return { number: parseInt(number), ...rest };
+    });
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      radioStations,
+      radioStations: orderBy(updatedRadios, 'number', 'asc'),
+      paginator: Object.assign(state.paginator, nextPaginatorInfo),
       addedToFavorites: false,
-      removedFromFavorites: null
+      removedFromFavorites: false
     };
   },
   [Types.GET_FAILURE]: (state, action) => {
@@ -130,6 +163,20 @@ export default createReducer(INITIAL_STATE, {
       playbackInfo
     };
   },
+  /// now-playing
+  [Types.SET_PAUSED]: (state, action) => {
+    return { ...state, paused: action.isPaused };
+  },
+  [Types.SET_PROGRESS]: (state, action) => {
+    return { ...state, playbackProgress: action.progress };
+  },
+  [Types.SET_NOW_PLAYING_LAYOUT_INFO]: (state, action) => {
+    return { ...state, nowPlayingLayoutInfo: action.layoutInfo };
+  },
+  [Types.SET_NOW_PLAYING]: (state, action) => {
+    const { track } = action;
+    return { ...state, nowPlaying: track };
+  },
 
   /// search
   [Types.SEARCH_START]: (state) => {
@@ -161,5 +208,26 @@ export default createReducer(INITIAL_STATE, {
       error: action.error,
       searchResults: []
     };
+  },
+  // misc
+  [Types.SET_PAGINATOR_INFO]: (state, action) => {
+    return {
+      ...state,
+      paginator: action.data
+    };
+  },
+  [Types.RESET_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      paginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
+    };
+  },
+  [Types.RESET]: (state) => {
+    return { ...state, ...INITIAL_STATE };
   }
 });

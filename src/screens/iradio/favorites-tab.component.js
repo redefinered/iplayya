@@ -21,16 +21,19 @@ import Spacer from 'components/spacer.component';
 import ContentWrap from 'components/content-wrap.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+import { selectPaginator } from 'modules/ducks/iradio/iradio.selectors';
 
 const FavoritesTab = ({
   theme,
   // radioStations,
   favorites,
+  paginator,
   paginatorInfo,
   getFavoritesAction,
+  getRadioStationsAction,
   removedFromFavorites,
   removeFromFavoritesAction,
-  // handleSelectItem,
+  handleSelectItem,
   navigation,
   setIndex
 }) => {
@@ -66,6 +69,7 @@ const FavoritesTab = ({
       // setRemovedItemName(name);
       // setShowSnackBar(true);
       getFavoritesAction(paginatorInfo);
+      getRadioStationsAction(paginator);
     }
   }, [removedFromFavorites]);
 
@@ -75,7 +79,7 @@ const FavoritesTab = ({
   //   }, 3000);
   // };
 
-  const handleSelectItem = (item) => {
+  const handleSelectItems = (item) => {
     if (activateCheckboxes) {
       const newItems = selectedItems;
       const index = selectedItems.findIndex((i) => i === item);
@@ -86,8 +90,9 @@ const FavoritesTab = ({
         setSelectedItems([item, ...selectedItems]);
       }
     } else {
-      // navigation.navigate('MovieDetailScreen', { videoId: item });
-      navigation.navigate('IsportsChannelDetailScreen', { channelId: item });
+      // navigation.navigate('MovieDetailScreen', { videoId: item })
+      const { cmd, name, number } = item;
+      handleSelectItem({ number, cmd, name });
     }
   };
 
@@ -215,7 +220,7 @@ const FavoritesTab = ({
           iconName="heart-solid"
           iconColor="#FF5050"
         /> */}
-        {favorites.map(({ id, name }) => (
+        {favorites.map(({ id, name, number, cmd }) => (
           <Pressable
             key={id}
             underlayColor={theme.iplayya.colors.black80}
@@ -227,7 +232,7 @@ const FavoritesTab = ({
               }
             ]}
             onLongPress={() => handleLongPress(id)}
-            onPress={() => handleSelectItem(id)}
+            onPress={() => handleSelectItems({ id, name, cmd, number })}
           >
             <View
               style={{
@@ -237,13 +242,13 @@ const FavoritesTab = ({
               }}
             >
               <View>
-                <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
+                <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
+                  {number} {name}
+                </Text>
               </View>
-              <View>
-                {activateCheckboxes && (
-                  <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                )}
-              </View>
+              {activateCheckboxes && (
+                <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+              )}
             </View>
           </Pressable>
         ))}
@@ -269,12 +274,14 @@ FavoritesTab.propTypes = {
   theme: PropTypes.object,
   radioStations: PropTypes.array,
   favorites: PropTypes.array,
+  paginator: PropTypes.object,
   paginatorInfo: PropTypes.object,
   removedFromFavorites: PropTypes.bool,
   getFavorites: PropTypes.func,
   removeFromFavoritesAction: PropTypes.func,
+  getRadioStationsAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
-  // handleSelectItem: PropTypes.func,
+  handleSelectItem: PropTypes.func,
   navigation: PropTypes.object,
   setIndex: PropTypes.func
 };
@@ -283,11 +290,13 @@ const mapStateToProps = createStructuredSelector({
   radioStations: selectRadioStations,
   favorites: selectFavorites,
   paginatorInfo: selectPaginatorInfo,
+  paginator: selectPaginator,
   removedFromFavorites: selectRemovedFromFavorites
 });
 
 const actions = {
   getFavoritesAction: Creators.getFavorites,
+  getRadioStationsAction: Creators.get,
   removeFromFavoritesAction: Creators.removeFromFavorites
 };
 

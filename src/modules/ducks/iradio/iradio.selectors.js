@@ -23,6 +23,8 @@ export const selectPaginatorInfo = createSelector(
   ({ paginatorInfo }) => paginatorInfo
 );
 
+export const selectPaginator = createSelector([radioState], ({ paginator }) => paginator);
+
 export const selectPlaybackInfo = createSelector([radioState], ({ playbackInfo }) => playbackInfo);
 
 export const selectSeekableDuration = createSelector([radioState], ({ playbackInfo }) => {
@@ -44,3 +46,17 @@ export const selectRemovedFromFavorites = createSelector(
   [radioState],
   ({ removedFromFavorites }) => removedFromFavorites
 );
+
+export const selectPlaybackProgress = createSelector(
+  [radioState],
+  ({ playbackProgress }) => playbackProgress
+);
+
+export const selectNowPlaying = createSelector([radioState], ({ nowPlaying }) => nowPlaying);
+
+export const selectNowPlayingLayoutInfo = createSelector(
+  [radioState],
+  ({ nowPlayingLayoutInfo }) => nowPlayingLayoutInfo
+);
+
+export const selectPaused = createSelector([radioState], ({ paused }) => paused);

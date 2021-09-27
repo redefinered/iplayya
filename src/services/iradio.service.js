@@ -14,7 +14,8 @@ export const getStations = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_RADIO_STATIONS,
-      variables: { input }
+      variables: { input },
+      fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
@@ -26,6 +27,7 @@ export const getFavorites = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_FAVORITE_RADIOS,
+      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;
@@ -45,8 +47,14 @@ export const addToFavorites = async (radioId) => {
       refetchQueries: [
         /// TODO: input variables should come from this function's arguments
         // form pagination to work
-        { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
-        { query: GET_RADIO_STATIONS, variables: { input: { limit: 10, pageNumber: 1 } } }
+        // { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
+        { query: GET_FAVORITE_RADIOS, fetchPolicy: 'network-only' },
+
+        {
+          query: GET_RADIO_STATIONS,
+          variables: { input: { limit: 10, pageNumber: 1 } },
+          fetchPolicy: 'network-only'
+        }
       ],
       awaitRefetchQueries: true
     });
@@ -64,8 +72,18 @@ export const removeFromFavorites = async (input) => {
       refetchQueries: [
         /// TODO: input variables should come from this function's arguments
         // form pagination to work
-        { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
-        { query: GET_RADIO_STATIONS, variables: { input: { limit: 10, pageNumber: 1 } } }
+        // { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
+        // { query: GET_RADIO_STATIONS, variables: { input: { limit: 10, pageNumber: 1 } } }
+        {
+          query: GET_FAVORITE_RADIOS,
+          fetchPolicy: 'network-only',
+          variables: { input: { limit: 10, pageNumber: 1 } }
+        },
+        {
+          query: GET_RADIO_STATIONS,
+          fetchPolicy: 'network-only',
+          variables: { input: { limit: 10, pageNumber: 1 } }
+        }
       ],
       awaitRefetchQueries: true
     });

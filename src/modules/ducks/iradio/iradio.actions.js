@@ -7,8 +7,9 @@ const { Types, Creators } = createActions(
     getOneFailure: ['error'],
 
     // get radio stations
-    get: ['data'],
-    getSuccess: ['data'],
+    getStart: null,
+    get: ['input'],
+    getSuccess: ['radioStations', 'nextPaginatorInfo'],
     getFailure: ['error'],
 
     // get radio stations
@@ -30,10 +31,21 @@ const { Types, Creators } = createActions(
     playbackStart: [],
     updatePlaybackInfo: ['data'],
 
+    setNowPlaying: ['track'],
+    setProgress: ['progress'], // progress in percentage
+    setPaused: ['isPaused'], // boolean,
+    resetNowPlaying: null,
+    setNowPlayingLayoutInfo: ['layoutInfo'],
+
     searchStart: [],
     search: ['input'],
     searchSuccess: ['data'],
-    searchFailure: ['error']
+    searchFailure: ['error'],
+
+    // misc
+    reset: null,
+    setPaginatorInfo: ['data'],
+    resetPaginator: null
   },
   { prefix: '@Iradio/' }
 );

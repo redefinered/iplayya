@@ -8,11 +8,15 @@ import {
 } from 'services/iradio.service';
 
 export function* getRequest(action) {
-  const { ...input } = action.data;
+  // const { ...input } = action.data;
+  const { limit, pageNumber } = action.input;
+
+  /// increment pageNumber each successful request
+  const nextPaginatorInfo = { limit, pageNumber: pageNumber + 1 };
   try {
     // TODO: input should come from stat, pageNumber should be incremented for every request
-    const { radios: radioStations } = yield call(getStations, input);
-    yield put(Creators.getSuccess({ radioStations }));
+    const { radios: radioStations } = yield call(getStations, action.input);
+    yield put(Creators.getSuccess(radioStations, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.getFailure(error.message));
   }
@@ -31,11 +35,11 @@ export function* getFavoritesRequest(action) {
 
 export function* addToFavoritesRequest(action) {
   try {
-    const {
-      addRadioToFavorites: { status, message }
-    } = yield call(addToFavorites, action.radioId);
-    console.log(message);
-    if (status !== 'success') throw new Error('Something went wrong');
+    // const {
+    //   addRadioToFavorites: { status, message }
+    const { addRadioToFavorites } = yield call(addToFavorites, action.radioId);
+    // console.log(message);
+    if (addRadioToFavorites.status !== 'success') throw new Error('Something went wrong');
     yield put(Creators.addToFavoritesSuccess());
   } catch (error) {
     yield put(Creators.addToFavoritesFailure(error.message));
