@@ -52,7 +52,7 @@ export const GET_TRACKS_BY_ALBUM = gql`
 `;
 
 export const ADD_TRACK_TO_FAVORITES = gql`
-  mutation ADD_TRACK_TO_FAVORITES($input: addImusicToFavoritesInput) {
+  mutation ADD_TRACK_TO_FAVORITES($input: iMusicToFavoritesInput) {
     addImusicToFavorites(input: $input) {
       status
     }
