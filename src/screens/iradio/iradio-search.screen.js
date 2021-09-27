@@ -25,9 +25,9 @@ const IradioSearchScreen = ({ navigation, radioStations }) => {
 
   React.useEffect(() => {
     if (term.length) {
-      const d = radioStations.filter(({ name }) => name.toLowerCase().search(term) !== -1);
-      console.log('ww', d);
-      setData(d);
+      const data = radioStations.filter(({ name }) => name.toLowerCase().search(term) !== -1);
+      console.log('ww', data);
+      setData(data);
     } else {
       setData([]);
     }
@@ -37,9 +37,9 @@ const IradioSearchScreen = ({ navigation, radioStations }) => {
     // }
   }, [term]);
 
-  const handleItemPress = ({ id, ...rest }) => {
+  const handleItemPress = (radioId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.push('IradioScreen', { file: { id, ...rest } });
+    navigation.navigate('IradioScreen', { radioId });
   };
 
   const onSubmitEditing = () => {
