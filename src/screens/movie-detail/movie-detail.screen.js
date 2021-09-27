@@ -34,7 +34,6 @@ import {
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
-
 import { useRemoteMediaClient } from 'react-native-google-cast';
 import moment from 'moment';
 import theme from 'common/theme';
@@ -68,6 +67,12 @@ const MovieDetailScreen = ({
   const [showSnackbar, setShowSnackbar] = React.useState(false);
   const [showFavoriteSnackBar, setShowFavoriteSnackBar] = React.useState(false);
   const [fullscreen, setFullscreen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!movie) return;
+
+    navigation.setParams({ movie });
+  }, [movie]);
 
   const renderStatusbar = () => {
     if (fullscreen) return <StatusBar hidden />;

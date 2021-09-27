@@ -1,13 +1,20 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, View, Image, ScrollView } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { StyleSheet, View, Image, FlatList } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Button from 'components/button/button.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
+import ActionSheet from 'components/action-sheet/action-sheet.component';
+import Icon from 'components/icon/icon.component';
+import SnackBar from 'components/snackbar/snackbar.component';
+import MoreButton from 'components/button-more/more-button.component';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
+import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -17,14 +24,15 @@ import {
   selectIsBackgroundMode,
   selectNowPlayingLayoutInfo
 } from 'modules/ducks/music/music.selectors';
-import { connect } from 'react-redux';
-import Icon from 'components/icon/icon.component';
-import { compose } from 'redux';
+import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.selectors';
+import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
+const ITEM_HEIGHT = 64;
+
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: { flex: 1, marginTop: theme.spacing(2) },
   cover: {
     width: 148,
     height: 148,
@@ -40,28 +48,58 @@ const styles = StyleSheet.create({
 });
 
 const AlbumDetail = ({
-  // eslint-disable-next-line no-unused-vars
   navigation,
+  favoritesStartAction,
   route,
   album,
-  getAlbumAction,
+  updated,
+  getAlbumDetailsStartAction,
   isBackgroundMode,
   setNowPlayingAction,
   nowPlaying,
-  // setNowPlayingBackgroundModeAction,
   nowPlayingLayoutInfo,
   setShuffleOnAction,
   setShuffleOffAction,
   setProgressAction,
   setPausedAction,
-  clearRepeatAction
+  clearRepeatAction,
+  addTrackToFavoritesAction,
+  getAlbumDetailsAction
 }) => {
-  const theme = useTheme();
-  const { album: albumData } = route.params;
+  const { albumId } = route.params;
+  const [showActionSheet, setShowActionSheet] = React.useState(false);
+  const [selectedTrack, setSelectedTrack] = React.useState(null);
+  const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
 
   React.useEffect(() => {
-    if (albumData) getAlbumAction(albumData);
-  }, [albumData]);
+    getAlbumDetailsAction(albumId);
+    /// clean up
+    return () => getAlbumDetailsStartAction();
+  }, []);
+
+  React.useEffect(() => {
+    if (!album) return;
+
+    navigation.setParams({ album });
+  }, [album]);
+
+  /// show update notification
+  React.useEffect(() => {
+    if (updated) {
+      setShowUpdateNotification(true);
+    }
+  }, [updated]);
+
+  /// hide update notification when it displays
+  React.useEffect(() => {
+    if (showUpdateNotification) {
+      hideUpdateNotification();
+    }
+  }, [showUpdateNotification]);
+
+  const hideActionSheet = () => {
+    setShowActionSheet(false);
+  };
 
   const handleSelectItem = (item) => {
     clearRepeatAction();
@@ -103,7 +141,111 @@ const AlbumDetail = ({
     setNowPlayingAction(null, true); // select a random track from album
   };
 
+  const handlePressAction = (data) => {
+    setSelectedTrack(data);
+    setShowActionSheet(true);
+  };
+
+  const handleAddToFacoritesPress = () => {
+    if (!selectedTrack) return;
+
+    addTrackToFavoritesAction(selectedTrack.id);
+
+    hideActionSheet();
+  };
+
+  const handleDownloadItem = () => {
+    console.log('download item');
+    hideActionSheet();
+  };
+
+  const actions = [
+    {
+      icon: 'heart-solid',
+      title: 'Add to favorites',
+      onPress: handleAddToFacoritesPress
+    },
+    {
+      icon: 'download',
+      title: 'Download',
+      onPress: handleDownloadItem
+    }
+  ];
+
+  const hideUpdateNotification = () => {
+    /// reset updated check
+    favoritesStartAction();
+
+    setTimeout(() => {
+      setShowUpdateNotification(false);
+    }, 3000);
+  };
+
   if (!album) return <View />;
+
+  const renderItem = ({ item: { name, ...rest } }) => (
+    <TouchableRipple onPress={() => handleSelectItem({ ...rest, name })}>
+      <View
+        style={{
+          flexDirection: 'row',
+          paddingHorizontal: theme.spacing(2),
+          paddingVertical: theme.spacing(1)
+        }}
+      >
+        <Image source={coverplaceholder} style={{ width: 40, height: 40 }} />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'space-between',
+            paddingVertical: 3,
+            paddingLeft: theme.spacing(1),
+            paddingRight: 5
+          }}
+        >
+          <Text numberOfLines={1} style={{ fontWeight: 'bold', fontSize: 14 }}>
+            {name}
+          </Text>
+          <Text style={{ fontSize: 12, color: theme.iplayya.colors.white50 }}>
+            {`${album.performer} • 4:04 min`}
+          </Text>
+        </View>
+        <MoreButton pressAction={handlePressAction} data={{ name, ...rest }} />
+      </View>
+    </TouchableRipple>
+  );
+
+  const renderUpdateNotification = () => {
+    if (route.name !== 'MusicPlayerScreen') return;
+    if (!album) return;
+
+    return (
+      <SnackBar
+        visible={showUpdateNotification}
+        message={`${album.name} is added to your favorites list`}
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+    );
+  };
+
+  const renderPrograms = () => {
+    if (typeof album.tracks === 'undefined') return;
+
+    return (
+      <View style={{ flex: 1, paddingVertical: theme.spacing(1) }}>
+        <FlatList
+          bounces={false}
+          data={album.tracks}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+        />
+        {renderBottomPadding()}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.root}>
@@ -137,35 +279,10 @@ const AlbumDetail = ({
         </Button>
       </ContentWrap>
 
-      <ScrollView>
-        {album.tracks.map(({ name, number, ...rest }) => (
-          <TouchableRipple key={number} onPress={() => handleSelectItem({ number, name, ...rest })}>
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingHorizontal: theme.spacing(2),
-                paddingVertical: theme.spacing(1)
-              }}
-            >
-              <Image source={coverplaceholder} style={{ width: 40, height: 40 }} />
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'space-between',
-                  paddingVertical: 3,
-                  paddingLeft: theme.spacing(1)
-                }}
-              >
-                <Text style={{ fontWeight: 'bold', fontSize: 14 }}>{name}</Text>
-                <Text style={{ fontSize: 12, color: theme.iplayya.colors.white50 }}>
-                  {`${album.performer} • 4:04 min`}
-                </Text>
-              </View>
-            </View>
-          </TouchableRipple>
-        ))}
-        {renderBottomPadding()}
-      </ScrollView>
+      {renderPrograms()}
+      <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
+
+      {renderUpdateNotification()}
     </View>
   );
 };
@@ -177,21 +294,24 @@ const Container = (props) => (
 );
 
 const actions = {
-  getAlbumStartAction: Creators.getAlbumStart,
-  getAlbumAction: Creators.getAlbum,
+  favoritesStartAction: FavoritesCreators.start,
+  getAlbumDetailsStartAction: Creators.getAlbumDetailsStart,
+  getAlbumDetailsAction: Creators.getAlbumDetails,
   setNowPlayingAction: Creators.setNowPlaying,
-  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
   setPausedAction: Creators.setPaused,
   setShuffleOnAction: Creators.setShuffleOn,
   setShuffleOffAction: Creators.setShuffleOff,
   setProgressAction: Creators.setProgress,
-  clearRepeatAction: Creators.clearRepeat
+  clearRepeatAction: Creators.clearRepeat,
+  addTrackToFavoritesAction: FavoritesCreators.addTrackToFavorites,
+  addAlbumToFavoritesStartAction: FavoritesCreators.addAlbumToFavoritesStart
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   album: selectAlbum,
+  updated: selectUpdated,
   nowPlaying: selectNowPlaying,
   isBackgroundMode: selectIsBackgroundMode,
   nowPlayingLayoutInfo: selectNowPlayingLayoutInfo

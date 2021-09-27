@@ -1,30 +1,40 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, Pressable } from 'react-native';
+import { View, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
-import Icon from 'components/icon/icon.component';
 import { createFontFormat } from 'utils';
 import MusicPlayerSlider from './music-player-slider.component';
+import SnackBar from 'components/snackbar/snackbar.component';
+import withLoader from 'components/with-loader.component';
+import ShuffleButton from 'components/button-shuffle/shuffle-button.component';
+import PrevButton from 'components/button-prev/prev-button.component';
+import NextButton from 'components/button-next/next-button.component';
+import RepeatButton from 'components/button-repeat/repeat-button.component';
+import PlayButton from 'components/button-play/play-button.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
-import withLoader from 'components/with-loader.component';
+import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectNowPlaying,
   selectPaused,
   selectPlaylist,
   selectShuffle,
-  selectRepeat
+  selectRepeat,
+  selectAlbumId,
+  selectTrack
 } from 'modules/ducks/music/music.selectors';
+import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.selectors';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const MusicPlayerScreen = ({
+  navigation,
   playlist,
   nowPlaying,
   setNowPlayingAction,
@@ -35,23 +45,73 @@ const MusicPlayerScreen = ({
   isShuffled,
   toggleShuffleAction,
   cycleRepeatAction,
-  repeat
+  repeat,
+  getAlbumDetailsAction,
+  albumId,
+  track,
+  updated,
+  favoritesStartAction
 }) => {
   const [disablePrevious, setDisablePrevious] = React.useState(true);
   const [disableNext, setDisableNext] = React.useState(false);
+  const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
 
   React.useEffect(() => {
     setNowPlayingBackgroundModeAction(true);
 
     updateButtons(nowPlaying);
 
+    /// set track as navigation parameter for use of the add to favorites button
+    navigation.setParams({ track });
+
     // Unsubscribe
-    return () => setNowPlayingBackgroundModeAction(false);
+    return () => {
+      setNowPlayingBackgroundModeAction(false);
+      getAlbumDetailsAction(albumId);
+    };
   }, []);
+
+  /// show update notification
+  React.useEffect(() => {
+    if (updated) {
+      setShowUpdateNotification(true);
+    }
+  }, [updated]);
+
+  /// hide update notification when it displays
+  React.useEffect(() => {
+    if (showUpdateNotification) {
+      hideUpdateNotification();
+    }
+  }, [showUpdateNotification]);
 
   React.useEffect(() => {
     updateButtons(nowPlaying);
+
+    navigation.setParams({ track });
   }, [nowPlaying]);
+
+  const hideUpdateNotification = () => {
+    /// reset updated check
+    favoritesStartAction();
+
+    setTimeout(() => {
+      setShowUpdateNotification(false);
+    }, 3000);
+  };
+
+  const renderUpdateNotification = () => {
+    if (!track) return;
+
+    return (
+      <SnackBar
+        visible={showUpdateNotification}
+        message={`${track.name} is added to your favorites list`}
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+    );
+  };
 
   const updateButtons = (nowPlaying) => {
     setProgressAction(0);
@@ -110,6 +170,10 @@ const MusicPlayerScreen = ({
     );
   };
 
+  const handleTogglePlayAction = () => {
+    setPausedAction(!paused);
+  };
+
   const playPrevious = () => {
     /// set now playing to the next item in the selected album
     const nextTrackNumber = nowPlaying.sequence - 1;
@@ -143,13 +207,6 @@ const MusicPlayerScreen = ({
     );
   };
 
-  const getRepeatColor = () => {
-    if (repeat.order !== 1) return theme.iplayya.colors.vibrantpussy;
-
-    /// normal color
-    return 'white';
-  };
-
   if (nowPlaying) {
     const { name, performer } = nowPlaying;
     return (
@@ -160,6 +217,7 @@ const MusicPlayerScreen = ({
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           <View style={{ marginBottom: 30 }}>
             <Text
+              numberOfLines={2}
               style={{
                 textAlign: 'center',
                 fontWeight: 'bold',
@@ -170,6 +228,7 @@ const MusicPlayerScreen = ({
               {name}
             </Text>
             <Text
+              numberOfLines={2}
               style={{
                 textAlign: 'center',
                 color: theme.iplayya.colors.vibrantpussy,
@@ -184,55 +243,14 @@ const MusicPlayerScreen = ({
         <MusicPlayerSlider />
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <Pressable style={{ marginRight: 20 }} onPress={() => toggleShuffleAction()}>
-            <Icon
-              name="shuffle"
-              size={theme.iconSize(3)}
-              style={{
-                color: isShuffled ? theme.iplayya.colors.vibrantpussy : 'white'
-              }}
-            />
-          </Pressable>
-          <Pressable onPress={playPrevious} disabled={disablePrevious}>
-            <Icon
-              name="previous"
-              size={theme.iconSize(5)}
-              style={{ color: disablePrevious ? theme.iplayya.colors.white25 : 'white' }}
-            />
-          </Pressable>
-          <Pressable onPress={() => setPausedAction(!paused)}>
-            <Icon
-              name={paused ? 'circular-play' : 'circular-pause'}
-              size={theme.iconSize(10)}
-              style={{ marginHorizontal: 20 }}
-            />
-          </Pressable>
-          <Pressable onPress={playNext} disabled={disableNext}>
-            <Icon
-              name="next"
-              size={theme.iconSize(5)}
-              style={{ color: disableNext ? theme.iplayya.colors.white25 : 'white' }}
-            />
-          </Pressable>
-          <Pressable
-            style={{ marginLeft: 20, position: 'relative' }}
-            onPress={() => cycleRepeatAction()}
-          >
-            <Icon name="repeat" size={theme.iconSize(3)} style={{ color: getRepeatColor() }} />
-            <Text
-              style={{
-                position: 'absolute',
-                top: 0,
-                right: -8,
-                fontWeight: 'bold',
-                color: getRepeatColor(),
-                opacity: repeat.order === 3 ? 1 : 0
-              }}
-            >
-              1
-            </Text>
-          </Pressable>
+          <ShuffleButton active={isShuffled} pressAction={toggleShuffleAction} />
+          <PrevButton pressAction={playPrevious} disabled={disablePrevious} />
+          <PlayButton paused={paused} pressAction={handleTogglePlayAction} />
+          <NextButton pressAction={playNext} disabled={disableNext} />
+          <RepeatButton repeat={repeat} pressAction={cycleRepeatAction} />
         </View>
+
+        {renderUpdateNotification()}
       </ContentWrap>
     );
   }
@@ -247,7 +265,9 @@ const Container = (props) => (
 );
 
 const actions = {
+  favoritesStartAction: FavoritesCreators.start,
   setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  getAlbumDetailsAction: Creators.getAlbumDetails,
   setPausedAction: Creators.setPaused,
   setProgressAction: Creators.setProgress,
   setNowPlayingAction: Creators.setNowPlaying,
@@ -257,8 +277,11 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  track: selectTrack,
+  albumId: selectAlbumId,
   playlist: selectPlaylist,
   paused: selectPaused,
+  updated: selectUpdated,
   nowPlaying: selectNowPlaying,
   isShuffled: selectShuffle,
   repeat: selectRepeat

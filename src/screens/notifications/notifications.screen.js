@@ -87,14 +87,12 @@ const NotificationsScreen = ({
     {
       icon: 'notifications-off',
       title: 'Turn off notification',
-      onPress: handleDeactivateNotification,
-      data: 'Male'
+      onPress: handleDeactivateNotification
     },
     {
       icon: 'delete',
       title: 'Remove notification',
-      onPress: handleDeleteNotification,
-      data: 'Female'
+      onPress: handleDeleteNotification
     }
   ];
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Banner, withTheme } from 'react-native-paper';
+import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -11,20 +11,16 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as AppActionCreators } from 'modules/app';
-// import { Creators as AuthActionCreators } from 'modules/ducks/auth/auth.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/music/music.actions';
 import Icon from 'components/icon/icon.component';
-// import NowPlaying from 'components/now-playing/now-playing.component';
 import {
   selectError,
   selectIsFetching,
   selectAlbums,
-  // selectCategoriesOf,
   selectPaginatorInfo,
   selectGenrePaginator
 } from 'modules/ducks/music/music.selectors';
-// import { urlEncodeTitle } from 'utils';
 import GenreScroll from './genre-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
 import NetInfo from '@react-native-community/netinfo';
@@ -34,11 +30,8 @@ const ImusicScreen = ({
   navigation,
   error,
   getAlbumsAction,
-  // getAlbumAction,
   paginatorInfo,
-  // addMovieToFavoritesStartAction,
   theme,
-  // route: { params },
   genrePaginator,
   albums,
   enableSwipeAction,
@@ -70,28 +63,11 @@ const ImusicScreen = ({
     };
   }, []);
 
-  // React.useEffect(() => {
-  //   console.log({ albums });
-  //   let collection = [];
-  //   if (typeof albums === 'undefined') return setData(collection);
+  /// retry get data if empty
+  React.useEffect(() => {
+    if (!albums.length) handleRetry();
+  }, [albums]);
 
-  //   collection = albums.map((props) => {
-  //     return { cover: coverplaceholder, ...props };
-  //   });
-
-  //   return setData(collection);
-  // }, [albums]);
-
-  // React.useEffect(() => {
-  //   // console.log({ data, albums });
-  //   if (typeof params !== 'undefined') {
-  //     const { categoryName } = params;
-  //     return setScrollIndex(data.findIndex((c) => c.category === categoryName));
-  //   }
-  //   setScrollIndex(0);
-  // }, [params, data]);
-
-  // get movies on mount
   React.useEffect(() => {
     if (paginatorInfo.length) {
       getAlbumsAction(paginatorInfo, { page: 1, limit: 10 });
@@ -99,15 +75,11 @@ const ImusicScreen = ({
   }, [paginatorInfo]);
 
   const handleSelect = (album) => {
-    // console.log(album);
-    navigation.navigate('AlbumDetailScreen', { album });
-    // getAlbumAction(id);
-    // if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
-    // navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
+    navigation.navigate('AlbumDetailScreen', { albumId: album.id });
   };
 
   const renderEmpty = () => {
-    return <Text>No music found</Text>;
+    return <ActivityIndicator />;
   };
 
   const handleRetry = () => {
@@ -164,21 +136,6 @@ const ImusicScreen = ({
       {renderErrorBanner()}
       {albums.length ? (
         <React.Fragment>
-          {/* <ScrollView contentOffset={{ y: scrollOffset }}>
-            {movies.map(({ category }) => {
-              return (
-                <View
-                  key={category}
-                  onLayout={({ nativeEvent: { layout } }) =>
-                    handleSetItemsPosition(category, layout)
-                  }
-                >
-                  <CategoryScroll category={category} onSelect={handleMovieSelect} />
-                </View>
-              );
-            })}
-            <Spacer size={100} />
-          </ScrollView> */}
           <FlatList
             data={albums}
             keyExtractor={(album) => album.id}

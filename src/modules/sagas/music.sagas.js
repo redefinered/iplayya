@@ -1,6 +1,11 @@
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/music/music.actions';
-import { getGenres, getAlbum, getAlbumsByGenre } from 'services/music.service';
+import {
+  getAlbumDetails,
+  getGenres,
+  getTracksByAlbum,
+  getAlbumsByGenres
+} from 'services/music.service';
 
 export function* getGenresRequest() {
   try {
@@ -23,7 +28,7 @@ export function* getAlbumsRequest(action) {
 
   try {
     const response = yield all(
-      paginator.map(({ paginator: input }) => call(getAlbumsByGenre, input))
+      paginator.map(({ paginator: input }) => call(getAlbumsByGenres, input))
     );
 
     // // remove items that have 0 content
@@ -48,18 +53,36 @@ export function* getAlbumsRequest(action) {
   }
 }
 
-export function* getAlbumRequest(action) {
-  const { id: albumId, ...rest } = action.album;
+export function* getAlbumsByGenresRequest(action) {
   try {
-    const { musicsByAlbum: tracks } = yield call(getAlbum, { albumId });
-    yield put(Creators.getAlbumSuccess({ tracks, ...rest }));
+    const { pageNumber } = action.input;
+
+    const nextPaginator = Object.assign(action.input, { pageNumber: pageNumber + 1 });
+    const { albumByGenre: albums } = yield call(getAlbumsByGenres, action.input);
+    yield put(Creators.getAlbumsByGenresSuccess(albums, nextPaginator));
   } catch (error) {
-    yield put(Creators.getAlbumFailure(error.message));
+    yield put(Creators.getAlbumsByGenresFailure(error.message));
+  }
+}
+
+export function* getAlbumDetailsRequest(action) {
+  try {
+    /// get album information
+    const { album } = yield call(getAlbumDetails, action.albumId);
+
+    // then get tracks
+    const { musicsByAlbum: tracks } = yield call(getTracksByAlbum, { albumId: action.albumId });
+
+    // set album and tracks as 1 album object
+    yield put(Creators.getAlbumDetailsSuccess({ ...album, tracks }));
+  } catch (error) {
+    yield put(Creators.getAlbumDetailsFailure(error.message));
   }
 }
 
 export default function* musicSagas() {
-  yield takeLatest(Types.GET_ALBUM, getAlbumRequest);
+  yield takeLatest(Types.GET_ALBUM_DETAILS, getAlbumDetailsRequest);
   yield takeLatest(Types.GET_ALBUMS, getAlbumsRequest);
+  yield takeLatest(Types.GET_ALBUMS_BY_GENRES, getAlbumsByGenresRequest);
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
 }

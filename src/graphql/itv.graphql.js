@@ -24,6 +24,7 @@ export const GET_CHANNEL = gql`
       number
       title
       url
+      is_favorite
     }
   }
 `;
@@ -64,7 +65,7 @@ export const GET_TV_CHANNELS_BY_CATEGORIES = gql`
 `;
 
 export const ADD_TO_FAVORITES = gql`
-  mutation ADD_TO_FAVORITES($input: addIptvToFavoritesInput) {
+  mutation ADD_TO_FAVORITES($input: iptvToFavoritesInput) {
     addIptvToFavorites(input: $input) {
       status
       message
@@ -88,7 +89,7 @@ export const GET_FAVORITES = gql`
 `;
 
 export const REMOVE_FROM_FAVORITES = gql`
-  mutation REMOVE_FROM_FAVORITES($input: addIptvToFavoritesInput) {
+  mutation REMOVE_FROM_FAVORITES($input: iptvToFavoritesInput) {
     removeIptvToFavorites(input: $input) {
       status
       message

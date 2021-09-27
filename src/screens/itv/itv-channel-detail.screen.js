@@ -57,9 +57,14 @@ const ItvChannelDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showFavSnackBar, setShowFavSnackBar] = React.useState(false);
-  // const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
   const [contentHeight, setContentHeight] = React.useState(null);
   const [fullscreen, setFullscreen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!channel) return;
+
+    navigation.setParams({ channel });
+  }, [channel]);
 
   /// hide status bar if fullscreen
   const renderStatusbar = () => {
@@ -405,8 +410,7 @@ const mapStateToProps = createStructuredSelector({
   channel: selectChannel,
   programs: selectPrograms,
   currentProgram: selectCurrentProgram,
-  favoritesListUpdated: selectFavoritesListUpdated,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  favoritesListUpdated: selectFavoritesListUpdated
 });
 
 const actions = {
@@ -415,7 +419,8 @@ const actions = {
   getChannelAction: Creators.getChannel,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
-  onNotifResetAction: NotificationCreators.onNotifReset
+  onNotifResetAction: NotificationCreators.onNotifReset,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
