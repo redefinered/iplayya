@@ -79,7 +79,7 @@ const MusicPlayerSlider = ({ progress, playbackInfo, setPauseAction, setSeekvalu
         minimumValue={0}
         maximumValue={100}
         minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
-        maximumTrackTintColor="white"
+        maximumTrackTintColor={theme.iplayya.colors.white50}
         thumbImage={isSliding ? thumbImagePressed : thumbImage}
         style={{ width: '100%', height: 10 }}
       />
