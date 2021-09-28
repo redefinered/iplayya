@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Pressable, ScrollView } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
@@ -29,7 +29,6 @@ import {
   selectDownloadsProgress,
   selectDownloadsData
 } from 'modules/ducks/downloads/downloads.selectors';
-import uuid from 'react-uuid';
 import { FlatList } from 'react-native-gesture-handler';
 import RNBackgroundDownloader, { download } from 'react-native-background-downloader';
 
@@ -207,10 +206,9 @@ const ImovieDownloadsScreen = ({
     try {
       let data = [];
       let ids = [];
+
       // check for active downloads in the background
       const existingDownloads = await checkExistingDownloads();
-
-      console.log({ existingDownloads });
 
       // set active downloads list to get the download tasks
       setActiveDownloads(existingDownloads);
@@ -233,8 +231,6 @@ const ImovieDownloadsScreen = ({
       // const promises = downloadedFiles.map((d) => deleteFile(d));
       await Promise.all(promises);
 
-      // console.log({ downloadedFiles });
-
       const donwloadedFilesIds = downloadedFiles.map((filename) => filename.split('_')[0]);
 
       ids = [...existingDownloadIds, ...donwloadedFilesIds];
@@ -254,32 +250,11 @@ const ImovieDownloadsScreen = ({
         }
       }
 
-      // data = ids.map((id) => {
-      //   const download = downloads.find((d) => d.id === id);
-      //   if (typeof download === 'undefined') {
-      //     /// remove broken file
-      //     // console.log({ id });
-      //     return { id };
-      //   }
-
-      //   const { id: itemId, movie, ep } = download;
-
-      //   let movieClone = clone(movie);
-
-      //   /// change the movie id to be the download id from redux state
-      //   return Object.assign(movieClone, { id: itemId, ep });
-      // });
-
       data = uniqBy(data, 'id');
-
-      // console.log({ downloadedFiles });
-
-      /// remove all empty downloads
-      // data = data.filter(({ title }) => typeof title !== 'undefined');
 
       setList(data);
     } catch (error) {
-      console.log({ error });
+      console.log(error.message);
     }
   };
 
@@ -347,49 +322,12 @@ const ImovieDownloadsScreen = ({
       return (
         <FlatList
           data={list}
+          keyExtractor={(item) => item.id}
           getItemLayout={(data, index) => {
             return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
           }}
           renderItem={renderItem}
         />
-        // <ScrollView>
-        //   {list.map(({ id, thumbnail, ...otherProps }) => {
-        //     let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
-
-        //     let progress = null;
-
-        //     if (downloadsProgress.length) {
-        //       let progressData = downloadsProgress.filter(
-        //         ({ id: progressId }) => id === progressId
-        //       );
-
-        //       let currentProgress = progressData[progressData.length - 1];
-
-        //       if (typeof currentProgress !== 'undefined') {
-        //         // progress = currentProgress.received / currentProgress.total;
-        //         progress = currentProgress.progress;
-        //       }
-        //     }
-
-        //     let task = activeDownloads.find((d) => d.id === id);
-
-        //     return (
-        //       <DownloadItem
-        //         key={id}
-        //         id={id}
-        //         progress={progress}
-        //         imageUrl={imageUrl}
-        //         handleSelectItem={handleSelectItem}
-        //         task={task}
-        //         handleLongPress={handleLongPress}
-        //         activateCheckboxes={activateCheckboxes}
-        //         selectedItems={selectedItems}
-        //         {...otherProps}
-        //       />
-        //     );
-        //   })}
-        //   {/* <Spacer size={100} /> */}
-        // </ScrollView>
       );
     return <EmptyState theme={theme} navigation={navigation} />;
   };

@@ -59,12 +59,6 @@ const DownloadItem = ({
   }, [downloadProgress]);
 
   React.useEffect(() => {
-    // if (downloadProgress.length) {
-    //   const p = downloadProgress.find(({ id: pid }) => pid === id);
-
-    //   if (typeof p !== 'undefined') setProgress(p.progress);
-    // }
-
     console.log({ progress, isDownloaded });
     if (progress === 100) {
       if (isDownloaded) return;
@@ -102,14 +96,6 @@ const DownloadItem = ({
 
     setIsDownloaded(false);
   }, [task]);
-
-  // React.useEffect(() => {
-  //   checkDownloads();
-  // });
-
-  // const checkDownloads = async () => {
-  //   await checkExistingDownloads();
-  // };
 
   // hide download success modal if true
   React.useEffect(() => {
@@ -157,12 +143,6 @@ const DownloadItem = ({
     setPaused(false);
   };
 
-  // const handleStopDownload = () => {
-  //   if (typeof task === 'undefined') return;
-
-  //   task.stop();
-  // };
-
   const hideStopDownloadModal = () => {
     setShowStopDownloadModal(true);
   };
@@ -183,9 +163,6 @@ const DownloadItem = ({
           handlePress={handleRetry}
           handleDownloadMovie={handleDownloadMovie}
         />
-        {/* <Pressable onPress={() => setShowStopDownloadModal(true)} style={{ marginLeft: 10 }}>
-          <Icon name="close" size={theme.iconSize(5)} />
-        </Pressable> */}
         <ButtonClose onPressAction={hideStopDownloadModal} />
       </View>
     );
@@ -206,18 +183,7 @@ const DownloadItem = ({
   const renderProgress = () => {
     if (isDownloaded) return;
     return (
-      <View
-        style={
-          {
-            // backgroundColor: theme.iplayya.colors.white10,
-            // backgroundColor: 'red'
-            // height: 10,
-            // position: 'absolute',
-            // bottom: 0,
-            // left: 0
-          }
-        }
-      >
+      <React.Fragment>
         <View
           style={{
             width: (progress * Dimensions.get('window').width) / 100,
@@ -238,7 +204,7 @@ const DownloadItem = ({
             bottom: 0
           }}
         />
-      </View>
+      </React.Fragment>
     );
   };
 
