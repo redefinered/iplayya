@@ -6,7 +6,6 @@ import Icon from 'components/icon/icon.component';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import theme from 'common/theme';
 
-// eslint-disable-next-line no-unused-vars
 const ImovieBottomTabs = ({ navigation, route }) => {
   const [heartIconColor, setHeartIconColor] = React.useState('white');
   const [downloadIconColor, setDownloadIconColor] = React.useState('white');
@@ -45,7 +44,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
     >
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate('ImovieFavoritesScreen')}
+          onPress={() => navigation.navigate('ImusicFavorites')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
@@ -72,7 +71,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
       </View>
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate('ImovieDownloadsScreen')}
+          // onPress={() => navigation.navigate('ImovieDownloadsScreen')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />

@@ -30,6 +30,7 @@ import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-d
 import IradioScreen from 'screens/iradio/iradio.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
+import ImusicFavorites from 'screens/imusic-favorites/imusic-favorites.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
@@ -447,6 +448,31 @@ const HomeStack = ({
                 <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />
               </View>
             ),
+            headerRight: () => (
+              <View style={{ flexDirection: 'row' }}>
+                <TouchableRipple
+                  borderless={true}
+                  style={{ borderRadius: 44, padding: 8 }}
+                  rippleColor="rgba(0,0,0,0.28)"
+                >
+                  <View style={styles.headerButtonContainer}>
+                    <Icon name="search" size={theme.iconSize(3)} />
+                  </View>
+                </TouchableRipple>
+              </View>
+            )
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="ImusicFavorites"
+          component={ImusicFavorites}
+          options={() => ({
+            title: 'Favorites',
+            animationEnabled: false,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple
