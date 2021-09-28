@@ -214,14 +214,26 @@ const AlbumDetail = ({
     </TouchableRipple>
   );
 
+  // console.log({ album, nowPlaying, route });
+
   const renderUpdateNotification = () => {
-    if (route.name !== 'MusicPlayerScreen') return;
     if (!album) return;
+
+    let name = 'item';
+
+    /// if player is in background mode, music player screen is in view
+    // if player screen is in view, name of notification is the name of the currently
+    // playing song
+    if (isBackgroundMode) {
+      name = nowPlaying.name;
+    } else {
+      name = album.name;
+    }
 
     return (
       <SnackBar
         visible={showUpdateNotification}
-        message={`${album.name} is added to your favorites list`}
+        message={`${name} is added to your favorites list`}
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
       />

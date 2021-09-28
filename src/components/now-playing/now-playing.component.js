@@ -25,6 +25,8 @@ import DeviceInfo from 'react-native-device-info';
 import clone from 'lodash/clone';
 import theme from 'common/theme';
 
+const coverplaceholder = require('assets/imusic-placeholder.png');
+
 const NowPlaying = ({
   navigation,
   albumId,
@@ -184,13 +186,21 @@ const NowPlaying = ({
 
   const renderThumbnail = (nowPlaying) => {
     const { thumbnail } = nowPlaying;
-    if (typeof thumbnail !== 'undefined')
+
+    if (typeof thumbnail === 'undefined')
       return (
         <Image
+          source={coverplaceholder}
           style={{ width: 60, height: 60, borderRadius: 8, marginRight: 15 }}
-          source={thumbnail}
         />
       );
+
+    return (
+      <Image
+        style={{ width: 60, height: 60, borderRadius: 8, marginRight: 15 }}
+        source={thumbnail}
+      />
+    );
   };
 
   const renderContent = (nowPlaying) => {
@@ -205,7 +215,9 @@ const NowPlaying = ({
           >
             {buffering ? 'Buffering...' : title}
           </Text>
-          <Text style={{ ...createFontFormat(12, 16) }}>{artist}</Text>
+          <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(12, 16) }}>
+            {artist}
+          </Text>
         </View>
       );
 
@@ -284,8 +296,9 @@ const NowPlaying = ({
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            paddingVertical: theme.spacing(4),
-            paddingHorizontal: theme.spacing(2)
+            paddingHorizontal: theme.spacing(2),
+            paddingTop: theme.spacing(2),
+            paddingBottom: DeviceInfo.hasNotch() ? theme.spacing(4) : theme.spacing(2)
           }}
         >
           <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>

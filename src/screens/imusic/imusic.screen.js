@@ -26,7 +26,6 @@ import { FlatList } from 'react-native-gesture-handler';
 import NetInfo from '@react-native-community/netinfo';
 
 const ImusicScreen = ({
-  isFetching,
   navigation,
   error,
   getAlbumsAction,
@@ -149,7 +148,7 @@ const ImusicScreen = ({
         </React.Fragment>
       ) : (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {!isFetching ? renderEmpty() : null}
+          {renderEmpty()}
           <Spacer size={100} />
         </View>
       )}
