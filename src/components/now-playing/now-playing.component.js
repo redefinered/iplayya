@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, Pressable, Dimensions } from 'react-native';
+import { View, Image, Pressable } from 'react-native';
 import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
+import MediaProgressVisualizer from './media-progress-visualizer.component';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
 import PausedAnimationPlaceholder from 'assets/paused-animation-placeholder.svg';
 import { createFontFormat } from 'utils';
@@ -13,7 +14,6 @@ import {
   selectAlbum,
   selectPlaylist,
   selectPaused,
-  selectPlaybackProgress,
   selectRepeat,
   selectSeekValue,
   selectAlbumId
@@ -32,7 +32,6 @@ const NowPlaying = ({
   albumId,
   nowPlaying,
   playlist,
-  progress,
   setProgressAction,
   setNowPlayingAction,
   isBackgroundMode,
@@ -94,7 +93,7 @@ const NowPlaying = ({
         // turn playing off
         setPausedAction(true);
 
-        setNowPlayingAction(null);
+        // setNowPlayingAction(null);
 
         return;
       } else {
@@ -248,8 +247,6 @@ const NowPlaying = ({
   };
 
   const renderPlayer = () => {
-    if (paused) return;
-
     const { url: uri } = nowPlaying;
 
     return (
@@ -283,15 +280,8 @@ const NowPlaying = ({
       >
         {renderPlayer()}
 
-        <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
-          <View
-            style={{
-              width: (progress * Dimensions.get('window').width) / 100,
-              height: 1,
-              backgroundColor: theme.iplayya.colors.vibrantpussy
-            }}
-          />
-        </View>
+        <MediaProgressVisualizer />
+
         <View
           style={{
             flexDirection: 'row',
@@ -351,7 +341,7 @@ NowPlaying.propTypes = {
   isBackgroundMode: PropTypes.bool,
   setNowPlayingLayoutInfoAction: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
-  progress: PropTypes.number,
+  // progress: PropTypes.number,
   repeat: PropTypes.object,
   seekValue: PropTypes.number
 };
@@ -367,7 +357,6 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   albumId: selectAlbumId,
   paused: selectPaused,
-  progress: selectPlaybackProgress,
   nowPlaying: selectNowPlaying,
   playlist: selectPlaylist,
   album: selectAlbum,

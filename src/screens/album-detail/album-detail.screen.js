@@ -225,6 +225,8 @@ const AlbumDetail = ({
     // if player screen is in view, name of notification is the name of the currently
     // playing song
     if (isBackgroundMode) {
+      if (!nowPlaying) return;
+
       name = nowPlaying.name;
     } else {
       name = album.name;
