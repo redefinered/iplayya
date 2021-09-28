@@ -83,10 +83,8 @@ const ImovieScreen = ({
     InteractionManager.runAfterInteractions(() => {
       if (!movies) return;
 
-      // retry get movies if it is set to an empty array, sup hackers?
-      if (movies.length === 0) {
-        getMoviesAction(paginatorInfo, { page: 1, limit: 5 });
-      }
+      /// for development
+      if (!movies.length) console.log('Something went wrong, albums array empty');
 
       setData(movies);
     });

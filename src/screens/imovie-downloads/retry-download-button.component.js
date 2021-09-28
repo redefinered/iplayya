@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import Button from 'components/button/button.component';
-import { Creators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
-import { selectDownloads } from 'modules/ducks/downloads/downloads.selectors';
+import { selectDownloadsProgress } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
+import { selectDownloads } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { selectNetworkInfo } from 'modules/app';
 
 const RetryDownloadButton = ({

@@ -5,7 +5,7 @@ import { resettableReducer } from 'reduxsauce';
 import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
-import downloadsReducer from './ducks/downloads/downloads.reducer';
+import imovieDownloadsReducer from './ducks/imovie-downloads/imovie-downloads.reducer';
 import userReducer from './ducks/user/user.reducer';
 import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
@@ -31,7 +31,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   auth: authReducer,
   // auth: resettable(authReducer),
   nav: navReducer,
-  downloads: downloadsReducer,
+  imovieDownloads: imovieDownloadsReducer,
   user: resettable(userReducer),
   password: resettable(passwordReducer),
   itv: resettable(itvReducer),

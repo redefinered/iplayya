@@ -16,8 +16,12 @@ import RadioButton from 'components/radio-button/radio-button.component';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import DownloadItem from './download-item.component';
-import { Creators } from 'modules/ducks/downloads/downloads.actions';
-import { deleteFile, listDownloadedFiles, checkExistingDownloads } from 'services/download.service';
+import { Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
+import {
+  deleteFile,
+  listDownloadedFiles,
+  checkExistingDownloads
+} from 'services/imovie-downloads.service';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createFontFormat, getFilename, downloadPath, getConfig } from 'utils';
 import clone from 'lodash/clone';
@@ -28,7 +32,7 @@ import {
   selectDownloads,
   selectDownloadsProgress,
   selectDownloadsData
-} from 'modules/ducks/downloads/downloads.selectors';
+} from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { FlatList } from 'react-native-gesture-handler';
 import RNBackgroundDownloader, { download } from 'react-native-background-downloader';
 

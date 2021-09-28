@@ -2,8 +2,8 @@
 /* eslint-disable prettier/prettier */
 
 import { takeLatest, put, call } from 'redux-saga/effects';
-import { Types, Creators } from 'modules/ducks/downloads/downloads.actions';
-import { getDownloads } from 'services/download.service';
+import { Types, Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
+import { getDownloads } from 'services/imovie-downloads.service';
 
 export function* getDownloadsRequest(action) {
   const { input } = action.data;
@@ -15,6 +15,6 @@ export function* getDownloadsRequest(action) {
   }
 }
 
-export default function* downloadsSagas() {
+export default function* imovieDownloadsSagas() {
   // yield takeLatest(Types.GET_DOWNLOADS, getDownloadsRequest);
 }

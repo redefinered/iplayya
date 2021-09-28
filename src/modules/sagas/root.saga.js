@@ -1,7 +1,7 @@
 import { all, fork } from 'redux-saga/effects';
 import appSagas from './app.sagas';
 import authSagas from './auth.sagas';
-import downloadsSagas from './downloads.sagas';
+import imovieDownloadsSagas from './imovie-downloads.sagas';
 import itvSagas from './itv.sagas';
 import userSagas from './user.sagas';
 import passwordSagas from './password.sagas';
@@ -17,7 +17,7 @@ export default function* rootSaga() {
   yield all([
     fork(appSagas),
     fork(authSagas),
-    fork(downloadsSagas),
+    fork(imovieDownloadsSagas),
     fork(itvSagas),
     fork(userSagas),
     fork(passwordSagas),

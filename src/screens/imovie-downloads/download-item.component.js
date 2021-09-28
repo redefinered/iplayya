@@ -7,17 +7,21 @@ import { createFontFormat } from 'utils';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 // eslint-disable-next-line no-unused-vars
-import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
+// import {
+//   checkExistingDownloads,
+//   listDownloadedFiles,
+//   deleteFile
+// } from 'services/imovie-downloads.service';
 import theme from 'common/theme';
 import RetryDownloadButton from './retry-download-button.component';
 import ButtonClose from './button-close.component';
 import ButtonPause from './button-pause.component';
 import ButtonRetry from './button-retry.component';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
+import { selectDownloadsProgress } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { selectIsConnected } from 'modules/app';
 
 const DownloadItem = ({

@@ -62,9 +62,9 @@ const ImusicScreen = ({
     };
   }, []);
 
-  /// retry get data if empty
+  /// for development
   React.useEffect(() => {
-    if (!albums.length) handleRetry();
+    if (!albums.length) console.log('Something went wrong, albums array empty');
   }, [albums]);
 
   React.useEffect(() => {

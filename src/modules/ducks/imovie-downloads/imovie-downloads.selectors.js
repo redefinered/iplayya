@@ -1,23 +1,26 @@
 import { createSelector } from 'reselect';
 import { moviesState } from 'modules/ducks/movies/movies.selectors';
 
-export const downloadsState = (state) => state.downloads;
+export const imovieDownloadsState = (state) => state.imovieDownloads;
 
-export const selectError = createSelector([downloadsState], ({ error }) => error);
+export const selectError = createSelector([imovieDownloadsState], ({ error }) => error);
 
-export const selectIsFetching = createSelector([downloadsState], ({ isFetching }) => isFetching);
+export const selectIsFetching = createSelector(
+  [imovieDownloadsState],
+  ({ isFetching }) => isFetching
+);
 
-export const selectDownloads = createSelector([downloadsState], ({ downloads }) => {
+export const selectDownloads = createSelector([imovieDownloadsState], ({ downloads }) => {
   return downloads;
 });
 
 export const selectDownloadsData = createSelector(
-  [downloadsState],
+  [imovieDownloadsState],
   ({ downloadsData }) => downloadsData
 );
 
 export const selectDownloadsProgress = createSelector(
-  [downloadsState],
+  [imovieDownloadsState],
   ({ downloadsProgress }) => downloadsProgress
 );
 
@@ -40,6 +43,6 @@ export const selectMovies = createSelector([moviesState], ({ movies }) => {
 });
 
 export const selectDownloadStarted = createSelector(
-  [downloadsState],
+  [imovieDownloadsState],
   ({ downloadStarted }) => downloadStarted
 );

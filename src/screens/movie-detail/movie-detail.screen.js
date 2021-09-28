@@ -11,12 +11,11 @@ import ScreenContainer from 'components/screen-container.component';
 import PlayMovieButton from './play-movie-button.component';
 import PlayTrailerButton from './play-trailer-button.component';
 import withLoader from 'components/with-loader.component';
-// import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
-import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators as DownloadsCreators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -30,7 +29,7 @@ import {
 import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
-} from 'modules/ducks/downloads/downloads.selectors';
+} from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';

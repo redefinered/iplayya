@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
-import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
+import { Creators as DownloadsCreators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
+import { selectDownloadsProgress } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { getConfig, downloadPath, createFontFormat } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
@@ -21,7 +21,7 @@ import {
   selectCurrentEpisode
 } from 'modules/ducks/movies/movies.selectors';
 import { selectNetworkInfo } from 'modules/app';
-import { checkExistingDownloads } from 'services/download.service';
+import { checkExistingDownloads } from 'services/imovie-downloads.service';
 import uuid from 'react-uuid';
 import DeviceInfo from 'react-native-device-info';
 

@@ -1,6 +1,6 @@
 import { createReducer } from 'reduxsauce';
-import { Types } from './downloads.actions';
-import { updateDownloadsCollection } from './downloads.utils';
+import { Types } from './imovie-downloads.actions';
+import { updateDownloadsCollection } from './imovie-downloads.utils';
 
 const INITIAL_STATE = {
   error: null,
