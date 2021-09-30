@@ -3,12 +3,22 @@ import { createActions } from 'reduxsauce';
 const { Types, Creators } = createActions(
   {
     searchStart: null,
-    search: ['input', 'shouldIncrement'],
-    searchSuccess: ['results', 'nextPaginatorInfo'],
+    search: ['input'],
+    searchSuccess: ['data'],
     searchFailure: ['error'],
-    resetSearchResultsPaginator: null
+
+    //recent search
+    updateRecentSearch: ['term'],
+
+    getSimilarGenreStart: null,
+    getSimilarGenre: ['input'],
+    getSimilarGenreSuccess: ['data'],
+    getSimilarGenreFailure: ['error'],
+
+    setPaginatorInfo: ['data'],
+    resetPaginator: null
   },
-  { prefix: '@ImusicFavorites/' }
+  { prefix: '@ImusicSearch/' }
 );
 
 export { Types, Creators };

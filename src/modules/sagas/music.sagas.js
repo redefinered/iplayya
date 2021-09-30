@@ -1,10 +1,16 @@
 import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/music/music.actions';
 import {
+  Types as SearchTypes,
+  Creators as SearchCreators
+} from 'modules/ducks/imusic-search/imusic-search.actions';
+
+import {
   getAlbumDetails,
   getGenres,
   getTracksByAlbum,
-  getAlbumsByGenres
+  getAlbumsByGenres,
+  search
 } from 'services/music.service';
 
 export function* getGenresRequest() {
@@ -80,9 +86,30 @@ export function* getAlbumDetailsRequest(action) {
   }
 }
 
+export function* searchRequest(action) {
+  try {
+    const { albums: results } = yield call(search, action.input);
+    yield put(SearchCreators.searchSuccess(results));
+  } catch (error) {
+    yield put(SearchCreators.searchFailure(error.message));
+  }
+}
+
+export function* getSimilarGenreRequest(action) {
+  try {
+    const { albumByGenre: results } = yield call(getAlbumsByGenres, action.input);
+    // console.log({ results });
+    yield put(SearchCreators.getSimilarGenreSuccess(results));
+  } catch (error) {
+    yield put(SearchCreators.getSimilarGenreFailure(error.message));
+  }
+}
+
 export default function* musicSagas() {
   yield takeLatest(Types.GET_ALBUM_DETAILS, getAlbumDetailsRequest);
   yield takeLatest(Types.GET_ALBUMS, getAlbumsRequest);
   yield takeLatest(Types.GET_ALBUMS_BY_GENRES, getAlbumsByGenresRequest);
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
+  yield takeLatest(SearchTypes.SEARCH, searchRequest);
+  yield takeLatest(SearchTypes.GET_SIMILAR_GENRE, getSimilarGenreRequest);
 }

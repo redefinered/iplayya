@@ -66,3 +66,16 @@ export const ADD_ALBUM_TO_FAVORITES = gql`
     }
   }
 `;
+
+export const SEARCH = gql`
+  query SEARCH_IMUSIC($input: musicRequest) {
+    albums(input: $input) {
+      id
+      name
+      cover
+      performer
+      year
+      genre
+    }
+  }
+`;
