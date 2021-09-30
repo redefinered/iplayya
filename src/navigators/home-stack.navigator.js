@@ -31,6 +31,7 @@ import IradioScreen from 'screens/iradio/iradio.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import ImusicFavorites from 'screens/imusic-favorites/imusic-favorites.screen';
+import ImusicSearchScreen from 'screens/imusic/imusic-search.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
@@ -452,6 +453,7 @@ const HomeStack = ({
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple
                   borderless={true}
+                  onPress={() => navigation.navigate('ImusicSearchScreen')}
                   style={{ borderRadius: 44, padding: 8 }}
                   rippleColor="rgba(0,0,0,0.28)"
                 >
@@ -461,6 +463,19 @@ const HomeStack = ({
                 </TouchableRipple>
               </View>
             )
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="ImusicSearchScreen"
+          component={ImusicSearchScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={({ navigation }) => ({
+            title: 'Search',
+            ...TransitionPresets.ModalSlideFromBottomIOS
           })}
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
