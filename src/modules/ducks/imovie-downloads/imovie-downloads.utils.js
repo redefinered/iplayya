@@ -11,3 +11,28 @@ export const updateDownloadsCollection = (state, action) => {
 
   return [downloadTask, ...downloads];
 };
+
+export const removeFinishedDownloads = (state, action) => {
+  const { ids } = action;
+  const downloadsProgress = state.downloadsProgress;
+  let incompleteItems = [];
+  ids.forEach((removeId) => {
+    incompleteItems = downloadsProgress.filter(({ id }) => id !== removeId);
+  });
+
+  return incompleteItems;
+};
+
+export const removeDownloadsByIds = (state, action) => {
+  let { downloads } = state;
+  const { ids } = action;
+  ids.forEach((id) => {
+    let index = downloads.findIndex(({ movie }) => movie.id === id);
+    console.log({ index, downloads, ids });
+    if (index >= 0) {
+      downloads.splice(index, 1);
+    }
+  });
+
+  return downloads;
+};

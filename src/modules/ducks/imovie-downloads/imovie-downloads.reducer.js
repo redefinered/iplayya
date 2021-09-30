@@ -1,6 +1,10 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './imovie-downloads.actions';
-import { updateDownloadsCollection } from './imovie-downloads.utils';
+import {
+  updateDownloadsCollection,
+  removeFinishedDownloads,
+  removeDownloadsByIds
+} from './imovie-downloads.utils';
 
 const INITIAL_STATE = {
   error: null,
@@ -11,9 +15,6 @@ const INITIAL_STATE = {
 
   // downloads progress
   downloadsProgress: [],
-
-  // data for downloaded movies where we get properties like title, id, etc...
-  downloadsData: [],
 
   downloadStarted: false
 };
@@ -29,13 +30,10 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.UPDATE_DOWNLOADS]: (state, action) => {
     const downloads = updateDownloadsCollection(state, action);
-    // const { downloadTask } = action;
-
     return {
       ...state,
       isFetching: true,
       downloads
-      // downloads: [downloadTask, ...state.downloads]
     };
   },
   [Types.DOWNLOAD_STARTED]: (state) => {
@@ -55,24 +53,18 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.UPDATE_DOWNLOADS_PROGRESS]: (state, action) => {
-    const { id, ...progress } = action.data;
     return {
       ...state,
-      downloadsProgress: [{ id, ...progress }, ...state.downloadsProgress]
+      downloadsProgress: [action.data, ...state.downloadsProgress]
     };
   },
 
   [Types.CLEAN_UP_DOWNLOADS_PROGRESS]: (state, action) => {
-    const { ids } = action;
-    const downloadsProgress = state.downloadsProgress;
-    let incompleteItems = [];
-    ids.forEach((removeId) => {
-      incompleteItems = downloadsProgress.filter(({ id }) => id !== removeId);
-    });
+    const downloadsProgress = removeFinishedDownloads(state, action);
 
     return {
       ...state,
-      downloadsProgress: incompleteItems
+      downloadsProgress
     };
   },
 
@@ -83,47 +75,25 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  // [Types.GET_DOWNLOADS]: (state) => {
-  //   return {
-  //     ...state,
-  //     isFetching: true,
-  //     error: null,
-  //     downloadsData: []
-  //   };
-  // },
-  // [Types.GET_DOWNLOADS_SUCCESS]: (state, action) => {
-  //   return {
-  //     ...state,
-  //     isFetching: false,
-  //     error: null,
-  //     downloadsData: action.data
-  //   };
-  // },
-  // [Types.GET_DOWNLOADS_FAILURE]: (state) => {
-  //   return {
-  //     ...state,
-  //     isFetching: false,
-  //     error: null
-  //   };
-  // },
-
   [Types.REMOVE_DOWNLOADS_BY_IDS]: (state, action) => {
-    let { downloads } = state;
-    const { ids } = action;
-    ids.forEach((id) => {
-      let index = downloads.findIndex(({ movie }) => movie.id === id);
-      console.log({ index, downloads, ids });
-      if (index >= 0) {
-        downloads.splice(index, 1);
-      }
-    });
+    const downloads = removeDownloadsByIds(state, action);
 
     return {
       ...state,
       downloads
     };
   },
-  [Types.RESET]: () => {
-    return INITIAL_STATE;
+
+  /// reset to original, untouched state.
+  // for some reason, returnung INITIAL_STATE here does not do what is expected
+  [Types.RESET]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      downloads: [],
+      downloadsProgress: [],
+      downloadStarted: false
+    };
   }
 });
