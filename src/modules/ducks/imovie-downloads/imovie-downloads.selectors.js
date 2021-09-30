@@ -14,24 +14,10 @@ export const selectDownloads = createSelector([imovieDownloadsState], ({ downloa
   return downloads;
 });
 
-export const selectDownloadsData = createSelector(
-  [imovieDownloadsState],
-  ({ downloadsData }) => downloadsData
-);
-
 export const selectDownloadsProgress = createSelector(
   [imovieDownloadsState],
   ({ downloadsProgress }) => downloadsProgress
 );
-
-const selectTaskById = ({ downloads: { downloads } }, props) => {
-  const task = downloads.find(({ id }) => id === props.id);
-  if (typeof task === 'undefined') return;
-
-  return task;
-};
-
-export const selectTask = createSelector([selectTaskById], (task) => task);
 
 export const selectMovies = createSelector([moviesState], ({ movies }) => {
   let collection = [];

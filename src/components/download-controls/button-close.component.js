@@ -12,7 +12,6 @@ const ButtonClose = ({ onPressAction }) => {
       onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
       onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
       onPress={() => onPressAction()}
-      // onPress={() => console.log('sss')}
       style={{
         width: 44,
         height: 44,

@@ -2,39 +2,37 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Pressable } from 'react-native';
+import { View, Pressable, FlatList } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import NoDownloads from 'assets/downloads-empty.svg';
 import ScreenContainer from 'components/screen-container.component';
+import RadioButton from 'components/radio-button/radio-button.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
+import DownloadItem from './imovie-download-item.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import RadioButton from 'components/radio-button/radio-button.component';
-import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
-import AlertModal from 'components/alert-modal/alert-modal.component';
-import DownloadItem from './download-item.component';
 import { Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
+import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
+import {
+  selectError,
+  selectIsFetching,
+  selectDownloads,
+  selectDownloadsProgress
+} from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import {
   deleteFile,
   listDownloadedFiles,
   checkExistingDownloads
 } from 'services/imovie-downloads.service';
-import RNFetchBlob from 'rn-fetch-blob';
+import RNBackgroundDownloader from 'react-native-background-downloader';
 import { createFontFormat, getFilename, downloadPath, getConfig } from 'utils';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
-import {
-  selectError,
-  selectIsFetching,
-  selectDownloads,
-  selectDownloadsProgress,
-  selectDownloadsData
-} from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
-import { FlatList } from 'react-native-gesture-handler';
-import RNBackgroundDownloader, { download } from 'react-native-background-downloader';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const ITEM_HEIGHT = 144;
 
@@ -44,7 +42,7 @@ const ImovieDownloadsScreen = ({
   navigation,
   // route,
   downloadsProgress,
-  getDownloadsAction,
+  // getDownloadsAction,
   // downloadsData,
 
   downloads,
@@ -72,19 +70,7 @@ const ImovieDownloadsScreen = ({
   const handleDownloadMovie = React.useCallback((video) => {
     const { ep, videoId, url, movie } = video;
 
-    // let ep = '';
-
-    // if (is_series) {
-    //   ep = `SO${currentEpisode.season}E${currentEpisode.episode}`;
-    // }
-
     const downloadId = `${videoId}${ep}`;
-
-    // return if movie is already downloaded
-    // if (isMovieDownloaded) {
-    //   console.log('already downloaded');
-    //   return;
-    // }
 
     // return if there is no available source to download
     if (typeof url === 'undefined') {
@@ -289,25 +275,11 @@ const ImovieDownloadsScreen = ({
   const renderItem = ({ item: { id, thumbnail, ...otherProps } }) => {
     let imageUrl = thumbnail ? thumbnail : 'http://via.placeholder.com/65x96.png';
 
-    let progress = null;
-
-    if (downloadsProgress.length) {
-      let progressData = downloadsProgress.filter(({ id: progressId }) => id === progressId);
-
-      let currentProgress = progressData[progressData.length - 1];
-
-      if (typeof currentProgress !== 'undefined') {
-        // progress = currentProgress.received / currentProgress.total;
-        progress = currentProgress.progress;
-      }
-    }
-
     let task = activeDownloads.find((d) => d.id === id);
 
     return (
       <DownloadItem
         id={id}
-        progress={progress}
         imageUrl={imageUrl}
         handleSelectItem={handleSelectItem}
         task={task}
@@ -372,9 +344,6 @@ const ImovieDownloadsScreen = ({
       {showDeleteConfirmation && (
         <AlertModal
           variant="danger"
-          // message={`Are you sure you want to delete ${
-          //   selectedItems.length > 1 ? 'these' : 'this'
-          // } items in your download list?`}
           message="Are you sure you want to delete this movie/s from your Downloads list?"
           visible={showDeleteConfirmation}
           onCancel={handleHideConfirmDeleteModal}
@@ -416,7 +385,6 @@ const Container = (props) => (
 );
 
 const actions = {
-  getDownloadsAction: Creators.getDownloads,
   removeDownloadsByIdsAction: Creators.removeDownloadsByIds,
   downloadStartAction: Creators.downloadStart,
   downloadStartedAction: Creators.downloadStarted,
@@ -430,7 +398,6 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   downloads: selectDownloads,
-  favorites: selectFavorites,
   downloadsProgress: selectDownloadsProgress
 });
 

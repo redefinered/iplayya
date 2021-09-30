@@ -31,6 +31,7 @@ import IradioScreen from 'screens/iradio/iradio.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import ImusicFavorites from 'screens/imusic-favorites/imusic-favorites.screen';
+import ImusicDownloadsScreen from 'screens/imusic-downloads/imusic-downloads.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
@@ -494,6 +495,19 @@ const HomeStack = ({
         />
 
         <Stack.Screen
+          name="ImusicDownloadsScreen"
+          component={ImusicDownloadsScreen}
+          options={() => ({
+            title: 'Downloads',
+            animationEnabled: false
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
+        <Stack.Screen
           name="AlbumDetailScreen"
           component={AlbumDetailScreen}
           options={(props) => {
@@ -792,7 +806,6 @@ const styles = StyleSheet.create({
 
 const actions = {
   setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
-  updateDownloadsAction: MoviesCreators.updateDownloads,
   updateDownloadsProgressAction: MoviesCreators.updateDownloadsProgress,
   updateProfileAction: Creators.update,
   addChannelToFavoritesAction: ItvCreators.addToFavorites,
