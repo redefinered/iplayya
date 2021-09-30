@@ -75,7 +75,8 @@ const appState = (state) => state.app;
 export const selectIsLoading = createSelector([appState], ({ isLoading }) => isLoading);
 export const selectNetworkInfo = createSelector([appState], ({ networkInfo }) => networkInfo);
 export const selectHeaderHeight = createSelector([appState], ({ headerHeight }) => headerHeight);
-export const selectIsConnected = createSelector(
-  [appState],
-  ({ networkInfo }) => networkInfo.isConnected
-);
+export const selectIsConnected = createSelector([appState], ({ networkInfo }) => {
+  if (!networkInfo) return false;
+
+  return networkInfo.isConnected;
+});
