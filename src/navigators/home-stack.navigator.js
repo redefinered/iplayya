@@ -30,7 +30,7 @@ import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-d
 import IradioScreen from 'screens/iradio/iradio.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
-import ImusicFavorites from 'screens/imusic-favorites/imusic-favorites.screen';
+import ImusicFavoritesScreen from 'screens/imusic-favorites/imusic-favorites.screen';
 import ImusicDownloadsScreen from 'screens/imusic-downloads/imusic-downloads.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
@@ -469,8 +469,8 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ImusicFavorites"
-          component={ImusicFavorites}
+          name="ImusicFavoritesScreen"
+          component={ImusicFavoritesScreen}
           options={() => ({
             title: 'Favorites',
             animationEnabled: false,
