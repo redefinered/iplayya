@@ -1,22 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// eslint-disable-next-line no-unused-vars
-import { Pressable, StyleSheet, Modal, View, TouchableOpacity } from 'react-native';
+import { Pressable, StyleSheet, Modal, View } from 'react-native';
 import { withTheme, Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/movies/movies.actions';
-import { Creators as DownloadsCreators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
+import { Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { selectDownloadsProgress } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
-import { getConfig, downloadPath, createFontFormat } from 'utils';
+import { getConfigForVideoDownload, downloadPath, createFontFormat } from 'utils';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNBackgroundDownloader from 'react-native-background-downloader';
 import {
   selectMovieTitle,
-  // selectDownloadUrl,
   selectMovie,
   selectCurrentEpisode
 } from 'modules/ducks/movies/movies.selectors';
@@ -26,35 +23,20 @@ import uuid from 'react-uuid';
 import DeviceInfo from 'react-native-device-info';
 
 const DownloadButton = ({
-  videoId, // from navigation parameters
-
+  videoId,
   theme,
   movie,
   movieTitle,
-  // donwloadUrl,
-
   currentEpisode,
-
-  // downloads,
-  // eslint-disable-next-line no-unused-vars
   updateDownloadsProgressAction,
   updateDownloadsAction,
-  // updateDownloadIdsAction,
-
   downloadsProgress,
   cleanUpDownloadsProgressAction,
-  // setPermissionErrorAction,
-
-  // eslint-disable-next-line react/prop-types
   downloadStartedAction,
-  // eslint-disable-next-line react/prop-types
   downloadStartFailureAction,
-
   networkInfo
 }) => {
-  // console.log({ donwloadUrl });
   const [files, setFiles] = React.useState([]);
-  // const [downloading, setDownloading] = React.useState(false);
   const [isMovieDownloaded, setIsMovieDownloaded] = React.useState(false);
   const [sources, setSources] = React.useState([]);
   const [selectedDownloadUrl, setSelectedDownloadUrl] = React.useState(null);
@@ -127,7 +109,7 @@ const DownloadButton = ({
     }
 
     try {
-      let config = getConfig(video);
+      let config = getConfigForVideoDownload(video);
 
       // eslint-disable-next-line no-unused-vars
       let task = RNBackgroundDownloader.download(config)
@@ -304,42 +286,34 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center'
-    // marginLeft: 15
   }
 });
 
 DownloadButton.propTypes = {
   theme: PropTypes.object,
   movie: PropTypes.object,
-  isMovieDownloaded: PropTypes.bool,
-  setIsMovieDownloaded: PropTypes.func,
-  handleDownloadMovie: PropTypes.func,
   videoId: PropTypes.string,
-  donwloadUrl: PropTypes.string,
   movieTitle: PropTypes.string,
   updateDownloadsAction: PropTypes.func,
   updateDownloadsProgressAction: PropTypes.func,
   downloadsProgress: PropTypes.any,
   cleanUpDownloadsProgressAction: PropTypes.func,
-  setPermissionErrorAction: PropTypes.func,
   networkInfo: PropTypes.object,
-  currentEpisode: PropTypes.object
+  currentEpisode: PropTypes.object,
+  downloadStartedAction: PropTypes.func,
+  downloadStartFailureAction: PropTypes.func
 };
 
 const actions = {
-  updateDownloadsAction: DownloadsCreators.updateDownloads,
-  updateDownloadsProgressAction: DownloadsCreators.updateDownloadsProgress,
-  cleanUpDownloadsProgressAction: DownloadsCreators.cleanUpDownloadsProgress,
-  setPermissionErrorAction: Creators.setPermissionError,
-  downloadStartedAction: DownloadsCreators.downloadStarted,
-  downloadStartFailureAction: DownloadsCreators.downloadStartFailure
+  updateDownloadsAction: Creators.updateDownloads,
+  updateDownloadsProgressAction: Creators.updateDownloadsProgress,
+  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress,
+  downloadStartedAction: Creators.downloadStarted,
+  downloadStartFailureAction: Creators.downloadStartFailure
 };
 
 const mapStateToProps = createStructuredSelector({
-  // get movie from state to add to downloads data for offline use
   movie: selectMovie,
-  // movieUrl: selectMovieUrl,
-  // donwloadUrl: selectDownloadUrl,
   movieTitle: selectMovieTitle,
   downloadsProgress: selectDownloadsProgress,
   networkInfo: selectNetworkInfo,

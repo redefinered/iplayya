@@ -74,7 +74,12 @@ export function* getAlbumDetailsRequest(action) {
     const { musicsByAlbum: tracks } = yield call(getTracksByAlbum, { albumId: action.albumId });
 
     // set album and tracks as 1 album object
-    yield put(Creators.getAlbumDetailsSuccess({ ...album, tracks }));
+    yield put(
+      Creators.getAlbumDetailsSuccess({
+        ...album,
+        tracks: tracks.map((track) => ({ ...track, albumId: action.albumId }))
+      })
+    );
   } catch (error) {
     yield put(Creators.getAlbumDetailsFailure(error.message));
   }

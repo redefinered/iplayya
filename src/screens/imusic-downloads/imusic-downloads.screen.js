@@ -70,11 +70,6 @@ const ImusicDownloads = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
 
-  /**
-   * downloads a track
-   * @param {Object} track contains id, title, url, is_series, currentEpisode properties that are required for the download aciton
-   * @returns void
-   */
   const executeDownload = React.useCallback((downloadObj) => {
     const { id, url, track } = downloadObj;
 

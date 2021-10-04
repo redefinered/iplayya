@@ -62,11 +62,6 @@ const ImovieDownloadsScreen = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
 
-  /**
-   * downloads a movie
-   * @param {Object} video contains ep, videoId, title, url, is_series, currentEpisode properties that are required for the download aciton
-   * @returns void
-   */
   const handleDownloadMovie = React.useCallback((video) => {
     const { ep, videoId, url, movie } = video;
 
