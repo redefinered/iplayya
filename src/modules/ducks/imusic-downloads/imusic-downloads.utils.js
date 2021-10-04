@@ -2,7 +2,7 @@ export const updateDownloadsCollection = (state, action) => {
   const { downloadTask } = action;
 
   const { downloads } = state;
-  const dupeIndex = state.downloads.findIndex(({ id }) => id === downloadTask.id);
+  const dupeIndex = state.downloads.findIndex(({ taskId }) => taskId === downloadTask.id);
 
   if (typeof dupeIndex >= 0) {
     downloads.splice(dupeIndex, 1, downloadTask);
@@ -13,10 +13,10 @@ export const updateDownloadsCollection = (state, action) => {
 };
 
 export const removeFinishedDownloads = (state, action) => {
-  const { ids } = action;
+  const { trackIds } = action;
   const downloadsProgress = state.downloadsProgress;
   let incompleteItems = [];
-  ids.forEach((removeId) => {
+  trackIds.forEach((removeId) => {
     incompleteItems = downloadsProgress.filter(({ id }) => id !== removeId);
   });
 

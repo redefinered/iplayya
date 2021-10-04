@@ -20,7 +20,6 @@ export function* createRequest(action) {
   const { input } = action.data;
   try {
     const { createUserProvider } = yield call(createProvider, input);
-    // console.log({ createUserProvider });
 
     const { isportsGenres } = yield call(getIsportsGenres);
     const { iptvGenres } = yield call(getItvGenres);

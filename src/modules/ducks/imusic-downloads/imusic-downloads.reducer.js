@@ -40,7 +40,7 @@ export default createReducer(INITIAL_STATE, {
     return { ...state, isFetching: true, downloads };
   },
   [Types.UPDATE_PROGRESS]: (state, action) => {
-    return { ...state, downloadsProgress: [action.data, ...state.downloadsProgress] };
+    return { ...state, downloadsProgress: [action.progress, ...state.downloadsProgress] };
   },
   [Types.CLEAN_UP_PROGRESS]: (state, action) => {
     const downloadsProgress = removeFinishedDownloads(state, action);
@@ -63,18 +63,18 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       downloads
     };
-  },
+  }
 
   /// reset to original, untouched state.
   // for some reason, returnung INITIAL_STATE here does not do what is expected
-  [Types.RESET]: (state) => {
-    return {
-      ...state,
-      error: null,
-      isFetching: false,
-      downloads: [],
-      downloadsProgress: [],
-      downloadStarted: false
-    };
-  }
+  // [Types.RESET]: (state) => {
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: false,
+  //     downloads: [],
+  //     downloadsProgress: [],
+  //     downloadStarted: false
+  //   };
+  // }
 });

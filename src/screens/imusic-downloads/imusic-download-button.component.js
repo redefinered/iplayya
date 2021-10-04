@@ -9,12 +9,12 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/imusic-downloads/imusic-downloads.actions';
 import { selectDownloadsProgress } from 'modules/ducks/imusic-downloads/imusic-downloads.selectors';
 import { selectNetworkInfo } from 'modules/app';
-import { checkExistingDownloads } from 'services/imusic-downloads.service';
+import { checkExistingDownloads, listDownloadedFiles } from 'services/imusic-downloads.service';
 import { downloadPath, createFilenameForAudioTrack, checkIfTrackOrAlbumIsDownloaded } from 'utils';
 import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const createDownloadConfig = ({ taskId, title, url }) => {
-  const filename = createFilenameForAudioTrack({ taskId, title });
+const createDownloadConfig = ({ taskId, url, ...rest }) => {
+  const filename = createFilenameForAudioTrack({ taskId, ...rest });
 
   /// id, url, and destination are proprties required for background downloader
   return { id: taskId, url, destination: `${downloadPath}/${filename}` };
@@ -23,17 +23,25 @@ const createDownloadConfig = ({ taskId, title, url }) => {
 const DownloadButton = ({
   theme,
   sub,
-  updateDownloadsProgressAction,
+  updateProgressAction,
   updateDownloadsAction,
   downloadsProgress,
-  cleanUpDownloadsProgressAction,
+  cleanUpProgressAction,
   downloadStartedAction,
   downloadStartFailureAction,
   networkInfo
 }) => {
-  console.log({ sub });
-  const [isDownloaded, setIsDownloaded] = React.useState(false);
+  // console.log({ sub });
+  const [isDownloaded, setIsDownloaded] = React.useState(null);
   const [isConnected, setIsConnected] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!sub) return;
+
+    checkIfAlreadyDownloaded(sub);
+  }, [sub]);
+
+  console.log({ isDownloaded });
 
   React.useEffect(() => {
     if (!networkInfo) return setIsConnected(false);
@@ -43,7 +51,12 @@ const DownloadButton = ({
     return setIsConnected(true);
   }, [networkInfo]);
 
-  const startDownload = React.useCallback((track) => {
+  const checkIfAlreadyDownloaded = async (sub) => {
+    const downloaded = await checkIfTrackOrAlbumIsDownloaded(sub);
+    setIsDownloaded(downloaded);
+  };
+
+  const startDownload = (track) => {
     const { id, url, albumId } = track;
 
     const taskId = `a_${id}_${albumId}`;
@@ -63,27 +76,33 @@ const DownloadButton = ({
           downloadStartedAction();
         })
         .progress((percent) => {
-          updateDownloadsProgressAction({ id, progress: percent * 100 });
+          updateProgressAction({ id, progress: percent * 100 });
         })
         .done(() => {
+          /// FOR DEVELOPMENT: list downloaded file when a download is finished
+          listDownloadedFiles();
+
           console.log('Download is done!');
 
-          updateDownloadsProgressAction({ id, progress: 100 });
+          updateProgressAction({ id, progress: 100 });
 
-          let completedItems = downloadsProgress.filter(
-            ({ received, total }) => received === total
-          );
+          let completedItems = downloadsProgress.filter(({ progress }) => progress === 100);
+
           completedItems = completedItems.map(({ id }) => id);
 
-          cleanUpDownloadsProgressAction([track.id, ...completedItems]);
+          console.log({ completedItems });
+
+          cleanUpProgressAction([track.id, ...completedItems]);
         })
         .error((error) => {
           console.log('Download canceled due to error: ', error);
           downloadStartFailureAction(error.message);
         });
 
+      /// download item in state might need to be updated in the future to make a leaner data
       updateDownloadsAction({
         taskId,
+        albumId: track.albumId,
         url,
         task,
         track
@@ -91,7 +110,7 @@ const DownloadButton = ({
     } catch (error) {
       console.log(error.message);
     }
-  }, []);
+  };
 
   /// gets file ids from filesystem and populates the files data
   // for use for checking if the file is already downloaded
@@ -104,7 +123,24 @@ const DownloadButton = ({
   //   setFiles(dls);
   // };
 
-  const execDownload = async (tracks) => {
+  const execDownload = async (sub) => {
+    /// return if already downloaded
+    if (isDownloaded) return;
+    console.log('x');
+
+    let tracks;
+
+    /// return if there is no subject yet
+    if (typeof sub === 'undefined') return;
+
+    if (typeof sub.tracks === 'undefined') {
+      /// if the subject is a track
+      tracks = [sub];
+    } else {
+      /// subject is an album
+      tracks = sub.tracks;
+    }
+
     // don't download if not connected to internet
     if (!isConnected) return;
 
@@ -128,7 +164,8 @@ const DownloadButton = ({
   };
 
   const getColor = () => {
-    if (!isConnected) return 'gray';
+    /// change to disabled color if not connected to internet or there is no subject
+    if (!isConnected || typeof sub === 'undefined') return 'gray';
 
     if (isDownloaded) return theme.iplayya.colors.vibrantpussy;
 
@@ -138,7 +175,7 @@ const DownloadButton = ({
   return (
     <Pressable
       disabled={!isConnected}
-      onPress={() => execDownload(tracks)}
+      onPress={() => execDownload(sub)}
       style={({ pressed }) => [
         {
           backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
@@ -168,12 +205,12 @@ const styles = StyleSheet.create({
 DownloadButton.propTypes = {
   id: PropTypes.string,
   theme: PropTypes.object,
-  sub: PropTypes.string,
+  sub: PropTypes.object,
   isMovieDownloaded: PropTypes.bool,
   updateDownloadsAction: PropTypes.func,
-  updateDownloadsProgressAction: PropTypes.func,
+  updateProgressAction: PropTypes.func,
   downloadsProgress: PropTypes.any,
-  cleanUpDownloadsProgressAction: PropTypes.func,
+  cleanUpProgressAction: PropTypes.func,
   networkInfo: PropTypes.object,
   downloadStartedAction: PropTypes.func,
   downloadStartFailureAction: PropTypes.func
@@ -181,8 +218,8 @@ DownloadButton.propTypes = {
 
 const actions = {
   updateDownloadsAction: Creators.updateDownloads,
-  updateDownloadsProgressAction: Creators.updateDownloadsProgress,
-  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress,
+  updateProgressAction: Creators.updateProgress,
+  cleanUpProgressAction: Creators.cleanUpProgress,
   downloadStartedAction: Creators.downloadStarted,
   downloadStartFailureAction: Creators.downloadStartFailure
 };

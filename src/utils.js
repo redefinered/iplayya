@@ -162,7 +162,7 @@ export const createFilenameForAudioTrack = (track) => {
   const { taskId, name } = track;
 
   // convert spaces to underscores
-  const tsplit = name.split();
+  const tsplit = name.split(' ');
   const tjoin = tsplit.join('_');
 
   return `${taskId}_${tjoin}.mp3`;
@@ -184,6 +184,7 @@ export const checkIfTrackOrAlbumIsDownloaded = async (sub) => {
     return fSplit[0] === 'a' ? fSplit[1] : 'not_audio';
   });
   const audioIds = fileIds.filter((id) => id !== 'not_audio');
+  console.log({ sub, audioIds, type });
 
   if (type === 'track') {
     /// return true if sub.id is in the extracted array, otherwise return false

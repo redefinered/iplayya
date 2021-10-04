@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import HomeMenu from 'components/home-menu/home-menu.component';
@@ -10,25 +10,14 @@ import WelcomeDialog from 'components/welcome-dialog/welcome-dialog.component';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-// import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
-// import { Creators as MusicCreator } from 'modules/ducks/music/music.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { compose } from 'redux';
-// import { selectOnboardingComplete } from 'modules/ducks/auth/auth.selectors';
-
 import HomeGuide from 'components/walkthrough-guide/home-guide.component';
-
-// import NotifService from 'NotifService';
-import { selectNotifications, selectSubscriptions } from 'modules/ducks/itv/itv.selectors.js';
 import { selectNewNotification } from 'modules/ducks/notifications/notifications.selectors.js';
-// import moment from 'moment';
-
-import { NOTIFICATION_STATUS } from 'common/values';
+import { selectDataLoaded } from 'modules/app.js';
 
 const Home = ({
   error,
@@ -38,7 +27,8 @@ const Home = ({
   getMoviesStartAction,
   resetCategoryPaginatorAction,
   enableSwipeAction,
-  newNotification
+  newNotification,
+  dataLoaded
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
@@ -95,12 +85,21 @@ const Home = ({
     setShowErrorModal(false);
   };
 
+  const renderMain = () => {
+    if (!dataLoaded) return <ActivityIndicator size="small" />;
+
+    return (
+      <React.Fragment>
+        <HomeMenu navigation={navigation} />
+        <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
+        <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
+      </React.Fragment>
+    );
+  };
+
   return (
     <ContentWrap style={{ marginTop: 20 }}>
-      <HomeMenu navigation={navigation} />
-      <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
-      <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
-
+      {renderMain()}
       {error && (
         <AlertModal
           variant="danger"
@@ -130,6 +129,7 @@ Home.propTypes = {
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
+  dataLoaded: selectDataLoaded,
   newNotification: selectNewNotification
 });
 

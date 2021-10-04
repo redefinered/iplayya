@@ -28,6 +28,7 @@ import NotifService from 'NotifService';
 // eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
 import { Button } from 'react-native-paper';
+import theme from 'common/theme';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -40,6 +41,7 @@ const HomeComponent = () => (
 const App = ({
   isLoading,
   isLoggedIn,
+  dataLoaded,
   updatePasswordStartAction,
   passwordUpdateParams,
   resetNowPlayingAction,
@@ -50,7 +52,6 @@ const App = ({
   onRegisterAction,
   onNotifAction
 }) => {
-  const theme = useTheme();
   const [testMode] = React.useState(false);
   const [notif, setNotif] = React.useState(null);
 

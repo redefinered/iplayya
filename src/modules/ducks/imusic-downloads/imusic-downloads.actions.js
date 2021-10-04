@@ -6,14 +6,14 @@ const { Types, Creators } = createActions(
     downloadStarted: null,
     downloadStartFailure: ['error'],
 
-    updateDownloads: null,
+    updateDownloads: ['downloadTask'],
     updateProgress: ['progress'],
     cleanUpProgress: ['trackIds'],
     resetProgress: null,
 
     removeDownloadsByIds: ['ids']
   },
-  { prefix: '@/ImusicDownloads' }
+  { prefix: '@ImusicDownloads/' }
 );
 
 export { Types, Creators };
