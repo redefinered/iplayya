@@ -5,7 +5,7 @@ import 'react-native-gesture-handler';
 
 import React from 'react';
 import { View, Linking, Platform, StatusBar, StyleSheet } from 'react-native';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
@@ -29,6 +29,7 @@ import NotifService from 'NotifService';
 import { resetStore } from 'modules/store';
 import { Button } from 'react-native-paper';
 import theme from 'common/theme';
+import { selectDataLoaded } from 'modules/app.js';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -52,6 +53,7 @@ const App = ({
   onRegisterAction,
   onNotifAction
 }) => {
+  const [isReady, setIsReady] = React.useState(false);
   const [testMode] = React.useState(false);
   const [notif, setNotif] = React.useState(null);
 
@@ -98,6 +100,12 @@ const App = ({
     });
   }, []);
 
+  React.useEffect(() => {
+    if (!dataLoaded) return;
+
+    setIsReady(true);
+  }, [dataLoaded]);
+
   // if profile is updated get profile to update profile data
   React.useEffect(() => {
     if (profileUpdated) {
@@ -143,7 +151,7 @@ const App = ({
       </View>
     );
 
-  // if (testMode) return <Test />;
+  if (testMode) return <Test />;
 
   if (passwordUpdateParams)
     return (
@@ -159,12 +167,29 @@ const App = ({
       </NavigationContainer>
     );
 
+  if (!isReady) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.iplayya.colors.goodnight,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <StatusBar hidden />
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  }
+
   return <HomeComponent />;
 };
 
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser,
   isLoading: selectIsLoading,
+  dataLoaded: selectDataLoaded,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
   profileUpdated: selectUpdated
