@@ -2,7 +2,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import HomeMenu from 'components/home-menu/home-menu.component';
@@ -17,7 +16,6 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import { compose } from 'redux';
 import HomeGuide from 'components/walkthrough-guide/home-guide.component';
 import { selectNewNotification } from 'modules/ducks/notifications/notifications.selectors.js';
-import { selectDataLoaded } from 'modules/app.js';
 
 const Home = ({
   error,
@@ -27,8 +25,7 @@ const Home = ({
   getMoviesStartAction,
   resetCategoryPaginatorAction,
   enableSwipeAction,
-  newNotification,
-  dataLoaded
+  newNotification
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
@@ -85,21 +82,11 @@ const Home = ({
     setShowErrorModal(false);
   };
 
-  const renderMain = () => {
-    if (!dataLoaded) return <ActivityIndicator size="small" />;
-
-    return (
-      <React.Fragment>
-        <HomeMenu navigation={navigation} />
-        <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
-        <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
-      </React.Fragment>
-    );
-  };
-
   return (
     <ContentWrap style={{ marginTop: 20 }}>
-      {renderMain()}
+      <HomeMenu navigation={navigation} />
+      <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
+      <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
       {error && (
         <AlertModal
           variant="danger"
@@ -129,7 +116,6 @@ Home.propTypes = {
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  dataLoaded: selectDataLoaded,
   newNotification: selectNewNotification
 });
 
