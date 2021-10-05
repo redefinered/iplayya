@@ -76,7 +76,8 @@ export const getConfigForVideoDownload = (video) => {
     : videoId;
 
   return {
-    id: `V_${taskId}`, /// add V_ to identify videos in downloads
+    // id: `V_${taskId}`, /// add V_ to identify videos in downloads
+    id: taskId,
     url: url,
     destination: `${downloadPath}/${filename}`
   };
