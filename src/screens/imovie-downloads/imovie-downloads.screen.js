@@ -62,6 +62,7 @@ const ImovieDownloadsScreen = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
 
+  // used for retrying downloads
   const handleDownloadMovie = React.useCallback((video) => {
     const { ep, videoId, url, movie } = video;
 
@@ -116,7 +117,7 @@ const ImovieDownloadsScreen = ({
   React.useEffect(() => {
     downloadStartAction();
     setUpDownloadsList(downloads);
-    listDownloadedFiles();
+    // listDownloadedFiles();
   }, []);
 
   const handleLongPress = (id) => {

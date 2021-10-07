@@ -25,30 +25,18 @@ import {
 } from 'modules/ducks/imusic-downloads/imusic-downloads.selectors';
 import {
   deleteFile,
+  // eslint-disable-next-line no-unused-vars
   listDownloadedFiles,
   checkExistingDownloads
-} from 'services/imovie-downloads.service';
-import { createFontFormat, downloadPath } from 'utils';
-import clone from 'lodash/clone';
+} from 'services/imusic-downloads.service';
+import { createDownloadConfig } from './imusic-download-button.component';
+import { createFontFormat, downloadPath, createFilenameForAudioTrack } from 'utils';
+// import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
+import orderBy from 'lodash/orderBy';
 
-const ITEM_HEIGHT = 144;
-
-const createFilename = (track) => {
-  const { id, title } = track;
-
-  // convert spaces to underscores
-  const tsplit = title.split();
-  const tjoin = tsplit.join('_');
-
-  return `${id}_${tjoin}`;
-};
-
-const createDownloadConfig = ({ id, title, url }) => {
-  const filename = createFilename({ id, title });
-
-  return { id, url, destination: `${downloadPath}/${filename}` };
-};
+const ITEM_HEIGHT = 64;
+// listDownloadedFiles();
 
 const ImusicDownloads = ({
   theme,
@@ -58,9 +46,9 @@ const ImusicDownloads = ({
   downloadsProgress,
   updateDownloadsAction,
   downloadStartedAction,
-  updateDownloadsProgressAction,
+  updateProgressAction,
   removeDownloadsByIdsAction,
-  cleanUpDownloadsProgressAction,
+  cleanUpProgressAction,
   downloadStartFailureAction
 }) => {
   const [list, setList] = React.useState([]);
@@ -70,8 +58,12 @@ const ImusicDownloads = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
 
-  const executeDownload = React.useCallback((downloadObj) => {
-    const { id, url, track } = downloadObj;
+  // console.log({ list });
+
+  const executeDownload = (track) => {
+    const { id, url, albumId } = track;
+
+    const taskId = `a_${id}_${albumId}`;
 
     // return if there is no available source to download
     if (typeof url === 'undefined') {
@@ -80,7 +72,7 @@ const ImusicDownloads = ({
     }
 
     try {
-      let config = createDownloadConfig(track);
+      let config = createDownloadConfig({ taskId, ...track });
 
       let task = RNBackgroundDownloader.download(config)
         .begin((expectedBytes) => {
@@ -88,27 +80,33 @@ const ImusicDownloads = ({
           downloadStartedAction();
         })
         .progress((percent) => {
-          updateDownloadsProgressAction({ id, progress: percent * 100 });
+          updateProgressAction({ id, progress: percent * 100 });
         })
         .done(() => {
+          /// FOR DEVELOPMENT: list downloaded file when a download is finished
+          // listDownloadedFiles();
+
           console.log('Download is done!');
 
-          updateDownloadsProgressAction({ id, progress: 100 });
+          updateProgressAction({ id, progress: 100 });
 
-          let completedItems = downloadsProgress.filter(
-            ({ received, total }) => received === total
-          );
+          let completedItems = downloadsProgress.filter(({ progress }) => progress === 100);
+
           completedItems = completedItems.map(({ id }) => id);
 
-          cleanUpDownloadsProgressAction([track.id, ...completedItems]);
+          console.log({ completedItems });
+
+          cleanUpProgressAction([track.id, ...completedItems]);
         })
         .error((error) => {
           console.log('Download canceled due to error: ', error);
           downloadStartFailureAction(error.message);
         });
 
+      /// download item in state might need to be updated in the future to make a leaner data
       updateDownloadsAction({
-        id,
+        taskId,
+        albumId: track.albumId,
         url,
         task,
         track
@@ -116,12 +114,59 @@ const ImusicDownloads = ({
     } catch (error) {
       console.log(error.message);
     }
-  }, []);
+  };
+
+  // const executeDownload = React.useCallback((downloadObj) => {
+  //   const { id, url, track } = downloadObj;
+
+  //   // return if there is no available source to download
+  //   if (typeof url === 'undefined') {
+  //     console.log('no source');
+  //     return;
+  //   }
+
+  //   try {
+  //     let config = createDownloadConfig(track);
+
+  //     let task = RNBackgroundDownloader.download(config)
+  //       .begin((expectedBytes) => {
+  //         console.log(`Going to download ${expectedBytes} bytes!`);
+  //         downloadStartedAction();
+  //       })
+  //       .progress((percent) => {
+  //         updateDownloadsProgressAction({ id, progress: percent * 100 });
+  //       })
+  //       .done(() => {
+  //         console.log('Download is done!');
+
+  //         updateDownloadsProgressAction({ id, progress: 100 });
+
+  //         let completedItems = downloadsProgress.filter(
+  //           ({ received, total }) => received === total
+  //         );
+  //         completedItems = completedItems.map(({ id }) => id);
+
+  //         cleanUpDownloadsProgressAction([track.id, ...completedItems]);
+  //       })
+  //       .error((error) => {
+  //         console.log('Download canceled due to error: ', error);
+  //         downloadStartFailureAction(error.message);
+  //       });
+
+  //     updateDownloadsAction({
+  //       id,
+  //       url,
+  //       task,
+  //       track
+  //     });
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }, []);
 
   React.useEffect(() => {
     downloadStartAction();
     setUpDownloadsList(downloads);
-    listDownloadedFiles();
   }, []);
 
   const handleLongPress = (id) => {
@@ -135,9 +180,15 @@ const ImusicDownloads = ({
       try {
         let promises = selectedItems.map((id) => {
           const {
-            movie: { title }
-          } = downloads.find(({ id: downloadId }) => id === downloadId);
-          const filename = createFilename({ id, title });
+            taskId,
+            track: { name }
+          } = downloads.find(({ taskId, albumId }) => {
+            const x = `a_${id}_${albumId}`;
+
+            return taskId === x;
+          });
+
+          const filename = createFilenameForAudioTrack({ taskId, name });
           return deleteFile(filename);
         });
 
@@ -170,48 +221,74 @@ const ImusicDownloads = ({
 
       // check for active downloads in the background
       const existingDownloads = await checkExistingDownloads();
+      console.log({ existingDownloads });
 
       // set active downloads list to get the download tasks
       setActiveDownloads(existingDownloads);
 
       // add existing download ids to ids array
-      const existingDownloadIds = existingDownloads.map(({ id }) => id);
+      const existingDownloadIds = existingDownloads.map(({ id }) => id); // e.g. a_37900_2404 which is prefix_trackId_albumId
 
       // add downloaded files ids to ids array
       const downloadedFiles = await RNFetchBlob.fs.ls(downloadPath);
+
+      // console.log({ downloadedFiles });
 
       /// remove downloaded files that are not included in state download list
       // because not doing so, the screen will display items that have undefined info like title and time
       const promises = [];
       for (let i = 0; i < downloadedFiles.length; i++) {
         const d = downloadedFiles[i];
-        const downloadId = d.split('_')[0];
-        const download = downloads.find(({ id }) => id === downloadId);
+        const dsplit = d.split('_');
+        // const downloadId = d.split('_')[0];
+
+        /// extract download item's ID from its filename
+        const downloadId = `${dsplit[0]}_${dsplit[1]}_${dsplit[2]}`;
+
+        /// check if that download exists in downloads array in redux state
+        const download = downloads.find(({ taskId }) => taskId === downloadId);
+
         if (typeof download === 'undefined') promises.push(deleteFile(d));
       }
-      // const promises = downloadedFiles.map((d) => deleteFile(d));
+
+      /// delete files
       await Promise.all(promises);
 
-      const donwloadedFilesIds = downloadedFiles.map((filename) => filename.split('_')[0]);
+      const donwloadedFilesIds = downloadedFiles.map((filename) => {
+        const fsplit = filename.split('_');
+        return `${fsplit[0]}_${fsplit[1]}_${fsplit[2]}`;
+      });
 
       ids = [...existingDownloadIds, ...donwloadedFilesIds];
 
-      for (let i = 0; i < ids.length; i++) {
-        const id = ids[i];
+      /// collect
+      // for (let i = 0; i < ids.length; i++) {
+      //   const id = ids[i];
 
-        const download = downloads.find((d) => d.id === id);
+      //   const download = downloads.find(({ trackId }) => trackId === id);
 
-        if (typeof download !== 'undefined') {
-          const { movie, ep } = download;
+      //   if (typeof download !== 'undefined') {
+      //     const { track } = download;
 
-          let movieClone = clone(movie);
+      //     let trackClone = clone(track);
 
-          /// change the movie id to be the download id from redux state
-          data.push(Object.assign(movieClone, { ep }));
-        }
-      }
+      //     /// change the movie id to be the download id from redux state
+      //     // data.push(Object.assign(trackClone, ));
+      //   }
+      // }
 
+      // console.log({ ids, downloadedFiles, existingDownloads });
+
+      data = ids.map((id) => {
+        const { track } = downloads.find(({ taskId }) => taskId === id);
+        return track;
+      });
+
+      // make data unique by ID
       data = uniqBy(data, 'id');
+
+      // order by name
+      data = orderBy(data, 'name', 'asc');
 
       setList(data);
     } catch (error) {
@@ -223,6 +300,9 @@ const ImusicDownloads = ({
     if (activateCheckboxes) {
       const newItems = selectedItems;
       const index = selectedItems.findIndex((i) => i === id);
+
+      // console.log({ id, newItems, selectedItems });
+
       if (index >= 0) {
         newItems.splice(index, 1);
         setSelectedItems([...newItems]);
@@ -236,15 +316,26 @@ const ImusicDownloads = ({
   };
 
   const renderItem = ({ item }) => {
-    let task = activeDownloads.find((d) => d.id === item.id);
+    let selected = false;
 
-    <ImusicDownloadItem
-      item={item}
-      task={task}
-      handleLongPress={handleLongPress}
-      executeDownload={executeDownload}
-      handleItemSelect={handleItemSelect}
-    />;
+    const taskId = `a_${item.id}_${item.albumId}`;
+
+    let task = activeDownloads.find((d) => d.id === taskId);
+
+    let d = selectedItems.find((i) => i === item.id);
+    if (typeof d !== 'undefined') selected = true;
+
+    return (
+      <ImusicDownloadItem
+        item={item}
+        task={task}
+        selected={selected}
+        showRadioButton={activateCheckboxes}
+        longPressAction={handleLongPress}
+        executeDownload={executeDownload}
+        handleItemSelect={handleItemSelect}
+      />
+    );
   };
 
   const renderMain = () => {
@@ -358,8 +449,8 @@ const actions = {
   downloadStartedAction: Creators.downloadStarted,
   removeDownloadsByIdsAction: Creators.removeDownloadsByIds,
   updateDownloadsAction: Creators.updateDownloads,
-  updateDownloadsProgressAction: Creators.updateDownloadsProgress,
-  cleanUpDownloadsProgressAction: Creators.cleanUpDownloadsProgress,
+  updateProgressAction: Creators.updateProgress,
+  cleanUpProgressAction: Creators.cleanUpProgress,
   downloadStartFailureAction: Creators.downloadStartFailure
 };
 

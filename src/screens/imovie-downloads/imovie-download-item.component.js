@@ -55,7 +55,6 @@ const DownloadItem = ({
   }, [downloadProgress]);
 
   React.useEffect(() => {
-    console.log({ progress, isDownloaded });
     if (progress === 100) {
       if (isDownloaded) return;
       setShowDownloadSuccessModal(true);
@@ -74,7 +73,6 @@ const DownloadItem = ({
     // setProgress(task.percent * 100);
     task
       .progress((percent) => {
-        console.log(`progress: ${percent * 100}%`);
         updateDownloadsProgressAction({ id, progress: percent * 100 });
       })
       .done(() => {
@@ -98,7 +96,6 @@ const DownloadItem = ({
     if (showDownloadSuccessModal) hideSnackBar();
   }, [showDownloadSuccessModal]);
 
-  console.log({ isConnected });
   React.useEffect(() => {
     if (isConnected) {
       setBroken(false);

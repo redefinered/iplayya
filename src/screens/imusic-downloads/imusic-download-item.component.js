@@ -2,13 +2,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, Image, View, Text } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import { Dimensions, Image, View } from 'react-native';
+import { Text, TouchableRipple } from 'react-native-paper';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import DownloadControls from 'components/download-controls/download-controls.component';
 import RetryDownloadButton from './imusic-retry-download-button.component'; // the retry button on the modal that appears when download has failed
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { selectDownloadsProgress } from 'modules/ducks/imusic-downloads/imusic-downloads.selectors';
+import { Creators } from 'modules/ducks/imusic-downloads/imusic-downloads.actions';
+import { selectIsConnected } from 'modules/app';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
@@ -21,15 +26,84 @@ const ImusicDownloadItem = ({
   handleItemSelect,
   executeDownload,
   handleStopDownload,
-  longPressAction
+  longPressAction,
+  downloadsProgress,
+  updateProgressAction,
+  isConnected
 }) => {
+  // console.log({ task });
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [broken, setBroken] = React.useState(false);
-  const [progress] = React.useState(0);
+  const [progress, setProgress] = React.useState(0);
   const [showDownloadSuccessModal, setShowDownloadSuccessModal] = React.useState(false);
   const [showStopDownloadModal, setShowStopDownloadModal] = React.useState(false);
   const [showDownloadFailureModal, setShowDownloadFailureModal] = React.useState(false);
+
+  React.useEffect(() => {
+    if (downloadsProgress.length) {
+      const p = downloadsProgress.find(({ id }) => id === item.id);
+      if (typeof p !== 'undefined') setProgress(p.progress);
+    }
+  }, [downloadsProgress]);
+
+  React.useEffect(() => {
+    if (progress === 100) {
+      if (isDownloaded) return;
+      setShowDownloadSuccessModal(true);
+      setIsDownloaded(true);
+    }
+  }, [progress]);
+
+  /// modifies state on taks changes
+  React.useEffect(() => {
+    if (typeof task === 'undefined') return setIsDownloaded(true);
+    if (task.state === 'PAUSED') return setPaused(true);
+    if (task.state === 'PENDING') return setPaused(true);
+    if (task.state === 'FAILED') return setBroken(true);
+    if (task.state === 'DONE') return setIsDownloaded(true);
+
+    // setProgress(task.percent * 100);
+    task
+      .progress((percent) => {
+        updateProgressAction({ id: item.id, progress: percent * 100 });
+      })
+      .done(() => {
+        setIsDownloaded(true);
+        setShowDownloadSuccessModal(true);
+        console.log('Download is done!');
+      })
+      .error((error) => {
+        setIsDownloaded(false);
+        setBroken(true);
+        setShowDownloadFailureModal(true);
+        console.log('Download canceled due to error: ', error);
+      });
+    // setPaused(false);
+
+    setIsDownloaded(false);
+  }, [task]);
+
+  // hide download success modal if true
+  React.useEffect(() => {
+    if (showDownloadSuccessModal) hideSnackBar();
+  }, [showDownloadSuccessModal]);
+
+  React.useEffect(() => {
+    if (isConnected) {
+      setBroken(false);
+      setShowDownloadFailureModal(false);
+    } else {
+      setBroken(true);
+      setShowDownloadFailureModal(true);
+    }
+  }, [isConnected]);
+
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowDownloadSuccessModal(false);
+    }, 3000);
+  };
 
   const handlePause = () => {
     if (typeof task === 'undefined') return;
@@ -53,6 +127,7 @@ const ImusicDownloadItem = ({
   };
 
   const handlePress = () => {
+    // console.log(item.id);
     if (!isDownloaded) return;
 
     handleItemSelect(item.id);
@@ -157,7 +232,7 @@ const ImusicDownloadItem = ({
             handlePause={handlePause}
             handlePlay={handlePlay}
             handleRetry={handleRetry}
-            handleDownloadMovie={executeDownload}
+            // handleDownloadMovie={executeDownload}
             hideStopDownloadModal={hideStopDownloadModal}
           />
 
@@ -214,7 +289,19 @@ ImusicDownloadItem.propTypes = {
   executeDownload: PropTypes.func,
   handleStopDownload: PropTypes.func,
   handleItemSelect: PropTypes.func,
-  longPressAction: PropTypes.func
+  longPressAction: PropTypes.func,
+  downloadsProgress: PropTypes.array,
+  updateProgressAction: PropTypes.func,
+  isConnected: PropTypes.bool
 };
 
-export default React.memo(ImusicDownloadItem);
+const mapStateToProps = createStructuredSelector({
+  downloadsProgress: selectDownloadsProgress,
+  isConnected: selectIsConnected
+});
+
+const actions = {
+  updateProgressAction: Creators.updateProgress
+};
+
+export default connect(mapStateToProps, actions)(React.memo(ImusicDownloadItem));

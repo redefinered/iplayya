@@ -18,18 +18,18 @@ export const deleteFile = async (filename = null) => {
 
 export const checkExistingDownloads = async () => {
   try {
-    const downloadTasks = await RNBackgroundDownloader.checkForExistingDownloads();
-    console.log('active downloads', downloadTasks);
-    return downloadTasks;
+    return await RNBackgroundDownloader.checkForExistingDownloads();
   } catch (error) {
     console.log(error);
   }
 };
 
 export const listDownloadedFiles = async () => {
-  const ls = await RNFetchBlob.fs.ls(downloadPath);
-  console.log('downloaded files', ls);
-  return ls;
+  try {
+    return await RNFetchBlob.fs.ls(downloadPath);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const getDownloads = async (videoIds) => {

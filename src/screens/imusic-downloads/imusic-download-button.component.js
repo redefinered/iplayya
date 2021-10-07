@@ -9,16 +9,19 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/imusic-downloads/imusic-downloads.actions';
 import { selectDownloadsProgress } from 'modules/ducks/imusic-downloads/imusic-downloads.selectors';
 import { selectNetworkInfo } from 'modules/app';
+// eslint-disable-next-line no-unused-vars
 import { checkExistingDownloads, listDownloadedFiles } from 'services/imusic-downloads.service';
 import { downloadPath, createFilenameForAudioTrack, checkIfTrackOrAlbumIsDownloaded } from 'utils';
 import RNBackgroundDownloader from 'react-native-background-downloader';
 
-const createDownloadConfig = ({ taskId, url, ...rest }) => {
+export const createDownloadConfig = ({ taskId, url, ...rest }) => {
   const filename = createFilenameForAudioTrack({ taskId, ...rest });
 
   /// id, url, and destination are proprties required for background downloader
   return { id: taskId, url, destination: `${downloadPath}/${filename}` };
 };
+
+// listDownloadedFiles();
 
 const DownloadButton = ({
   theme,
@@ -31,7 +34,6 @@ const DownloadButton = ({
   downloadStartFailureAction,
   networkInfo
 }) => {
-  // console.log({ sub });
   const [isDownloaded, setIsDownloaded] = React.useState(null);
   const [isConnected, setIsConnected] = React.useState(false);
 
@@ -40,8 +42,6 @@ const DownloadButton = ({
 
     checkIfAlreadyDownloaded(sub);
   }, [sub]);
-
-  console.log({ isDownloaded });
 
   React.useEffect(() => {
     if (!networkInfo) return setIsConnected(false);
@@ -56,10 +56,17 @@ const DownloadButton = ({
     setIsDownloaded(downloaded);
   };
 
-  const startDownload = (track) => {
+  const startDownload = async (track) => {
     const { id, url, albumId } = track;
 
     const taskId = `a_${id}_${albumId}`;
+
+    // return if track is already downloaded
+    const downloaded = await checkIfTrackOrAlbumIsDownloaded(sub);
+    if (downloaded) {
+      console.log('already downloaded');
+      return;
+    }
 
     // return if there is no available source to download
     if (typeof url === 'undefined') {
@@ -79,18 +86,12 @@ const DownloadButton = ({
           updateProgressAction({ id, progress: percent * 100 });
         })
         .done(() => {
-          /// FOR DEVELOPMENT: list downloaded file when a download is finished
-          listDownloadedFiles();
-
           console.log('Download is done!');
 
           updateProgressAction({ id, progress: 100 });
 
           let completedItems = downloadsProgress.filter(({ progress }) => progress === 100);
-
           completedItems = completedItems.map(({ id }) => id);
-
-          console.log({ completedItems });
 
           cleanUpProgressAction([track.id, ...completedItems]);
         })
@@ -112,23 +113,11 @@ const DownloadButton = ({
     }
   };
 
-  /// gets file ids from filesystem and populates the files data
-  // for use for checking if the file is already downloaded
-  // const checkIfTrackIsDownlowded = async () => {
-  //   const ls = await RNFetchBlob.fs.ls(downloadPath);
-  //   const dls = ls.map((file) => {
-  //     let split = file.split('_');
-  //     return split[0]; // this is the ID
-  //   });
-  //   setFiles(dls);
-  // };
-
   const execDownload = async (sub) => {
+    let tracks;
+
     /// return if already downloaded
     if (isDownloaded) return;
-    console.log('x');
-
-    let tracks;
 
     /// return if there is no subject yet
     if (typeof sub === 'undefined') return;
@@ -150,11 +139,15 @@ const DownloadButton = ({
     // eslint-disable-next-line react/prop-types
     for (let i = 0; i < tracks.length; i++) {
       const track = tracks[i];
+      const { id, albumId } = track;
 
+      const taskId = `a_${id}_${albumId}`;
       // eslint-disable-next-line react/prop-types
-      const downloadingItem = activeDownloads.find(({ id }) => id === track.id);
 
+      // skip track if already downloading
+      const downloadingItem = activeDownloads.find(({ id }) => id === taskId);
       if (typeof downloadingItem !== 'undefined') {
+        console.log('stopped - already downloading');
         /// return if already downloading
         continue;
       }

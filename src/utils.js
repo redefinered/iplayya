@@ -185,7 +185,7 @@ export const checkIfTrackOrAlbumIsDownloaded = async (sub) => {
     return fSplit[0] === 'a' ? fSplit[1] : 'not_audio';
   });
   const audioIds = fileIds.filter((id) => id !== 'not_audio');
-  console.log({ sub, audioIds, type });
+  // console.log({ sub, audioIds, type });
 
   if (type === 'track') {
     /// return true if sub.id is in the extracted array, otherwise return false

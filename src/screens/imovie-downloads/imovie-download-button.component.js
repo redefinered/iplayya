@@ -210,6 +210,12 @@ const DownloadButton = ({
     });
   };
 
+  const handleDownloadPress = () => {
+    if (isMovieDownloaded) return;
+
+    setShowDownloadOptionsModal(true);
+  };
+
   const getColor = () => {
     if (!networkInfo.isConnected) return 'gray';
     if (isMovieDownloaded) return theme.iplayya.colors.vibrantpussy;
@@ -222,7 +228,7 @@ const DownloadButton = ({
     <React.Fragment>
       <Pressable
         disabled={!networkInfo.isConnected}
-        onPress={() => setShowDownloadOptionsModal(true)}
+        onPress={handleDownloadPress}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',

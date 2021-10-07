@@ -12,7 +12,6 @@ const DownloadControls = ({
   handlePause,
   handlePlay,
   handleRetry,
-  handleDownloadMovie,
   hideStopDownloadModal
 }) => {
   if (isDownloaded) return <View />;
@@ -25,11 +24,7 @@ const DownloadControls = ({
         handlePause={handlePause}
         handlePlay={handlePlay}
       />
-      <ButtonRetry
-        broken={broken}
-        handlePress={handleRetry}
-        handleDownloadMovie={handleDownloadMovie}
-      />
+      <ButtonRetry broken={broken} handlePress={handleRetry} />
       <ButtonClose onPressAction={hideStopDownloadModal} />
     </View>
   );
