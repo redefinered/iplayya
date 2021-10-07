@@ -71,7 +71,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
       </View>
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          // onPress={() => navigation.navigate('ImovieDownloadsScreen')}
+          onPress={() => navigation.navigate('ImusicDownloadsScreen')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />

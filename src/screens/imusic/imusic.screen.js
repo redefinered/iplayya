@@ -6,7 +6,7 @@ import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
-import ImovieBottomTabs from './imusic-bottom-tabs.component';
+import ImusicBottomTabs from './imusic-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -62,9 +62,9 @@ const ImusicScreen = ({
     };
   }, []);
 
-  /// retry get data if empty
+  /// for development
   React.useEffect(() => {
-    if (!albums.length) handleRetry();
+    if (!albums.length) console.log('Something went wrong, albums array empty');
   }, [albums]);
 
   React.useEffect(() => {
@@ -153,7 +153,7 @@ const ImusicScreen = ({
         </View>
       )}
 
-      <ImovieBottomTabs navigation={navigation} />
+      <ImusicBottomTabs navigation={navigation} />
     </View>
   );
 };

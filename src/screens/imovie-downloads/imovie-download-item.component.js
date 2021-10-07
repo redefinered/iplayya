@@ -6,18 +6,14 @@ import RadioButton from 'components/radio-button/radio-button.component';
 import { createFontFormat } from 'utils';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import SnackBar from 'components/snackbar/snackbar.component';
-// eslint-disable-next-line no-unused-vars
-import { checkExistingDownloads, listDownloadedFiles, deleteFile } from 'services/download.service';
 import theme from 'common/theme';
-import RetryDownloadButton from './retry-download-button.component';
-import ButtonClose from './button-close.component';
-import ButtonPause from './button-pause.component';
-import ButtonRetry from './button-retry.component';
+import DownloadControls from 'components/download-controls/download-controls.component';
+import RetryDownloadButton from './retry-download-button.component'; // the retry button on the modal that appears when download has failed
 import { createStructuredSelector } from 'reselect';
-import { Creators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
+import { selectDownloadsProgress } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { selectIsConnected } from 'modules/app';
 
 const DownloadItem = ({
@@ -59,13 +55,6 @@ const DownloadItem = ({
   }, [downloadProgress]);
 
   React.useEffect(() => {
-    // if (downloadProgress.length) {
-    //   const p = downloadProgress.find(({ id: pid }) => pid === id);
-
-    //   if (typeof p !== 'undefined') setProgress(p.progress);
-    // }
-
-    console.log({ progress, isDownloaded });
     if (progress === 100) {
       if (isDownloaded) return;
       setShowDownloadSuccessModal(true);
@@ -84,7 +73,6 @@ const DownloadItem = ({
     // setProgress(task.percent * 100);
     task
       .progress((percent) => {
-        console.log(`progress: ${percent * 100}%`);
         updateDownloadsProgressAction({ id, progress: percent * 100 });
       })
       .done(() => {
@@ -103,20 +91,11 @@ const DownloadItem = ({
     setIsDownloaded(false);
   }, [task]);
 
-  // React.useEffect(() => {
-  //   checkDownloads();
-  // });
-
-  // const checkDownloads = async () => {
-  //   await checkExistingDownloads();
-  // };
-
   // hide download success modal if true
   React.useEffect(() => {
     if (showDownloadSuccessModal) hideSnackBar();
   }, [showDownloadSuccessModal]);
 
-  console.log({ isConnected });
   React.useEffect(() => {
     if (isConnected) {
       setBroken(false);
@@ -134,10 +113,7 @@ const DownloadItem = ({
   };
 
   const handleRetry = () => {
-    // initialise download here
-
     setBroken(false);
-    // retry download
   };
 
   const handlePause = () => {
@@ -157,38 +133,8 @@ const DownloadItem = ({
     setPaused(false);
   };
 
-  // const handleStopDownload = () => {
-  //   if (typeof task === 'undefined') return;
-
-  //   task.stop();
-  // };
-
   const hideStopDownloadModal = () => {
     setShowStopDownloadModal(true);
-  };
-
-  const renderDownloadControls = () => {
-    if (isDownloaded) return;
-
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <ButtonPause
-          broken={broken}
-          paused={paused}
-          handlePause={handlePause}
-          handlePlay={handlePlay}
-        />
-        <ButtonRetry
-          broken={broken}
-          handlePress={handleRetry}
-          handleDownloadMovie={handleDownloadMovie}
-        />
-        {/* <Pressable onPress={() => setShowStopDownloadModal(true)} style={{ marginLeft: 10 }}>
-          <Icon name="close" size={theme.iconSize(5)} />
-        </Pressable> */}
-        <ButtonClose onPressAction={hideStopDownloadModal} />
-      </View>
-    );
   };
 
   const renderRadioButton = () => {
@@ -206,18 +152,7 @@ const DownloadItem = ({
   const renderProgress = () => {
     if (isDownloaded) return;
     return (
-      <View
-        style={
-          {
-            // backgroundColor: theme.iplayya.colors.white10,
-            // backgroundColor: 'red'
-            // height: 10,
-            // position: 'absolute',
-            // bottom: 0,
-            // left: 0
-          }
-        }
-      >
+      <React.Fragment>
         <View
           style={{
             width: (progress * Dimensions.get('window').width) / 100,
@@ -238,7 +173,7 @@ const DownloadItem = ({
             bottom: 0
           }}
         />
-      </View>
+      </React.Fragment>
     );
   };
 
@@ -322,25 +257,39 @@ const DownloadItem = ({
 
           {/* year and duration */}
           <Text
+            numberOfLines={1}
             style={{
               ...createFontFormat(12, 16),
               color: theme.iplayya.colors.white50,
               marginBottom: 5
             }}
-          >{`${year}, ${Math.floor(time / 60)}h ${time % 60}m`}</Text>
+          >
+            {`${year}, ${Math.floor(time / 60)}h ${time % 60}m`}
+          </Text>
 
           {/* ratings */}
           <Text
+            numberOfLines={1}
             style={{
               ...createFontFormat(12, 16),
               color: theme.iplayya.colors.white50,
               marginBottom: 5
             }}
-          >{`${rating_mpaa}-${age_rating}, ${category}`}</Text>
+          >
+            {`${rating_mpaa}-${age_rating}, ${category}`}
+          </Text>
         </View>
 
-        {/* buttons */}
-        {renderDownloadControls()}
+        <DownloadControls
+          isDownloaded={isDownloaded}
+          broken={broken}
+          paused={paused}
+          handlePause={handlePause}
+          handlePlay={handlePlay}
+          handleRetry={handleRetry}
+          handleDownloadMovie={handleDownloadMovie}
+          hideStopDownloadModal={hideStopDownloadModal}
+        />
 
         {/* radtio buttons for selection */}
         {renderRadioButton()}
@@ -353,13 +302,11 @@ const DownloadItem = ({
       <AlertModal
         iconName="download"
         iconColor={theme.iplayya.colors.vibrantpussy}
-        // message={`Error downloading ${title}`}
         message="An unexpected error has occured. Download is interrupted."
         visible={showDownloadFailureModal}
         hideAction={hideDownloadFailureModal}
         onCancel={hideDownloadFailureModal}
         cancelText="Try later"
-        // confirmText="Reload"
         confirmTextCompomponent={() => (
           <RetryDownloadButton
             ep={ep}
@@ -380,7 +327,6 @@ const DownloadItem = ({
         visible={showStopDownloadModal}
         hideAction={handleHideStopDownloadingModal}
         onCancel={handleHideStopDownloadingModal}
-        // cancelText="Joke lang pala"
         confirmText="Confirm"
         confirmAction={confirmStopDownload}
       />
@@ -428,4 +374,4 @@ const mapStateToProps = createStructuredSelector({
 
 const enhance = compose(connect(mapStateToProps, actions));
 
-export default enhance(DownloadItem);
+export default enhance(React.memo(DownloadItem));

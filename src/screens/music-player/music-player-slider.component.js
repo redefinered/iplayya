@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import Slider from '@react-native-community/slider';
 import thumbImage from 'assets/player-thumb-image.png';
+import thumbImagePressed from 'assets/player-thumb-image-active.png';
 import { createStructuredSelector } from 'reselect';
 import { selectPlaybackProgress, selectPlaybackInfo } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
@@ -16,6 +17,7 @@ const MusicPlayerSlider = ({ progress, playbackInfo, setPauseAction, setSeekvalu
   const [value, setValue] = React.useState();
   const [remainingTime, setRemainingTime] = React.useState(0);
   const [currentTime, setCurrentTime] = React.useState(0);
+  const [isSliding, setIsSliding] = React.useState(false);
 
   React.useEffect(() => {
     if (progress) setValue(progress);
@@ -56,23 +58,29 @@ const MusicPlayerSlider = ({ progress, playbackInfo, setPauseAction, setSeekvalu
   };
 
   const handleSlidingComplete = (value) => {
+    setIsSliding(false);
     setPauseAction(false);
 
     setSeekvalueAction((value * playbackInfo.seekableDuration) / 100);
+  };
+
+  const handleSlidingStart = () => {
+    setIsSliding(true);
+    setPauseAction(true);
   };
 
   return (
     <React.Fragment>
       <Slider
         value={value}
-        onSlidingStart={() => setPauseAction(true)}
+        onSlidingStart={handleSlidingStart}
         onSlidingComplete={handleSlidingComplete}
         onValueChange={handleChange}
         minimumValue={0}
         maximumValue={100}
         minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
-        maximumTrackTintColor="white"
-        thumbImage={thumbImage}
+        maximumTrackTintColor={theme.iplayya.colors.white50}
+        thumbImage={isSliding ? thumbImagePressed : thumbImage}
         style={{ width: '100%', height: 10 }}
       />
 

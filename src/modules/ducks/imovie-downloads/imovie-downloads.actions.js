@@ -2,8 +2,8 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
-    downloadStart: [],
-    downloadStarted: [],
+    downloadStart: null,
+    downloadStarted: null,
     downloadStartFailure: ['error'],
 
     updateDownloads: ['downloadTask'],
@@ -11,14 +11,9 @@ const { Types, Creators } = createActions(
     cleanUpDownloadsProgress: ['ids'],
     resetDownloadsProgress: [],
 
-    // getDownloadsStart: [],
-    // getDownloads: ['data'],
-    // getDownloadsSuccess: ['data'],
-    // getDownloadsFailure: ['error'],
-
     removeDownloadsByIds: ['ids'],
 
-    reset: []
+    reset: null
   },
   { prefix: '@Downloads/' }
 );

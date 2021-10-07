@@ -26,12 +26,14 @@ import ImovieDownloadsScreen from 'screens/imovie-downloads/imovie-downloads.scr
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import SeriesDetailScreen from 'screens/series-detail/series-detail.screen';
 import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-detail-downloaded.screen';
+import ImovieDownloadButton from 'screens/imovie-downloads/imovie-download-button.component';
 
 import IradioScreen from 'screens/iradio/iradio.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
-import ImusicFavorites from 'screens/imusic-favorites/imusic-favorites.screen';
 import ImusicSearchScreen from 'screens/imusic/imusic-search.screen';
+import ImusicFavoritesScreen from 'screens/imusic-favorites/imusic-favorites.screen';
+import ImusicDownloadsScreen from 'screens/imusic-downloads/imusic-downloads.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
@@ -57,11 +59,6 @@ import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
 import { selectFavorites as selectFavoriteIsportChannels } from 'modules/ducks/isports/isports.selectors';
-import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
-import DownloadButton from 'components/download-button/download-button.component';
-
-import NowPlaying from 'components/now-playing/now-playing.component';
-import { useNavigation } from '@react-navigation/native';
 
 import { headerHeight } from 'common/values';
 import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
@@ -70,8 +67,12 @@ import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
 import { Creators } from 'modules/ducks/profile/profile.actions';
 import { selectCreated } from 'modules/ducks/provider/provider.selectors';
 
+import NowPlaying from 'components/now-playing/now-playing.component';
 import NotificationButton from 'components/notification-button.component';
+import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
+import ImusicDownloadButton from 'screens/imusic-downloads/imusic-download-button.component';
 
+import { useNavigation } from '@react-navigation/native';
 import clone from 'lodash/clone';
 import theme from 'common/theme';
 
@@ -354,7 +355,7 @@ const HomeStack = ({
                     pressAction={rest.addMovieToFavoritesAction}
                     active={typeof movie === 'undefined' ? false : movie.is_favorite}
                   />
-                  <DownloadButton videoId={videoId} />
+                  <ImovieDownloadButton videoId={videoId} />
                 </View>
               )
             };
@@ -386,7 +387,7 @@ const HomeStack = ({
                     pressAction={rest.addMovieToFavoritesAction}
                     active={isInFavorites >= 0 ? true : false}
                   />
-                  <DownloadButton videoId={videoId} />
+                  <ImovieDownloadButton videoId={videoId} />
                 </View>
               )
             };
@@ -483,8 +484,8 @@ const HomeStack = ({
           }}
         />
         <Stack.Screen
-          name="ImusicFavorites"
-          component={ImusicFavorites}
+          name="ImusicFavoritesScreen"
+          component={ImusicFavoritesScreen}
           options={() => ({
             title: 'Favorites',
             animationEnabled: false,
@@ -501,6 +502,19 @@ const HomeStack = ({
                 </TouchableRipple>
               </View>
             )
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
+        <Stack.Screen
+          name="ImusicDownloadsScreen"
+          component={ImusicDownloadsScreen}
+          options={() => ({
+            title: 'Downloads',
+            animationEnabled: false
           })}
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
@@ -527,9 +541,42 @@ const HomeStack = ({
                     pressAction={rest.addAlbumToFavoritesAction}
                     active={typeof album === 'undefined' ? false : album.is_favorite}
                   />
-                  <DownloadButton albumId={albumId} />
+                  <ImusicDownloadButton sub={album} />
                 </View>
               )
+            };
+          }}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
+        <Stack.Screen
+          name="MusicPlayerScreen"
+          component={MusicPlayerScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={(props) => {
+            const {
+              route: {
+                params: { trackId, albumId, track }
+              }
+            } = props;
+
+            return {
+              title: null,
+              headerBackImage: () => <HeaderBackImage vertical />,
+              headerRight: () => (
+                <View style={{ flexDirection: 'row' }}>
+                  <AddToFavoritesButton
+                    sub={{ trackId: parseInt(trackId), albumId: parseInt(albumId) }}
+                    pressAction={rest.addTrackToFavoritesAction}
+                    active={typeof track === 'undefined' ? false : track.is_favorite}
+                  />
+                  <ImusicDownloadButton sub={track} />
+                </View>
+              ),
+              ...TransitionPresets.ModalSlideFromBottomIOS
             };
           }}
           listeners={{
@@ -735,41 +782,6 @@ const HomeStack = ({
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
-
-        <Stack.Screen
-          name="MusicPlayerScreen"
-          component={MusicPlayerScreen}
-          // eslint-disable-next-line no-unused-vars
-          options={(props) => {
-            const {
-              route: {
-                params: { trackId, albumId, track }
-              }
-            } = props;
-            console.log({ track });
-
-            // const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
-            return {
-              title: null,
-              headerBackImage: () => <HeaderBackImage vertical />,
-              headerRight: () => (
-                <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton
-                    sub={{ trackId: parseInt(trackId), albumId: parseInt(albumId) }}
-                    pressAction={rest.addTrackToFavoritesAction}
-                    active={typeof track === 'undefined' ? false : track.is_favorite}
-                  />
-                  <DownloadButton albumId={trackId} />
-                </View>
-              ),
-              ...TransitionPresets.ModalSlideFromBottomIOS
-            };
-          }}
-          listeners={{
-            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
-            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
-          }}
-        />
       </Stack.Navigator>
 
       <NowPlaying navigation={navigation} />
@@ -807,7 +819,6 @@ const styles = StyleSheet.create({
 
 const actions = {
   setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
-  updateDownloadsAction: MoviesCreators.updateDownloads,
   updateDownloadsProgressAction: MoviesCreators.updateDownloadsProgress,
   updateProfileAction: Creators.update,
   addChannelToFavoritesAction: ItvCreators.addToFavorites,
