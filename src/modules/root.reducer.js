@@ -14,6 +14,7 @@ import profileReducer from './ducks/profile/profile.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
 import musicReducer from './ducks/music/music.reducer';
 import imusicFavoritesReducer from './ducks/imusic-favorites/imusic-favorites.reducer';
+import imusicSearchReducer from './ducks/imusic-search/imusic-search.reducer';
 import imusicDownloadsReducer from './ducks/imusic-downloads/imusic-downloads.reducer';
 import isportsReducer from './ducks/isports/isports.reducer';
 import iradioReducer from './ducks/iradio/iradio.reducer';
@@ -41,6 +42,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   movies: resettable(moviesReducer),
   music: resettable(musicReducer),
   imusicFavorites: imusicFavoritesReducer,
+  imusicSearch: imusicSearchReducer,
   imusicDownloads: imusicDownloadsReducer,
   sports: resettable(isportsReducer),
   radios: iradioReducer,
