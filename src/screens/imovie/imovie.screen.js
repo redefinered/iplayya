@@ -83,6 +83,9 @@ const ImovieScreen = ({
     InteractionManager.runAfterInteractions(() => {
       if (!movies) return;
 
+      /// for development
+      if (!movies.length) console.log('Something went wrong, albums array empty');
+
       setData(movies);
     });
   }, [movies]);

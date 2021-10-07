@@ -5,7 +5,7 @@ import { resettableReducer } from 'reduxsauce';
 import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
 import authReducer from './ducks/auth/auth.reducer';
-import downloadsReducer from './ducks/downloads/downloads.reducer';
+import imovieDownloadsReducer from './ducks/imovie-downloads/imovie-downloads.reducer';
 import userReducer from './ducks/user/user.reducer';
 import passwordReducer from './ducks/password/password.reducer';
 import itvReducer from './ducks/itv/itv.reducer';
@@ -14,6 +14,7 @@ import profileReducer from './ducks/profile/profile.reducer';
 import moviesReducer from './ducks/movies/movies.reducer';
 import musicReducer from './ducks/music/music.reducer';
 import imusicFavoritesReducer from './ducks/imusic-favorites/imusic-favorites.reducer';
+import imusicDownloadsReducer from './ducks/imusic-downloads/imusic-downloads.reducer';
 import isportsReducer from './ducks/isports/isports.reducer';
 import iradioReducer from './ducks/iradio/iradio.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
@@ -31,7 +32,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   auth: authReducer,
   // auth: resettable(authReducer),
   nav: navReducer,
-  downloads: downloadsReducer,
+  imovieDownloads: imovieDownloadsReducer,
   user: resettable(userReducer),
   password: resettable(passwordReducer),
   itv: resettable(itvReducer),
@@ -40,6 +41,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   movies: resettable(moviesReducer),
   music: resettable(musicReducer),
   imusicFavorites: imusicFavoritesReducer,
+  imusicDownloads: imusicDownloadsReducer,
   sports: resettable(isportsReducer),
   radios: iradioReducer,
   provider: providerReducer,

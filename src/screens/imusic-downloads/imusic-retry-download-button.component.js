@@ -16,7 +16,7 @@ const RetryDownloadButton = ({
   movieTitle,
   downloads,
   networkInfo,
-  handleDownloadMovie,
+  executeDownload,
   setShowDownloadFailureModal,
   setBroken
 }) => {
@@ -56,7 +56,7 @@ const RetryDownloadButton = ({
 
     setBroken(false);
 
-    handleDownloadMovie({
+    executeDownload({
       ep,
       videoId,
       movie,
@@ -96,7 +96,7 @@ RetryDownloadButton.propTypes = {
   downloadsProgress: PropTypes.array,
   cleanUpDownloadsProgressAction: PropTypes.func,
   downloadStartFailureAction: PropTypes.func,
-  handleDownloadMovie: PropTypes.func,
+  executeDownload: PropTypes.func,
   setBroken: PropTypes.func,
   setShowDownloadFailureModal: PropTypes.func
 };

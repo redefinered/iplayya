@@ -11,7 +11,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
-import { Creators as DownloadsCreators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators as DownloadsCreators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -25,7 +25,7 @@ import {
 import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
-} from 'modules/ducks/downloads/downloads.selectors';
+} from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 import withLoader from 'components/with-loader.component';

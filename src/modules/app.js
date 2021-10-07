@@ -71,11 +71,32 @@ export default createReducer(INITIAL_STATE, {
 });
 
 const appState = (state) => state.app;
+const itvState = (state) => state.itv;
+const imoviesState = (state) => state.movies;
+const isportsState = (state) => state.sports;
+const imusicState = (state) => state.music;
+
+export const selectDataLoaded = createSelector(
+  [itvState, imoviesState, isportsState, imusicState],
+  (
+    { genres: itvGenres },
+    { categories: movieCategories },
+    { genres: isportsGenres },
+    { genres: imusicGenres }
+  ) => {
+    if (!itvGenres.length) return false;
+    if (!movieCategories.length) return false;
+    if (!isportsGenres.length) return false;
+    if (!imusicGenres.length) return false;
+    return true;
+  }
+);
 
 export const selectIsLoading = createSelector([appState], ({ isLoading }) => isLoading);
 export const selectNetworkInfo = createSelector([appState], ({ networkInfo }) => networkInfo);
 export const selectHeaderHeight = createSelector([appState], ({ headerHeight }) => headerHeight);
-export const selectIsConnected = createSelector(
-  [appState],
-  ({ networkInfo }) => networkInfo.isConnected
-);
+export const selectIsConnected = createSelector([appState], ({ networkInfo }) => {
+  if (!networkInfo) return false;
+
+  return networkInfo.isConnected;
+});

@@ -15,6 +15,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
+import { Creators as DownloadsCreators } from 'modules/ducks/imusic-downloads/imusic-downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
@@ -25,6 +26,7 @@ import {
   selectNowPlayingLayoutInfo
 } from 'modules/ducks/music/music.selectors';
 import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.selectors';
+import { selectDownloadStarted } from 'modules/ducks/imusic-downloads/imusic-downloads.selectors';
 import theme from 'common/theme';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
@@ -64,14 +66,20 @@ const AlbumDetail = ({
   setPausedAction,
   clearRepeatAction,
   addTrackToFavoritesAction,
-  getAlbumDetailsAction
+  getAlbumDetailsAction,
+  downloadStarted,
+  downloadsStartAction
 }) => {
+  console.log({ downloadStarted });
   const { albumId } = route.params;
+  const [showSnackbar, setShowSnackbar] = React.useState(false);
   const [showActionSheet, setShowActionSheet] = React.useState(false);
   const [selectedTrack, setSelectedTrack] = React.useState(null);
   const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
 
   React.useEffect(() => {
+    downloadsStartAction();
+
     getAlbumDetailsAction(albumId);
     /// clean up
     return () => getAlbumDetailsStartAction();
@@ -96,6 +104,26 @@ const AlbumDetail = ({
       hideUpdateNotification();
     }
   }, [showUpdateNotification]);
+
+  React.useEffect(() => {
+    if (downloadStarted) {
+      setShowSnackbar(true);
+    } else {
+      setShowSnackbar(false);
+    }
+  }, [downloadStarted]);
+
+  React.useEffect(() => {
+    if (showSnackbar) {
+      hideSnackbar();
+    }
+  }, [showSnackbar]);
+
+  const hideSnackbar = () => {
+    setTimeout(() => {
+      setShowSnackbar(false);
+    }, 3000);
+  };
 
   const hideActionSheet = () => {
     setShowActionSheet(false);
@@ -297,6 +325,13 @@ const AlbumDetail = ({
       <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
 
       {renderUpdateNotification()}
+
+      <SnackBar
+        visible={showSnackbar}
+        message="Downloading album. You can check the progress in Downloaded section."
+        iconName="download"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
@@ -318,7 +353,8 @@ const actions = {
   setProgressAction: Creators.setProgress,
   clearRepeatAction: Creators.clearRepeat,
   addTrackToFavoritesAction: FavoritesCreators.addTrackToFavorites,
-  addAlbumToFavoritesStartAction: FavoritesCreators.addAlbumToFavoritesStart
+  addAlbumToFavoritesStartAction: FavoritesCreators.addAlbumToFavoritesStart,
+  downloadsStartAction: DownloadsCreators.downloadStart
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -328,7 +364,8 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated,
   nowPlaying: selectNowPlaying,
   isBackgroundMode: selectIsBackgroundMode,
-  nowPlayingLayoutInfo: selectNowPlayingLayoutInfo
+  nowPlayingLayoutInfo: selectNowPlayingLayoutInfo,
+  downloadStarted: selectDownloadStarted
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
