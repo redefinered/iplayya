@@ -30,6 +30,7 @@ const { Types, Creators } = createActions(
     setPaused: ['isPaused'], // boolean
     updatePlaybackInfo: ['playbackInfo'],
     switchInImusicScreen: ['value'],
+    setImusicBottomNavLayout: ['layout'],
     resetNowPlaying: null,
     setNowPlayingBackgroundMode: ['isBackgroundMode'],
     setNowPlayingLayoutInfo: ['layoutInfo'],
