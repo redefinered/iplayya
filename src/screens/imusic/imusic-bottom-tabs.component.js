@@ -8,8 +8,9 @@ import theme from 'common/theme';
 import { createStructuredSelector } from 'reselect';
 import { selectNowPlaying } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/music/music.actions';
 
-const ImusicBottomTabs = ({ navigation, route, nowPlaying }) => {
+const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLayoutAction }) => {
   const [heartIconColor, setHeartIconColor] = React.useState('white');
   const [downloadIconColor, setDownloadIconColor] = React.useState('white');
 
@@ -45,6 +46,7 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying }) => {
 
   return (
     <SafeAreaView
+      onLayout={({ nativeEvent: { layout } }) => setImusicBottomNavLayoutAction(layout)}
       style={{
         flex: 1,
         flexDirection: 'row',
@@ -60,7 +62,7 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying }) => {
     >
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate('ImusicFavorites')}
+          onPress={() => navigation.navigate('ImusicFavoritesScreen')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
@@ -110,9 +112,14 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying }) => {
 ImusicBottomTabs.propTypes = {
   navigation: PropTypes.object,
   route: PropTypes.object,
-  nowPlaying: PropTypes.object
+  nowPlaying: PropTypes.object,
+  setImusicBottomNavLayoutAction: PropTypes.func
 };
 
-const mapStateToProps = createStructuredSelector({ nowPlaying: selectNowPlaying });
+const mapStateToProps = createStructuredSelector({
+  nowPlaying: selectNowPlaying
+});
 
-export default connect(mapStateToProps)(ImusicBottomTabs);
+const actions = { setImusicBottomNavLayoutAction: Creators.setImusicBottomNavLayout };
+
+export default connect(mapStateToProps, actions)(ImusicBottomTabs);
