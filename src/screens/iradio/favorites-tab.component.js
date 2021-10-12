@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, FlatList } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 // import SnackBar from 'components/snackbar/snackbar.component';
 import Icon from 'components/icon/icon.component';
@@ -13,71 +13,75 @@ import { createStructuredSelector } from 'reselect';
 import {
   selectFavorites,
   selectRemovedFromFavorites,
-  selectPaginatorInfo
+  selectFavoritesPaginator,
+  selectRadioStations,
+  selectPaginator
 } from 'modules/ducks/iradio/iradio.selectors';
-import { selectRadioStations } from 'modules/ducks/iradio/iradio.selectors';
 
 import Spacer from 'components/spacer.component';
 import ContentWrap from 'components/content-wrap.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
-import { selectPaginator } from 'modules/ducks/iradio/iradio.selectors';
+
+const ITEM_HEIGHT = 16;
 
 const FavoritesTab = ({
   theme,
   // radioStations,
   favorites,
-  // paginator,
-  paginatorInfo,
+  favoritesPaginator,
   getFavoritesAction,
   getRadioStationsAction,
   removedFromFavorites,
   removeFromFavoritesAction,
   handleSelectItem,
   navigation,
-  setIndex
+  setIndex,
+  resetFavoritesPaginatorAction
 }) => {
-  // const [showSnackBar, setShowSnackBar] = React.useState(false);
-  // const [showConfirm, setShowConfirm] = React.useState(false);
-  // const [removedItemName, setRemovedItemName] = React.useState('');
-  // const [selectedIdToRemove, serSelectedIdToremove] = React.useState(null);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [selectAll, setSellectAll] = React.useState(false);
+  const [listData, setListData] = React.useState([]);
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
 
-  // const handleRemovePressed = (id) => {
-  //   serSelectedIdToremove(id);
-  //   setShowConfirm(true);
-  // };
+  React.useEffect(() => {
+    resetFavoritesPaginatorAction();
+    // getFavoritesAction(favoritesPaginator);
+  }, []);
 
-  // const confirmRemove = (id) => {
-  //   // add channel to favorites
-  //   removeFromFavoritesAction(id);
-
-  //   setShowConfirm(false);
-  // };
+  // React.useEffect(() => {
+  //   if (favoritesPaginator.pageNumber === 1) {
+  //     getFavoritesAction({ limit: 10, pageNumber: 2, orderBy: 'number', order: 'asc' });
+  //   }
+  // }, [favoritesPaginator]);
 
   // get favorites on mount
   React.useEffect(() => {
-    getFavoritesAction(paginatorInfo);
-  }, []);
-
-  React.useEffect(() => {
+    resetFavoritesPaginatorAction();
     if (removedFromFavorites) {
-      // const name = radioStations.find(({ id }) => id === removedFromFavorites).name;
-      // setRemovedItemName(name);
-      // setShowSnackBar(true);
-      getFavoritesAction(paginatorInfo);
-      getRadioStationsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      setActivateCheckboxes(false);
+      getFavoritesAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getRadioStationsAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
   }, [removedFromFavorites]);
 
-  // const hideSnackBar = () => {
-  //   setTimeout(() => {
-  //     setShowSnackBar(false);
-  //   }, 3000);
-  // };
+  console.log(favorites);
+  // setup favorites
+  React.useEffect(() => {
+    if (favorites) {
+      let data = favorites.map(({ id, name, cmd, number }) => ({
+        id,
+        name,
+        cmd,
+        number
+      }));
+      setListData(data);
+    }
+  }, [favorites]);
 
   const handleSelectItems = ({ id, cmd, name, number }) => {
     if (activateCheckboxes) {
@@ -90,8 +94,6 @@ const FavoritesTab = ({
         setSelectedItems([id, ...selectedItems]);
       }
     } else {
-      // navigation.navigate('MovieDetailScreen', { videoId: item })
-      // const { cmd, name, number } = item;
       handleSelectItem({ number, cmd, name });
     }
   };
@@ -108,6 +110,7 @@ const FavoritesTab = ({
         return id;
       });
       setSelectedItems(collection);
+      console.log(collection);
     } else {
       setSelectedItems([]);
     }
@@ -141,6 +144,13 @@ const FavoritesTab = ({
     handleRemoveItems();
   };
 
+  const handleEndReached = () => {
+    if (!onEndReachedCalledDuringMomentum) {
+      getFavoritesAction(favoritesPaginator);
+      setOnEndReachedCalledDuringMomentum(true);
+    }
+  };
+
   // React.useEffect(() => {
   //   if (showSnackBar) hideSnackBar();
   // }, [showSnackBar]);
@@ -167,9 +177,56 @@ const FavoritesTab = ({
     </View>
   );
 
-  if (favorites.length)
+  // eslint-disable-next-line react/prop-types
+  const renderItem = ({ item: { id, cmd, name, number } }) => {
     return (
-      <ScrollView>
+      <Pressable
+        delayLongPress={1500}
+        underlayColor={theme.iplayya.colors.black80}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+            paddingHorizontal: theme.spacing(2),
+            paddingVertical: theme.spacing(2)
+          }
+        ]}
+        onLongPress={() => handleLongPress(id)}
+        onPress={() => handleSelectItems({ id, name, cmd, number })}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              flex: 1
+            }}
+          >
+            <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
+              {number}
+            </Text>
+            <View style={{ flex: 1, marginHorizontal: 10 }}>
+              <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
+                {name}
+              </Text>
+            </View>
+          </View>
+          {activateCheckboxes && (
+            <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  if (listData.length || favorites.length)
+    return (
+      <View style={{ flex: 1 }}>
         {activateCheckboxes && (
           <ContentWrap>
             <View
@@ -205,53 +262,19 @@ const FavoritesTab = ({
             <Spacer size={20} />
           </ContentWrap>
         )}
-        {/* <AlertModal
-          iconName="unfavorite"
-          iconColor="#FF5050"
-          confirmText="Remove"
-          message="Do you want to remove this station to your Favorite list?"
-          hideAction={() => setShowConfirm(false)}
-          confirmAction={() => confirmRemove(selectedIdToRemove)}
-          visible={showConfirm}
-        /> */}
-        {/* <SnackBar
-          visible={showSnackBar}
-          message={`${removedItemName} is removed to your favorites list`}
-          iconName="heart-solid"
-          iconColor="#FF5050"
-        /> */}
-        {favorites.map(({ id, name, number, cmd }) => (
-          <Pressable
-            key={id}
-            underlayColor={theme.iplayya.colors.black80}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
-                paddingHorizontal: theme.spacing(2),
-                paddingVertical: theme.spacing(2)
-              }
-            ]}
-            onLongPress={() => handleLongPress(id)}
-            onPress={() => handleSelectItems({ id, name, cmd, number })}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
-              <View>
-                <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
-                  {number} {name}
-                </Text>
-              </View>
-              {activateCheckboxes && (
-                <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-              )}
-            </View>
-          </Pressable>
-        ))}
+        <FlatList
+          data={listData}
+          getItemLayout={(data, index) => ({
+            length: ITEM_HEIGHT,
+            offset: ITEM_HEIGHT * index,
+            index
+          })}
+          onEndReached={() => handleEndReached()}
+          onEndReachedThreshold={0.5}
+          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+        />
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
@@ -265,7 +288,7 @@ const FavoritesTab = ({
             confirmAction={handleConfirmDelete}
           />
         )}
-      </ScrollView>
+      </View>
     );
   return <EmptyState theme={theme} navigation={navigation} />;
 };
@@ -274,11 +297,11 @@ FavoritesTab.propTypes = {
   theme: PropTypes.object,
   radioStations: PropTypes.array,
   favorites: PropTypes.array,
-  paginator: PropTypes.object,
-  paginatorInfo: PropTypes.object,
+  favoritesPaginator: PropTypes.object,
   removedFromFavorites: PropTypes.bool,
   getFavorites: PropTypes.func,
   removeFromFavoritesAction: PropTypes.func,
+  resetFavoritesPaginatorAction: PropTypes.func,
   getRadioStationsAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
   handleSelectItem: PropTypes.func,
@@ -288,42 +311,17 @@ FavoritesTab.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   radioStations: selectRadioStations,
-  favorites: selectFavorites,
-  paginatorInfo: selectPaginatorInfo,
   paginator: selectPaginator,
+  favorites: selectFavorites,
+  favoritesPaginator: selectFavoritesPaginator,
   removedFromFavorites: selectRemovedFromFavorites
 });
 
 const actions = {
   getFavoritesAction: Creators.getFavorites,
   getRadioStationsAction: Creators.get,
-  removeFromFavoritesAction: Creators.removeFromFavorites
+  removeFromFavoritesAction: Creators.removeFromFavorites,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
 export default compose(connect(mapStateToProps, actions), withTheme)(FavoritesTab);
-
-{
-  /* <TouchableRipple key={id} onPress={() => handleSelectItem({ id, name, ...rest })}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: theme.spacing(2)
-              }}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
-              </View>
-              <View>
-                <Pressable onPress={() => handleRemovePressed(id)}>
-                  <Icon
-                    name="heart-solid"
-                    size={24}
-                    style={{ color: theme.iplayya.colors.vibrantpussy }}
-                  />
-                </Pressable>
-              </View>
-            </View>
-          </TouchableRipple> */
-}

@@ -12,14 +12,16 @@ const { Types, Creators } = createActions(
     getSuccess: ['radioStations', 'nextPaginatorInfo'],
     getFailure: ['error'],
 
+    favoritesStart: null,
     // get radio stations
-    getFavorites: ['data'],
-    getFavoritesSuccess: ['data'],
+    getFavorites: ['input'],
+    getFavoritesSuccess: ['data', 'nextPaginator'],
     getFavoritesFailure: ['error'],
+    resetFavoritesPaginator: null,
 
     // add to favorites
     addToFavorites: ['radioId'],
-    addToFavoritesSuccess: [],
+    addToFavoritesSuccess: null,
     addToFavoritesFailure: ['error'],
 
     // remove from favorites

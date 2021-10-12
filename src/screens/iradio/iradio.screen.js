@@ -21,7 +21,8 @@ import {
   selectError,
   selectIsFetching,
   selectRadioStations,
-  selectPaginator
+  selectPaginator,
+  selectFavoritesPaginator
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
 import { selectPaginatorInfo } from 'modules/ducks/iradio/iradio.selectors';
@@ -36,11 +37,13 @@ const IradioScreen = ({
   radioStations,
   getRadiosAction,
   getFavoritesAction,
-  paginatorInfo,
+  favoritesPaginator,
+  // paginatorInfo,
   paginator,
   enableSwipeAction,
   setNowPlayingAction,
   getRadiosStartAction
+  // resetFavoritesPaginatorAction
 }) => {
   const [index, setIndex] = React.useState(0);
   const [nowPlaying, setNowPlaying] = React.useState(null);
@@ -50,8 +53,8 @@ const IradioScreen = ({
 
   React.useEffect(() => {
     getRadiosStartAction();
-    getRadiosAction(paginator);
-    getFavoritesAction(paginatorInfo);
+    getRadiosAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    getFavoritesAction({ pageNumber: 1 });
   }, []);
 
   const [routes] = React.useState([
@@ -109,7 +112,8 @@ const IradioScreen = ({
                 <TabBars
                   {...props}
                   getRadiosAction={getRadiosAction}
-                  paginatorInfo={paginatorInfo}
+                  paginator={paginator}
+                  favoritesPaginator={favoritesPaginator}
                   getFavoritesAction={getFavoritesAction}
                 />
               );
@@ -121,11 +125,10 @@ const IradioScreen = ({
           <Text>No stations found</Text>
         </ContentWrap>
       )}
-      <View style={{ paddingTop: nowPlaying ? 50 : 0 }}>
-        {nowPlaying && <NowPlaying navigation={navigation} />}
-      </View>
+      <View>{nowPlaying && <NowPlaying navigation={navigation} />}</View>
       {/* pushes up the content to make room for the bottom tab */}
       <View style={{ paddingBottom: bottomNavHeight }} />
+
       <View
         onLayout={handleSetBottomTabsHeight}
         style={{
@@ -173,7 +176,6 @@ const IradioScreen = ({
 const TabBars = ({
   navigationState: { index, routes },
   jumpTo,
-  paginatorInfo,
   getRadiosAction,
   getFavoritesAction
 }) => {
@@ -181,10 +183,10 @@ const TabBars = ({
 
   const handleTabSelect = (key) => {
     if (key === 'radios') {
-      getRadiosAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getRadiosAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
     if (key === 'favorites') {
-      getFavoritesAction(paginatorInfo);
+      getFavoritesAction({ pageNumber: 1 });
     }
     jumpTo(key);
   };
@@ -251,6 +253,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   radioStations: selectRadioStations,
+  favoritesPaginator: selectFavoritesPaginator,
   paginatorInfo: selectPaginatorInfo,
   paginator: selectPaginator
 });
@@ -262,7 +265,8 @@ const actions = {
   getRadiosStartAction: Creators.getStart,
   getRadiosAction: Creators.get,
   getFavoritesAction: Creators.getFavorites,
-  enableSwipeAction: NavActionCreators.enableSwipe
+  enableSwipeAction: NavActionCreators.enableSwipe,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

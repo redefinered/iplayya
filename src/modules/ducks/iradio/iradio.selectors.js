@@ -23,6 +23,11 @@ export const selectPaginatorInfo = createSelector(
   ({ paginatorInfo }) => paginatorInfo
 );
 
+export const selectFavoritesPaginator = createSelector(
+  [radioState],
+  ({ favoritesPaginator }) => favoritesPaginator
+);
+
 export const selectPaginator = createSelector([radioState], ({ paginator }) => paginator);
 
 export const selectPlaybackInfo = createSelector([radioState], ({ playbackInfo }) => playbackInfo);

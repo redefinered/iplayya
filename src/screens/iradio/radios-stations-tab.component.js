@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, FlatList, Dimensions } from 'react-native';
+import { View, Pressable, FlatList } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import SnackBar from 'components/snackbar/snackbar.component';
@@ -13,7 +13,8 @@ import {
   selectRadioStations,
   selectAddedToFavorites,
   selectPaginator,
-  selectPaginatorInfo
+  selectPaginatorInfo,
+  selectFavoritesPaginator
 } from 'modules/ducks/iradio/iradio.selectors';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import ContentWrap from 'components/content-wrap.component';
@@ -25,7 +26,6 @@ const RadioStationsTab = ({
   addToFavoritesAction,
   addedToFavorites,
   paginator,
-  paginatorInfo,
   handleSelectItem,
   getFavoritesAction
 }) => {
@@ -39,14 +39,6 @@ const RadioStationsTab = ({
   React.useEffect(() => {
     getRadioStationsAction(paginator);
   }, []);
-
-  // React.useEffect(() => {
-  //   if (radioStations.length === 10) {
-  //     getRadioStationsAction(paginator);
-  //   } else {
-  //     return;
-  //   }
-  // }, []);
 
   // setup radio data
   React.useEffect(() => {
@@ -65,7 +57,6 @@ const RadioStationsTab = ({
   }, [radioStations]);
 
   const handleEndReached = () => {
-    console.log('ditoako');
     if (!onEndReachedCalledDuringMomentum) {
       getRadioStationsAction(paginator);
       setOnEndReachedCalledDuringMomentum(true);
@@ -74,9 +65,6 @@ const RadioStationsTab = ({
 
   const handleAddToFavorites = (radioId) => {
     let radio = radioStations.find(({ id }) => id === radioId);
-
-    // if radio is not found stop
-    if (typeof radio === 'undefined') return;
 
     const { is_favorite } = radio;
 
@@ -91,8 +79,8 @@ const RadioStationsTab = ({
   React.useEffect(() => {
     if (addedToFavorites) {
       setShowSnackBar(true);
-      getFavoritesAction(paginatorInfo);
-      getRadioStationsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getFavoritesAction({ pageNumber: 1 });
+      getRadioStationsAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
     }
   }, [addedToFavorites]);
 
@@ -177,8 +165,7 @@ const RadioStationsTab = ({
         data={radioStationsData}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
-        snapToInterval={Dimensions.get('window').height}
-        onEndReachedThreshold={0.6}
+        onEndReachedThreshold={0.5}
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
         renderItem={renderItem}
       />
@@ -201,20 +188,24 @@ RadioStationsTab.propTypes = {
   getFavoritesAction: PropTypes.func,
   handleSelectItem: PropTypes.func,
   paginator: PropTypes.object,
-  paginatorInfo: PropTypes.object
+  paginatorInfo: PropTypes.object,
+  getRadiosStartAction: PropTypes.func
 };
 
 const actions = {
   getRadioStationsAction: Creators.get,
   getFavoritesAction: Creators.getFavorites,
-  addToFavoritesAction: Creators.addToFavorites
+  addToFavoritesAction: Creators.addToFavorites,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
+  getRadiosStartAction: Creators.getStart
 };
 
 const mapStateToProps = createStructuredSelector({
   radioStations: selectRadioStations,
   addedToFavorites: selectAddedToFavorites,
   paginator: selectPaginator,
-  paginatorInfo: selectPaginatorInfo
+  paginatorInfo: selectPaginatorInfo,
+  favoritesPaginator: selectFavoritesPaginator
 });
 
 export default compose(connect(mapStateToProps, actions), withTheme)(RadioStationsTab);

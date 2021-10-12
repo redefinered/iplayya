@@ -23,11 +23,18 @@ export function* getRequest(action) {
 }
 
 export function* getFavoritesRequest(action) {
-  const { ...input } = action.data;
+  const { input } = action;
+  // const { limit, pageNumber } = action;
+
+  // const nextPaginator = { limit, pageNumber: pageNumber + 1 };
   try {
     // TODO: input should come from stat, pageNumber should be incremented for every request
     const { favoriteRadios: favorites } = yield call(getFavorites, input);
-    yield put(Creators.getFavoritesSuccess({ favorites }));
+
+    /// increment paginator pageNumber
+    Object.assign(input, { pageNumber: input.pageNumber + 1 });
+
+    yield put(Creators.getFavoritesSuccess(favorites, input));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
   }

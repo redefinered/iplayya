@@ -2,6 +2,7 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './iradio.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
+import { updateRadioStationsWithFavorited } from './iradio.helpers';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -22,6 +23,12 @@ const INITIAL_STATE = {
   paginatorInfo: {
     limit: 10,
     pageNumber: 1
+  },
+  favoritesPaginator: {
+    limit: 10,
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
   },
 
   paused: false,
@@ -77,6 +84,11 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  // favorites
+  [Types.FAVORITES_START]: (state) => {
+    return { ...state, addedToFavorites: false, removedFromFavorites: false };
+  },
   [Types.GET_FAVORITES]: (state) => {
     return {
       ...state,
@@ -85,15 +97,25 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
-    const { favorites } = action.data;
+    const { data, nextPaginator } = action;
+
+    let updatedData = uniqBy([...data, ...state.favorites], 'id');
+    // let updatedData = uniqBy(data, 'id');
+    console.log(data, state.favorites);
+
+    updatedData = updatedData.map(({ number, ...rest }) => {
+      return { number: parseInt(number), ...rest };
+    });
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      favorites,
+      favorites: orderBy(updatedData, 'number', 'asc'),
+      favoritesPaginator: Object.assign(state.favoritesPaginator, nextPaginator),
+      // favoritesPaginator: nextPaginator,
       addedToFavorites: false,
-      removedFromFavorites: null
+      removedFromFavorites: false
     };
   },
   [Types.GET_FAVORITES_FAILURE]: (state, action) => {
@@ -103,11 +125,14 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
-  [Types.ADD_TO_FAVORITES]: (state) => {
+  [Types.ADD_TO_FAVORITES]: (state, action) => {
+    const radioStations = updateRadioStationsWithFavorited(state, action);
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      radioStations,
+      addedToFavorites: false
     };
   },
   [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
@@ -126,11 +151,23 @@ export default createReducer(INITIAL_STATE, {
       addedToFavorites: false
     };
   },
-  [Types.REMOVE_FROM_FAVORITES]: (state) => {
+  [Types.REMOVE_FROM_FAVORITES]: (state, action) => {
+    const { favorites } = (state, action);
+
+    const newFavorites = (id) => {
+      return favorites.filter((item) => {
+        return item.id !== id;
+      });
+    };
+
+    let updateData = uniqBy(newFavorites);
+
     return {
       ...state,
       isFetching: true,
       error: null,
+      // favorites: newFavorites,
+      favorites: orderBy(updateData, 'number', 'asc'),
       removedFromFavorites: false
     };
   },
@@ -150,6 +187,18 @@ export default createReducer(INITIAL_STATE, {
       removedFromFavorites: false
     };
   },
+  [Types.RESET_FAVORITES_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      favoritesPaginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
+    };
+  },
+
   [Types.PLAYBACK_START]: (state) => {
     return {
       ...state,
