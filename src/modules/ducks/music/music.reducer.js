@@ -22,6 +22,7 @@ const INITIAL_STATE = {
   playlist: [],
   shuffle: false,
   nowPlayingLayoutInfo: null,
+  imusicBottomNavLayout: null,
   isBackgroundMode: false,
   isInImusicScreen: false,
   repeat: repeatTypes.find(({ value }) => value === 'none'),
@@ -203,6 +204,9 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.SET_NOW_PLAYING_BACKGROUND_MODE]: (state, action) => {
     return { ...state, isBackgroundMode: action.isBackgroundMode };
+  },
+  [Types.SET_IMUSIC_BOTTOM_NAV_LAYOUT]: (state, action) => {
+    return { ...state, imusicBottomNavLayout: action.layout };
   },
   [Types.SET_NOW_PLAYING_LAYOUT_INFO]: (state, action) => {
     return { ...state, nowPlayingLayoutInfo: action.layoutInfo };

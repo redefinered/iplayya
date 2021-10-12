@@ -99,3 +99,8 @@ export const selectIsInImusicScreen = createSelector(
   [musicState],
   ({ isInImusicScreen }) => isInImusicScreen
 );
+
+export const selectImusicBottomNavLayout = createSelector(
+  [musicState],
+  ({ imusicBottomNavLayout }) => imusicBottomNavLayout
+);
