@@ -62,7 +62,7 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLay
     >
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate('ImusicFavorites')}
+          onPress={() => navigation.navigate('ImusicFavoritesScreen')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
