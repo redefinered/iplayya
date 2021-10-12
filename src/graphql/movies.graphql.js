@@ -63,7 +63,7 @@ export const GET_MOVIE = gql`
 `;
 
 export const ADD_MOVIE_TO_FAVORITES = gql`
-  mutation ADD_VIDEO_TO_FAVOURITES($input: addVideoToFavoritesInput) {
+  mutation ADD_VIDEO_TO_FAVOURITES($input: videoToFavoritesInput) {
     addVideoToFavorites(input: $input) {
       status
       message
@@ -87,7 +87,7 @@ export const GET_FAVORITE_MOVIES = gql`
 `;
 
 export const REMOVE_FROM_FAVORITES = gql`
-  mutation REMOVE_FROM_FAVORITES($input: addVideoToFavoritesInput) {
+  mutation REMOVE_FROM_FAVORITES($input: videoToFavoritesInput) {
     removeVideoToFavorites(input: $input) {
       status
       message

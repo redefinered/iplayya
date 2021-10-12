@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import Button from 'components/button/button.component';
-import { Creators } from 'modules/ducks/downloads/downloads.actions';
+import { Creators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectDownloadsProgress } from 'modules/ducks/downloads/downloads.selectors';
-import { selectDownloads } from 'modules/ducks/downloads/downloads.selectors';
+import { selectDownloadsProgress } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
+import { selectDownloads } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { selectNetworkInfo } from 'modules/app';
 
 const RetryDownloadButton = ({
@@ -20,6 +20,8 @@ const RetryDownloadButton = ({
   setShowDownloadFailureModal,
   setBroken
 }) => {
+  const [currentEpisode, setCurrentEpisode] = React.useState(null);
+
   /// return null if downloads history is empty
   if (!downloads.length) return;
 
@@ -31,10 +33,6 @@ const RetryDownloadButton = ({
     seriesId >= 0
       ? downloads.find(({ id }) => id === videoId)
       : downloads.find(({ movie }) => movie.id === videoId);
-
-  console.log({ movie, downloadUrl });
-
-  const [currentEpisode, setCurrentEpisode] = React.useState(null);
 
   React.useEffect(() => {
     if (!movie) return;
@@ -98,7 +96,6 @@ RetryDownloadButton.propTypes = {
   downloadsProgress: PropTypes.array,
   cleanUpDownloadsProgressAction: PropTypes.func,
   downloadStartFailureAction: PropTypes.func,
-  updateDownloadsAction: PropTypes.func,
   handleDownloadMovie: PropTypes.func,
   setBroken: PropTypes.func,
   setShowDownloadFailureModal: PropTypes.func

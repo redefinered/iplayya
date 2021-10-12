@@ -11,19 +11,25 @@ const { Types, Creators } = createActions(
     getAlbumsSuccess: ['albums', 'genrePaginator'],
     getAlbumsFailure: ['error'],
 
-    getAlbumStart: null,
-    getAlbum: ['album'],
-    getAlbumSuccess: ['album'],
-    getAlbumFailure: ['error'],
+    // getTracksByAlbumStart: null,
+    // getTracksByAlbum: ['album'],
+    // getTracksByAlbumSuccess: ['album'],
+    // getTracksByAlbumFailure: ['error'],
 
-    getAlbumsByGenre: ['input'],
-    getAlbumsByGenreSuccess: ['data'],
-    getAlbumsByGenreFailure: ['error'],
+    getAlbumDetailsStart: null,
+    getAlbumDetails: ['albumId'],
+    getAlbumDetailsSuccess: ['album'],
+    getAlbumDetailsFailure: ['error'],
+
+    getAlbumsByGenres: ['input'],
+    getAlbumsByGenresSuccess: ['data', 'nextPaginator'],
+    getAlbumsByGenresFailure: ['error'],
 
     setNowPlaying: ['track', 'newPlaylist'],
     setProgress: ['progress'], // progress in percentage
     setPaused: ['isPaused'], // boolean
     updatePlaybackInfo: ['playbackInfo'],
+    switchInImusicScreen: ['value'],
     resetNowPlaying: null,
     setNowPlayingBackgroundMode: ['isBackgroundMode'],
     setNowPlayingLayoutInfo: ['layoutInfo'],

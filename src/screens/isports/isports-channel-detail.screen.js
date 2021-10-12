@@ -14,10 +14,7 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
-// import { createFontFormat } from 'utils';
-// import MediaPlayer from 'components/media-player/media-player.component';
 import RNFetchBlob from 'rn-fetch-blob';
-// import { generateDatesFromToday } from 'utils';
 import { createStructuredSelector } from 'reselect';
 import IsportsPlayer from './isports-player.component';
 import CurrentProgram from './isports-current-program.component';
@@ -28,14 +25,9 @@ import {
   selectPrograms,
   selectFavoritesListUpdated
 } from 'modules/ducks/isports/isports.selectors';
-// import moment from 'moment';
 import theme from 'common/theme';
 
 const dirs = RNFetchBlob.fs.dirs;
-
-// generates an array of dates 7 days from now
-// let DATES = generateDatesFromToday();
-// DATES = DATES.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
 
 const IsportsChannelDetailScreen = ({
   route: {
@@ -49,7 +41,6 @@ const IsportsChannelDetailScreen = ({
   getChannelAction,
   startAction,
   onNotifResetAction,
-  // addToFavoritesAction,
   favoritesListUpdated,
   getProgramsByChannelStartAction,
   navigation,
@@ -63,6 +54,12 @@ const IsportsChannelDetailScreen = ({
   const [showFavSnackBar, setShowFavSnackBar] = React.useState(false);
   const [contentHeight, setContentHeight] = React.useState(null);
   const [fullscreen, setFullscreen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!channel) return;
+
+    navigation.setParams({ channel });
+  }, [channel]);
 
   /// hide status bar if fullscreen
   const renderStatusbar = () => {

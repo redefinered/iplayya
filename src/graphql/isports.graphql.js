@@ -24,6 +24,7 @@ export const GET_CHANNEL = gql`
       number
       title
       url
+      is_favorite
     }
   }
 `;
@@ -64,7 +65,7 @@ export const GET_SPORTS_CHANNELS_BY_CATEGORIES = gql`
 `;
 
 export const ADD_TO_FAVORITES = gql`
-  mutation ADD_TO_FAVORITES($input: addIsportToFavoritesInput) {
+  mutation ADD_TO_FAVORITES($input: iSportToFavoritesInput) {
     addIsportToFavorites(input: $input) {
       status
       message
@@ -89,7 +90,7 @@ export const GET_FAVORITES = gql`
 `;
 
 export const REMOVE_FROM_FAVORITES = gql`
-  mutation REMOVE_FROM_FAVORITES($input: addIsportToFavoritesInput) {
+  mutation REMOVE_FROM_FAVORITES($input: iSportToFavoritesInput) {
     removeIsportToFavorites(input: $input) {
       status
       message

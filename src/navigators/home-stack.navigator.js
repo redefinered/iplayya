@@ -13,7 +13,6 @@ import HomeScreen from 'screens/home/home.screen';
 import ItvScreen from 'screens/itv/itv.screen';
 import ItvProgramGuideScreen from 'screens/itv/itv-program-guide.screen';
 import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
-// import ItvDownloadsScreen from 'screens/itv-downloads/itv-downloads.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
 import ItvChannelDetailScreen from 'screens/itv/itv-channel-detail.screen';
 import NotificationsScreen from 'screens/notifications/notifications.screen';
@@ -27,10 +26,14 @@ import ImovieDownloadsScreen from 'screens/imovie-downloads/imovie-downloads.scr
 import MovieDetailScreen from 'screens/movie-detail/movie-detail.screen';
 import SeriesDetailScreen from 'screens/series-detail/series-detail.screen';
 import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-detail-downloaded.screen';
+import ImovieDownloadButton from 'screens/imovie-downloads/imovie-download-button.component';
 
 import IradioScreen from 'screens/iradio/iradio.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
+import ImusicSearchScreen from 'screens/imusic/imusic-search.screen';
+import ImusicFavoritesScreen from 'screens/imusic-favorites/imusic-favorites.screen';
+import ImusicDownloadsScreen from 'screens/imusic-downloads/imusic-downloads.screen';
 import AlbumDetailScreen from 'screens/album-detail/album-detail.screen';
 import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 
@@ -47,17 +50,15 @@ import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { Creators as MoviesActionCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
+import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
+import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
+import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
+import { Creators as ImusicFavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
 import { selectFavorites as selectFavoriteIsportChannels } from 'modules/ducks/isports/isports.selectors';
-import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
-import DownloadButton from 'components/download-button/download-button.component';
-
-import NowPlaying from 'components/now-playing/now-playing.component';
-import { useNavigation } from '@react-navigation/native';
 
 import { headerHeight } from 'common/values';
 import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
@@ -66,8 +67,12 @@ import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
 import { Creators } from 'modules/ducks/profile/profile.actions';
 import { selectCreated } from 'modules/ducks/provider/provider.selectors';
 
+import NowPlaying from 'components/now-playing/now-playing.component';
 import NotificationButton from 'components/notification-button.component';
+import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
+import ImusicDownloadButton from 'screens/imusic-downloads/imusic-download-button.component';
 
+import { useNavigation } from '@react-navigation/native';
 import clone from 'lodash/clone';
 import theme from 'common/theme';
 
@@ -234,57 +239,11 @@ const HomeStack = ({
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
-        {/* <Stack.Screen
-        name="ItvDownloadsScreen"
-        component={ItvDownloadsScreen}
-        // eslint-disable-next-line no-unused-vars
-        options={({ navigation }) => ({
-          title: 'Downloads',
-          animationEnabled: false,
-          headerRight: () => (
-            <View style={{ flexDirection: 'row' }}>
-              <TouchableRipple
-                borderless={true}
-                style={{ borderRadius: 44, padding: 8 }}
-                rippleColor="rgba(0,0,0,0.28)"
-                onPress={() => navigation.navigate('ItvSearchScreen')}
-              >
-                <View style={{ ...styles.headerButtonContainer }}>
-                  <Icon name="search" size={24} />
-                </View>
-              </TouchableRipple>
-            </View>
-          )
-        })}
-        listeners={{
-          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
-          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
-        }}
-      /> */}
         <Stack.Screen
           name="ItvSearchScreen"
           component={ItvSearchScreen}
-          // eslint-disable-next-line no-unused-vars
-          options={({ navigation }) => ({
+          options={() => ({
             title: 'Search',
-            // headerLeft: null, // hide back button
-            // animationEnabled: false,
-
-            // Remove headerRight use backButton
-            // headerRight: () => (
-            //   <View style={{ flexDirection: 'row' }}>
-            //     <TouchableRipple
-            //       borderless={true}
-            //       style={{ borderRadius: 44, padding: 8 }}
-            //       rippleColor="rgba(0,0,0,0.28)"
-            //       onPress={() => navigation.goBack()}
-            //     >
-            //       <View style={{ ...styles.headerButtonContainer }}>
-            //         <Icon name="close" size={24} />
-            //       </View>
-            //     </TouchableRipple>
-            //   </View>
-            // ),
             ...TransitionPresets.ModalSlideFromBottomIOS
           })}
         />
@@ -295,22 +254,6 @@ const HomeStack = ({
           // eslint-disable-next-line no-unused-vars
           options={({ navigation }) => ({
             title: 'Search',
-            // headerLeft: null, // hide back button
-            // // animationEnabled: false,
-            // headerRight: () => (
-            //   <View style={{ flexDirection: 'row' }}>
-            //     <TouchableRipple
-            //       borderless={true}
-            //       style={{ borderRadius: 44, padding: 8 }}
-            //       rippleColor="rgba(0,0,0,0.28)"
-            //       onPress={() => navigation.goBack()}
-            //     >
-            //       <View style={{ ...styles.headerButtonContainer }}>
-            //         <Icon name="close" size={theme.iconSize(3)} />
-            //       </View>
-            //     </TouchableRipple>
-            //   </View>
-            // ),
             ...TransitionPresets.ModalSlideFromBottomIOS
           })}
         />
@@ -319,7 +262,6 @@ const HomeStack = ({
         <Stack.Screen
           name="ImovieScreen"
           component={ImovieScreen}
-          // eslint-disable-next-line no-unused-vars
           options={({ navigation }) => ({
             title: 'iMovie',
             animationEnabled: false,
@@ -349,22 +291,6 @@ const HomeStack = ({
           // eslint-disable-next-line no-unused-vars
           options={({ navigation }) => ({
             title: 'Search',
-            // headerLeft: null, // hide back button
-            // // animationEnabled: false,
-            // headerRight: () => (
-            //   <View style={{ flexDirection: 'row' }}>
-            //     <TouchableRipple
-            //       borderless={true}
-            //       style={{ borderRadius: 44, padding: 8 }}
-            //       rippleColor="rgba(0,0,0,0.28)"
-            //       onPress={() => navigation.goBack()}
-            //     >
-            //       <View style={styles.headerButtonContainer}>
-            //         <Icon name="close" size={24} />
-            //       </View>
-            //     </TouchableRipple>
-            //   </View>
-            // ),
             ...TransitionPresets.ModalSlideFromBottomIOS
           })}
           listeners={{
@@ -401,8 +327,7 @@ const HomeStack = ({
         <Stack.Screen
           name="ImovieDownloadsScreen"
           component={ImovieDownloadsScreen}
-          // eslint-disable-next-line no-unused-vars
-          options={({ navigation }) => ({
+          options={() => ({
             title: 'Downloads',
             animationEnabled: false
           })}
@@ -414,7 +339,6 @@ const HomeStack = ({
         <Stack.Screen
           name="MovieDetailScreen"
           component={MovieDetailScreen}
-          // eslint-disable-next-line no-unused-vars
           options={(props) => {
             const {
               route: {
@@ -422,19 +346,16 @@ const HomeStack = ({
               }
             } = props;
 
-            // const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
-
             return {
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={parseInt(videoId)}
-                    module="imovie"
-                    // inFavorites={isInFavorites >= 0 ? true : false}
-                    isFavorite={typeof movie === 'undefined' ? false : movie.is_favorite}
+                    pressAction={rest.addMovieToFavoritesAction}
+                    active={typeof movie === 'undefined' ? false : movie.is_favorite}
                   />
-                  <DownloadButton videoId={videoId} />
+                  <ImovieDownloadButton videoId={videoId} />
                 </View>
               )
             };
@@ -463,10 +384,10 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={parseInt(videoId)}
-                    module="imovie"
-                    inFavorites={isInFavorites >= 0 ? true : false}
+                    pressAction={rest.addMovieToFavoritesAction}
+                    active={isInFavorites >= 0 ? true : false}
                   />
-                  <DownloadButton videoId={videoId} />
+                  <ImovieDownloadButton videoId={videoId} />
                 </View>
               )
             };
@@ -476,38 +397,6 @@ const HomeStack = ({
             beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
-        {/* <Stack.Screen
-        name="SeriesDetailScreen"
-        component={SeriesDetailScreen}
-        // eslint-disable-next-line no-unused-vars
-        options={(props) => {
-          const {
-            route: {
-              params: { videoId }
-            }
-          } = props;
-
-          const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
-
-          return {
-            title: null,
-            headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <AddToFavoritesButton
-                  sub={parseInt(videoId)}
-                  module="imovie"
-                  inFavorites={isInFavorites >= 0 ? true : false}
-                />
-                <DownloadButton videoId={videoId} />
-              </View>
-            )
-          };
-        }}
-        listeners={{
-          focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
-          beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
-        }}
-      /> */}
         <Stack.Screen
           name="MovieDetailDownloadedScreen"
           component={MovieDetailDownloadedScreen}
@@ -551,16 +440,53 @@ const HomeStack = ({
         <Stack.Screen
           name="ImusicScreen"
           component={ImusicScreen}
-          // eslint-disable-next-line no-unused-vars
           options={({ navigation }) => ({
             title: 'iMusic',
             animationEnabled: false,
-            // headerLeft: () => <Text>asd</Text>,
             headerBackImage: () => (
               <View style={styles.backButtonContainer}>
                 <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />
               </View>
             ),
+            headerRight: () => (
+              <View style={{ flexDirection: 'row' }}>
+                <TouchableRipple
+                  borderless={true}
+                  onPress={() => navigation.navigate('ImusicSearchScreen')}
+                  style={{ borderRadius: 44, padding: 8 }}
+                  rippleColor="rgba(0,0,0,0.28)"
+                >
+                  <View style={styles.headerButtonContainer}>
+                    <Icon name="search" size={theme.iconSize(3)} />
+                  </View>
+                </TouchableRipple>
+              </View>
+            )
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="ImusicSearchScreen"
+          component={ImusicSearchScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={({ navigation }) => ({
+            title: 'Search',
+            ...TransitionPresets.ModalSlideFromBottomIOS
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+        <Stack.Screen
+          name="ImusicFavoritesScreen"
+          component={ImusicFavoritesScreen}
+          options={() => ({
+            title: 'Favorites',
+            animationEnabled: false,
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple
@@ -582,28 +508,73 @@ const HomeStack = ({
         />
 
         <Stack.Screen
+          name="ImusicDownloadsScreen"
+          component={ImusicDownloadsScreen}
+          options={() => ({
+            title: 'Downloads',
+            animationEnabled: false
+          })}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
+        <Stack.Screen
           name="AlbumDetailScreen"
           component={AlbumDetailScreen}
           options={(props) => {
             const {
               route: {
-                params: { albumId }
+                params: { albumId, album }
               }
             } = props;
-
-            const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
 
             return {
               title: null,
               headerRight: () => (
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
-                    albumId={parseInt(albumId)}
-                    inFavorites={isInFavorites >= 0 ? true : false}
+                    sub={parseInt(albumId)}
+                    pressAction={rest.addAlbumToFavoritesAction}
+                    active={typeof album === 'undefined' ? false : album.is_favorite}
                   />
-                  <DownloadButton albumId={albumId} />
+                  <ImusicDownloadButton sub={album} />
                 </View>
               )
+            };
+          }}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
+        <Stack.Screen
+          name="MusicPlayerScreen"
+          component={MusicPlayerScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={(props) => {
+            const {
+              route: {
+                params: { trackId, albumId, track }
+              }
+            } = props;
+
+            return {
+              title: null,
+              headerBackImage: () => <HeaderBackImage vertical />,
+              headerRight: () => (
+                <View style={{ flexDirection: 'row' }}>
+                  <AddToFavoritesButton
+                    sub={{ trackId: parseInt(trackId), albumId: parseInt(albumId) }}
+                    pressAction={rest.addTrackToFavoritesAction}
+                    active={typeof track === 'undefined' ? false : track.is_favorite}
+                  />
+                  <ImusicDownloadButton sub={track} />
+                </View>
+              ),
+              ...TransitionPresets.ModalSlideFromBottomIOS
             };
           }}
           listeners={{
@@ -760,6 +731,8 @@ const HomeStack = ({
               }
             } = props;
 
+            console.log({ channel });
+
             return {
               title: null,
               headerRight: () => (
@@ -767,7 +740,7 @@ const HomeStack = ({
                   <AddToFavoritesButton
                     sub={parseInt(channelId)}
                     module="itv"
-                    isFavorite={typeof channel === 'undefined' ? false : channel.is_favorite}
+                    active={typeof channel === 'undefined' ? false : channel.is_favorite}
                   />
                 </View>
               )
@@ -795,46 +768,11 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={parseInt(channelId)}
-                    isFavorite={typeof channel === 'undefined' ? false : channel.is_favorite}
+                    active={typeof channel === 'undefined' ? false : channel.is_favorite}
                     module="isports"
                   />
                 </View>
               )
-            };
-          }}
-          listeners={{
-            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
-            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
-          }}
-        />
-
-        {/* <ChannelDetailsStackScreen /> */}
-        <Stack.Screen
-          name="MusicPlayerScreen"
-          component={MusicPlayerScreen}
-          // eslint-disable-next-line no-unused-vars
-          options={(props) => {
-            const {
-              route: {
-                params: { albumId }
-              }
-            } = props;
-
-            const isInFavorites = favorites.findIndex(({ id }) => id === albumId);
-            return {
-              title: null,
-              headerBackImage: () => <HeaderBackImage vertical />,
-              headerRight: () => (
-                <View style={{ flexDirection: 'row' }}>
-                  <AddToFavoritesButton
-                    sub={parseInt(albumId)}
-                    module="imusic"
-                    inFavorites={isInFavorites >= 0 ? true : false}
-                  />
-                  <DownloadButton albumId={albumId} />
-                </View>
-              ),
-              ...TransitionPresets.ModalSlideFromBottomIOS
             };
           }}
           listeners={{
@@ -878,10 +816,14 @@ const styles = StyleSheet.create({
 // };
 
 const actions = {
-  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  updateDownloadsAction: MoviesActionCreators.updateDownloads,
-  updateDownloadsProgressAction: MoviesActionCreators.updateDownloadsProgress,
-  updateProfileAction: Creators.update
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
+  updateDownloadsProgressAction: MoviesCreators.updateDownloadsProgress,
+  updateProfileAction: Creators.update,
+  addChannelToFavoritesAction: ItvCreators.addToFavorites,
+  addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites,
+  addTrackToFavoritesAction: ImusicFavoritesCreators.addTrackToFavorites,
+  addAlbumToFavoritesAction: ImusicFavoritesCreators.addAlbumToFavorites,
+  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites
 };
 
 const mapStateToProps = createStructuredSelector({

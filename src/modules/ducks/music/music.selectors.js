@@ -29,7 +29,7 @@ export const selectAlbumsByGenre = createSelector([selectAlbumsForFilter], (albu
 });
 
 const selectPaginatorInfoForFilter = ({ music: { paginatorInfo } }, props) => {
-  return paginatorInfo.find(({ title }) => title === props.genre);
+  return paginatorInfo.find(({ title }) => title.trim() === props.genre);
 };
 
 export const selectPaginatorOfGenre = createSelector(
@@ -45,7 +45,26 @@ export const selectTracks = createSelector([musicState], ({ album }) => {
   return album.tracks;
 });
 
+export const selectTrack = createSelector([musicState], ({ album, nowPlaying }) => {
+  if (!album) return;
+  if (!nowPlaying) return;
+
+  return album.tracks.find(({ id }) => id === nowPlaying.id);
+});
+
+// export const selectNowPlaying = createSelector([musicState], ({ album, nowPlaying }) => {
+//   if (!nowPlaying) return null;
+//   if (!album) return nowPlaying;
+
+//   return { albumId: album.id, ...nowPlaying };
+// });
+
 export const selectNowPlaying = createSelector([musicState], ({ nowPlaying }) => nowPlaying);
+export const selectAlbumId = createSelector([musicState], ({ album }) => {
+  if (!album) return;
+
+  return album.id;
+});
 
 export const selectIsBackgroundMode = createSelector(
   [musicState],
@@ -73,3 +92,10 @@ export const selectShuffle = createSelector([musicState], ({ shuffle }) => shuff
 export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat);
 
 export const selectSeekValue = createSelector([musicState], ({ seekValue }) => seekValue);
+
+export const selectGenres = createSelector([musicState], ({ genres }) => genres);
+
+export const selectIsInImusicScreen = createSelector(
+  [musicState],
+  ({ isInImusicScreen }) => isInImusicScreen
+);

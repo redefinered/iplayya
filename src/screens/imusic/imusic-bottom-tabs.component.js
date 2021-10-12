@@ -5,9 +5,11 @@ import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import theme from 'common/theme';
+import { createStructuredSelector } from 'reselect';
+import { selectNowPlaying } from 'modules/ducks/music/music.selectors';
+import { connect } from 'react-redux';
 
-// eslint-disable-next-line no-unused-vars
-const ImovieBottomTabs = ({ navigation, route }) => {
+const ImusicBottomTabs = ({ navigation, route, nowPlaying }) => {
   const [heartIconColor, setHeartIconColor] = React.useState('white');
   const [downloadIconColor, setDownloadIconColor] = React.useState('white');
 
@@ -27,25 +29,38 @@ const ImovieBottomTabs = ({ navigation, route }) => {
     }
   }, [route]);
 
+  const borderRadiusStyle = () => {
+    if (nowPlaying) {
+      return {
+        borderTopRightRadius: 0,
+        borderTopLeftRadius: 0
+      };
+    }
+
+    return {
+      borderTopRightRadius: 24,
+      borderTopLeftRadius: 24
+    };
+  };
+
   return (
     <SafeAreaView
       style={{
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#202530',
-        borderTopRightRadius: 24,
-        borderTopLeftRadius: 24,
         paddingHorizontal: 15,
         paddingTop: 10,
         paddingBottom: 10,
         position: 'absolute',
         width: '100%',
-        bottom: 0
+        bottom: 0,
+        ...borderRadiusStyle()
       }}
     >
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate('ImovieFavoritesScreen')}
+          onPress={() => navigation.navigate('ImusicFavorites')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
@@ -72,7 +87,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
       </View>
       <View style={{ flex: 4 }}>
         <TouchableWithoutFeedback
-          onPress={() => navigation.navigate('ImovieDownloadsScreen')}
+          onPress={() => navigation.navigate('ImusicDownloadsScreen')}
           style={{ alignItems: 'center' }}
         >
           <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />
@@ -92,9 +107,12 @@ const ImovieBottomTabs = ({ navigation, route }) => {
   );
 };
 
-ImovieBottomTabs.propTypes = {
+ImusicBottomTabs.propTypes = {
   navigation: PropTypes.object,
-  route: PropTypes.object
+  route: PropTypes.object,
+  nowPlaying: PropTypes.object
 };
 
-export default ImovieBottomTabs;
+const mapStateToProps = createStructuredSelector({ nowPlaying: selectNowPlaying });
+
+export default connect(mapStateToProps)(ImusicBottomTabs);

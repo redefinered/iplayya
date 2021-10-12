@@ -1,12 +1,13 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './music.actions';
 import {
-  updateMoviesState,
+  updateMusicState,
   updatePaginatorInfo,
   setupPaginator,
   shuffleTrackNumbers
 } from './music.utils';
 import uniqBy from 'lodash/uniqBy';
+import orderBy from 'lodash/orderBy';
 import { repeatTypes } from './music.utils';
 
 const INITIAL_STATE = {
@@ -22,6 +23,7 @@ const INITIAL_STATE = {
   shuffle: false,
   nowPlayingLayoutInfo: null,
   isBackgroundMode: false,
+  isInImusicScreen: false,
   repeat: repeatTypes.find(({ value }) => value === 'none'),
   seekValue: 0,
 
@@ -38,6 +40,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SWITCH_IN_IMUSIC_SCREEN]: (state, action) => {
+    return { ...state, isInImusicScreen: action.value };
+  },
   [Types.SET_SEEK_VALUE]: (state, { seekValue }) => {
     return { ...state, seekValue };
   },
@@ -116,17 +121,33 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  /// get album
-  [Types.GET_ALBUM_START]: (state) => {
-    return { ...state, album: null };
+  /// get tracks by album
+  // [Types.GET_TRACKS_BY_ALBUM_START]: (state) => {
+  //   return { ...state, album: null };
+  // },
+  // [Types.GET_TRACKS_BY_ALBUM]: (state) => {
+  //   return { ...state, isFetching: true, error: null, album: null };
+  // },
+  // [Types.GET_TRACKS_BY_ALBUM_SUCCESS]: (state, action) => {
+  //   return { ...state, isFetching: false, album: action.album };
+  // },
+  // [Types.GET_TRACKS_BY_ALBUM_FAILURE]: (state, action) => {
+  //   return { ...state, isFetching: false, album: null, error: action.error };
+  // },
+
+  /// album details
+  [Types.GET_ALBUM_DETAILS_START]: (state) => ({ ...state, album: null }),
+  [Types.GET_ALBUM_DETAILS]: (state) => {
+    return { ...state, isFetching: true, error: null };
   },
-  [Types.GET_ALBUM]: (state) => {
-    return { ...state, isFetching: true, error: null, album: null };
+  [Types.GET_ALBUM_DETAILS_SUCCESS]: (state, action) => {
+    return {
+      ...state,
+      isFetching: false,
+      album: action.album
+    };
   },
-  [Types.GET_ALBUM_SUCCESS]: (state, action) => {
-    return { ...state, isFetching: false, album: action.album };
-  },
-  [Types.GET_ALBUM_FAILURE]: (state, action) => {
+  [Types.GET_ALBUM_DETAILS_FAILURE]: (state, action) => {
     return { ...state, isFetching: false, album: null, error: action.error };
   },
 
@@ -229,13 +250,21 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_ALBUMS_SUCCESS]: (state, action) => {
-    const { albums, genrePaginator } = action;
+    const { genrePaginator } = action;
+    let { albums } = action;
+
+    // fixes issue where genre with spaces are ordered first
+    albums = albums.map(({ genre, ...rest }) => ({ genre: genre.trim(), ...rest }));
+
+    albums = uniqBy([...state.albums, ...albums], 'id');
+    albums = orderBy(albums, 'genre', 'asc');
+
     // console.log({ albums });
     return {
       ...state,
       isFetching: false,
       error: null,
-      albums: uniqBy([...state.albums, ...albums], 'id'),
+      albums,
       genrePaginator
     };
   },
@@ -247,16 +276,16 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  [Types.GET_ALBUMS_BY_GENRE]: (state) => {
+  [Types.GET_ALBUMS_BY_GENRES]: (state) => {
     return {
       ...state,
       isFetching: true,
       error: null
     };
   },
-  [Types.GET_ALBUMS_BY_GENRE_SUCCESS]: (state, action) => {
-    const { newAlbums, nextPaginator } = action.data;
-    const albums = updateMoviesState(state, newAlbums);
+  [Types.GET_ALBUMS_BY_GENRES_SUCCESS]: (state, action) => {
+    const { data: newAlbums, nextPaginator } = action;
+    const albums = updateMusicState(state, newAlbums);
     const paginatorInfo = updatePaginatorInfo(state, newAlbums, nextPaginator);
     return {
       ...state,
@@ -266,7 +295,7 @@ export default createReducer(INITIAL_STATE, {
       paginatorInfo
     };
   },
-  [Types.GET_ALBUMS_BY_GENRE_FAILURE]: (state, action) => {
+  [Types.GET_ALBUMS_BY_GENRES_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,

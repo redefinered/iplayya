@@ -1,5 +1,11 @@
 import client from 'apollo/client';
-import { GET_GENRES, GET_ALBUM, GET_ALBUMS_BY_GENRE } from 'graphql/music.graphql';
+import {
+  GET_GENRES,
+  GET_TRACKS_BY_ALBUM,
+  GET_ALBUM_DETAILS,
+  GET_ALBUMS_BY_GENRES,
+  SEARCH
+} from 'graphql/music.graphql';
 
 export const getGenres = async () => {
   try {
@@ -12,10 +18,10 @@ export const getGenres = async () => {
   }
 };
 
-export const getAlbumsByGenre = async (input) => {
+export const getAlbumsByGenres = async (input) => {
   try {
     const { data } = await client.query({
-      query: GET_ALBUMS_BY_GENRE,
+      query: GET_ALBUMS_BY_GENRES,
       variables: { input }
     });
     return data;
@@ -24,10 +30,35 @@ export const getAlbumsByGenre = async (input) => {
   }
 };
 
-export const getAlbum = async (input) => {
+export const getAlbumDetails = async (albumId) => {
   try {
     const { data } = await client.query({
-      query: GET_ALBUM,
+      query: GET_ALBUM_DETAILS,
+      variables: { input: { albumId } }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getTracksByAlbum = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: GET_TRACKS_BY_ALBUM,
+      variables: { input }
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const search = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: SEARCH,
+      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;

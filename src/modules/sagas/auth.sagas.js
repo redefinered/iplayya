@@ -40,9 +40,7 @@ export function* registerRequest(action) {
     yield put(MoviesCreators.reset());
     yield put(MusicCreators.reset());
 
-    // yield put(Creators.signInSuccess());
     yield put(Creators.signInSuccess(user, true));
-    // yield put(ProfileCreators.getSuccess(user));
 
     yield put(UserCreators.userStart());
 
@@ -66,17 +64,13 @@ export function* signInRequest(action) {
 
     const { me: user } = yield call(getProfile);
 
-    console.log({ user });
-
     // reset state data
     yield put(ItvCreators.reset());
     yield put(MoviesCreators.reset());
     yield put(IsportsCreators.reset());
     yield put(MusicCreators.reset());
 
-    // yield put(Creators.signInSuccess());
     yield put(Creators.signInSuccess(user));
-    // yield put(ProfileCreators.getSuccess(user));
 
     yield put(AppCreators.appReadySuccess());
   } catch (error) {
@@ -93,18 +87,11 @@ export function* signOutRequest() {
     // remove access token
     yield AsyncStorage.removeItem('access_token');
 
-    // check token
-    // const token = yield AsyncStorage.getItem('access_token');
-    // console.log({ token });
-
     yield put(Creators.signOutSuccess());
 
     // remove current user and profile
     // yield put(UserCreators.removeCurrentUser());
     yield put(ProfileCreators.removeProfile());
-
-    // clear user specific settings
-    // yield put(UserCreators.reset());
   } catch (error) {
     yield put(Creators.signOutFailure(`Sign-out error: ${error.message}`));
   }

@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, Pressable, Dimensions } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { View, Image, Pressable } from 'react-native';
+import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
+import MediaProgressVisualizer from './media-progress-visualizer.component';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
 import PausedAnimationPlaceholder from 'assets/paused-animation-placeholder.svg';
 import { createFontFormat } from 'utils';
@@ -13,24 +14,25 @@ import {
   selectAlbum,
   selectPlaylist,
   selectPaused,
-  selectPlaybackProgress,
   selectRepeat,
-  selectSeekValue
+  selectSeekValue,
+  selectAlbumId,
+  selectIsInImusicScreen
 } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import DeviceInfo from 'react-native-device-info';
 import clone from 'lodash/clone';
+import theme from 'common/theme';
 
-// const coverplaceholder = require('assets/imusic-placeholder.png');
+const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const NowPlaying = ({
-  // eslint-disable-next-line react/prop-types
   navigation,
+  albumId,
   nowPlaying,
   playlist,
-  progress,
   setProgressAction,
   setNowPlayingAction,
   isBackgroundMode,
@@ -39,10 +41,9 @@ const NowPlaying = ({
   paused,
   setPausedAction,
   repeat,
-  seekValue
+  seekValue,
+  isInImusicScreen
 }) => {
-  // console.log({ playbackCounter });
-  const theme = useTheme();
   const rootComponent = React.useRef();
   const player = React.useRef();
 
@@ -94,7 +95,7 @@ const NowPlaying = ({
         // turn playing off
         setPausedAction(true);
 
-        setNowPlayingAction(null);
+        // setNowPlayingAction(null);
 
         return;
       } else {
@@ -186,13 +187,21 @@ const NowPlaying = ({
 
   const renderThumbnail = (nowPlaying) => {
     const { thumbnail } = nowPlaying;
-    if (typeof thumbnail !== 'undefined')
+
+    if (typeof thumbnail === 'undefined')
       return (
         <Image
+          source={coverplaceholder}
           style={{ width: 60, height: 60, borderRadius: 8, marginRight: 15 }}
-          source={thumbnail}
         />
       );
+
+    return (
+      <Image
+        style={{ width: 60, height: 60, borderRadius: 8, marginRight: 15 }}
+        source={thumbnail}
+      />
+    );
   };
 
   const renderContent = (nowPlaying) => {
@@ -207,7 +216,9 @@ const NowPlaying = ({
           >
             {buffering ? 'Buffering...' : title}
           </Text>
-          <Text style={{ ...createFontFormat(12, 16) }}>{artist}</Text>
+          <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(12, 16) }}>
+            {artist}
+          </Text>
         </View>
       );
 
@@ -224,14 +235,13 @@ const NowPlaying = ({
   };
 
   const handlePress = () => {
-    const { number } = nowPlaying;
-    navigation.navigate('MusicPlayerScreen', { number });
+    navigation.navigate('MusicPlayerScreen', { trackId: nowPlaying.id, albumId });
   };
 
   const visibilityStyles = () => {
     if (isBackgroundMode) return { top: '100%' };
 
-    return { bottom: 0 };
+    return { bottom: isInImusicScreen ? 75.3 : 0 };
   };
 
   const handleOnRootLayout = ({ nativeEvent }) => {
@@ -239,8 +249,6 @@ const NowPlaying = ({
   };
 
   const renderPlayer = () => {
-    if (paused) return;
-
     const { url: uri } = nowPlaying;
 
     return (
@@ -257,8 +265,6 @@ const NowPlaying = ({
   };
 
   if (nowPlaying) {
-    // const { url: uri } = nowPlaying;
-
     return (
       <Pressable
         onPress={handlePress}
@@ -276,31 +282,15 @@ const NowPlaying = ({
       >
         {renderPlayer()}
 
-        {/* <Video
-          ref={player}
-          paused={paused}
-          source={{ uri }}
-          onBuffer={handleBuffer}
-          onError={handleError}
-          onProgress={handleProgress}
-          playInBackground
-        /> */}
+        <MediaProgressVisualizer />
 
-        <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
-          <View
-            style={{
-              width: (progress * Dimensions.get('window').width) / 100,
-              height: 1,
-              backgroundColor: theme.iplayya.colors.vibrantpussy
-            }}
-          />
-        </View>
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            paddingVertical: theme.spacing(4),
-            paddingHorizontal: theme.spacing(2)
+            paddingHorizontal: theme.spacing(2),
+            paddingTop: theme.spacing(2),
+            paddingBottom: DeviceInfo.hasNotch() ? theme.spacing(4) : theme.spacing(2)
           }}
         >
           <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
@@ -331,11 +321,6 @@ const NowPlaying = ({
             </Pressable>
           </View>
         </View>
-        {/* {hasNotch && (
-          <View style={{ height: 20, backgroundColor: '#202530' }}>
-            <View style={{ height: 1, backgroundColor: theme.iplayya.colors.white10 }} />
-          </View>
-        )} */}
       </Pressable>
     );
   }
@@ -345,8 +330,10 @@ const NowPlaying = ({
 };
 
 NowPlaying.propTypes = {
+  track: PropTypes.object,
   navigation: PropTypes.object,
   theme: PropTypes.object,
+  albumId: PropTypes.string,
   paused: PropTypes.bool,
   setPausedAction: PropTypes.func,
   nowPlaying: PropTypes.object,
@@ -356,9 +343,10 @@ NowPlaying.propTypes = {
   isBackgroundMode: PropTypes.bool,
   setNowPlayingLayoutInfoAction: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
-  progress: PropTypes.number,
+  // progress: PropTypes.number,
   repeat: PropTypes.object,
-  seekValue: PropTypes.number
+  seekValue: PropTypes.number,
+  isInImusicScreen: PropTypes.bool
 };
 
 const actions = {
@@ -370,14 +358,15 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  albumId: selectAlbumId,
   paused: selectPaused,
-  progress: selectPlaybackProgress,
   nowPlaying: selectNowPlaying,
   playlist: selectPlaylist,
   album: selectAlbum,
   isBackgroundMode: selectIsBackgroundMode,
   repeat: selectRepeat,
-  seekValue: selectSeekValue
+  seekValue: selectSeekValue,
+  isInImusicScreen: selectIsInImusicScreen
 });
 
-export default connect(mapStateToProps, actions)(NowPlaying);
+export default connect(mapStateToProps, actions)(React.memo(NowPlaying));

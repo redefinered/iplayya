@@ -1,55 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { connect } from 'react-redux';
 import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
 import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
+import theme from 'common/theme';
 
-const AddToFavoritesButton = ({
-  sub,
-  module,
-  addChannelToFavoritesAction,
-  addMovieToFavoritesAction,
-  addIsportChannelToFavoritesAction,
-  isFavorite
-}) => {
-  const theme = useTheme();
-  const [favorited, setFavorited] = React.useState(false);
+const AddToFavoritesButton = ({ sub, pressAction, active }) => {
+  const [colored, setColored] = React.useState(false);
 
   React.useEffect(() => {
-    if (isFavorite) {
-      setFavorited(true);
-    } else {
-      setFavorited(false);
-    }
-  }, [isFavorite]);
+    setColored(active);
+  }, [active]);
 
   const handleAddAction = () => {
-    /// stop if already in favorites
-    if (!favorited) setFavorited(true);
+    if (active) return;
 
-    if (favorited === true) return;
+    setColored(true);
 
-    switch (module) {
-      case 'itv':
-        addChannelToFavoritesAction(sub);
-        break;
-      case 'imovie':
-        addMovieToFavoritesAction(sub);
-        break;
-      case 'isports':
-        addIsportChannelToFavoritesAction(sub);
-        break;
-      case 'imusic':
-        /// wip: add imusic module
-        break;
-      default:
-        break;
-    }
+    pressAction(sub);
   };
+
   return (
     <Pressable
       underlayColor={theme.iplayya.colors.black80}
@@ -59,7 +32,6 @@ const AddToFavoritesButton = ({
           backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
           borderRadius: 44,
           padding: 8
-          // ...styles.headerButtonContainer
         }
       ]}
     >
@@ -67,7 +39,7 @@ const AddToFavoritesButton = ({
         <Icon
           name="heart-solid"
           size={theme.iconSize(3)}
-          style={{ color: favorited ? theme.iplayya.colors.vibrantpussy : 'white' }}
+          style={{ color: colored ? theme.iplayya.colors.vibrantpussy : 'white' }}
         />
       </View>
     </Pressable>
@@ -86,17 +58,13 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center'
-    // marginLeft: 15
   }
 });
 
 AddToFavoritesButton.propTypes = {
-  module: PropTypes.string,
-  sub: PropTypes.number,
-  isFavorite: PropTypes.bool,
-  addChannelToFavoritesAction: PropTypes.func,
-  addMovieToFavoritesAction: PropTypes.func,
-  addIsportChannelToFavoritesAction: PropTypes.func
+  sub: PropTypes.any,
+  pressAction: PropTypes.func,
+  active: PropTypes.bool
 };
 
 const actions = {
