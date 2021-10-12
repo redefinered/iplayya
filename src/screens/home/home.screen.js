@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
@@ -10,25 +9,13 @@ import WelcomeDialog from 'components/welcome-dialog/welcome-dialog.component';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-// import { selectCompletedOnboarding } from 'modules/ducks/user/user.selectors';
 import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
-// import { Creators as MusicCreator } from 'modules/ducks/music/music.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { compose } from 'redux';
-// import { selectOnboardingComplete } from 'modules/ducks/auth/auth.selectors';
-
 import HomeGuide from 'components/walkthrough-guide/home-guide.component';
-
-// import NotifService from 'NotifService';
-import { selectNotifications, selectSubscriptions } from 'modules/ducks/itv/itv.selectors.js';
 import { selectNewNotification } from 'modules/ducks/notifications/notifications.selectors.js';
-// import moment from 'moment';
-
-import { NOTIFICATION_STATUS } from 'common/values';
 
 const Home = ({
   error,
@@ -100,7 +87,6 @@ const Home = ({
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
       <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
-
       {error && (
         <AlertModal
           variant="danger"

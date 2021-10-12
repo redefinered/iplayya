@@ -1,6 +1,9 @@
 import RNBackgroundDownloader from 'react-native-background-downloader';
 import { PermissionsAndroid, Platform } from 'react-native';
+import RNFetchBlob from 'rn-fetch-blob';
 import moment from 'moment';
+
+export const downloadPath = RNBackgroundDownloader.directories.documents;
 
 export const createFontFormat = (fontSize, lineHeight) => {
   return { fontSize, lineHeight };
@@ -47,8 +50,6 @@ export const generateDatesFromToday = (numberDays = 7) => {
   return dates;
 };
 
-export const downloadPath = RNBackgroundDownloader.directories.documents;
-
 export const getFilename = (video) => {
   const { videoId, title, is_series, currentEpisode } = video;
 
@@ -65,7 +66,7 @@ export const getFilename = (video) => {
   return filename;
 };
 
-export const getConfig = (video) => {
+export const getConfigForVideoDownload = (video) => {
   const filename = getFilename(video);
 
   const { videoId, url, is_series, currentEpisode } = video;
@@ -75,6 +76,7 @@ export const getConfig = (video) => {
     : videoId;
 
   return {
+    // id: `V_${taskId}`, /// add V_ to identify videos in downloads
     id: taskId,
     url: url,
     destination: `${downloadPath}/${filename}`
@@ -119,4 +121,95 @@ export const toTitleCase = (str) => {
     str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
   }
   return str.join(' ');
+};
+
+/**
+ * checks whether a track is downloaded using track ID
+ * @param {string} trackId ID of a track being downloaded
+ * @returns boolean
+ */
+export const isTrackDownloaded = async (trackId) => {
+  const ls = await RNFetchBlob.fs.ls(downloadPath);
+  const fileIds = ls.map((file) => {
+    /// filename is of shape %{type}_${id}_${track_name}
+    // split to get the ID at index 1
+    let split = file.split('_');
+
+    /// the ID of the downloaded track
+    return split[1];
+  });
+
+  if (fileIds.length) {
+    /// check if trackId is among the IDS of downloaded files
+    const check = fileIds.find((f) => f === trackId);
+
+    if (typeof check !== 'undefined') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// return false if there is no downloaded file because that means the track is not downloaded
+  return false;
+};
+
+/**
+ * create a filename for a track to for download
+ * @param {object} track contains id and title proprty
+ * @returns a string filename with type, id, and title separated with underscores
+ */
+export const createFilenameForAudioTrack = (track) => {
+  const { taskId, name } = track;
+
+  // convert spaces to underscores
+  const tsplit = name.split(' ');
+  const tjoin = tsplit.join('_');
+
+  return `${taskId}_${tjoin}.mp3`;
+};
+
+export const checkIfTrackOrAlbumIsDownloaded = async (sub) => {
+  let type = 'track';
+
+  /// sub is either a track or an album object
+  if (typeof sub.tracks !== 'undefined') type = 'album';
+
+  /// get downloaded files
+  const ls = await RNFetchBlob.fs.ls(downloadPath);
+
+  /// get ids of all audio files
+  const fileIds = ls.map((file) => {
+    const fSplit = file.split('_');
+    /// if item is an audio return its ID, else return not_audio
+    return fSplit[0] === 'a' ? fSplit[1] : 'not_audio';
+  });
+  const audioIds = fileIds.filter((id) => id !== 'not_audio');
+  // console.log({ sub, audioIds, type });
+
+  if (type === 'track') {
+    /// return true if sub.id is in the extracted array, otherwise return false
+    if (typeof audioIds.find((id) => id === sub.id) === 'undefined') {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    /// if type is not track, so 'album' will match this condition
+    let missingAtleastOne = false;
+
+    for (let i = 0; i < sub.tracks.length; i++) {
+      const track = sub.tracks[i];
+      if (typeof audioIds.find((id) => id === track.id) === 'undefined') {
+        missingAtleastOne = true;
+        break;
+      }
+    }
+
+    if (missingAtleastOne) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 };

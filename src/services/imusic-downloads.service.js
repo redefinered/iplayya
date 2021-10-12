@@ -19,7 +19,7 @@ export const deleteFile = async (filename = null) => {
 export const checkExistingDownloads = async () => {
   try {
     const downloadTasks = await RNBackgroundDownloader.checkForExistingDownloads();
-    console.log('active downloads', downloadTasks);
+    // console.log('active downloads', downloadTasks);
     return downloadTasks;
   } catch (error) {
     console.log(error);

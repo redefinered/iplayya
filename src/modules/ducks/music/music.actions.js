@@ -29,6 +29,8 @@ const { Types, Creators } = createActions(
     setProgress: ['progress'], // progress in percentage
     setPaused: ['isPaused'], // boolean
     updatePlaybackInfo: ['playbackInfo'],
+    switchInImusicScreen: ['value'],
+    setImusicBottomNavLayout: ['layout'],
     resetNowPlaying: null,
     setNowPlayingBackgroundMode: ['isBackgroundMode'],
     setNowPlayingLayoutInfo: ['layoutInfo'],

@@ -60,9 +60,22 @@ export const ADD_TRACK_TO_FAVORITES = gql`
 `;
 
 export const ADD_ALBUM_TO_FAVORITES = gql`
-  mutation ADD_ALBUM_TO_FAVORITES($input: addAlbumToFavoritesInput) {
+  mutation ADD_ALBUM_TO_FAVORITES($input: albumToFavoritesInput) {
     addAlbumToFavorites(input: $input) {
       status
+    }
+  }
+`;
+
+export const SEARCH = gql`
+  query SEARCH($input: musicRequest) {
+    albums(input: $input) {
+      id
+      name
+      cover
+      performer
+      year
+      genre
     }
   }
 `;

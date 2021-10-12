@@ -6,7 +6,7 @@ import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
-import ImovieBottomTabs from './imusic-bottom-tabs.component';
+import ImusicBottomTabs from './imusic-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -23,10 +23,10 @@ import {
 } from 'modules/ducks/music/music.selectors';
 import GenreScroll from './genre-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
+import { useIsFocused } from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 
 const ImusicScreen = ({
-  isFetching,
   navigation,
   error,
   getAlbumsAction,
@@ -37,13 +37,19 @@ const ImusicScreen = ({
   enableSwipeAction,
   setNetworkInfoAction,
   resetGenrePaginatorAction,
-  setNowPlayingBackgroundModeAction
+  setNowPlayingBackgroundModeAction,
+  switchInImusicScreenAction
 }) => {
+  const isFocused = useIsFocused();
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
   const [scrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
+
+  // React.useEffect(() => {
+  //   switchInImusicScreenAction(true);
+  // });
 
   React.useEffect(() => {
     setNowPlayingBackgroundModeAction(false);
@@ -60,12 +66,22 @@ const ImusicScreen = ({
     return () => {
       unsubscribe();
       setNowPlayingBackgroundModeAction(true);
+
+      switchInImusicScreenAction(false);
     };
   }, []);
 
-  /// retry get data if empty
   React.useEffect(() => {
-    if (!albums.length) handleRetry();
+    if (isFocused) {
+      switchInImusicScreenAction(true);
+    } else {
+      switchInImusicScreenAction(false);
+    }
+  }, [isFocused]);
+
+  /// for development
+  React.useEffect(() => {
+    if (!albums.length) console.log('Something went wrong, albums array empty');
   }, [albums]);
 
   React.useEffect(() => {
@@ -75,6 +91,7 @@ const ImusicScreen = ({
   }, [paginatorInfo]);
 
   const handleSelect = (album) => {
+    // console.log('x');
     navigation.navigate('AlbumDetailScreen', { albumId: album.id });
   };
 
@@ -149,12 +166,12 @@ const ImusicScreen = ({
         </React.Fragment>
       ) : (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {!isFetching ? renderEmpty() : null}
+          {renderEmpty()}
           <Spacer size={100} />
         </View>
       )}
 
-      <ImovieBottomTabs navigation={navigation} />
+      <ImusicBottomTabs navigation={navigation} />
     </View>
   );
 };
@@ -188,7 +205,8 @@ const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   enableSwipeAction: NavActionCreators.enableSwipe,
-  resetGenrePaginatorAction: Creators.resetGenrePaginator
+  resetGenrePaginatorAction: Creators.resetGenrePaginator,
+  switchInImusicScreenAction: Creators.switchInImusicScreen
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);

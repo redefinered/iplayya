@@ -92,3 +92,15 @@ export const selectShuffle = createSelector([musicState], ({ shuffle }) => shuff
 export const selectRepeat = createSelector([musicState], ({ repeat }) => repeat);
 
 export const selectSeekValue = createSelector([musicState], ({ seekValue }) => seekValue);
+
+export const selectGenres = createSelector([musicState], ({ genres }) => genres);
+
+export const selectIsInImusicScreen = createSelector(
+  [musicState],
+  ({ isInImusicScreen }) => isInImusicScreen
+);
+
+export const selectImusicBottomNavLayout = createSelector(
+  [musicState],
+  ({ imusicBottomNavLayout }) => imusicBottomNavLayout
+);
