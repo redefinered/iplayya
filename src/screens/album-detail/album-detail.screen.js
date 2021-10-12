@@ -70,7 +70,6 @@ const AlbumDetail = ({
   downloadStarted,
   downloadsStartAction
 }) => {
-  console.log({ downloadStarted });
   const { albumId } = route.params;
   const [showSnackbar, setShowSnackbar] = React.useState(false);
   const [showActionSheet, setShowActionSheet] = React.useState(false);
@@ -81,8 +80,11 @@ const AlbumDetail = ({
     downloadsStartAction();
 
     getAlbumDetailsAction(albumId);
+
     /// clean up
-    return () => getAlbumDetailsStartAction();
+    return () => {
+      getAlbumDetailsStartAction();
+    };
   }, []);
 
   React.useEffect(() => {
@@ -241,8 +243,6 @@ const AlbumDetail = ({
       </View>
     </TouchableRipple>
   );
-
-  // console.log({ album, nowPlaying, route });
 
   const renderUpdateNotification = () => {
     if (!album) return;

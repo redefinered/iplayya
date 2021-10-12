@@ -23,6 +23,7 @@ const INITIAL_STATE = {
   shuffle: false,
   nowPlayingLayoutInfo: null,
   isBackgroundMode: false,
+  isInImusicScreen: false,
   repeat: repeatTypes.find(({ value }) => value === 'none'),
   seekValue: 0,
 
@@ -39,6 +40,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SWITCH_IN_IMUSIC_SCREEN]: (state, action) => {
+    return { ...state, isInImusicScreen: action.value };
+  },
   [Types.SET_SEEK_VALUE]: (state, { seekValue }) => {
     return { ...state, seekValue };
   },

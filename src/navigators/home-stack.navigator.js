@@ -440,11 +440,9 @@ const HomeStack = ({
         <Stack.Screen
           name="ImusicScreen"
           component={ImusicScreen}
-          // eslint-disable-next-line no-unused-vars
           options={({ navigation }) => ({
             title: 'iMusic',
             animationEnabled: false,
-            // headerLeft: () => <Text>asd</Text>,
             headerBackImage: () => (
               <View style={styles.backButtonContainer}>
                 <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />

@@ -16,7 +16,8 @@ import {
   selectPaused,
   selectRepeat,
   selectSeekValue,
-  selectAlbumId
+  selectAlbumId,
+  selectIsInImusicScreen
 } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
@@ -40,7 +41,8 @@ const NowPlaying = ({
   paused,
   setPausedAction,
   repeat,
-  seekValue
+  seekValue,
+  isInImusicScreen
 }) => {
   const rootComponent = React.useRef();
   const player = React.useRef();
@@ -239,7 +241,7 @@ const NowPlaying = ({
   const visibilityStyles = () => {
     if (isBackgroundMode) return { top: '100%' };
 
-    return { bottom: 0 };
+    return { bottom: isInImusicScreen ? 75.3 : 0 };
   };
 
   const handleOnRootLayout = ({ nativeEvent }) => {
@@ -343,7 +345,8 @@ NowPlaying.propTypes = {
   updatePlaybackInfoAction: PropTypes.func,
   // progress: PropTypes.number,
   repeat: PropTypes.object,
-  seekValue: PropTypes.number
+  seekValue: PropTypes.number,
+  isInImusicScreen: PropTypes.bool
 };
 
 const actions = {
@@ -362,7 +365,8 @@ const mapStateToProps = createStructuredSelector({
   album: selectAlbum,
   isBackgroundMode: selectIsBackgroundMode,
   repeat: selectRepeat,
-  seekValue: selectSeekValue
+  seekValue: selectSeekValue,
+  isInImusicScreen: selectIsInImusicScreen
 });
 
 export default connect(mapStateToProps, actions)(React.memo(NowPlaying));

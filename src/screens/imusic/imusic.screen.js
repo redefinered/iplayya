@@ -23,6 +23,7 @@ import {
 } from 'modules/ducks/music/music.selectors';
 import GenreScroll from './genre-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
+import { useIsFocused } from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 
 const ImusicScreen = ({
@@ -36,13 +37,19 @@ const ImusicScreen = ({
   enableSwipeAction,
   setNetworkInfoAction,
   resetGenrePaginatorAction,
-  setNowPlayingBackgroundModeAction
+  setNowPlayingBackgroundModeAction,
+  switchInImusicScreenAction
 }) => {
+  const isFocused = useIsFocused();
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
   const [scrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
+
+  // React.useEffect(() => {
+  //   switchInImusicScreenAction(true);
+  // });
 
   React.useEffect(() => {
     setNowPlayingBackgroundModeAction(false);
@@ -59,8 +66,18 @@ const ImusicScreen = ({
     return () => {
       unsubscribe();
       setNowPlayingBackgroundModeAction(true);
+
+      switchInImusicScreenAction(false);
     };
   }, []);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      switchInImusicScreenAction(true);
+    } else {
+      switchInImusicScreenAction(false);
+    }
+  }, [isFocused]);
 
   /// for development
   React.useEffect(() => {
@@ -74,6 +91,7 @@ const ImusicScreen = ({
   }, [paginatorInfo]);
 
   const handleSelect = (album) => {
+    // console.log('x');
     navigation.navigate('AlbumDetailScreen', { albumId: album.id });
   };
 
@@ -187,7 +205,8 @@ const actions = {
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   enableSwipeAction: NavActionCreators.enableSwipe,
-  resetGenrePaginatorAction: Creators.resetGenrePaginator
+  resetGenrePaginatorAction: Creators.resetGenrePaginator,
+  switchInImusicScreenAction: Creators.switchInImusicScreen
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
