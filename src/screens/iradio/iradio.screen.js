@@ -2,11 +2,9 @@
 
 import React from 'react';
 import { View, Pressable, StyleSheet, Dimensions } from 'react-native';
-// import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { TabView } from 'react-native-tab-view';
 import Icon from 'components/icon/icon.component';
-import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import RadioStationsTab from './radios-stations-tab.component';
 import FavoritesTab from './favorites-tab.component';
@@ -15,17 +13,15 @@ import NowPlaying from './iradio-nowplaying.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
+import { Creators as FavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
+import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectRadioStations,
-  selectPaginator,
-  selectFavoritesPaginator
+  selectPaginator
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
-import { selectPaginatorInfo } from 'modules/ducks/iradio/iradio.selectors';
 import withLoader from 'components/with-loader.component';
 import theme from 'common/theme';
 
@@ -33,49 +29,46 @@ const initialLayout = { width: Dimensions.get('window').width };
 
 const IradioScreen = ({
   navigation,
+  startAction,
+  favoritesStartAction,
   error,
-  radioStations,
   getRadiosAction,
   getFavoritesAction,
-  favoritesPaginator,
-  // paginatorInfo,
-  paginator,
   enableSwipeAction,
-  setNowPlayingAction,
-  getRadiosStartAction
-  // resetFavoritesPaginatorAction
+  setNowPlayingAction
 }) => {
   const [index, setIndex] = React.useState(0);
   const [nowPlaying, setNowPlaying] = React.useState(null);
   const [bottomNavHeight, setBottomNavHeight] = React.useState();
 
-  console.log({ nowPlaying });
+  React.useEffect(() => {
+    enableSwipeAction(false);
+
+    // clean up
+    return () => startAction();
+  }, []);
 
   React.useEffect(() => {
-    getRadiosStartAction();
-    getRadiosAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-    getFavoritesAction({ pageNumber: 1 });
-  }, []);
+    if (index === 0) {
+      favoritesStartAction();
+      getRadiosAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
+    }
+
+    if (index === 1) {
+      startAction();
+      getFavoritesAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
+    }
+  }, [index]);
 
   const [routes] = React.useState([
     { key: 'radios', title: 'Radio Stations' },
     { key: 'favorites', title: 'Favorites' }
   ]);
 
-  React.useEffect(() => {
-    enableSwipeAction(false);
-  }, []);
-
-  // const renderScene = SceneMap({
-  //   // eslint-disable-next-line react/display-name
-  //   radios: RadioStationsTab,
-  //   favorites: FavoritesTab
-  // });
   const handleSelectItem = (item) => {
     // const { source, title, artist, thumbnail } = item;
     const { cmd, name, number } = item;
 
-    console.log({ item });
     setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
     setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
   };
@@ -100,31 +93,18 @@ const IradioScreen = ({
 
   return (
     <View style={styles.container}>
-      {radioStations.length ? (
-        <React.Fragment>
-          <TabView
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={initialLayout}
-            renderTabBar={(props) => {
-              return (
-                <TabBars
-                  {...props}
-                  getRadiosAction={getRadiosAction}
-                  paginator={paginator}
-                  favoritesPaginator={favoritesPaginator}
-                  getFavoritesAction={getFavoritesAction}
-                />
-              );
-            }}
-          />
-        </React.Fragment>
-      ) : (
-        <ContentWrap style={{ justifyContent: 'center' }}>
-          <Text>No stations found</Text>
-        </ContentWrap>
-      )}
+      <React.Fragment>
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={initialLayout}
+          renderTabBar={(props) => {
+            return <TabBars {...props} />;
+          }}
+        />
+      </React.Fragment>
+
       <View>{nowPlaying && <NowPlaying navigation={navigation} />}</View>
       {/* pushes up the content to make room for the bottom tab */}
       <View style={{ paddingBottom: bottomNavHeight }} />
@@ -135,16 +115,9 @@ const IradioScreen = ({
           flexDirection: 'row',
           justifyContent: 'center',
           backgroundColor: '#202530',
-          // borderTopRightRadius: 24,
-          // borderTopLeftRadius: 24,
           paddingHorizontal: 4,
-          // paddingTop: 10,
-          // paddingBottom: 10,
           borderTopRightRadius: !nowPlaying ? 24 : 0,
           borderTopLeftRadius: !nowPlaying ? 24 : 0,
-          // paddingHorizontal: 30,
-          // paddingTop: 15,
-          // paddingBottom: 30,
           position: 'absolute',
           width: '100%',
           bottom: 0
@@ -175,19 +148,19 @@ const IradioScreen = ({
 
 const TabBars = ({
   navigationState: { index, routes },
-  jumpTo,
-  getRadiosAction,
-  getFavoritesAction
+  jumpTo
+  // getRadiosAction,
+  // getFavoritesAction
 }) => {
   const theme = useTheme();
 
   const handleTabSelect = (key) => {
-    if (key === 'radios') {
-      getRadiosAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
-    }
-    if (key === 'favorites') {
-      getFavoritesAction({ pageNumber: 1 });
-    }
+    // if (key === 'radios') {
+    //   getRadiosAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
+    // }
+    // if (key === 'favorites') {
+    //   getFavoritesAction({ pageNumber: 1 });
+    // }
     jumpTo(key);
   };
 
@@ -252,19 +225,18 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  radioStations: selectRadioStations,
-  favoritesPaginator: selectFavoritesPaginator,
-  paginatorInfo: selectPaginatorInfo,
   paginator: selectPaginator
 });
 
 const actions = {
+  startAction: Creators.start,
+  favoritesStartAction: FavoritesCreators.start,
   setNowPlayingAction: Creators.setNowPlaying,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
-  addToFavoritesAction: Creators.addToFavorites,
-  getRadiosStartAction: Creators.getStart,
+  addToFavoritesAction: FavoritesCreators.addToFavorites,
+  getRadiosStartAction: Creators.start,
   getRadiosAction: Creators.get,
-  getFavoritesAction: Creators.getFavorites,
+  getFavoritesAction: FavoritesCreators.getFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe,
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };

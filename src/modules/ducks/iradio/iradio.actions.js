@@ -2,32 +2,16 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    start: null,
+
     getOne: ['data'],
     getOneSuccess: ['data'],
     getOneFailure: ['error'],
 
     // get radio stations
-    getStart: null,
     get: ['input'],
-    getSuccess: ['radioStations', 'nextPaginatorInfo'],
+    getSuccess: ['radioStations', 'nextPaginator'],
     getFailure: ['error'],
-
-    favoritesStart: null,
-    // get radio stations
-    getFavorites: ['input'],
-    getFavoritesSuccess: ['data', 'nextPaginator'],
-    getFavoritesFailure: ['error'],
-    resetFavoritesPaginator: null,
-
-    // add to favorites
-    addToFavorites: ['radioId'],
-    addToFavoritesSuccess: null,
-    addToFavoritesFailure: ['error'],
-
-    // remove from favorites
-    removeFromFavorites: ['radioIds'],
-    removeFromFavoritesSuccess: null,
-    removeFromFavoritesFailure: ['error'],
 
     // misc
     playbackStart: [],
@@ -46,7 +30,6 @@ const { Types, Creators } = createActions(
 
     // misc
     reset: null,
-    setPaginatorInfo: ['data'],
     resetPaginator: null
   },
   { prefix: '@Iradio/' }

@@ -1,44 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, FlatList } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+import { View, Pressable, FlatList, StyleSheet } from 'react-native';
+import { ActivityIndicator, Text, withTheme } from 'react-native-paper';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { createFontFormat } from 'utils';
-
+import FavoriteButton from './iradio-favorite-button.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { selectRadioStations, selectPaginator } from 'modules/ducks/iradio/iradio.selectors';
 import {
-  selectRadioStations,
-  selectAddedToFavorites,
-  selectPaginator,
-  selectPaginatorInfo,
-  selectFavoritesPaginator
-} from 'modules/ducks/iradio/iradio.selectors';
+  selectIsFetching,
+  selectAdded
+} from 'modules/ducks/iradio-favorites/iradio-favorites.selectors';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
+import { Creators as FavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import ContentWrap from 'components/content-wrap.component';
+// import theme from 'common/theme';
+
+const ITEM_HEIGHT = 44;
 
 const RadioStationsTab = ({
-  theme,
   getRadioStationsAction,
   radioStations,
   addToFavoritesAction,
-  addedToFavorites,
   paginator,
   handleSelectItem,
-  getFavoritesAction
+  isAddingToFavorites,
+  added,
+  resetUpdateIndicatorsAction
 }) => {
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
   const [radioStationsData, setRadioStationsData] = React.useState([]);
-  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-    true
-  );
-
-  React.useEffect(() => {
-    getRadioStationsAction(paginator);
-  }, []);
 
   // setup radio data
   React.useEffect(() => {
@@ -56,33 +50,32 @@ const RadioStationsTab = ({
     }
   }, [radioStations]);
 
+  React.useEffect(() => {
+    if (added) setShowSnackBar(true);
+  }, [added]);
+
+  React.useEffect(() => {
+    if (!showSnackBar) resetUpdateIndicatorsAction();
+  }, [showSnackBar]);
+
   const handleEndReached = () => {
-    if (!onEndReachedCalledDuringMomentum) {
-      getRadioStationsAction(paginator);
-      setOnEndReachedCalledDuringMomentum(true);
-    }
+    getRadioStationsAction(paginator);
   };
 
   const handleAddToFavorites = (radioId) => {
     let radio = radioStations.find(({ id }) => id === radioId);
 
-    const { is_favorite } = radio;
+    const { name, is_favorite } = radio;
 
+    // stop if alreay in favorites
     if (is_favorite) return;
 
-    let name = radioStations.find(({ id }) => id === radioId).name;
+    // set selected item name for notif
     setFavorited(name);
 
-    addToFavoritesAction(parseInt(radioId));
+    // exec add to favorites
+    addToFavoritesAction(radio);
   };
-
-  React.useEffect(() => {
-    if (addedToFavorites) {
-      setShowSnackBar(true);
-      getFavoritesAction({ pageNumber: 1 });
-      getRadioStationsAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
-    }
-  }, [addedToFavorites]);
 
   const hideSnackBar = () => {
     setTimeout(() => {
@@ -129,45 +122,42 @@ const RadioStationsTab = ({
               </Text>
             </View>
           </View>
-          <View>
-            <Pressable
-              onPress={() => handleAddToFavorites(id, name)}
-              style={({ pressed }) => [
-                {
-                  width: 44,
-                  height: 44,
-                  borderRadius: 22,
-                  backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }
-              ]}
-            >
-              <Icon
-                name="heart-solid"
-                size={theme.iconSize(3)}
-                style={{
-                  color: is_favorite ? theme.iplayya.colors.vibrantpussy : 'white'
-                }}
-              />
-            </Pressable>
-          </View>
+          <FavoriteButton id={id} isFavorite={is_favorite} pressAction={handleAddToFavorites} />
         </ContentWrap>
       </Pressable>
     );
   };
 
-  // return radioStations.map(({ id, name, is_favorite, number, ...rest }) => (
-  //   <React.Fragment key={id}>
+  const renderFavoriteLoader = () => {
+    if (!isAddingToFavorites) return;
+
+    return (
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          // backgroundColor: theme.iplayya.colors.black80,
+          zIndex: 1,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
+      {renderFavoriteLoader()}
       <FlatList
         data={radioStationsData}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}
-        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
         renderItem={renderItem}
+        getItemLayout={(data, index) => {
+          return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+        }}
       />
       <SnackBar
         visible={showSnackBar}
@@ -181,31 +171,30 @@ const RadioStationsTab = ({
 
 RadioStationsTab.propTypes = {
   theme: PropTypes.object,
+  added: PropTypes.bool,
+  isAddingToFavorites: PropTypes.bool,
   getRadioStationsAction: PropTypes.func,
   radioStations: PropTypes.array,
   addedToFavorites: PropTypes.bool,
   addToFavoritesAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
   handleSelectItem: PropTypes.func,
-  paginator: PropTypes.object,
-  paginatorInfo: PropTypes.object,
-  getRadiosStartAction: PropTypes.func
+  resetUpdateIndicatorsAction: PropTypes.func,
+  paginator: PropTypes.object
 };
 
 const actions = {
   getRadioStationsAction: Creators.get,
-  getFavoritesAction: Creators.getFavorites,
-  addToFavoritesAction: Creators.addToFavorites,
-  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
-  getRadiosStartAction: Creators.getStart
+  getFavoritesAction: FavoritesCreators.getFavorites,
+  addToFavoritesAction: FavoritesCreators.addToFavorites,
+  resetUpdateIndicatorsAction: FavoritesCreators.resetUpdateIndicators
 };
 
 const mapStateToProps = createStructuredSelector({
   radioStations: selectRadioStations,
-  addedToFavorites: selectAddedToFavorites,
   paginator: selectPaginator,
-  paginatorInfo: selectPaginatorInfo,
-  favoritesPaginator: selectFavoritesPaginator
+  isAddingToFavorites: selectIsFetching,
+  added: selectAdded
 });
 
 export default compose(connect(mapStateToProps, actions), withTheme)(RadioStationsTab);

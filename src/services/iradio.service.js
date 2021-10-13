@@ -39,28 +39,24 @@ export const getFavorites = async (input) => {
 /// IN PROGRESS! addToFavorites and getFavorites
 
 export const addToFavorites = async (radioId) => {
-  console.log({ radioIdxxxxx: radioId });
   try {
     const { data } = await client.mutate({
       mutation: ADD_RADIO_TO_FAVORITES,
-      variables: { input: { radioId } },
-      refetchQueries: [
-        /// TODO: input variables should come from this function's arguments
-        // form pagination to work
-        // { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
-        {
-          query: GET_FAVORITE_RADIOS,
-          // variables: { input: { limit: 10, pageNumber: 1 } },
-          fetchPolicy: 'network-only'
-        },
+      variables: { input: { radioId } }
+      // refetchQueries: [
+      //   {
+      //     query: GET_FAVORITE_RADIOS,
+      //     variables: { input: { limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' } },
+      //     fetchPolicy: 'network-only'
+      //   },
 
-        {
-          query: GET_RADIO_STATIONS,
-          variables: { input: { limit: 10, pageNumber: 1 } },
-          fetchPolicy: 'network-only'
-        }
-      ],
-      awaitRefetchQueries: true
+      //   {
+      //     query: GET_RADIO_STATIONS,
+      //     variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
+      //     fetchPolicy: 'network-only'
+      //   }
+      // ],
+      // awaitRefetchQueries: true
     });
     return data;
   } catch (error) {
@@ -68,25 +64,23 @@ export const addToFavorites = async (radioId) => {
   }
 };
 
-export const removeFromFavorites = async (input) => {
+export const removeFromFavorites = async (radioId, pageNumber) => {
+  console.log({ pageNumber });
   try {
     const { data } = await client.mutate({
       mutation: REMOVE_RADIO_FROM_FAVORITES,
-      variables: { input },
+      variables: { input: { radioId } },
       refetchQueries: [
-        /// TODO: input variables should come from this function's arguments
-        // form pagination to work
-        // { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
-        // { query: GET_RADIO_STATIONS, variables: { input: { limit: 10, pageNumber: 1 } } }
         {
           query: GET_FAVORITE_RADIOS,
-          fetchPolicy: 'network-only'
-        },
-        {
-          query: GET_RADIO_STATIONS,
-          // variables: { input: { limit: 10, pageNumber: 1 } },
+          variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
           fetchPolicy: 'network-only'
         }
+        // {
+        //   query: GET_RADIO_STATIONS,
+        //   variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
+        //   fetchPolicy: 'network-only'
+        // }
       ],
       awaitRefetchQueries: true
     });

@@ -1,100 +1,85 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, FlatList } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
-// import SnackBar from 'components/snackbar/snackbar.component';
+import { View, Pressable, FlatList, StyleSheet } from 'react-native';
+import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/iradio/iradio.actions';
+import { Creators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import { createStructuredSelector } from 'reselect';
 import {
+  selectPaginator,
   selectFavorites,
-  selectRemovedFromFavorites,
-  selectFavoritesPaginator,
-  selectRadioStations,
-  selectPaginator
-} from 'modules/ducks/iradio/iradio.selectors';
-
+  selectRemoved,
+  selectAddedToFavorites
+} from 'modules/ducks/iradio-favorites/iradio-favorites.selectors';
 import Spacer from 'components/spacer.component';
 import ContentWrap from 'components/content-wrap.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+import { selectIsFetching } from 'modules/ducks/iradio-favorites/iradio-favorites.selectors';
 
 const ITEM_HEIGHT = 16;
 
 const FavoritesTab = ({
   theme,
-  // radioStations,
+  isFetching,
   favorites,
-  favoritesPaginator,
-  getFavoritesAction,
-  getRadioStationsAction,
-  removedFromFavorites,
+  paginator,
   removeFromFavoritesAction,
   handleSelectItem,
   navigation,
   setIndex,
-  resetFavoritesPaginatorAction
+  resetPaginatorAction,
+  getFavoritesAction,
+  removed
 }) => {
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [selectAll, setSellectAll] = React.useState(false);
   const [listData, setListData] = React.useState([]);
-  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-    true
-  );
+  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+  //   true
+  // );
 
   React.useEffect(() => {
-    resetFavoritesPaginatorAction();
+    resetPaginatorAction();
     // getFavoritesAction(favoritesPaginator);
   }, []);
 
-  // React.useEffect(() => {
-  //   if (favoritesPaginator.pageNumber === 1) {
-  //     getFavoritesAction({ limit: 10, pageNumber: 2, orderBy: 'number', order: 'asc' });
-  //   }
-  // }, [favoritesPaginator]);
-
-  // get favorites on mount
   React.useEffect(() => {
-    resetFavoritesPaginatorAction();
-    if (removedFromFavorites) {
+    if (removed) {
       setActivateCheckboxes(false);
-      getFavoritesAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
-      getRadioStationsAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
-    }
-  }, [removedFromFavorites]);
 
-  console.log(favorites);
+      const prevPaginator = Object.assign(paginator, { pageNumber: paginator.pageNumber - 1 });
+      // console.log({ prevPaginator });
+      getFavoritesAction(prevPaginator);
+    }
+  }, [removed]);
+
   // setup favorites
   React.useEffect(() => {
+    console.log({ x: favorites });
     if (favorites) {
-      let data = favorites.map(({ id, name, cmd, number }) => ({
-        id,
-        name,
-        cmd,
-        number
-      }));
-      setListData(data);
+      setListData(favorites);
     }
   }, [favorites]);
 
-  const handleSelectItems = ({ id, cmd, name, number }) => {
+  const handleSelectItems = (item) => {
     if (activateCheckboxes) {
       const newItems = selectedItems;
-      const index = selectedItems.findIndex((i) => i === id);
+      const index = selectedItems.findIndex(({ id }) => id === item.id);
       if (index >= 0) {
         newItems.splice(index, 1);
         setSelectedItems([...newItems]);
       } else {
-        setSelectedItems([id, ...selectedItems]);
+        setSelectedItems([item, ...selectedItems]);
       }
     } else {
-      handleSelectItem({ number, cmd, name });
+      handleSelectItem(item);
     }
   };
 
@@ -106,29 +91,28 @@ const FavoritesTab = ({
 
   React.useEffect(() => {
     if (selectAll) {
-      let collection = favorites.map(({ id }) => {
-        return id;
-      });
-      setSelectedItems(collection);
-      console.log(collection);
+      setSelectedItems(listData);
     } else {
       setSelectedItems([]);
     }
   }, [selectAll]);
 
+  // console.log({ selectedItems });
+
   const handleSelectAll = () => {
     setSellectAll(!selectAll);
   };
 
-  const handleLongPress = (id) => {
-    setSelectedItems([id]);
+  const handleLongPress = (item) => {
+    setSelectedItems([item]);
     setActivateCheckboxes(true);
   };
 
+  console.log({ selectedItems });
+
   const handleRemoveItems = () => {
     if (selectedItems.length) {
-      let deleteItems = selectedItems.map((id) => parseInt(id));
-      removeFromFavoritesAction(deleteItems);
+      removeFromFavoritesAction(selectedItems);
     }
   };
 
@@ -137,23 +121,17 @@ const FavoritesTab = ({
   };
 
   const handleConfirmDelete = () => {
-    // do delete action here
-    // console.log('delete action');
-    // setShowDeleteConfirmation(false);
     setShowDeleteConfirmation(false);
     handleRemoveItems();
   };
 
   const handleEndReached = () => {
-    if (!onEndReachedCalledDuringMomentum) {
-      getFavoritesAction(favoritesPaginator);
-      setOnEndReachedCalledDuringMomentum(true);
-    }
-  };
+    getFavoritesAction(paginator);
 
-  // React.useEffect(() => {
-  //   if (showSnackBar) hideSnackBar();
-  // }, [showSnackBar]);
+    // if (!onEndReachedCalledDuringMomentum) {
+    //   setOnEndReachedCalledDuringMomentum(true);
+    // }
+  };
 
   const EmptyState = ({ theme }) => (
     <View
@@ -178,7 +156,7 @@ const FavoritesTab = ({
   );
 
   // eslint-disable-next-line react/prop-types
-  const renderItem = ({ item: { id, cmd, name, number } }) => {
+  const renderItem = ({ item }) => {
     return (
       <Pressable
         delayLongPress={1500}
@@ -190,8 +168,8 @@ const FavoritesTab = ({
             paddingVertical: theme.spacing(2)
           }
         ]}
-        onLongPress={() => handleLongPress(id)}
-        onPress={() => handleSelectItems({ id, name, cmd, number })}
+        onLongPress={() => handleLongPress(item)}
+        onPress={() => handleSelectItems(item)}
       >
         <View
           style={{
@@ -208,25 +186,46 @@ const FavoritesTab = ({
             }}
           >
             <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
-              {number}
+              {/* eslint-disable-next-line react/prop-types */}
+              {item.number}
             </Text>
             <View style={{ flex: 1, marginHorizontal: 10 }}>
               <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
-                {name}
+                {/* eslint-disable-next-line react/prop-types */}
+                {item.name}
               </Text>
             </View>
           </View>
           {activateCheckboxes && (
-            <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+            <RadioButton selected={selectedItems.findIndex((i) => i === item) >= 0} />
           )}
         </View>
       </Pressable>
     );
   };
 
+  const renderFavoriteLoader = () => {
+    if (!isFetching) return;
+
+    return (
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          // backgroundColor: theme.iplayya.colors.black80,
+          zIndex: 1,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  };
+
   if (listData.length || favorites.length)
     return (
       <View style={{ flex: 1 }}>
+        {renderFavoriteLoader()}
         {activateCheckboxes && (
           <ContentWrap>
             <View
@@ -271,7 +270,8 @@ const FavoritesTab = ({
           })}
           onEndReached={() => handleEndReached()}
           onEndReachedThreshold={0.5}
-          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          // eslint-disable-next-line react/prop-types
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
         />
@@ -295,33 +295,31 @@ const FavoritesTab = ({
 
 FavoritesTab.propTypes = {
   theme: PropTypes.object,
-  radioStations: PropTypes.array,
+  isFetching: PropTypes.bool,
   favorites: PropTypes.array,
-  favoritesPaginator: PropTypes.object,
-  removedFromFavorites: PropTypes.bool,
-  getFavorites: PropTypes.func,
+  addedToFavorites: PropTypes.array,
+  paginator: PropTypes.object,
+  removed: PropTypes.bool,
   removeFromFavoritesAction: PropTypes.func,
-  resetFavoritesPaginatorAction: PropTypes.func,
-  getRadioStationsAction: PropTypes.func,
-  getFavoritesAction: PropTypes.func,
+  resetPaginatorAction: PropTypes.func,
   handleSelectItem: PropTypes.func,
   navigation: PropTypes.object,
-  setIndex: PropTypes.func
+  setIndex: PropTypes.func,
+  getFavoritesAction: PropTypes.func
 };
 
 const mapStateToProps = createStructuredSelector({
-  radioStations: selectRadioStations,
   paginator: selectPaginator,
   favorites: selectFavorites,
-  favoritesPaginator: selectFavoritesPaginator,
-  removedFromFavorites: selectRemovedFromFavorites
+  removed: selectRemoved,
+  addedToFavorites: selectAddedToFavorites,
+  isFetching: selectIsFetching
 });
 
 const actions = {
   getFavoritesAction: Creators.getFavorites,
-  getRadioStationsAction: Creators.get,
   removeFromFavoritesAction: Creators.removeFromFavorites,
-  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
+  resetPaginatorAction: Creators.resetPaginator
 };
 
 export default compose(connect(mapStateToProps, actions), withTheme)(FavoritesTab);
