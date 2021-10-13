@@ -5,16 +5,7 @@ import PhoneInput from 'react-native-phone-input';
 import CountryPicker, { DARK_THEME } from 'react-native-country-picker-modal';
 import { useTheme } from 'react-native-paper';
 
-// const styles = StyleSheet.create({
-//   textFocus: {
-//     backgroundColor: 'rgba(255,255,255,0.3)'
-//   },
-//   textUnfocus: {
-//     backgroundColor: 'rgba(255,255,255,0.1)'
-//   }
-// });
-
-const PhoneNumberPicker = ({ setPhone }) => {
+const PhoneNumberPicker = ({ setPhone, placeholder }) => {
   const [value, setValue] = React.useState('');
   const [visible, setVisible] = React.useState(false);
   const theme = useTheme();
@@ -63,9 +54,9 @@ const PhoneNumberPicker = ({ setPhone }) => {
         value={value}
         onChange={setValue}
         autoFormat={true}
-        initialValue="+44"
+        initialValue={placeholder}
         textProps={{
-          color: value === '' ? 'rgba(255,255,255,0.3)' : '#ffffff',
+          color: value === '' ? 'rgba(255,255,255,0.4)' : '#ffffff',
           selectionColor: '#E34398'
         }}
         textStyle={{ fontSize: 16 }}
@@ -93,6 +84,7 @@ const PhoneNumberPicker = ({ setPhone }) => {
 };
 
 PhoneNumberPicker.propTypes = {
+  placeholder: PropTypes.string,
   setPhone: PropTypes.func
 };
 

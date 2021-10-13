@@ -39,16 +39,17 @@ class EditProfileScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    const { first_name, last_name, birth_date, email, phone, gender } = props.profile;
+    const { first_name, last_name, name, birth_date, email, phone, gender } = props.profile;
 
     this.state = {
       valid: true,
       actionSheetisVisible: false,
-      first_name,
-      last_name,
+      first_name: '',
+      last_name: '',
+      name: `${first_name} ${last_name}`,
       phone,
       birth_date,
-      gender: 'Gender',
+      gender,
       errors: [
         { key: 'first_name', val: false },
         { key: 'last_name', val: false },
@@ -153,7 +154,6 @@ class EditProfileScreen extends React.Component {
     const { isFetching, profile } = this.props;
     const { errors, valid, showModal, ...form } = this.state;
     const { theme } = this.props;
-
     const actions = [
       {
         key: 'male',
@@ -187,7 +187,7 @@ class EditProfileScreen extends React.Component {
                 name="first_name"
                 value={form.first_name}
                 style={styles.textInput}
-                placeholder="First name"
+                placeholder={profile.first_name}
                 handleChangeText={this.handleChange}
                 error={stateError.first_name}
               />
@@ -195,7 +195,7 @@ class EditProfileScreen extends React.Component {
                 name="last_name"
                 value={form.last_name}
                 style={styles.textInput}
-                placeholder="Last name"
+                placeholder={profile.last_name}
                 handleChangeText={this.handleChange}
                 error={stateError.last_name}
               />
@@ -210,11 +210,17 @@ class EditProfileScreen extends React.Component {
                 keyboardType="number-pad"
               /> */}
               <View>
-                <PhoneNumberPicker name="phone" setPhone={this.setPhone} error={stateError.phone} />
+                <PhoneNumberPicker
+                  name="phone"
+                  placeholder={profile.phone}
+                  setPhone={this.setPhone}
+                  error={stateError.phone}
+                />
               </View>
               <View>
                 <DatePicker
                   name="birth_date"
+                  placeholder={profile.birth_date}
                   setBirthdate={this.setBirthdate}
                   error={stateError.birth_date}
                   style={stateError.birth_date ? styles.errorText : null}
@@ -234,13 +240,15 @@ class EditProfileScreen extends React.Component {
                       justifyContent: 'space-between',
                       paddingVertical: 15,
                       paddingHorizontal: 10,
-                      ...(this.state.gender === 'Gender' ? styles.textUnfocus : styles.textUnfocus),
+                      ...(this.state.gender === profile.gender
+                        ? styles.textUnfocus
+                        : styles.textInputFocus),
                       ...(stateError.gender ? styles.errorText : null)
                     }}
                   >
                     <Text
                       style={[
-                        this.state.gender === 'Gender'
+                        this.state.gender === profile.gender
                           ? styles.textChangeColor
                           : styles.textUnchange,
                         { fontSize: 16 }

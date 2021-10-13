@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     color: '#ffffff'
   },
   textBlur: {
-    color: 'rgba(255,255,255,0.3)'
+    color: 'rgba(225,225,225,0.5)'
   },
   dateIcon: {
     marginRight: 10,
@@ -42,11 +42,9 @@ const styles = StyleSheet.create({
   }
 });
 
-const DatePicker = ({ setBirthdate, style }) => {
+const DatePicker = ({ setBirthdate, style, placeholder }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
-  const [chosenDate, setChosenDate] = React.useState(
-    moment(new Date()).localeData().longDateFormat('L').toLowerCase()
-  ); // moment().format('LL')
+  const [chosenDate, setChosenDate] = React.useState(placeholder); // moment().format('LL')
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -72,20 +70,8 @@ const DatePicker = ({ setBirthdate, style }) => {
       style={{ ...styles.textContainer, ...style }}
       onPress={() => showDatePicker()}
     >
-      <View
-        style={
-          chosenDate === moment(new Date()).localeData().longDateFormat('L').toLowerCase()
-            ? styles.textHolderBlur
-            : styles.textHolderFocus
-        }
-      >
-        <Text
-          style={
-            chosenDate === moment(new Date()).localeData().longDateFormat('L').toLowerCase()
-              ? styles.textBlur
-              : styles.textFocus
-          }
-        >
+      <View style={chosenDate === placeholder ? styles.textHolderBlur : styles.textHolderFocus}>
+        <Text style={chosenDate === placeholder ? styles.textBlur : styles.textFocus}>
           {chosenDate}
         </Text>
         <View style={styles.dateIcon}>
@@ -103,6 +89,7 @@ const DatePicker = ({ setBirthdate, style }) => {
 };
 
 DatePicker.propTypes = {
+  placeholder: PropTypes.string,
   setBirthdate: PropTypes.func,
   style: PropTypes.object
 };
