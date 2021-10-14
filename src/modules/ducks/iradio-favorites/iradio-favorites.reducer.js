@@ -1,6 +1,6 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './iradio-favorites.actions';
-import { filterOutRemovedItems, updateAddedToFavorites } from './iradio-favorites.helpers';
+import { filterOutRemovedItems } from './iradio-favorites.helpers';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
 
@@ -8,7 +8,7 @@ const INITIAL_STATE = {
   isFetching: false,
   error: null,
   favorites: [],
-  addedToFavorites: [],
+  // addedToFavorites: [],
   added: false,
   removed: false,
   paginator: {
@@ -44,8 +44,8 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
     const { data, nextPaginator } = action;
 
-    let updatedData = uniqBy(data, 'id');
-    // let updatedData = uniqBy([...data, ...state.favorites], 'id');
+    // let updatedData = uniqBy(data, 'id');
+    let updatedData = uniqBy([...data, ...state.favorites], 'id');
 
     updatedData = updatedData.map(({ number, ...rest }) => {
       return { number: parseInt(number), ...rest };
@@ -74,14 +74,14 @@ export default createReducer(INITIAL_STATE, {
       added: false
     };
   },
-  [Types.ADD_TO_FAVORITES_SUCCESS]: (state, action) => {
-    const updated = updateAddedToFavorites(state, action);
+  [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
+    // const updated = updateAddedToFavorites(state, action);
     return {
       ...state,
       isFetching: false,
       error: null,
-      added: true,
-      addedToFavorites: updated
+      added: true
+      // addedToFavorites: updated
     };
   },
   [Types.ADD_TO_FAVORITES_FAILURE]: (state, action) => {
@@ -101,14 +101,13 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state, action) => {
-    const filtered = filterOutRemovedItems(state, action);
-
+    const favorites = filterOutRemovedItems(state, action);
     return {
       ...state,
       isFetching: false,
       error: null,
       removed: true,
-      addedToFavorites: filtered
+      favorites
     };
   },
   [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {

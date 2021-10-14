@@ -2,7 +2,7 @@ import clone from 'lodash/clone';
 
 export const filterOutRemovedItems = (state, action) => {
   const { radios } = action;
-  const c = clone(state.addedToFavorites);
+  const c = clone(state.favorites);
   const removedIds = radios.map(({ id }) => id);
 
   return c.filter(({ id }) => !removedIds.includes(id));

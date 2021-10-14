@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable, FlatList, StyleSheet } from 'react-native';
-import { ActivityIndicator, Text, withTheme } from 'react-native-paper';
+import { Text, withTheme } from 'react-native-paper';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { createFontFormat } from 'utils';
 import FavoriteButton from './iradio-favorite-button.component';
@@ -141,9 +141,7 @@ const RadioStationsTab = ({
           alignItems: 'center',
           justifyContent: 'center'
         }}
-      >
-        <ActivityIndicator size="small" />
-      </View>
+      />
     );
   };
 

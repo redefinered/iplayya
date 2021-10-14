@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable, Dimensions } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
@@ -202,13 +202,25 @@ const NowPlaying = ({
               <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
             )}
 
-            <Pressable onPress={() => setPausedAction(!paused)}>
+            <TouchableRipple
+              style={{
+                borderRadius: theme.iconSize(4),
+                height: theme.iconSize(4),
+                width: theme.iconSize(4),
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginHorizontal: 10
+              }}
+              borderless={true}
+              rippleColor="rgba(255,255,255,0.25)"
+              onPress={() => setPausedAction(!paused)}
+            >
               <Icon
                 name={paused ? 'circular-play' : 'circular-pause'}
                 size={theme.iconSize(4)}
-                style={{ marginHorizontal: 10 }}
+                // style={{ marginHorizontal: 10 }}
               />
-            </Pressable>
+            </TouchableRipple>
           </View>
         </View>
         {/* {hasNotch && (

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable, FlatList, StyleSheet } from 'react-native';
-import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
+import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { createFontFormat } from 'utils';
@@ -216,9 +216,7 @@ const FavoritesTab = ({
           alignItems: 'center',
           justifyContent: 'center'
         }}
-      >
-        <ActivityIndicator size="small" />
-      </View>
+      />
     );
   };
 
