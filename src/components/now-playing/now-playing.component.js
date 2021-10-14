@@ -60,6 +60,10 @@ const NowPlaying = ({
     if (DeviceInfo.hasNotch()) setHasNotch(true);
   }, []);
 
+  React.useEffect(() => {
+    setPausedAction(false);
+  }, [nowPlaying]);
+
   // jumps to seek value specified
   React.useEffect(() => {
     if (seekValue) {
