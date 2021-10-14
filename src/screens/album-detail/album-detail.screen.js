@@ -82,9 +82,9 @@ const AlbumDetail = ({
     getAlbumDetailsAction(albumId);
 
     /// clean up
-    return () => {
-      getAlbumDetailsStartAction();
-    };
+    // return () => {
+    //   getAlbumDetailsStartAction();
+    // };
   }, []);
 
   React.useEffect(() => {
