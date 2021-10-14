@@ -404,7 +404,7 @@ const ImusicDownloads = ({
       {showDeleteConfirmation && (
         <AlertModal
           variant="danger"
-          message="Are you sure you want to delete this movie/s from your Downloads list?"
+          message="Are you sure you want to delete this music/s from your Downloads list?"
           visible={showDeleteConfirmation}
           onCancel={handleHideConfirmDeleteModal}
           hideAction={handleHideConfirmDeleteModal}

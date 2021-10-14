@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Image, Pressable } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
 import MediaProgressVisualizer from './media-progress-visualizer.component';
@@ -46,7 +46,7 @@ const NowPlaying = ({
   isInImusicScreen,
   imusicBottomNavLayout
 }) => {
-  const rootComponent = React.useRef();
+  // const rootComponent = React.useRef();
   const player = React.useRef();
 
   const [buffering, setBuffering] = React.useState(false);
@@ -59,6 +59,10 @@ const NowPlaying = ({
     /// shows the bottom padding for devices with notch. not yet fully tested
     if (DeviceInfo.hasNotch()) setHasNotch(true);
   }, []);
+
+  React.useEffect(() => {
+    setPausedAction(false);
+  }, [nowPlaying]);
 
   // jumps to seek value specified
   React.useEffect(() => {
@@ -241,6 +245,8 @@ const NowPlaying = ({
   };
 
   const visibilityStyles = () => {
+    if (!imusicBottomNavLayout) return { bottom: 0 };
+
     if (isBackgroundMode) return { top: '100%' };
 
     return { bottom: isInImusicScreen ? imusicBottomNavLayout.height : 0 };
@@ -268,62 +274,65 @@ const NowPlaying = ({
 
   if (nowPlaying) {
     return (
-      <Pressable
+      <TouchableRipple
         onPress={handlePress}
         onLayout={handleOnRootLayout}
-        ref={rootComponent}
+        // ref={rootComponent}
         style={{
           backgroundColor: '#202530',
           borderBottomWidth: 1,
           borderColor: theme.iplayya.colors.white10,
           position: 'absolute',
+          zIndex: theme.iplayya.zIndex.loader,
           left: 0,
           right: 0,
           ...visibilityStyles()
         }}
       >
-        {renderPlayer()}
+        <React.Fragment>
+          {renderPlayer()}
 
-        <MediaProgressVisualizer />
+          <MediaProgressVisualizer />
 
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: theme.spacing(2),
-            paddingTop: theme.spacing(2),
-            paddingBottom: DeviceInfo.hasNotch() ? theme.spacing(4) : theme.spacing(2)
-          }}
-        >
-          <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
-            {renderThumbnail(nowPlaying)}
-
-            {renderContent(nowPlaying)}
-          </View>
           <View
             style={{
-              flex: 4,
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'center'
+              paddingHorizontal: theme.spacing(2),
+              paddingTop: theme.spacing(2),
+              paddingBottom: DeviceInfo.hasNotch() ? theme.spacing(4) : theme.spacing(2)
             }}
           >
-            {paused ? (
-              <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-            ) : (
-              <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-            )}
+            <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
+              {renderThumbnail(nowPlaying)}
 
-            <Pressable onPress={() => setPausedAction(!paused)}>
-              <Icon
-                name={paused ? 'circular-play' : 'circular-pause'}
-                size={theme.iconSize(4)}
-                style={{ marginHorizontal: 10 }}
-              />
-            </Pressable>
+              {renderContent(nowPlaying)}
+            </View>
+            <View
+              style={{
+                flex: 4,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              {paused ? (
+                <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+              ) : (
+                <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+              )}
+
+              <Pressable onPress={() => setPausedAction(!paused)}>
+                <Icon
+                  name={paused ? 'circular-play' : 'circular-pause'}
+                  size={theme.iconSize(4)}
+                  style={{ marginHorizontal: 10 }}
+                />
+              </Pressable>
+            </View>
           </View>
-        </View>
-      </Pressable>
+        </React.Fragment>
+      </TouchableRipple>
     );
   }
 
