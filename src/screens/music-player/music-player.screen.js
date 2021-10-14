@@ -66,10 +66,19 @@ const MusicPlayerScreen = ({
 
     // Unsubscribe
     return () => {
-      setNowPlayingBackgroundModeAction(false);
+      // setNowPlayingBackgroundModeAction(false);
+
       getAlbumDetailsAction(albumId);
     };
   }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setNowPlayingBackgroundModeAction(false);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   /// show update notification
   React.useEffect(() => {
