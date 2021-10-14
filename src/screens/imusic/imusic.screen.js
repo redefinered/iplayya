@@ -112,7 +112,7 @@ const ImusicScreen = ({
         <React.Fragment>
           <FlatList
             data={albums}
-            keyExtractor={(album) => album.id}
+            keyExtractor={(item) => item.id}
             renderItem={renderItem}
             initialScrollIndex={scrollIndex}
             onEndReached={(info) => handleEndReached(info)}
