@@ -30,6 +30,7 @@ const RadioStationsTab = ({
   added,
   resetUpdateIndicatorsAction
 }) => {
+  console.log({ xxxx: paginator });
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
   const [radioStationsData, setRadioStationsData] = React.useState([]);
