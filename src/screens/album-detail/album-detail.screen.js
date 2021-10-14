@@ -55,7 +55,7 @@ const AlbumDetail = ({
   route,
   album,
   updated,
-  getAlbumDetailsStartAction,
+  // getAlbumDetailsStartAction,
   isBackgroundMode,
   setNowPlayingAction,
   nowPlaying,
@@ -344,7 +344,7 @@ const Container = (props) => (
 
 const actions = {
   favoritesStartAction: FavoritesCreators.start,
-  getAlbumDetailsStartAction: Creators.getAlbumDetailsStart,
+  // getAlbumDetailsStartAction: Creators.getAlbumDetailsStart,
   getAlbumDetailsAction: Creators.getAlbumDetails,
   setNowPlayingAction: Creators.setNowPlaying,
   setPausedAction: Creators.setPaused,
