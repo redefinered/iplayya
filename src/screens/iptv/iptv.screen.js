@@ -8,7 +8,7 @@ import Button from 'components/button/button.component';
 import IptvItem from 'components/iptv-item/iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 // import SnackBar from 'components/snackbar/snackbar.component';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -31,13 +31,15 @@ import {
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import {
   selectIsFetching as selectUserIsFetching,
-  selectError as selectUserError
+  selectError as selectUserError,
+  selectActiveProviderId
 } from 'modules/ducks/user/user.selectors';
 
 import NoProvider from 'assets/no_provider.svg';
 
 import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
+import { FlatList } from 'react-native-gesture-handler';
 
 const IptvScreen = ({
   navigation,
@@ -54,7 +56,8 @@ const IptvScreen = ({
   deleteAction,
   deteteStartAction,
   // isInitialSignIn,
-  route: { params }
+  route: { params },
+  activeProviderId
   // isProviderSetupSkipped
 }) => {
   // const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
@@ -111,9 +114,9 @@ const IptvScreen = ({
     setProviderAction(id);
   };
 
-  const handleAddProviderSuccess = () => {
-    // setShowSuccessMessage(true);
-  };
+  // const handleAddProviderSuccess = () => {
+  //   // setShowSuccessMessage(true);
+  // };
 
   const handleProviderDeleteSuccess = () => {
     getProfileAction();
@@ -153,6 +156,19 @@ const IptvScreen = ({
     { key: 'delete', icon: 'delete', title: 'Delete', onPress: handleDelete, data: { selected } }
   ];
 
+  const renderItem = ({ item }) => {
+    return (
+      <IptvItem
+        id={item.id}
+        onSelect={handleProviderSelect}
+        active={item.id === activeProviderId}
+        name={item.name || 'No Provider Name'}
+        username={item.username}
+        onActionPress={handleItemPress}
+      />
+    );
+  };
+
   if (providers.length)
     return (
       <ContentWrap>
@@ -160,7 +176,8 @@ const IptvScreen = ({
           {error && <Text style={{ marginBottom: 15 }}>{error}</Text>}
           {userError && <Text style={{ marginBottom: 15 }}>{userError}</Text>}
           {userIsFetching && <ActivityIndicator style={{ marginBottom: 15 }} />}
-          <ScrollView>
+          <FlatList data={providers} renderItem={renderItem} />
+          {/* <ScrollView>
             {providers.map(({ id, name, username }) => (
               <IptvItem
                 key={id}
@@ -171,7 +188,7 @@ const IptvScreen = ({
                 onActionPress={handleItemPress}
               />
             ))}
-          </ScrollView>
+          </ScrollView> */}
           <WalkThroughGuide
             visible={showIptvGuide}
             hideModal={handleVisibleWalkthrough}
@@ -260,7 +277,7 @@ const NoProviders = ({ navigation }) => (
     <Text style={{ fontSize: 24 }}>No providers yet</Text>
     <Spacer />
     <Button onPress={() => navigation.navigate('AddIptvScreen')}>
-      Tap to add you IPTV Provider
+      Tap to add your IPTV Provider
     </Button>
   </View>
 );
@@ -295,7 +312,8 @@ const mapStateToProps = createStructuredSelector({
   // skipped: selectSkipProviderAdd,
   onboardinginfo: selectOnboardinginfo,
   isProviderSetupSkipped: selectIsProviderSetupSkipped,
-  isInitialSignIn: selectIsInitialSignIn
+  isInitialSignIn: selectIsInitialSignIn,
+  activeProviderId: selectActiveProviderId
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
