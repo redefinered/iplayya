@@ -19,12 +19,13 @@ const IptvItem = ({
   },
   onSelect,
   onActionPress,
-  id
+  id,
+  active
 }) => (
   <Pressable
     onPress={() => onSelect(id)}
     style={{
-      backgroundColor: /**colors.white10**/ 'transparent',
+      backgroundColor: active ? colors.white10 : 'transparent',
       borderRadius: roundness,
       ...styles.container
     }}
