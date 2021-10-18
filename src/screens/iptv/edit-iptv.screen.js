@@ -46,6 +46,7 @@ class EditIptvScreen extends React.Component {
       username,
       password,
       valid: true,
+      edited: false,
       errors: [
         { key: 'name', val: false },
         { key: 'portal_address', val: false },
@@ -55,15 +56,27 @@ class EditIptvScreen extends React.Component {
     };
   }
 
+  // unsubscribeToBeforeRemove = null;
+
   componentDidMount() {
     // resets provider create state
     this.props.updateStartAction();
     this.props.createStartAction();
     this.props.enableSwipeAction(false);
+
+    // this.unsubscribeToBeforeRemove = this.navigation.addListener('beforeRemove', () => {
+    //   if (this.state.edited) {
+    //     this.setState({ showGoingBackWarning: true });
+    //   }
+    // });
   }
 
+  // componentWillUnmount() {
+  //   this.unsubscribeToBeforeRemove();
+  // }
+
   handleChange = (text, name) => {
-    this.setState({ [name]: text });
+    this.setState({ [name]: text, edited: true });
   };
 
   setError = (stateError, field, val) => {
@@ -74,7 +87,7 @@ class EditIptvScreen extends React.Component {
 
   handleSubmit = () => {
     // eslint-disable-next-line no-unused-vars
-    const { modalVisible, errors: stateError, valid, ...input } = this.state;
+    const { modalVisible, errors: stateError, valid, edited, ...input } = this.state; /// destructuring non input fields 'valid', 'edited' so the update will work
 
     // validation here
     if (input.name === '') {
