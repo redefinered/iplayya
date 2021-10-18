@@ -3,11 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
 import MinistraThumbnail from 'assets/providers/ministra.svg';
-
+import MoreButton from 'components/button-more/more-button.component';
 import styles from './iptv-item.styles';
-import theme from 'common/theme';
 
 const IptvItem = ({
   name,
@@ -48,11 +46,7 @@ const IptvItem = ({
         style={{ color: colors.white50, ...styles.username }}
       >{`Logged in as ${username}`}</Text>
     </View>
-    <View style={styles.iconContainer}>
-      <Pressable onPress={() => onActionPress(id)} style={styles.icon}>
-        <Icon name="more" size={theme.iconSize(3)} />
-      </Pressable>
-    </View>
+    <MoreButton pressAction={onActionPress} data={{ id }} />
   </Pressable>
 );
 
