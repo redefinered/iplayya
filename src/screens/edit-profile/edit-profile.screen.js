@@ -152,8 +152,10 @@ class EditProfileScreen extends React.Component {
 
   render() {
     const { isFetching, profile } = this.props;
+    const { isValidPhoneNumber } = this.props;
     const { errors, valid, showModal, ...form } = this.state;
     const { theme } = this.props;
+    console.log(isValidPhoneNumber);
     const actions = [
       {
         key: 'male',
@@ -214,6 +216,11 @@ class EditProfileScreen extends React.Component {
                   name="phone"
                   placeholder={profile.phone}
                   setPhone={this.setPhone}
+                  isValidPhoneNumber={isValidPhoneNumber}
+                  style={{
+                    borderWidth: isValidPhoneNumber ? 0 : 2,
+                    borderColor: isValidPhoneNumber ? 'null' : '#E34398'
+                  }}
                   error={stateError.phone}
                 />
               </View>
@@ -240,9 +247,9 @@ class EditProfileScreen extends React.Component {
                       justifyContent: 'space-between',
                       paddingVertical: 15,
                       paddingHorizontal: 10,
-                      ...(this.state.gender === profile.gender
-                        ? styles.textUnfocus
-                        : styles.textInputFocus),
+                      ...(this.state.actionSheetisVisible
+                        ? styles.textInputFocus
+                        : styles.textUnfocus),
                       ...(stateError.gender ? styles.errorText : null)
                     }}
                   >

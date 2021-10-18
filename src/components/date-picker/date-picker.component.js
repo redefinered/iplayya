@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 10,
-    backgroundColor: 'rgba(255,255,255,0.3)'
+    backgroundColor: 'rgba(255,255,255,0.25)'
   }
 });
 
@@ -54,10 +54,10 @@ const DatePicker = ({ setBirthdate, style, placeholder }) => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (datetime) => {
+  const handleConfirm = (date) => {
     hideDatePicker(); //must be first
     // console.log('A date has been picked: ', datetime);
-    setChosenDate(moment(datetime).format('LL'));
+    setChosenDate(moment(date).format('LL'));
   };
 
   React.useEffect(() => {
@@ -70,7 +70,7 @@ const DatePicker = ({ setBirthdate, style, placeholder }) => {
       style={{ ...styles.textContainer, ...style }}
       onPress={() => showDatePicker()}
     >
-      <View style={chosenDate === placeholder ? styles.textHolderBlur : styles.textHolderFocus}>
+      <View style={isDatePickerVisible ? styles.textHolderFocus : styles.textHolderBlur}>
         <Text style={chosenDate === placeholder ? styles.textBlur : styles.textFocus}>
           {chosenDate}
         </Text>
