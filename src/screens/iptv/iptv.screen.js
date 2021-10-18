@@ -7,7 +7,6 @@ import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import IptvItem from 'components/iptv-item/iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
-// import SnackBar from 'components/snackbar/snackbar.component';
 import { View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
@@ -83,7 +82,8 @@ const IptvScreen = ({
     if (created) getProfileAction();
 
     // if (updated) handleAddProviderSuccess();
-    if (deleted) handleProviderDeleteSuccess();
+    if (deleted) getProfileAction();
+
     // hide the snackbar in 3 sec
     // hideSnackBar();
   }, [deleted, created]);
@@ -114,14 +114,6 @@ const IptvScreen = ({
     setProviderAction(id);
   };
 
-  // const handleAddProviderSuccess = () => {
-  //   // setShowSuccessMessage(true);
-  // };
-
-  const handleProviderDeleteSuccess = () => {
-    getProfileAction();
-  };
-
   // const hideSnackBar = () => {
   //   setTimeout(() => {
   //     setShowSuccessMessage(false);
@@ -141,7 +133,7 @@ const IptvScreen = ({
     setActionSheetVisible(false);
   };
 
-  const handleItemPress = (id) => {
+  const handleItemPress = ({ id }) => {
     setActionSheetVisible(true);
     setSelected(id);
   };
@@ -169,12 +161,19 @@ const IptvScreen = ({
     );
   };
 
+  const renderUserError = () => {
+    if (!userError) return;
+    if (userError === 'Error: Provider not match') return;
+
+    return <Text style={{ marginBottom: 15 }}>{userError}</Text>;
+  };
+
   if (providers.length)
     return (
       <ContentWrap>
         <View style={{ paddingBottom: 120, paddingTop: 30 }}>
           {error && <Text style={{ marginBottom: 15 }}>{error}</Text>}
-          {userError && <Text style={{ marginBottom: 15 }}>{userError}</Text>}
+          {renderUserError()}
           {userIsFetching && <ActivityIndicator style={{ marginBottom: 15 }} />}
           <FlatList data={providers} renderItem={renderItem} />
           {/* <ScrollView>
