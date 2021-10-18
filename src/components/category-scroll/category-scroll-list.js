@@ -6,9 +6,10 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selectors';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-import { useTheme } from 'react-native-paper';
+// import { useTheme } from 'react-native-paper';
+import theme from 'common/theme';
 
-const SPACING_FOR_CARD_INSET = 15;
+const SPACING_FOR_CARD_INSET = theme.spacing(2);
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const CategoryScrollList = ({
@@ -17,7 +18,7 @@ const CategoryScrollList = ({
   getMoviesByCategoriesAction,
   paginatorOfCategory
 }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
   const brand = theme.iplayya.colors;
 
   const renderThumbnail = (uri, title) => {
@@ -76,8 +77,10 @@ const CategoryScrollList = ({
         right: SPACING_FOR_CARD_INSET
       }}
       contentContainerStyle={{
+        paddingHorizontal: SPACING_FOR_CARD_INSET
+
         // contentInset alternative for Android
-        paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0 // Horizontal spacing before and after the ScrollView
+        // paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0 // Horizontal spacing before and after the ScrollView
       }}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}

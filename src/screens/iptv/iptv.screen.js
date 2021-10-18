@@ -5,8 +5,9 @@ import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
-import IptvItem from 'components/iptv-item/iptv-item.component';
+import IptvItem from './iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
+import AlertModal from 'components/alert-modal/alert-modal.component';
 import { View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
@@ -61,10 +62,13 @@ const IptvScreen = ({
 }) => {
   // const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
+  const [showCheckboxes, setShowCheckboxes] = React.useState(false);
+  const [itemsForDelete, setItemsForDelete] = React.useState([]);
   const [selected, setSelected] = React.useState(null);
   const [showIptvGuide, setShowIptvGuide] = React.useState(false);
   const [showStepTwo, setShowStepTwo] = React.useState(false);
   const [showStepThree, setShowStepThree] = React.useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
     createStartAction();
@@ -143,15 +147,37 @@ const IptvScreen = ({
     setActionSheetVisible(false);
   };
 
+  const handleHideConfirmDeleteModal = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowDeleteConfirmation(false);
+    handleDelete({ selected });
+  };
+
+  const handleShowDeleteConfirmation = () => {
+    setActionSheetVisible(false);
+    setShowDeleteConfirmation(true);
+  };
+
   const actions = [
     { key: 'edit', icon: 'edit', title: 'Edit', onPress: handleEdit, data: { selected } },
-    { key: 'delete', icon: 'delete', title: 'Delete', onPress: handleDelete, data: { selected } }
+    {
+      key: 'delete',
+      icon: 'delete',
+      title: 'Delete',
+      onPress: handleShowDeleteConfirmation,
+      data: { selected }
+    }
   ];
 
   const renderItem = ({ item }) => {
     return (
       <IptvItem
         id={item.id}
+        showCheckboxes={showCheckboxes}
+        setShowCheckboxes={setShowCheckboxes}
         onSelect={handleProviderSelect}
         active={item.id === activeProviderId}
         name={item.name || 'No Provider Name'}
@@ -254,6 +280,16 @@ const IptvScreen = ({
           message="Changes saved successfully"
         /> */}
         <ActionSheet visible={actionSheetVisible} actions={actions} hideAction={hideActionSheet} />
+
+        <AlertModal
+          variant="danger"
+          message="Are you sure you want to delete this provider?"
+          visible={showDeleteConfirmation}
+          onCancel={handleHideConfirmDeleteModal}
+          hideAction={handleHideConfirmDeleteModal}
+          confirmText="Delete"
+          confirmAction={handleConfirmDelete}
+        />
       </ContentWrap>
       // <Text>asd</Text>
     );
