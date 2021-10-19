@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, withTheme, TouchableRipple } from 'react-native-paper';
 import MinistraThumbnail from 'assets/providers/ministra.svg';
 import RadioButton from 'components/radio-button/radio-button.component';
 import MoreButton from 'components/button-more/more-button.component';
@@ -18,6 +18,7 @@ const IptvItem = ({
   active,
   selected,
   showCheckboxes,
+  setShowCheckboxes,
   theme: {
     roundness,
     iplayya: { colors }
@@ -26,12 +27,28 @@ const IptvItem = ({
   const renderActions = () => {
     if (!showCheckboxes) return <MoreButton pressAction={onActionPress} data={{ id }} />;
 
-    return <RadioButton selected={selected} />;
+    return (
+      <TouchableRipple
+        borderless
+        style={{
+          width: 44,
+          height: 44,
+          borderRadius: 22,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        onPress={() => onActionPress({ id })}
+        // disabled={disabled}
+      >
+        <RadioButton selected={selected} />
+      </TouchableRipple>
+    );
   };
 
   return (
     <Pressable
       onPress={() => onSelect(id)}
+      onLongPress={() => setShowCheckboxes(true)}
       style={{
         backgroundColor: active ? colors.white10 : 'transparent',
         borderRadius: roundness,

@@ -2,12 +2,15 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Pressable } from 'react-native';
+import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
 import IptvItem from './iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
+import RadioButton from 'components/radio-button/radio-button.component';
 import { View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
@@ -23,9 +26,7 @@ import {
   selectIsFetching,
   selectProviders,
   selectCreated,
-  // selectUpdated,
   selectDeleted,
-  // selectSkipProviderAdd
   selectIsProviderSetupSkipped
 } from 'modules/ducks/provider/provider.selectors';
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
@@ -34,12 +35,13 @@ import {
   selectError as selectUserError,
   selectActiveProviderId
 } from 'modules/ducks/user/user.selectors';
-
 import NoProvider from 'assets/no_provider.svg';
-
 import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
 import { FlatList } from 'react-native-gesture-handler';
+import { createFontFormat } from 'utils';
+import uniq from 'lodash/uniq';
+import theme from 'common/theme';
 
 const IptvScreen = ({
   navigation,
@@ -48,17 +50,14 @@ const IptvScreen = ({
   userError,
   providers,
   created,
-  // updated,
   deleted,
   setProviderAction,
   getProfileAction,
   createStartAction,
   deleteAction,
   deteteStartAction,
-  // isInitialSignIn,
   route: { params },
   activeProviderId
-  // isProviderSetupSkipped
 }) => {
   // const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
@@ -72,8 +71,12 @@ const IptvScreen = ({
 
   React.useEffect(() => {
     createStartAction();
-    // getProfileAction();
   }, []);
+
+  /// hide checkboxes when there is nothing selected
+  React.useEffect(() => {
+    if (!itemsForDelete.length) setShowCheckboxes(false);
+  }, [itemsForDelete]);
 
   React.useEffect(() => {
     if (params) {
@@ -124,9 +127,10 @@ const IptvScreen = ({
   //   }, 3000);
   // };
 
-  const handleDelete = ({ selected }) => {
-    deteteStartAction();
-    deleteAction({ id: selected });
+  const handleDelete = (idsForDelete) => {
+    if (!idsForDelete.length) return;
+
+    deleteAction({ ids: idsForDelete });
     setActionSheetVisible(false);
   };
 
@@ -138,8 +142,22 @@ const IptvScreen = ({
   };
 
   const handleItemPress = ({ id }) => {
-    setActionSheetVisible(true);
-    setSelected(id);
+    // console.log({ id });
+    if (showCheckboxes) {
+      /// set 'deleted' indicator to null
+      deteteStartAction();
+
+      /// if selecting for delete
+      if (itemsForDelete.includes(id)) {
+        /// remove if already included
+        setItemsForDelete(itemsForDelete.filter((iid) => iid !== id));
+      } else {
+        setItemsForDelete([id, ...itemsForDelete]);
+      }
+    } else {
+      setActionSheetVisible(true);
+      setSelected(id);
+    }
   };
   // const data = providers.map((p) => ({ id, name, username }))
 
@@ -153,7 +171,14 @@ const IptvScreen = ({
 
   const handleConfirmDelete = () => {
     setShowDeleteConfirmation(false);
-    handleDelete({ selected });
+
+    if (selected) {
+      /// if 'selected' has a value
+      // this happens if more button is tapped then canceled
+      return handleDelete(uniq([selected, ...itemsForDelete]));
+    }
+
+    return handleDelete([...itemsForDelete]);
   };
 
   const handleShowDeleteConfirmation = () => {
@@ -172,6 +197,14 @@ const IptvScreen = ({
     }
   ];
 
+  const handleSelectAll = () => {
+    if (itemsForDelete.length) {
+      return setItemsForDelete([]);
+    }
+
+    return setItemsForDelete(providers.map(({ id }) => id));
+  };
+
   const renderItem = ({ item }) => {
     return (
       <IptvItem
@@ -180,6 +213,7 @@ const IptvScreen = ({
         setShowCheckboxes={setShowCheckboxes}
         onSelect={handleProviderSelect}
         active={item.id === activeProviderId}
+        selected={itemsForDelete.includes(item.id)}
         name={item.name || 'No Provider Name'}
         username={item.username}
         onActionPress={handleItemPress}
@@ -194,6 +228,39 @@ const IptvScreen = ({
     return <Text style={{ marginBottom: 15 }}>{userError}</Text>;
   };
 
+  const renderCheckboxesActiveHeader = () => {
+    if (!showCheckboxes) return;
+
+    return (
+      <ContentWrap>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Pressable
+            onPress={() => setShowDeleteConfirmation(true)}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
+            <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
+            <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => handleSelectAll()}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
+            <Text style={{ marginRight: 10 }}>All</Text>
+            <RadioButton selected={itemsForDelete.length === providers.length} />
+          </Pressable>
+        </View>
+
+        <Spacer size={30} />
+      </ContentWrap>
+    );
+  };
+
   if (providers.length)
     return (
       <ContentWrap>
@@ -201,6 +268,9 @@ const IptvScreen = ({
           {error && <Text style={{ marginBottom: 15 }}>{error}</Text>}
           {renderUserError()}
           {userIsFetching && <ActivityIndicator style={{ marginBottom: 15 }} />}
+
+          {renderCheckboxesActiveHeader()}
+
           <FlatList data={providers} renderItem={renderItem} />
           {/* <ScrollView>
             {providers.map(({ id, name, username }) => (
