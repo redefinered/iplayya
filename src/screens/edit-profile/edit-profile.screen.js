@@ -34,6 +34,7 @@ import moment, { relativeTimeRounding } from 'moment';
 import DatePicker from 'components/date-picker/date-picker.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import PhoneNumberPicker from 'components/phone-number-picker/phone-number-picker.component';
+import { CommonActions } from '@react-navigation/routers';
 
 class EditProfileScreen extends React.Component {
   constructor(props) {
@@ -44,12 +45,14 @@ class EditProfileScreen extends React.Component {
     this.state = {
       valid: true,
       actionSheetisVisible: false,
+      modalVisible: false,
       first_name: '',
       last_name: '',
       name: `${first_name} ${last_name}`,
       phone,
       birth_date,
       gender,
+      isValidPhone,
       errors: [
         { key: 'first_name', val: false },
         { key: 'last_name', val: false },
@@ -63,6 +66,15 @@ class EditProfileScreen extends React.Component {
   componentDidMount() {
     // console.log(isValidBirthday('xxx'));
     this.props.profileStartAction();
+    this.props.navigation.addListener('beforeRemove', (e) => {
+      if (this.state.modalVisible) {
+        return;
+      }
+
+      e.preventDefault();
+
+      this.handleShowModal();
+    });
   }
 
   handleChange = (text, name) => {
@@ -81,7 +93,14 @@ class EditProfileScreen extends React.Component {
       profile: { id }
     } = this.props;
 
-    const { errors, valid, actionSheetisVisible, ...formdata } = this.state;
+    const {
+      errors,
+      valid,
+      actionSheetisVisible,
+      modalVisible,
+      isValidPhone,
+      ...formdata
+    } = this.state;
 
     console.log({ formdata, actionSheetisVisible });
 
@@ -103,12 +122,8 @@ class EditProfileScreen extends React.Component {
       this.setError(errors, 'birth_date', false);
     }
 
-    if (formdata.phone === '') {
-      if (!isValidPhone(formdata.phone)) {
-        this.setError(errors, 'phone', true);
-      } else {
-        this.setError(errors, 'phone', false);
-      }
+    if (isValidPhone === false) {
+      this.setError(errors, 'phone', true);
     } else {
       this.setError(errors, 'phone', false);
     }
@@ -134,6 +149,10 @@ class EditProfileScreen extends React.Component {
     if (this.props.updated) this.props.navigation.goBack();
   }
 
+  setValidPhone = (isValidNumber) => {
+    this.setState({ isValidPhone: isValidNumber });
+  };
+
   setBirthdate = (value) => {
     this.setState({ birth_date: value });
   };
@@ -150,12 +169,24 @@ class EditProfileScreen extends React.Component {
     this.setState({ actionSheetisVisible: false });
   };
 
+  handleHideModal = () => {
+    this.setState({ modalVisible: false });
+  };
+
+  handleShowModal = () => {
+    if (this.setState.count >= 2) return;
+    this.setState({ modalVisible: true });
+  };
+
+  handleComfirmAction = () => {
+    this.setState({ modalVisible: false });
+    this.props.navigation.goBack();
+  };
+
   render() {
     const { isFetching, profile } = this.props;
-    const { isValidPhoneNumber } = this.props;
-    const { errors, valid, showModal, ...form } = this.state;
+    const { errors, valid, showModal, modalVisible, isValidPhone, ...form } = this.state;
     const { theme } = this.props;
-    console.log(isValidPhoneNumber);
     const actions = [
       {
         key: 'male',
@@ -216,13 +247,14 @@ class EditProfileScreen extends React.Component {
                   name="phone"
                   placeholder={profile.phone}
                   setPhone={this.setPhone}
-                  isValidPhoneNumber={isValidPhoneNumber}
-                  style={{
-                    borderWidth: isValidPhoneNumber ? 0 : 2,
-                    borderColor: isValidPhoneNumber ? 'null' : '#E34398'
-                  }}
+                  setValidPhone={this.setValidPhone}
                   error={stateError.phone}
+                  style={{
+                    borderWidth: isValidPhone ? 0 : 2,
+                    borderColor: isValidPhone ? 'null' : '#E34398'
+                  }}
                 />
+                {!isValidPhone ? <Text style={{ margin: 2 }}>Invalid Phone Number</Text> : null}
               </View>
               <View>
                 <DatePicker
@@ -290,6 +322,15 @@ class EditProfileScreen extends React.Component {
           visible={this.state.actionSheetisVisible}
           actions={actions}
           hideAction={this.hideActionSheet}
+        />
+        <AlertModal
+          variant="danger"
+          message="Are you sure you want to back, changes will not be save?"
+          visible={modalVisible}
+          hideAction={() => this.handleHideModal()}
+          onCancel={() => this.handleHideModal()}
+          confirmText="OK"
+          confirmAction={() => this.handleComfirmAction()}
         />
       </React.Fragment>
     );

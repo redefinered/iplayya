@@ -5,7 +5,7 @@ import PhoneInput from 'react-native-phone-input';
 import CountryPicker, { DARK_THEME } from 'react-native-country-picker-modal';
 import { useTheme } from 'react-native-paper';
 
-const PhoneNumberPicker = ({ setPhone, placeholder, style, isValidPhoneNumber }) => {
+const PhoneNumberPicker = ({ setPhone, placeholder, style, setValidPhone }) => {
   const [value, setValue] = React.useState('');
   const [visible, setVisible] = React.useState(false);
   const [focused, setFocused] = React.useState(false);
@@ -36,11 +36,10 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, isValidPhoneNumber })
     // setState({ cca2: country.cca2 });
   };
 
-  console.log(phone);
-
   React.useEffect(() => {
     setPhone(value);
-    isValidPhoneNumber(phone.current.isValidNumber());
+    if (!value) return;
+    setValidPhone(phone.current.isValidNumber());
   }, [value]);
 
   return (
@@ -54,8 +53,6 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, isValidPhoneNumber })
         marginTop: 5,
         position: 'relative',
         backgroundColor: focused ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)',
-        // borderWidth: isValidNumber ? 0 : 2,
-        // borderColor: isValidNumber ? 'null' : '#E34398',
         ...style
       }}
     >
@@ -70,11 +67,12 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, isValidPhoneNumber })
           onFocus: () => setFocused(true),
           onBlur: () => setFocused(false),
           placeholder: placeholder,
-          color: focused ? '#ffffff' : 'rgba(255,255,255,0.4)',
+          placeholderTextColor: focused ? '#FFFFFF' : 'rgba(225,225,225,0.5)',
+          color: focused ? '#ffffff' : 'rgba(255,255,255,0.5)',
+          fontSize: 16,
           selectionColor: '#E34398',
           maxLength: 18
         }}
-        textStyle={{ fontSize: 16 }}
         flagStyle={{
           borderRadius: 2,
           borderWidth: 0,
@@ -105,8 +103,8 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, isValidPhoneNumber })
 PhoneNumberPicker.propTypes = {
   placeholder: PropTypes.string,
   setPhone: PropTypes.func,
-  style: PropTypes.object,
-  isValidPhoneNumber: PropTypes.bool
+  setValidPhone: PropTypes.func,
+  style: PropTypes.object
 };
 
 export default PhoneNumberPicker;
