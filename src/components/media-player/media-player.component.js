@@ -226,6 +226,7 @@ const MediaPlayer = ({
   };
 
   const handleProgress = (playbackInfo) => {
+    // console.log({ playbackInfo });
     setBuffering(false);
     // updatePlaybackInfoAction({ playbackInfo });
     setPlaybackInfo(playbackInfo);

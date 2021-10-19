@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
-import { Text, withTheme, ActivityIndicator } from 'react-native-paper';
+import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Slider from '@react-native-community/slider';
 // import moment from 'moment';
@@ -302,17 +302,27 @@ const VideoControls = ({
         {multipleMedia && (
           <PrevButton onPress={handlePreviousButtonPress} disabled={isFirstEpisode} />
         )}
-        <Pressable onPress={() => controlProps.togglePlay()}>
+        <TouchableRipple
+          onPress={() => controlProps.togglePlay()}
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: 60,
+            justifyContent: 'center',
+            alignItems: 'center'
+            // backgroundColor: 'red'
+          }}
+        >
           {buffering ? (
             <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />
           ) : (
             <Icon
               name={controlProps.paused ? 'circular-play' : 'circular-pause'}
               size={theme.iconSize(7)}
-              style={{ marginHorizontal: 20 }}
+              // style={{ marginHorizontal: 20 }}
             />
           )}
-        </Pressable>
+        </TouchableRipple>
         {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
 
