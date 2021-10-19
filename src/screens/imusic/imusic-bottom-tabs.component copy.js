@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SafeAreaView, View } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { createStructuredSelector } from 'reselect';
 import { selectNowPlaying } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import theme from 'common/theme';
 
-// eslint-disable-next-line no-unused-vars
 const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLayoutAction }) => {
   const [heartIconColor, setHeartIconColor] = React.useState('white');
   const [downloadIconColor, setDownloadIconColor] = React.useState('white');
@@ -51,87 +51,59 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLay
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#202530',
-        paddingHorizontal: 4,
+        paddingHorizontal: 15,
+        paddingTop: 10,
+        paddingBottom: 10,
         position: 'absolute',
         width: '100%',
         bottom: 0,
         ...borderRadiusStyle()
       }}
     >
-      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableRipple
-          style={{
-            borderRadius: 34,
-            height: 67,
-            width: 67,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          borderless={true}
-          rippleColor="rgba(255,255,255,0.25)"
+      <View style={{ flex: 4 }}>
+        <TouchableWithoutFeedback
           onPress={() => navigation.navigate('ImusicFavoritesScreen')}
+          style={{ alignItems: 'center' }}
         >
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
-            <Text
-              style={{
-                fontSize: 10,
-                textTransform: 'uppercase',
-                marginTop: 5,
-                color: heartIconColor
-              }}
-            >
-              Favorites
-            </Text>
-          </View>
-        </TouchableRipple>
+          <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
+          <Text
+            style={{
+              fontSize: 10,
+              textTransform: 'uppercase',
+              marginTop: 5,
+              color: heartIconColor
+            }}
+          >
+            Favorites
+          </Text>
+        </TouchableWithoutFeedback>
       </View>
-      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableRipple
-          style={{
-            borderRadius: 34,
-            height: 67,
-            width: 67,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          borderless={true}
-          rippleColor="rgba(255,255,255,0.25)"
+      <View style={{ flex: 4 }}>
+        <TouchableWithoutFeedback
           onPress={() => navigation.replace('HomeScreen')}
+          style={{ flex: 4, alignItems: 'center' }}
         >
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="iplayya" size={theme.iconSize(3)} />
-            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-          </View>
-        </TouchableRipple>
+          <Icon name="iplayya" size={theme.iconSize(3)} />
+          <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+        </TouchableWithoutFeedback>
       </View>
-      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableRipple
-          style={{
-            borderRadius: 34,
-            height: 67,
-            width: 67,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          borderless={true}
-          rippleColor="rgba(255,255,255,0.25)"
+      <View style={{ flex: 4 }}>
+        <TouchableWithoutFeedback
           onPress={() => navigation.navigate('ImusicDownloadsScreen')}
+          style={{ alignItems: 'center' }}
         >
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />
-            <Text
-              style={{
-                fontSize: 10,
-                textTransform: 'uppercase',
-                marginTop: 5,
-                color: downloadIconColor
-              }}
-            >
-              Downloads
-            </Text>
-          </View>
-        </TouchableRipple>
+          <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />
+          <Text
+            style={{
+              fontSize: 10,
+              textTransform: 'uppercase',
+              marginTop: 5,
+              color: downloadIconColor
+            }}
+          >
+            Downloads
+          </Text>
+        </TouchableWithoutFeedback>
       </View>
     </SafeAreaView>
   );

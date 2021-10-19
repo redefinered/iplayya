@@ -455,11 +455,12 @@ const HomeStack = ({
           options={({ navigation }) => ({
             title: 'iMusic',
             animationEnabled: false,
-            headerBackImage: () => (
-              <View style={styles.backButtonContainer}>
-                <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />
-              </View>
-            ),
+            headerLeft: null,
+            // headerBackImage: () => (
+            //   <View style={styles.backButtonContainer}>
+            //     <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />
+            //   </View>
+            // ),
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple

@@ -9,6 +9,7 @@ import { ActivityIndicator } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
+import IptvStack from 'navigators/iptv-stack.navigator';
 import HomeTabs from 'navigators/home-tabs.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -30,6 +31,7 @@ import { resetStore } from 'modules/store';
 import { Button } from 'react-native-paper';
 import theme from 'common/theme';
 import { selectDataLoaded } from 'modules/app.js';
+import { selectError } from 'modules/ducks/user/user.selectors.js';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -40,6 +42,7 @@ const HomeComponent = () => (
 );
 
 const App = ({
+  userError,
   isLoading,
   isLoggedIn,
   dataLoaded,
@@ -53,9 +56,17 @@ const App = ({
   onRegisterAction,
   onNotifAction
 }) => {
+  const [providerError, setProviderError] = React.useState(false);
   const [isReady, setIsReady] = React.useState(false);
   const [testMode] = React.useState(false);
   const [notif, setNotif] = React.useState(null);
+
+  React.useEffect(() => {
+    if (userError === 'Error: Provider not match') return setProviderError(true);
+
+    /// fallback to false for anything other than above
+    setProviderError(false);
+  }, [userError]);
 
   React.useEffect(() => {
     if (testMode) {
@@ -167,6 +178,14 @@ const App = ({
       </NavigationContainer>
     );
 
+  if (providerError) {
+    return (
+      <NavigationContainer>
+        <IptvStack />
+      </NavigationContainer>
+    );
+  }
+
   if (!isReady) {
     return (
       <View
@@ -187,6 +206,7 @@ const App = ({
 };
 
 const mapStateToProps = createStructuredSelector({
+  userError: selectError,
   currentUser: selectCurrentUser,
   isLoading: selectIsLoading,
   dataLoaded: selectDataLoaded,

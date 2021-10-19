@@ -82,7 +82,8 @@ export default {
       white10: 'rgba(255,255,255,0.1)'
     },
     zIndex: {
-      bottomTabs: 1200,
+      bottomTabs: 1100,
+      nowPlaying: 1200,
       loader: 1300
     },
     bodyp: {

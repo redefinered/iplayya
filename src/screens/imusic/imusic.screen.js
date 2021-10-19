@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
+import { withTheme, ActivityIndicator } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -13,7 +13,6 @@ import { createStructuredSelector } from 'reselect';
 import { Creators as AppActionCreators } from 'modules/app';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/music/music.actions';
-import Icon from 'components/icon/icon.component';
 import {
   selectError,
   selectIsFetching,
@@ -28,10 +27,8 @@ import NetInfo from '@react-native-community/netinfo';
 
 const ImusicScreen = ({
   navigation,
-  error,
   getAlbumsAction,
   paginatorInfo,
-  theme,
   genrePaginator,
   albums,
   enableSwipeAction,
@@ -45,11 +42,6 @@ const ImusicScreen = ({
     true
   );
   const [scrollIndex] = React.useState(0);
-  const [showBanner, setShowBanner] = React.useState(true);
-
-  // React.useEffect(() => {
-  //   switchInImusicScreenAction(true);
-  // });
 
   React.useEffect(() => {
     setNowPlayingBackgroundModeAction(false);
@@ -99,41 +91,6 @@ const ImusicScreen = ({
     return <ActivityIndicator />;
   };
 
-  const handleRetry = () => {
-    if (paginatorInfo.length) {
-      getAlbumsAction(paginatorInfo, genrePaginator);
-    }
-    setShowBanner(false);
-  };
-
-  // show error banner on error
-  React.useEffect(() => {
-    if (error) {
-      setShowBanner(true);
-    }
-  }, [error]);
-
-  const renderErrorBanner = () => {
-    if (!error) return;
-
-    return (
-      <Banner
-        visible={showBanner}
-        actions={[
-          {
-            label: 'Retry',
-            onPress: () => handleRetry()
-          }
-        ]}
-        icon={({ size }) => (
-          <Icon name="alert" size={size} color={theme.iplayya.colors.vibrantpussy} />
-        )}
-      >
-        <Text style={{ color: 'black' }}>{error}</Text>
-      </Banner>
-    );
-  };
-
   const renderItem = ({ item: { genre } }) => {
     if (typeof albums === 'undefined') return;
 
@@ -150,12 +107,12 @@ const ImusicScreen = ({
 
   return (
     <View style={styles.container}>
-      {renderErrorBanner()}
+      {/* {renderErrorBanner()} */}
       {albums.length ? (
         <React.Fragment>
           <FlatList
             data={albums}
-            keyExtractor={(album) => album.id}
+            keyExtractor={(item) => item.id}
             renderItem={renderItem}
             initialScrollIndex={scrollIndex}
             onEndReached={(info) => handleEndReached(info)}

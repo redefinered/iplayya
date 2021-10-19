@@ -2,13 +2,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Pressable } from 'react-native';
+import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import Button from 'components/button/button.component';
-import IptvItem from 'components/iptv-item/iptv-item.component';
+import IptvItem from './iptv-item.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
-// import SnackBar from 'components/snackbar/snackbar.component';
-import { View, ScrollView } from 'react-native';
+import AlertModal from 'components/alert-modal/alert-modal.component';
+import RadioButton from 'components/radio-button/radio-button.component';
+import { View } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -23,21 +26,22 @@ import {
   selectIsFetching,
   selectProviders,
   selectCreated,
-  // selectUpdated,
   selectDeleted,
-  // selectSkipProviderAdd
   selectIsProviderSetupSkipped
 } from 'modules/ducks/provider/provider.selectors';
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import {
   selectIsFetching as selectUserIsFetching,
-  selectError as selectUserError
+  selectError as selectUserError,
+  selectActiveProviderId
 } from 'modules/ducks/user/user.selectors';
-
 import NoProvider from 'assets/no_provider.svg';
-
 import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
+import { FlatList } from 'react-native-gesture-handler';
+import { createFontFormat } from 'utils';
+import uniq from 'lodash/uniq';
+import theme from 'common/theme';
 
 const IptvScreen = ({
   navigation,
@@ -46,28 +50,33 @@ const IptvScreen = ({
   userError,
   providers,
   created,
-  // updated,
   deleted,
   setProviderAction,
   getProfileAction,
   createStartAction,
   deleteAction,
   deteteStartAction,
-  // isInitialSignIn,
-  route: { params }
-  // isProviderSetupSkipped
+  route: { params },
+  activeProviderId
 }) => {
   // const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
+  const [showCheckboxes, setShowCheckboxes] = React.useState(false);
+  const [itemsForDelete, setItemsForDelete] = React.useState([]);
   const [selected, setSelected] = React.useState(null);
   const [showIptvGuide, setShowIptvGuide] = React.useState(false);
   const [showStepTwo, setShowStepTwo] = React.useState(false);
   const [showStepThree, setShowStepThree] = React.useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
     createStartAction();
-    // getProfileAction();
   }, []);
+
+  /// hide checkboxes when there is nothing selected
+  React.useEffect(() => {
+    if (!itemsForDelete.length) setShowCheckboxes(false);
+  }, [itemsForDelete]);
 
   React.useEffect(() => {
     if (params) {
@@ -80,7 +89,8 @@ const IptvScreen = ({
     if (created) getProfileAction();
 
     // if (updated) handleAddProviderSuccess();
-    if (deleted) handleProviderDeleteSuccess();
+    if (deleted) getProfileAction();
+
     // hide the snackbar in 3 sec
     // hideSnackBar();
   }, [deleted, created]);
@@ -111,23 +121,16 @@ const IptvScreen = ({
     setProviderAction(id);
   };
 
-  const handleAddProviderSuccess = () => {
-    // setShowSuccessMessage(true);
-  };
-
-  const handleProviderDeleteSuccess = () => {
-    getProfileAction();
-  };
-
   // const hideSnackBar = () => {
   //   setTimeout(() => {
   //     setShowSuccessMessage(false);
   //   }, 3000);
   // };
 
-  const handleDelete = ({ selected }) => {
-    deteteStartAction();
-    deleteAction({ id: selected });
+  const handleDelete = (idsForDelete) => {
+    if (!idsForDelete.length) return;
+
+    deleteAction({ ids: idsForDelete });
     setActionSheetVisible(false);
   };
 
@@ -138,9 +141,23 @@ const IptvScreen = ({
     setActionSheetVisible(false);
   };
 
-  const handleItemPress = (id) => {
-    setActionSheetVisible(true);
-    setSelected(id);
+  const handleItemPress = ({ id }) => {
+    // console.log({ id });
+    if (showCheckboxes) {
+      /// set 'deleted' indicator to null
+      deteteStartAction();
+
+      /// if selecting for delete
+      if (itemsForDelete.includes(id)) {
+        /// remove if already included
+        setItemsForDelete(itemsForDelete.filter((iid) => iid !== id));
+      } else {
+        setItemsForDelete([id, ...itemsForDelete]);
+      }
+    } else {
+      setActionSheetVisible(true);
+      setSelected(id);
+    }
   };
   // const data = providers.map((p) => ({ id, name, username }))
 
@@ -148,19 +165,114 @@ const IptvScreen = ({
     setActionSheetVisible(false);
   };
 
+  const handleHideConfirmDeleteModal = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowDeleteConfirmation(false);
+
+    if (selected) {
+      /// if 'selected' has a value
+      // this happens if more button is tapped then canceled
+      return handleDelete(uniq([selected, ...itemsForDelete]));
+    }
+
+    return handleDelete([...itemsForDelete]);
+  };
+
+  const handleShowDeleteConfirmation = () => {
+    setActionSheetVisible(false);
+    setShowDeleteConfirmation(true);
+  };
+
   const actions = [
     { key: 'edit', icon: 'edit', title: 'Edit', onPress: handleEdit, data: { selected } },
-    { key: 'delete', icon: 'delete', title: 'Delete', onPress: handleDelete, data: { selected } }
+    {
+      key: 'delete',
+      icon: 'delete',
+      title: 'Delete',
+      onPress: handleShowDeleteConfirmation,
+      data: { selected }
+    }
   ];
+
+  const handleSelectAll = () => {
+    if (itemsForDelete.length) {
+      return setItemsForDelete([]);
+    }
+
+    return setItemsForDelete(providers.map(({ id }) => id));
+  };
+
+  const renderItem = ({ item }) => {
+    return (
+      <IptvItem
+        id={item.id}
+        showCheckboxes={showCheckboxes}
+        setShowCheckboxes={setShowCheckboxes}
+        onSelect={handleProviderSelect}
+        active={item.id === activeProviderId}
+        selected={itemsForDelete.includes(item.id)}
+        name={item.name || 'No Provider Name'}
+        username={item.username}
+        onActionPress={handleItemPress}
+      />
+    );
+  };
+
+  const renderUserError = () => {
+    if (!userError) return;
+    if (userError === 'Error: Provider not match') return;
+
+    return <Text style={{ marginBottom: 15 }}>{userError}</Text>;
+  };
+
+  const renderCheckboxesActiveHeader = () => {
+    if (!showCheckboxes) return;
+
+    return (
+      <ContentWrap>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Pressable
+            onPress={() => setShowDeleteConfirmation(true)}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
+            <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
+            <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => handleSelectAll()}
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+          >
+            <Text style={{ marginRight: 10 }}>All</Text>
+            <RadioButton selected={itemsForDelete.length === providers.length} />
+          </Pressable>
+        </View>
+
+        <Spacer size={30} />
+      </ContentWrap>
+    );
+  };
 
   if (providers.length)
     return (
       <ContentWrap>
         <View style={{ paddingBottom: 120, paddingTop: 30 }}>
           {error && <Text style={{ marginBottom: 15 }}>{error}</Text>}
-          {userError && <Text style={{ marginBottom: 15 }}>{userError}</Text>}
+          {renderUserError()}
           {userIsFetching && <ActivityIndicator style={{ marginBottom: 15 }} />}
-          <ScrollView>
+
+          {renderCheckboxesActiveHeader()}
+
+          <FlatList data={providers} renderItem={renderItem} />
+          {/* <ScrollView>
             {providers.map(({ id, name, username }) => (
               <IptvItem
                 key={id}
@@ -171,7 +283,7 @@ const IptvScreen = ({
                 onActionPress={handleItemPress}
               />
             ))}
-          </ScrollView>
+          </ScrollView> */}
           <WalkThroughGuide
             visible={showIptvGuide}
             hideModal={handleVisibleWalkthrough}
@@ -238,6 +350,16 @@ const IptvScreen = ({
           message="Changes saved successfully"
         /> */}
         <ActionSheet visible={actionSheetVisible} actions={actions} hideAction={hideActionSheet} />
+
+        <AlertModal
+          variant="danger"
+          message="Are you sure you want to delete this provider?"
+          visible={showDeleteConfirmation}
+          onCancel={handleHideConfirmDeleteModal}
+          hideAction={handleHideConfirmDeleteModal}
+          confirmText="Delete"
+          confirmAction={handleConfirmDelete}
+        />
       </ContentWrap>
       // <Text>asd</Text>
     );
@@ -260,7 +382,7 @@ const NoProviders = ({ navigation }) => (
     <Text style={{ fontSize: 24 }}>No providers yet</Text>
     <Spacer />
     <Button onPress={() => navigation.navigate('AddIptvScreen')}>
-      Tap to add you IPTV Provider
+      Tap to add your IPTV Provider
     </Button>
   </View>
 );
@@ -295,7 +417,8 @@ const mapStateToProps = createStructuredSelector({
   // skipped: selectSkipProviderAdd,
   onboardinginfo: selectOnboardinginfo,
   isProviderSetupSkipped: selectIsProviderSetupSkipped,
-  isInitialSignIn: selectIsInitialSignIn
+  isInitialSignIn: selectIsInitialSignIn,
+  activeProviderId: selectActiveProviderId
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

@@ -52,13 +52,19 @@ const ImusicDownloads = ({
   downloadStartFailureAction
 }) => {
   const [list, setList] = React.useState([]);
+  const [isDownloading, setIsDownloading] = React.useState(false);
   const [activeDownloads, setActiveDownloads] = React.useState([]);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectAll, setSellectAll] = React.useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
 
-  // console.log({ list });
+  const checkIfDownloading = async () => {
+    const d = await checkExistingDownloads();
+    if (d.length) return setIsDownloading(true);
+
+    return setIsDownloading(false);
+  };
 
   const executeDownload = (track) => {
     const { id, url, albumId } = track;
@@ -165,6 +171,8 @@ const ImusicDownloads = ({
   // }, []);
 
   React.useEffect(() => {
+    checkIfDownloading();
+
     downloadStartAction();
     setUpDownloadsList(downloads);
   }, []);
@@ -350,6 +358,8 @@ const ImusicDownloads = ({
           renderItem={renderItem}
         />
       );
+
+    if (isDownloading) return <View />;
     return <EmptyState theme={theme} navigation={navigation} />;
   };
 
@@ -369,7 +379,7 @@ const ImusicDownloads = ({
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: theme.spacing(2) }}>
       {activateCheckboxes && (
         <ContentWrap>
           <View
@@ -404,7 +414,7 @@ const ImusicDownloads = ({
       {showDeleteConfirmation && (
         <AlertModal
           variant="danger"
-          message="Are you sure you want to delete this movie/s from your Downloads list?"
+          message="Are you sure you want to delete this music/s from your Downloads list?"
           visible={showDeleteConfirmation}
           onCancel={handleHideConfirmDeleteModal}
           hideAction={handleHideConfirmDeleteModal}

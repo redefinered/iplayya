@@ -52,6 +52,9 @@ const RetryDownloadButton = ({
     setShowDownloadFailureModal(false);
 
     // don't download if not connected to internet
+    if (!networkInfo) return;
+
+    // don't download if not connected to internet
     if (!networkInfo.isConnected) return;
 
     setBroken(false);

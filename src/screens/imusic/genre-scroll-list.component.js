@@ -117,18 +117,19 @@ const GenreScrollList = ({ data, onSelect, getAlbumsByGenresAction, paginatorOfG
       snapToAlignment="start"
       contentInset={{
         top: 0,
-        bottom: 0,
+        bottom: 0
         // left: SPACING_FOR_CARD_INSET,
-        right: SPACING_FOR_CARD_INSET
+        // right: SPACING_FOR_CARD_INSET
       }}
       contentContainerStyle={{
         // contentInset alternative for Android
-        paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0 // Horizontal spacing before and after the ScrollView
+        paddingHorizontal: SPACING_FOR_CARD_INSET
+        // paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0 // Horizontal spacing before and after the ScrollView
       }}
       renderItem={renderItem}
       // eslint-disable-next-line react/prop-types
       keyExtractor={(item) => item.id}
-      style={{ paddingHorizontal: 10 }}
+      // style={{ paddingHorizontal: 10 }}
       onEndReached={() => handleOnEndReached()}
       onEndReachedThreshold={0}
     />
