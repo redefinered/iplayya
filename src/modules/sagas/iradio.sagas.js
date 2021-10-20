@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/iradio/iradio.actions';
-import { getStations } from 'services/iradio.service';
+import { getStations, search } from 'services/iradio.service';
 
 export function* getRequest(action) {
   const { input } = action;
@@ -21,6 +21,24 @@ export function* getRequest(action) {
   }
 }
 
+export function* searchRequest(action) {
+  const { limit, pageNumber } = action.input;
+  const { shouldIncrement } = action;
+
+  try {
+    const { radios: results } = yield call(search, action.input);
+
+    /// increment pageNumber each successful request
+    const nextPaginatorInfo = { limit, pageNumber: shouldIncrement ? pageNumber + 1 : pageNumber };
+
+    // console.log({ loc: 'saga', ...nextPaginatorInfo });
+    yield put(Creators.searchSuccess(results, nextPaginatorInfo));
+  } catch (error) {
+    yield put(Creators.searchFailure(error.message));
+  }
+}
+
 export default function* radiosSagas() {
   yield takeLatest(Types.GET, getRequest);
+  yield takeLatest(Types.SEARCH, searchRequest);
 }

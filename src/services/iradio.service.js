@@ -3,7 +3,8 @@ import {
   GET_RADIO_STATIONS,
   ADD_RADIO_TO_FAVORITES,
   REMOVE_RADIO_FROM_FAVORITES,
-  GET_FAVORITE_RADIOS
+  GET_FAVORITE_RADIOS,
+  SEARCH
 } from 'graphql/radios.graphql';
 
 /**
@@ -83,6 +84,19 @@ export const removeFromFavorites = async (radioId, pageNumber) => {
         // }
       ],
       awaitRefetchQueries: true
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const search = async (input) => {
+  try {
+    const { data } = await client.query({
+      query: SEARCH,
+      fetchPolicy: 'network-only',
+      variables: { input }
     });
     return data;
   } catch (error) {

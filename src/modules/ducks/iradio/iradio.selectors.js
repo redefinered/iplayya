@@ -38,3 +38,15 @@ export const selectNowPlayingLayoutInfo = createSelector(
 );
 
 export const selectPaused = createSelector([radioState], ({ paused }) => paused);
+
+export const selectSearchResults = createSelector(
+  [radioState],
+  ({ searchResults }) => searchResults
+);
+
+export const selectSearchResultsPaginator = createSelector(
+  [radioState],
+  ({ searchResultsPaginator }) => searchResultsPaginator
+);
+
+export const selectRecentSearch = createSelector([radioState], ({ recentSearch }) => recentSearch);

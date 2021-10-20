@@ -46,3 +46,15 @@ export const GET_FAVORITE_RADIOS = gql`
     }
   }
 `;
+
+export const SEARCH = gql`
+  query SEARCH($input: radioRequest) {
+    radios(input: $input) {
+      id
+      name
+      number
+      cmd
+      is_favorite
+    }
+  }
+`;

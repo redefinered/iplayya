@@ -35,7 +35,8 @@ const IradioScreen = ({
   getRadiosAction,
   getFavoritesAction,
   enableSwipeAction,
-  setNowPlayingAction
+  setNowPlayingAction,
+  route: { params }
 }) => {
   const [index, setIndex] = React.useState(0);
   const [nowPlaying, setNowPlaying] = React.useState(null);
@@ -59,6 +60,15 @@ const IradioScreen = ({
       getFavoritesAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
     }
   }, [index]);
+
+  React.useEffect(() => {
+    if (params) {
+      const { cmd, name, number } = params;
+      // setNowPlaying({ params });
+      setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
+      setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
+    }
+  }, [params]);
 
   const [routes] = React.useState([
     { key: 'radios', title: 'Radio Stations' },

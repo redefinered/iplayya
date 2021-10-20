@@ -23,10 +23,14 @@ const { Types, Creators } = createActions(
     resetNowPlaying: null,
     setNowPlayingLayoutInfo: ['layoutInfo'],
 
-    searchStart: [],
-    search: ['input'],
-    searchSuccess: ['data'],
+    searchStart: null,
+    search: ['input', 'shouldIncrement'],
+    searchSuccess: ['results', 'nextPaginatorInfo'],
     searchFailure: ['error'],
+    resetSearchResultsPaginator: null,
+
+    //recent search
+    updateRecentSearch: ['term'],
 
     // misc
     reset: null,

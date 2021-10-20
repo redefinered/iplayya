@@ -8,13 +8,21 @@ const INITIAL_STATE = {
   error: null,
   radioStation: null,
   radioStations: [],
-  searchResults: [],
   paginator: {
     limit: 10,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
   },
+  recentSearch: [],
+  searchResults: [],
+  searchResultsPaginator: {
+    limit: 10,
+    pageNumber: 1,
+    orderBy: 'number',
+    order: 'asc'
+  },
+
   paused: false,
   nowPlaying: null,
   nowPlayingLayoutInfo: null,
@@ -113,18 +121,48 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
+    const { results, nextPaginatorInfo } = action;
+
+    const updatedSearchResults = uniqBy([...results, ...state.searchResults], 'id');
+
+    // console.log({ loc: 'reducer', ...nextPaginatorInfo });
+
     return {
       ...state,
       isFetching: false,
-      searchResults: action.data
+      searchResults: orderBy(updatedSearchResults, 'number', 'asc'),
+      searchResultsPaginator: { orderBy: 'number', order: 'asc', ...nextPaginatorInfo }
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      error: action.error,
-      searchResults: []
+      error: action.error
+      // searchResults: []
+    };
+  },
+  [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
+    let newRecentSearch = [];
+    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+      newRecentSearch = state.recentSearch;
+    } else {
+      newRecentSearch = [action.term, ...state.recentSearch];
+    }
+    return {
+      ...state,
+      recentSearch: newRecentSearch.splice(0, 10)
+    };
+  },
+  [Types.RESET_SEARCH_RESULTS_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      searchResultsPaginator: {
+        limit: 10,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
     };
   },
   [Types.RESET_PAGINATOR]: (state) => {
