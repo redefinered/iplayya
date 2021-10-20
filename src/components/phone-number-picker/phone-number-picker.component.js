@@ -70,6 +70,7 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, setValidPhone }) => {
           placeholderTextColor: focused ? '#FFFFFF' : 'rgba(225,225,225,0.5)',
           color: focused ? '#ffffff' : 'rgba(255,255,255,0.5)',
           fontSize: 16,
+          fontFamily: 'NotoSans',
           selectionColor: '#E34398',
           maxLength: 18
         }}

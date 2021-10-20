@@ -17,9 +17,13 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   textFocus: {
+    fontSize: 16,
+    fontFamily: 'NotoSans',
     color: '#ffffff'
   },
   textBlur: {
+    fontSize: 16,
+    fontFamily: 'NotoSans',
     color: 'rgba(225,225,225,0.5)'
   },
   dateIcon: {

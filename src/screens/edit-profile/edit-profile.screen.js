@@ -305,7 +305,7 @@ class EditProfileScreen extends React.Component {
                   </View>
                 </TouchableRipple>
               </View>
-              {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
+              {!valid ? <Text>There are errors in your entries</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
               <MainButton
                 onPress={() => this.handleSubmit()}
