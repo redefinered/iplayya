@@ -18,6 +18,7 @@ import imusicSearchReducer from './ducks/imusic-search/imusic-search.reducer';
 import imusicDownloadsReducer from './ducks/imusic-downloads/imusic-downloads.reducer';
 import isportsReducer from './ducks/isports/isports.reducer';
 import iradioReducer from './ducks/iradio/iradio.reducer';
+import iradioFavoritesRaducer from './ducks/iradio-favorites/iradio-favorites.reducer';
 import providerReducer from './ducks/provider/provider.reducer';
 import iplayReducer from './ducks/iplay/iplay.reducer';
 
@@ -45,7 +46,8 @@ const rootReducer = persistCombineReducers(persistConfig, {
   imusicSearch: imusicSearchReducer,
   imusicDownloads: imusicDownloadsReducer,
   sports: resettable(isportsReducer),
-  radios: iradioReducer,
+  radios: resettable(iradioReducer),
+  iradioFavorites: resettable(iradioFavoritesRaducer),
   provider: providerReducer,
   iplay: iplayReducer
 });
