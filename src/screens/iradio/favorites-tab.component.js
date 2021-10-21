@@ -1,141 +1,323 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable } from 'react-native';
-import { Text, TouchableRipple, withTheme } from 'react-native-paper';
-import SnackBar from 'components/snackbar/snackbar.component';
+import { View, Pressable, FlatList, StyleSheet } from 'react-native';
+import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators } from 'modules/ducks/iradio/iradio.actions';
+import { Creators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import { createStructuredSelector } from 'reselect';
 import {
+  selectPaginator,
   selectFavorites,
-  selectRemovedFromFavorites,
-  selectPaginatorInfo
-} from 'modules/ducks/iradio/iradio.selectors';
-import { selectRadioStations } from 'modules/ducks/iradio/iradio.selectors';
+  selectRemoved,
+  selectAddedToFavorites
+} from 'modules/ducks/iradio-favorites/iradio-favorites.selectors';
+import Spacer from 'components/spacer.component';
+import ContentWrap from 'components/content-wrap.component';
+import RadioButton from 'components/radio-button/radio-button.component';
+import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+import { selectIsFetching } from 'modules/ducks/iradio-favorites/iradio-favorites.selectors';
+
+const ITEM_HEIGHT = 16;
 
 const FavoritesTab = ({
   theme,
-  radioStations,
+  isFetching,
   favorites,
-  paginatorInfo,
-  getFavoritesAction,
-  removedFromFavorites,
+  paginator,
   removeFromFavoritesAction,
-  handleSelectItem
+  handleSelectItem,
+  navigation,
+  setIndex,
+  resetPaginatorAction,
+  getFavoritesAction,
+  removed
 }) => {
-  const [showSnackBar, setShowSnackBar] = React.useState(false);
-  const [showConfirm, setShowConfirm] = React.useState(false);
-  const [removedItemName, setRemovedItemName] = React.useState('');
-  const [selectedIdToRemove, serSelectedIdToremove] = React.useState(null);
-
-  const handleRemovePressed = (id) => {
-    serSelectedIdToremove(id);
-    setShowConfirm(true);
-  };
-
-  const confirmRemove = (id) => {
-    // add channel to favorites
-    removeFromFavoritesAction(id);
-
-    setShowConfirm(false);
-  };
-
-  // get favorites on mount
-  // React.useEffect(() => {
-  //   getFavoritesAction(paginatorInfo);
-  // }, []);
+  const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
+  const [selectedItems, setSelectedItems] = React.useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+  const [selectAll, setSellectAll] = React.useState(false);
+  const [listData, setListData] = React.useState([]);
+  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+  //   true
+  // );
 
   React.useEffect(() => {
-    if (removedFromFavorites) {
-      const name = radioStations.find(({ id }) => id === removedFromFavorites).name;
-      setRemovedItemName(name);
-      setShowSnackBar(true);
-      getFavoritesAction(paginatorInfo);
+    resetPaginatorAction();
+    // getFavoritesAction(favoritesPaginator);
+  }, []);
+
+  React.useEffect(() => {
+    if (removed) {
+      setActivateCheckboxes(false);
+
+      const prevPaginator = Object.assign(paginator, { pageNumber: paginator.pageNumber - 1 });
+      // console.log({ prevPaginator });
+      getFavoritesAction(prevPaginator);
     }
-  }, [removedFromFavorites]);
+  }, [removed]);
 
-  const hideSnackBar = () => {
-    setTimeout(() => {
-      setShowSnackBar(false);
-    }, 3000);
+  // setup favorites
+  React.useEffect(() => {
+    console.log({ x: favorites });
+    if (favorites) {
+      setListData(favorites);
+    }
+  }, [favorites]);
+
+  const handleSelectItems = (item) => {
+    if (activateCheckboxes) {
+      const newItems = selectedItems;
+      const index = selectedItems.findIndex(({ id }) => id === item.id);
+      if (index >= 0) {
+        newItems.splice(index, 1);
+        setSelectedItems([...newItems]);
+      } else {
+        setSelectedItems([item, ...selectedItems]);
+      }
+    } else {
+      handleSelectItem(item);
+    }
   };
 
   React.useEffect(() => {
-    if (showSnackBar) hideSnackBar();
-  }, [showSnackBar]);
+    if (selectedItems.length === 0) {
+      setActivateCheckboxes(false);
+    }
+  }, [selectedItems]);
 
-  return (
-    <React.Fragment>
-      <AlertModal
-        iconName="unfavorite"
-        iconColor="#FF5050"
-        confirmText="Remove"
-        message="Do you want to remove this station to your Favorite list?"
-        hideAction={() => setShowConfirm(false)}
-        confirmAction={() => confirmRemove(selectedIdToRemove)}
-        visible={showConfirm}
-      />
-      <SnackBar
-        visible={showSnackBar}
-        message={`${removedItemName} is removed to your favorites list`}
-        iconName="heart-solid"
-        iconColor="#FF5050"
-      />
-      {favorites.map(({ id, name, ...rest }) => (
-        <TouchableRipple key={id} onPress={() => handleSelectItem({ id, name, ...rest })}>
+  React.useEffect(() => {
+    if (selectAll) {
+      setSelectedItems(listData);
+    } else {
+      setSelectedItems([]);
+    }
+  }, [selectAll]);
+
+  // console.log({ selectedItems });
+
+  const handleSelectAll = () => {
+    setSellectAll(!selectAll);
+  };
+
+  const handleLongPress = (item) => {
+    setSelectedItems([item]);
+    setActivateCheckboxes(true);
+  };
+
+  console.log({ selectedItems });
+
+  const handleRemoveItems = () => {
+    if (selectedItems.length) {
+      removeFromFavoritesAction(selectedItems);
+    }
+  };
+
+  const handleHideConfirmDeleteModal = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowDeleteConfirmation(false);
+    handleRemoveItems();
+  };
+
+  const handleEndReached = () => {
+    getFavoritesAction(paginator);
+
+    // if (!onEndReachedCalledDuringMomentum) {
+    //   setOnEndReachedCalledDuringMomentum(true);
+    // }
+  };
+
+  const EmptyState = ({ theme }) => (
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 15,
+        paddingBottom: 100
+      }}
+    >
+      <NoFavorites />
+      <Spacer />
+      <Text style={{ fontSize: 24 }}>No favorites yet</Text>
+      <Spacer size={30} />
+      <Pressable onPress={() => setIndex(0)}>
+        <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
+          Heart a station to add to your Favorites list.
+        </Text>
+      </Pressable>
+    </View>
+  );
+
+  // eslint-disable-next-line react/prop-types
+  const renderItem = ({ item }) => {
+    return (
+      <Pressable
+        delayLongPress={1500}
+        underlayColor={theme.iplayya.colors.black80}
+        style={({ pressed }) => [
+          {
+            backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+            paddingHorizontal: theme.spacing(2),
+            paddingVertical: theme.spacing(2)
+          }
+        ]}
+        onLongPress={() => handleLongPress(item)}
+        onPress={() => handleSelectItems(item)}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: theme.spacing(2)
+              flex: 1
             }}
           >
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{name}</Text>
-            </View>
-            <View>
-              <Pressable onPress={() => handleRemovePressed(id)}>
-                <Icon
-                  name="heart-solid"
-                  size={24}
-                  style={{ color: theme.iplayya.colors.vibrantpussy }}
-                />
-              </Pressable>
+            <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
+              {/* eslint-disable-next-line react/prop-types */}
+              {item.number}
+            </Text>
+            <View style={{ flex: 1, marginHorizontal: 10 }}>
+              <Text numberOfLines={1} style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
+                {/* eslint-disable-next-line react/prop-types */}
+                {item.name}
+              </Text>
             </View>
           </View>
-        </TouchableRipple>
-      ))}
-    </React.Fragment>
-  );
+          {activateCheckboxes && (
+            <RadioButton selected={selectedItems.findIndex((i) => i === item) >= 0} />
+          )}
+        </View>
+      </Pressable>
+    );
+  };
+
+  const renderFavoriteLoader = () => {
+    if (!isFetching) return;
+
+    return (
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          // backgroundColor: theme.iplayya.colors.black80,
+          zIndex: 1,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      />
+    );
+  };
+
+  if (listData.length || favorites.length)
+    return (
+      <View style={{ flex: 1 }}>
+        {renderFavoriteLoader()}
+        {activateCheckboxes && (
+          <ContentWrap>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between'
+              }}
+            >
+              <Pressable
+                onPress={() => setShowDeleteConfirmation(true)}
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 5
+                  }
+                ]}
+              >
+                <Icon name="delete" size={theme.iconSize(3)} style={{ marginRight: 10 }} />
+                <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>Delete</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => handleSelectAll()}
+                style={{ flexDirection: 'row', alignItems: 'center' }}
+              >
+                <Text style={{ marginRight: 10 }}>All</Text>
+                <RadioButton selected={selectedItems.length === favorites.length} />
+              </Pressable>
+            </View>
+
+            <Spacer size={20} />
+          </ContentWrap>
+        )}
+        <FlatList
+          data={listData}
+          getItemLayout={(data, index) => ({
+            length: ITEM_HEIGHT,
+            offset: ITEM_HEIGHT * index,
+            index
+          })}
+          onEndReached={() => handleEndReached()}
+          onEndReachedThreshold={0.5}
+          // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          // eslint-disable-next-line react/prop-types
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+        />
+        {showDeleteConfirmation && (
+          <AlertModal
+            variant="confirmation"
+            message={`Are you sure you want to delete ${
+              selectedItems.length > 1 ? 'these' : 'this'
+            } channel/s from your Favorites list?`}
+            visible={showDeleteConfirmation}
+            onCancel={handleHideConfirmDeleteModal}
+            hideAction={handleHideConfirmDeleteModal}
+            confirmText="Delete"
+            confirmAction={handleConfirmDelete}
+          />
+        )}
+      </View>
+    );
+  return <EmptyState theme={theme} navigation={navigation} />;
 };
 
 FavoritesTab.propTypes = {
   theme: PropTypes.object,
-  radioStations: PropTypes.array,
+  isFetching: PropTypes.bool,
   favorites: PropTypes.array,
-  paginatorInfo: PropTypes.object,
-  removedFromFavorites: PropTypes.string,
-  getFavorites: PropTypes.func,
+  addedToFavorites: PropTypes.array,
+  paginator: PropTypes.object,
+  removed: PropTypes.bool,
   removeFromFavoritesAction: PropTypes.func,
-  getFavoritesAction: PropTypes.func,
-  handleSelectItem: PropTypes.func
+  resetPaginatorAction: PropTypes.func,
+  handleSelectItem: PropTypes.func,
+  navigation: PropTypes.object,
+  setIndex: PropTypes.func,
+  getFavoritesAction: PropTypes.func
 };
 
 const mapStateToProps = createStructuredSelector({
-  radioStations: selectRadioStations,
+  paginator: selectPaginator,
   favorites: selectFavorites,
-  paginatorInfo: selectPaginatorInfo,
-  removedFromFavorites: selectRemovedFromFavorites
+  removed: selectRemoved,
+  addedToFavorites: selectAddedToFavorites,
+  isFetching: selectIsFetching
 });
 
 const actions = {
   getFavoritesAction: Creators.getFavorites,
-  removeFromFavoritesAction: Creators.removeFromFavorites
+  removeFromFavoritesAction: Creators.removeFromFavorites,
+  resetPaginatorAction: Creators.resetPaginator
 };
 
 export default compose(connect(mapStateToProps, actions), withTheme)(FavoritesTab);

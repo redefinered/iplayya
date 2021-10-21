@@ -40,7 +40,7 @@ export const deleteOne = async (id) => {
     const { data } = await client.mutate({
       mutation: DELETE_PROVIDER,
       variables: { id },
-      refetchQueries: [{ query: GET_PROFILE }],
+      refetchQueries: [{ query: GET_PROFILE, fetchPolicy: 'network-only' }],
       awaitRefetchQueries: true
     });
     return data;
@@ -60,6 +60,7 @@ export const update = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

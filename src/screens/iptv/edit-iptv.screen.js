@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View, ScrollView, Alert } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
-// import Button from 'components/button/button.component';
-import MainButton from 'components/button/mainbutton.component';
+import Button from 'components/button/button.component';
+// import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -46,6 +46,8 @@ class EditIptvScreen extends React.Component {
       username,
       password,
       valid: true,
+      edited: false,
+      disableSubmit: true,
       errors: [
         { key: 'name', val: false },
         { key: 'portal_address', val: false },
@@ -55,15 +57,27 @@ class EditIptvScreen extends React.Component {
     };
   }
 
+  // unsubscribeToBeforeRemove = null;
+
   componentDidMount() {
     // resets provider create state
     this.props.updateStartAction();
     this.props.createStartAction();
     this.props.enableSwipeAction(false);
+
+    // this.unsubscribeToBeforeRemove = this.navigation.addListener('beforeRemove', () => {
+    //   if (this.state.edited) {
+    //     this.setState({ showGoingBackWarning: true });
+    //   }
+    // });
   }
 
+  // componentWillUnmount() {
+  //   this.unsubscribeToBeforeRemove();
+  // }
+
   handleChange = (text, name) => {
-    this.setState({ [name]: text });
+    this.setState({ [name]: text, edited: true });
   };
 
   setError = (stateError, field, val) => {
@@ -73,8 +87,15 @@ class EditIptvScreen extends React.Component {
   };
 
   handleSubmit = () => {
+    if (this.state.disableSubmit) {
+      return Alert.alert(
+        'Not Permitted',
+        'Modifying provider is not permitted at the moment. This feature will come in the future. Contact admin for more information.'
+      );
+    }
+
     // eslint-disable-next-line no-unused-vars
-    const { modalVisible, errors: stateError, valid, ...input } = this.state;
+    const { modalVisible, errors: stateError, valid, edited, ...input } = this.state; /// destructuring non input fields 'valid', 'edited' so the update will work
 
     // validation here
     if (input.name === '') {
@@ -179,14 +200,20 @@ class EditIptvScreen extends React.Component {
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
 
-              <MainButton
+              {/* <MainButton
+                disabled
                 onPress={() => this.handleSubmit()}
                 text="Save"
                 style={{ ...styles.submit }}
-              />
-              {/* <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
+              /> */}
+              <Button
+                style={styles.submit}
+                mode="contained"
+                onPress={() => this.handleSubmit()}
+                // disabled
+              >
                 Save
-              </Button> */}
+              </Button>
             </View>
           </ScrollView>
         </ContentWrap>

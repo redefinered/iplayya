@@ -13,7 +13,8 @@ export default StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     marginBottom: 15,
-    paddingVertical: 10
+    paddingVertical: 10,
+    borderRadius: theme.roundness
   },
   iconContainer: { flex: 2, alignItems: 'center' },
   textContainer: { flex: 10 },

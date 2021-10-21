@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Pressable, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import styles from './action-sheet.styles';
 import theme from 'common/theme';
@@ -17,14 +17,22 @@ const ActionSheet = ({ visible, actions, hideAction }) => {
         <View style={styles.contentWrap}>
           {actions.map(({ icon, title, onPress, data }) => {
             return (
-              <Pressable key={uuid()} style={styles.itemContainer} onPress={() => onPress(data)}>
-                <View style={styles.iconContainer}>
-                  <Icon name={icon} style={styles.iconColor} size={theme.iconSize(3)} />
-                </View>
-                <View style={styles.textContainer}>
-                  <Text style={styles.text}>{title}</Text>
-                </View>
-              </Pressable>
+              <TouchableRipple
+                key={uuid()}
+                style={styles.itemContainer}
+                rippleColor={theme.iplayya.colors.vibrantpussy}
+                borderless
+                onPress={() => onPress(data)}
+              >
+                <React.Fragment>
+                  <View style={styles.iconContainer}>
+                    <Icon name={icon} style={styles.iconColor} size={theme.iconSize(3)} />
+                  </View>
+                  <View style={styles.textContainer}>
+                    <Text style={styles.text}>{title}</Text>
+                  </View>
+                </React.Fragment>
+              </TouchableRipple>
             );
           })}
         </View>
