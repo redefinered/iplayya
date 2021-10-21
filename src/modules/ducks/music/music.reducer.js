@@ -137,9 +137,9 @@ export default createReducer(INITIAL_STATE, {
   // },
 
   /// album details
-  [Types.GET_ALBUM_DETAILS_START]: (state) => ({ ...state, album: null }),
+  // [Types.GET_ALBUM_DETAILS_START]: (state) => ({ ...state, album: null }),
   [Types.GET_ALBUM_DETAILS]: (state) => {
-    return { ...state, isFetching: true, error: null };
+    return { ...state, isFetching: true, error: null, album: null };
   },
   [Types.GET_ALBUM_DETAILS_SUCCESS]: (state, action) => {
     return {

@@ -7,7 +7,8 @@ import Button from 'components/button/button.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
-import ActionSheet from 'components/action-sheet/action-sheet.component';
+// import ActionSheet from 'components/action-sheet/action-sheet.component';
+import AlbumTrackMoreMenu from './album-track-more-menu.component';
 import Icon from 'components/icon/icon.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import MoreButton from 'components/button-more/more-button.component';
@@ -55,7 +56,7 @@ const AlbumDetail = ({
   route,
   album,
   updated,
-  getAlbumDetailsStartAction,
+  // getAlbumDetailsStartAction,
   isBackgroundMode,
   setNowPlayingAction,
   nowPlaying,
@@ -65,7 +66,7 @@ const AlbumDetail = ({
   setProgressAction,
   setPausedAction,
   clearRepeatAction,
-  addTrackToFavoritesAction,
+  // addTrackToFavoritesAction,
   getAlbumDetailsAction,
   downloadStarted,
   downloadsStartAction
@@ -75,6 +76,9 @@ const AlbumDetail = ({
   const [showActionSheet, setShowActionSheet] = React.useState(false);
   const [selectedTrack, setSelectedTrack] = React.useState(null);
   const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
+  // const [shuffleButtonLayout, setShuffleButtonLayout] = React.useState(null);
+
+  // console.log({ shuffleButtonLayout });
 
   React.useEffect(() => {
     downloadsStartAction();
@@ -82,9 +86,9 @@ const AlbumDetail = ({
     getAlbumDetailsAction(albumId);
 
     /// clean up
-    return () => {
-      getAlbumDetailsStartAction();
-    };
+    // return () => {
+    //   getAlbumDetailsStartAction();
+    // };
   }, []);
 
   React.useEffect(() => {
@@ -153,9 +157,9 @@ const AlbumDetail = ({
   };
 
   const renderBottomPadding = () => {
-    if (isBackgroundMode) return;
-    if (!nowPlayingLayoutInfo) return;
-    if (!nowPlaying) return;
+    if (isBackgroundMode) return <View />;
+    if (!nowPlayingLayoutInfo) return <View />;
+    if (!nowPlaying) return <View />;
 
     return (
       <View style={{ width: nowPlayingLayoutInfo.width, height: nowPlayingLayoutInfo.height }} />
@@ -171,36 +175,36 @@ const AlbumDetail = ({
     setNowPlayingAction(null, true); // select a random track from album
   };
 
-  const handlePressAction = (data) => {
+  const handleMoreButtonPress = (data) => {
     setSelectedTrack(data);
     setShowActionSheet(true);
   };
 
-  const handleAddToFacoritesPress = () => {
-    if (!selectedTrack) return;
+  // const handleAddToFacoritesPress = () => {
+  //   if (!selectedTrack) return;
 
-    addTrackToFavoritesAction(selectedTrack.id);
+  //   addTrackToFavoritesAction(selectedTrack.id);
 
-    hideActionSheet();
-  };
+  //   hideActionSheet();
+  // };
 
-  const handleDownloadItem = () => {
-    console.log('download item');
-    hideActionSheet();
-  };
+  // const handleDownloadItem = () => {
+  //   console.log('download item');
+  //   hideActionSheet();
+  // };
 
-  const actions = [
-    {
-      icon: 'heart-solid',
-      title: 'Add to favorites',
-      onPress: handleAddToFacoritesPress
-    },
-    {
-      icon: 'download',
-      title: 'Download',
-      onPress: handleDownloadItem
-    }
-  ];
+  // const actions = [
+  //   {
+  //     icon: 'heart-solid',
+  //     title: 'Add to favorites',
+  //     onPress: handleAddToFacoritesPress
+  //   },
+  //   {
+  //     icon: 'download',
+  //     title: 'Download',
+  //     onPress: handleDownloadItem
+  //   }
+  // ];
 
   const hideUpdateNotification = () => {
     /// reset updated check
@@ -239,7 +243,7 @@ const AlbumDetail = ({
             {`${album.performer} • 4:04 min`}
           </Text>
         </View>
-        <MoreButton pressAction={handlePressAction} data={{ name, ...rest }} />
+        <MoreButton pressAction={handleMoreButtonPress} data={{ name, ...rest }} />
       </View>
     </TouchableRipple>
   );
@@ -260,6 +264,8 @@ const AlbumDetail = ({
       name = album.name;
     }
 
+    if (selectedTrack) name = selectedTrack.name;
+
     return (
       <SnackBar
         visible={showUpdateNotification}
@@ -270,28 +276,35 @@ const AlbumDetail = ({
     );
   };
 
+  const getDownloadingItemMessage = () => {
+    let name = 'album';
+
+    if (selectedTrack) name = selectedTrack.name;
+
+    return `Downloading ${name}. You can check the progress in Downloaded section.`;
+  };
+
   const renderPrograms = () => {
     if (typeof album.tracks === 'undefined') return;
 
     return (
-      <View style={{ flex: 1, paddingVertical: theme.spacing(1) }}>
-        <FlatList
-          bounces={false}
-          data={album.tracks}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          getItemLayout={(data, index) => {
-            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-          }}
-        />
-        {renderBottomPadding()}
-      </View>
+      <FlatList
+        // ListHeaderComponent={renderListHeader}
+        ListFooterComponent={renderBottomPadding}
+        bounces={false}
+        data={album.tracks}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        getItemLayout={(data, index) => {
+          return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+        }}
+      />
     );
   };
 
   return (
     <View style={styles.root}>
-      <ContentWrap style={{ flexDirection: 'row', marginBottom: theme.spacing(2) }}>
+      <ContentWrap style={{ flexDirection: 'row' }}>
         <Image style={styles.cover} source={coverplaceholder} />
         <View style={{ flex: 1, paddingLeft: theme.spacing(2), justifyContent: 'space-between' }}>
           <View style={{ marginTop: theme.spacing(1) }}>
@@ -313,22 +326,29 @@ const AlbumDetail = ({
         </View>
       </ContentWrap>
 
-      <ContentWrap style={{ marginBottom: theme.spacing(2) }}>
+      <ContentWrap
+        style={{ marginBottom: theme.spacing(2) }}
+        // onLayout={(e) => setShuffleButtonLayout(e.nativeEvent.layout)}
+      >
         <Button mode="contained" onPress={handleShufflePlay}>
           <Icon name="shuffle" size={theme.iconSize(3)} />
           <View style={{ width: theme.spacing(1) }} />
           <Text style={{ fontWeight: 'bold' }}>Shuffle Play</Text>
         </Button>
       </ContentWrap>
-
       {renderPrograms()}
-      <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
+      <AlbumTrackMoreMenu
+        showActionSheet={showActionSheet}
+        selectedTrack={selectedTrack}
+        hideActionSheet={hideActionSheet}
+      />
+      {/* <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} /> */}
 
       {renderUpdateNotification()}
 
       <SnackBar
         visible={showSnackbar}
-        message="Downloading album. You can check the progress in Downloaded section."
+        message={getDownloadingItemMessage()}
         iconName="download"
         iconColor={theme.iplayya.colors.vibrantpussy}
       />
@@ -344,7 +364,7 @@ const Container = (props) => (
 
 const actions = {
   favoritesStartAction: FavoritesCreators.start,
-  getAlbumDetailsStartAction: Creators.getAlbumDetailsStart,
+  // getAlbumDetailsStartAction: Creators.getAlbumDetailsStart,
   getAlbumDetailsAction: Creators.getAlbumDetails,
   setNowPlayingAction: Creators.setNowPlaying,
   setPausedAction: Creators.setPaused,

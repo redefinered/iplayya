@@ -11,6 +11,7 @@ import musicSagas from './music.sagas';
 import imusicFavoritesSagas from './imusic-favorites.sagas';
 import isportsSagas from './isports.sagas';
 import iradioSagas from './iradio.sagas';
+import iradioFavoritesSagas from './iradio-favorites.sagas';
 
 export default function* rootSaga() {
   yield all([
@@ -24,6 +25,7 @@ export default function* rootSaga() {
     fork(imusicFavoritesSagas),
     fork(isportsSagas),
     fork(iradioSagas),
+    fork(iradioFavoritesSagas),
     fork(profileSagas),
     fork(providerSagas)
   ]);

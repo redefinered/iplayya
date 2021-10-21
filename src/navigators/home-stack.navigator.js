@@ -29,6 +29,7 @@ import MovieDetailDownloadedScreen from 'screens/movie-detail-downloaded/movie-d
 import ImovieDownloadButton from 'screens/imovie-downloads/imovie-download-button.component';
 
 import IradioScreen from 'screens/iradio/iradio.screen';
+import IradioSearchScreen from 'screens/iradio/iradio-search.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import ImusicSearchScreen from 'screens/imusic/imusic-search.screen';
@@ -419,6 +420,7 @@ const HomeStack = ({
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple
+                  onPress={() => navigation.navigate('IradioSearchScreen')}
                   borderless={true}
                   style={{ borderRadius: 44, padding: 8 }}
                   rippleColor="rgba(0,0,0,0.28)"
@@ -436,6 +438,16 @@ const HomeStack = ({
           }}
         />
 
+        <Stack.Screen
+          name="IradioSearchScreen"
+          component={IradioSearchScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={({ navigation }) => ({
+            title: 'Search',
+            ...TransitionPresets.ModalSlideFromBottomIOS
+          })}
+        />
+
         {/* iMusic */}
         <Stack.Screen
           name="ImusicScreen"
@@ -443,11 +455,12 @@ const HomeStack = ({
           options={({ navigation }) => ({
             title: 'iMusic',
             animationEnabled: false,
-            headerBackImage: () => (
-              <View style={styles.backButtonContainer}>
-                <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />
-              </View>
-            ),
+            headerLeft: null,
+            // headerBackImage: () => (
+            //   <View style={styles.backButtonContainer}>
+            //     <Icon name="close" style={{ color: 'white' }} size={theme.iconSize(3)} />
+            //   </View>
+            // ),
             headerRight: () => (
               <View style={{ flexDirection: 'row' }}>
                 <TouchableRipple

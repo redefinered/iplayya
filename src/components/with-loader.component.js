@@ -3,7 +3,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from 'react-native';
-import { useTheme, ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
+import theme from 'common/theme';
 
 /**
  * TODO: fix z-index so it appears in front of all elements
@@ -26,7 +27,7 @@ import { useTheme, ActivityIndicator } from 'react-native-paper';
  */
 export default function withLoader(WrappedComponent) {
   const Loader = ({ isFetching, ...otherProps }) => {
-    const theme = useTheme();
+    // const theme = useTheme();
     const renderLoader = () => {
       if (isFetching)
         return (
