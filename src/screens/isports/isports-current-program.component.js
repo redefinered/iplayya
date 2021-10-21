@@ -7,8 +7,8 @@ import moment from 'moment';
 import { selectCurrentProgram } from 'modules/ducks/isports/isports.selectors';
 import { connect } from 'react-redux';
 
-const CurrentProgram = ({ currentProgram }) => {
-  const { title: channelTitle, epgtitle, time, time_to } = currentProgram;
+const CurrentProgram = ({ channel }) => {
+  const { title: channelTitle, epgtitle, time, time_to } = channel;
   const renderEpgtitle = () => {
     if (!epgtitle)
       return (
@@ -51,7 +51,7 @@ const mapStateToProps = (state, props) => {
 };
 
 CurrentProgram.propTypes = {
-  currentProgram: PropTypes.object
+  channel: PropTypes.object
 };
 
 // export default CurrentProgram;
