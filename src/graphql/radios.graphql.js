@@ -7,11 +7,11 @@ export const GET_RADIO_STATIONS = gql`
       name
       number
       cmd
-      count
-      volume_correction
-      enable_monitoring
-      monitoring_status
-      monitoring_status_updated
+      # count
+      # volume_correction
+      # enable_monitoring
+      # monitoring_status
+      # monitoring_status_updated
       is_favorite
     }
   }
@@ -40,6 +40,19 @@ export const GET_FAVORITE_RADIOS = gql`
     favoriteRadios(input: $input) {
       id
       name
+      number
+      cmd
+      is_favorite
+    }
+  }
+`;
+
+export const SEARCH = gql`
+  query SEARCH($input: radioRequest) {
+    radios(input: $input) {
+      id
+      name
+      number
       cmd
       is_favorite
     }

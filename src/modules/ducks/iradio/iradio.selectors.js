@@ -11,17 +11,7 @@ export const selectRadioStations = createSelector(
   ({ radioStations }) => radioStations
 );
 
-export const selectFavorites = createSelector([radioState], ({ favorites }) => favorites);
-
-export const selectFeatured = createSelector([radioState], ({ radioStations }) => {
-  if (!radioStations.length) return;
-  return radioStations[0]; // while waiting for API, select first item for now
-});
-
-export const selectPaginatorInfo = createSelector(
-  [radioState],
-  ({ paginatorInfo }) => paginatorInfo
-);
+export const selectPaginator = createSelector([radioState], ({ paginator }) => paginator);
 
 export const selectPlaybackInfo = createSelector([radioState], ({ playbackInfo }) => playbackInfo);
 
@@ -35,12 +25,28 @@ export const selectCurrentTime = createSelector([radioState], ({ playbackInfo })
   return Math.floor(playbackInfo.currentTime);
 });
 
-export const selectAddedToFavorites = createSelector(
+export const selectPlaybackProgress = createSelector(
   [radioState],
-  ({ addedToFavorites }) => addedToFavorites
+  ({ playbackProgress }) => playbackProgress
 );
 
-export const selectRemovedFromFavorites = createSelector(
+export const selectNowPlaying = createSelector([radioState], ({ nowPlaying }) => nowPlaying);
+
+export const selectNowPlayingLayoutInfo = createSelector(
   [radioState],
-  ({ removedFromFavorites }) => removedFromFavorites
+  ({ nowPlayingLayoutInfo }) => nowPlayingLayoutInfo
 );
+
+export const selectPaused = createSelector([radioState], ({ paused }) => paused);
+
+export const selectSearchResults = createSelector(
+  [radioState],
+  ({ searchResults }) => searchResults
+);
+
+export const selectSearchResultsPaginator = createSelector(
+  [radioState],
+  ({ searchResultsPaginator }) => searchResultsPaginator
+);
+
+export const selectRecentSearch = createSelector([radioState], ({ recentSearch }) => recentSearch);
