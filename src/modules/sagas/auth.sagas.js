@@ -11,6 +11,7 @@ import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
 import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as IradioCreators } from 'modules/ducks/iradio/iradio.actions';
 
 import { register, signIn, signOut, validateUsername } from 'services/auth.service';
 import { getCategories } from 'services/movies.service';
@@ -69,6 +70,7 @@ export function* signInRequest(action) {
     yield put(MoviesCreators.reset());
     yield put(IsportsCreators.reset());
     yield put(MusicCreators.reset());
+    yield put(IradioCreators.reset());
 
     yield put(Creators.signInSuccess(user));
 
