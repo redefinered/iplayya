@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Pressable, FlatList } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text, useTheme, ActivityIndicator } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
@@ -201,34 +201,39 @@ const IplayScreen = ({
     setShowStepTwo(false);
   };
 
-  const renderError = () => {
-    if (!error) return;
+  // const renderError = () => {
+  //   if (!error) return;
 
-    return (
-      <ContentWrap style={{ alignItems: 'center', marginBottom: theme.spacing(2) }}>
-        <Text>{error}</Text>
-      </ContentWrap>
-    );
-  };
+  //   return (
+  //     <ContentWrap style={{ alignItems: 'center', marginBottom: theme.spacing(2) }}>
+  //       <Text>{error}</Text>
+  //     </ContentWrap>
+  //   );
+  // };
 
   const renderProcess = () => {
     if (!loading) return;
 
     return (
-      <ContentWrap style={{ alignItems: 'center', marginBottom: theme.spacing(2) }}>
-        <Text>Processing...</Text>
+      <ContentWrap
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: theme.spacing(2)
+        }}
+      >
+        <ActivityIndicator size="small" />
       </ContentWrap>
     );
   };
 
   if (!videoFiles.length && loading) {
-    return <View>{renderProcess()}</View>;
+    return <View style={{ flex: 1 }}>{renderProcess()}</View>;
   }
 
   return (
     <View style={styles.container}>
-      {renderError()}
-      {renderProcess()}
       {videoFiles.length ? (
         <React.Fragment>
           <ContentWrap style={{ paddingVertical: theme.spacing(2) }}>
@@ -341,7 +346,6 @@ const IplayScreen = ({
           </ContentWrap>
         </View>
       )}
-
       <React.Fragment>
         <View style={{ paddingBottom: 100 }} />
 
