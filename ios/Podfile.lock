@@ -47,8 +47,6 @@ PODS:
     - GTMSessionFetcher/Core (~> 1.1)
     - Protobuf (~> 3.13)
   - GTMSessionFetcher/Core (1.5.0)
-  - libevent (2.1.12)
-  - OpenSSL-Universal (1.1.180)
   - PromisesObjC (2.0.0)
   - Protobuf (3.17.0)
   - RCTRequired (0.63.3)
@@ -401,8 +399,6 @@ SPEC REPOS:
     - boost-for-react-native
     - google-cast-sdk
     - GTMSessionFetcher
-    - libevent
-    - OpenSSL-Universal
     - PromisesObjC
     - Protobuf
 
@@ -531,8 +527,6 @@ SPEC CHECKSUMS:
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   google-cast-sdk: f94c5df87564f71d4342400b8487665e9bed27c6
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
-  libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  OpenSSL-Universal: 1aa4f6a6ee7256b83db99ec1ccdaa80d10f9af9b
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   Protobuf: 7327d4444215b5f18e560a97f879ff5503c4581c
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047

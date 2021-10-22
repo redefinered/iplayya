@@ -54,6 +54,13 @@ const IsportsChannelDetailScreen = ({
   const [showFavSnackBar, setShowFavSnackBar] = React.useState(false);
   const [contentHeight, setContentHeight] = React.useState(null);
   const [fullscreen, setFullscreen] = React.useState(false);
+  const [currentProgram, setCurrentProgram] = React.useState(null);
+
+  React.useEffect(() => {
+    if (!programs.length) return;
+
+    setCurrentProgram(programs[0]);
+  }, [programs]);
 
   React.useEffect(() => {
     if (!channel) return;
@@ -243,7 +250,7 @@ const IsportsChannelDetailScreen = ({
                   >
                     <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
                   </View>
-                  <CurrentProgram channel={channel} />
+                  <CurrentProgram channel={channel} currentProgram={currentProgram} />
                 </View>
               </View>
             </ContentWrap>

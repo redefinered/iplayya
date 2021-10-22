@@ -7,10 +7,11 @@ import moment from 'moment';
 // import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
 // import { connect } from 'react-redux';
 
-const CurrentProgram = ({ channel }) => {
-  const { title: channelTitle, epgtitle, time, time_to } = channel;
+const CurrentProgram = ({ currentProgram, channel }) => {
+  const { title: channelTitle } = channel;
+  const { title, time, time_to } = currentProgram;
   const renderEpgtitle = () => {
-    if (!epgtitle)
+    if (!title)
       return (
         <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
           Program title unavailable
@@ -19,7 +20,7 @@ const CurrentProgram = ({ channel }) => {
 
     return (
       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-        {epgtitle}
+        {title}
       </Text>
     );
   };
@@ -47,7 +48,8 @@ const CurrentProgram = ({ channel }) => {
 };
 
 CurrentProgram.propTypes = {
-  channel: PropTypes.object
+  channel: PropTypes.object,
+  currentProgram: PropTypes.object
 };
 
 // export default CurrentProgram;
