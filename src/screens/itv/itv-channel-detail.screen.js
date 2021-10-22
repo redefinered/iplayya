@@ -264,7 +264,7 @@ const ItvChannelDetailScreen = ({
                   >
                     <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
                   </View>
-                  <CurrentProgram channelId={channelId} />
+                  <CurrentProgram channel={channel} />
                 </View>
               </View>
             </ContentWrap>

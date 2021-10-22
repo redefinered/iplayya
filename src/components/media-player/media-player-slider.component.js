@@ -2,8 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
+// import Slider from 'react-native-slider';
 import Slider from '@react-native-community/slider';
 import thumbImage from 'assets/player-thumb-image.png';
+import thumbImagePressed from 'assets/player-thumb-image-active.png';
+import thumbImageNoMargin from 'assets/player-thumb-image-no-margin.png';
 import { createStructuredSelector } from 'reselect';
 import { selectPlaybackProgress } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
@@ -16,6 +19,22 @@ const MediaPlayerSlider = ({ playbackInfo, setPausedAction, setSliderPosition })
   const [value, setValue] = React.useState();
   const [remainingTime, setRemainingTime] = React.useState(0);
   const [currentTime, setCurrentTime] = React.useState(0);
+  const [thumb, setThumb] = React.useState(thumbImage);
+  const [isSliding, setIsSliding] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isSliding) {
+      setThumb(thumbImagePressed);
+    } else {
+      if (value <= 20) {
+        setThumb(thumbImageNoMargin);
+      } else if (value >= 80) {
+        setThumb(thumbImageNoMargin);
+      } else {
+        setThumb(thumbImage);
+      }
+    }
+  }, [value, isSliding]);
 
   React.useEffect(() => {
     if (playbackInfo) {
@@ -57,10 +76,17 @@ const MediaPlayerSlider = ({ playbackInfo, setPausedAction, setSliderPosition })
   }, [playbackInfo]);
 
   const handleSlidingComplete = () => {
+    setIsSliding(false);
+
     if (!playbackInfo) return;
 
     setPausedAction(false);
     setSliderPosition((value * playbackInfo.seekableDuration) / 100);
+  };
+
+  const handleSlidingStart = () => {
+    setIsSliding(true);
+    setPausedAction(true);
   };
 
   const renderCurrentTime = () => {
@@ -79,15 +105,15 @@ const MediaPlayerSlider = ({ playbackInfo, setPausedAction, setSliderPosition })
       <View style={{ flex: 7 }}>
         <Slider
           value={value}
-          onSlidingStart={() => setPausedAction(true)}
+          onSlidingStart={handleSlidingStart}
           onSlidingComplete={handleSlidingComplete}
           onValueChange={handleChange}
           minimumValue={0}
           maximumValue={100}
           minimumTrackTintColor={theme.iplayya.colors.vibrantpussy}
           maximumTrackTintColor={theme.iplayya.colors.white25}
-          thumbImage={thumbImage}
-          style={{ width: '100%', height: 10 }}
+          thumbImage={thumb}
+          style={{ width: '100%' }}
         />
       </View>
       <View style={{ flex: 1.5, alignItems: 'flex-end' }}>{renderRemainingTime()}</View>
