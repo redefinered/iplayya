@@ -58,7 +58,7 @@ const MediaPlayer = ({
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [showControls, setShowControls] = React.useState(true);
   const [sliderPosition, setSliderPosition] = React.useState(null);
-  const [volume, setVolume] = React.useState(0.6);
+  const [volume, setVolume] = React.useState(100);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
@@ -69,6 +69,8 @@ const MediaPlayer = ({
   const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [timer, setTimer] = React.useState();
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
+
+  // console.log({ volume });
 
   /// switches root container style depending on screen orientation
   React.useEffect(() => {
@@ -226,6 +228,7 @@ const MediaPlayer = ({
   };
 
   const handleProgress = (playbackInfo) => {
+    // console.log({ playbackInfo });
     setBuffering(false);
     // updatePlaybackInfoAction({ playbackInfo });
     setPlaybackInfo(playbackInfo);

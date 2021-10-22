@@ -4,11 +4,11 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import moment from 'moment';
-import { selectCurrentProgram } from 'modules/ducks/isports/isports.selectors';
-import { connect } from 'react-redux';
+// import { selectCurrentProgram } from 'modules/ducks/isports/isports.selectors';
+// import { connect } from 'react-redux';
 
-const CurrentProgram = ({ currentProgram }) => {
-  const { title: channelTitle, epgtitle, time, time_to } = currentProgram;
+const CurrentProgram = ({ channel }) => {
+  const { title: channelTitle, epgtitle, time, time_to } = channel;
   const renderEpgtitle = () => {
     if (!epgtitle)
       return (
@@ -46,13 +46,13 @@ const CurrentProgram = ({ currentProgram }) => {
   );
 };
 
-const mapStateToProps = (state, props) => {
-  return { currentProgram: selectCurrentProgram(state, props) };
-};
+// const mapStateToProps = (state, props) => {
+//   return { currentProgram: selectCurrentProgram(state, props) };
+// };
 
 CurrentProgram.propTypes = {
-  currentProgram: PropTypes.object
+  channel: PropTypes.object
 };
 
 // export default CurrentProgram;
-export default connect(mapStateToProps)(React.memo(CurrentProgram));
+export default React.memo(CurrentProgram);

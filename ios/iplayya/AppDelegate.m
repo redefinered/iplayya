@@ -14,7 +14,11 @@
 #import <AppCenterReactNativeCrashes.h>
 //appcenter
 
+// iOS 9.x or newer
+#import <React/RCTLinkingManager.h>
+
 #ifdef FB_SONARKIT_ENABLED
+
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
 #import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
@@ -22,8 +26,7 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 
-// iOS 9.x or newer
-#import <React/RCTLinkingManager.h>
+
 
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
