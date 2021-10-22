@@ -19,7 +19,8 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectPaginator
+  selectPaginator,
+  selectNowPlaying
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
 import withLoader from 'components/with-loader.component';
@@ -36,10 +37,10 @@ const IradioScreen = ({
   getFavoritesAction,
   enableSwipeAction,
   setNowPlayingAction,
+  nowPlaying,
   route: { params }
 }) => {
   const [index, setIndex] = React.useState(0);
-  const [nowPlaying, setNowPlaying] = React.useState(null);
   const [bottomNavHeight, setBottomNavHeight] = React.useState();
 
   React.useEffect(() => {
@@ -65,7 +66,6 @@ const IradioScreen = ({
     if (params) {
       const { cmd, name, number } = params;
       // setNowPlaying({ params });
-      setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
       setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
     }
   }, [params]);
@@ -79,7 +79,6 @@ const IradioScreen = ({
     // const { source, title, artist, thumbnail } = item;
     const { cmd, name, number } = item;
 
-    setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
     setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
   };
 
@@ -115,7 +114,12 @@ const IradioScreen = ({
         />
       </React.Fragment>
 
-      <View>{nowPlaying && <NowPlaying navigation={navigation} />}</View>
+      {/* <View>{nowPlaying && }</View> */}
+
+      <View>
+        <NowPlaying navigation={navigation} />
+      </View>
+
       {/* pushes up the content to make room for the bottom tab */}
       <View style={{ paddingBottom: bottomNavHeight }} />
 
@@ -235,7 +239,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  paginator: selectPaginator
+  paginator: selectPaginator,
+  nowPlaying: selectNowPlaying
 });
 
 const actions = {
