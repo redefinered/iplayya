@@ -1,6 +1,6 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './auth.actions';
-// import { Types as ProfileTypes } from 'modules/ducks/profile/profile.actions';
+import { Types as ProfileTypes } from 'modules/ducks/profile/profile.actions';
 import { Types as ProviderTypes } from 'modules/ducks/provider/provider.actions';
 import { checkIfIsInitialSignIn } from './auth.utils';
 
@@ -16,9 +16,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  // [ProfileTypes.UPDATE_SUCCESS]: (state) => {
-  //   return { ...state, isInitialSignIn: false };
-  // },
+  [ProfileTypes.UPDATE_SUCCESS]: (state) => {
+    return { ...state, isInitialSignIn: false };
+  },
   [ProviderTypes.CREATE_SUCCESS]: (state) => {
     return { ...state, isInitialSignIn: false };
   },

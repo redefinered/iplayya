@@ -190,6 +190,7 @@ const MediaPlayer = ({
 
     setBuffering(true);
     setShowControls(true);
+    // setTimer(hideControls(3));
   };
 
   const hideControls = (duration = 5) => {
@@ -206,6 +207,9 @@ const MediaPlayer = ({
       if (timer) clearTimeout(timer);
     } else {
       if (client) return;
+
+      /// don't hide controls if program did not buffer
+      // if (!buffering) return;
 
       setTimer(hideControls(10));
     }
