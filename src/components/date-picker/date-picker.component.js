@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   textBlur: {
     fontSize: 16,
     fontFamily: 'NotoSans',
-    color: 'rgba(225,225,225,0.5)'
+    color: theme.iplayya.colors.white50
   },
   dateIcon: {
     marginRight: 10,
@@ -35,14 +35,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)'
+    backgroundColor: theme.iplayya.colors.white10
   },
   textHolderFocus: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 10,
-    backgroundColor: 'rgba(255,255,255,0.25)'
+    backgroundColor: theme.iplayya.colors.white25
   }
 });
 

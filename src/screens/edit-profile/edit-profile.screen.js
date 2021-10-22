@@ -251,7 +251,7 @@ class EditProfileScreen extends React.Component {
                   error={stateError.phone}
                   style={{
                     borderWidth: isValidPhone ? 0 : 2,
-                    borderColor: isValidPhone ? 'null' : '#E34398'
+                    borderColor: isValidPhone ? null : '#E34398'
                   }}
                 />
                 {!isValidPhone ? <Text style={{ margin: 2 }}>Invalid Phone Number</Text> : null}

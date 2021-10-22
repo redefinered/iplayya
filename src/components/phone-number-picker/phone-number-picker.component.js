@@ -52,7 +52,7 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, setValidPhone }) => {
         paddingVertical: 15,
         marginTop: 5,
         position: 'relative',
-        backgroundColor: focused ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)',
+        backgroundColor: focused ? theme.iplayya.colors.white25 : theme.iplayya.colors.white10,
         ...style
       }}
     >
@@ -67,8 +67,8 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, setValidPhone }) => {
           onFocus: () => setFocused(true),
           onBlur: () => setFocused(false),
           placeholder: placeholder,
-          placeholderTextColor: focused ? '#FFFFFF' : 'rgba(225,225,225,0.5)',
-          color: focused ? '#ffffff' : 'rgba(255,255,255,0.5)',
+          placeholderTextColor: focused ? '#FFFFFF' : theme.iplayya.colors.white50,
+          color: focused ? '#ffffff' : theme.iplayya.colors.white50,
           fontSize: 16,
           fontFamily: 'NotoSans',
           selectionColor: '#E34398',
