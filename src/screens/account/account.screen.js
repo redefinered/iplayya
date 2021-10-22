@@ -6,7 +6,7 @@ import ContentWrap from 'components/content-wrap.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import ScreenContainer from 'components/screen-container.component';
 import Icon from 'components/icon/icon.component';
-import { Text, useTheme, TouchableRipple } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -34,7 +34,7 @@ import {
 } from 'react-native';
 import SnackBar from 'components/snackbar/snackbar.component';
 import Button from 'components/button/button.component';
-
+import theme from 'common/theme';
 import WalkThrougGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 
 const styles = StyleSheet.create({
@@ -75,8 +75,6 @@ const AccountScreen = ({
   route: { params },
   resetAction
 }) => {
-  const theme = useTheme();
-
   const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
   const [profileErrorVisible, setProfileErrorVisible] = React.useState(false);
   const [onSigningOut, setOnSigningOut] = React.useState(false);
@@ -206,7 +204,7 @@ const AccountScreen = ({
                 fontSize: 20,
                 fontWeight: 'bold',
                 lineHeight: 22,
-                marginBottom: 5,
+                marginBottom: theme.spacing(1),
                 paddingHorizontal: theme.spacing(2)
               }}
             >
@@ -218,7 +216,7 @@ const AccountScreen = ({
                 fontSize: 14,
                 lineHeight: 19,
                 paddingHorizontal: theme.spacing(2),
-                color: 'rgba(255, 255, 255, 0.5)'
+                color: theme.iplayya.colors.white50
               }}
             >
               {profile.email}
@@ -265,7 +263,7 @@ const AccountScreen = ({
             fontWeight: 'bold',
             color: theme.iplayya.colors.white50,
             padding: theme.spacing(2),
-            marginBottom: 10
+            marginBottom: theme.spacing(2)
           }}
         >
           Settings
