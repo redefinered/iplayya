@@ -818,9 +818,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = iplayya/iplayya.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = JLDCKJRS6D;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -838,7 +838,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.delugetech.iplayya;
 				PRODUCT_NAME = iplayya;
-				PROVISIONING_PROFILE_SPECIFIER = "DTTC Internal";
+				PROVISIONING_PROFILE_SPECIFIER = "iPlayya Distribution";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -856,7 +856,7 @@
 				CODE_SIGN_ENTITLEMENTS = iplayya/iplayya.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = JLDCKJRS6D;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";

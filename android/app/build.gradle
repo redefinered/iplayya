@@ -139,8 +139,8 @@ android {
         applicationId "com.iplayya"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 114
-        versionName "0.0.2-alpha.114"
+        versionCode 115
+        versionName "0.0.2-alpha.115"
     }
     splits {
         abi {
