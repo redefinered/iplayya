@@ -33,23 +33,6 @@ const RadioStationsTab = ({
   console.log({ xxxx: paginator });
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [favorited, setFavorited] = React.useState('');
-  const [radioStationsData, setRadioStationsData] = React.useState([]);
-
-  // setup radio data
-  React.useEffect(() => {
-    if (radioStations.length) {
-      let data = radioStations.map(({ id, name, is_favorite, number, ...rest }) => ({
-        id,
-        name,
-        is_favorite,
-        number,
-        ...rest
-      }));
-      setRadioStationsData(data);
-    } else {
-      setRadioStationsData([]);
-    }
-  }, [radioStations]);
 
   React.useEffect(() => {
     if (added) setShowSnackBar(true);
@@ -92,7 +75,7 @@ const RadioStationsTab = ({
   const renderItem = ({ item: { id, name, is_favorite, number, ...rest } }) => {
     return (
       <Pressable
-        onPress={() => handleSelectItem({ id, name, is_favorite, ...rest })}
+        onPress={() => handleSelectItem({ id, name, is_favorite, number, ...rest })}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
@@ -149,7 +132,7 @@ const RadioStationsTab = ({
     <View style={{ flex: 1 }}>
       {renderFavoriteLoader()}
       <FlatList
-        data={radioStationsData}
+        data={radioStations}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}
