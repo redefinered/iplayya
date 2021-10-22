@@ -356,7 +356,7 @@ const AccountScreen = ({
           visible={onSigningOut}
           hideAction={handleHideOnSignOut}
           onCancel={handleHideOnSignOut}
-          confirmText="OK"
+          confirmText="Logout"
           confirmAction={signOutAction}
         />
         {/* </View> */}
