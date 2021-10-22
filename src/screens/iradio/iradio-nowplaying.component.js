@@ -29,7 +29,6 @@ const NowPlaying = ({
   paused,
   setPausedAction
 }) => {
-  // console.log({ playbackCounter });
   const theme = useTheme();
   const rootComponent = React.useRef();
   const player = React.useRef();
@@ -80,8 +79,8 @@ const NowPlaying = ({
         );
       }
 
-      const { source } = nowPlaying;
-      if (!source) return;
+      const { url } = nowPlaying;
+      if (!url) return;
 
       setPausedAction(false);
     }
