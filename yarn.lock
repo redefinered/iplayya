@@ -4024,9 +4024,9 @@ globals@^12.1.0:
     type-fest "^0.8.1"
 
 google-libphonenumber@^3.2.2:
-  version "3.2.19"
-  resolved "https://registry.yarnpkg.com/google-libphonenumber/-/google-libphonenumber-3.2.19.tgz#4177f9a1232a740cfd378a46f628ae9a62982069"
-  integrity sha512-zevRvpUuc88wIXa+ijlMprAc8SrldUtYY2vQpfymmxyZ2ksct6gFrGxccpo28+zjvjK51VoSUaDUHS24XYp6dA==
+  version "3.2.25"
+  resolved "https://registry.yarnpkg.com/google-libphonenumber/-/google-libphonenumber-3.2.25.tgz#3bc1a041fa392739d201eacf66761df236f1614b"
+  integrity sha512-M/b5mij5o2aGnbe+Id9O3847jBtP0baW61foFkevxBxbuV4LH9AcujjYLd2UVkUPKVdMpKyBZxfeNwdxqobQFQ==
 
 got@^9.6.0:
   version "9.6.0"
@@ -5531,7 +5531,7 @@ lodash@4, lodash@^4.17.10, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lo
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
 
-lodash@^4.17.4:
+lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -7051,13 +7051,13 @@ react-native-paper@^4.2.0:
     color "^3.1.2"
     react-native-safe-area-view "^0.14.9"
 
-react-native-phone-input@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/react-native-phone-input/-/react-native-phone-input-1.0.9.tgz#e05601a21eb09915145635323d47bb49afd37036"
-  integrity sha512-XjGCOy2OlFAPI1Vad5bYH39dG+7YVA+Cf6806InAgieKT0/ML6wur2/rw37H1OWhaBgJqLp2HIwoAqm2e0pgdg==
+react-native-phone-input@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-phone-input/-/react-native-phone-input-1.2.0.tgz#9d8aa67212c0d7889b953c6c7f38cfb05eb79c2d"
+  integrity sha512-R+ay2LbWFGOQoiCZC0SMwa9BIHBX1hOMuQmj67uyjlNFq48ZratJd9L+UA4kynx/AGrVNkH4MVDZoHxJ2Jlhlw==
   dependencies:
     google-libphonenumber "^3.2.2"
-    lodash "^4.17.4"
+    lodash "^4.17.21"
     prop-types "^15.5.10"
 
 react-native-push-notification@^7.4.0:

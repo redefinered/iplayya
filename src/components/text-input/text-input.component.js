@@ -34,7 +34,11 @@ const TextInput = ({ style, name, handleChangeText, focusAction, ...otherProps }
       onBlur={() => setFocused(false)}
       placeholderTextColor={focused ? '#FFFFFF' : 'rgba(225,225,225,0.5)'}
       theme={{
-        colors: { primary: 'rgba(255,255,255,0.1)', error: '#E34398', placeholder: 'transparent' }
+        colors: {
+          primary: 'transparent',
+          error: '#E34398',
+          placeholder: 'transparent'
+        }
       }}
       ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans', height: 50 } })}
       {...otherProps}

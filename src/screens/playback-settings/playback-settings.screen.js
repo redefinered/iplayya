@@ -4,8 +4,8 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import SwitchOption from 'components/switch-option/switch-option.component';
-import DropdownOption from 'components/dropdown-option/dropdown-option.component';
-import RadioOption from 'components/radio-option/radio-option.component';
+// import DropdownOption from 'components/dropdown-option/dropdown-option.component';
+// import RadioOption from 'components/radio-option/radio-option.component';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -22,7 +22,7 @@ import {
   selectUpdated
 } from 'modules/ducks/user/user.selectors';
 
-import languages from 'common/languages.json';
+// import languages from 'common/languages.json';
 
 /**
  * TODO: hasUnsavedChanges is being set to true on mount.
@@ -112,27 +112,27 @@ class PlaybackSettings extends React.Component {
 
   render() {
     console.log({ hasUnsavedChanges: this.state.hasUnsavedChanges });
-    const languageChoices = Object.keys(languages).map((key) => ({
-      key,
-      label: languages[key].name,
-      value: key
-    }));
+    // const languageChoices = Object.keys(languages).map((key) => ({
+    //   key,
+    //   label: languages[key].name,
+    //   value: key
+    // }));
 
-    const videoQualityChoices = [
-      { label: 'High', value: 'high' },
-      { label: 'Medium', value: 'medium' },
-      { label: 'Low', value: 'low' },
-      { label: 'Auto', value: 'auto' }
-    ];
+    // const videoQualityChoices = [
+    //   { label: 'High', value: 'high' },
+    //   { label: 'Medium', value: 'medium' },
+    //   { label: 'Low', value: 'low' },
+    //   { label: 'Auto', value: 'auto' }
+    // ];
 
     const {
       is_autoplay_video,
-      is_autoplay_next_ep,
-      is_show_video_info,
-      is_always_show_caption,
-      language,
-      subtitle,
-      video_quality
+      is_autoplay_next_ep
+      // is_show_video_info,
+      // is_always_show_caption,
+      // language,
+      // subtitle,
+      // video_quality
     } = this.state;
 
     const { theme } = this.props;
@@ -165,7 +165,7 @@ class PlaybackSettings extends React.Component {
             label="Auto-play next episode"
             toggleAction={this.toggleSwitchOption}
           />
-          <SwitchOption
+          {/* <SwitchOption
             name="is_show_video_info"
             value={is_show_video_info}
             label="Show in-video info at start"
@@ -193,7 +193,7 @@ class PlaybackSettings extends React.Component {
             currentValue={videoQualityChoices.find(({ value }) => value === video_quality)['value']}
             choices={videoQualityChoices}
             onSelect={this.handleVideoQualitySelect}
-          />
+          /> */}
         </ScrollView>
       </ContentWrap>
     );

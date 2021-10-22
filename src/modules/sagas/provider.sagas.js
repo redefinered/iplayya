@@ -1,4 +1,4 @@
-import { takeLatest, put, call } from 'redux-saga/effects';
+import { takeLatest, put, call, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/provider/provider.actions';
 import {
   create as createProvider,
@@ -58,10 +58,10 @@ export function* updateRequest(action) {
 }
 
 export function* deleteRequest(action) {
-  const { id } = action.data;
+  const { ids } = action.data;
   try {
-    const { deleteUserProvider } = yield call(deleteProvider, id);
-    console.log({ deleteUserProvider });
+    // const { deleteUserProvider } = yield call(deleteProvider, id);
+    yield all(ids.map((i) => call(deleteProvider, i)));
     yield put(Creators.deleteSuccess());
   } catch (error) {
     yield put(Creators.deleteFailure(error.message));

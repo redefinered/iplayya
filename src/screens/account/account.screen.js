@@ -6,7 +6,7 @@ import ContentWrap from 'components/content-wrap.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import ScreenContainer from 'components/screen-container.component';
 import Icon from 'components/icon/icon.component';
-import { Text, useTheme, TouchableRipple } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -25,7 +25,7 @@ import { selectUpdated as selectPasswordUpdated } from 'modules/ducks/password/p
 import {
   View,
   Image,
-  Pressable,
+  // Pressable,
   StyleSheet,
   Dimensions,
   SafeAreaView
@@ -34,7 +34,7 @@ import {
 } from 'react-native';
 import SnackBar from 'components/snackbar/snackbar.component';
 import Button from 'components/button/button.component';
-
+import theme from 'common/theme';
 import WalkThrougGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 
 const styles = StyleSheet.create({
@@ -75,8 +75,6 @@ const AccountScreen = ({
   route: { params },
   resetAction
 }) => {
-  const theme = useTheme();
-
   const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
   const [profileErrorVisible, setProfileErrorVisible] = React.useState(false);
   const [onSigningOut, setOnSigningOut] = React.useState(false);
@@ -191,12 +189,12 @@ const AccountScreen = ({
                 borderRadius: 300,
                 resizeMode: 'contain'
               }}
-              source={require('assets/placeholder.jpg')}
+              source={require('assets/Avatar_Eclipse.png')}
             />
           </View>
           <View
             style={{
-              paddingHorizontal: 15,
+              // paddingHorizontal: 15,
               width: Dimensions.get('window').width - 100 // 100 is the 15 space left and 85 image width
             }}
           >
@@ -206,7 +204,8 @@ const AccountScreen = ({
                 fontSize: 20,
                 fontWeight: 'bold',
                 lineHeight: 22,
-                marginBottom: 5
+                marginBottom: theme.spacing(1),
+                paddingHorizontal: theme.spacing(2)
               }}
             >
               {profile.name}
@@ -216,24 +215,33 @@ const AccountScreen = ({
               style={{
                 fontSize: 14,
                 lineHeight: 19,
-                marginBottom: 8,
-                paddingRight: 15,
-                color: 'rgba(255, 255, 255, 0.5)'
+                paddingHorizontal: theme.spacing(2),
+                color: theme.iplayya.colors.white50
               }}
             >
               {profile.email}
             </Text>
-            <Pressable onPress={() => navigation.navigate('ProfileScreen')}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  lineHeight: 19,
-                  marginBottom: 8
-                }}
-              >
-                View Profile
-              </Text>
-            </Pressable>
+            <TouchableRipple
+              borderless={false}
+              rippleColor="rgba(0,0,0,0.28)"
+              onPress={() => navigation.navigate('ProfileScreen')}
+              style={{
+                width: 90,
+                padding: theme.spacing(1),
+                marginLeft: theme.spacing(1)
+              }}
+            >
+              <View>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    lineHeight: 19
+                  }}
+                >
+                  View Profile
+                </Text>
+              </View>
+            </TouchableRipple>
           </View>
         </View>
       </ContentWrap>
@@ -255,7 +263,7 @@ const AccountScreen = ({
             fontWeight: 'bold',
             color: theme.iplayya.colors.white50,
             padding: theme.spacing(2),
-            marginBottom: 10
+            marginBottom: theme.spacing(2)
           }}
         >
           Settings
@@ -348,7 +356,7 @@ const AccountScreen = ({
           visible={onSigningOut}
           hideAction={handleHideOnSignOut}
           onCancel={handleHideOnSignOut}
-          confirmText="OK"
+          confirmText="Logout"
           confirmAction={signOutAction}
         />
         {/* </View> */}

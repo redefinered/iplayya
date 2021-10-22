@@ -17,10 +17,14 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   textFocus: {
+    fontSize: 16,
+    fontFamily: 'NotoSans',
     color: '#ffffff'
   },
   textBlur: {
-    color: 'rgba(255,255,255,0.3)'
+    fontSize: 16,
+    fontFamily: 'NotoSans',
+    color: theme.iplayya.colors.white50
   },
   dateIcon: {
     marginRight: 10,
@@ -31,22 +35,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 10,
-    backgroundColor: 'rgba(255,255,255,0.1)'
+    backgroundColor: theme.iplayya.colors.white10
   },
   textHolderFocus: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 10,
-    backgroundColor: 'rgba(255,255,255,0.3)'
+    backgroundColor: theme.iplayya.colors.white25
   }
 });
 
-const DatePicker = ({ setBirthdate, style }) => {
+const DatePicker = ({ setBirthdate, style, placeholder }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = React.useState(false);
-  const [chosenDate, setChosenDate] = React.useState(
-    moment(new Date()).localeData().longDateFormat('L').toLowerCase()
-  ); // moment().format('LL')
+  const [chosenDate, setChosenDate] = React.useState(placeholder); // moment().format('LL')
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -56,10 +58,10 @@ const DatePicker = ({ setBirthdate, style }) => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (datetime) => {
+  const handleConfirm = (date) => {
     hideDatePicker(); //must be first
     // console.log('A date has been picked: ', datetime);
-    setChosenDate(moment(datetime).format('LL'));
+    setChosenDate(moment(date).format('LL'));
   };
 
   React.useEffect(() => {
@@ -72,20 +74,8 @@ const DatePicker = ({ setBirthdate, style }) => {
       style={{ ...styles.textContainer, ...style }}
       onPress={() => showDatePicker()}
     >
-      <View
-        style={
-          chosenDate === moment(new Date()).localeData().longDateFormat('L').toLowerCase()
-            ? styles.textHolderBlur
-            : styles.textHolderFocus
-        }
-      >
-        <Text
-          style={
-            chosenDate === moment(new Date()).localeData().longDateFormat('L').toLowerCase()
-              ? styles.textBlur
-              : styles.textFocus
-          }
-        >
+      <View style={isDatePickerVisible ? styles.textHolderFocus : styles.textHolderBlur}>
+        <Text style={chosenDate === placeholder ? styles.textBlur : styles.textFocus}>
           {chosenDate}
         </Text>
         <View style={styles.dateIcon}>
@@ -103,6 +93,7 @@ const DatePicker = ({ setBirthdate, style }) => {
 };
 
 DatePicker.propTypes = {
+  placeholder: PropTypes.string,
   setBirthdate: PropTypes.func,
   style: PropTypes.object
 };

@@ -3,7 +3,8 @@ import {
   GET_RADIO_STATIONS,
   ADD_RADIO_TO_FAVORITES,
   REMOVE_RADIO_FROM_FAVORITES,
-  GET_FAVORITE_RADIOS
+  GET_FAVORITE_RADIOS,
+  SEARCH
 } from 'graphql/radios.graphql';
 
 /**
@@ -14,7 +15,8 @@ export const getStations = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_RADIO_STATIONS,
-      variables: { input }
+      variables: { input },
+      fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
@@ -26,7 +28,8 @@ export const getFavorites = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_FAVORITE_RADIOS,
-      variables: { input }
+      variables: { input },
+      fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
@@ -37,16 +40,48 @@ export const getFavorites = async (input) => {
 /// IN PROGRESS! addToFavorites and getFavorites
 
 export const addToFavorites = async (radioId) => {
-  console.log({ radioIdxxxxx: radioId });
   try {
     const { data } = await client.mutate({
       mutation: ADD_RADIO_TO_FAVORITES,
+      variables: { input: { radioId } }
+      // refetchQueries: [
+      //   {
+      //     query: GET_FAVORITE_RADIOS,
+      //     variables: { input: { limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' } },
+      //     fetchPolicy: 'network-only'
+      //   },
+
+      //   {
+      //     query: GET_RADIO_STATIONS,
+      //     variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
+      //     fetchPolicy: 'network-only'
+      //   }
+      // ],
+      // awaitRefetchQueries: true
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const removeFromFavorites = async (radioId, pageNumber) => {
+  console.log({ pageNumber });
+  try {
+    const { data } = await client.mutate({
+      mutation: REMOVE_RADIO_FROM_FAVORITES,
       variables: { input: { radioId } },
       refetchQueries: [
-        /// TODO: input variables should come from this function's arguments
-        // form pagination to work
-        { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
-        { query: GET_RADIO_STATIONS, variables: { input: { limit: 10, pageNumber: 1 } } }
+        {
+          query: GET_FAVORITE_RADIOS,
+          variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
+          fetchPolicy: 'network-only'
+        }
+        // {
+        //   query: GET_RADIO_STATIONS,
+        //   variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
+        //   fetchPolicy: 'network-only'
+        // }
       ],
       awaitRefetchQueries: true
     });
@@ -56,18 +91,12 @@ export const addToFavorites = async (radioId) => {
   }
 };
 
-export const removeFromFavorites = async (radioId) => {
+export const search = async (input) => {
   try {
-    const { data } = await client.mutate({
-      mutation: REMOVE_RADIO_FROM_FAVORITES,
-      variables: { input: { radioId } },
-      refetchQueries: [
-        /// TODO: input variables should come from this function's arguments
-        // form pagination to work
-        { query: GET_FAVORITE_RADIOS, variables: { input: { limit: 10, pageNumber: 1 } } },
-        { query: GET_RADIO_STATIONS, variables: { input: { limit: 10, pageNumber: 1 } } }
-      ],
-      awaitRefetchQueries: true
+    const { data } = await client.query({
+      query: SEARCH,
+      fetchPolicy: 'network-only',
+      variables: { input }
     });
     return data;
   } catch (error) {

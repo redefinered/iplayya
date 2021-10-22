@@ -86,9 +86,27 @@ class AddIptvScreen extends React.Component {
 
     /// handle error
     if (prevProps.error !== this.props.error) {
-      if (this.props.error) {
+      const { error } = this.props;
+
+      if (error) {
+        /// add state error if request has error
+        if (
+          error === 'Provider already exist' ||
+          // eslint-disable-next-line quotes
+          error === "'Username' and 'Portal Address' cannot be duplicate."
+        ) {
+          this.setError('portal_address', `${error} Please enter another provider credentials.`);
+        } else {
+          this.setError('username', 'Make sure your username is correct');
+          this.setError('password', 'Make sure your password is correct');
+        }
+
         this.setState({ modalVisible: true });
       } else {
+        this.setError('username', null);
+        this.setError('password', null);
+        this.setError('portal_address', null);
+
         this.setState({ modalVisible: false });
       }
     }
@@ -143,24 +161,9 @@ class AddIptvScreen extends React.Component {
     this.setState({ errors: Object.assign(this.state.errors, { [field]: val }) });
   };
 
-  // setError = (stateError, field, val) => {
-  //   const index = stateError.findIndex(({ key }) => key === field);
-  //   stateError[index].val = val;
-  //   this.setState({ errors: stateError });
-  // };
-
   handleSubmit = () => {
     // eslint-disable-next-line no-unused-vars
     const { modalVisible, errors: stateError, valid, showSuccessMessage, ...input } = this.state;
-
-    // console.log({ input, stateError });
-
-    // validation here
-    // if (!input.name || input.name.length < 5) {
-    //   this.setError(stateError, 'name', true);
-    // } else {
-    //   this.setError(stateError, 'name', false);
-    // }
 
     if (
       input.name === '' &&
@@ -180,16 +183,6 @@ class AddIptvScreen extends React.Component {
       this.setError('name', null);
     }
 
-    // if (!input.portal_address) {
-    //   this.setError(stateError, 'portal_address', true);
-    // } else {
-    //   if (!isValidWebsite(input.portal_address)) {
-    //     this.setError(stateError, 'portal_address', true);
-    //   } else {
-    //     this.setError(stateError, 'portal_address', false);
-    //   }
-    // }
-
     if (!input.portal_address.length) {
       this.setError('portal_address', 'Portal address is required');
     } else {
@@ -200,12 +193,6 @@ class AddIptvScreen extends React.Component {
       }
     }
 
-    // if (!isValidUsername(input.username)) {
-    //   this.setError(stateError, 'username', true);
-    // } else {
-    //   this.setError(stateError, 'username', false);
-    // }
-
     if (!input.username.length) {
       this.setError('username', 'Username is required');
     } else {
@@ -215,14 +202,6 @@ class AddIptvScreen extends React.Component {
         this.setError('username', null);
       }
     }
-
-    /// TODO: fix password validation -- Deluge@2020! is invalid
-    // if (!isValidPassword(input.password)) {
-    // if (!input.password) {
-    //   this.setError(stateError, 'password', true);
-    // } else {
-    //   this.setError(stateError, 'password', false);
-    // }
 
     if (!input.password.length) {
       this.setError('password', 'Password is required');
@@ -239,13 +218,6 @@ class AddIptvScreen extends React.Component {
     } else {
       this.setState({ valid: true });
     }
-
-    // const withError = stateError.find(({ val }) => val === true);
-    // if (typeof withError !== 'undefined') {
-    //   return this.setState({ valid: false });
-    // } else {
-    //   this.setState({ valid: true });
-    // }
 
     // submit if no errors
     this.props.createAction({ input });
