@@ -35,8 +35,6 @@ const ItvChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
-  // eslint-disable-next-line no-unused-vars
-  error,
   channel,
   programs,
   getProgramsByChannelAction,
