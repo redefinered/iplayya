@@ -820,7 +820,7 @@
 				CODE_SIGN_ENTITLEMENTS = iplayya/iplayya.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = JLDCKJRS6D;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
@@ -856,7 +856,7 @@
 				CODE_SIGN_ENTITLEMENTS = iplayya/iplayya.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = JLDCKJRS6D;
 				EXCLUDED_ARCHS = "";
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
