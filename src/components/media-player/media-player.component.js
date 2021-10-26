@@ -54,7 +54,7 @@ const MediaPlayer = ({
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
   // eslint-disable-next-line no-unused-vars
-  const [error, setError] = React.useState(false);
+  const [videoError, setVideoError] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [showControls, setShowControls] = React.useState(true);
   const [sliderPosition, setSliderPosition] = React.useState(null);
@@ -87,7 +87,8 @@ const MediaPlayer = ({
 
   let player = React.useRef();
 
-  let listener = null;
+  let castListener = null;
+  let volumeListener = null;
 
   React.useEffect(() => {
     if (!client) {
@@ -101,7 +102,15 @@ const MediaPlayer = ({
   React.useEffect(() => {
     setCastSession();
 
-    listener = GoogleCast.onCastStateChanged((castState) => {
+    volumeListener = SystemSetting.addVolumeListener(({ value }) => {
+      console.log({ value });
+      setVolume(value);
+    });
+
+    /// set the volume to be equal to system volume
+    syncVolumeWithSystemVolume();
+
+    castListener = GoogleCast.onCastStateChanged((castState) => {
       console.log({ castState });
       /// switch cast state
       switch (castState) {
@@ -131,8 +140,22 @@ const MediaPlayer = ({
       // 'noDevicesAvailable' | 'notConnected' | 'connecting' | 'connected'
     });
 
-    return () => listener.remove();
+    return () => handleCleanup({ castListener, volumeListener });
   }, []);
+
+  const syncVolumeWithSystemVolume = async () => {
+    const v = await SystemSetting.getVolume('system');
+    console.log({ v });
+    setVolume(v);
+  };
+
+  const handleCleanup = ({ castListener, volumeListener }) => {
+    /// remove google-cast listener
+    castListener.remove();
+
+    /// remove system volume listener
+    SystemSetting.removeVolumeListener(volumeListener);
+  };
 
   const setCastSession = async () => {
     if (castSession) {
@@ -182,8 +205,10 @@ const MediaPlayer = ({
     setFullscreen(!fullscreen);
   };
 
-  const onBuffer = () => {
+  const handleOnBuffer = () => {
     console.log('buffering...');
+
+    setVideoError(false);
 
     // prevents loader when buffering only in IPTV because buffering in IPTV is very frequent
     if (typename === 'Iptv') return;
@@ -227,8 +252,9 @@ const MediaPlayer = ({
     }
   }, [castSessionActive]);
 
-  const videoError = () => {
-    setError(true);
+  const handleVideoError = ({ error }) => {
+    console.log({ error });
+    setVideoError(true);
   };
 
   const handleProgress = (playbackInfo) => {
@@ -277,12 +303,22 @@ const MediaPlayer = ({
           onProgress={handleProgress}
           source={{ uri: source }}
           volume={volume}
-          onBuffer={onBuffer}
-          onError={videoError}
+          onBuffer={handleOnBuffer}
+          onError={handleVideoError}
           resizeMode="contain"
           style={videoStyle}
         />
       </Pressable>
+    );
+  };
+
+  const renderVideoError = () => {
+    if (!videoError) return;
+
+    return (
+      <View style={{ paddingHorizontal: 15, marginTop: theme.spacing(2) }}>
+        <Text>Error: source unavailable</Text>
+      </View>
     );
   };
 
@@ -324,6 +360,7 @@ const MediaPlayer = ({
         }}
       >
         {renderPlayer()}
+
         <Controls
           // visible
           visible={showControls}
@@ -360,6 +397,8 @@ const MediaPlayer = ({
           style={{ position: 'absolute' }}
         />
       </View>
+
+      {renderVideoError()}
 
       {/* screencast option */}
       {/* <Modal animationType="slide" visible={showCastOptions} transparent>
