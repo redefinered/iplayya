@@ -66,7 +66,6 @@ const MediaPlayer = ({
   const [resolutions, setResolutions] = React.useState([]);
   const [buffering, setBuffering] = React.useState(false);
   const [castSessionActive, setCastSessionActive] = React.useState(false);
-  // const [timer, setTimer] = React.useState();
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
 
   const timer = React.useRef(null);
@@ -364,7 +363,8 @@ const MediaPlayer = ({
         {renderPlayer()}
 
         <Controls
-          visible={showControls}
+          // visible={showControls}
+          visible
           setShowControls={setShowControls}
           playbackInfo={playbackInfo}
           qualitySwitchable={qualitySwitchable}

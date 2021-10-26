@@ -46,6 +46,7 @@ const VideoControls = ({
 }) => {
   const [mediaInfo, setMediaInfo] = React.useState(null);
   const [showVolume, setShowVolume] = React.useState(true);
+  const [showFullscreenQualityOptions, setShowFullscreenQualityOptions] = React.useState(false);
   const client = useRemoteMediaClient();
 
   React.useEffect(() => {
@@ -183,42 +184,77 @@ const VideoControls = ({
     );
   };
 
-  const resolutionOptions = () => {
-    const { resolutions } = controlProps;
+  // const resolutionOptions = () => {
+  //   const { resolutions } = controlProps;
 
-    if (typeof resolutions === 'undefined') return;
+  //   // if (typeof resolutions === 'undefined') return;
 
-    if (controlProps.showVideoOptions) {
-      return resolutions.map(({ id, name, label }) => (
-        <Pressable
-          key={id}
-          onPressIn={() => controlProps.setActiveState(name)}
-          onPress={() => controlProps.handleSelectResolution(name)}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            height: 50,
-            backgroundColor:
-              controlProps.activeState === name ? theme.iplayya.colors.white10 : 'transparent',
-            paddingHorizontal: 15
-          }}
-        >
-          <View style={{ flex: 10.5 }}>
-            <Text
-              style={{
-                color:
-                  controlProps.resolution === name
-                    ? theme.iplayya.colors.vibrantpussy
-                    : theme.colors.text,
-                ...createFontFormat(16, 22)
-              }}
-            >
-              {label}
-            </Text>
+  //   if (controlProps.showVideoOptions) {
+  //     return;
+  //   }
+  // };
+
+  const handleVideoQualityButtonPress = () => {
+    if (isFullscreen) return setShowFullscreenQualityOptions(!showFullscreenQualityOptions);
+
+    controlProps.toggleVideoOptions();
+  };
+
+  const renderVideoQualityButton = () => {
+    if (!controlProps.qualitySwitchable) return;
+
+    return (
+      <View style={{ position: 'relative', zIndex: 111 }}>
+        <ButtonIconDefault
+          iconName="video-quality"
+          pressAction={handleVideoQualityButtonPress}
+          iconSize={3}
+        />
+        {showFullscreenQualityOptions && (
+          <View
+            style={{
+              backgroundColor: '#202530',
+              width: 250,
+              position: 'absolute',
+              bottom: '100%',
+              left: 0
+            }}
+          >
+            {controlProps.resolutions.map(({ id, name, label }) => (
+              <Pressable
+                key={id}
+                onPressIn={() => controlProps.setActiveState(name)}
+                onPress={() => controlProps.handleSelectResolution(name)}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 50,
+                  backgroundColor:
+                    controlProps.activeState === name
+                      ? theme.iplayya.colors.white10
+                      : 'transparent',
+                  paddingHorizontal: 15
+                }}
+              >
+                <View style={{ flex: 10.5 }}>
+                  <Text
+                    style={{
+                      color:
+                        controlProps.resolution === name
+                          ? theme.iplayya.colors.vibrantpussy
+                          : theme.colors.text,
+                      ...createFontFormat(16, 22)
+                    }}
+                  >
+                    {label}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
           </View>
-        </Pressable>
-      ));
-    }
+        )}
+      </View>
+    );
   };
 
   const renderBottomControls = () => {
@@ -231,7 +267,7 @@ const VideoControls = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           position: 'relative',
-          zIndex: 104,
+          zIndex: 111,
           marginBottom: -10
         }}
       >
@@ -241,26 +277,8 @@ const VideoControls = ({
             pressAction={toggleVolume}
             iconSize={3}
           />
-          {controlProps.qualitySwitchable ? (
-            <React.Fragment>
-              <ButtonIconDefault
-                iconName="video-quality"
-                pressAction={controlProps.toggleVideoOptions}
-                iconSize={3}
-              />
-              <View
-                style={{
-                  backgroundColor: '#202530',
-                  width: 250,
-                  position: 'absolute',
-                  bottom: '100%',
-                  left: 0
-                }}
-              >
-                {resolutionOptions()}
-              </View>
-            </React.Fragment>
-          ) : null}
+
+          {renderVideoQualityButton()}
         </View>
         <ButtonIconDefault
           iconName={isFullscreen ? 'normal-screen' : 'fullscreen'}
@@ -371,7 +389,7 @@ const VideoControls = ({
         {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
 
-      <View style={{ position: 'relative', zIndex: 101 }}>
+      <View style={{ position: 'relative', zIndex: 111 }}>
         {renderBottomControls()}
 
         {renderProgressSlider()}
