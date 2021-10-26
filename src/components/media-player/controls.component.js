@@ -302,7 +302,8 @@ const VideoControls = ({
   if (!controlProps.visible) return <View />;
 
   return (
-    <View
+    <Pressable
+      onPress={() => controlProps.setShowControls(false)}
       style={{
         backgroundColor: theme.iplayya.colors.black50,
         opacity: controlProps.visible ? 1 : 0,
@@ -375,7 +376,7 @@ const VideoControls = ({
 
         {renderProgressSlider()}
       </View>
-    </View>
+    </Pressable>
   );
 };
 
