@@ -66,8 +66,10 @@ const MediaPlayer = ({
   const [resolutions, setResolutions] = React.useState([]);
   const [buffering, setBuffering] = React.useState(false);
   const [castSessionActive, setCastSessionActive] = React.useState(false);
-  const [timer, setTimer] = React.useState();
+  // const [timer, setTimer] = React.useState();
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
+
+  const timer = React.useRef(null);
 
   /// switches root container style depending on screen orientation
   React.useEffect(() => {
@@ -90,7 +92,7 @@ const MediaPlayer = ({
       return setCastSessionActive(false);
     }
 
-    if (timer) clearTimeout(timer);
+    if (timer.current) clearTimeout(timer.current);
     setCastSessionActive(true);
   }, [client]);
 
@@ -214,7 +216,7 @@ const MediaPlayer = ({
   };
 
   const hideControls = (duration = 5) => {
-    return setTimeout(() => {
+    timer.current = setTimeout(() => {
       setShowControls(false);
       setVolumeSliderVisible(false);
     }, duration * 1000);
@@ -224,20 +226,25 @@ const MediaPlayer = ({
     if (paused) {
       // console.log('paused');
       setShowControls(true);
-      if (timer) clearTimeout(timer);
+      if (timer.current) clearTimeout(timer.current);
     } else {
       if (client) return;
 
       /// don't hide controls if program did not buffer
       // if (!buffering) return;
 
-      setTimer(hideControls(10));
+      // setTimer(hideControls(10));
+      hideControls(10);
     }
   }, [paused]);
 
   React.useEffect(() => {
-    if (showControls) hideControls();
-  }, [showControls]);
+    if (showControls) {
+      if (timer.current) clearTimeout(timer.current);
+
+      hideControls(10);
+    }
+  }, [showControls, timer.current]);
 
   /// cancel hide control timeout if cast session is active
   React.useEffect(() => {
@@ -357,7 +364,6 @@ const MediaPlayer = ({
         {renderPlayer()}
 
         <Controls
-          // visible
           visible={showControls}
           setShowControls={setShowControls}
           playbackInfo={playbackInfo}
