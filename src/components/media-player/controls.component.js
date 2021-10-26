@@ -116,28 +116,41 @@ const VideoControls = ({
   };
 
   const getFullscreenStyle = () => {
-    let WIDTH, V_SLIDER_MARGIN_OFFSET;
-    const V_SLIDER_MARGIN = 30;
+    let WIDTH, TOP_OFFSET;
+
+    const SLIDER_WIDTH = 5;
+    const ROTATED_TOP_ZERO = 25 + SLIDER_WIDTH;
+    const ROTATED_LEFT_ZERO = -25 - SLIDER_WIDTH;
+
+    const V_SLIDER_MARGIN = 10;
+    const NORMAL_SCREEN_VIDEO_HEIGHT = 211;
+
+    const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
     if (isFullscreen) {
       WIDTH = 200;
-      V_SLIDER_MARGIN_OFFSET = -WIDTH / 2;
+
+      const FULLSCREEN_ROTATED_LEFT_ZERO = -65;
+      const FULLSCREEN_ROTATED_TOP_ZERO = 80;
+
+      const SCREEN_WIDTH_DIVIDED_BY_TWO = SCREEN_WIDTH / 2;
+      const WIDTH_WIDTH_DIVIDED_BY_TWO = WIDTH / 2;
 
       return {
-        width: WIDTH,
-        top: 150,
+        width: 200,
+        top: FULLSCREEN_ROTATED_TOP_ZERO + SCREEN_WIDTH_DIVIDED_BY_TWO - WIDTH_WIDTH_DIVIDED_BY_TWO,
         left: DeviceInfo.hasNotch()
-          ? V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN + 30
-          : V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN
+          ? FULLSCREEN_ROTATED_LEFT_ZERO + 30
+          : FULLSCREEN_ROTATED_LEFT_ZERO
       };
     } else {
       WIDTH = 100;
-      V_SLIDER_MARGIN_OFFSET = -WIDTH / 2;
+      TOP_OFFSET = NORMAL_SCREEN_VIDEO_HEIGHT / 2 - 15; /// 15 is to nudge the slider a little up ward so it does not ovarlap with the volume button
 
       return {
-        width: WIDTH,
-        top: 50,
-        left: V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN
+        width: 100,
+        top: ROTATED_TOP_ZERO + TOP_OFFSET - WIDTH / 2,
+        left: ROTATED_LEFT_ZERO + V_SLIDER_MARGIN
       };
     }
   };
@@ -147,49 +160,26 @@ const VideoControls = ({
     if (castSessionActive) return;
     if (!showVolume) return;
 
-    // const V_SLIDER_MARGIN_OFFSET = -50;
-    // const V_SLIDER_MARGIN = 30;
-    // const LEFT_POSITION = DeviceInfo.hasNotch()
-    //   ? V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN + 30
-    //   : V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN;
-
-    // if (isFullscreen)
-    //   return (
-    //     <Slider
-    //       style={{
-    //         zIndex: 110,
-    //         width: 200,
-    //         position: 'absolute',
-    //         left: -100 + 24,
-    //         top: 150
-    //       }}
-    //       onValueChange={handleVolumeChange}
-    //       value={controlProps.volume}
-    //       minimumValue={0}
-    //       maximumValue={1}
-    //       transform={[{ rotate: '-90deg' }]}
-    //       minimumTrackTintColor={theme.iplayya.colors.white100}
-    //       maximumTrackTintColor={theme.iplayya.colors.white25}
-    //     />
-    //   );
-
     return (
-      <Slider
+      <View
         style={{
           zIndex: 110,
           position: 'absolute',
-          height: 80,
+          // backgroundColor: 'green',
+          transform: [{ rotate: '-90deg' }],
           ...getFullscreenStyle()
         }}
-        thumbImage={volumeThumbTransparent}
-        onValueChange={handleVolumeChange}
-        value={controlProps.volume}
-        minimumValue={0}
-        maximumValue={1}
-        transform={[{ rotate: '-90deg' }]}
-        minimumTrackTintColor={theme.iplayya.colors.white100}
-        maximumTrackTintColor={theme.iplayya.colors.white25}
-      />
+      >
+        <Slider
+          thumbImage={volumeThumbTransparent}
+          onValueChange={handleVolumeChange}
+          value={controlProps.volume}
+          minimumValue={0}
+          maximumValue={1}
+          minimumTrackTintColor={theme.iplayya.colors.white100}
+          maximumTrackTintColor={theme.iplayya.colors.white25}
+        />
+      </View>
     );
   };
 
@@ -246,21 +236,11 @@ const VideoControls = ({
         }}
       >
         <View style={{ flexDirection: 'row' }}>
-          {/* <Pressable>
-            <Icon
-              name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
-              size={theme.iconSize(3)}
-              style={{ marginRight: 15 }}
-            />
-          </Pressable> */}
           <ButtonIconDefault
             iconName={controlProps.volume > 0 ? 'volume' : 'volume-off'}
             pressAction={toggleVolume}
             iconSize={3}
           />
-          {/* <Pressable>
-              <Icon name="caption" size={25} style={{ marginRight: 15 }} />
-            </Pressable> */}
           {controlProps.qualitySwitchable ? (
             <React.Fragment>
               <ButtonIconDefault
@@ -407,6 +387,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     justifyContent: 'space-between',
     zIndex: 99
+    // backgroundColor: 'red'
   },
   containerStyleFullScreen: {
     width: Dimensions.get('window').height,
