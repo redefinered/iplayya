@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, View, Modal, Pressable, ImageBackground } from 'react-native';
+import { Dimensions, View, Modal, Pressable, ImageBackground, StyleSheet } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
-// import FullScreenPlayer from './fullscreen-player.component';
+import ButtonIconDefault from 'components/button-icon-default/button-icon-default.component';
 import Controls from './controls.component';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -53,9 +53,9 @@ const MediaPlayer = ({
 }) => {
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
-  const [videoError, setVideoError] = React.useState(false);
+  const [videoError, setVideoError] = React.useState(true);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
-  const [showControls, setShowControls] = React.useState(true);
+  const [showControls, setShowControls] = React.useState(false);
   const [sliderPosition, setSliderPosition] = React.useState(null);
   const [volume, setVolume] = React.useState(0.5);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
@@ -313,13 +313,72 @@ const MediaPlayer = ({
     );
   };
 
-  const renderVideoError = () => {
-    if (!videoError) return;
+  const handleErrorClose = () => {
+    setFullscreen(false);
+  };
+
+  const renderControls = () => {
+    if (videoError)
+      return (
+        <View
+          style={{
+            ...StyleSheet.absoluteFillObject,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Text style={{ color: theme.iplayya.colors.white50 }}>
+            Error: video source unavailable
+          </Text>
+          {fullscreen && (
+            <View style={{ position: 'absolute', top: 15, right: 15 }}>
+              <ButtonIconDefault
+                pressAction={handleErrorClose}
+                iconName="close"
+                iconSize={3}
+                color={theme.iplayya.colors.white50}
+              />
+            </View>
+          )}
+        </View>
+      );
 
     return (
-      <View style={{ paddingHorizontal: 15, marginTop: theme.spacing(2) }}>
-        <Text>Error: source unavailable</Text>
-      </View>
+      <Controls
+        visible={showControls}
+        // visible
+        setShowControls={setShowControls}
+        playbackInfo={playbackInfo}
+        qualitySwitchable={qualitySwitchable}
+        volume={volume}
+        setVolume={setVolume}
+        buffering={buffering}
+        multipleMedia={multipleMedia}
+        title={title}
+        seriesTitle={seriesTitle}
+        togglePlay={togglePlay}
+        paused={paused}
+        setPaused={setPaused}
+        toggleFullscreen={handleFullscreenToggle}
+        setSliderPosition={setSliderPosition}
+        toggleVolumeSliderVisible={toggleVolumeSliderVisible}
+        toggleCastOptions={handleToggleCastOptions}
+        toggleVideoOptions={handleToggleVideoOptions}
+        previousAction={previousAction}
+        nextAction={nextAction}
+        isFirstEpisode={isFirstEpisode}
+        isLastEpisode={isLastEpisode}
+        resolutions={resolutions}
+        resolution={resolution}
+        activeState={activeState}
+        setActiveState={setActiveState}
+        handleSelectResolution={handleSelectResolution}
+        typename={typename}
+        source={source}
+        castSessionActive={castSessionActive}
+        isFullscreen={fullscreen}
+        style={{ position: 'absolute' }}
+      />
     );
   };
 
@@ -339,21 +398,6 @@ const MediaPlayer = ({
         marginBottom: fullscreen ? 0 : theme.spacing(2)
       }}
     >
-      {/* <Button onPress={() => setFullscreen(!fullscreen)}>fullscreen</Button> */}
-      {/* {error && (
-        <View
-          style={{
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        >
-          <Text>VIDEO ERROR</Text>
-        </View>
-      )} */}
       <View
         style={{
           backgroundColor: 'black',
@@ -362,44 +406,8 @@ const MediaPlayer = ({
       >
         {renderPlayer()}
 
-        <Controls
-          // visible={showControls}
-          visible
-          setShowControls={setShowControls}
-          playbackInfo={playbackInfo}
-          qualitySwitchable={qualitySwitchable}
-          volume={volume}
-          setVolume={setVolume}
-          buffering={buffering}
-          multipleMedia={multipleMedia}
-          title={title}
-          seriesTitle={seriesTitle}
-          togglePlay={togglePlay}
-          paused={paused}
-          setPaused={setPaused}
-          toggleFullscreen={handleFullscreenToggle}
-          setSliderPosition={setSliderPosition}
-          toggleVolumeSliderVisible={toggleVolumeSliderVisible}
-          toggleCastOptions={handleToggleCastOptions}
-          toggleVideoOptions={handleToggleVideoOptions}
-          previousAction={previousAction}
-          nextAction={nextAction}
-          isFirstEpisode={isFirstEpisode}
-          isLastEpisode={isLastEpisode}
-          resolutions={resolutions}
-          resolution={resolution}
-          activeState={activeState}
-          setActiveState={setActiveState}
-          handleSelectResolution={handleSelectResolution}
-          typename={typename}
-          source={source}
-          castSessionActive={castSessionActive}
-          isFullscreen={fullscreen}
-          style={{ position: 'absolute' }}
-        />
+        {renderControls()}
       </View>
-
-      {renderVideoError()}
 
       {/* screencast option */}
       {/* <Modal animationType="slide" visible={showCastOptions} transparent>
