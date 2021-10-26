@@ -11,6 +11,7 @@ const { Types, Creators } = createActions(
     update: ['data'],
     updateSuccess: ['data'],
     updateFailure: ['error'],
+    changePasswordStart: [],
     changePassword: ['data'],
     changePasswordSuccess: null,
     changePasswordFailure: ['error'],
