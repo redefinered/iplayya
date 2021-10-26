@@ -20,7 +20,7 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import CastButton from 'components/cast-button/cast-button.component';
 import { useRemoteMediaClient } from 'react-native-google-cast';
-import SystemSetting from 'react-native-system-setting';
+// import SystemSetting from 'react-native-system-setting';
 import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
 // import volumeThumb from 'assets/volume-thumb.png';
@@ -44,23 +44,9 @@ const VideoControls = ({
   updatePlaybackInfoAction,
   ...controlProps
 }) => {
-  // const headerHeight = useHeaderHeight();
   const [mediaInfo, setMediaInfo] = React.useState(null);
   const [showVolume, setShowVolume] = React.useState(true);
-  // const [savedVolume, setSavedVolume] = React.useState(controlProps.volume);
   const client = useRemoteMediaClient();
-
-  React.useEffect(() => {
-    const volumeListener = SystemSetting.addVolumeListener((data) => {
-      const volume = data.value;
-      setVolume(volume);
-    });
-
-    // console.log({ x: DeviceInfo.hasNotch() });
-    // console.log({ headerHeight });
-
-    return () => SystemSetting.removeVolumeListener(volumeListener);
-  }, []);
 
   React.useEffect(() => {
     if (client) {
@@ -380,6 +366,7 @@ const VideoControls = ({
           <PrevButton onPress={handlePreviousButtonPress} disabled={isFirstEpisode} />
         )}
         <TouchableRipple
+          borderless
           onPress={() => controlProps.togglePlay()}
           style={{
             width: 60,
