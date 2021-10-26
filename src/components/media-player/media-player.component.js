@@ -53,7 +53,6 @@ const MediaPlayer = ({
 }) => {
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
-  // eslint-disable-next-line no-unused-vars
   const [videoError, setVideoError] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [showControls, setShowControls] = React.useState(true);
@@ -70,16 +69,12 @@ const MediaPlayer = ({
   const [timer, setTimer] = React.useState();
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
 
-  // console.log({ volume });
-
   /// switches root container style depending on screen orientation
   React.useEffect(() => {
     if (fullscreen) return setVideoStyle(VIDEO_STYLE_FULLSCREEN);
 
     return setVideoStyle(VIDEO_STYLE);
   }, [fullscreen]);
-
-  // console.log('test');
 
   React.useEffect(() => {
     SystemSetting.setVolume(volume, { showUI: false });
