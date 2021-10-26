@@ -16,7 +16,7 @@ import moment from 'moment';
 import theme from 'common/theme';
 
 const MediaPlayerSlider = ({ playbackInfo, setPausedAction, setSliderPosition }) => {
-  const [value, setValue] = React.useState();
+  const [value, setValue] = React.useState(null);
   const [remainingTime, setRemainingTime] = React.useState(0);
   const [currentTime, setCurrentTime] = React.useState(0);
   const [thumb, setThumb] = React.useState(thumbImage);
