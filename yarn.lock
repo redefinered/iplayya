@@ -7009,10 +7009,10 @@ react-native-gesture-handler@^1.8.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-google-cast@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-google-cast/-/react-native-google-cast-4.0.3.tgz#f9a4ae583ed8a6b423f3ed2efb3a828392d42cdc"
-  integrity sha512-gEGexpeZS7Axac1xefeXH3vhgzndeYEk66NFPt8YnogSRv1UXEb9missKUAZr+NJDpLwpO06h2ILHmxZoabn3Q==
+react-native-google-cast@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-google-cast/-/react-native-google-cast-4.1.2.tgz#8a2b83849034029665f49fb36222c2439abb6c12"
+  integrity sha512-XfrbYBjhNCOz3JOoFEiLHqKJyAAdyAA8c5Ga/U0xdG4ejcPXFgVWnErANxwyH77wxQRhkCZ+hGRO8w1PFNuVCA==
 
 react-native-image-picker@^3.3.4:
   version "3.3.4"
