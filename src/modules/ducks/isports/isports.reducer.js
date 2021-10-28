@@ -58,7 +58,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      genres: action.data
+      genres: orderBy(action.data, 'number', 'asc')
     };
   },
   [Types.GET_GENRES_FAILURE]: (state, action) => {

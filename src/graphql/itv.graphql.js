@@ -12,6 +12,7 @@ export const GET_GENRES = gql`
   query GET_GENRES {
     iptvGenres {
       id
+      number
       title
     }
   }
