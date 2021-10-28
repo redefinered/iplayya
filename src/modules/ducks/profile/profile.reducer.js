@@ -8,7 +8,8 @@ const INITIAL_STATE = {
   isFetching: false,
   profile: null,
   updateResponse: null,
-  updated: false
+  updated: false,
+  authenticatedEmailChange: false
 };
 
 export default createReducer(INITIAL_STATE, {
@@ -35,7 +36,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       error: null,
       isFetching: false,
-      profile: action.profile
+      profile: action.profile,
+      authenticatedEmailChange: false
     };
   },
   [Types.GET_FAILURE]: (state, action) => {
@@ -59,7 +61,8 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       isFetching: false,
       updateResponse,
-      updated: true
+      updated: true,
+      authenticatedEmailChange: false
     };
   },
   [Types.UPDATE_FAILURE]: (state, action) => {
@@ -69,6 +72,29 @@ export default createReducer(INITIAL_STATE, {
       isFetching: false,
       updateResponse: null,
       updated: false
+    };
+  },
+  [Types.AUTHENTICATE_EMAIL_CHANGE]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: true
+    };
+  },
+  [Types.AUTHENTICATE_EMAIL_CHANGE_SUCCESS]: (state) => {
+    return {
+      ...state,
+      error: null,
+      isFetching: false,
+      authenticatedEmailChange: true
+    };
+  },
+  [Types.AUTHENTICATE_EMAIL_CHANGE_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      error: action.error,
+      isFetching: false,
+      authenticatedEmailChange: false
     };
   },
   [Types.REMOVE_PROFILE]: (state) => {
