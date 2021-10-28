@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
-
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Modal, View, FlatList } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
@@ -24,6 +23,7 @@ const ResolutionsOptionsModal = ({
     setShowVideoOptions(false);
   };
 
+  // eslint-disable-next-line react/prop-types
   const renderItem = ({ item: { name, label } }) => {
     return (
       <TouchableRipple
@@ -55,7 +55,7 @@ const ResolutionsOptionsModal = ({
     <Modal animationType="slide" visible={visible} transparent>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: '#202530', paddingTop: 20 }}>
-          <FlatList data={data} keyExtractor={(item) => item.id} renderItem={renderItem} />
+          <FlatList data={data} keyExtractor={(item) => item.name} renderItem={renderItem} />
           <Spacer size={20} />
           <View
             style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}
@@ -74,6 +74,13 @@ const ResolutionsOptionsModal = ({
       </View>
     </Modal>
   );
+};
+
+ResolutionsOptionsModal.propTypes = {
+  visible: PropTypes.bool.isRequired,
+  data: PropTypes.object.isRequired,
+  handleSelectResolution: PropTypes.func,
+  setShowVideoOptions: PropTypes.func
 };
 
 export default React.memo(ResolutionsOptionsModal);
