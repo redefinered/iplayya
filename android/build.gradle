@@ -2,19 +2,34 @@
 
 buildscript {
     ext {
+        /// firebase-messaging setup -- for remote notification
+        // googlePlayServicesVersion = "<Your play services version>" // default: "+"
+        // firebaseMessagingVersion = "<Your Firebase version>" // default: "21.1.0"
+
         buildToolsVersion = "29.0.2"
-        minSdkVersion = 16
+        minSdkVersion = 21
         compileSdkVersion = 29
         targetSdkVersion = 29
+
+        // @react-native-community/netinfo configuration
+        androidXCore = "1.0.2"
+
+        // react-native-google-cast configuration
+        castFrameworkVersion = "19.0.0"
     }
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.3")
+        classpath('com.android.tools.build:gradle:4.0.1')
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
+
+        /// TODO: Finish firebase-messaging setup
+        // continue setup here: https://github.com/zo0r/react-native-push-notification#if-you-use-remote-notifications
+        // for remote notifications
+        classpath('com.google.gms:google-services:4.3.8')
     }
 }
 

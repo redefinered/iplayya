@@ -1,15 +1,26 @@
 package com.iplayya;
 
+// for remote notifications
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
 import android.app.Application;
 import android.content.Context;
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+
+//import com.ninty.system.setting.SystemSettingPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -26,6 +37,9 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+//          packages.add(new SystemSettingPackage());
+//            packages.add(new ReactNativePushNotificationPackage());
+
           return packages;
         }
 
@@ -45,6 +59,9 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
+    long size = 50L * 1024L * 1024L; // 50 MB
+    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
   }
 
   /**

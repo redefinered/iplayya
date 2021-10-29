@@ -32,6 +32,10 @@
     "no-alert": 2,
     "react/jsx-uses-react": 2,
     "react/jsx-uses-vars": 2,
-    "prettier/prettier": "error"
+    "prettier/prettier": [ "error", 
+    {
+      "endOfLine": "auto"
+    }
+  ]
   }
 }

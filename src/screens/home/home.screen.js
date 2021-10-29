@@ -1,54 +1,111 @@
+/* eslint-disable react/prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SafeAreaView, Dimensions } from 'react-native';
+import ContentWrap from 'components/content-wrap.component';
+import ScreenContainer from 'components/screen-container.component';
+import HomeMenu from 'components/home-menu/home-menu.component';
+import WelcomeDialog from 'components/welcome-dialog/welcome-dialog.component';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
+import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
+import withLoader from 'components/with-loader.component';
+import { Creators } from 'modules/ducks/movies/movies.actions';
+import AlertModal from 'components/alert-modal/alert-modal.component';
+import { compose } from 'redux';
+import HomeGuide from 'components/walkthrough-guide/home-guide.component';
+import { selectNewNotification } from 'modules/ducks/notifications/notifications.selectors.js';
 
-import Video from 'react-native-video';
+const Home = ({
+  error,
+  navigation,
+  completedOnboarding,
+  setBottomTabsVisibleAction,
+  getMoviesStartAction,
+  resetCategoryPaginatorAction,
+  enableSwipeAction,
+  newNotification
+}) => {
+  const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
+  const [showErrorModal, setShowErrorModal] = React.useState(true);
+  const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
-class Home extends React.Component {
-  constructor(props) {
-    super(props);
+  React.useEffect(() => {
+    getMoviesStartAction();
+    enableSwipeAction(true);
 
-    this.state = {
-      videoError: null,
-      videoBuffering: false
-    };
-  }
+    // makes sure main tab navigation is always visible on application mount
+    setBottomTabsVisibleAction({ hideTabs: false });
+  }, []);
 
-  handleVideoError = () => {
-    // this.setState({ videoError: 'Error loading the video' });
-    console.log('Error loading the video');
+  React.useEffect(() => {
+    if (completedOnboarding) {
+      setShowWelcomeDialog(false);
+    } else {
+      setShowWelcomeDialog(true);
+    }
+  }, [completedOnboarding]);
+
+  React.useEffect(() => {
+    if (!newNotification) return;
+
+    navigation.navigate('ChannelDetailScreen', { channelId: newNotification.data.channelId });
+  }, [newNotification]);
+
+  const handleWelcomeHide = () => {
+    setShowWelcomeDialog(false);
   };
 
-  handleVideoBuffering = () => {
-    // this.setState({ videoBuffering: true });
-    console.log('buffering...');
+  const handleHomeGuideHide = () => {
+    setShowHomeGuide(false);
   };
 
-  render() {
-    const uri = 'http://195.181.160.220:2080/9/video.m3u8';
-    const type = 'm3u8';
+  React.useEffect(() => {
+    if (error) {
+      setShowErrorModal(true);
+    } else {
+      setShowErrorModal(false);
+    }
+  }, [error]);
 
-    return (
-      <SafeAreaView>
-        <Video
-          fullscreen
-          controls
-          source={{ type, uri }}
-          ref={(ref) => {
-            this.player = ref;
-          }} // Store reference
-          onBuffer={this.handleVideoBuffering} // Callback when remote video is buffering
-          onError={this.handleVideoError} // Callback when video cannot be loaded
-          style={{
-            width: Dimensions.get('window').width,
-            height: 200,
-            backgroundColor: 'black'
-          }}
+  const handleHideErrorModal = () => {
+    setShowErrorModal(false);
+  };
+
+  const handleProfileErrorConfirmAction = () => {
+    getMoviesStartAction();
+    // getCategoriesAction();
+    resetCategoryPaginatorAction();
+
+    // hide error modal after retry
+    setShowErrorModal(false);
+  };
+
+  return (
+    <ContentWrap style={{ marginTop: 20 }}>
+      <HomeMenu navigation={navigation} />
+      <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
+      <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
+      {error && (
+        <AlertModal
+          variant="danger"
+          message={error}
+          visible={showErrorModal}
+          hideAction={handleHideErrorModal}
+          confirmText="Retry"
+          confirmAction={handleProfileErrorConfirmAction}
         />
-      </SafeAreaView>
-    );
-  }
-}
+      )}
+    </ContentWrap>
+  );
+};
+
+const Container = (props) => (
+  <ScreenContainer backgroundType="image" withHeaderPush>
+    <Home {...props} />
+  </ScreenContainer>
+);
 
 Home.propTypes = {
   currentUser: PropTypes.object,
@@ -56,4 +113,19 @@ Home.propTypes = {
   helloAction: PropTypes.func
 };
 
-export default Home;
+const mapStateToProps = createStructuredSelector({
+  error: selectError,
+  isFetching: selectIsFetching,
+  newNotification: selectNewNotification
+});
+
+const actions = {
+  setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
+  getMoviesStartAction: Creators.getMoviesStart,
+  resetCategoryPaginatorAction: Creators.resetCategoryPaginator,
+  enableSwipeAction: NavActionCreators.enableSwipe
+};
+
+const enhance = compose(connect(mapStateToProps, actions), withLoader);
+
+export default enhance(Container);

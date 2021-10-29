@@ -1,0 +1,47 @@
+platform :android do
+  desc 'Build the Android application.'
+  lane :build do
+    gradle(task: 'clean', project_dir: 'android/')
+    gradle(task: 'assemble', build_type: 'release', project_dir: 'android/')
+  end
+
+  desc 'Build and upload to App Center.'
+  lane :beta do
+  build
+  appcenter_upload(
+    api_token: ENV["TEST_APPCENTER_API_TOKEN"],
+    owner_name: ENV["TEST_APPCENTER_OWNER_NAME"],
+    app_name: ENV["APPCENTER_APP_NAME"],
+    apk: ENV["APPCENTER_DISTRIBUTE_APK"]
+  )
+  end
+end
+
+# platform :ios do    
+#   desc 'Fetch certificates and provisioning profiles'
+#   lane :certificates do
+#     match(app_identifier: 'com.iplayya.app')
+#   end
+
+#   desc 'Fetch certificates. Build the iOS application.'
+#   lane :build do
+#     certificates
+#     gym(
+#       scheme: "iplayya",
+#       workspace: './ios/iplayya.xcworkspace',
+#       # project: './ios/iplayya.xcodeproj', # Use this command if you don't have an iOS .xcworkspace file.
+#       export_method: 'development'
+#     )
+#   end
+  
+#   desc 'Fetch certificates, build and upload to App Center.'
+#   lane :beta do
+#     build
+#     appcenter_upload(
+#       api_token: ENV["TEST_APPCENTER_API_TOKEN"],
+#       owner_name: ENV["TEST_APPCENTER_OWNER_NAME"],
+#       app_name: ENV["APPCENTER_APP_NAME"],
+#       ipa: ENV["APPCENTER_DISTRIBUTE_IPA"]
+#     )
+#   end
+# end

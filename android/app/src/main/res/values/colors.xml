@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="primary_color">#ffffff</color>
+  <color name="background">#2D1449</color>
+  <color name="primary_dark">#000000</color>
+  <color name="gradient_start">#0D0637</color>
+  <color name="gradient_end">#2D1449</color>
+  <color name="vibrant_pussy">#E34398</color>
+</resources>

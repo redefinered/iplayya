@@ -1,12 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import { Button as RNPButton } from 'react-native-paper';
 
-const Button = ({ style, ...otherProps }) => (
-  <RNPButton style={{ paddingVertical: 10, ...style }} {...otherProps}>
-    {otherProps.children}
-  </RNPButton>
-);
+const Button = ({ children, style, ...otherProps }) => {
+  return (
+    <View style={{ minHeight: 64, justifyContent: 'flex-end' }}>
+      <RNPButton
+        uppercase={false}
+        contentStyle={{ height: 50 }}
+        labelStyle={{ fontWeight: 'bold' }}
+        style={{ fontSize: 14, fontWeight: 19, ...style }}
+        {...otherProps}
+      >
+        {children}
+      </RNPButton>
+    </View>
+  );
+};
 
 Button.propTypes = {
   children: PropTypes.any,
