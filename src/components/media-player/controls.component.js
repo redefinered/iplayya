@@ -12,26 +12,23 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { createFontFormat } from 'utils';
 import MediaPlayerSlider from './media-player-slider.component';
+import ChromecastButton from 'components/cast-button/cast-button.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
   selectCurrentTime,
   selectRemainingTime,
   selectDuration
 } from 'modules/ducks/movies/movies.selectors';
-import CastButton from 'components/cast-button/cast-button.component';
-import { useRemoteMediaClient } from 'react-native-google-cast';
-// import SystemSetting from 'react-native-system-setting';
+import GoogleCast, { useRemoteMediaClient } from 'react-native-google-cast';
 import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
-// import volumeThumb from 'assets/volume-thumb.png';
 import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import DeviceInfo from 'react-native-device-info';
 
 const VideoControls = ({
   playbackInfo,
   theme,
-  currentTime,
-  buffering,
+  // buffering,
   previousAction,
   nextAction,
   isFirstEpisode,
@@ -39,35 +36,37 @@ const VideoControls = ({
   multipleMedia,
   setVolume,
   isFullscreen,
-  source,
   castSessionActive,
-  updatePlaybackInfoAction,
+  // updatePlaybackInfoAction,
+  // setPlaybackInfo,
   ...controlProps
 }) => {
-  const [mediaInfo, setMediaInfo] = React.useState(null);
+  const sessionManager = GoogleCast.getSessionManager();
+  // const client = useRemoteMediaClient();
+  // const [mediaStatus, setMediaStatus] = React.useState(null);
   const [showVolume, setShowVolume] = React.useState(true);
   const [showFullscreenQualityOptions, setShowFullscreenQualityOptions] = React.useState(false);
-  const client = useRemoteMediaClient();
 
-  React.useEffect(() => {
-    if (client) {
-      getMediaStatus();
-    }
-  }, [client]);
+  // React.useEffect(() => {
+  //   if (client) {
+  //     const mediaStatusListener = client.onMediaStatusUpdated((mediaStatus) => {
+  //       if (!mediaStatus) return;
 
-  React.useEffect(() => {
-    if (client) {
-      if (!mediaInfo) return;
-      const { streamDuration } = mediaInfo;
-      const { setPaused } = controlProps;
-      client.onMediaProgressUpdated((streamPosition) => {
-        setPaused(false);
-        updatePlaybackInfoAction({
-          playbackInfo: { seekableDuration: streamDuration, currentTime: streamPosition }
-        });
-      });
-    }
-  });
+  //       setMediaStatus(mediaStatus);
+  //     });
+
+  //     const mediaProgressListener = client.onMediaProgressUpdated((p, d) => {
+  //       controlProps.setPaused(false);
+
+  //       setPlaybackInfo({ seekableDuration: d, currentTime: p });
+  //     });
+
+  //     return () => {
+  //       mediaProgressListener.remove();
+  //       mediaStatusListener.remove();
+  //     };
+  //   }
+  // }, [client]);
 
   const handleNextButtonPress = () => {
     nextAction();
@@ -77,12 +76,6 @@ const VideoControls = ({
   const handlePreviousButtonPress = () => {
     previousAction();
     controlProps.setShowControls(true);
-  };
-
-  const getMediaStatus = async () => {
-    if (!client) return;
-    const { mediaInfo } = await client.getMediaStatus();
-    setMediaInfo(mediaInfo);
   };
 
   // const handleSlidingStart = () => {
@@ -307,7 +300,7 @@ const VideoControls = ({
   };
 
   const getContentTitle = () => {
-    if (castSessionActive) return 'Connected to Google Cast';
+    if (castSessionActive) return 'Connected to chromecast';
 
     return controlProps.seriesTitle || controlProps.title;
   };
@@ -317,11 +310,79 @@ const VideoControls = ({
     return styles.containerStyle;
   };
 
+  const handleStopCasting = async () => {
+    console.log('stopping....', { sessionManager });
+    await sessionManager.endCurrentSession(true);
+  };
+
+  const renderCastButton = () => {
+    const { title, seriesTitle, source } = controlProps;
+    return (
+      <ChromecastButton
+        title={title || seriesTitle}
+        subtitle="Test subtitle"
+        source={source}
+        showListAction={() => controlProps.setShowChromecastOptions(true)}
+        stopCastingAction={handleStopCasting}
+        style={{ width: 24, height: 24 }}
+      />
+    );
+  };
+
+  const handlePlayButtonPress = async () => {
+    // if (castSessionActive) {
+    //   if (!client) return;
+    //   if (!mediaStatus) return;
+    //   /// pause media if already playing
+    //   if (mediaStatus.playerState === 'playing') return await client.pause();
+
+    //   return await client.play();
+    // }
+
+    controlProps.togglePlay();
+  };
+
+  const renderPlayButton = () => {
+    // if (!mediaStatus)
+    //   return (
+    //     <Icon
+    //       name={controlProps.paused ? 'circular-play' : 'circular-pause'}
+    //       size={theme.iconSize(7)}
+    //     />
+    //   );
+
+    // if (buffering)
+    //   return <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />;
+
+    // if (castSessionActive) {
+    //   return (
+    //     <Icon
+    //       name={mediaStatus.playerState === 'playing' ? 'circular-pause' : 'circular-play'}
+    //       size={theme.iconSize(7)}
+    //     />
+    //   );
+    // }
+
+    return (
+      <Icon
+        name={controlProps.paused ? 'circular-play' : 'circular-pause'}
+        size={theme.iconSize(7)}
+      />
+    );
+  };
+
+  const handleControlsPress = () => {
+    /// prevents the conrtols from hiding when white spaces are pressed
+    if (castSessionActive) return;
+
+    controlProps.setShowControls(false);
+  };
+
   if (!controlProps.visible) return <View />;
 
   return (
     <Pressable
-      onPress={() => controlProps.setShowControls(false)}
+      onPress={handleControlsPress}
       style={{
         backgroundColor: theme.iplayya.colors.black50,
         opacity: controlProps.visible ? 1 : 0,
@@ -343,12 +404,18 @@ const VideoControls = ({
       >
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{getContentTitle()}</Text>
 
-        <CastButton
-          style={{ width: 24, height: 24 }}
-          source={source}
-          currentTime={currentTime}
-          seriesTitle={controlProps.seriesTitle}
-        />
+        {renderCastButton()}
+
+        {/* <View style={{ flexDirection: 'row' }}>
+          {castSession && (
+            <ButtonIconDefault iconName="close" iconSize={3} pressAction={handleStopCasting} />
+          )}
+          <ButtonIconDefault
+            iconName={castConnected ? 'cast-connected' : 'cast'}
+            iconSize={3}
+            pressAction={() => controlProps.setShowChromecastOptions(true)}
+          />
+        </View> */}
       </View>
 
       <View
@@ -366,7 +433,7 @@ const VideoControls = ({
         )}
         <TouchableRipple
           borderless
-          onPress={() => controlProps.togglePlay()}
+          onPress={handlePlayButtonPress}
           style={{
             width: 60,
             height: 60,
@@ -376,15 +443,7 @@ const VideoControls = ({
             // backgroundColor: 'red'
           }}
         >
-          {buffering ? (
-            <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />
-          ) : (
-            <Icon
-              name={controlProps.paused ? 'circular-play' : 'circular-pause'}
-              size={theme.iconSize(7)}
-              // style={{ marginHorizontal: 20 }}
-            />
-          )}
+          <React.Fragment>{renderPlayButton()}</React.Fragment>
         </TouchableRipple>
         {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>

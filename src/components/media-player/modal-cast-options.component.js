@@ -9,7 +9,7 @@ import GoogleCast, { useDevices, useCastDevice } from 'react-native-google-cast'
 import { createFontFormat } from 'utils';
 import theme from 'common/theme';
 
-const CastOptionsModal = ({ visible, onCancelPress }) => {
+const CastOptionsModal = ({ visible, onCancelPress, handleHideList }) => {
   const gcastDevices = useDevices();
   const castDevice = useCastDevice();
   const sessionManager = GoogleCast.getSessionManager();
@@ -22,6 +22,8 @@ const CastOptionsModal = ({ visible, onCancelPress }) => {
 
     await sessionManager.startSession(deviceId);
     // setSelected(deviceId);
+
+    handleHideList();
   };
 
   const handleCancelPress = () => {
@@ -48,17 +50,46 @@ const CastOptionsModal = ({ visible, onCancelPress }) => {
           paddingHorizontal: 15
         }}
       >
-        <View style={{ flex: 10.5 }}>
+        <Text
+          style={{
+            color: active === deviceId ? theme.iplayya.colors.vibrantpussy : theme.colors.text,
+            ...createFontFormat(16, 22)
+          }}
+        >
+          {friendlyName}
+        </Text>
+      </TouchableRipple>
+    );
+  };
+
+  const renderDeviceList = () => {
+    if (!gcastDevices.length) {
+      return (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 50,
+            paddingHorizontal: 15
+          }}
+        >
           <Text
             style={{
-              color: active === deviceId ? theme.iplayya.colors.vibrantpussy : theme.colors.text,
+              color: theme.colors.text,
               ...createFontFormat(16, 22)
             }}
           >
-            {friendlyName}
+            No cast device found
           </Text>
         </View>
-      </TouchableRipple>
+      );
+    }
+    return (
+      <FlatList
+        data={gcastDevices}
+        keyExtractor={(item) => item.deviceId}
+        renderItem={renderItem}
+      />
     );
   };
 
@@ -66,11 +97,7 @@ const CastOptionsModal = ({ visible, onCancelPress }) => {
     <Modal animationType="slide" visible={visible} transparent>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: '#202530', paddingTop: 20 }}>
-          <FlatList
-            data={gcastDevices}
-            keyExtractor={(item) => item.deviceId}
-            renderItem={renderItem}
-          />
+          {renderDeviceList()}
           <Spacer size={20} />
           <View
             style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}

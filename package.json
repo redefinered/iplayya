@@ -6,6 +6,8 @@
     "android": "npx react-native run-android",
     "ios:ipse": "npx react-native run-ios --simulator='iPhone SE (2nd generation)'",
     "ios": "npx react-native run-ios --simulator='iPhone 12'",
+    "ios:ip8": "npx react-native run-ios --simulator='iPhone 8'",
+    "ios:ipx": "npx react-native run-ios --simulator='iPhone X'",
     "ios:device": "npx react-native run-ios --device 'Red’s iPhone SE'",
     "start": "npx react-native start",
     "start:reset-cache": "yarn start --reset-cache",

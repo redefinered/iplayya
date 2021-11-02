@@ -78,7 +78,7 @@ const ResolutionsOptionsModal = ({
 
 ResolutionsOptionsModal.propTypes = {
   visible: PropTypes.bool.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
   handleSelectResolution: PropTypes.func,
   setShowVideoOptions: PropTypes.func
 };
