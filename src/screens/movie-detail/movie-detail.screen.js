@@ -30,6 +30,7 @@ import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
 } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
+import { selectPlaybackSettings } from 'modules/ducks/user/user.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
@@ -56,7 +57,9 @@ const MovieDetailScreen = ({
   downloadStarted,
   videoUrls,
   setMusicNowPlaying,
-  navigation
+  navigation,
+
+  playbackSettings
 }) => {
   const client = useRemoteMediaClient();
   const [paused, setPaused] = React.useState(false);
@@ -82,6 +85,12 @@ const MovieDetailScreen = ({
 
     navigation.setOptions({ headerShown: true });
   }, [fullscreen]);
+
+  React.useEffect(() => {
+    if (playbackSettings.is_autoplay_video === false) {
+      setPaused(!paused);
+    }
+  }, [playbackSettings.is_autoplay_video]);
 
   /// stop music player when a video is played
   React.useEffect(() => {
@@ -512,7 +521,8 @@ const mapStateToProps = createStructuredSelector({
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
   downloadStarted: selectDownloadStarted,
-  videoUrls: selectMovieVideoUrls
+  videoUrls: selectMovieVideoUrls,
+  playbackSettings: selectPlaybackSettings
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
