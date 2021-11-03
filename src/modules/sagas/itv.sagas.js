@@ -16,6 +16,7 @@ import {
 export function* getGenresRequest() {
   try {
     const { iptvGenres } = yield call(getGenres);
+    console.log({ iptvGenres });
     yield put(Creators.getGenresSuccess(iptvGenres));
   } catch (error) {
     yield put(Creators.getGenresFailure(error.message));

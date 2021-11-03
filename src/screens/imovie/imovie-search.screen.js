@@ -96,8 +96,9 @@ const ImovieSearchScreen = ({
   React.useEffect(() => {
     if (results.length) {
       let getSimilarMovies = results.map(({ category }) => {
-        const { id } = allCategories.find(({ title }) => title === category);
-        return parseInt(id);
+        const c = allCategories.find(({ title }) => title === category);
+        if (typeof c === 'undefined') return;
+        return parseInt(c.id);
       });
       getSimilarMovies = uniq(getSimilarMovies);
       getSimilarMoviesAction({ limit: 6, categories: getSimilarMovies });

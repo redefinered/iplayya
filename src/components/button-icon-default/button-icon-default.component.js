@@ -4,7 +4,7 @@ import { TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import theme from 'common/theme';
 
-const NextButton = ({ disabled, pressAction, iconName, iconSize }) => (
+const ButtonIconDefault = ({ color, disabled, pressAction, iconName, iconSize }) => (
   <TouchableRipple
     borderless
     style={{
@@ -20,16 +20,22 @@ const NextButton = ({ disabled, pressAction, iconName, iconSize }) => (
     <Icon
       name={iconName}
       size={theme.iconSize(iconSize)}
-      color={disabled ? theme.iplayya.colors.white25 : 'white'}
+      color={disabled ? theme.iplayya.colors.white25 : color}
     />
   </TouchableRipple>
 );
 
-NextButton.propTypes = {
+ButtonIconDefault.defaultProps = {
+  color: 'white',
+  disabled: false
+};
+
+ButtonIconDefault.propTypes = {
+  color: PropTypes.string,
   disabled: PropTypes.bool,
   pressAction: PropTypes.func.isRequired,
   iconName: PropTypes.string.isRequired,
   iconSize: PropTypes.number.isRequired
 };
 
-export default NextButton;
+export default ButtonIconDefault;

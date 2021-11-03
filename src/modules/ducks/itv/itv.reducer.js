@@ -63,7 +63,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      genres: action.data
+      genres: orderBy(action.data, 'number', 'asc')
     };
   },
   [Types.GET_GENRES_FAILURE]: (state, action) => {
@@ -83,7 +83,6 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.GET_CHANNEL_SUCCESS]: (state, action) => {
     const { channel, token } = action;
-    console.log({ channel });
     return {
       ...state,
       isFetching: false,

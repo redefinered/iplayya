@@ -33,8 +33,6 @@ const IsportsChannelDetailScreen = ({
   route: {
     params: { channelId }
   },
-  // eslint-disable-next-line no-unused-vars
-  error,
   channel,
   programs,
   getProgramsByChannelAction,
@@ -315,6 +313,7 @@ const IsportsChannelDetailScreen = ({
     return (
       <IsportsPlayer
         channel={channel}
+        currentProgram={currentProgram}
         paused={paused}
         source={source}
         handleNextChannel={handleNextChannel}

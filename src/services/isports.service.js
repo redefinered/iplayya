@@ -132,7 +132,6 @@ export const removeFromFavorites = async (input) => {
 };
 
 export const getFavorites = async (input) => {
-  console.log({ getFavoritesInput: input });
   try {
     const { data } = await client.query({
       query: GET_FAVORITES,
