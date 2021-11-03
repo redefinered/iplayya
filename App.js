@@ -108,21 +108,26 @@ const App = ({
       /// set data required to reset password
       // this will redirect the app to reset-password screen
       updatePasswordStartAction({ params: { token, email } });
+
+      /// get profile when updated
+      if (profileUpdated) {
+        getProfileAction();
+      }
     });
   }, []);
 
-  React.useEffect(() => {
-    if (!dataLoaded) return;
+  // React.useEffect(() => {
+  //   if (!dataLoaded) return;
 
-    setIsReady(true);
-  }, [dataLoaded]);
+  //   setIsReady(true);
+  // }, [dataLoaded]);
 
   // if profile is updated get profile to update profile data
-  React.useEffect(() => {
-    if (profileUpdated) {
-      getProfileAction();
-    }
-  }, [profileUpdated]);
+  // React.useEffect(() => {
+  //   if (profileUpdated) {
+  //     getProfileAction();
+  //   }
+  // }, [profileUpdated]);
 
   React.useEffect(() => {
     if (isLoggedIn) {
@@ -186,21 +191,21 @@ const App = ({
     );
   }
 
-  if (!isReady) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: theme.iplayya.colors.goodnight,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <StatusBar hidden />
-        <ActivityIndicator size="small" />
-      </View>
-    );
-  }
+  // if (!isReady) {
+  //   return (
+  //     <View
+  //       style={{
+  //         flex: 1,
+  //         backgroundColor: theme.iplayya.colors.goodnight,
+  //         alignItems: 'center',
+  //         justifyContent: 'center'
+  //       }}
+  //     >
+  //       <StatusBar hidden />
+  //       <ActivityIndicator size="small" />
+  //     </View>
+  //   );
+  // }
 
   return <HomeComponent />;
 };

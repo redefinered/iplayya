@@ -9,9 +9,17 @@ import moment from 'moment';
 
 const CurrentProgram = ({ currentProgram, channel }) => {
   const { title: channelTitle } = channel;
-  const { title, time, time_to } = currentProgram;
+
+  const [program, setProgram] = React.useState(null);
+
+  React.useEffect(() => {
+    if (!currentProgram) return;
+
+    setProgram(currentProgram);
+  }, [currentProgram]);
+
   const renderEpgtitle = () => {
-    if (!title)
+    if (!program)
       return (
         <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
           Program title unavailable
@@ -20,13 +28,15 @@ const CurrentProgram = ({ currentProgram, channel }) => {
 
     return (
       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-        {title}
+        {program.title}
       </Text>
     );
   };
 
-  const getSchedule = (time, time_to) => {
-    if (!time || !time_to) return;
+  const getSchedule = () => {
+    if (!program) return;
+
+    const { time, time_to } = program;
 
     return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
   };
@@ -38,9 +48,7 @@ const CurrentProgram = ({ currentProgram, channel }) => {
         {renderEpgtitle()}
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
-          {getSchedule(time, time_to)}
-        </Text>
+        <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>{getSchedule()}</Text>
         {/* <Icon name="history" color="#13BD38" /> */}
       </View>
     </View>

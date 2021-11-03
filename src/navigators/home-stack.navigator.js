@@ -744,8 +744,6 @@ const HomeStack = ({
               }
             } = props;
 
-            console.log({ channel });
-
             return {
               title: null,
               headerRight: () => (

@@ -12,25 +12,22 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { createFontFormat } from 'utils';
 import MediaPlayerSlider from './media-player-slider.component';
+import ChromecastButton from 'components/cast-button/cast-button.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
   selectCurrentTime,
   selectRemainingTime,
   selectDuration
 } from 'modules/ducks/movies/movies.selectors';
-import CastButton from 'components/cast-button/cast-button.component';
-import { useRemoteMediaClient } from 'react-native-google-cast';
-import SystemSetting from 'react-native-system-setting';
+import GoogleCast, { useRemoteMediaClient } from 'react-native-google-cast';
 import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
-// import volumeThumb from 'assets/volume-thumb.png';
 import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import DeviceInfo from 'react-native-device-info';
 
 const VideoControls = ({
   playbackInfo,
   theme,
-  currentTime,
   buffering,
   previousAction,
   nextAction,
@@ -39,48 +36,39 @@ const VideoControls = ({
   multipleMedia,
   setVolume,
   isFullscreen,
-  source,
   castSessionActive,
-  updatePlaybackInfoAction,
+  // updatePlaybackInfoAction,
+  setPlaybackInfo,
   ...controlProps
 }) => {
-  // const headerHeight = useHeaderHeight();
-  const [mediaInfo, setMediaInfo] = React.useState(null);
-  const [showVolume, setShowVolume] = React.useState(true);
-  // const [savedVolume, setSavedVolume] = React.useState(controlProps.volume);
+  const sessionManager = GoogleCast.getSessionManager();
   const client = useRemoteMediaClient();
-
-  React.useEffect(() => {
-    const volumeListener = SystemSetting.addVolumeListener((data) => {
-      const volume = data.value;
-      setVolume(volume);
-    });
-
-    // console.log({ x: DeviceInfo.hasNotch() });
-    // console.log({ headerHeight });
-
-    return () => SystemSetting.removeVolumeListener(volumeListener);
-  }, []);
+  const [mediaStatus, setMediaStatus] = React.useState(null);
+  const [showVolume, setShowVolume] = React.useState(true);
+  const [showFullscreenQualityOptions, setShowFullscreenQualityOptions] = React.useState(false);
 
   React.useEffect(() => {
     if (client) {
-      getMediaStatus();
+      const mediaStatusListener = client.onMediaStatusUpdated((mediaStatus) => {
+        if (!mediaStatus) return;
+
+        console.log({ playerStatus: mediaStatus.playerState });
+
+        setMediaStatus(mediaStatus);
+      });
+
+      const mediaProgressListener = client.onMediaProgressUpdated((p, d) => {
+        controlProps.setPaused(false);
+
+        setPlaybackInfo({ seekableDuration: d, currentTime: p });
+      });
+
+      return () => {
+        mediaProgressListener.remove();
+        mediaStatusListener.remove();
+      };
     }
   }, [client]);
-
-  React.useEffect(() => {
-    if (client) {
-      if (!mediaInfo) return;
-      const { streamDuration } = mediaInfo;
-      const { setPaused } = controlProps;
-      client.onMediaProgressUpdated((streamPosition) => {
-        setPaused(false);
-        updatePlaybackInfoAction({
-          playbackInfo: { seekableDuration: streamDuration, currentTime: streamPosition }
-        });
-      });
-    }
-  });
 
   const handleNextButtonPress = () => {
     nextAction();
@@ -90,12 +78,6 @@ const VideoControls = ({
   const handlePreviousButtonPress = () => {
     previousAction();
     controlProps.setShowControls(true);
-  };
-
-  const getMediaStatus = async () => {
-    if (!client) return;
-    const { mediaInfo } = await client.getMediaStatus();
-    setMediaInfo(mediaInfo);
   };
 
   // const handleSlidingStart = () => {
@@ -130,28 +112,41 @@ const VideoControls = ({
   };
 
   const getFullscreenStyle = () => {
-    let WIDTH, V_SLIDER_MARGIN_OFFSET;
-    const V_SLIDER_MARGIN = 30;
+    let WIDTH, TOP_OFFSET;
+
+    const SLIDER_WIDTH = 5;
+    const ROTATED_TOP_ZERO = 25 + SLIDER_WIDTH;
+    const ROTATED_LEFT_ZERO = -25 - SLIDER_WIDTH;
+
+    const V_SLIDER_MARGIN = 10;
+    const NORMAL_SCREEN_VIDEO_HEIGHT = 211;
+
+    const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
     if (isFullscreen) {
       WIDTH = 200;
-      V_SLIDER_MARGIN_OFFSET = -WIDTH / 2;
+
+      const FULLSCREEN_ROTATED_LEFT_ZERO = -65;
+      const FULLSCREEN_ROTATED_TOP_ZERO = 80;
+
+      const SCREEN_WIDTH_DIVIDED_BY_TWO = SCREEN_WIDTH / 2;
+      const WIDTH_WIDTH_DIVIDED_BY_TWO = WIDTH / 2;
 
       return {
-        width: WIDTH,
-        top: 150,
+        width: 200,
+        top: FULLSCREEN_ROTATED_TOP_ZERO + SCREEN_WIDTH_DIVIDED_BY_TWO - WIDTH_WIDTH_DIVIDED_BY_TWO,
         left: DeviceInfo.hasNotch()
-          ? V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN + 30
-          : V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN
+          ? FULLSCREEN_ROTATED_LEFT_ZERO + 30
+          : FULLSCREEN_ROTATED_LEFT_ZERO
       };
     } else {
       WIDTH = 100;
-      V_SLIDER_MARGIN_OFFSET = -WIDTH / 2;
+      TOP_OFFSET = NORMAL_SCREEN_VIDEO_HEIGHT / 2 - 15; /// 15 is to nudge the slider a little up ward so it does not ovarlap with the volume button
 
       return {
-        width: WIDTH,
-        top: 50,
-        left: V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN
+        width: 100,
+        top: ROTATED_TOP_ZERO + TOP_OFFSET - WIDTH / 2,
+        left: ROTATED_LEFT_ZERO + V_SLIDER_MARGIN
       };
     }
   };
@@ -161,88 +156,100 @@ const VideoControls = ({
     if (castSessionActive) return;
     if (!showVolume) return;
 
-    // const V_SLIDER_MARGIN_OFFSET = -50;
-    // const V_SLIDER_MARGIN = 30;
-    // const LEFT_POSITION = DeviceInfo.hasNotch()
-    //   ? V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN + 30
-    //   : V_SLIDER_MARGIN_OFFSET + V_SLIDER_MARGIN;
-
-    // if (isFullscreen)
-    //   return (
-    //     <Slider
-    //       style={{
-    //         zIndex: 110,
-    //         width: 200,
-    //         position: 'absolute',
-    //         left: -100 + 24,
-    //         top: 150
-    //       }}
-    //       onValueChange={handleVolumeChange}
-    //       value={controlProps.volume}
-    //       minimumValue={0}
-    //       maximumValue={1}
-    //       transform={[{ rotate: '-90deg' }]}
-    //       minimumTrackTintColor={theme.iplayya.colors.white100}
-    //       maximumTrackTintColor={theme.iplayya.colors.white25}
-    //     />
-    //   );
-
     return (
-      <Slider
+      <View
         style={{
           zIndex: 110,
           position: 'absolute',
-          height: 80,
+          // backgroundColor: 'green',
+          transform: [{ rotate: '-90deg' }],
           ...getFullscreenStyle()
         }}
-        thumbImage={volumeThumbTransparent}
-        onValueChange={handleVolumeChange}
-        value={controlProps.volume}
-        minimumValue={0}
-        maximumValue={1}
-        transform={[{ rotate: '-90deg' }]}
-        minimumTrackTintColor={theme.iplayya.colors.white100}
-        maximumTrackTintColor={theme.iplayya.colors.white25}
-      />
+      >
+        <Slider
+          thumbImage={volumeThumbTransparent}
+          onValueChange={handleVolumeChange}
+          value={controlProps.volume}
+          minimumValue={0}
+          maximumValue={1}
+          minimumTrackTintColor={theme.iplayya.colors.white100}
+          maximumTrackTintColor={theme.iplayya.colors.white25}
+        />
+      </View>
     );
   };
 
-  const resolutionOptions = () => {
-    const { resolutions } = controlProps;
+  // const resolutionOptions = () => {
+  //   const { resolutions } = controlProps;
 
-    if (typeof resolutions === 'undefined') return;
+  //   // if (typeof resolutions === 'undefined') return;
 
-    if (controlProps.showVideoOptions) {
-      return resolutions.map(({ id, name, label }) => (
-        <Pressable
-          key={id}
-          onPressIn={() => controlProps.setActiveState(name)}
-          onPress={() => controlProps.handleSelectResolution(name)}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            height: 50,
-            backgroundColor:
-              controlProps.activeState === name ? theme.iplayya.colors.white10 : 'transparent',
-            paddingHorizontal: 15
-          }}
-        >
-          <View style={{ flex: 10.5 }}>
-            <Text
-              style={{
-                color:
-                  controlProps.resolution === name
-                    ? theme.iplayya.colors.vibrantpussy
-                    : theme.colors.text,
-                ...createFontFormat(16, 22)
-              }}
-            >
-              {label}
-            </Text>
+  //   if (controlProps.showVideoOptions) {
+  //     return;
+  //   }
+  // };
+
+  const handleVideoQualityButtonPress = () => {
+    if (isFullscreen) return setShowFullscreenQualityOptions(!showFullscreenQualityOptions);
+
+    controlProps.toggleVideoOptions();
+  };
+
+  const renderVideoQualityButton = () => {
+    if (!controlProps.qualitySwitchable) return;
+
+    return (
+      <View style={{ position: 'relative', zIndex: 111 }}>
+        <ButtonIconDefault
+          iconName="video-quality"
+          pressAction={handleVideoQualityButtonPress}
+          iconSize={3}
+        />
+        {showFullscreenQualityOptions && (
+          <View
+            style={{
+              backgroundColor: '#202530',
+              width: 250,
+              position: 'absolute',
+              bottom: '100%',
+              left: 0
+            }}
+          >
+            {controlProps.resolutions.map(({ id, name, label }) => (
+              <Pressable
+                key={id}
+                onPressIn={() => controlProps.setActiveState(name)}
+                onPress={() => controlProps.handleSelectResolution(name)}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  height: 50,
+                  backgroundColor:
+                    controlProps.activeState === name
+                      ? theme.iplayya.colors.white10
+                      : 'transparent',
+                  paddingHorizontal: 15
+                }}
+              >
+                <View style={{ flex: 10.5 }}>
+                  <Text
+                    style={{
+                      color:
+                        controlProps.resolution === name
+                          ? theme.iplayya.colors.vibrantpussy
+                          : theme.colors.text,
+                      ...createFontFormat(16, 22)
+                    }}
+                  >
+                    {label}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
           </View>
-        </Pressable>
-      ));
-    }
+        )}
+      </View>
+    );
   };
 
   const renderBottomControls = () => {
@@ -255,46 +262,18 @@ const VideoControls = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           position: 'relative',
-          zIndex: 104,
+          zIndex: 111,
           marginBottom: -10
         }}
       >
         <View style={{ flexDirection: 'row' }}>
-          {/* <Pressable>
-            <Icon
-              name={controlProps.volume > 0 ? 'volume' : 'volume-off'}
-              size={theme.iconSize(3)}
-              style={{ marginRight: 15 }}
-            />
-          </Pressable> */}
           <ButtonIconDefault
             iconName={controlProps.volume > 0 ? 'volume' : 'volume-off'}
             pressAction={toggleVolume}
             iconSize={3}
           />
-          {/* <Pressable>
-              <Icon name="caption" size={25} style={{ marginRight: 15 }} />
-            </Pressable> */}
-          {controlProps.qualitySwitchable ? (
-            <React.Fragment>
-              <ButtonIconDefault
-                iconName="video-quality"
-                pressAction={controlProps.toggleVideoOptions}
-                iconSize={3}
-              />
-              <View
-                style={{
-                  backgroundColor: '#202530',
-                  width: 250,
-                  position: 'absolute',
-                  bottom: '100%',
-                  left: 0
-                }}
-              >
-                {resolutionOptions()}
-              </View>
-            </React.Fragment>
-          ) : null}
+
+          {renderVideoQualityButton()}
         </View>
         <ButtonIconDefault
           iconName={isFullscreen ? 'normal-screen' : 'fullscreen'}
@@ -323,7 +302,7 @@ const VideoControls = ({
   };
 
   const getContentTitle = () => {
-    if (castSessionActive) return 'Connected to Google Cast';
+    if (castSessionActive) return 'Connected to chromecast';
 
     return controlProps.seriesTitle || controlProps.title;
   };
@@ -333,10 +312,79 @@ const VideoControls = ({
     return styles.containerStyle;
   };
 
+  const handleStopCasting = async () => {
+    // console.log('stopping....', { sessionManager });
+    await sessionManager.endCurrentSession(true);
+  };
+
+  const renderCastButton = () => {
+    const { title, seriesTitle, source } = controlProps;
+    return (
+      <ChromecastButton
+        title={title || seriesTitle}
+        subtitle="Test subtitle"
+        source={source}
+        showListAction={() => controlProps.setShowChromecastOptions(true)}
+        stopCastingAction={handleStopCasting}
+        style={{ width: 24, height: 24 }}
+      />
+    );
+  };
+
+  const handlePlayButtonPress = async () => {
+    if (castSessionActive) {
+      if (!client) return;
+      if (!mediaStatus) return;
+      /// pause media if already playing
+      if (mediaStatus.playerState === 'playing') return await client.pause();
+
+      return await client.play();
+    }
+
+    controlProps.togglePlay();
+  };
+
+  const renderPlayButton = () => {
+    if (!mediaStatus)
+      return (
+        <Icon
+          name={controlProps.paused ? 'circular-play' : 'circular-pause'}
+          size={theme.iconSize(7)}
+        />
+      );
+
+    if (buffering)
+      return <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />;
+
+    if (castSessionActive) {
+      return (
+        <Icon
+          name={mediaStatus.playerState === 'playing' ? 'circular-pause' : 'circular-play'}
+          size={theme.iconSize(7)}
+        />
+      );
+    }
+
+    return (
+      <Icon
+        name={controlProps.paused ? 'circular-play' : 'circular-pause'}
+        size={theme.iconSize(7)}
+      />
+    );
+  };
+
+  const handleControlsPress = () => {
+    /// prevents the conrtols from hiding when white spaces are pressed
+    if (castSessionActive) return;
+
+    controlProps.setShowControls(false);
+  };
+
   if (!controlProps.visible) return <View />;
 
   return (
-    <View
+    <Pressable
+      onPress={handleControlsPress}
       style={{
         backgroundColor: theme.iplayya.colors.black50,
         opacity: controlProps.visible ? 1 : 0,
@@ -358,12 +406,18 @@ const VideoControls = ({
       >
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{getContentTitle()}</Text>
 
-        <CastButton
-          style={{ width: 24, height: 24 }}
-          source={source}
-          currentTime={currentTime}
-          seriesTitle={controlProps.seriesTitle}
-        />
+        {renderCastButton()}
+
+        {/* <View style={{ flexDirection: 'row' }}>
+          {castSession && (
+            <ButtonIconDefault iconName="close" iconSize={3} pressAction={handleStopCasting} />
+          )}
+          <ButtonIconDefault
+            iconName={castConnected ? 'cast-connected' : 'cast'}
+            iconSize={3}
+            pressAction={() => controlProps.setShowChromecastOptions(true)}
+          />
+        </View> */}
       </View>
 
       <View
@@ -380,7 +434,8 @@ const VideoControls = ({
           <PrevButton onPress={handlePreviousButtonPress} disabled={isFirstEpisode} />
         )}
         <TouchableRipple
-          onPress={() => controlProps.togglePlay()}
+          borderless
+          onPress={handlePlayButtonPress}
           style={{
             width: 60,
             height: 60,
@@ -390,25 +445,17 @@ const VideoControls = ({
             // backgroundColor: 'red'
           }}
         >
-          {buffering ? (
-            <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />
-          ) : (
-            <Icon
-              name={controlProps.paused ? 'circular-play' : 'circular-pause'}
-              size={theme.iconSize(7)}
-              // style={{ marginHorizontal: 20 }}
-            />
-          )}
+          <React.Fragment>{renderPlayButton()}</React.Fragment>
         </TouchableRipple>
         {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
 
-      <View style={{ position: 'relative', zIndex: 101 }}>
+      <View style={{ position: 'relative', zIndex: 111 }}>
         {renderBottomControls()}
 
         {renderProgressSlider()}
       </View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -420,6 +467,7 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     justifyContent: 'space-between',
     zIndex: 99
+    // backgroundColor: 'red'
   },
   containerStyleFullScreen: {
     width: Dimensions.get('window').height,
