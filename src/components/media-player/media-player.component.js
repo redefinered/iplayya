@@ -76,7 +76,7 @@ const MediaPlayer = ({
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
   const [showChromecastOptions, setShowChromecastOptions] = React.useState(false);
   // const [chromeCastSession, setChromeCastSession] = React.useState(null);
-  // console.log({ playbackInfo });
+  // console.log({ playbackInfo, thumbnail });
 
   const timer = React.useRef(null);
 
@@ -127,12 +127,19 @@ const MediaPlayer = ({
   };
 
   React.useEffect(() => {
-    if (client) {
-      loadMedia(source);
-    }
+    if (!client) return;
+    loadMedia(source);
   }, [source, client]);
 
   const getMetadata = () => {
+    const common = {
+      images: [
+        {
+          url: thumbnail
+        }
+      ]
+    };
+
     if (moduleType === MODULE_TYPES.TV) {
       /// use generic title if no title found
       if (!currentProgram) return { type: 'tvShow', title: 'No title found.' };
@@ -140,21 +147,23 @@ const MediaPlayer = ({
       const { title: programTitle } = currentProgram;
       return {
         type: 'tvShow',
-        title,
-        seriesTitle: programTitle
+        title: programTitle,
+        seriesTitle: title
       };
     }
 
     if (isSeries) {
       return {
         type: 'tvShow',
-        title: seriesTitle
+        title: seriesTitle,
+        ...common
       };
     }
 
     return {
       type: 'movie',
-      title
+      title,
+      ...common
     };
   };
 
@@ -163,20 +172,16 @@ const MediaPlayer = ({
 
     try {
       await client.loadMedia({
+        // autoplay: false,
         mediaInfo: {
           contentUrl: source,
           streamType: moduleType === MODULE_TYPES.TV ? 'live' : 'buffered',
           metadata: {
-            images: [
-              {
-                url: thumbnail
-              }
-            ],
             ...getMetadata()
-          }
-          // streamDuration: duration * 60
+          },
+          streamDuration: playbackInfo.seekableDuration
         }
-        // startTime: currentTime // seconds
+        // startTime: playbackInfo.currentTime // seconds
       });
     } catch (error) {
       console.log({ error });
@@ -505,6 +510,7 @@ const MediaPlayer = ({
 MediaPlayer.defaultProps = {
   qualitySwitchable: false,
   moduleType: MODULE_TYPES.VOD
+  // thumbnail:
 };
 
 MediaPlayer.propTypes = {

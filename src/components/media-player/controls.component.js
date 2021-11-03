@@ -28,7 +28,7 @@ import DeviceInfo from 'react-native-device-info';
 const VideoControls = ({
   playbackInfo,
   theme,
-  // buffering,
+  buffering,
   previousAction,
   nextAction,
   isFirstEpisode,
@@ -38,35 +38,37 @@ const VideoControls = ({
   isFullscreen,
   castSessionActive,
   // updatePlaybackInfoAction,
-  // setPlaybackInfo,
+  setPlaybackInfo,
   ...controlProps
 }) => {
   const sessionManager = GoogleCast.getSessionManager();
-  // const client = useRemoteMediaClient();
-  // const [mediaStatus, setMediaStatus] = React.useState(null);
+  const client = useRemoteMediaClient();
+  const [mediaStatus, setMediaStatus] = React.useState(null);
   const [showVolume, setShowVolume] = React.useState(true);
   const [showFullscreenQualityOptions, setShowFullscreenQualityOptions] = React.useState(false);
 
-  // React.useEffect(() => {
-  //   if (client) {
-  //     const mediaStatusListener = client.onMediaStatusUpdated((mediaStatus) => {
-  //       if (!mediaStatus) return;
+  React.useEffect(() => {
+    if (client) {
+      const mediaStatusListener = client.onMediaStatusUpdated((mediaStatus) => {
+        if (!mediaStatus) return;
 
-  //       setMediaStatus(mediaStatus);
-  //     });
+        console.log({ playerStatus: mediaStatus.playerState });
 
-  //     const mediaProgressListener = client.onMediaProgressUpdated((p, d) => {
-  //       controlProps.setPaused(false);
+        setMediaStatus(mediaStatus);
+      });
 
-  //       setPlaybackInfo({ seekableDuration: d, currentTime: p });
-  //     });
+      const mediaProgressListener = client.onMediaProgressUpdated((p, d) => {
+        controlProps.setPaused(false);
 
-  //     return () => {
-  //       mediaProgressListener.remove();
-  //       mediaStatusListener.remove();
-  //     };
-  //   }
-  // }, [client]);
+        setPlaybackInfo({ seekableDuration: d, currentTime: p });
+      });
+
+      return () => {
+        mediaProgressListener.remove();
+        mediaStatusListener.remove();
+      };
+    }
+  }, [client]);
 
   const handleNextButtonPress = () => {
     nextAction();
@@ -311,7 +313,7 @@ const VideoControls = ({
   };
 
   const handleStopCasting = async () => {
-    console.log('stopping....', { sessionManager });
+    // console.log('stopping....', { sessionManager });
     await sessionManager.endCurrentSession(true);
   };
 
@@ -330,38 +332,38 @@ const VideoControls = ({
   };
 
   const handlePlayButtonPress = async () => {
-    // if (castSessionActive) {
-    //   if (!client) return;
-    //   if (!mediaStatus) return;
-    //   /// pause media if already playing
-    //   if (mediaStatus.playerState === 'playing') return await client.pause();
+    if (castSessionActive) {
+      if (!client) return;
+      if (!mediaStatus) return;
+      /// pause media if already playing
+      if (mediaStatus.playerState === 'playing') return await client.pause();
 
-    //   return await client.play();
-    // }
+      return await client.play();
+    }
 
     controlProps.togglePlay();
   };
 
   const renderPlayButton = () => {
-    // if (!mediaStatus)
-    //   return (
-    //     <Icon
-    //       name={controlProps.paused ? 'circular-play' : 'circular-pause'}
-    //       size={theme.iconSize(7)}
-    //     />
-    //   );
+    if (!mediaStatus)
+      return (
+        <Icon
+          name={controlProps.paused ? 'circular-play' : 'circular-pause'}
+          size={theme.iconSize(7)}
+        />
+      );
 
-    // if (buffering)
-    //   return <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />;
+    if (buffering)
+      return <ActivityIndicator size="large" style={{ marginHorizontal: 20 }} color="white" />;
 
-    // if (castSessionActive) {
-    //   return (
-    //     <Icon
-    //       name={mediaStatus.playerState === 'playing' ? 'circular-pause' : 'circular-play'}
-    //       size={theme.iconSize(7)}
-    //     />
-    //   );
-    // }
+    if (castSessionActive) {
+      return (
+        <Icon
+          name={mediaStatus.playerState === 'playing' ? 'circular-pause' : 'circular-play'}
+          size={theme.iconSize(7)}
+        />
+      );
+    }
 
     return (
       <Icon
