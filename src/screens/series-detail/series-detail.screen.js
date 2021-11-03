@@ -362,6 +362,7 @@ const SeriesDetailScreen = ({
 
     return (
       <MediaPlayer
+        isSeries={true}
         multipleMedia={true}
         paused={paused}
         source={source}
