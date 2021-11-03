@@ -334,6 +334,7 @@ const ItvChannelDetailScreen = ({
     return (
       <ItvPlayer
         channel={channel}
+        currentProgram={currentProgram}
         paused={paused}
         source={source}
         handleNextChannel={handleNextChannel}

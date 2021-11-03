@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { selectNextChannel, selectPreviousChannel } from 'modules/ducks/isports/isports.selectors';
 import { connect } from 'react-redux';
+import { MODULE_TYPES } from 'common/values';
 
 const IsportsPlayer = ({
   channel,
@@ -17,7 +18,8 @@ const IsportsPlayer = ({
   nextChannel,
   previousChannel,
   fullscreen,
-  setFullscreen
+  setFullscreen,
+  currentProgram
 }) => {
   const [isFirstChannel, setIsFirstChannel] = React.useState(false);
   const [isLastChannel, setIsLastChannel] = React.useState(false);
@@ -50,6 +52,8 @@ const IsportsPlayer = ({
   return (
     <MediaPlayer
       multipleMedia
+      title={channel.title}
+      currentProgram={currentProgram}
       isSeries={false}
       paused={paused}
       source={source}
@@ -58,18 +62,19 @@ const IsportsPlayer = ({
       togglePlay={handleTogglePlay}
       loading={loading}
       setLoading={setLoading}
-      typename={channel.__typename}
       setPaused={setPaused}
       isFirstEpisode={isFirstChannel}
       isLastEpisode={isLastChannel}
       fullscreen={fullscreen}
       setFullscreen={setFullscreen}
+      moduleType={MODULE_TYPES.TV}
     />
   );
 };
 
 IsportsPlayer.propTypes = {
   channel: PropTypes.object,
+  currentProgram: PropTypes.object,
   nextChannel: PropTypes.object,
   previousChannel: PropTypes.object,
   paused: PropTypes.bool,

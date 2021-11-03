@@ -150,7 +150,7 @@ export const getProgramsByChannel = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
+    console.log({ graphqlerror: error.message });
     throw new Error(error);
   }
 };

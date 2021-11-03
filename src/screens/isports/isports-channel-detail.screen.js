@@ -313,6 +313,7 @@ const IsportsChannelDetailScreen = ({
     return (
       <IsportsPlayer
         channel={channel}
+        currentProgram={currentProgram}
         paused={paused}
         source={source}
         handleNextChannel={handleNextChannel}

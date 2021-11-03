@@ -1,5 +1,7 @@
 #import "AppDelegate.h"
 
+#import <GoogleCast/GoogleCast.h>
+
 // required for push notifications
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
@@ -46,6 +48,12 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
+  // google-cast code
+  NSString *receiverAppID = kGCKDefaultMediaReceiverApplicationID; // or @"ABCD1234"
+  GCKDiscoveryCriteria *criteria = [[GCKDiscoveryCriteria alloc] initWithApplicationID:receiverAppID];
+  GCKCastOptions* options = [[GCKCastOptions alloc] initWithDiscoveryCriteria:criteria];
+  [GCKCastContext setSharedInstanceWithOptions:options];
+  // end google-cast code
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge

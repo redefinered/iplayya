@@ -13,3 +13,8 @@ export const NOTIFICATION_STATUS = {
   UNREAD: 'unread',
   READ: 'read'
 };
+
+export const MODULE_TYPES = {
+  VOD: 'vod',
+  TV: 'tv'
+};
