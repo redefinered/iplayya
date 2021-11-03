@@ -35,6 +35,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { useRemoteMediaClient } from 'react-native-google-cast';
+import { MODULE_TYPES } from 'common/values';
 import moment from 'moment';
 import theme from 'common/theme';
 
@@ -51,7 +52,6 @@ const MovieDetailScreen = ({
   isFavListUpdated,
   getFavoriteMoviesAction,
   addMovieToFavoritesStartAction,
-
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
@@ -348,6 +348,7 @@ const MovieDetailScreen = ({
         videoUrls={videoUrls}
         fullscreen={fullscreen}
         setFullscreen={setFullscreen}
+        moduleType={MODULE_TYPES.VOD}
       />
     );
   };
