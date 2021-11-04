@@ -30,7 +30,7 @@ const initialLayout = { width: Dimensions.get('window').width };
 const IradioScreen = ({
   navigation,
   startAction,
-  favoritesStartAction,
+  // favoritesStartAction,
   error,
   getRadiosAction,
   getFavoritesAction,
@@ -51,7 +51,7 @@ const IradioScreen = ({
 
   React.useEffect(() => {
     if (index === 0) {
-      favoritesStartAction();
+      // favoritesStartAction();
       getRadiosAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
     }
 

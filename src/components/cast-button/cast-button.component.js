@@ -1,31 +1,22 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import GoogleCast, { useRemoteMediaClient, useCastSession } from 'react-native-google-cast';
+import GoogleCast, { useCastSession } from 'react-native-google-cast';
 import ButtonIconDefault from 'components/button-icon-default/button-icon-default.component';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { selectMovie } from 'modules/ducks/movies/movies.selectors';
 import { selectChannel } from 'modules/ducks/itv/itv.selectors';
 
-const ChromecastButton = ({
-  source,
-  title,
-  subtitle,
-  thumbnail,
-  showListAction,
-  stopCastingAction
-}) => {
+const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
   const castSession = useCastSession();
-  const client = useRemoteMediaClient();
 
   const [castConnected, setCastConnected] = React.useState(false);
 
   const handlePressActionPress = () => {
-    showListAction();
+    onPressAction();
   };
 
   const handleStopCastingPress = () => {

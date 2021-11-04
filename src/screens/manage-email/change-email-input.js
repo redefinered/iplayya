@@ -6,7 +6,7 @@ import { TextInput, Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import MainButton from 'components/button/mainbutton.component';
 
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 
 import { compose } from 'redux';
@@ -17,7 +17,8 @@ import {
   selectError,
   selectIsFetching,
   selectProfile,
-  selectUpdated
+  selectUpdated,
+  selectAuthenticatedEmailChange
 } from 'modules/ducks/profile/profile.selectors';
 
 import { isValidPassword } from 'common/validate';
@@ -27,54 +28,99 @@ class ChangeEmailInput extends React.Component {
   constructor(props) {
     super(props);
 
+    const { email } = props.profile;
     this.state = {
       showPassword: false,
       valid: true,
-      errors: [{ key: 'password', val: false }]
+      email,
+      password: '',
+      errors: {
+        password: null
+      }
     };
   }
 
-  handleChangeText = (text, name) => {
-    this.setState({ [name]: text });
+  componentDidMount() {
+    this.props.getProfileAction();
+  }
+
+  handleChange = (value) => {
+    this.setState({ password: value });
   };
 
-  setError = (stateError, field, val) => {
-    const index = stateError.findIndex(({ key }) => key === field);
-    stateError[index].val = val;
-    this.setState({ errors: stateError });
+  setError = (field, val) => {
+    // const index = stateError.findIndex(({ key }) => key === field);
+    // stateError[index].val = val;
+    this.setState({ errors: Object.assign(this.state.errors, { [field]: val }) });
   };
 
-  handleChange = () => {
-    const { password, errors } = this.state;
+  handleSubmit = () => {
+    const { authenticateEmailChangeAction, startAction } = this.props;
+    // eslint-disable-next-line no-unused-vars
+    const { errors: stateError, email, valid, showPassword, password } = this.state;
+    startAction();
 
-    if (!isValidPassword(password)) {
-      this.setError(errors, 'password', true);
+    if (password === '') {
+      this.setError('password', 'Password is required');
+      return;
     } else {
-      this.setError(errors, 'password', false);
+      if (!isValidPassword(password)) {
+        this.setError('password', 'Your password is incorrect');
+      } else {
+        this.setError('password', null);
+      }
     }
 
-    const withError = errors.find(({ val }) => val === true);
+    const withError = Object.keys(stateError)
+      .map((key) => ({ key, val: stateError[key] }))
+      .find(({ val }) => val !== null);
+
     if (typeof withError !== 'undefined') {
       return this.setState({ valid: false });
     } else {
       this.setState({ valid: true });
     }
 
-    console.log('no error go next');
+    // console.log('no error go next');
+    authenticateEmailChangeAction({ username: email, password });
   };
 
+  componentDidUpdate(prevProps) {
+    if (this.props.authenticatedEmailChange !== prevProps.authenticatedEmailChange) {
+      const {
+        updateAction,
+        profile: { id },
+        newEmail
+      } = this.props;
+      updateAction({ id, email: newEmail });
+    }
+
+    if (prevProps.updated !== this.props.updated) {
+      const { navigation } = this.props;
+      this.props.handleModalClose(false);
+      navigation.navigate('ManageEmailScreen');
+    }
+
+    if (prevProps !== this.props.error) {
+      const { error } = this.props;
+      if (error === 'Error: Internal server error') {
+        this.props.handleModalClose(false);
+      }
+    }
+  }
+
   render() {
-    const { showPassword, errors, valid, password } = this.state;
+    const { showPassword, errors, password } = this.state;
 
-    let stateError = {};
+    // let stateError = {};
 
-    errors.map(({ key, val }) => {
-      Object.assign(stateError, { [key]: val });
-    });
+    // errors.map(({ key, val }) => {
+    //   Object.assign(stateError, { [key]: val });
+    // });
 
     return (
       <View style={{ paddingHorizontal: 25, paddingBottom: 10 }}>
-        <View style={{ position: 'relative', paddingBottom: 10 }}>
+        <View style={{ position: 'relative' }}>
           <TextInput
             render={(props) => (
               <FormInput
@@ -90,11 +136,11 @@ class ChangeEmailInput extends React.Component {
             mode="outlined"
             name="password"
             value={password}
-            error={stateError.password}
+            error={errors.password || this.props.error}
             autoCapitalize="none"
             selectionColor={'#E34398'}
             secureTextEntry={!showPassword}
-            onChangeText={this.handleChangeText}
+            onChangeText={(value) => this.handleChange(value, password)}
             placeholder="Enter Password"
             placeholderTextColor="#000000"
             style={{
@@ -104,7 +150,7 @@ class ChangeEmailInput extends React.Component {
             }}
             theme={{
               colors: {
-                primary: 'transparent',
+                primary: 'rgba(255,255,255,0.1)',
                 error: '#E34398',
                 placeholder: 'transparent'
               },
@@ -131,12 +177,15 @@ class ChangeEmailInput extends React.Component {
             />
           </Pressable>
         </View>
-        {!valid ? (
-          <Text style={{ color: '#000000' }}>There are errors in your entries. Please fix!</Text>
-        ) : null}
-        {this.props.error && <Text>{this.props.error}</Text>}
+        <View style={{ paddingBottom: 10, justifyContent: 'center' }}>
+          {errors.password && <Text style={{ color: '#000000' }}>{errors.password}</Text>}
+          {/* {!valid ? (
+            <Text style={{ color: '#000000' }}>There are errors in your entries. Please fix!</Text>
+          ) : null} */}
+          {this.props.error && <Text style={{ color: '#000000' }}>Your password is Incorrect</Text>}
+        </View>
         <View>
-          <MainButton text="Proceed" onPress={() => this.handleChange()} />
+          <MainButton text="Proceed" onPress={() => this.handleSubmit()} />
         </View>
       </View>
     );
@@ -145,16 +194,19 @@ class ChangeEmailInput extends React.Component {
 
 const actions = {
   getProfileAction: Creators.get,
-  updateAction: Creators.update
+  updateAction: Creators.update,
+  authenticateEmailChangeAction: Creators.authenticateEmailChange,
+  startAction: Creators.start
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   profile: selectProfile,
-  updated: selectUpdated
+  updated: selectUpdated,
+  authenticatedEmailChange: selectAuthenticatedEmailChange
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap);
 
 export default enhance(ChangeEmailInput);

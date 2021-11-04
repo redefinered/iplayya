@@ -166,7 +166,10 @@ const Content = ({
       );
 
     return (
-      <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
+      <Text
+        numberOfLines={1}
+        style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}
+      >
         {epgtitle}
       </Text>
     );
@@ -183,7 +186,8 @@ const Content = ({
       <View
         style={{
           justifyContent: 'center',
-          marginBottom: 5
+          marginBottom: 5,
+          flex: 1
         }}
       >
         <Text
