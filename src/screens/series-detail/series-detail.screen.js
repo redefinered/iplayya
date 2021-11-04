@@ -40,8 +40,6 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 
-import { useRemoteMediaClient } from 'react-native-google-cast';
-
 export const selectSource = (videourls) => {
   const urls = videourls.map(({ link }) => link);
   const mp4url = urls.find((url) => !url.includes('video.m3u8'));
@@ -62,7 +60,6 @@ const SeriesDetailScreen = ({
     params: { videoId }
   },
   movie: seriesdata,
-  // videoSource,
   playbackStartAction,
   getMovieAction,
   getMovieStartAction,
@@ -78,9 +75,6 @@ const SeriesDetailScreen = ({
   setEpisodeAction,
   navigation
 }) => {
-  // const dummyvideo = dummydata.video;
-  const client = useRemoteMediaClient();
-
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
@@ -121,33 +115,6 @@ const SeriesDetailScreen = ({
     getMovieAction(videoId);
     // getMovieAction(316); /// for testing
   }, []);
-
-  /// cast functions
-  React.useEffect(() => {
-    if (!client) return;
-    // getChromecastStatus();
-
-    if (paused) {
-      handlePause();
-    } else {
-      handlePlay();
-    }
-  }, [client, paused]);
-
-  const handlePlay = async () => {
-    await client.play();
-  };
-
-  const handlePause = async () => {
-    await client.pause();
-  };
-
-  // const getChromecastStatus = async () => {
-  //   const chromecastStatus = await client.getMediaStatus();
-
-  //   console.log({ chromecastStatus });
-  // };
-  /// end cast functions
 
   React.useEffect(() => {
     if (showSnackbar) {

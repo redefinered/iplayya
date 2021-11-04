@@ -99,33 +99,6 @@ const MovieDetailScreen = ({
     addMovieToFavoritesStartAction();
   }, []);
 
-  /// cast functions
-  React.useEffect(() => {
-    if (!client) return;
-    // getChromecastStatus();
-
-    if (paused) {
-      handlePause();
-    } else {
-      handlePlay();
-    }
-  }, [client, paused]);
-
-  const handlePlay = async () => {
-    await client.play();
-  };
-
-  const handlePause = async () => {
-    await client.pause();
-  };
-  /// end cast functions
-
-  // const getChromecastStatus = async () => {
-  //   const chromecastStatus = await client.getMediaStatus();
-
-  //   console.log({ chromecastStatus });
-  // };
-
   React.useEffect(() => {
     if (showSnackbar) {
       hideSnackbar();
@@ -333,6 +306,7 @@ const MovieDetailScreen = ({
         source={source}
         thumbnail={thumbnail}
         title={title}
+        videoLength={movie.time}
         togglePlay={handleTogglePlay}
         setPaused={setPaused}
         setSource={handleSourceSet}
