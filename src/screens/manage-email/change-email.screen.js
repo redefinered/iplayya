@@ -34,17 +34,14 @@ class ChangeEmailScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    const { email } = props.profile;
-
+    // const { email } = props.profile;
     this.state = {
       modalVisible: false,
       valid: true,
-      email,
-      showPassword: false,
-      errors: [
-        { key: 'email', val: false },
-        { key: 'password', val: false }
-      ]
+      email: '',
+      errors: {
+        email: null
+      }
     };
   }
 
@@ -53,25 +50,50 @@ class ChangeEmailScreen extends React.Component {
   }
 
   handleChangeText = (text, name) => {
+    if (name === 'email') {
+      if (text === '') {
+        this.setError('email', null);
+      }
+      return this.setState({ [name]: text.toLowerCase().trim() });
+    }
     this.setState({ [name]: text });
   };
 
-  setError = (stateError, field, val) => {
-    const index = stateError.findIndex(({ key }) => key === field);
-    stateError[index].val = val;
-    this.setState({ errors: stateError });
+  handleOnFocus = () => {
+    if (!isValidEmail(this.state.email)) {
+      this.setError('email', 'Invalid email address');
+    } else {
+      this.setError('email', null);
+    }
+    if (this.state.email === '') {
+      this.setError('email', null);
+    }
+  };
+
+  setError = (field, val) => {
+    // const index = stateError.findIndex(({ key }) => key === field);
+    // stateError[index].val = val;
+    this.setState({ errors: Object.assign(this.state.errors, { [field]: val }) });
   };
 
   handleSubmit = () => {
-    const { email, errors } = this.state;
+    // eslint-disable-next-line no-unused-vars
+    const { modalVisible, valid, errors: stateError, loading, ...form } = this.state;
 
-    if (!isValidEmail(email)) {
-      this.setError(errors, 'email', true);
+    if (!form.email.length) {
+      this.setError('email', 'Email is required');
     } else {
-      this.setError(errors, 'email', false);
+      if (!isValidEmail(form.email)) {
+        this.setError('email', 'Invalid email address.');
+      } else {
+        this.setError('email', null);
+      }
     }
 
-    const withError = errors.find(({ val }) => val === true);
+    const withError = Object.keys(stateError)
+      .map((key) => ({ key, val: stateError[key] }))
+      .find(({ val }) => val !== null);
+
     if (typeof withError !== 'undefined') {
       return this.setState({ valid: false });
     } else {
@@ -79,7 +101,7 @@ class ChangeEmailScreen extends React.Component {
     }
 
     console.log('no errors! submit.');
-    if (email === false) {
+    if (form.email === false) {
       return this.setState({ modalVisible: false });
     } else {
       this.setState({ modalVisible: true });
@@ -88,16 +110,21 @@ class ChangeEmailScreen extends React.Component {
 
   handleClose = () => {
     this.setState({ modalVisible: false });
+    this.props.getProfileAction();
+  };
+
+  handleModalClose = () => {
+    this.setState({ modalVisible: false });
   };
 
   render() {
-    const { errors, valid, modalVisible, ...form } = this.state;
+    const { email } = this.props.profile;
+    const { errors, modalVisible, ...form } = this.state;
 
-    let stateError = {};
-
-    errors.map(({ key, val }) => {
-      Object.assign(stateError, { [key]: val });
-    });
+    // let stateError = {};
+    // errors.map(({ key, val }) => {
+    //   Object.assign(stateError, { [key]: val });
+    // });
 
     return (
       <ContentWrap style={{ paddingTop: 30 }}>
@@ -135,65 +162,12 @@ class ChangeEmailScreen extends React.Component {
                   Enter your password below to continue changing your email.
                 </Text>
               </View>
-              {/* <View style={{ paddingHorizontal: 25, paddingBottom: 10 }}>
-                <View style={{ position: 'relative' }}>
-                  <PasswordInput
-                    render={(props) => (
-                      <FormInput
-                        {...props}
-                        style={{
-                          color: '#000000',
-                          backgroundColor: 'rgba(13, 17, 29, 0.1)',
-                          padding: 14,
-                          borderWidth: 0
-                        }}
-                      />
-                    )}
-                    name="password"
-                    handleChangeText={this.handleChangeText}
-                    value={form.password}
-                    autoCapitalize="none"
-                    error={stateError.password}
-                    theme={{ colors: { primary: 'transparent', underlineColor: 'transparent' } }}
-                    style={{
-                      position: 'relative',
-                      zIndex: 1
-                    }}
-                    placeholder="Enter Password"
-                    placeholderTextColor="#000000"
-                    secureTextEntry={!showPassword}
-                  />
-                  <Pressable
-                    onPress={() => this.setState({ showPassword: !showPassword })}
-                    style={{
-                      position: 'absolute',
-                      right: 10,
-                      height: '100%',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      width: 40,
-                      zIndex: 2
-                    }}
-                  >
-                    <Icon
-                      name={showPassword ? 'close' : 'eye'}
-                      size={showPassword ? 25 : 40}
-                      style={{ color: 'rgba(0,0,0,0.8)' }}
-                    />
-                  </Pressable>
-                </View>
-              </View>
-              {!valid ? (
-                <Text style={{ color: '#000000', textAlign: 'center' }}>
-                  There are errors in your entries. Please fix!
-                </Text>
-              ) : null}
-              {this.props.error && <Text>{this.props.error}</Text>}
-              <View style={{ paddingHorizontal: 25, paddingBottom: 25 }}>
-                <MainButton text="Proceed" onPress={() => this.handleChange()} />
-              </View> */}
               <View style={{ height: 150 }}>
-                <ChangeEmailInput />
+                <ChangeEmailInput
+                  newEmail={form.email}
+                  navigation={this.props.navigation}
+                  handleModalClose={this.handleModalClose}
+                />
               </View>
               <TouchableRipple
                 style={{ paddingVertical: 10 }}
@@ -215,24 +189,34 @@ class ChangeEmailScreen extends React.Component {
           </View>
         </Modal>
         <Text
-          style={{ marginBottom: 20, textAlign: 'center', paddingHorizontal: 40, fontSize: 16 }}
+          style={{
+            marginBottom: 20,
+            textAlign: 'left',
+            fontSize: 16
+          }}
         >
-          You can change your email by typing in your new email below
+          You can change your email by typing in your new email below.
         </Text>
         <View>
           <TextInput
             name="email"
             value={form.email}
+            focusAction={this.handleOnFocus}
             handleChangeText={this.handleChangeText}
             autoCapitalize="none"
             clearButtonMode="while-editing"
             keyboardType="email-address"
             autoCompleteType="email"
-            error={stateError.email}
-            style={{ paddingBottom: 20 }}
+            placeholder={email}
+            error={errors.email || this.props.error}
           />
-          {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
-          {this.props.error && <Text>{this.props.error}</Text>}
+
+          <View style={{ paddingBottom: 20, justifyContent: 'center' }}>
+            {errors.email && <Text>{errors.email}</Text>}
+            {/* {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null} */}
+            {this.props.error && <Text>The email has already been taken.</Text>}
+          </View>
+
           <MainButton text="Submit" onPress={() => this.handleSubmit()} />
         </View>
       </ContentWrap>
