@@ -179,7 +179,7 @@ const MediaPlayer = ({
           metadata: {
             ...getMetadata()
           },
-          streamDuration: playbackInfo.seekableDuration
+          streamDuration: playbackInfo ? playbackInfo.seekableDuration : 0
         }
         // startTime: playbackInfo.currentTime // seconds
       });
@@ -453,6 +453,7 @@ const MediaPlayer = ({
         setShowChromecastOptions={setShowChromecastOptions}
         moduleType={moduleType}
         style={{ position: 'absolute' }}
+        handleHideList={() => setShowChromecastOptions(false)}
       />
     );
   };
