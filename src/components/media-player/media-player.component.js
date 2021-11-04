@@ -47,11 +47,13 @@ const MediaPlayer = ({
   isLastEpisode,
   isSeries,
   currentProgram,
-  moduleType
+  moduleType,
+  // eslint-disable-next-line react/prop-types
+  videoLength
 }) => {
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
-  const discoveryManager = GoogleCast.getDiscoveryManager();
+  // const discoveryManager = GoogleCast.getDiscoveryManager();
 
   let player = React.useRef();
 
@@ -82,7 +84,7 @@ const MediaPlayer = ({
 
   React.useEffect(() => {
     /// starts discovery of chromcast devices
-    discoveryManager.startDiscovery();
+    // discoveryManager.startDiscovery();
 
     setCastSession();
 
@@ -132,13 +134,13 @@ const MediaPlayer = ({
   }, [source, client]);
 
   const getMetadata = () => {
-    const common = {
-      images: [
-        {
-          url: thumbnail
-        }
-      ]
-    };
+    // const common = {
+    //   images: [
+    //     {
+    //       url: thumbnail
+    //     }
+    //   ]
+    // };
 
     if (moduleType === MODULE_TYPES.TV) {
       /// use generic title if no title found
@@ -155,19 +157,20 @@ const MediaPlayer = ({
     if (isSeries) {
       return {
         type: 'tvShow',
-        title: seriesTitle,
-        ...common
+        title: seriesTitle
+        // ...common
       };
     }
 
     return {
       type: 'movie',
-      title,
-      ...common
+      title
+      // ...common
     };
   };
 
   const loadMedia = async (source) => {
+    console.log({ source });
     if (!client) return;
 
     try {
@@ -175,11 +178,12 @@ const MediaPlayer = ({
         // autoplay: false,
         mediaInfo: {
           contentUrl: source,
+          // contentUrl: 'http://vod3.freeddns.org:80/195181164146/12AngryMen.mp4',
           streamType: moduleType === MODULE_TYPES.TV ? 'live' : 'buffered',
           metadata: {
             ...getMetadata()
           },
-          streamDuration: playbackInfo ? playbackInfo.seekableDuration : 0
+          streamDuration: videoLength * 60
         }
         // startTime: playbackInfo.currentTime // seconds
       });
@@ -510,14 +514,15 @@ const MediaPlayer = ({
 
 MediaPlayer.defaultProps = {
   qualitySwitchable: false,
-  moduleType: MODULE_TYPES.VOD
-  // thumbnail:
+  moduleType: MODULE_TYPES.VOD,
+  videoLength: 0
 };
 
 MediaPlayer.propTypes = {
   currentProgram: PropTypes.object,
   fullscreen: PropTypes.bool,
   title: PropTypes.string,
+  // videoLength: PropTypes.string,
   seriesTitle: PropTypes.string,
   source: PropTypes.string,
   thumbnail: PropTypes.string,
