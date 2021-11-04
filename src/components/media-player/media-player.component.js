@@ -47,7 +47,8 @@ const MediaPlayer = ({
   isLastEpisode,
   isSeries,
   currentProgram,
-  moduleType
+  moduleType,
+  updatePlaybackInfoAction
 }) => {
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
@@ -335,7 +336,7 @@ const MediaPlayer = ({
   const handleProgress = (playbackInfo) => {
     // console.log({ playbackInfo });
     setBuffering(false);
-    // updatePlaybackInfoAction({ playbackInfo });
+    updatePlaybackInfoAction({ playbackInfo });
     setPlaybackInfo(playbackInfo);
   };
 
