@@ -34,6 +34,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { useRemoteMediaClient } from 'react-native-google-cast';
+import { MODULE_TYPES } from 'common/values';
 import moment from 'moment';
 import theme from 'common/theme';
 
@@ -50,7 +51,6 @@ const MovieDetailScreen = ({
   isFavListUpdated,
   getFavoriteMoviesAction,
   addMovieToFavoritesStartAction,
-
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
@@ -98,33 +98,6 @@ const MovieDetailScreen = ({
     getMovieAction(videoId);
     addMovieToFavoritesStartAction();
   }, []);
-
-  /// cast functions
-  React.useEffect(() => {
-    if (!client) return;
-    // getChromecastStatus();
-
-    if (paused) {
-      handlePause();
-    } else {
-      handlePlay();
-    }
-  }, [client, paused]);
-
-  const handlePlay = async () => {
-    await client.play();
-  };
-
-  const handlePause = async () => {
-    await client.pause();
-  };
-  /// end cast functions
-
-  // const getChromecastStatus = async () => {
-  //   const chromecastStatus = await client.getMediaStatus();
-
-  //   console.log({ chromecastStatus });
-  // };
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -333,12 +306,14 @@ const MovieDetailScreen = ({
         source={source}
         thumbnail={thumbnail}
         title={title}
+        videoLength={movie.time}
         togglePlay={handleTogglePlay}
         setPaused={setPaused}
         setSource={handleSourceSet}
         videoUrls={videoUrls}
         fullscreen={fullscreen}
         setFullscreen={setFullscreen}
+        moduleType={MODULE_TYPES.VOD}
       />
     );
   };

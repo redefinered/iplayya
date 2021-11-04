@@ -39,14 +39,11 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - google-cast-sdk (4.5.3):
-    - google-cast-sdk/Core (= 4.5.3)
-    - GTMSessionFetcher/Core (~> 1.1)
+  - google-cast-sdk (4.6.1):
+    - google-cast-sdk/Core (= 4.6.1)
     - Protobuf (~> 3.13)
-  - google-cast-sdk/Core (4.5.3):
-    - GTMSessionFetcher/Core (~> 1.1)
+  - google-cast-sdk/Core (4.6.1):
     - Protobuf (~> 3.13)
-  - GTMSessionFetcher/Core (1.5.0)
   - PromisesObjC (2.0.0)
   - Protobuf (3.17.0)
   - RCTRequired (0.63.3)
@@ -221,11 +218,11 @@ PODS:
     - React
   - react-native-document-picker (5.0.4):
     - React-Core
-  - react-native-google-cast/GuestMode (4.0.3):
+  - react-native-google-cast/GuestMode (4.1.2):
     - google-cast-sdk
     - React
     - react-native-google-cast/RNGoogleCast
-  - react-native-google-cast/RNGoogleCast (4.0.3):
+  - react-native-google-cast/RNGoogleCast (4.1.2):
     - PromisesObjC
     - React
   - react-native-image-picker (3.3.4):
@@ -398,7 +395,6 @@ SPEC REPOS:
     - AppCenterReactNativeShared
     - boost-for-react-native
     - google-cast-sdk
-    - GTMSessionFetcher
     - PromisesObjC
     - Protobuf
 
@@ -525,8 +521,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 7da9338acfb98d4ef9e5536805a0704572d33c2f
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
-  google-cast-sdk: f94c5df87564f71d4342400b8487665e9bed27c6
-  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
+  google-cast-sdk: 9fc76175641bc24ef2515e0263344bd2c5c4e75c
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   Protobuf: 7327d4444215b5f18e560a97f879ff5503c4581c
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047
@@ -542,7 +537,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
   react-native-background-downloader: 4a034cf39a3b00fac57364984e360a4f180a5efb
   react-native-document-picker: 1a7518132d4a06b67f459be9bb1464a567d2b3b4
-  react-native-google-cast: 8edc149baf13eee0dd2acf1583ed1412c00fd253
+  react-native-google-cast: 8538c321da08b2289d24c173cbdfb1bacf8d3be8
   react-native-image-picker: 32fbfa63b6eff82b13b037022dc1d25005290e36
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-safe-area-context: 79fea126c6830c85f65947c223a5e3058a666937
@@ -575,6 +570,6 @@ SPEC CHECKSUMS:
   toolbar-android: 85f3ef4d691469f2d304e7dee4bca013aa1ba1ff
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
 
-PODFILE CHECKSUM: 3f3669217c15073135fc23110198ebea12cff247
+PODFILE CHECKSUM: b3ed1cc15eb09c794f426125f7fa5ae0fdf77456
 
 COCOAPODS: 1.10.1
