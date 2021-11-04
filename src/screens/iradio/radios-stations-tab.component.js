@@ -28,7 +28,8 @@ const RadioStationsTab = ({
   handleSelectItem,
   isAddingToFavorites,
   added,
-  resetUpdateIndicatorsAction
+  resetUpdateIndicatorsAction,
+  getFavoritesAction
 }) => {
   console.log({ xxxx: paginator });
   const [showSnackBar, setShowSnackBar] = React.useState(false);
@@ -53,6 +54,8 @@ const RadioStationsTab = ({
 
   React.useEffect(() => {
     if (added) setShowSnackBar(true);
+    const prevPaginator = Object.assign(paginator, { pageNumber: paginator.pageNumber - 1 });
+    getFavoritesAction(prevPaginator);
   }, [added]);
 
   React.useEffect(() => {
