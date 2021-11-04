@@ -53,7 +53,7 @@ const MediaPlayer = ({
 }) => {
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
-  // const discoveryManager = GoogleCast.getDiscoveryManager();
+  const discoveryManager = GoogleCast.getDiscoveryManager();
 
   let player = React.useRef();
 
@@ -84,7 +84,7 @@ const MediaPlayer = ({
 
   React.useEffect(() => {
     /// starts discovery of chromcast devices
-    // discoveryManager.startDiscovery();
+    discoveryManager.startDiscovery();
 
     setCastSession();
 
