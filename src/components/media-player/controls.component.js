@@ -43,6 +43,7 @@ const VideoControls = ({
   ...controlProps
 }) => {
   const sessionManager = GoogleCast.getSessionManager();
+  const discoveryManager = GoogleCast.getDiscoveryManager();
   const client = useRemoteMediaClient();
   const [mediaStatus, setMediaStatus] = React.useState(null);
   const [showVolume, setShowVolume] = React.useState(true);
@@ -340,6 +341,8 @@ const VideoControls = ({
   };
 
   const handleCastButtonPress = () => {
+    discoveryManager.startDiscovery();
+
     if (isFullscreen) return setShowFullscreenCastOptions(!showFullscreenCastOptions);
 
     controlProps.setShowChromecastOptions(true);
