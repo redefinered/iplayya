@@ -103,7 +103,7 @@ const NotificationItem = ({
                 marginBottom: theme.spacing(1)
               }}
             >
-              {`${title} will start in 5 minutes`}
+              {title}
             </Text>
             <Text style={{ fontSize: 10, fontWeight: '300', color: theme.iplayya.colors.white50 }}>
               {renderFromNow()}

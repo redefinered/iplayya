@@ -25,6 +25,7 @@ import PrevButton from './prev-button.component';
 import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import DeviceInfo from 'react-native-device-info';
 import CastOptions from './cast-options.component';
+import { MODULE_TYPES } from 'common/values';
 
 const VideoControls = ({
   playbackInfo,
@@ -267,7 +268,7 @@ const VideoControls = ({
           style={{
             position: 'relative',
             zIndex: 111,
-            marginBottom: -10
+            marginBottom: controlProps.moduleType === MODULE_TYPES.TV ? 0 : -10
           }}
         >
           <View style={{ alignSelf: 'flex-end' }}>
@@ -289,7 +290,7 @@ const VideoControls = ({
           justifyContent: 'space-between',
           position: 'relative',
           zIndex: 111,
-          marginBottom: -10
+          marginBottom: controlProps.moduleType === MODULE_TYPES.TV ? 0 : -10
         }}
       >
         <View style={{ flexDirection: 'row' }}>
@@ -311,6 +312,9 @@ const VideoControls = ({
   };
 
   const renderProgressSlider = () => {
+    /// hide progress slider in TV
+    if (controlProps.moduleType === MODULE_TYPES.TV) return;
+
     return (
       <View
         style={{ flexDirection: 'row', alignItems: 'center', position: 'relative', zIndex: 105 }}

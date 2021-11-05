@@ -31,7 +31,7 @@ const { Types, Creators } = createActions(
 
     favoritesStart: null,
     // add to favorites
-    addToFavorites: ['videoId'],
+    addToFavorites: ['id'],
     addToFavoritesSuccess: null,
     addToFavoritesFailure: ['error'],
 

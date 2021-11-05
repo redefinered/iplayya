@@ -56,6 +56,7 @@ const IsportsScreen = ({
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
+  // eslint-disable-next-line no-unused-vars
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
@@ -380,8 +381,15 @@ const IsportsScreen = ({
             onPress={() => navigation.navigate('IsportsDownloadsScreen')}
           >
             <View style={{ alignItems: 'center' }}>
-              <Icon name="download" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+              <Icon name="download" size={theme.iconSize(3)} color={theme.iplayya.colors.white25} />
+              <Text
+                style={{
+                  fontSize: 10,
+                  textTransform: 'uppercase',
+                  marginTop: 5,
+                  color: theme.iplayya.colors.white25
+                }}
+              >
                 Downloads
               </Text>
             </View>
@@ -391,7 +399,8 @@ const IsportsScreen = ({
 
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your Favorites list`}
+        message="Channel is added to your Favorites list"
+        // message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor="#FF5050"
       />

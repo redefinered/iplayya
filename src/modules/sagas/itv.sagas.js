@@ -68,7 +68,7 @@ export function* getChannelsByCategoriesRequest(action) {
 
 export function* addToFavoritesRequest(action) {
   try {
-    const { addIptvToFavorites } = yield call(addToFavorites, action.videoId);
+    const { addIptvToFavorites } = yield call(addToFavorites, action.id);
     if (addIptvToFavorites.status !== 'success') throw new Error('Error adding item to favorites');
     yield put(Creators.addToFavoritesSuccess());
   } catch (error) {

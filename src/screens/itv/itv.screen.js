@@ -57,6 +57,7 @@ const ItvScreen = ({
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
+  // eslint-disable-next-line no-unused-vars
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
@@ -259,6 +260,10 @@ const ItvScreen = ({
     );
   };
 
+  const handleEpgButtonPress = (id) => {
+    navigation.navigate('ItvProgramGuideScreen', { channelId: id });
+  };
+
   const renderChannels = () => {
     if (!channelsData) return;
 
@@ -290,6 +295,7 @@ const ItvScreen = ({
               isCatchUpAvailable={false}
               onSelect={handleItemSelect}
               onRightActionPress={handleAddToFavorites}
+              onEpgButtonPressed={handleEpgButtonPress}
               full
               epgtitle={epgtitle}
               {...itemProps}
@@ -384,15 +390,16 @@ const ItvScreen = ({
             }}
             borderless={true}
             rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.navigate('ItvDownloadsScreen')}
+            // onPress={() => navigation.navigate('ItvDownloadsScreen')}
           >
             <View style={{ alignItems: 'center' }}>
-              <Icon name="download" size={theme.iconSize(3)} />
+              <Icon name="download" size={theme.iconSize(3)} color={theme.iplayya.colors.white25} />
               <Text
                 style={{
                   fontSize: 10,
                   textTransform: 'uppercase',
-                  marginTop: 5
+                  marginTop: 5,
+                  color: theme.iplayya.colors.white25
                 }}
               >
                 Downloads
@@ -404,7 +411,8 @@ const ItvScreen = ({
       </View>
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your Favorites list`}
+        message="Channel is added to your Favorites list"
+        // message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
       />
@@ -456,6 +464,6 @@ const actions = {
   reset: Creators.reset
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

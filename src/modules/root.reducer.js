@@ -25,6 +25,7 @@ import iplayReducer from './ducks/iplay/iplay.reducer';
 export const persistConfig = {
   key: 'primary',
   storage: AsyncStorage
+  // blacklist
 };
 
 const resettable = resettableReducer('RESET');
