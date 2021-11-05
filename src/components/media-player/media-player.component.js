@@ -28,19 +28,18 @@ const VIDEO_STYLE_FULLSCREEN = {
 };
 
 const MediaPlayer = ({
+  title,
+  source,
+  setSource,
   fullscreen,
   setFullscreen,
-  source,
-  qualitySwitchable,
   thumbnail,
-  title,
   seriesTitle,
   paused,
   togglePlay,
   setPaused,
   multipleMedia,
   videoUrls,
-  setSource,
   previousAction,
   nextAction,
   isFirstEpisode,
@@ -49,6 +48,7 @@ const MediaPlayer = ({
   currentProgram,
   moduleType,
   updatePlaybackInfoAction,
+  qualitySwitchable,
   // eslint-disable-next-line react/prop-types
   videoLength
 }) => {
@@ -79,7 +79,6 @@ const MediaPlayer = ({
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
   const [showChromecastOptions, setShowChromecastOptions] = React.useState(false);
   // const [chromeCastSession, setChromeCastSession] = React.useState(null);
-  // console.log({ playbackInfo, thumbnail });
 
   const timer = React.useRef(null);
 
@@ -133,6 +132,13 @@ const MediaPlayer = ({
     if (!client) return;
     loadMedia(source);
   }, [source, client]);
+
+  React.useEffect(() => {
+    if (castSessionActive) return;
+    if (!playbackInfo) return;
+
+    player.current.seek(playbackInfo.currentTime);
+  }, [source]);
 
   const getMetadata = () => {
     // const common = {
