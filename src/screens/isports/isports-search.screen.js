@@ -62,8 +62,9 @@ const ISportsSearchScreen = ({
       searchStartAction();
     }
     if (term.length) {
-      if (term.length <= 2) return;
-      search(term);
+      if (term.length >= 2) {
+        search(term, false);
+      }
     }
   }, [term]);
 
