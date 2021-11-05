@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Text } from 'react-native-paper';
-import { Platform, ScrollView } from 'react-native';
+import { Platform, ScrollView, View } from 'react-native';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import UsernameInput from './username-input.component';
@@ -17,6 +17,8 @@ import { Creators } from 'modules/ducks/auth/auth.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectError, selectSignedUp, selectIsFetching } from 'modules/ducks/auth/auth.selectors';
 import { validateName } from './sign-up.utils';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { checkRegularExpression } from 'common/validate';
 
 import styles from './sign-up.styles';
 
@@ -46,7 +48,10 @@ class SignUpScreen extends React.Component {
       password: null,
       password_confirmation: null,
       commonError: null,
-      password_validation: null
+      password_validation: null,
+      second_password_validation: null,
+      icon_color: null,
+      second_icon_color: null
     }
   };
 
@@ -85,13 +90,34 @@ class SignUpScreen extends React.Component {
     }
 
     if (name === 'password') {
-      if (isValidPassword(value)) {
-        this.setError('password_validation', null);
+      if (value.length >= 4) {
+        this.setError('password_validation', 'At least 4 characters in length');
+        this.setError('icon_color', 'green');
       } else {
         if (value.length) {
           this.setState({ disable: true });
         }
       }
+
+      if (value.length <= 3) {
+        this.setError('password_validation', 'At least 4 characters in length');
+        this.setError('icon_color', 'white');
+      }
+
+      if (!checkRegularExpression(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, value)) {
+        this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+        this.setError('second_icon_color', 'white');
+      }
+
+      if (checkRegularExpression(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, value)) {
+        this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+        this.setError('second_icon_color', 'green');
+      } else {
+        if (value.length) {
+          this.setState({ disable: true });
+        }
+      }
+
       if (value === '') {
         this.setError('password', null);
         this.setState({ disable: false });
@@ -121,15 +147,22 @@ class SignUpScreen extends React.Component {
       this.setError('email', null);
     }
 
-    if (!isValidPassword(this.state.password)) {
-      this.setError(
-        'password_validation',
-        '• At least 4 characters in length. \n• Must contain uppercase letters and numbers.'
-      );
+    if (!isValidEmail(this.state.password)) {
+      this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+      this.setError('second_icon_color', 'white');
+      this.setError('password', null);
+    } else {
+      this.setError('second_password_validation', null);
+    }
+
+    if (this.state.password.length <= 4) {
+      this.setError('password_validation', 'At least 4 characters in length.');
+      this.setError('icon_color', 'white');
       this.setError('password', null);
     } else {
       this.setError('password_validation', null);
     }
+
     if (this.state.first_name === '') {
       this.setError('first_name', null);
     }
@@ -165,6 +198,7 @@ class SignUpScreen extends React.Component {
     if (this.state.password === '') {
       this.setError('password_validation', null);
       this.setError('password', null);
+      this.setError('second_password_validation', null);
     }
 
     if (this.state.first_name.length < 3) {
@@ -386,13 +420,21 @@ class SignUpScreen extends React.Component {
             style={styles.textInput}
             name="password"
             placeholder="Password"
-            maxLength={20}
             focusAction={this.handlePasswordFocus}
             handleChangeText={this.handleChange}
             error={errors.password || errors.commonError}
           />
           {errors.password_validation ? (
-            <Text style={{ marginBottom: 10 }}>{errors.password_validation}</Text>
+            <View style={{ flexDirection: 'row' }}>
+              <Icon name="check" size={18} color={errors.icon_color} />
+              <Text style={{ marginBottom: 5 }}>{errors.password_validation}</Text>
+            </View>
+          ) : null}
+          {errors.second_password_validation ? (
+            <View style={{ flexDirection: 'row' }}>
+              <Icon name="check" size={18} color={errors.second_icon_color} />
+              <Text style={{ marginBottom: 5 }}>{errors.second_password_validation}</Text>
+            </View>
           ) : null}
           {errors.password && <Text style={{ marginBottom: 10 }}>{errors.password}</Text>}
           <PasswordInput
@@ -400,7 +442,6 @@ class SignUpScreen extends React.Component {
             style={styles.textInput}
             name="password_confirmation"
             placeholder="Confirm password"
-            maxLength={20}
             editable={this.state.disable}
             selectTextOnFocus={this.state.disable}
             focusAction={this.handleOnFocus}
