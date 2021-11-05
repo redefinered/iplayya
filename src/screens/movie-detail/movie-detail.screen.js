@@ -203,12 +203,12 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!movie) return <View />;
+  // return (
+  //   <ContentWrap>
+  //     <Text>Working...</Text>
+  //   </ContentWrap>
+  // );
 
   const {
     /// items to exclude in 'read more' section
@@ -382,8 +382,8 @@ const MovieDetailScreen = ({
               </List.Section>
             </ContentWrap>
 
-            <PlayMovieButton setPaused={setPaused} />
-            <PlayTrailerButton playTrailer={playTrailer} />
+            {/* <PlayMovieButton setPaused={setPaused} />
+            <PlayTrailerButton playTrailer={playTrailer} /> */}
           </ScrollView>
 
           {/* loader for download starting */}
