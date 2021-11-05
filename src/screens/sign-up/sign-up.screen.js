@@ -26,8 +26,8 @@ import {
   isValidEmail,
   isValidName,
   isValidLastName,
-  isValidUsername,
-  isValidPassword
+  isValidUsername
+  // isValidPassword
 } from 'common/validate';
 
 class SignUpScreen extends React.Component {
@@ -147,7 +147,7 @@ class SignUpScreen extends React.Component {
       this.setError('email', null);
     }
 
-    if (!isValidEmail(this.state.password)) {
+    if (!checkRegularExpression(/^(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, this.state.password)) {
       this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
       this.setError('second_icon_color', 'white');
       this.setError('password', null);
@@ -155,7 +155,7 @@ class SignUpScreen extends React.Component {
       this.setError('second_password_validation', null);
     }
 
-    if (this.state.password.length <= 4) {
+    if (this.state.password.length <= 3) {
       this.setError('password_validation', 'At least 4 characters in length.');
       this.setError('icon_color', 'white');
       this.setError('password', null);
@@ -254,6 +254,7 @@ class SignUpScreen extends React.Component {
     ) {
       this.setError('commonError', 'Please fill the required fields.');
       this.setError('password_validation', null);
+      this.setError('second_password_validation', null);
       return;
     } else {
       this.setError('commonError', null);
@@ -303,16 +304,25 @@ class SignUpScreen extends React.Component {
     if (!rest.password.length) {
       this.setError('password', 'Password is required');
       this.setError('password_validation', null);
+      this.setError('second_password_validation', null);
     } else {
-      if (!isValidPassword(rest.password)) {
-        this.setError(
-          'password',
-          '• At least 4 characters in length. \n• Must contain uppercase letters and numbers.'
-        );
-        this.setError('password_validation', null);
+      if (!checkRegularExpression(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, rest.password)) {
+        this.setError('password', 'error');
+        this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+        this.setError('icon_color', 'white');
       } else {
         this.setError('password', null);
+        this.setError('second_password_validation', null);
       }
+    }
+
+    if (rest.password.length <= 3) {
+      this.setError('password', 'error');
+      this.setError('password_validation', 'At least 4 characters in length.');
+      this.setError('icon_color', 'white');
+    } else {
+      this.setError('password', null);
+      this.setError('password_validation', null);
     }
 
     if (!rest.password_confirmation.length) {
@@ -436,7 +446,7 @@ class SignUpScreen extends React.Component {
               <Text style={{ marginBottom: 5 }}>{errors.second_password_validation}</Text>
             </View>
           ) : null}
-          {errors.password && <Text style={{ marginBottom: 10 }}>{errors.password}</Text>}
+          {/* {errors.password && <Text style={{ marginBottom: 10 }}>{errors.password}</Text>} */}
           <PasswordInput
             value={formFields.password_confirmation}
             style={styles.textInput}
