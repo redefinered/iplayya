@@ -124,7 +124,7 @@ const SeriesDetailScreen = ({
 
   React.useEffect(() => {
     if (playbackSettings.is_autoplay_video === false) {
-      setPaused(!paused);
+      setPaused(true);
     }
   }, [playbackSettings.is_autoplay_video]);
 
