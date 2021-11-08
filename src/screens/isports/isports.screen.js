@@ -3,7 +3,7 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -11,7 +11,6 @@ import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
-import withLoader from 'components/with-loader.component';
 import useComponentSize from 'hooks/use-component-size.hook';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -35,6 +34,7 @@ const channelplaceholder = require('assets/channel-placeholder.png');
 
 const IsportsScreen = ({
   navigation,
+  isFetching,
   error,
   genres,
   channels,
@@ -251,6 +251,16 @@ const IsportsScreen = ({
     navigation.navigate('IsportsProgramGuideScreen', { channelId: id });
   };
 
+  const renderListFooter = () => {
+    if (!isFetching) return;
+
+    return (
+      <View style={{ paddingVertical: theme.spacing(2) }}>
+        <ActivityIndicator />
+      </View>
+    );
+  };
+
   const renderChannels = () => {
     if (!channelsData) return;
 
@@ -288,9 +298,7 @@ const IsportsScreen = ({
               {...itemProps}
             />
           )}
-          ListFooterComponent={
-            <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
-          }
+          ListFooterComponent={renderListFooter()}
         />
       </React.Fragment>
     );
@@ -451,6 +459,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

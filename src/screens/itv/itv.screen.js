@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -16,7 +16,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
-import useComponentSize from 'hooks/use-component-size.hook';
+// import useComponentSize from 'hooks/use-component-size.hook';
 import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
 import {
@@ -35,11 +35,11 @@ const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvScreen = ({
   navigation,
+  isFetching,
   error,
   updated,
   genres,
   channels,
-  getChannelsStartAction,
   getChannelsAction,
   paginator,
   favoritesPaginator,
@@ -52,7 +52,7 @@ const ItvScreen = ({
   route: { params },
   headerHeight
 }) => {
-  const [size, onLayout] = useComponentSize();
+  // const [size, onLayout] = useComponentSize();
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -60,6 +60,8 @@ const ItvScreen = ({
   const [subscribed, setSubscribed] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
+  // eslint-disable-next-line no-unused-vars
+  const [featuredChannels, setFeaturedChannels] = React.useState([]);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
@@ -71,8 +73,7 @@ const ItvScreen = ({
     // resetPaginatorAction(); // for debugging
     enableSwipeAction(false);
 
-    // start get channels
-    getChannelsStartAction();
+    resetPaginatorAction();
   }, []);
 
   React.useEffect(() => {
@@ -139,6 +140,7 @@ const ItvScreen = ({
         setChannelsData(data);
       } else {
         setChannelsData([]);
+        setFeaturedChannels([]);
       }
     });
   }, [channels]);
@@ -192,6 +194,8 @@ const ItvScreen = ({
   };
 
   const onCategorySelect = (id) => {
+    getChannelsByCategoriesStartAction();
+
     // when changing category, reset the pagination info
     resetPaginatorAction();
 
@@ -201,8 +205,6 @@ const ItvScreen = ({
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
-      getChannelsByCategoriesStartAction();
-
       // if (paginator.pageNumber > 1) return;
       if (selectedCategory === 'all') {
         getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
@@ -259,28 +261,46 @@ const ItvScreen = ({
     navigation.navigate('ItvProgramGuideScreen', { channelId: id });
   };
 
+  const renderLisHeader = () => {
+    return (
+      <View style={{ marginBottom: theme.spacing(2) }}>
+        <ContentWrap>
+          <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+            Featured TV Channels
+          </Text>
+        </ContentWrap>
+        <FlatList
+          data={channelsData}
+          horizontal
+          bounces={false}
+          renderItem={renderFeaturedItem}
+          showsHorizontalScrollIndicator={false}
+          style={{ paddingHorizontal: theme.spacing(2) }}
+        />
+      </View>
+    );
+  };
+
+  const renderListFooter = () => {
+    if (!isFetching) return;
+
+    return (
+      <View style={{ paddingVertical: theme.spacing(2) }}>
+        <ActivityIndicator />
+      </View>
+    );
+  };
+
   const renderChannels = () => {
     if (!channelsData) return;
 
     return (
       <React.Fragment>
-        <View style={{ marginBottom: theme.spacing(2) }}>
-          <ContentWrap>
-            <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-              Featured TV Channels
-            </Text>
-          </ContentWrap>
-          <FlatList
-            data={channelsData}
-            horizontal
-            bounces={false}
-            renderItem={renderFeaturedItem}
-            showsHorizontalScrollIndicator={false}
-            style={{ paddingHorizontal: theme.spacing(2) }}
-          />
-        </View>
         <FlatList
+          ListHeaderComponent={renderLisHeader()}
           data={channelsData}
+          // refreshing={isFetching}
+          // onRefresh={() => getChannelsAction(paginator)}
           keyExtractor={(item) => item.id}
           onEndReached={() => handleEndReached()}
           onEndReachedThreshold={0.5}
@@ -296,9 +316,7 @@ const ItvScreen = ({
               {...itemProps}
             />
           )}
-          ListFooterComponent={
-            <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
-          }
+          ListFooterComponent={renderListFooter()}
         />
       </React.Fragment>
     );
@@ -322,7 +340,7 @@ const ItvScreen = ({
       </View>
 
       <View
-        onLayout={onLayout}
+        // onLayout={onLayout}
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',

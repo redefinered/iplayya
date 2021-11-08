@@ -39,6 +39,7 @@ const ItvFavoritesScreen = ({
   favoritesRemoved,
   removeFromFavoritesAction,
   getChannelsAction,
+  resetPaginatorAction,
   resetFavoritesPaginatorAction,
   favoritesStartAction
 }) => {
@@ -70,6 +71,8 @@ const ItvFavoritesScreen = ({
 
   React.useEffect(() => {
     if (favoritesRemoved) {
+      resetPaginatorAction();
+
       updated.current = true;
       setActivateCheckboxes(false);
 
@@ -462,6 +465,7 @@ const actions = {
   getFavoritesAction: Creators.getFavorites,
   getChannelsAction: Creators.getChannels,
   getChannelsStartAction: Creators.getChannelsStart,
+  resetPaginatorAction: Creators.resetPaginator,
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
