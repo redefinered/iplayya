@@ -79,9 +79,7 @@ export function* addToFavoritesRequest(action) {
 export function* removeFromFavoritesRequest(action) {
   const { channelIds } = action;
   try {
-    const response = yield all(channelIds.map((id) => call(removeFromFavorites, { videoId: id })));
-    // const { removeIptvToFavorites } = yield call(removeFromFavorites, { videoId: 4117 });
-    console.log({ response });
+    yield all(channelIds.map((id) => call(removeFromFavorites, { videoId: id })));
     yield put(Creators.removeFromFavoritesSuccess());
   } catch (error) {
     yield put(Creators.removeFromFavoritesFailure(error.message));
