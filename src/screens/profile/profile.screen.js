@@ -29,7 +29,7 @@ import { createStructuredSelector } from 'reselect';
 import SnackBar from 'components/snackbar/snackbar.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { StyleSheet } from 'react-native';
-import { headerHeight } from 'common/values';
+import { headerHeight } from 'common/globals';
 import ImagePick from 'components/image-picker/image-picker.component';
 
 const styles = StyleSheet.create({

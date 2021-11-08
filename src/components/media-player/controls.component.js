@@ -25,7 +25,7 @@ import PrevButton from './prev-button.component';
 import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import DeviceInfo from 'react-native-device-info';
 import CastOptions from './cast-options.component';
-import { MODULE_TYPES } from 'common/values';
+import { MODULE_TYPES } from 'common/globals';
 
 const VideoControls = ({
   playbackInfo,

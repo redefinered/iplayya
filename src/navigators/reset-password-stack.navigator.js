@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import ResetPasswordScreen from 'screens/reset-password/reset-password.screen';
-import { headerHeight } from 'common/values';
+import { headerHeight } from 'common/globals';
 
 const Stack = createStackNavigator();
 

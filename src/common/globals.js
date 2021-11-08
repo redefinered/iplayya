@@ -18,3 +18,5 @@ export const MODULE_TYPES = {
   VOD: 'vod',
   TV: 'tv'
 };
+
+export const PAGINATOR_LIMIT = 100;

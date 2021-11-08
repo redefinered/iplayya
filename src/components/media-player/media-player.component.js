@@ -12,7 +12,7 @@ import ChromecastOptionsModal from './modal-cast-options.component';
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
 import SystemSetting from 'react-native-system-setting';
 import theme from 'common/theme';
-import { MODULE_TYPES } from 'common/values';
+import { MODULE_TYPES } from 'common/globals';
 import uuid from 'react-uuid';
 
 const VIDEO_HEIGHT = 211;
