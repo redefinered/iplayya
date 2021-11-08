@@ -99,13 +99,6 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  /// TODO: add GET_PROGRAMS_BY_CHANNEL reducers
-  [Types.GET_CHANNELS_START]: (state) => {
-    return {
-      ...state,
-      paginator: INITIAL_STATE.paginator
-    };
-  },
   [Types.GET_CHANNELS]: (state) => {
     return {
       ...state,
@@ -254,7 +247,6 @@ export default createReducer(INITIAL_STATE, {
       isFetching: true,
       error: null,
       channels: [],
-      paginator: INITIAL_STATE.paginator,
       favoritesListRemoveUpdated: true
     };
   },
@@ -338,7 +330,12 @@ export default createReducer(INITIAL_STATE, {
   [Types.RESET_PAGINATOR]: (state) => {
     return {
       ...state,
-      paginator: INITIAL_STATE.paginator
+      paginator: {
+        limit: PAGINATOR_LIMIT,
+        pageNumber: 1,
+        orderBy: 'number',
+        order: 'asc'
+      }
     };
   },
 
