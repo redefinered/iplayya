@@ -76,9 +76,34 @@ const MediaPlayer = ({
   const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
   const [showChromecastOptions, setShowChromecastOptions] = React.useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [isLandscape, setIsLandscape] = React.useState(false);
   // const [chromeCastSession, setChromeCastSession] = React.useState(null);
 
   const timer = React.useRef(null);
+
+  React.useEffect(() => {
+    // subscribe to orientation change
+    const orientationChangeListener = Dimensions.addEventListener('change', ({ window }) => {
+      const { width, height } = window;
+
+      if (width > height) {
+        setIsLandscape(true);
+      } else {
+        setIsLandscape(false);
+      }
+    });
+
+    return () => orientationChangeListener?.remove();
+  });
+
+  // React.useEffect(() => {
+  //   if (isLandscape) {
+  //     setFullscreen(true);
+  //   } else {
+  //     setFullscreen(false);
+  //   }
+  // }, [isLandscape]);
 
   React.useEffect(() => {
     setCastSession();
@@ -114,6 +139,17 @@ const MediaPlayer = ({
 
     return () => handleCleanup({ castListener, volumeListener });
   }, []);
+
+  // const onOrientationChange = ({ window }) => {
+  //   const { width, height } = window;
+  //   if (width > height) {
+  //     setIsLandscape(true);
+  //   } else {
+  //     setIsLandscape(false);
+  //   }
+  // };
+
+  // console.log({ isLandscape });
 
   const handleCleanup = ({ castListener, volumeListener }) => {
     /// remove google-cast listener
