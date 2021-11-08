@@ -77,7 +77,7 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLay
               style={{
                 fontSize: 10,
                 textTransform: 'uppercase',
-                marginTop: 5,
+                paddingTop: 5,
                 color: heartIconColor
               }}
             >
@@ -101,7 +101,7 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLay
         >
           <View style={{ alignItems: 'center' }}>
             <Icon name="iplayya" size={theme.iconSize(3)} />
-            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+            <Text style={{ fontSize: 10, textTransform: 'uppercase', paddingTop: 5 }}>Home</Text>
           </View>
         </TouchableRipple>
       </View>
@@ -109,8 +109,8 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLay
         <TouchableRipple
           style={{
             borderRadius: 34,
-            height: 67,
-            width: 67,
+            height: 69,
+            width: 69,
             alignItems: 'center',
             justifyContent: 'center'
           }}
@@ -124,7 +124,7 @@ const ImusicBottomTabs = ({ navigation, route, nowPlaying, setImusicBottomNavLay
               style={{
                 fontSize: 10,
                 textTransform: 'uppercase',
-                marginTop: 5,
+                paddingTop: 5,
                 color: downloadIconColor
               }}
             >

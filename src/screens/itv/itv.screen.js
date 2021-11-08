@@ -333,7 +333,7 @@ const ItvScreen = ({
           zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
-        <View style={{ flex: 4, alignItems: 'center' }}>
+        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple
             style={{
               borderRadius: 34,
@@ -348,16 +348,16 @@ const ItvScreen = ({
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="heart-solid" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', paddingTop: 5 }}>
                 Favorites
               </Text>
             </View>
           </TouchableRipple>
         </View>
-        <View style={{ flex: 4, alignItems: 'center' }}>
+        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple
             style={{
-              borderRadius: 33,
+              borderRadius: 34,
               height: 67,
               width: 67,
               alignItems: 'center',
@@ -369,16 +369,16 @@ const ItvScreen = ({
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="iplayya" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', paddingTop: 5 }}>Home</Text>
             </View>
           </TouchableRipple>
         </View>
-        <View style={{ flex: 4, alignItems: 'center' }}>
+        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple
             style={{
               borderRadius: 34,
-              height: 67,
-              width: 67,
+              height: 69,
+              width: 69,
               alignItems: 'center',
               justifyContent: 'center'
             }}
@@ -392,7 +392,7 @@ const ItvScreen = ({
                 style={{
                   fontSize: 10,
                   textTransform: 'uppercase',
-                  marginTop: 5
+                  paddingTop: 5
                 }}
               >
                 Downloads

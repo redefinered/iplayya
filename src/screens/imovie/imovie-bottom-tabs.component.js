@@ -60,7 +60,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
               style={{
                 fontSize: 10,
                 textTransform: 'uppercase',
-                marginTop: 5,
+                paddingTop: 5,
                 color: heartIconColor
               }}
             >
@@ -84,7 +84,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         >
           <View style={{ alignItems: 'center' }}>
             <Icon name="iplayya" size={theme.iconSize(3)} />
-            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+            <Text style={{ fontSize: 10, paddingTop: 5, textTransform: 'uppercase' }}>Home</Text>
           </View>
         </TouchableRipple>
       </View>
@@ -92,8 +92,8 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         <TouchableRipple
           style={{
             borderRadius: 34,
-            height: 67,
-            width: 67,
+            height: 69,
+            width: 69,
             alignItems: 'center',
             justifyContent: 'center'
           }}
@@ -107,7 +107,7 @@ const ImovieBottomTabs = ({ navigation, route }) => {
               style={{
                 fontSize: 10,
                 textTransform: 'uppercase',
-                marginTop: 5,
+                paddingTop: 5,
                 color: downloadIconColor
               }}
             >
