@@ -3,6 +3,7 @@ import { Types } from './itv.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
 import { updateChannelsWithFavorited } from './itv.helpers';
+import { PAGINATOR_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -11,7 +12,7 @@ const INITIAL_STATE = {
   recentSearch: [],
 
   paginator: {
-    limit: 10,
+    limit: PAGINATOR_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -102,12 +103,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_CHANNELS_START]: (state) => {
     return {
       ...state,
-      paginator: {
-        limit: 10,
-        pageNumber: 1,
-        orderBy: 'number',
-        order: 'asc'
-      }
+      paginator: INITIAL_STATE.paginator
     };
   },
   [Types.GET_CHANNELS]: (state) => {
@@ -257,7 +253,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: true,
       error: null,
-      // favorites: [],
+      channels: [],
+      paginator: INITIAL_STATE.paginator,
       favoritesListRemoveUpdated: true
     };
   },
@@ -290,7 +287,7 @@ export default createReducer(INITIAL_STATE, {
       error: null,
       // addedToFavorites: false,
       favoritesListUpdated: false,
-      favoritesListRemoveUpdated: false,
+      // favoritesListRemoveUpdated: false,
       favorites: orderBy(updatedData, 'number', 'asc'), /// overkill yata to
       favoritesPaginator: nextPaginator
     };
@@ -341,12 +338,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.RESET_PAGINATOR]: (state) => {
     return {
       ...state,
-      paginator: {
-        limit: 10,
-        pageNumber: 1,
-        orderBy: 'number',
-        order: 'asc'
-      }
+      paginator: INITIAL_STATE.paginator
     };
   },
 
