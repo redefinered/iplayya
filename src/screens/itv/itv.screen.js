@@ -9,7 +9,6 @@ import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
-import withLoader from 'components/with-loader.component';
 import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -27,7 +26,8 @@ import {
   selectGenres,
   selectChannels,
   selectFavorites,
-  selectFavoritesListUpdated
+  selectFavoritesListUpdated,
+  selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
 import theme from 'common/theme';
 
@@ -39,11 +39,12 @@ const ItvScreen = ({
   updated,
   genres,
   channels,
-  getChannelsByCategoriesStartAction,
   getChannelsStartAction,
   getChannelsAction,
   paginator,
+  favoritesPaginator,
   resetPaginatorAction,
+  getChannelsByCategoriesStartAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
   getFavoritesAction,
@@ -57,8 +58,6 @@ const ItvScreen = ({
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
-  // eslint-disable-next-line no-unused-vars
-  const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
@@ -69,12 +68,11 @@ const ItvScreen = ({
 
   // get genres on mount
   React.useEffect(() => {
-    resetPaginatorAction(); // for debugging
+    // resetPaginatorAction(); // for debugging
     enableSwipeAction(false);
-    getChannelsStartAction();
 
-    // get channels on mount
-    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+    // start get channels
+    getChannelsStartAction();
   }, []);
 
   React.useEffect(() => {
@@ -151,16 +149,13 @@ const ItvScreen = ({
 
   const handleAddToFavorites = (channelId) => {
     let channel = channels.find(({ id }) => id === channelId);
-
     // if channel is not found stop
     if (typeof channel === 'undefined') return;
 
     const { is_favorite } = channel;
 
+    // stop if already added
     if (is_favorite) return;
-
-    let title = channels.find(({ id }) => id === channelId).title;
-    setFavorited(title);
 
     addToFavoritesAction(parseInt(channelId));
     // setShowSnackBar(true);
@@ -177,8 +172,8 @@ const ItvScreen = ({
   React.useEffect(() => {
     if (updated) {
       handleShowSnackBar();
-      getFavoritesAction({ pageNumber: 1 });
-      getChannelsAction({ pageNumber: 1 });
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
     }
   }, [updated]);
 
@@ -208,9 +203,9 @@ const ItvScreen = ({
     InteractionManager.runAfterInteractions(() => {
       getChannelsByCategoriesStartAction();
 
-      if (paginator.pageNumber > 1) return;
+      // if (paginator.pageNumber > 1) return;
       if (selectedCategory === 'all') {
-        getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+        getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
       } else {
         getChannelsByCategoriesAction({
           categories: [parseInt(selectedCategory)],
@@ -443,6 +438,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   favorites: selectFavorites,
+  favoritesPaginator: selectFavoritesPaginator,
   genres: selectGenres,
   paginator: selectPaginator,
   channels: selectChannels,
