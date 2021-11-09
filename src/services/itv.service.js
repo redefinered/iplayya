@@ -96,8 +96,6 @@ export const addToFavorites = async (videoId) => {
         }
       ],
       awaitRefetchQueries: true
-      // this query should refetch favorites each time an item
-      // is added to favorites
     });
     return data;
   } catch (error) {
@@ -124,10 +122,6 @@ export const removeFromFavorites = async (input) => {
       ],
       awaitRefetchQueries: true
     });
-
-    // refetch
-    // await client.refetchQueries({ include: ['GET_CHANNELS', 'GET_FAVORITES'] });
-
     return data;
   } catch (error) {
     throw new Error(error);

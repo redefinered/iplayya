@@ -295,30 +295,26 @@ const ItvScreen = ({
     if (!channelsData) return;
 
     return (
-      <React.Fragment>
-        <FlatList
-          ListHeaderComponent={renderLisHeader()}
-          data={channelsData}
-          // refreshing={isFetching}
-          // onRefresh={() => getChannelsAction(paginator)}
-          keyExtractor={(item) => item.id}
-          onEndReached={() => handleEndReached()}
-          onEndReachedThreshold={0.5}
-          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-          renderItem={({ item: { epgtitle, ...itemProps } }) => (
-            <ListItemChanel
-              isCatchUpAvailable={false}
-              onSelect={handleItemSelect}
-              onRightActionPress={handleAddToFavorites}
-              onEpgButtonPressed={handleEpgButtonPress}
-              full
-              epgtitle={epgtitle}
-              {...itemProps}
-            />
-          )}
-          ListFooterComponent={renderListFooter()}
-        />
-      </React.Fragment>
+      <FlatList
+        ListHeaderComponent={renderLisHeader()}
+        data={channelsData}
+        keyExtractor={(item) => item.id}
+        onEndReached={() => handleEndReached()}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        renderItem={({ item: { epgtitle, ...itemProps } }) => (
+          <ListItemChanel
+            isCatchUpAvailable={false}
+            onSelect={handleItemSelect}
+            onRightActionPress={handleAddToFavorites}
+            onEpgButtonPressed={handleEpgButtonPress}
+            full
+            epgtitle={epgtitle}
+            {...itemProps}
+          />
+        )}
+        ListFooterComponent={renderListFooter()}
+      />
     );
   };
 
