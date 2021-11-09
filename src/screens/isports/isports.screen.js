@@ -50,7 +50,9 @@ const IsportsScreen = ({
   enableSwipeAction,
   headerHeight
 }) => {
+  // eslint-disable-next-line no-unused-vars
   const [size, onLayout] = useComponentSize();
+
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -251,6 +253,26 @@ const IsportsScreen = ({
     navigation.navigate('IsportsProgramGuideScreen', { channelId: id });
   };
 
+  const renderLisHeader = () => {
+    return (
+      <View style={{ marginBottom: theme.spacing(2) }}>
+        <ContentWrap>
+          <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+            Featured Sports Channels
+          </Text>
+        </ContentWrap>
+        <FlatList
+          data={channelsData}
+          horizontal
+          bounces={false}
+          renderItem={renderFeaturedItem}
+          showsHorizontalScrollIndicator={false}
+          style={{ paddingHorizontal: theme.spacing(2) }}
+        />
+      </View>
+    );
+  };
+
   const renderListFooter = () => {
     if (!isFetching) return;
 
@@ -265,42 +287,26 @@ const IsportsScreen = ({
     if (!channelsData) return;
 
     return (
-      <React.Fragment>
-        <View style={{ marginBottom: theme.spacing(2) }}>
-          <ContentWrap>
-            <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-              Featured TV Channels
-            </Text>
-          </ContentWrap>
-          <FlatList
-            data={channelsData}
-            horizontal
-            bounces={false}
-            renderItem={renderFeaturedItem}
-            showsHorizontalScrollIndicator={false}
-            style={{ paddingHorizontal: theme.spacing(2) }}
+      <FlatList
+        ListHeaderComponent={renderLisHeader()}
+        data={channelsData}
+        keyExtractor={(item) => item.id}
+        onEndReached={() => handleEndReached()}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        renderItem={({ item: { epgtitle, ...itemProps } }) => (
+          <ListItemChanel
+            isCatchUpAvailable={false}
+            onSelect={handleItemSelect}
+            onRightActionPress={handleAddToFavorites}
+            onEpgButtonPressed={handleEpgButtonPress}
+            full
+            epgtitle={epgtitle}
+            {...itemProps}
           />
-        </View>
-        <FlatList
-          data={channelsData}
-          keyExtractor={(item) => item.id}
-          onEndReached={() => handleEndReached()}
-          onEndReachedThreshold={0.5}
-          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-          renderItem={({ item: { epgtitle, ...itemProps } }) => (
-            <ListItemChanel
-              isCatchUpAvailable={false}
-              onSelect={handleItemSelect}
-              onRightActionPress={handleAddToFavorites}
-              onEpgButtonPressed={handleEpgButtonPress}
-              full
-              epgtitle={epgtitle}
-              {...itemProps}
-            />
-          )}
-          ListFooterComponent={renderListFooter()}
-        />
-      </React.Fragment>
+        )}
+        ListFooterComponent={renderListFooter()}
+      />
     );
   };
 
