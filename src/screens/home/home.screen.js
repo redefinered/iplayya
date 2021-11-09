@@ -82,21 +82,26 @@ const Home = ({
     setShowErrorModal(false);
   };
 
+  const renderErrorModal = () => {
+    if (!error) return;
+    return (
+      <AlertModal
+        variant="danger"
+        message={error}
+        visible={showErrorModal}
+        hideAction={handleHideErrorModal}
+        confirmText="Retry"
+        confirmAction={handleProfileErrorConfirmAction}
+      />
+    );
+  };
+
   return (
     <ContentWrap style={{ marginTop: 20 }}>
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
       <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
-      {error && (
-        <AlertModal
-          variant="danger"
-          message={error}
-          visible={showErrorModal}
-          hideAction={handleHideErrorModal}
-          confirmText="Retry"
-          confirmAction={handleProfileErrorConfirmAction}
-        />
-      )}
+      {renderErrorModal()}
     </ContentWrap>
   );
 };
