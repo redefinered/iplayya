@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet, FlatList, InteractionManager } from 'react-native';
-import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
+import { Text, Banner, withTheme } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -22,14 +22,12 @@ import {
   selectPaginatorInfo,
   selectCategoryPaginator
 } from 'modules/ducks/movies/movies.selectors';
-// import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
-// import uniq
 import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
 
 const ImovieScreen = ({
-  isFetching,
+  // isFetching,
   navigation,
   error,
   getMoviesAction,
@@ -105,9 +103,9 @@ const ImovieScreen = ({
     navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   };
 
-  const renderEmpty = () => {
-    return <ActivityIndicator size="small" />;
-  };
+  // const renderEmpty = () => {
+  //   return <ActivityIndicator size="small" />;
+  // };
 
   const handleRetry = () => {
     if (paginatorInfo.length) {
@@ -144,6 +142,26 @@ const ImovieScreen = ({
     );
   };
 
+  const renderEmptyErrorBanner = () => {
+    if (error === '')
+      return (
+        <Banner
+          visible={showBanner}
+          actions={[
+            {
+              label: 'Retry',
+              onPress: () => handleRetry()
+            }
+          ]}
+          icon={({ size }) => (
+            <Icon name="alert" size={size} color={theme.iplayya.colors.vibrantpussy} />
+          )}
+        >
+          <Text style={{ color: 'black' }}>{error}</Text>
+        </Banner>
+      );
+  };
+
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
     // console.log({ category });
@@ -170,44 +188,58 @@ const ImovieScreen = ({
     setShowWalkthroughGuide(false);
   };
 
+  // {data.length ? (
+  //   <React.Fragment>
+  //     {/* <ScrollView contentOffset={{ y: scrollOffset }}>
+  //       {movies.map(({ category }) => {
+  //         return (
+  //           <View
+  //             key={category}
+  //             onLayout={({ nativeEvent: { layout } }) =>
+  //               handleSetItemsPosition(category, layout)
+  //             }
+  //           >
+  //             <CategoryScroll category={category} onSelect={handleMovieSelect} />
+  //           </View>
+  //         );
+  //       })}
+  //       <Spacer size={100} />
+  //     </ScrollView> */}
+  //     <FlatList
+  //       data={data}
+  //       showsVerticalScrollIndicator={false}
+  //       keyExtractor={(movie) => movie.category}
+  //       renderItem={renderItem}
+  //       initialScrollIndex={scrollIndex}
+  //       onEndReached={(info) => handleEndReached(info)}
+  //       onEndReachedThreshold={0.5}
+  //       onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+  //     />
+  //     <Spacer size={80} />
+  //   </React.Fragment>
+  // ) : (
+  //   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //     {!isFetching ? renderEmpty() : null}
+  //     <Spacer size={100} />
+  //   </View>
+  // )}
+
   return (
     <View style={styles.container}>
       {renderErrorBanner()}
-      {data.length ? (
-        <React.Fragment>
-          {/* <ScrollView contentOffset={{ y: scrollOffset }}>
-            {movies.map(({ category }) => {
-              return (
-                <View
-                  key={category}
-                  onLayout={({ nativeEvent: { layout } }) =>
-                    handleSetItemsPosition(category, layout)
-                  }
-                >
-                  <CategoryScroll category={category} onSelect={handleMovieSelect} />
-                </View>
-              );
-            })}
-            <Spacer size={100} />
-          </ScrollView> */}
-          <FlatList
-            data={data}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(movie) => movie.category}
-            renderItem={renderItem}
-            initialScrollIndex={scrollIndex}
-            onEndReached={(info) => handleEndReached(info)}
-            onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-          />
-          <Spacer size={80} />
-        </React.Fragment>
-      ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {!isFetching ? renderEmpty() : null}
-          <Spacer size={100} />
-        </View>
-      )}
+      {renderEmptyErrorBanner()}
+
+      <FlatList
+        data={data}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(movie) => movie.category}
+        renderItem={renderItem}
+        initialScrollIndex={scrollIndex}
+        onEndReached={(info) => handleEndReached(info)}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+      />
+      <Spacer size={80} />
 
       <ImovieBottomTabs navigation={navigation} />
       <ImovieWalkthrough
