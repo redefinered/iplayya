@@ -33,6 +33,8 @@ import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
+const ITEM_HEIGHT = 96;
+
 const ItvScreen = ({
   navigation,
   isFetching,
@@ -68,7 +70,6 @@ const ItvScreen = ({
     true
   );
 
-  // get genres on mount
   React.useEffect(() => {
     // resetPaginatorAction(); // for debugging
     enableSwipeAction(false);
@@ -100,6 +101,14 @@ const ItvScreen = ({
       }
     });
   }, [genres]);
+
+  React.useEffect(() => {
+    if (updated) {
+      handleShowSnackBar();
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+    }
+  }, [updated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -169,15 +178,6 @@ const ItvScreen = ({
       setShowNotificationSnackBar(false);
     }, 3000);
   };
-
-  /// if favorites update in backend get feavorites
-  React.useEffect(() => {
-    if (updated) {
-      handleShowSnackBar();
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
-    }
-  }, [updated]);
 
   React.useEffect(() => {
     if (showSnackBar) hideSnackBar();
@@ -285,7 +285,12 @@ const ItvScreen = ({
     if (!isFetching) return;
 
     return (
-      <View style={{ paddingVertical: theme.spacing(2) }}>
+      <View
+        style={{
+          paddingTop: theme.spacing(3),
+          paddingBottom: theme.spacing(5)
+        }}
+      >
         <ActivityIndicator />
       </View>
     );
@@ -297,11 +302,14 @@ const ItvScreen = ({
     return (
       <FlatList
         ListHeaderComponent={renderLisHeader()}
-        data={channelsData}
+        data={channelsData.slice(0, 9)}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        getItemLayout={(data, index) => {
+          return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+        }}
         renderItem={({ item: { epgtitle, ...itemProps } }) => (
           <ListItemChanel
             isCatchUpAvailable={false}
@@ -452,17 +460,15 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   favorites: selectFavorites,
+  paginator: selectPaginator,
   favoritesPaginator: selectFavoritesPaginator,
   genres: selectGenres,
-  paginator: selectPaginator,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
   headerHeight: selectHeaderHeight
 });
 
 const actions = {
-  // getGenresAction: Creators.getGenres,
-  getChannelsStartAction: Creators.getChannelsStart,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   resetPaginatorAction: Creators.resetPaginator,

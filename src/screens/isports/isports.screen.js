@@ -29,8 +29,11 @@ import {
 import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
+import { selectFavoritesPaginator } from 'modules/ducks/isports/isports.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
+
+const ITEM_HEIGHT = 96;
 
 const IsportsScreen = ({
   navigation,
@@ -39,9 +42,9 @@ const IsportsScreen = ({
   genres,
   channels,
   getChannelsByCategoriesStartAction,
-  getChannelsStartAction,
   getChannelsAction,
   paginator,
+  favoritesPaginator,
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
@@ -69,12 +72,9 @@ const IsportsScreen = ({
 
   // get genres on mount
   React.useEffect(() => {
-    resetPaginatorAction(); // for debugging
     enableSwipeAction(false);
-    getChannelsStartAction();
-    getFavoritesAction({ pageNumber: 1 });
-    // get channels on mount
-    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+
+    resetPaginatorAction();
   }, []);
 
   // setup genres data
@@ -88,12 +88,11 @@ const IsportsScreen = ({
     });
   }, [genres]);
 
-  // get favorites if an item is added
   React.useEffect(() => {
     if (updated) {
       setShowSnackBar(true);
-      getFavoritesAction({ pageNumber: 1 });
-      getChannelsAction({ pageNumber: 1 });
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
     }
   }, [updated]);
 
@@ -170,6 +169,8 @@ const IsportsScreen = ({
   };
 
   const onCategorySelect = (id) => {
+    getChannelsByCategoriesStartAction();
+
     // when changing category, reset the pagination info
     resetPaginatorAction();
 
@@ -190,11 +191,8 @@ const IsportsScreen = ({
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
-      getChannelsByCategoriesStartAction();
-
-      if (paginator.pageNumber > 1) return;
       if (selectedCategory === 'all') {
-        getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+        getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
       } else {
         getChannelsByCategoriesAction({
           categories: [parseInt(selectedCategory)],
@@ -262,7 +260,7 @@ const IsportsScreen = ({
           </Text>
         </ContentWrap>
         <FlatList
-          data={channelsData}
+          data={channelsData.slice(0, 9)}
           horizontal
           bounces={false}
           renderItem={renderFeaturedItem}
@@ -277,7 +275,12 @@ const IsportsScreen = ({
     if (!isFetching) return;
 
     return (
-      <View style={{ paddingVertical: theme.spacing(2) }}>
+      <View
+        style={{
+          paddingTop: theme.spacing(3),
+          paddingBottom: theme.spacing(5)
+        }}
+      >
         <ActivityIndicator />
       </View>
     );
@@ -294,6 +297,9 @@ const IsportsScreen = ({
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        getItemLayout={(data, index) => {
+          return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+        }}
         renderItem={({ item: { epgtitle, ...itemProps } }) => (
           <ListItemChanel
             isCatchUpAvailable={false}
@@ -447,6 +453,7 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   genres: selectGenres,
   paginator: selectPaginator,
+  favoritesPaginator: selectFavoritesPaginator,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
   headerHeight: selectHeaderHeight
