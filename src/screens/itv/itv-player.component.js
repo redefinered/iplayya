@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { selectNextChannel, selectPreviousChannel } from 'modules/ducks/itv/itv.selectors';
 import { connect } from 'react-redux';
-import { MODULE_TYPES } from 'common/values';
+import { MODULE_TYPES } from 'common/globals';
 
 const ItvPlayer = ({
   channel,

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Pressable, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-// import RadioButton from 'components/radio-button/radio-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
 import Spacer from 'components/spacer.component';
@@ -15,11 +14,11 @@ const spacer = 20;
 
 const ListItemChanel = ({
   id,
-  onSelect,
-  onRightActionPress,
-  is_favorite,
   full,
+  onSelect,
   selected,
+  is_favorite,
+  onRightActionPress,
   activateCheckboxes,
   onEpgButtonPressed,
   ...contentProps
@@ -52,13 +51,8 @@ const ListItemChanel = ({
             alignItems: 'center',
             paddingHorizontal: 10,
             paddingVertical: 2
-            // padding: theme.spacing(2)
           }}
         >
-          {/* <Image
-            style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-            source={contentProps.thumbnail}
-          /> */}
           <View
             style={{
               width: 60,
@@ -98,12 +92,6 @@ const ListItemChanel = ({
         }}
       >
         <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
-          {/* <Image
-            style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-            source={{
-              url: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(contentProps.title)}`
-            }}
-          /> */}
           <View
             style={{
               width: 60,

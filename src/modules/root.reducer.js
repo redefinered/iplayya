@@ -25,6 +25,7 @@ import iplayReducer from './ducks/iplay/iplay.reducer';
 export const persistConfig = {
   key: 'primary',
   storage: AsyncStorage
+  // blacklist
 };
 
 const resettable = resettableReducer('RESET');
@@ -37,7 +38,8 @@ const rootReducer = persistCombineReducers(persistConfig, {
   imovieDownloads: imovieDownloadsReducer,
   user: resettable(userReducer),
   password: resettable(passwordReducer),
-  itv: resettable(itvReducer),
+  // itv: resettable(itvReducer),
+  itv: itvReducer,
   notifications: resettable(notificationsReducer),
   profile: profileReducer,
   movies: resettable(moviesReducer),

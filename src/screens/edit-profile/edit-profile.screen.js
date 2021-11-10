@@ -48,7 +48,8 @@ class EditProfileScreen extends React.Component {
       modalVisible: false,
       first_name: '',
       last_name: '',
-      name: `${first_name} ${last_name}`,
+      edited: false,
+      // name,
       phone,
       birth_date,
       gender,
@@ -63,22 +64,37 @@ class EditProfileScreen extends React.Component {
     };
   }
 
+  unsubscribeToBeforeRemove = null;
+  ac = null;
+
   componentDidMount() {
-    // console.log(isValidBirthday('xxx'));
     this.props.profileStartAction();
-    this.props.navigation.addListener('beforeRemove', (e) => {
-      if (this.state.modalVisible) {
-        return;
-      }
+  }
 
-      e.preventDefault();
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.updated !== this.props.update) {
+      if (this.props.updated) this.props.navigation.goBack();
+    }
 
-      this.handleShowModal();
-    });
+    if (prevState.edited !== this.state.edited || prevProps.navigation !== this.props.navigation) {
+      const { navigation } = this.props;
+      this.unsubscribeToBeforeRemove = navigation.addListener('beforeRemove', (e) => {
+        this.ac = e.data.action;
+        if (!this.state.edited) return;
+
+        e.preventDefault();
+
+        this.setState({ modalVisible: true });
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this.unsubscribeToBeforeRemove;
   }
 
   handleChange = (text, name) => {
-    this.setState({ [name]: text });
+    this.setState({ [name]: text, edited: true });
   };
 
   setError = (stateError, field, val) => {
@@ -88,6 +104,7 @@ class EditProfileScreen extends React.Component {
   };
 
   handleSubmit = () => {
+    this.setState({ edited: false });
     const {
       updateAction,
       profile: { id }
@@ -99,6 +116,7 @@ class EditProfileScreen extends React.Component {
       actionSheetisVisible,
       modalVisible,
       isValidPhone,
+      edited,
       ...formdata
     } = this.state;
 
@@ -142,27 +160,34 @@ class EditProfileScreen extends React.Component {
     }
 
     // updateAction
-    updateAction({ id, ...formdata });
+    updateAction({ id, name: `${formdata.first_name} ${formdata.last_name}`, ...formdata });
   };
-
-  componentDidUpdate() {
-    if (this.props.updated) this.props.navigation.goBack();
-  }
 
   setValidPhone = (isValidNumber) => {
     this.setState({ isValidPhone: isValidNumber });
   };
 
+  // setEdited = () => {
+  //   this.setState({ edited: });
+  // };
+
   setBirthdate = (value) => {
     this.setState({ birth_date: value });
+    if (this.props.profile.birth_date !== value) {
+      this.setState({ edited: true });
+    }
   };
 
   setPhone = (value) => {
     this.setState({ phone: value.phoneInputValue });
+    if (value) {
+      this.setState({ edited: true });
+    }
   };
 
   handleSelect = (gender) => {
     this.setState({ gender, actionSheetisVisible: false });
+    this.setState({ edited: true });
   };
 
   hideActionSheet = () => {
@@ -173,20 +198,24 @@ class EditProfileScreen extends React.Component {
     this.setState({ modalVisible: false });
   };
 
-  handleShowModal = () => {
-    if (this.setState.count >= 2) return;
-    this.setState({ modalVisible: true });
-  };
+  // handleShowModal = () => {
+  //   if (this.setState.count >= 2) return;
+  //   this.setState({ modalVisible: true });
+  // };
 
   handleComfirmAction = () => {
+    // console.log('xxxxxx');
     this.setState({ modalVisible: false });
-    this.props.navigation.goBack();
+    this.props.navigation.dispatch(this.ac);
+
+    // this.props.navigation.goBack();
   };
 
   render() {
     const { isFetching, profile } = this.props;
     const { errors, valid, showModal, modalVisible, isValidPhone, ...form } = this.state;
     const { theme } = this.props;
+
     const actions = [
       {
         key: 'male',

@@ -10,6 +10,9 @@ const { Types, Creators } = createActions(
     update: ['data'],
     updateSuccess: ['data'],
     updateFailure: ['error'],
+    authenticateEmailChange: ['data'],
+    authenticateEmailChangeSuccess: null,
+    authenticateEmailChangeFailure: ['error'],
     removeProfile: []
   },
   { prefix: '@Profile/' }

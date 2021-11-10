@@ -12,7 +12,7 @@ import ChromecastOptionsModal from './modal-cast-options.component';
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
 import SystemSetting from 'react-native-system-setting';
 import theme from 'common/theme';
-import { MODULE_TYPES } from 'common/values';
+import { MODULE_TYPES } from 'common/globals';
 import uuid from 'react-uuid';
 
 const VIDEO_HEIGHT = 211;
@@ -28,19 +28,18 @@ const VIDEO_STYLE_FULLSCREEN = {
 };
 
 const MediaPlayer = ({
+  title,
+  source,
+  setSource,
   fullscreen,
   setFullscreen,
-  source,
-  qualitySwitchable,
   thumbnail,
-  title,
   seriesTitle,
   paused,
   togglePlay,
   setPaused,
   multipleMedia,
   videoUrls,
-  setSource,
   previousAction,
   nextAction,
   isFirstEpisode,
@@ -48,12 +47,12 @@ const MediaPlayer = ({
   isSeries,
   currentProgram,
   moduleType,
+  qualitySwitchable,
   // eslint-disable-next-line react/prop-types
   videoLength
 }) => {
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
-  const discoveryManager = GoogleCast.getDiscoveryManager();
 
   let player = React.useRef();
 
@@ -77,15 +76,36 @@ const MediaPlayer = ({
   const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
   const [showChromecastOptions, setShowChromecastOptions] = React.useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [isLandscape, setIsLandscape] = React.useState(false);
   // const [chromeCastSession, setChromeCastSession] = React.useState(null);
-  // console.log({ playbackInfo, thumbnail });
 
   const timer = React.useRef(null);
 
   React.useEffect(() => {
-    /// starts discovery of chromcast devices
-    discoveryManager.startDiscovery();
+    // subscribe to orientation change
+    const orientationChangeListener = Dimensions.addEventListener('change', ({ window }) => {
+      const { width, height } = window;
 
+      if (width > height) {
+        setIsLandscape(true);
+      } else {
+        setIsLandscape(false);
+      }
+    });
+
+    return () => orientationChangeListener?.remove();
+  });
+
+  // React.useEffect(() => {
+  //   if (isLandscape) {
+  //     setFullscreen(true);
+  //   } else {
+  //     setFullscreen(false);
+  //   }
+  // }, [isLandscape]);
+
+  React.useEffect(() => {
     setCastSession();
 
     volumeListener = SystemSetting.addVolumeListener(({ value }) => {
@@ -120,6 +140,17 @@ const MediaPlayer = ({
     return () => handleCleanup({ castListener, volumeListener });
   }, []);
 
+  // const onOrientationChange = ({ window }) => {
+  //   const { width, height } = window;
+  //   if (width > height) {
+  //     setIsLandscape(true);
+  //   } else {
+  //     setIsLandscape(false);
+  //   }
+  // };
+
+  // console.log({ isLandscape });
+
   const handleCleanup = ({ castListener, volumeListener }) => {
     /// remove google-cast listener
     castListener.remove();
@@ -132,6 +163,13 @@ const MediaPlayer = ({
     if (!client) return;
     loadMedia(source);
   }, [source, client]);
+
+  React.useEffect(() => {
+    if (castSessionActive) return;
+    if (!playbackInfo) return;
+
+    player.current.seek(playbackInfo.currentTime);
+  }, [source]);
 
   const getMetadata = () => {
     // const common = {

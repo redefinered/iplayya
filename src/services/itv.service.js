@@ -11,6 +11,7 @@ import {
   GET_PROGRAMS_BY_CHANNEL,
   SEARCH
 } from 'graphql/itv.graphql';
+import { PAGINATOR_LIMIT } from 'common/globals';
 
 export const getGenres = async () => {
   try {
@@ -52,6 +53,7 @@ export const getChannels = async (input) => {
     const { data } = await client.query({
       query: GET_CHANNELS,
       variables: { input },
+      /// adding network-only for now, remove when refetchQuery is working as expected
       fetchPolicy: 'network-only'
     });
     return data;
@@ -82,11 +84,11 @@ export const addToFavorites = async (videoId) => {
           query: GET_FAVORITES,
           fetchPolicy: 'network-only'
         },
-        {
-          query: GET_CHANNELS,
-          variables: { input: { limit: 10, pageNumber: 1 } },
-          fetchPolicy: 'network-only'
-        },
+        // {
+        //   query: GET_CHANNELS,
+        //   variables: { input: paginator },
+        //   fetchPolicy: 'network-only'
+        // },
         {
           query: GET_CHANNEL,
           variables: { input: { videoId } },
@@ -94,8 +96,6 @@ export const addToFavorites = async (videoId) => {
         }
       ],
       awaitRefetchQueries: true
-      // this query should refetch favorites each time an item
-      // is added to favorites
     });
     return data;
   } catch (error) {
@@ -111,12 +111,12 @@ export const removeFromFavorites = async (input) => {
       refetchQueries: [
         {
           query: GET_FAVORITES,
-          // ariables: { input: { limit: 10, pageNumber: 1 } },
+          variables: { input: { limit: 10, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         },
         {
           query: GET_CHANNELS,
-          // ariables: { input: { limit: 10, pageNumber: 1 } },
+          variables: { input: { limit: PAGINATOR_LIMIT, pageNumber: 1 } },
           fetchPolicy: 'network-only'
         }
       ],
