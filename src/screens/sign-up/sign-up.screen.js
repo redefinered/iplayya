@@ -105,12 +105,18 @@ class SignUpScreen extends React.Component {
       }
 
       if (!checkRegularExpression(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, value)) {
-        this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+        this.setError(
+          'second_password_validation',
+          'Must contain uppercase letter and special characters.'
+        );
         this.setError('second_icon_color', 'white');
       }
 
       if (checkRegularExpression(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, value)) {
-        this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+        this.setError(
+          'second_password_validation',
+          'Must contain uppercase letter and special characters.'
+        );
         this.setError('second_icon_color', 'green');
       } else {
         if (value.length) {
