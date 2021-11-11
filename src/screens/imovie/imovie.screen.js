@@ -55,13 +55,9 @@ const ImovieScreen = ({
   React.useEffect(() => {
     if (!paginatorInfo.length) return;
 
-    getMoviesAction(paginatorInfo, categoryPaginator);
+    if (isFetching) return; /// stop if another request is running
 
-    // InteractionManager.runAfterInteractions(() => {
-    //   if (categoryPaginator.page === 1) {
-    //     getMoviesAction(paginatorInfo, categoryPaginator);
-    //   }
-    // });
+    getMoviesAction(paginatorInfo, categoryPaginator);
   }, []);
 
   React.useEffect(() => {
@@ -170,11 +166,13 @@ const ImovieScreen = ({
     return <CategoryScroll category={category} onSelect={handleMovieSelect} />;
   };
 
-  const handleEndReached = (info) => {
+  const handleEndReached = () => {
     if (!onEndReachedCalledDuringMomentum) {
-      console.log('end reached!', info);
-      getMoviesAction(paginatorInfo, categoryPaginator);
       setOnEndReachedCalledDuringMomentum(true);
+
+      if (isFetching) return; /// stop if another request is running
+
+      getMoviesAction(paginatorInfo, categoryPaginator);
     }
   };
 
@@ -228,7 +226,7 @@ const ImovieScreen = ({
         keyExtractor={(movie) => movie.category}
         renderItem={renderItem}
         initialScrollIndex={scrollIndex}
-        onEndReached={(info) => handleEndReached(info)}
+        onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
         ListFooterComponent={renderListFooter()}
