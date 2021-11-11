@@ -33,9 +33,9 @@ const IsportsBottomTabs = () => {
         bottom: 0
       }}
     >
-      <TabMenuItem label="Favorites" pressAction={handleFavoritesButtonPress} />
-      <TabMenuItem label="Home" pressAction={handleHomeButtonPress} />
-      <TabMenuItem label="Downloads" />
+      <TabMenuItem label="Favorites" icon="heart-solid" pressAction={handleFavoritesButtonPress} />
+      <TabMenuItem label="Home" icon="iplayya" pressAction={handleHomeButtonPress} />
+      <TabMenuItem label="Downloads" icon="download" />
     </SafeAreaView>
   );
 };

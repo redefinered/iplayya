@@ -5,7 +5,7 @@ import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import theme from 'common/theme';
 
-const TabMenuItem = ({ pressAction, label, color }) => {
+const TabMenuItem = ({ pressAction, label, color, icon }) => {
   const [disabled, setDisabled] = React.useState(false);
   const [tint, setTint] = React.useState(color);
 
@@ -32,7 +32,7 @@ const TabMenuItem = ({ pressAction, label, color }) => {
         disabled={disabled}
       >
         <View style={{ alignItems: 'center' }}>
-          <Icon name="download" size={theme.iconSize(3)} color={tint} />
+          <Icon name={icon} size={theme.iconSize(3)} color={tint} />
           <Text
             style={{
               fontSize: 10,
@@ -52,7 +52,8 @@ const TabMenuItem = ({ pressAction, label, color }) => {
 TabMenuItem.propTypes = {
   label: PropTypes.string,
   color: PropTypes.string,
-  pressAction: PropTypes.func
+  pressAction: PropTypes.func,
+  icon: PropTypes.string
 };
 
 TabMenuItem.defaultProps = {
