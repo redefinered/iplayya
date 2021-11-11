@@ -148,7 +148,10 @@ class SignUpScreen extends React.Component {
     }
 
     if (!checkRegularExpression(/^(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, this.state.password)) {
-      this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+      this.setError(
+        'second_password_validation',
+        'Must contain uppercase letter and special characters.'
+      );
       this.setError('second_icon_color', 'white');
       this.setError('password', null);
     } else {
@@ -308,11 +311,16 @@ class SignUpScreen extends React.Component {
     } else {
       if (!checkRegularExpression(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$/, rest.password)) {
         this.setError('password', 'error');
-        this.setError('second_password_validation', 'Must contain uppercase letters and numbers.');
+        this.setError(
+          'second_password_validation',
+          'Must contain uppercase letter and special character.'
+        );
         this.setError('icon_color', 'white');
       } else {
         this.setError('password', null);
         this.setError('second_password_validation', null);
+        this.setError('icon_color', null);
+        this.setError('second_icon_color', null);
       }
     }
 
@@ -323,6 +331,8 @@ class SignUpScreen extends React.Component {
     } else {
       this.setError('password', null);
       this.setError('password_validation', null);
+      this.setError('icon_color', null);
+      this.setError('second_icon_color', null);
     }
 
     if (!rest.password_confirmation.length) {
