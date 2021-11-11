@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
 
-const ImovieBottomTabs = () => {
+const ImovieBottomTabs = ({ handleBottomTabsLayoutEvent }) => {
   const navigation = useNavigation();
   // const [heartIconColor, setHeartIconColor] = React.useState('white');
   // const [downloadIconColor, setDownloadIconColor] = React.useState('white');
@@ -39,6 +39,7 @@ const ImovieBottomTabs = () => {
 
   return (
     <SafeAreaView
+      onLayout={handleBottomTabsLayoutEvent}
       style={{
         flex: 1,
         flexDirection: 'row',
@@ -59,8 +60,7 @@ const ImovieBottomTabs = () => {
 };
 
 ImovieBottomTabs.propTypes = {
-  navigation: PropTypes.object,
-  route: PropTypes.object
+  handleBottomTabsLayoutEvent: PropTypes.func
 };
 
 export default React.memo(ImovieBottomTabs);

@@ -30,12 +30,14 @@ import {
   selectIsFetching,
   selectMovie,
   selectPlaybackInfo,
-  selectUpdatedFavoritesCheck
+  selectUpdatedFavoritesCheck,
+  selectRemainingTime
 } from 'modules/ducks/movies/movies.selectors';
 import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
 } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
+import { selectPlaybackSettings } from 'modules/ducks/user/user.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
@@ -73,7 +75,11 @@ const SeriesDetailScreen = ({
 
   setMusicNowPlaying,
   setEpisodeAction,
-  navigation
+  navigation,
+
+  remainingTime,
+  playbackSettings,
+  playbackInfo
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
@@ -115,6 +121,24 @@ const SeriesDetailScreen = ({
     getMovieAction(videoId);
     // getMovieAction(316); /// for testing
   }, []);
+
+  React.useEffect(() => {
+    if (playbackSettings.is_autoplay_video === false) {
+      setPaused(true);
+    }
+  }, [playbackSettings.is_autoplay_video]);
+
+  React.useEffect(() => {
+    if (playbackInfo !== null) {
+      if (remainingTime.toFixed() == 0) {
+        if (playbackSettings.is_autoplay_next_ep === true) {
+          handleNextEpisode();
+        } else {
+          return;
+        }
+      }
+    }
+  }, [playbackInfo]);
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -559,7 +583,9 @@ const mapStateToProps = createStructuredSelector({
   playbackInfo: selectPlaybackInfo,
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
-  downloadStarted: selectDownloadStarted
+  downloadStarted: selectDownloadStarted,
+  remainingTime: selectRemainingTime,
+  playbackSettings: selectPlaybackSettings
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);

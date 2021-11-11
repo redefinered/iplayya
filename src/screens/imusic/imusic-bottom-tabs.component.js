@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
+import { createStructuredSelector } from 'reselect';
+import { selectNowPlaying } from 'modules/ducks/music/music.selectors';
+import { connect } from 'react-redux';
 
-const ImusicBottomTabs = () => {
+const ImusicBottomTabs = ({ nowPlaying, handleBottomTabsLayoutEvent }) => {
   const navigation = useNavigation();
 
   const handleFavoritesButtonPress = () => {
@@ -19,8 +22,23 @@ const ImusicBottomTabs = () => {
     navigation.navigate('ImusicDownloadsScreen');
   };
 
+  const borderRadiusStyle = () => {
+    if (nowPlaying) {
+      return {
+        borderTopRightRadius: 0,
+        borderTopLeftRadius: 0
+      };
+    }
+
+    return {
+      borderTopRightRadius: 24,
+      borderTopLeftRadius: 24
+    };
+  };
+
   return (
     <SafeAreaView
+      onLayout={handleBottomTabsLayoutEvent}
       style={{
         flex: 1,
         flexDirection: 'row',
@@ -30,7 +48,8 @@ const ImusicBottomTabs = () => {
         paddingHorizontal: 4,
         position: 'absolute',
         width: '100%',
-        bottom: 0
+        bottom: 0,
+        ...borderRadiusStyle()
       }}
     >
       <TabMenuItem label="Favorites" icon="heart-solid" pressAction={handleFavoritesButtonPress} />
@@ -41,8 +60,10 @@ const ImusicBottomTabs = () => {
 };
 
 ImusicBottomTabs.propTypes = {
-  navigation: PropTypes.object,
-  route: PropTypes.object
+  nowPlaying: PropTypes.object,
+  handleBottomTabsLayoutEvent: PropTypes.func
 };
 
-export default React.memo(ImusicBottomTabs);
+const mapStateToProps = () => createStructuredSelector({ nowPlaying: selectNowPlaying });
+
+export default connect(mapStateToProps)(React.memo(ImusicBottomTabs));
