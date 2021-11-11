@@ -3,8 +3,8 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
-import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+import { ActivityIndicator, Text } from 'react-native-paper';
+// import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
@@ -12,6 +12,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import useComponentSize from 'hooks/use-component-size.hook';
+import IsportsBottomTabs from './isports-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -126,6 +127,8 @@ const IsportsScreen = ({
           ...rest
         }));
         setChannelsData(data);
+      } else {
+        setChannelsData([]);
       }
     });
   }, [channels]);
@@ -333,7 +336,7 @@ const IsportsScreen = ({
         {renderChannels()}
       </View>
 
-      <View
+      {/* <View
         onLayout={onLayout}
         style={{
           flexDirection: 'row',
@@ -346,7 +349,7 @@ const IsportsScreen = ({
           zIndex: theme.iplayya.zIndex.bottomTabs
         }}
       >
-        <View style={{ flex: 4, alignItems: 'center' }}>
+        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple
             style={{
               borderRadius: 34,
@@ -361,13 +364,13 @@ const IsportsScreen = ({
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="heart-solid" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', paddingTop: 5 }}>
                 Favorites
               </Text>
             </View>
           </TouchableRipple>
         </View>
-        <View style={{ flex: 4, alignItems: 'center' }}>
+        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple
             style={{
               borderRadius: 34,
@@ -383,16 +386,16 @@ const IsportsScreen = ({
           >
             <View style={{ alignItems: 'center' }}>
               <Icon name="iplayya" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
+              <Text style={{ fontSize: 10, textTransform: 'uppercase', paddingTop: 5 }}>Home</Text>
             </View>
           </TouchableRipple>
         </View>
-        <View style={{ flex: 4, alignItems: 'center' }}>
+        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableRipple
             style={{
               borderRadius: 34,
-              height: 67,
-              width: 67,
+              height: 69,
+              width: 69,
               alignItems: 'center',
               justifyContent: 'center'
             }}
@@ -406,7 +409,7 @@ const IsportsScreen = ({
                 style={{
                   fontSize: 10,
                   textTransform: 'uppercase',
-                  marginTop: 5,
+                  paddingTop: 5,
                   color: theme.iplayya.colors.white25
                 }}
               >
@@ -415,7 +418,9 @@ const IsportsScreen = ({
             </View>
           </TouchableRipple>
         </View>
-      </View>
+      </View> */}
+
+      <IsportsBottomTabs />
 
       <SnackBar
         visible={showSnackBar}

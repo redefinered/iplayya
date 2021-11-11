@@ -4,38 +4,20 @@ import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
 
-const ImovieBottomTabs = () => {
+const ItvBottomTabs = () => {
   const navigation = useNavigation();
-  // const [heartIconColor, setHeartIconColor] = React.useState('white');
-  // const [downloadIconColor, setDownloadIconColor] = React.useState('white');
-
-  // React.useEffect(() => {
-  //   if (typeof route !== 'undefined') {
-  //     if (route.name === 'ImovieFavoritesScreen') {
-  //       setHeartIconColor(theme.iplayya.colors.vibrantpussy);
-  //     } else {
-  //       setHeartIconColor('white');
-  //     }
-
-  //     if (route.name === 'ImovieDownloadsScreen') {
-  //       setDownloadIconColor(theme.iplayya.colors.vibrantpussy);
-  //     } else {
-  //       setDownloadIconColor('white');
-  //     }
-  //   }
-  // }, [route]);
 
   const handleFavoritesButtonPress = () => {
-    navigation.navigate('ImovieFavoritesScreen');
+    navigation.navigate('ItvFavoritesScreen');
   };
 
   const handleHomeButtonPress = () => {
     navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] });
   };
 
-  const handleDownloadButtonPress = () => {
-    navigation.navigate('ImovieDownloadsScreen');
-  };
+  // const handleDownloadButtonPress = () => {
+  //   navigation.navigate('ImovieDownloadsScreen');
+  // };
 
   return (
     <SafeAreaView
@@ -53,14 +35,14 @@ const ImovieBottomTabs = () => {
     >
       <TabMenuItem label="Favorites" icon="heart-solid" pressAction={handleFavoritesButtonPress} />
       <TabMenuItem label="Home" icon="iplayya" pressAction={handleHomeButtonPress} />
-      <TabMenuItem label="Downloads" icon="download" pressAction={handleDownloadButtonPress} />
+      <TabMenuItem label="Downloads" icon="download" />
     </SafeAreaView>
   );
 };
 
-ImovieBottomTabs.propTypes = {
+ItvBottomTabs.propTypes = {
   navigation: PropTypes.object,
   route: PropTypes.object
 };
 
-export default React.memo(ImovieBottomTabs);
+export default React.memo(ItvBottomTabs);
