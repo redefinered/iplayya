@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-// eslint-disable-next-line no-unused-vars
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
-import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import Spacer from 'components/spacer.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
@@ -12,6 +11,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import useComponentSize from 'hooks/use-component-size.hook';
+import IsportsBottomTabs from './isports-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -65,6 +65,7 @@ const IsportsScreen = ({
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
+  const [bottomPadding, setBottomPadding] = React.useState(null);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -126,6 +127,8 @@ const IsportsScreen = ({
           ...rest
         }));
         setChannelsData(data);
+      } else {
+        setChannelsData([]);
       }
     });
   }, [channels]);
@@ -316,6 +319,14 @@ const IsportsScreen = ({
     );
   };
 
+  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
+    const {
+      layout: { height }
+    } = nativeEvent;
+
+    setBottomPadding(height);
+  };
+
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
@@ -333,89 +344,9 @@ const IsportsScreen = ({
         {renderChannels()}
       </View>
 
-      <View
-        onLayout={onLayout}
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          backgroundColor: '#202530',
-          borderTopRightRadius: 24,
-          borderTopLeftRadius: 24,
-          paddingHorizontal: 4,
-          width: '100%',
-          zIndex: theme.iplayya.zIndex.bottomTabs
-        }}
-      >
-        <View style={{ flex: 4, alignItems: 'center' }}>
-          <TouchableRipple
-            style={{
-              borderRadius: 34,
-              height: 67,
-              width: 67,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            borderless={true}
-            rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.navigate('IsportsFavoritesScreen')}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Icon name="heart-solid" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
-                Favorites
-              </Text>
-            </View>
-          </TouchableRipple>
-        </View>
-        <View style={{ flex: 4, alignItems: 'center' }}>
-          <TouchableRipple
-            style={{
-              borderRadius: 34,
-              height: 67,
-              width: 67,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            borderless={true}
-            rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] })}
-            // onPress={() => navigation.replace('HomeScreen')}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Icon name="iplayya" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-            </View>
-          </TouchableRipple>
-        </View>
-        <View style={{ flex: 4, alignItems: 'center' }}>
-          <TouchableRipple
-            style={{
-              borderRadius: 34,
-              height: 67,
-              width: 67,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            borderless={true}
-            rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.navigate('IsportsDownloadsScreen')}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Icon name="download" size={theme.iconSize(3)} color={theme.iplayya.colors.white25} />
-              <Text
-                style={{
-                  fontSize: 10,
-                  textTransform: 'uppercase',
-                  marginTop: 5,
-                  color: theme.iplayya.colors.white25
-                }}
-              >
-                Downloads
-              </Text>
-            </View>
-          </TouchableRipple>
-        </View>
-      </View>
+      <Spacer size={bottomPadding} />
+
+      <IsportsBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
 
       <SnackBar
         visible={showSnackBar}

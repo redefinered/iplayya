@@ -1,12 +1,11 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Image, FlatList, Platform, View, Text } from 'react-native';
+import { TouchableOpacity, Image, FlatList, View, Text } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError } from 'modules/ducks/movies/movies.selectors';
 import { Creators } from 'modules/ducks/movies/movies.actions';
-// import { useTheme } from 'react-native-paper';
 import theme from 'common/theme';
 
 const SPACING_FOR_CARD_INSET = theme.spacing(2);
@@ -15,11 +14,29 @@ const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 const CategoryScrollList = ({
   data,
   onSelect,
-  getMoviesByCategoriesAction,
-  paginatorOfCategory
+  isFetching,
+  paginatorOfCategory,
+  getMoviesByCategoriesAction
 }) => {
-  // const theme = useTheme();
   const brand = theme.iplayya.colors;
+
+  const renderListFooter = () => {
+    if (!isFetching) return;
+
+    return (
+      <View
+        style={{
+          width: CARD_DIMENSIONS.WIDTH,
+          height: CARD_DIMENSIONS.HEIGHT,
+          borderRadius: 8,
+          backgroundColor: brand.white10,
+          justifyContent: 'center'
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  };
 
   const renderThumbnail = (uri, title) => {
     if (!uri) {
@@ -67,7 +84,6 @@ const CategoryScrollList = ({
       data={data}
       showsHorizontalScrollIndicator={false}
       horizontal
-      // decelerationRate={0}
       snapToInterval={CARD_DIMENSIONS.WIDTH + 10}
       snapToAlignment="start"
       contentInset={{
@@ -78,15 +94,12 @@ const CategoryScrollList = ({
       }}
       contentContainerStyle={{
         paddingHorizontal: SPACING_FOR_CARD_INSET
-
-        // contentInset alternative for Android
-        // paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0 // Horizontal spacing before and after the ScrollView
       }}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
-      // style={{ paddingHorizontal: 0 }}
       onEndReached={() => handleOnEndReached()}
       onEndReachedThreshold={0}
+      ListFooterComponent={renderListFooter()}
     />
   );
 };

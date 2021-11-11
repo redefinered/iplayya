@@ -47,6 +47,7 @@ const MediaPlayer = ({
   isSeries,
   currentProgram,
   moduleType,
+  updatePlaybackInfoAction,
   qualitySwitchable,
   // eslint-disable-next-line react/prop-types
   videoLength
@@ -377,7 +378,7 @@ const MediaPlayer = ({
   const handleProgress = (playbackInfo) => {
     // console.log({ playbackInfo });
     setBuffering(false);
-    // updatePlaybackInfoAction({ playbackInfo });
+    updatePlaybackInfoAction({ playbackInfo });
     setPlaybackInfo(playbackInfo);
   };
 

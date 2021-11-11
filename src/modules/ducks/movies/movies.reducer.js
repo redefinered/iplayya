@@ -3,8 +3,6 @@ import { Types } from './movies.actions';
 import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './movies.utils';
 import uniqBy from 'lodash/uniqBy';
 
-// import { setupPaginator } from 'screens/imovie/imovie.utils';
-
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
