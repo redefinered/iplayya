@@ -3,7 +3,7 @@
 import React from 'react';
 // eslint-disable-next-line no-unused-vars
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
@@ -11,7 +11,6 @@ import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
-import withLoader from 'components/with-loader.component';
 import useComponentSize from 'hooks/use-component-size.hook';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -30,18 +29,22 @@ import {
 import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
+import { selectFavoritesPaginator } from 'modules/ducks/isports/isports.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
+const ITEM_HEIGHT = 96;
+
 const IsportsScreen = ({
   navigation,
+  isFetching,
   error,
   genres,
   channels,
   getChannelsByCategoriesStartAction,
-  getChannelsStartAction,
   getChannelsAction,
   paginator,
+  favoritesPaginator,
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   addToFavoritesAction,
@@ -50,12 +53,15 @@ const IsportsScreen = ({
   enableSwipeAction,
   headerHeight
 }) => {
+  // eslint-disable-next-line no-unused-vars
   const [size, onLayout] = useComponentSize();
+
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
+  // eslint-disable-next-line no-unused-vars
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
@@ -66,12 +72,9 @@ const IsportsScreen = ({
 
   // get genres on mount
   React.useEffect(() => {
-    resetPaginatorAction(); // for debugging
     enableSwipeAction(false);
-    getChannelsStartAction();
-    getFavoritesAction({ pageNumber: 1 });
-    // get channels on mount
-    getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+
+    resetPaginatorAction();
   }, []);
 
   // setup genres data
@@ -85,12 +88,11 @@ const IsportsScreen = ({
     });
   }, [genres]);
 
-  // get favorites if an item is added
   React.useEffect(() => {
     if (updated) {
       setShowSnackBar(true);
-      getFavoritesAction({ pageNumber: 1 });
-      getChannelsAction({ pageNumber: 1 });
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
     }
   }, [updated]);
 
@@ -167,6 +169,8 @@ const IsportsScreen = ({
   };
 
   const onCategorySelect = (id) => {
+    getChannelsByCategoriesStartAction();
+
     // when changing category, reset the pagination info
     resetPaginatorAction();
 
@@ -187,11 +191,8 @@ const IsportsScreen = ({
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
-      getChannelsByCategoriesStartAction();
-
-      if (paginator.pageNumber > 1) return;
       if (selectedCategory === 'all') {
-        getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+        getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
       } else {
         getChannelsByCategoriesAction({
           categories: [parseInt(selectedCategory)],
@@ -250,48 +251,68 @@ const IsportsScreen = ({
     navigation.navigate('IsportsProgramGuideScreen', { channelId: id });
   };
 
+  const renderLisHeader = () => {
+    return (
+      <View style={{ marginBottom: theme.spacing(2) }}>
+        <ContentWrap>
+          <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
+            Featured Sports Channels
+          </Text>
+        </ContentWrap>
+        <FlatList
+          data={channelsData.slice(0, 9)}
+          horizontal
+          bounces={false}
+          renderItem={renderFeaturedItem}
+          showsHorizontalScrollIndicator={false}
+          style={{ paddingHorizontal: theme.spacing(2) }}
+        />
+      </View>
+    );
+  };
+
+  const renderListFooter = () => {
+    if (!isFetching) return;
+
+    return (
+      <View
+        style={{
+          paddingTop: theme.spacing(3),
+          paddingBottom: theme.spacing(5)
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  };
+
   const renderChannels = () => {
     if (!channelsData) return;
 
     return (
-      <React.Fragment>
-        <View style={{ marginBottom: theme.spacing(2) }}>
-          <ContentWrap>
-            <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>
-              Featured TV Channels
-            </Text>
-          </ContentWrap>
-          <FlatList
-            data={channelsData}
-            horizontal
-            bounces={false}
-            renderItem={renderFeaturedItem}
-            showsHorizontalScrollIndicator={false}
-            style={{ paddingHorizontal: theme.spacing(2) }}
+      <FlatList
+        ListHeaderComponent={renderLisHeader()}
+        data={channelsData}
+        keyExtractor={(item) => item.id}
+        onEndReached={() => handleEndReached()}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        getItemLayout={(data, index) => {
+          return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+        }}
+        renderItem={({ item: { epgtitle, ...itemProps } }) => (
+          <ListItemChanel
+            isCatchUpAvailable={false}
+            onSelect={handleItemSelect}
+            onRightActionPress={handleAddToFavorites}
+            onEpgButtonPressed={handleEpgButtonPress}
+            full
+            epgtitle={epgtitle}
+            {...itemProps}
           />
-        </View>
-        <FlatList
-          data={channelsData}
-          keyExtractor={(item) => item.id}
-          onEndReached={() => handleEndReached()}
-          onEndReachedThreshold={0.5}
-          onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-          renderItem={({ item: { epgtitle, ...itemProps } }) => (
-            <ListItemChanel
-              isCatchUpAvailable={false}
-              onSelect={handleItemSelect}
-              onRightActionPress={handleAddToFavorites}
-              onEpgButtonPressed={handleEpgButtonPress}
-              full
-              epgtitle={epgtitle}
-              {...itemProps}
-            />
-          )}
-          ListFooterComponent={
-            <View style={{ flex: 1, height: size ? size.height + theme.spacing(3) : 0 }} />
-          }
-        />
-      </React.Fragment>
+        )}
+        ListFooterComponent={renderListFooter()}
+      />
     );
   };
 
@@ -380,8 +401,15 @@ const IsportsScreen = ({
             onPress={() => navigation.navigate('IsportsDownloadsScreen')}
           >
             <View style={{ alignItems: 'center' }}>
-              <Icon name="download" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>
+              <Icon name="download" size={theme.iconSize(3)} color={theme.iplayya.colors.white25} />
+              <Text
+                style={{
+                  fontSize: 10,
+                  textTransform: 'uppercase',
+                  marginTop: 5,
+                  color: theme.iplayya.colors.white25
+                }}
+              >
                 Downloads
               </Text>
             </View>
@@ -391,7 +419,8 @@ const IsportsScreen = ({
 
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your Favorites list`}
+        message="Channel is added to your Favorites list"
+        // message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor="#FF5050"
       />
@@ -424,6 +453,7 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   genres: selectGenres,
   paginator: selectPaginator,
+  favoritesPaginator: selectFavoritesPaginator,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
   headerHeight: selectHeaderHeight
@@ -442,6 +472,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

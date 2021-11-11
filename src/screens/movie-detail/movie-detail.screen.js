@@ -35,7 +35,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { useRemoteMediaClient } from 'react-native-google-cast';
-import { MODULE_TYPES } from 'common/values';
+import { MODULE_TYPES } from 'common/globals';
 import moment from 'moment';
 import theme from 'common/theme';
 
@@ -212,12 +212,12 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!movie) return <View />;
+  // return (
+  //   <ContentWrap>
+  //     <Text>Working...</Text>
+  //   </ContentWrap>
+  // );
 
   const {
     /// items to exclude in 'read more' section
@@ -391,8 +391,8 @@ const MovieDetailScreen = ({
               </List.Section>
             </ContentWrap>
 
-            <PlayMovieButton setPaused={setPaused} />
-            <PlayTrailerButton playTrailer={playTrailer} />
+            {/* <PlayMovieButton setPaused={setPaused} />
+            <PlayTrailerButton playTrailer={playTrailer} /> */}
           </ScrollView>
 
           {/* loader for download starting */}

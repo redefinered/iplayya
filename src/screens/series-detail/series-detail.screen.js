@@ -4,8 +4,8 @@ import React from 'react';
 import {
   View,
   ScrollView,
-  StyleSheet,
-  Pressable,
+  // StyleSheet,
+  // Pressable,
   Platform,
   Modal,
   StatusBar,
@@ -18,7 +18,7 @@ import { Text, List } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import { withTheme } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+// import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -311,12 +311,12 @@ const SeriesDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!seriesdata)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!seriesdata) return <View />;
+  // return (
+  //   <ContentWrap>
+  //     <Text>Working...</Text>
+  //   </ContentWrap>
+  // );
 
   const {
     title,
@@ -330,12 +330,12 @@ const SeriesDetailScreen = ({
     ...otherFields
   } = seriesdata;
 
-  if (!series)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!series) return <View />;
+  // return (
+  //   <ContentWrap>
+  //     <Text>Working...</Text>
+  //   </ContentWrap>
+  // );
 
   const renderMediaPlayer = () => {
     if (!source)
@@ -435,7 +435,7 @@ const SeriesDetailScreen = ({
                 </List.Accordion>
               </List.Section>
 
-              <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
+              {/* <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
                 <View style={styles.iconContainer}>
                   <Icon name="circular-play" size={theme.iconSize(3)} />
                 </View>
@@ -454,29 +454,34 @@ const SeriesDetailScreen = ({
                     Watch trailer
                   </Text>
                 </View>
-              </Pressable>
+              </Pressable> */}
             </ContentWrap>
 
             <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
-              {series.map(({ season }, index) => {
+              {series.map(({ season: so }, index) => {
                 const { episodes } = series[index];
                 return (
                   <List.Accordion
                     key={index}
-                    title={`Season ${season}`}
+                    title={`Season ${so}`}
                     style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
                     titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
                   >
-                    {episodes.map(({ episode }, index) => {
+                    {episodes.map(({ episode: e }, index) => {
+                      // console.log({ so, season, e, episode });
+                      let active = parseInt(e) === episode && parseInt(so) === season;
                       return (
                         <List.Item
                           key={index}
-                          onPress={() => handleEpisodeSelect({ season, episode })}
+                          onPress={() => handleEpisodeSelect({ season: so, episode: e })}
                           titleStyle={{ marginBottom: -10 }}
                           title={
                             <Text
-                              style={{ ...createFontFormat(14, 20) }}
-                            >{`Episode ${episode}`}</Text>
+                              style={{
+                                ...createFontFormat(14, 20),
+                                color: active ? theme.iplayya.colors.vibrantpussy : 'white'
+                              }}
+                            >{`Episode ${e}`}</Text>
                           }
                         />
                       );
@@ -545,19 +550,19 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
-const styles = StyleSheet.create({
-  settingItem: {
-    flexDirection: 'row',
-    paddingVertical: 10
-  },
-  iconContainer: {
-    width: 42,
-    justifyContent: 'center'
-  },
-  controls: {
-    position: 'absolute'
-  }
-});
+// const styles = StyleSheet.create({
+//   settingItem: {
+//     flexDirection: 'row',
+//     paddingVertical: 10
+//   },
+//   iconContainer: {
+//     width: 42,
+//     justifyContent: 'center'
+//   },
+//   controls: {
+//     position: 'absolute'
+//   }
+// });
 
 const actions = {
   getMovieAction: Creators.getMovie,

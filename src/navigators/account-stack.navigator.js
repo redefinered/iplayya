@@ -20,7 +20,7 @@ import { TouchableRipple } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/nav/nav.actions';
 
-import { headerHeight } from 'common/values';
+import { headerHeight } from 'common/globals';
 import theme from 'common/theme';
 
 const Stack = createStackNavigator();
