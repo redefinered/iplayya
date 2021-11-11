@@ -7,7 +7,7 @@ import { createStructuredSelector } from 'reselect';
 import { selectNowPlaying } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
 
-const ImusicBottomTabs = ({ nowPlaying }) => {
+const ImusicBottomTabs = ({ nowPlaying, handleBottomTabsLayoutEvent }) => {
   const navigation = useNavigation();
 
   const handleFavoritesButtonPress = () => {
@@ -38,6 +38,7 @@ const ImusicBottomTabs = ({ nowPlaying }) => {
 
   return (
     <SafeAreaView
+      onLayout={handleBottomTabsLayoutEvent}
       style={{
         flex: 1,
         flexDirection: 'row',
@@ -59,9 +60,8 @@ const ImusicBottomTabs = ({ nowPlaying }) => {
 };
 
 ImusicBottomTabs.propTypes = {
-  navigation: PropTypes.object,
-  route: PropTypes.object,
-  nowPlaying: PropTypes.object
+  nowPlaying: PropTypes.object,
+  handleBottomTabsLayoutEvent: PropTypes.func
 };
 
 const mapStateToProps = () => createStructuredSelector({ nowPlaying: selectNowPlaying });

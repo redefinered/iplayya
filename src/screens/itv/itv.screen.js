@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-// import Icon from 'components/icon/icon.component';
+import Spacer from 'components/spacer.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
@@ -17,7 +17,6 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
-// import useComponentSize from 'hooks/use-component-size.hook';
 import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
 import {
@@ -55,7 +54,6 @@ const ItvScreen = ({
   route: { params },
   headerHeight
 }) => {
-  // const [size, onLayout] = useComponentSize();
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -64,6 +62,7 @@ const ItvScreen = ({
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  const [bottomPadding, setBottomPadding] = React.useState(null);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -324,6 +323,14 @@ const ItvScreen = ({
     );
   };
 
+  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
+    const {
+      layout: { height }
+    } = nativeEvent;
+
+    setBottomPadding(height);
+  };
+
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
@@ -341,90 +348,9 @@ const ItvScreen = ({
         {renderChannels()}
       </View>
 
-      {/* <View
-        // onLayout={onLayout}
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          backgroundColor: '#202530',
-          borderTopRightRadius: 24,
-          borderTopLeftRadius: 24,
-          paddingHorizontal: 4,
-          width: '100%',
-          zIndex: theme.iplayya.zIndex.bottomTabs
-        }}
-      >
-        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-          <TouchableRipple
-            style={{
-              borderRadius: 34,
-              height: 67,
-              width: 67,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            borderless={true}
-            rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.navigate('ItvFavoritesScreen')}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Icon name="heart-solid" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', paddingTop: 5 }}>
-                Favorites
-              </Text>
-            </View>
-          </TouchableRipple>
-        </View>
-        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-          <TouchableRipple
-            style={{
-              borderRadius: 34,
-              height: 67,
-              width: 67,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            borderless={true}
-            rippleColor="rgba(255,255,255,0.25)"
-            onPress={() => navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] })}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Icon name="iplayya" size={theme.iconSize(3)} />
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', paddingTop: 5 }}>Home</Text>
-            </View>
-          </TouchableRipple>
-        </View>
-        <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-          <TouchableRipple
-            style={{
-              borderRadius: 34,
-              height: 69,
-              width: 69,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            borderless={true}
-            rippleColor="rgba(255,255,255,0.25)"
-            // onPress={() => navigation.navigate('ItvDownloadsScreen')}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Icon name="download" size={theme.iconSize(3)} color={theme.iplayya.colors.white25} />
-              <Text
-                style={{
-                  fontSize: 10,
-                  textTransform: 'uppercase',
-                  paddingTop: 5,
-                  color: theme.iplayya.colors.white25
-                }}
-              >
-                Downloads
-              </Text>
-            </View>
-          </TouchableRipple>
-        </View>
-      </View> */}
+      <Spacer size={bottomPadding} />
 
-      <ItvBottomTabs />
+      <ItvBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
 
       <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
 

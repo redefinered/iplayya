@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
 
-const IsportsBottomTabs = () => {
+const IsportsBottomTabs = ({ handleBottomTabsLayoutEvent }) => {
   const navigation = useNavigation();
 
   const handleFavoritesButtonPress = () => {
@@ -21,6 +21,7 @@ const IsportsBottomTabs = () => {
 
   return (
     <SafeAreaView
+      onLayout={handleBottomTabsLayoutEvent}
       style={{
         flex: 1,
         flexDirection: 'row',
@@ -41,8 +42,7 @@ const IsportsBottomTabs = () => {
 };
 
 IsportsBottomTabs.propTypes = {
-  navigation: PropTypes.object,
-  route: PropTypes.object
+  handleBottomTabsLayoutEvent: PropTypes.func
 };
 
 export default React.memo(IsportsBottomTabs);
