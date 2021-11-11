@@ -20,3 +20,7 @@ export const MODULE_TYPES = {
 };
 
 export const PAGINATOR_LIMIT = 100;
+
+export const IMOVIE_PAGINATOR_INFO_LIMIT = 10;
+
+export const IMOVIE_CATEGORY_PAGINATOR_LIMIT = 5;
