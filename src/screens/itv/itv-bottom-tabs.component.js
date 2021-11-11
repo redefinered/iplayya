@@ -4,20 +4,20 @@ import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
 
-const ImusicBottomTabs = () => {
+const ItvBottomTabs = () => {
   const navigation = useNavigation();
 
   const handleFavoritesButtonPress = () => {
-    navigation.navigate('ImusicFavoritesScreen');
+    navigation.navigate('ItvFavoritesScreen');
   };
 
   const handleHomeButtonPress = () => {
     navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] });
   };
 
-  const handleDownloadButtonPress = () => {
-    navigation.navigate('ImusicDownloadsScreen');
-  };
+  // const handleDownloadButtonPress = () => {
+  //   navigation.navigate('ImovieDownloadsScreen');
+  // };
 
   return (
     <SafeAreaView
@@ -35,14 +35,14 @@ const ImusicBottomTabs = () => {
     >
       <TabMenuItem label="Favorites" pressAction={handleFavoritesButtonPress} />
       <TabMenuItem label="Home" pressAction={handleHomeButtonPress} />
-      <TabMenuItem label="Downloads" pressAction={handleDownloadButtonPress} />
+      <TabMenuItem label="Downloads" />
     </SafeAreaView>
   );
 };
 
-ImusicBottomTabs.propTypes = {
+ItvBottomTabs.propTypes = {
   navigation: PropTypes.object,
   route: PropTypes.object
 };
 
-export default React.memo(ImusicBottomTabs);
+export default React.memo(ItvBottomTabs);

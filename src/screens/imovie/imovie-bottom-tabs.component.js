@@ -1,31 +1,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { SafeAreaView, View } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
-// import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import theme from 'common/theme';
+import { SafeAreaView } from 'react-native';
+import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
+import { useNavigation } from '@react-navigation/core';
 
-// eslint-disable-next-line no-unused-vars
-const ImovieBottomTabs = ({ navigation, route }) => {
-  const [heartIconColor, setHeartIconColor] = React.useState('white');
-  const [downloadIconColor, setDownloadIconColor] = React.useState('white');
+const ImovieBottomTabs = () => {
+  const navigation = useNavigation();
+  // const [heartIconColor, setHeartIconColor] = React.useState('white');
+  // const [downloadIconColor, setDownloadIconColor] = React.useState('white');
 
-  React.useEffect(() => {
-    if (typeof route !== 'undefined') {
-      if (route.name === 'ImovieFavoritesScreen') {
-        setHeartIconColor(theme.iplayya.colors.vibrantpussy);
-      } else {
-        setHeartIconColor('white');
-      }
+  // React.useEffect(() => {
+  //   if (typeof route !== 'undefined') {
+  //     if (route.name === 'ImovieFavoritesScreen') {
+  //       setHeartIconColor(theme.iplayya.colors.vibrantpussy);
+  //     } else {
+  //       setHeartIconColor('white');
+  //     }
 
-      if (route.name === 'ImovieDownloadsScreen') {
-        setDownloadIconColor(theme.iplayya.colors.vibrantpussy);
-      } else {
-        setDownloadIconColor('white');
-      }
-    }
-  }, [route]);
+  //     if (route.name === 'ImovieDownloadsScreen') {
+  //       setDownloadIconColor(theme.iplayya.colors.vibrantpussy);
+  //     } else {
+  //       setDownloadIconColor('white');
+  //     }
+  //   }
+  // }, [route]);
+
+  const handleFavoritesButtonPress = () => {
+    navigation.navigate('ImovieFavoritesScreen');
+  };
+
+  const handleHomeButtonPress = () => {
+    navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] });
+  };
+
+  const handleDownloadButtonPress = () => {
+    navigation.navigate('ImovieDownloadsScreen');
+  };
 
   return (
     <SafeAreaView
@@ -41,81 +51,9 @@ const ImovieBottomTabs = ({ navigation, route }) => {
         bottom: 0
       }}
     >
-      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableRipple
-          style={{
-            borderRadius: 34,
-            height: 67,
-            width: 67,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          borderless={true}
-          rippleColor="rgba(255,255,255,0.25)"
-          onPress={() => navigation.navigate('ImovieFavoritesScreen')}
-        >
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: heartIconColor }} />
-            <Text
-              style={{
-                fontSize: 10,
-                textTransform: 'uppercase',
-                paddingTop: 2,
-                color: heartIconColor
-              }}
-            >
-              Favorites
-            </Text>
-          </View>
-        </TouchableRipple>
-      </View>
-      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableRipple
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 34,
-            height: 67,
-            width: 67
-          }}
-          borderless={true}
-          rippleColor="rgba(255,255,255,0.25)"
-          onPress={() => navigation.replace('HomeScreen')}
-        >
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="iplayya" size={theme.iconSize(3)} />
-            <Text style={{ fontSize: 10, paddingTop: 2, textTransform: 'uppercase' }}>Home</Text>
-          </View>
-        </TouchableRipple>
-      </View>
-      <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-        <TouchableRipple
-          style={{
-            borderRadius: 35,
-            height: 70,
-            width: 70,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          borderless={true}
-          rippleColor="rgba(255,255,255,0.25)"
-          onPress={() => navigation.navigate('ImovieDownloadsScreen')}
-        >
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="download" size={theme.iconSize(3)} style={{ color: downloadIconColor }} />
-            <Text
-              style={{
-                fontSize: 10,
-                textTransform: 'uppercase',
-                paddingTop: 2,
-                color: downloadIconColor
-              }}
-            >
-              Downloads
-            </Text>
-          </View>
-        </TouchableRipple>
-      </View>
+      <TabMenuItem label="Favorites" pressAction={handleFavoritesButtonPress} />
+      <TabMenuItem label="Home" pressAction={handleHomeButtonPress} />
+      <TabMenuItem label="Downloads" pressAction={handleDownloadButtonPress} />
     </SafeAreaView>
   );
 };
@@ -125,4 +63,4 @@ ImovieBottomTabs.propTypes = {
   route: PropTypes.object
 };
 
-export default ImovieBottomTabs;
+export default React.memo(ImovieBottomTabs);

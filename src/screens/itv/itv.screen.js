@@ -2,14 +2,15 @@
 
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
-import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+import { ActivityIndicator, Text } from 'react-native-paper';
+// import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
+import ItvBottomTabs from './itv-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -62,8 +63,6 @@ const ItvScreen = ({
   const [subscribed, setSubscribed] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
-  // eslint-disable-next-line no-unused-vars
-  const [featuredChannels, setFeaturedChannels] = React.useState([]);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
@@ -149,7 +148,6 @@ const ItvScreen = ({
         setChannelsData(data);
       } else {
         setChannelsData([]);
-        setFeaturedChannels([]);
       }
     });
   }, [channels]);
@@ -270,7 +268,7 @@ const ItvScreen = ({
           </Text>
         </ContentWrap>
         <FlatList
-          data={channelsData}
+          data={channelsData.slice(0, 9)}
           horizontal
           bounces={false}
           renderItem={renderFeaturedItem}
@@ -302,7 +300,7 @@ const ItvScreen = ({
     return (
       <FlatList
         ListHeaderComponent={renderLisHeader()}
-        data={channelsData.slice(0, 9)}
+        data={channelsData}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}
@@ -343,7 +341,7 @@ const ItvScreen = ({
         {renderChannels()}
       </View>
 
-      <View
+      {/* <View
         // onLayout={onLayout}
         style={{
           flexDirection: 'row',
@@ -424,8 +422,12 @@ const ItvScreen = ({
             </View>
           </TouchableRipple>
         </View>
-        <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
-      </View>
+      </View> */}
+
+      <ItvBottomTabs />
+
+      <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
+
       <SnackBar
         visible={showSnackBar}
         message="Channel is added to your Favorites list"

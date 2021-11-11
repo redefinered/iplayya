@@ -241,7 +241,7 @@ const ImovieScreen = ({
       />
       <Spacer size={80} />
 
-      <ImovieBottomTabs navigation={navigation} />
+      <ImovieBottomTabs />
       <ImovieWalkthrough
         visible={showWalkthroughGuide}
         onButtonClick={handleWalkthroughGuideHide}
