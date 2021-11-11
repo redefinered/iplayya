@@ -33,7 +33,7 @@ const RadioStationsTab = ({
 }) => {
   console.log({ xxxx: paginator });
   const [showSnackBar, setShowSnackBar] = React.useState(false);
-  const [favorited, setFavorited] = React.useState('');
+  // const [favorited, setFavorited] = React.useState('');
   const [radioStationsData, setRadioStationsData] = React.useState([]);
 
   // setup radio data
@@ -69,13 +69,13 @@ const RadioStationsTab = ({
   const handleAddToFavorites = (radioId) => {
     let radio = radioStations.find(({ id }) => id === radioId);
 
-    const { name, is_favorite } = radio;
+    const { is_favorite } = radio;
 
     // stop if alreay in favorites
     if (is_favorite) return;
 
     // set selected item name for notif
-    setFavorited(name);
+    // setFavorited(name);
 
     // exec add to favorites
     addToFavoritesAction(radio);
@@ -163,7 +163,7 @@ const RadioStationsTab = ({
       />
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your favorites list`}
+        message="Channel is added to your favorites list"
         iconName="heart-solid"
         iconColor="#FF5050"
       />

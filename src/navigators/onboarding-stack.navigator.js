@@ -13,7 +13,7 @@ import SignInScreen from 'screens/sign-in/sign-in.screen';
 import SignUpScreen from 'screens/sign-up/sign-up.screen';
 import ForgotPasswordScreen from 'screens/forgot-password/forgot-password.screen';
 import EmailSuccessScreen from 'screens/email-success/email-success.screen';
-import { headerHeight } from 'common/values';
+import { headerHeight } from 'common/globals';
 
 const Stack = createStackNavigator();
 

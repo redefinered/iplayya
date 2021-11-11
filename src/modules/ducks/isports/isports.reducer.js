@@ -3,6 +3,7 @@ import { Types } from './isports.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
 import { updateChannelsWithFavorited } from 'modules/ducks/itv/itv.helpers';
+import { PAGINATOR_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -10,7 +11,7 @@ const INITIAL_STATE = {
   genres: [],
 
   paginator: {
-    limit: 10,
+    limit: PAGINATOR_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -92,17 +93,6 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
-  [Types.GET_CHANNELS_START]: (state) => {
-    return {
-      ...state,
-      paginator: {
-        limit: 10,
-        pageNumber: 1,
-        orderBy: 'number',
-        order: 'asc'
-      }
-    };
-  },
   [Types.GET_CHANNELS]: (state) => {
     return {
       ...state,
@@ -151,21 +141,6 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.GET_CHANNELS_BY_CATEGORIES_SUCCESS]: (state, action) => {
     const { channels, nextPaginatorInfo } = action.data;
-    // console.log({ nextPaginatorInfo });
-
-    // /// reference to current state paginator info object
-    // const currentPaginator = state.paginatorInfo;
-
-    // /// update paginator info
-    // const paginatorInfo = Object.assign(currentPaginator, nextPaginatorInfo);
-
-    // return {
-    //   ...state,
-    //   isFetching: false,
-    //   error: null,
-    //   channels,
-    //   paginatorInfo
-    // };
 
     const updatedChannels = uniqBy([...channels, ...state.channels], 'id');
 
@@ -407,7 +382,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       paginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'

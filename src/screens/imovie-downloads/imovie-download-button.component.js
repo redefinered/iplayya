@@ -41,6 +41,7 @@ const DownloadButton = ({
   const [sources, setSources] = React.useState([]);
   const [selectedDownloadUrl, setSelectedDownloadUrl] = React.useState(null);
   const [showDownloadOptionsModal, setShowDownloadOptionsModal] = React.useState(false);
+  const [startingDownload, setStartingDownload] = React.useState(false);
 
   React.useEffect(() => {
     checkIfMovieIsDownlowded();
@@ -111,6 +112,9 @@ const DownloadButton = ({
     try {
       let config = getConfigForVideoDownload(video);
 
+      /// set starting download to true
+      setStartingDownload(true);
+
       // eslint-disable-next-line no-unused-vars
       let task = RNBackgroundDownloader.download(config)
         .begin((expectedBytes) => {
@@ -118,6 +122,9 @@ const DownloadButton = ({
           downloadStartedAction();
         })
         .progress((percent) => {
+          /// set starting download to false
+          setStartingDownload(false);
+
           updateDownloadsProgressAction({ id: downloadId, progress: percent * 100 });
         })
         .done(() => {
@@ -135,6 +142,9 @@ const DownloadButton = ({
         .error((error) => {
           console.log('Download canceled due to error: ', error);
           downloadStartFailureAction(error.message);
+
+          // set starting download to false
+          setStartingDownload(false);
         });
 
       updateDownloadsAction({
@@ -212,6 +222,12 @@ const DownloadButton = ({
 
   const handleDownloadPress = () => {
     if (isMovieDownloaded) return;
+    if (startingDownload) return;
+
+    let downloadInProgress =
+      typeof downloadsProgress.find(({ id }) => id === videoId) !== 'undefined';
+
+    if (downloadInProgress) return;
 
     setShowDownloadOptionsModal(true);
   };

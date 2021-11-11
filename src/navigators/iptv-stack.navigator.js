@@ -11,7 +11,7 @@ import IptvScreen from 'screens/iptv/iptv.screen';
 import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 import EditIptvScreen from 'screens/iptv/edit-iptv.screen';
 
-import { headerHeight } from 'common/values';
+import { headerHeight } from 'common/globals';
 
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/nav/nav.actions';
