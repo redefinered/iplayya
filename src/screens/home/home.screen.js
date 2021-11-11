@@ -32,7 +32,9 @@ const Home = ({
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
   React.useEffect(() => {
+    /// this resets movie paginator
     getMoviesStartAction();
+
     enableSwipeAction(true);
 
     // makes sure main tab navigation is always visible on application mount
