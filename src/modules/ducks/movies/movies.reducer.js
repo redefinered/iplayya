@@ -1,6 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
 import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './movies.utils';
+import { IMOVIE_CATEGORY_PAGINATOR_LIMIT } from 'common/globals';
 import uniqBy from 'lodash/uniqBy';
 
 const INITIAL_STATE = {
@@ -21,7 +22,7 @@ const INITIAL_STATE = {
 
   categoryPaginator: {
     page: 1,
-    limit: 5
+    limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT
   },
 
   // if a movie is added to favorites
@@ -80,8 +81,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      categoryPaginator: { page: 1, limit: 5 },
-      movies: []
+      categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT }
     };
   },
   // get movies and update paginator i.e. increment pageNumber
@@ -146,7 +146,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.RESET_CATEGORY_PAGINATOR]: (state) => {
     return {
       ...state,
-      categoryPaginator: { page: 1, limit: 5 }
+      categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT }
     };
   },
   // setup paginator info

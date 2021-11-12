@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, View, ImageBackground, Dimensions } from 'react-native';
+import { StatusBar, View, ImageBackground, Dimensions, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { createStructuredSelector } from 'reselect';
 import { selectHeaderHeight } from 'modules/app';
@@ -26,22 +26,27 @@ const ScreenContainer = ({ children, backgroundType, withHeaderPush }) => {
     }
     if (backgroundType === 'image') {
       return (
-        <ImageBackground
-          imageStyle={{
-            flex: 1,
-            width: Dimensions.get('window').width,
-            height: Dimensions.get('window').height + 70
-          }}
-          style={{
-            flex: 1,
-            width: Dimensions.get('window').width,
-            height: Dimensions.get('window').height,
-            paddingTop: withHeaderPush ? headerHeight : 0
-          }}
-          source={require('assets/Home_BG.png')}
+        <LinearGradient
+          style={{ ...StyleSheet.absoluteFillObject }}
+          colors={['#2D1449', '#0D0637']}
         >
-          <View style={{ flex: 1 }}>{children}</View>
-        </ImageBackground>
+          <ImageBackground
+            imageStyle={{
+              flex: 1,
+              width: Dimensions.get('window').width,
+              height: Dimensions.get('window').height + 70
+            }}
+            style={{
+              flex: 1,
+              width: Dimensions.get('window').width,
+              height: Dimensions.get('window').height,
+              paddingTop: withHeaderPush ? headerHeight : 0
+            }}
+            source={require('assets/Home_BG_new.png')}
+          >
+            <View style={{ flex: 1 }}>{children}</View>
+          </ImageBackground>
+        </LinearGradient>
       );
     }
     return (

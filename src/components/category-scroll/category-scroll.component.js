@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import CategoryScrollList from './category-scroll-list';
+import CategoryScrollList from './category-scroll-list.component';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import {
