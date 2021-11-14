@@ -2,6 +2,7 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    setPaginatorInfo: ['categories'],
     setEpisode: ['season', 'episode'],
 
     getMovieStart: [],
@@ -16,9 +17,9 @@ const { Types, Creators } = createActions(
     getMoviesFailure: ['error'],
     resetCategoryPaginator: [],
 
-    getCategories: [],
-    getCategoriesSuccess: ['categories'],
-    getCategoriesFailure: ['error'],
+    // getCategories: [],
+    // getCategoriesSuccess: ['categories'],
+    // getCategoriesFailure: ['error'],
 
     /**
      * get movies by specific categories

@@ -26,14 +26,13 @@ import { Creators } from 'modules/ducks/movies/movies.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
-  selectCategoriesOf,
   selectError,
   selectSearchResults,
   selectIsFetching,
   selectRecentSearch,
-  selectSimilarMovies,
-  selectCategories
+  selectSimilarMovies
 } from 'modules/ducks/movies/movies.selectors';
+import { selectMovieCategories, selectCategoriesOf } from 'modules/app';
 import uniq from 'lodash/uniq';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
@@ -333,7 +332,7 @@ const ImovieSearchScreen = ({
       );
     }
   };
-
+  // console.log({ categories, allCategories });
   const renderSuggestedSearch = () => {
     // > 0 && term.length <= 3
     if (term.length || !term.length) {
@@ -454,7 +453,7 @@ const mapStateToProps = createStructuredSelector({
   categories: selectCategoriesOf('movies'),
   recentSearch: selectRecentSearch,
   similarMovies: selectSimilarMovies,
-  allCategories: selectCategories
+  allCategories: selectMovieCategories
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

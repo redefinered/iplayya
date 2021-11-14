@@ -16,29 +16,29 @@ export default createReducer(INITIAL_STATE, {
   [Types.USER_START]: (state) => {
     return { ...state, ...INITIAL_STATE };
   },
-  [Types.SET_PROVIDER]: (state) => {
-    return {
-      ...state,
-      error: null,
-      isFetching: true
-    };
-  },
-  [Types.SET_PROVIDER_SUCCESS]: (state, action) => {
-    const { id: provider } = action;
-    return {
-      ...state,
-      error: null,
-      isFetching: false,
-      provider
-    };
-  },
-  [Types.SET_PROVIDER_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: action.error
-    };
-  },
+  // [Types.SET_PROVIDER]: (state) => {
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: true
+  //   };
+  // },
+  // [Types.SET_PROVIDER_SUCCESS]: (state, action) => {
+  //   const { id: provider } = action;
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: false,
+  //     provider
+  //   };
+  // },
+  // [Types.SET_PROVIDER_FAILURE]: (state, action) => {
+  //   return {
+  //     ...state,
+  //     isFetching: false,
+  //     error: action.error
+  //   };
+  // },
   [Types.SKIP_PROVIDER_ADD]: (state) => {
     return { ...state, skippedProviderAdd: true };
   },

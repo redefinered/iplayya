@@ -23,5 +23,3 @@ export const selectPlaybackSettings = createSelector(
 );
 
 export const selectUpdated = createSelector([userState], ({ updated }) => updated);
-
-export const selectActiveProviderId = createSelector([userState], ({ provider }) => provider);

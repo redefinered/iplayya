@@ -7,7 +7,7 @@ import uniqBy from 'lodash/uniqBy';
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
-  categories: [],
+  // categories: [],
   movie: null,
   favoriteVideos: [],
 
@@ -37,6 +37,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_PAGINATOR_INFO]: (state, action) => {
+    return { ...state, paginatorInfo: setupPaginator(action.categories) };
+  },
   [Types.SET_EPISODE]: (state, action) => {
     const { season, episode } = action;
     return {
@@ -157,31 +160,31 @@ export default createReducer(INITIAL_STATE, {
   //     paginatorInfo
   //   };
   // },
-  [Types.GET_CATEGORIES]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null
-    };
-  },
-  // get all categories
-  [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
-    const { categories } = action;
-    return {
-      ...state,
-      error: null,
-      isFetching: false,
-      categories,
-      paginatorInfo: setupPaginator(categories)
-    };
-  },
-  [Types.GET_CATEGORIES_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      error: action.error,
-      isFetching: false
-    };
-  },
+  // [Types.GET_CATEGORIES]: (state) => {
+  //   return {
+  //     ...state,
+  //     isFetching: true,
+  //     error: null
+  //   };
+  // },
+  // // get all categories
+  // [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
+  //   const { categories } = action;
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: false,
+  //     categories,
+  //     paginatorInfo: setupPaginator(categories)
+  //   };
+  // },
+  // [Types.GET_CATEGORIES_FAILURE]: (state, action) => {
+  //   return {
+  //     ...state,
+  //     error: action.error,
+  //     isFetching: false
+  //   };
+  // },
   // not sure if I need this
   [Types.GET_MOVIES_BY_CATEGORIES]: (state) => {
     return {

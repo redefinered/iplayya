@@ -13,11 +13,11 @@ import { Creators as AppActionCreators } from 'modules/ducks/app.reducer';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
+import { selectCategoriesOf } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
   selectMovies,
-  selectCategoriesOf,
   selectPaginatorInfo,
   selectCategoryPaginator
 } from 'modules/ducks/movies/movies.selectors';

@@ -23,12 +23,12 @@ import {
   selectError,
   selectIsFetching,
   selectPaginator,
-  selectGenres,
   selectChannels,
   selectFavorites,
   selectFavoritesListUpdated,
   selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
+import { selectItvGenres } from 'modules/app';
 import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -390,7 +390,7 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   paginator: selectPaginator,
   favoritesPaginator: selectFavoritesPaginator,
-  genres: selectGenres,
+  genres: selectItvGenres,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
   headerHeight: selectHeaderHeight

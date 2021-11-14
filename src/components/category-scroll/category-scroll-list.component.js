@@ -88,9 +88,9 @@ const CategoryScrollList = ({
       snapToAlignment="start"
       contentInset={{
         top: 0,
-        bottom: 0,
-        left: SPACING_FOR_CARD_INSET,
-        right: SPACING_FOR_CARD_INSET
+        bottom: 0
+        // left: SPACING_FOR_CARD_INSET,
+        // right: SPACING_FOR_CARD_INSET
       }}
       contentContainerStyle={{
         paddingHorizontal: SPACING_FOR_CARD_INSET
