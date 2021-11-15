@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, InteractionManager } from 'react-native';
 import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
-import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
@@ -50,7 +49,7 @@ const ImovieScreen = ({
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
-  const [bottomPadding, setBottomPadding] = React.useState(null);
+
   // get movies on mount
   React.useEffect(() => {
     if (!paginatorInfo.length) return;
@@ -207,14 +206,6 @@ const ImovieScreen = ({
     );
   };
 
-  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
-    const {
-      layout: { height }
-    } = nativeEvent;
-
-    setBottomPadding(height);
-  };
-
   return (
     <View style={styles.container}>
       {renderErrorBanner()}
@@ -232,9 +223,8 @@ const ImovieScreen = ({
         ListFooterComponent={renderListFooter()}
       />
 
-      <Spacer size={bottomPadding} />
+      <ImovieBottomTabs />
 
-      <ImovieBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
       <ImovieWalkthrough
         visible={showWalkthroughGuide}
         onButtonClick={handleWalkthroughGuideHide}
