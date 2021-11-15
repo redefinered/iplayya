@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Image, FlatList, View, Text } from 'react-native';
+import MovieItem from 'components/movie-item/movie-item.component';
+import { FlatList, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -18,8 +19,6 @@ const CategoryScrollList = ({
   paginatorOfCategory,
   getMoviesByCategoriesAction
 }) => {
-  const brand = theme.iplayya.colors;
-
   const renderListFooter = () => {
     if (!isFetching) return;
 
@@ -29,7 +28,7 @@ const CategoryScrollList = ({
           width: CARD_DIMENSIONS.WIDTH,
           height: CARD_DIMENSIONS.HEIGHT,
           borderRadius: 8,
-          backgroundColor: brand.white10,
+          backgroundColor: theme.iplayya.colors.white10,
           justifyContent: 'center'
         }}
       >
@@ -38,37 +37,9 @@ const CategoryScrollList = ({
     );
   };
 
-  const renderThumbnail = (uri, title) => {
-    if (!uri) {
-      return (
-        <View
-          style={{
-            width: CARD_DIMENSIONS.WIDTH,
-            height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
-            borderRadius: 8,
-            padding: theme.spacing(1)
-          }}
-        >
-          <Text style={{ fontSize: 16, color: brand.vibrantpussy }}>{title}</Text>
-        </View>
-      );
-    }
-    return (
-      <Image
-        style={{ width: CARD_DIMENSIONS.WIDTH, height: CARD_DIMENSIONS.HEIGHT, borderRadius: 8 }}
-        source={{ uri }}
-      />
-    );
-  };
-
   // eslint-disable-next-line react/prop-types
-  const renderItem = ({ item: { id, thumbnail: uri, title, is_series } }) => {
-    return (
-      <TouchableOpacity style={{ marginRight: 10 }} onPress={() => onSelect({ id, is_series })}>
-        {renderThumbnail(uri, title)}
-      </TouchableOpacity>
-    );
+  const renderItem = ({ item }) => {
+    return <MovieItem item={item} onSelect={onSelect} />;
   };
 
   const handleOnEndReached = () => {
@@ -96,6 +67,7 @@ const CategoryScrollList = ({
         paddingHorizontal: SPACING_FOR_CARD_INSET
       }}
       renderItem={renderItem}
+      // eslint-disable-next-line react/prop-types
       keyExtractor={(item) => item.id}
       onEndReached={() => handleOnEndReached()}
       onEndReachedThreshold={0}
