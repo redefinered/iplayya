@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import Spacer from 'components/spacer.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
@@ -65,7 +64,6 @@ const IsportsScreen = ({
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
-  const [bottomPadding, setBottomPadding] = React.useState(null);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -319,14 +317,6 @@ const IsportsScreen = ({
     );
   };
 
-  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
-    const {
-      layout: { height }
-    } = nativeEvent;
-
-    setBottomPadding(height);
-  };
-
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
@@ -344,9 +334,7 @@ const IsportsScreen = ({
         {renderChannels()}
       </View>
 
-      <Spacer size={bottomPadding} />
-
-      <IsportsBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
+      <IsportsBottomTabs />
 
       <SnackBar
         visible={showSnackBar}

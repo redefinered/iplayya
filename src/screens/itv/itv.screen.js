@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import Spacer from 'components/spacer.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
@@ -62,7 +61,6 @@ const ItvScreen = ({
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
-  const [bottomPadding, setBottomPadding] = React.useState(null);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -323,14 +321,6 @@ const ItvScreen = ({
     );
   };
 
-  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
-    const {
-      layout: { height }
-    } = nativeEvent;
-
-    setBottomPadding(height);
-  };
-
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
@@ -348,9 +338,7 @@ const ItvScreen = ({
         {renderChannels()}
       </View>
 
-      <Spacer size={bottomPadding} />
-
-      <ItvBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
+      <ItvBottomTabs />
 
       <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
 
