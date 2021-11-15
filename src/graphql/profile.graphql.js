@@ -20,6 +20,7 @@ export const GET_PROFILE = gql`
         password
         portal_address
         created_at
+        is_active
       }
       playback {
         id

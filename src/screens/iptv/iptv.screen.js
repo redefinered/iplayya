@@ -212,7 +212,7 @@ const IptvScreen = ({
         showCheckboxes={showCheckboxes}
         setShowCheckboxes={setShowCheckboxes}
         onSelect={handleProviderSelect}
-        active={item.id === activeProviderId}
+        active={item.is_active}
         selected={itemsForDelete.includes(item.id)}
         name={item.name || 'No Provider Name'}
         username={item.username}
