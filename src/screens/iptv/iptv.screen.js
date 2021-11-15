@@ -56,8 +56,7 @@ const IptvScreen = ({
   createStartAction,
   deleteAction,
   deteteStartAction,
-  route: { params },
-  activeProvider
+  route: { params }
 }) => {
   // const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
@@ -205,21 +204,13 @@ const IptvScreen = ({
   };
 
   const renderItem = ({ item }) => {
-    let active = false;
-
-    if (!activeProvider) {
-      active = false;
-    } else {
-      active = activeProvider.id === item.id;
-    }
-
     return (
       <IptvItem
         id={item.id}
         showCheckboxes={showCheckboxes}
         setShowCheckboxes={setShowCheckboxes}
         onSelect={handleProviderSelect}
-        active={active}
+        active={item.is_active}
         selected={itemsForDelete.includes(item.id)}
         name={item.name || 'No Provider Name'}
         username={item.username}
