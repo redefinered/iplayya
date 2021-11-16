@@ -7,7 +7,6 @@ import { createFontFormat } from 'utils';
 const ITEM_HEIGHT = 34;
 
 const CategorySelectorPills = ({ data, labelkey, onSelect, selected, screen }) => {
-  console.log({ data });
   const theme = useTheme();
 
   const getItemLayout = (data, index) => ({

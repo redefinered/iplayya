@@ -1,4 +1,3 @@
-import { REHYDRATE } from 'redux-persist';
 import { createReducer, createActions } from 'reduxsauce';
 import { createSelector } from 'reselect';
 
@@ -24,7 +23,7 @@ export { Types, Creators };
 
 // default State
 const INITIAL_STATE = {
-  isLoading: true,
+  isLoading: false,
   error: null,
   networkInfo: null,
   headerHeight: null,
@@ -39,17 +38,11 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  [REHYDRATE]: (state) => {
-    return {
-      ...state,
-      isLoading: true
-    };
-  },
   [Types.SET_PROVIDER]: (state) => {
     return {
       ...state,
       error: null,
-      isFetching: true
+      isLoading: true
     };
   },
   [Types.SET_PROVIDER_SUCCESS]: (state, action) => {
@@ -58,7 +51,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       error: null,
-      isFetching: false,
+      isLoading: false,
       activeProvider: selectedProvider,
       contentBase: { itvGenres, movieCategories, isportsGenres, musicGenres }
     };
@@ -66,7 +59,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.SET_PROVIDER_FAILURE]: (state, action) => {
     return {
       ...state,
-      isFetching: false,
+      isLoading: false,
       error: action.error
     };
   },

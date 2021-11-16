@@ -347,8 +347,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       recentSearch: newRecentSearch.splice(0, 10)
     };
-  },
-  [Types.RESET]: (state) => {
-    return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
   }
+  // [Types.RESET]: (state) => {
+  //   return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
+  // }
 });

@@ -175,9 +175,9 @@ export default createReducer(INITIAL_STATE, {
         order: 'asc'
       }
     };
-  },
-
-  [Types.RESET]: (state) => {
-    return { ...state, ...INITIAL_STATE };
   }
+
+  // [Types.RESET]: (state) => {
+  //   return { ...state, ...INITIAL_STATE };
+  // }
 });
