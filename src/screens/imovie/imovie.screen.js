@@ -23,6 +23,8 @@ import {
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
 import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
+import RNFetchBlob from 'rn-fetch-blob';
+import { downloadPath } from 'utils';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -49,6 +51,7 @@ const ImovieScreen = ({
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  const [downloads, setDownloads] = React.useState(null);
 
   // get movies on mount
   React.useEffect(() => {
@@ -57,7 +60,14 @@ const ImovieScreen = ({
     if (isFetching) return; /// stop if another request is running
 
     getMoviesAction(paginatorInfo, categoryPaginator);
+
+    getDownloadsList();
   }, []);
+
+  const getDownloadsList = async () => {
+    const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
+    setDownloads(downloadsList);
+  };
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
@@ -162,7 +172,9 @@ const ImovieScreen = ({
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
     // console.log({ category });
-    return <CategoryScroll category={category} onSelect={handleMovieSelect} />;
+    return (
+      <CategoryScroll category={category} onSelect={handleMovieSelect} downloads={downloads} />
+    );
   };
 
   const handleEndReached = () => {
@@ -206,11 +218,10 @@ const ImovieScreen = ({
     );
   };
 
-  return (
-    <View style={styles.container}>
-      {renderErrorBanner()}
-      {renderEmptyErrorBanner()}
+  const renderList = () => {
+    if (!downloads) return;
 
+    return (
       <FlatList
         data={data}
         showsVerticalScrollIndicator={false}
@@ -222,6 +233,15 @@ const ImovieScreen = ({
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
         ListFooterComponent={renderListFooter()}
       />
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      {renderErrorBanner()}
+      {renderEmptyErrorBanner()}
+
+      {renderList()}
 
       <ImovieBottomTabs />
 

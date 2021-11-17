@@ -15,6 +15,7 @@ const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 const CategoryScrollList = ({
   data,
   onSelect,
+  downloads,
   isFetching,
   paginatorOfCategory,
   getMoviesByCategoriesAction
@@ -39,7 +40,16 @@ const CategoryScrollList = ({
 
   // eslint-disable-next-line react/prop-types
   const renderItem = ({ item }) => {
-    return <MovieItem item={item} onSelect={onSelect} />;
+    const downloadedThumbnail = downloads.find((file) => {
+      /// split item filename
+      // filename format: mt_id.jpg. e.g. mt_12390_.jpg
+      const splitFilename = file.split('_');
+      const id = splitFilename[1];
+      // eslint-disable-next-line react/prop-types
+      return id === item.id;
+    });
+
+    return <MovieItem item={item} onSelect={onSelect} downloadedThumbnail={downloadedThumbnail} />;
   };
 
   const handleOnEndReached = () => {
@@ -57,12 +67,6 @@ const CategoryScrollList = ({
       horizontal
       snapToInterval={CARD_DIMENSIONS.WIDTH + 10}
       snapToAlignment="start"
-      contentInset={{
-        top: 0,
-        bottom: 0,
-        left: SPACING_FOR_CARD_INSET,
-        right: SPACING_FOR_CARD_INSET
-      }}
       contentContainerStyle={{
         paddingHorizontal: SPACING_FOR_CARD_INSET
       }}
@@ -80,6 +84,7 @@ CategoryScrollList.propTypes = {
   isFetching: PropTypes.bool,
   error: PropTypes.string,
   data: PropTypes.array,
+  downloads: PropTypes.array,
   onSelect: PropTypes.func,
   paginatorOfCategory: PropTypes.object,
   getMoviesByCategoriesAction: PropTypes.func
