@@ -103,9 +103,14 @@ const MovieDetailScreen = ({
     listDownloadedFiles();
     downloadStartAction();
     playbackStartAction();
-    getMovieStartAction();
     getMovieAction(videoId);
     addMovieToFavoritesStartAction();
+
+    const navListener = navigation.addListener('beforeRemove', () => {
+      getMovieStartAction();
+    });
+
+    return () => navListener;
   }, []);
 
   React.useEffect(() => {

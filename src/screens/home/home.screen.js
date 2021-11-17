@@ -33,7 +33,7 @@ const Home = ({
 
   React.useEffect(() => {
     /// this resets movie paginator
-    getMoviesStartAction();
+    // getMoviesStartAction();
 
     enableSwipeAction(true);
 
