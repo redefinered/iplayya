@@ -136,7 +136,11 @@ const App = ({
     if (!isLoggedIn) return;
     if (!profile) return;
 
-    const provider = profile.providers.find(({ is_active }) => is_active === true);
+    const { providers } = profile;
+
+    if (!providers.length) return;
+
+    const provider = providers.find(({ is_active }) => is_active === true);
     setProviderAction(provider.id);
   }, [isLoggedIn]);
 
