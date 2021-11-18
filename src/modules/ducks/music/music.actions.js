@@ -2,6 +2,8 @@ import { createActions } from 'reduxsauce';
 
 const { Types, Creators } = createActions(
   {
+    setPaginatorInfo: ['genres'],
+
     getGenres: null,
     getGenresSuccess: ['genres'],
     getGenresFailure: ['error'],

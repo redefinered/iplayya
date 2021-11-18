@@ -12,9 +12,13 @@ import IptvStack from 'navigators/iptv-stack.navigator';
 import HomeTabs from 'navigators/home-tabs.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectIsLoading, selectMovieCategories } from 'modules/app';
-import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
+import {
+  Creators as AppCreators,
+  selectIsLoading,
+  selectMovieCategories,
+  selectMusicGenres
+} from 'modules/app';
+// import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as ImusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as ImovieCreators } from 'modules/ducks/movies/movies.actions';
@@ -23,7 +27,7 @@ import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import SplashScreen from 'react-native-splash-screen';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
-import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
+import { selectUpdated, selectProfile } from 'modules/ducks/profile/profile.selectors.js';
 import NotifService from 'NotifService';
 import { Button } from 'react-native-paper';
 import { selectError } from 'modules/ducks/user/user.selectors.js';
@@ -45,15 +49,19 @@ const App = ({
   userError,
   isLoading,
   isLoggedIn,
-  updatePasswordStartAction,
   passwordUpdateParams,
-  resetNowPlayingAction,
-  getProfileAction,
-  profileUpdated,
-  onRegisterAction,
-  onNotifAction,
+  profile,
+  // profileUpdated,
   movieCategories,
-  setImoviePaginatorInfoAction
+  musicGenres,
+  onNotifAction,
+  onRegisterAction,
+  // getProfileAction,
+  setProviderAction,
+  resetNowPlayingAction,
+  updatePasswordStartAction,
+  setImoviePaginatorInfoAction,
+  setImusicPaginatorInfoAction
 }) => {
   const [providerError, setProviderError] = React.useState(false);
   const [testMode] = React.useState(false);
@@ -63,6 +71,11 @@ const App = ({
     /// set the paginator information for imovie screen
     if (movieCategories.length) setImoviePaginatorInfoAction(movieCategories);
   }, [movieCategories]);
+
+  React.useEffect(() => {
+    /// set the paginator information for imovie screen
+    if (musicGenres.length) setImusicPaginatorInfoAction(musicGenres);
+  }, [musicGenres]);
 
   React.useEffect(() => {
     if (userError === 'Error: Provider not match') return setProviderError(true);
@@ -113,11 +126,19 @@ const App = ({
       updatePasswordStartAction({ params: { token, email } });
 
       /// get profile when updated
-      if (profileUpdated) {
-        getProfileAction();
-      }
+      // if (profileUpdated) {
+      //   getProfileAction();
+      // }
     });
   }, []);
+
+  React.useEffect(() => {
+    if (!isLoggedIn) return;
+    if (!profile) return;
+
+    const provider = profile.providers.find(({ is_active }) => is_active === true);
+    setProviderAction(provider.id);
+  }, [isLoggedIn]);
 
   // React.useEffect(() => {
   //   if (!dataLoaded) return;
@@ -203,18 +224,21 @@ const mapStateToProps = createStructuredSelector({
   isLoading: selectIsLoading,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
+  profile: selectProfile,
   profileUpdated: selectUpdated,
-  movieCategories: selectMovieCategories
+  movieCategories: selectMovieCategories,
+  musicGenres: selectMusicGenres
 });
 
 const actions = {
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   resetNowPlayingAction: ImusicCreators.resetNowPlaying,
-  setProviderAction: UserCreators.setProvider,
-  getProfileAction: ProfileCreators.get,
+  setProviderAction: AppCreators.setProvider,
+  // getProfileAction: ProfileCreators.get,
   onRegisterAction: NotifCreators.onRegister,
   onNotifAction: NotifCreators.onNotif,
-  setImoviePaginatorInfoAction: ImovieCreators.setPaginatorInfo
+  setImoviePaginatorInfoAction: ImovieCreators.setPaginatorInfo,
+  setImusicPaginatorInfoAction: ImusicCreators.setPaginatorInfo
 };
 
 export default connect(mapStateToProps, actions)(App);

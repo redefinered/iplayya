@@ -16,8 +16,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
-import { selectHeaderHeight } from 'modules/app';
-import uniq from 'lodash/uniq';
+import { selectHeaderHeight, selectItvGenres } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
@@ -27,7 +26,7 @@ import {
   selectFavoritesListUpdated,
   selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
-import { selectItvGenres } from 'modules/app';
+import uniq from 'lodash/uniq';
 import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');

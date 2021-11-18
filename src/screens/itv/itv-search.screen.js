@@ -31,9 +31,9 @@ import {
   selectSearchResults,
   selectSearchResultsPaginator,
   selectRecentSearch,
-  selectIsFetching,
-  selectGenres
+  selectIsFetching
 } from 'modules/ducks/itv/itv.selectors';
+import { selectItvGenres } from 'modules/app';
 import { ScrollView } from 'react-native-gesture-handler';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 
@@ -386,7 +386,7 @@ const mapStateToProps = createStructuredSelector({
   results: selectSearchResults,
   searchResultsPaginator: selectSearchResultsPaginator,
   recentSearch: selectRecentSearch,
-  genres: selectGenres
+  genres: selectItvGenres
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);

@@ -16,19 +16,18 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
+import { selectHeaderHeight, selectIsportsGenres } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
   selectPaginator,
-  selectGenres,
   selectChannels,
   selectFavorites,
-  selectFavoritesListUpdated
+  selectFavoritesListUpdated,
+  selectFavoritesPaginator
 } from 'modules/ducks/isports/isports.selectors';
-import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
-import { selectFavoritesPaginator } from 'modules/ducks/isports/isports.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -370,7 +369,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   favorites: selectFavorites,
-  genres: selectGenres,
+  genres: selectIsportsGenres,
   paginator: selectPaginator,
   favoritesPaginator: selectFavoritesPaginator,
   channels: selectChannels,
@@ -380,7 +379,7 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   getChannelsStartAction: Creators.getChannelsStart,
-  getGenresAction: Creators.getGenres,
+  // getGenresAction: Creators.getGenres,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   resetPaginatorAction: Creators.resetPaginator,

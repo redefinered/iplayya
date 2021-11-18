@@ -5,19 +5,17 @@ import {
   StyleSheet,
   ScrollView,
   View,
-  Image,
-  TouchableOpacity,
   FlatList,
   SectionList,
   TextInput as FormInput,
   Keyboard
 } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import MovieItem from 'components/movie-item/movie-item.component';
+import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
 import ContentWrap from 'components/content-wrap.component';
-import withLoader from 'components/with-loader.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
@@ -32,8 +30,11 @@ import {
   selectRecentSearch,
   selectSimilarMovies
 } from 'modules/ducks/movies/movies.selectors';
-import { selectMovieCategories, selectCategoriesOf } from 'modules/app';
+import { selectMovieCategories } from 'modules/app';
+import RNFetchBlob from 'rn-fetch-blob';
+import { downloadPath } from 'utils';
 import uniq from 'lodash/uniq';
+import theme from 'common/theme';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -45,24 +46,29 @@ const ImovieSearchScreen = ({
   results,
   categories,
   isFetching,
-
   updateRecentSearchAction,
   recentSearch,
-
-  allCategories,
   similarMovies,
   getSimilarMoviesAction,
   getSimilarMoviesStartAction
 }) => {
-  const theme = useTheme();
   const [term, setTerm] = React.useState('');
   const [showKeyboard, setShowKeyboard] = React.useState(false);
+  const [downloads, setDownloads] = React.useState(null);
 
+  console.log({ results });
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
     getSimilarMoviesStartAction();
+
+    getDownloadsList();
   }, []);
+
+  const getDownloadsList = async () => {
+    const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
+    setDownloads(downloadsList);
+  };
 
   const handleChange = (value) => {
     setTerm(value);
@@ -80,14 +86,17 @@ const ImovieSearchScreen = ({
   }, [term]);
 
   const search = React.useCallback(
-    debounce((keyword) => searchAction({ keyword, pageNumber: 1, limit: 10 }), 300),
+    debounce((keyword) => {
+      /// execute search
+      searchAction({ keyword, pageNumber: 1, limit: 10 });
+
+      /// update recent search terms
+      updateRecentSearchAction(term);
+    }, 300),
     []
   );
 
   const handleItemPress = ({ id: videoId, is_series }) => {
-    // console.log({ videoId, is_series });
-    // navigate to chanel details screen with `id` parameter
-    // navigation.navigate('MovieDetailScreen', { videoId });
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
     navigation.navigate('MovieDetailScreen', { videoId });
   };
@@ -95,12 +104,17 @@ const ImovieSearchScreen = ({
   React.useEffect(() => {
     if (results.length) {
       let getSimilarMovies = results.map(({ category }) => {
-        const c = allCategories.find(({ title }) => title === category);
+        const c = categories.find(({ title }) => title === category);
         if (typeof c === 'undefined') return;
         return parseInt(c.id);
       });
       getSimilarMovies = uniq(getSimilarMovies);
-      getSimilarMoviesAction({ limit: 6, categories: getSimilarMovies });
+      getSimilarMoviesAction({
+        limit: 6,
+        categories: getSimilarMovies.filter((i) => {
+          if (i) return i;
+        })
+      });
       Keyboard.dismiss();
     } else {
       getSimilarMoviesStartAction();
@@ -141,52 +155,21 @@ const ImovieSearchScreen = ({
     }
   };
 
-  const handleRecentSearch = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-    } else {
-      return;
-    }
-  };
-
   const handleShowKeyboard = () => {
     setShowKeyboard(true);
   };
 
-  // console.log({ results });
-
-  const renderThumbnail = (uri, title) => {
-    if (!uri) {
-      return (
-        <View
-          style={{
-            width: CARD_DIMENSIONS.WIDTH,
-            height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: theme.iplayya.colors.white10,
-            borderRadius: 8,
-            padding: theme.spacing(1)
-          }}
-        >
-          <Text style={{ fontSize: 16, color: theme.iplayya.colors.vibrantpussy }}>{title}</Text>
-        </View>
-      );
-    }
+  const renderItem = ({ item }) => {
+    const downloadedThumbnail = downloads.find((file) => {
+      /// split item filename
+      // filename format: mt_id.jpg. e.g. mt_12390_.jpg
+      const splitFilename = file.split('_');
+      const id = splitFilename[1];
+      // eslint-disable-next-line react/prop-types
+      return id === item.id;
+    });
     return (
-      <Image
-        style={{ width: CARD_DIMENSIONS.WIDTH, height: CARD_DIMENSIONS.HEIGHT, borderRadius: 8 }}
-        source={{ uri }}
-      />
-    );
-  };
-
-  const renderItem = ({ item: { id, thumbnail: uri, title, is_series } }) => {
-    return (
-      <TouchableOpacity
-        style={{ marginRight: 10, marginBottom: 10 }}
-        onPress={() => handleItemPress({ id, is_series })}
-      >
-        {renderThumbnail(uri, title)}
-      </TouchableOpacity>
+      <MovieItem item={item} onSelect={handleItemPress} downloadedThumbnail={downloadedThumbnail} />
     );
   };
 
@@ -204,6 +187,9 @@ const ImovieSearchScreen = ({
           Zero result
         </Text>
       );
+
+    if (!downloads) return;
+
     if (results.length)
       return (
         <React.Fragment>
@@ -232,56 +218,6 @@ const ImovieSearchScreen = ({
               </View>
             )}
           />
-
-          {/* <Text
-            style={{
-              ...createFontFormat(14, 19),
-              fontWeight: '700',
-              color: theme.iplayya.colors.white80,
-              paddingVertical: 15
-            }}
-          >
-            Search Results
-          </Text>
-          <FlatList
-            getItemLayout={(data, index) => ({
-              length: CARD_DIMENSIONS.HEIGHT,
-              offset: CARD_DIMENSIONS.HEIGHT * index,
-              index
-            })}
-            scrollEnabled
-            showsVerticalScrollIndicator={false}
-            data={results}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            numColumns={3}
-            // ListFooterComponent={<View>{renderSimilarMovies()}</View>}
-          /> */}
-          {/* <FlatList
-              data={results}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item: { id } }) => (
-                <CategoryScrollList key={id} data={results} onSelect={handleItemPress} />
-              )}
-              // initialScrollIndex={scrollIndex}
-              // onEndReached={(info) => handleEndReached(info)}
-              onEndReachedThreshold={0.5}
-              // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-            /> */}
-          {/* {results.map(({ id, title, is_series }) => (
-              <TouchableRipple key={id} onPress={() => handleItemPress({ id, is_series })}>
-                <Text
-                  style={{
-                    ...createFontFormat(16, 22),
-                    paddingVertical: 15,
-                    paddingHorizontal: theme.spacing(2)
-                  }}
-                >
-                  {title}
-                </Text>
-              </TouchableRipple>
-            ))} */}
         </React.Fragment>
       );
   };
@@ -295,6 +231,7 @@ const ImovieSearchScreen = ({
             offset: CARD_DIMENSIONS.HEIGHT * index,
             index
           })}
+          // contentInset={{ top: theme.spacing(2), left: 0, right: 0, bottom: theme.spacing(2) }}
           data={item}
           numColumns={3}
           renderItem={renderItem}
@@ -332,7 +269,7 @@ const ImovieSearchScreen = ({
       );
     }
   };
-  // console.log({ categories, allCategories });
+  // console.log({ categories, categories });
   const renderSuggestedSearch = () => {
     // > 0 && term.length <= 3
     if (term.length || !term.length) {
@@ -399,20 +336,11 @@ const ImovieSearchScreen = ({
           <RNPTextInput.Icon
             name={() => {
               return isFetching ? (
-                <Icon
-                  name="search"
-                  size={theme.iconSize(4)}
-                  style={{ marginRight: theme.spacing(-0.3) }}
-                />
+                <ActivityIndicator size="small" style={{ marginRight: 5 }} />
               ) : (
-                <Icon
-                  name="search"
-                  size={theme.iconSize(4)}
-                  style={{ marginRight: theme.spacing(-0.3) }}
-                />
+                <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
               );
             }}
-            onPress={() => handleRecentSearch()}
           />
         }
         // onFocus={() => this.setState({ isolatedInputs: true })}
@@ -450,12 +378,12 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
-  categories: selectCategoriesOf('movies'),
+  // categories: selectCategoriesOf('movies'),
   recentSearch: selectRecentSearch,
   similarMovies: selectSimilarMovies,
-  allCategories: selectMovieCategories
+  categories: selectMovieCategories
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);
