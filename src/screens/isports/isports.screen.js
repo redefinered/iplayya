@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import Spacer from 'components/spacer.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
@@ -17,19 +16,18 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
+import { selectHeaderHeight, selectIsportsGenres } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
   selectPaginator,
-  selectGenres,
   selectChannels,
   selectFavorites,
-  selectFavoritesListUpdated
+  selectFavoritesListUpdated,
+  selectFavoritesPaginator
 } from 'modules/ducks/isports/isports.selectors';
-import { selectHeaderHeight } from 'modules/app';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
-import { selectFavoritesPaginator } from 'modules/ducks/isports/isports.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
@@ -65,7 +63,6 @@ const IsportsScreen = ({
   const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
-  const [bottomPadding, setBottomPadding] = React.useState(null);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -319,14 +316,6 @@ const IsportsScreen = ({
     );
   };
 
-  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
-    const {
-      layout: { height }
-    } = nativeEvent;
-
-    setBottomPadding(height);
-  };
-
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
@@ -344,9 +333,7 @@ const IsportsScreen = ({
         {renderChannels()}
       </View>
 
-      <Spacer size={bottomPadding} />
-
-      <IsportsBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
+      <IsportsBottomTabs />
 
       <SnackBar
         visible={showSnackBar}
@@ -382,7 +369,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   favorites: selectFavorites,
-  genres: selectGenres,
+  genres: selectIsportsGenres,
   paginator: selectPaginator,
   favoritesPaginator: selectFavoritesPaginator,
   channels: selectChannels,
@@ -392,7 +379,7 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   getChannelsStartAction: Creators.getChannelsStart,
-  getGenresAction: Creators.getGenres,
+  // getGenresAction: Creators.getGenres,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   resetPaginatorAction: Creators.resetPaginator,

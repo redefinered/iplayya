@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { View, ScrollView, Alert } from 'react-native';
@@ -7,7 +6,6 @@ import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import Button from 'components/button/button.component';
-// import MainButton from 'components/button/mainbutton.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
@@ -17,6 +15,7 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/provider/provider.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { createStructuredSelector } from 'reselect';
+import { selectActiveProvider } from 'modules/app';
 import {
   selectIsFetching,
   selectError,
@@ -27,16 +26,17 @@ import {
 import { isValidUsername, isValidWebsite, isValidPassword } from 'common/validate';
 
 import styles from './add-iptv.styles';
-
 class EditIptvScreen extends React.Component {
   constructor(props) {
     super(props);
 
-    const {
-      params: {
-        provider: { id, name, portal_address, username, password }
-      }
-    } = props.route;
+    // const {
+    //   params: {
+    //     provider: { id, name, portal_address, username, password }
+    //   }
+    // } = props.route;
+
+    const { id, name, portal_address, username, password } = props.provider;
 
     this.state = {
       modalVisible: false,
@@ -57,24 +57,12 @@ class EditIptvScreen extends React.Component {
     };
   }
 
-  // unsubscribeToBeforeRemove = null;
-
   componentDidMount() {
     // resets provider create state
     this.props.updateStartAction();
     this.props.createStartAction();
     this.props.enableSwipeAction(false);
-
-    // this.unsubscribeToBeforeRemove = this.navigation.addListener('beforeRemove', () => {
-    //   if (this.state.edited) {
-    //     this.setState({ showGoingBackWarning: true });
-    //   }
-    // });
   }
-
-  // componentWillUnmount() {
-  //   this.unsubscribeToBeforeRemove();
-  // }
 
   handleChange = (text, name) => {
     this.setState({ [name]: text, edited: true });
@@ -103,12 +91,6 @@ class EditIptvScreen extends React.Component {
     } else {
       this.setError(stateError, 'name', false);
     }
-
-    // if (!isValidWebsite(input.portal_address)) {
-    //   this.setError(stateError, 'portal_address', true);
-    // } else {
-    //   this.setError(stateError, 'portal_address', false);
-    // }
 
     if (!isValidUsername(input.username)) {
       this.setError(stateError, 'username', true);
@@ -200,18 +182,7 @@ class EditIptvScreen extends React.Component {
               {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null}
               {this.props.error && <Text>{this.props.error}</Text>}
 
-              {/* <MainButton
-                disabled
-                onPress={() => this.handleSubmit()}
-                text="Save"
-                style={{ ...styles.submit }}
-              /> */}
-              <Button
-                style={styles.submit}
-                mode="contained"
-                onPress={() => this.handleSubmit()}
-                // disabled
-              >
+              <Button style={styles.submit} mode="contained" onPress={() => this.handleSubmit()}>
                 Save
               </Button>
             </View>
@@ -244,7 +215,8 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  updated: selectUpdated
+  updated: selectUpdated,
+  provider: selectActiveProvider
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader, withFormWrap);

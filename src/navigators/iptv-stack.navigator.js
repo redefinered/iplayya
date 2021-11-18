@@ -17,7 +17,6 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/nav/nav.actions';
 import { createStructuredSelector } from 'reselect';
 // import { selectSkippedProviderAdd } from 'modules/ducks/user/user.selectors';
-// import { selectProviders } from 'modules/ducks/provider/provider.selectors';
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import { TouchableRipple } from 'react-native-paper';
 import theme from 'common/theme';
@@ -174,7 +173,6 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   // skippedProviderAdd: selectSkippedProviderAdd,
   onboardinginfo: selectOnboardinginfo
-  // providers: selectProviders
 });
 
 export default connect(mapStateToProps, actions)(IptvStack);

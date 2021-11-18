@@ -15,11 +15,13 @@ export const GET_PROFILE = gql`
       onboardinginfo
       providers {
         id
+        user_id
         name
+        portal_address
         username
         password
-        portal_address
         created_at
+        is_active
       }
       playback {
         id

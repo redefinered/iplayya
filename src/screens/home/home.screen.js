@@ -33,7 +33,7 @@ const Home = ({
 
   React.useEffect(() => {
     /// this resets movie paginator
-    getMoviesStartAction();
+    // getMoviesStartAction();
 
     enableSwipeAction(true);
 
@@ -77,7 +77,8 @@ const Home = ({
 
   const handleProfileErrorConfirmAction = () => {
     getMoviesStartAction();
-    // getCategoriesAction();
+
+    // reset the paginator for the horizontal scrolling categories
     resetCategoryPaginatorAction();
 
     // hide error modal after retry

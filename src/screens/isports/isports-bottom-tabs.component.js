@@ -3,9 +3,19 @@ import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
+import Spacer from 'components/spacer.component';
 
-const IsportsBottomTabs = ({ handleBottomTabsLayoutEvent }) => {
+const IsportsBottomTabs = () => {
   const navigation = useNavigation();
+  const [bottomPadding, setBottomPadding] = React.useState(null);
+
+  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
+    const {
+      layout: { height }
+    } = nativeEvent;
+
+    setBottomPadding(height);
+  };
 
   const handleFavoritesButtonPress = () => {
     navigation.navigate('ItvFavoritesScreen');
@@ -20,24 +30,31 @@ const IsportsBottomTabs = ({ handleBottomTabsLayoutEvent }) => {
   // };
 
   return (
-    <SafeAreaView
-      onLayout={handleBottomTabsLayoutEvent}
-      style={{
-        flex: 1,
-        flexDirection: 'row',
-        backgroundColor: '#202530',
-        borderTopRightRadius: 24,
-        borderTopLeftRadius: 24,
-        paddingHorizontal: 4,
-        position: 'absolute',
-        width: '100%',
-        bottom: 0
-      }}
-    >
-      <TabMenuItem label="Favorites" icon="heart-solid" pressAction={handleFavoritesButtonPress} />
-      <TabMenuItem label="Home" icon="iplayya" pressAction={handleHomeButtonPress} />
-      <TabMenuItem label="Downloads" icon="download" />
-    </SafeAreaView>
+    <React.Fragment>
+      <Spacer size={bottomPadding} />
+      <SafeAreaView
+        onLayout={handleBottomTabsLayoutEvent}
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          backgroundColor: '#202530',
+          borderTopRightRadius: 24,
+          borderTopLeftRadius: 24,
+          paddingHorizontal: 4,
+          position: 'absolute',
+          width: '100%',
+          bottom: 0
+        }}
+      >
+        <TabMenuItem
+          label="Favorites"
+          icon="heart-solid"
+          pressAction={handleFavoritesButtonPress}
+        />
+        <TabMenuItem label="Home" icon="iplayya" pressAction={handleHomeButtonPress} />
+        <TabMenuItem label="Downloads" icon="download" />
+      </SafeAreaView>
+    </React.Fragment>
   );
 };
 
