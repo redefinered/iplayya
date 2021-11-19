@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
+import { View, Image, TouchableOpacity, StyleSheet, InteractionManager } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native-paper';
 import theme from 'common/theme';
 import axios from 'axios';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -18,14 +18,17 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
 
   const [thumbnail, setThumbnail] = React.useState(null);
   const [imgGetError, setImgGetError] = React.useState(false);
+  const [imgLoaded, setImgLoaded] = React.useState(false);
 
   // eslint-disable-next-line no-unused-vars
   const [imgGetErrorOmdb, setImgGetErrorOmdb] = React.useState(false); /// we can use this error to call the next priority image source
 
   React.useEffect(() => {
-    getThumbnail();
+    InteractionManager.runAfterInteractions(() => {
+      getThumbnail();
 
-    recordImbdId();
+      recordImbdId();
+    });
   }, []);
 
   React.useEffect(() => {
@@ -96,11 +99,13 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
       const { titles } = data;
 
       // stop if no result
+      if (typeof titles === 'undefined') return;
       if (!titles.length) return;
 
       /// save imdb id in firestore for future referrence
       return saveImdbDetails({ t: item.title, imdbid: titles[0].id });
     } catch (error) {
+      // console.log({ id: item.id, title: item.title });
       await db.collection('no-imdb-search-result').doc(item.id).set({ t: item.title });
       console.log(`imdbx error: ${error.message}`);
     }
@@ -174,6 +179,12 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
     }
   };
 
+  const renderImageLoader = () => {
+    if (imgLoaded) return;
+
+    return <ActivityIndicator />;
+  };
+
   const renderContent = () => {
     if (!thumbnail) {
       return (
@@ -197,11 +208,22 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
           width: CARD_DIMENSIONS.WIDTH,
           height: CARD_DIMENSIONS.HEIGHT,
           backgroundColor: theme.iplayya.colors.white10,
-          borderRadius: 8
+          borderRadius: 8,
+          justifyContent: 'center',
+          position: 'relative'
         }}
       >
+        {renderImageLoader()}
         <Image
-          style={{ width: CARD_DIMENSIONS.WIDTH, height: CARD_DIMENSIONS.HEIGHT, borderRadius: 8 }}
+          // onLoad={() => setImgLoaded(true)}
+          onLoadStart={() => setImgLoaded(false)}
+          onLoadEnd={() => setImgLoaded(true)}
+          style={{
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
+            borderRadius: 8,
+            ...StyleSheet.absoluteFillObject
+          }}
           source={{ uri: thumbnail }}
         />
       </View>
