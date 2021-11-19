@@ -18,8 +18,7 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectPaginator,
-  selectNowPlaying
+  selectPaginator
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
 import withLoader from 'components/with-loader.component';
@@ -34,11 +33,9 @@ const IradioScreen = ({
   getFavoritesAction,
   enableSwipeAction,
   setNowPlayingAction,
-  nowPlaying,
   route: { params }
 }) => {
   const [index, setIndex] = React.useState(0);
-  const [bottomNavHeight, setBottomNavHeight] = React.useState();
   const [nowPlaying, setNowPlaying] = React.useState(null);
 
   React.useEffect(() => {
@@ -62,7 +59,6 @@ const IradioScreen = ({
   React.useEffect(() => {
     if (params) {
       const { cmd, name, number } = params;
-      // setNowPlaying({ params });
       setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
       setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
     }
@@ -77,6 +73,7 @@ const IradioScreen = ({
     // const { source, title, artist, thumbnail } = item;
     const { cmd, name, number } = item;
 
+    setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
     setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
   };
 
@@ -107,14 +104,6 @@ const IradioScreen = ({
         />
       </React.Fragment>
 
-      {/* <View>{nowPlaying && }</View> */}
-
-      <View>
-        <NowPlaying navigation={navigation} />
-      </View>
-
-      {/* pushes up the content to make room for the bottom tab */}
-      <View style={{ paddingBottom: bottomNavHeight }} />
       <View>{nowPlaying && <NowPlaying navigation={navigation} />}</View>
 
       <IradioBottomTabs />
@@ -180,8 +169,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  paginator: selectPaginator,
-  nowPlaying: selectNowPlaying
+  paginator: selectPaginator
 });
 
 const actions = {
