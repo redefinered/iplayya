@@ -5,7 +5,7 @@ import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
 import Spacer from 'components/spacer.component';
 
-const ItvBottomTabs = () => {
+const IradioBottomTabs = () => {
   const navigation = useNavigation();
   const [bottomPadding, setBottomPadding] = React.useState(null);
 
@@ -17,17 +17,9 @@ const ItvBottomTabs = () => {
     setBottomPadding(height);
   };
 
-  const handleFavoritesButtonPress = () => {
-    navigation.navigate('ItvFavoritesScreen');
-  };
-
   const handleHomeButtonPress = () => {
     navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] });
   };
-
-  // const handleDownloadButtonPress = () => {
-  //   navigation.navigate('ItvDownloadsScreen');
-  // };
 
   return (
     <React.Fragment>
@@ -47,20 +39,14 @@ const ItvBottomTabs = () => {
           bottom: 0
         }}
       >
-        <TabMenuItem
-          label="Favorites"
-          icon="heart-solid"
-          pressAction={handleFavoritesButtonPress}
-        />
         <TabMenuItem label="Home" icon="iplayya" pressAction={handleHomeButtonPress} />
-        <TabMenuItem label="Downloads" icon="download" />
       </SafeAreaView>
     </React.Fragment>
   );
 };
 
-ItvBottomTabs.propTypes = {
+IradioBottomTabs.propTypes = {
   handleBottomTabsLayoutEvent: PropTypes.func
 };
 
-export default React.memo(ItvBottomTabs);
+export default React.memo(IradioBottomTabs);

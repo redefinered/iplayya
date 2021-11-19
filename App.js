@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import 'react-native-gesture-handler';
@@ -13,25 +12,30 @@ import IptvStack from 'navigators/iptv-stack.navigator';
 import HomeTabs from 'navigators/home-tabs.navigator';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectIsLoading } from 'modules/app';
-import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
+import {
+  Creators as AppCreators,
+  selectIsLoading,
+  selectMovieCategories,
+  selectMusicGenres
+} from 'modules/app';
+// import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
-import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as ImusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as ImovieCreators } from 'modules/ducks/movies/movies.actions';
 import { Creators as NotifCreators } from 'modules/ducks/notifications/notifications.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
 import { selectUpdateParams as selectPasswordUpdateParams } from 'modules/ducks/password/password.selectors';
 import SplashScreen from 'react-native-splash-screen';
-import Test from './test.component.js';
 import { selectCurrentUser } from 'modules/ducks/auth/auth.selectors.js';
-import { selectUpdated } from 'modules/ducks/profile/profile.selectors.js';
+import { selectUpdated, selectProfile } from 'modules/ducks/profile/profile.selectors.js';
 import NotifService from 'NotifService';
+import { Button } from 'react-native-paper';
+import { selectError } from 'modules/ducks/user/user.selectors.js';
+import theme from 'common/theme';
+
 // eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
-import { Button } from 'react-native-paper';
-import theme from 'common/theme';
-import { selectDataLoaded } from 'modules/app.js';
-import { selectError } from 'modules/ducks/user/user.selectors.js';
+import Test from './test.component.js';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -45,21 +49,33 @@ const App = ({
   userError,
   isLoading,
   isLoggedIn,
-  dataLoaded,
-  updatePasswordStartAction,
   passwordUpdateParams,
-  resetNowPlayingAction,
-  currentUser,
-  setProviderAction,
-  getProfileAction,
-  profileUpdated,
+  profile,
+  // profileUpdated,
+  movieCategories,
+  musicGenres,
+  onNotifAction,
   onRegisterAction,
-  onNotifAction
+  // getProfileAction,
+  setProviderAction,
+  resetNowPlayingAction,
+  updatePasswordStartAction,
+  setImoviePaginatorInfoAction,
+  setImusicPaginatorInfoAction
 }) => {
   const [providerError, setProviderError] = React.useState(false);
-  const [isReady, setIsReady] = React.useState(false);
   const [testMode] = React.useState(false);
   const [notif, setNotif] = React.useState(null);
+
+  React.useEffect(() => {
+    /// set the paginator information for imovie screen
+    if (movieCategories.length) setImoviePaginatorInfoAction(movieCategories);
+  }, [movieCategories]);
+
+  React.useEffect(() => {
+    /// set the paginator information for imovie screen
+    if (musicGenres.length) setImusicPaginatorInfoAction(musicGenres);
+  }, [musicGenres]);
 
   React.useEffect(() => {
     if (userError === 'Error: Provider not match') return setProviderError(true);
@@ -79,7 +95,7 @@ const App = ({
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
 
-    resetStore();
+    // resetStore(); /// for development
 
     resetNowPlayingAction();
 
@@ -110,11 +126,23 @@ const App = ({
       updatePasswordStartAction({ params: { token, email } });
 
       /// get profile when updated
-      if (profileUpdated) {
-        getProfileAction();
-      }
+      // if (profileUpdated) {
+      //   getProfileAction();
+      // }
     });
   }, []);
+
+  React.useEffect(() => {
+    if (!isLoggedIn) return;
+    if (!profile) return;
+
+    const { providers } = profile;
+
+    if (!providers.length) return;
+
+    const provider = providers.find(({ is_active }) => is_active === true);
+    setProviderAction(provider.id);
+  }, [isLoggedIn]);
 
   // React.useEffect(() => {
   //   if (!dataLoaded) return;
@@ -129,14 +157,14 @@ const App = ({
   //   }
   // }, [profileUpdated]);
 
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      const { providers } = currentUser;
-      if (providers.length) {
-        setProviderAction(providers[0].id);
-      }
-    }
-  }, [isLoggedIn, currentUser]);
+  // React.useEffect(() => {
+  //   if (isLoggedIn) {
+  //     const { providers } = currentUser;
+  //     if (providers.length) {
+  //       setProviderAction(providers[0].id);
+  //     }
+  //   }
+  // }, [isLoggedIn, currentUser]);
 
   if (testMode)
     return (
@@ -191,22 +219,6 @@ const App = ({
     );
   }
 
-  // if (!isReady) {
-  //   return (
-  //     <View
-  //       style={{
-  //         flex: 1,
-  //         backgroundColor: theme.iplayya.colors.goodnight,
-  //         alignItems: 'center',
-  //         justifyContent: 'center'
-  //       }}
-  //     >
-  //       <StatusBar hidden />
-  //       <ActivityIndicator size="small" />
-  //     </View>
-  //   );
-  // }
-
   return <HomeComponent />;
 };
 
@@ -214,20 +226,23 @@ const mapStateToProps = createStructuredSelector({
   userError: selectError,
   currentUser: selectCurrentUser,
   isLoading: selectIsLoading,
-  dataLoaded: selectDataLoaded,
   isLoggedIn: selectIsLoggedIn,
   passwordUpdateParams: selectPasswordUpdateParams,
-  profileUpdated: selectUpdated
-  // notifications: selectNotifications
+  profile: selectProfile,
+  profileUpdated: selectUpdated,
+  movieCategories: selectMovieCategories,
+  musicGenres: selectMusicGenres
 });
 
 const actions = {
   updatePasswordStartAction: PasswordActionCreators.updateStart,
-  resetNowPlayingAction: MusicCreators.resetNowPlaying,
-  setProviderAction: UserCreators.setProvider,
-  getProfileAction: ProfileCreators.get,
+  resetNowPlayingAction: ImusicCreators.resetNowPlaying,
+  setProviderAction: AppCreators.setProvider,
+  // getProfileAction: ProfileCreators.get,
   onRegisterAction: NotifCreators.onRegister,
-  onNotifAction: NotifCreators.onNotif
+  onNotifAction: NotifCreators.onNotif,
+  setImoviePaginatorInfoAction: ImovieCreators.setPaginatorInfo,
+  setImusicPaginatorInfoAction: ImusicCreators.setPaginatorInfo
 };
 
 export default connect(mapStateToProps, actions)(App);

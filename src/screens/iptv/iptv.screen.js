@@ -17,10 +17,11 @@ import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
+import { Creators as AppCreators } from 'modules/app';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as ProviderCreators } from 'modules/ducks/provider/provider.actions';
 import { createStructuredSelector } from 'reselect';
+import { selectActiveProvider } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
@@ -32,8 +33,7 @@ import {
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import {
   selectIsFetching as selectUserIsFetching,
-  selectError as selectUserError,
-  selectActiveProviderId
+  selectError as selectUserError
 } from 'modules/ducks/user/user.selectors';
 import NoProvider from 'assets/no_provider.svg';
 import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
@@ -56,8 +56,7 @@ const IptvScreen = ({
   createStartAction,
   deleteAction,
   deteteStartAction,
-  route: { params },
-  activeProviderId
+  route: { params }
 }) => {
   // const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
   const [actionSheetVisible, setActionSheetVisible] = React.useState(false);
@@ -134,10 +133,9 @@ const IptvScreen = ({
     setActionSheetVisible(false);
   };
 
-  const handleEdit = ({ selected }) => {
-    const provider = providers.find((p) => p.id === selected);
-    // console.log({ provider });
-    navigation.navigate('EditIptvScreen', { provider });
+  const handleEdit = () => {
+    navigation.navigate('EditIptvScreen');
+
     setActionSheetVisible(false);
   };
 
@@ -212,7 +210,7 @@ const IptvScreen = ({
         showCheckboxes={showCheckboxes}
         setShowCheckboxes={setShowCheckboxes}
         onSelect={handleProviderSelect}
-        active={item.id === activeProviderId}
+        active={item.is_active}
         selected={itemsForDelete.includes(item.id)}
         name={item.name || 'No Provider Name'}
         username={item.username}
@@ -398,7 +396,7 @@ IptvScreen.propTypes = {
 };
 
 const actions = {
-  setProviderAction: UserCreators.setProvider,
+  setProviderAction: AppCreators.setProvider,
   getProfileAction: ProfileCreators.get,
   deteteStartAction: ProviderCreators.deleteStart,
   deleteAction: ProviderCreators.delete,
@@ -411,14 +409,12 @@ const mapStateToProps = createStructuredSelector({
   userError: selectUserError,
   userIsFetching: selectUserIsFetching,
   created: selectCreated,
-  // updated: selectUpdated,
   deleted: selectDeleted,
   providers: selectProviders,
-  // skipped: selectSkipProviderAdd,
   onboardinginfo: selectOnboardinginfo,
   isProviderSetupSkipped: selectIsProviderSetupSkipped,
   isInitialSignIn: selectIsInitialSignIn,
-  activeProviderId: selectActiveProviderId
+  activeProvider: selectActiveProvider
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

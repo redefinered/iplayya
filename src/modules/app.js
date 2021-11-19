@@ -1,4 +1,3 @@
-import { REHYDRATE } from 'redux-persist';
 import { createReducer, createActions } from 'reduxsauce';
 import { createSelector } from 'reselect';
 
@@ -7,6 +6,11 @@ const { Types, Creators } = createActions(
     appReady: null,
     appReadySuccess: null,
     appReadyFailure: ['error'],
+
+    setProvider: ['id'],
+    setProviderSuccess: ['selectedProvider', 'contentBase'],
+    setProviderFailure: ['error'],
+
     setNetworkInfo: ['networkInfo'],
     setHeaderHeight: ['height'],
     default: null,
@@ -15,23 +19,48 @@ const { Types, Creators } = createActions(
   { prefix: '@App/' }
 );
 
-export { Creators };
+export { Types, Creators };
 
 // default State
 const INITIAL_STATE = {
-  isLoading: true,
+  isLoading: false,
   error: null,
   networkInfo: null,
   headerHeight: null,
   vodCategories: [],
-  musicGenres: []
+  activeProvider: null,
+  contentBase: {
+    itvGenres: [],
+    movieCategories: [],
+    isportsGenres: [],
+    musicGenres: []
+  }
 };
 
 export default createReducer(INITIAL_STATE, {
-  [REHYDRATE]: (state) => {
+  [Types.SET_PROVIDER]: (state) => {
     return {
       ...state,
+      error: null,
       isLoading: true
+    };
+  },
+  [Types.SET_PROVIDER_SUCCESS]: (state, action) => {
+    const { selectedProvider, contentBase } = action;
+    const { itvGenres, movieCategories, isportsGenres, musicGenres } = contentBase;
+    return {
+      ...state,
+      error: null,
+      isLoading: false,
+      activeProvider: selectedProvider,
+      contentBase: { itvGenres, movieCategories, isportsGenres, musicGenres }
+    };
+  },
+  [Types.SET_PROVIDER_FAILURE]: (state, action) => {
+    return {
+      ...state,
+      isLoading: false,
+      error: action.error
     };
   },
   [Types.SET_HEADER_HEIGHT]: (state, action) => {
@@ -71,26 +100,6 @@ export default createReducer(INITIAL_STATE, {
 });
 
 const appState = (state) => state.app;
-const itvState = (state) => state.itv;
-const imoviesState = (state) => state.movies;
-const isportsState = (state) => state.sports;
-const imusicState = (state) => state.music;
-
-export const selectDataLoaded = createSelector(
-  [itvState, imoviesState, isportsState, imusicState],
-  (
-    { genres: itvGenres },
-    { categories: movieCategories },
-    { genres: isportsGenres },
-    { genres: imusicGenres }
-  ) => {
-    if (!itvGenres.length) return false;
-    if (!movieCategories.length) return false;
-    if (!isportsGenres.length) return false;
-    if (!imusicGenres.length) return false;
-    return true;
-  }
-);
 
 export const selectIsLoading = createSelector([appState], ({ isLoading }) => isLoading);
 export const selectNetworkInfo = createSelector([appState], ({ networkInfo }) => networkInfo);
@@ -100,3 +109,41 @@ export const selectIsConnected = createSelector([appState], ({ networkInfo }) =>
 
   return networkInfo.isConnected;
 });
+
+export const selectActiveProvider = createSelector(
+  [appState],
+  ({ activeProvider }) => activeProvider
+);
+
+export const selectItvGenres = createSelector(
+  [appState],
+  ({ contentBase: { itvGenres } }) => itvGenres
+);
+
+export const selectMovieCategories = createSelector(
+  [appState],
+  ({ contentBase: { movieCategories } }) => movieCategories
+);
+
+export const selectIsportsGenres = createSelector(
+  [appState],
+  ({ contentBase: { isportsGenres } }) => isportsGenres
+);
+
+export const selectMusicGenres = createSelector(
+  [appState],
+  ({ contentBase: { musicGenres } }) => musicGenres
+);
+
+export const selectCategoriesOf = (type) =>
+  createSelector([selectMovieCategories], (categories) => {
+    const collection = [];
+    categories.map(({ id, title }) => {
+      let category_alias = title.split(': ')[0];
+      if (type === category_alias.toLowerCase()) {
+        return collection.push({ id, title });
+      }
+    });
+
+    return collection;
+  });

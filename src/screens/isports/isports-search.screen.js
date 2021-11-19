@@ -22,8 +22,8 @@ import {
   selectRecentSearch,
   selectSimilarChannel
 } from 'modules/ducks/isports/isports.selectors';
+import { selectIsportsGenres } from 'modules/app';
 import { ScrollView } from 'react-native-gesture-handler';
-import { selectGenres } from 'modules/ducks/isports/isports.selectors';
 import uniq from 'lodash/uniq';
 
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -419,7 +419,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
-  genres: selectGenres,
+  genres: selectIsportsGenres,
   recentSearch: selectRecentSearch,
   similarChannel: selectSimilarChannel
 });

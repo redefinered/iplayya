@@ -17,6 +17,14 @@ export const GET_MOVIES_BY_CATEGORIES = gql`
       thumbnail
       category
       is_series
+      kinopoisk {
+        api_key
+        api_link
+      }
+      tmdb {
+        api_key
+        api_link
+      }
     }
   }
 `;

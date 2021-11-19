@@ -32,7 +32,9 @@ const Home = ({
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
   React.useEffect(() => {
-    getMoviesStartAction();
+    /// this resets movie paginator
+    // getMoviesStartAction();
+
     enableSwipeAction(true);
 
     // makes sure main tab navigation is always visible on application mount
@@ -75,7 +77,8 @@ const Home = ({
 
   const handleProfileErrorConfirmAction = () => {
     getMoviesStartAction();
-    // getCategoriesAction();
+
+    // reset the paginator for the horizontal scrolling categories
     resetCategoryPaginatorAction();
 
     // hide error modal after retry

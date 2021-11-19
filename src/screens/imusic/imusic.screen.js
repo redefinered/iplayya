@@ -103,6 +103,7 @@ const ImusicScreen = ({
     if (!onEndReachedCalledDuringMomentum) {
       console.log('end reached!', info);
       getAlbumsAction(paginatorInfo, genrePaginator);
+
       setOnEndReachedCalledDuringMomentum(true);
     }
   };

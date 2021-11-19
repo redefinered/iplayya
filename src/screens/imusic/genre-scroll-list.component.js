@@ -23,6 +23,10 @@ const GenreScrollList = ({
 }) => {
   const brand = theme.iplayya.colors;
 
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
+
   const renderListFooter = () => {
     if (!isFetching) return;
 
@@ -124,10 +128,14 @@ const GenreScrollList = ({
   };
 
   const handleOnEndReached = () => {
-    // set pageNumber prop to get the next n albums
-    if (typeof paginatorOfGenre === 'undefined') return;
-    const { paginator } = paginatorOfGenre;
-    getAlbumsByGenresAction(paginator);
+    if (!onEndReachedCalledDuringMomentum) {
+      // set pageNumber prop to get the next n albums
+      if (typeof paginatorOfGenre === 'undefined') return;
+      const { paginator } = paginatorOfGenre;
+      getAlbumsByGenresAction(paginator);
+
+      setOnEndReachedCalledDuringMomentum(true);
+    }
   };
 
   return (
@@ -151,6 +159,7 @@ const GenreScrollList = ({
       keyExtractor={(item) => item.id}
       onEndReached={() => handleOnEndReached()}
       onEndReachedThreshold={0.5}
+      onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
       ListFooterComponent={renderListFooter()}
     />
   );

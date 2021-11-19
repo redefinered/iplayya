@@ -2,14 +2,13 @@
 
 import React from 'react';
 import { View, Pressable, StyleSheet, Dimensions } from 'react-native';
-import { Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { TabView } from 'react-native-tab-view';
-import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import RadioStationsTab from './radios-stations-tab.component';
 import FavoritesTab from './favorites-tab.component';
 import NowPlaying from './iradio-nowplaying.component';
-
+import IradioBottomTabs from './iradio-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -24,14 +23,12 @@ import {
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
 import withLoader from 'components/with-loader.component';
-import theme from 'common/theme';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
 const IradioScreen = ({
   navigation,
   startAction,
-  // favoritesStartAction,
   error,
   getRadiosAction,
   getFavoritesAction,
@@ -42,6 +39,7 @@ const IradioScreen = ({
 }) => {
   const [index, setIndex] = React.useState(0);
   const [bottomNavHeight, setBottomNavHeight] = React.useState();
+  const [nowPlaying, setNowPlaying] = React.useState(null);
 
   React.useEffect(() => {
     enableSwipeAction(false);
@@ -52,7 +50,6 @@ const IradioScreen = ({
 
   React.useEffect(() => {
     if (index === 0) {
-      // favoritesStartAction();
       getRadiosAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
     }
 
@@ -66,6 +63,7 @@ const IradioScreen = ({
     if (params) {
       const { cmd, name, number } = params;
       // setNowPlaying({ params });
+      setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
       setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
     }
   }, [params]);
@@ -80,11 +78,6 @@ const IradioScreen = ({
     const { cmd, name, number } = item;
 
     setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
-  };
-
-  const handleSetBottomTabsHeight = (event) => {
-    const { layout } = event.nativeEvent;
-    setBottomNavHeight(layout.height);
   };
 
   const renderScene = ({ route }) => {
@@ -122,59 +115,17 @@ const IradioScreen = ({
 
       {/* pushes up the content to make room for the bottom tab */}
       <View style={{ paddingBottom: bottomNavHeight }} />
+      <View>{nowPlaying && <NowPlaying navigation={navigation} />}</View>
 
-      <View
-        onLayout={handleSetBottomTabsHeight}
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          backgroundColor: '#202530',
-          paddingHorizontal: 4,
-          borderTopRightRadius: !nowPlaying ? 24 : 0,
-          borderTopLeftRadius: !nowPlaying ? 24 : 0,
-          position: 'absolute',
-          width: '100%',
-          bottom: 0
-        }}
-      >
-        <TouchableRipple
-          onPress={() => navigation.replace('HomeScreen')}
-          // style={{ alignItems: 'center' }}
-          style={{
-            borderRadius: 34,
-            height: 67,
-            width: 67,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-          borderless={true}
-          rippleColor="rgba(255,255,255,0.25)"
-        >
-          <View style={{ alignItems: 'center' }}>
-            <Icon name="iplayya" size={theme.iconSize(3)} />
-            <Text style={{ fontSize: 10, textTransform: 'uppercase', marginTop: 5 }}>Home</Text>
-          </View>
-        </TouchableRipple>
-      </View>
+      <IradioBottomTabs />
     </View>
   );
 };
 
-const TabBars = ({
-  navigationState: { index, routes },
-  jumpTo
-  // getRadiosAction,
-  // getFavoritesAction
-}) => {
+const TabBars = ({ navigationState: { index, routes }, jumpTo }) => {
   const theme = useTheme();
 
   const handleTabSelect = (key) => {
-    // if (key === 'radios') {
-    //   getRadiosAction({ pageNumber: 1, orderBy: 'number', order: 'asc' });
-    // }
-    // if (key === 'favorites') {
-    //   getFavoritesAction({ pageNumber: 1 });
-    // }
     jumpTo(key);
   };
 
@@ -205,16 +156,6 @@ const TabBars = ({
             >
               {title}
             </Text>
-            {/* <View
-              style={{
-                width: 60,
-                height: 2,
-                backgroundColor:
-                  routes[index].key === key
-                    ? theme.iplayya.colors.vibrantpussy
-                    : theme.iplayya.colors.white50
-              }}
-            /> */}
           </Pressable>
         </View>
       ))}

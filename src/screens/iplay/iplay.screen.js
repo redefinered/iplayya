@@ -25,6 +25,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import withLoader from 'components/with-loader.component';
 import WalkThroughGuide from 'components/walkthrough-guide/walkthrough-guide.component';
 import MediaItem from './media-item.component';
+import IplayBottomTabs from './iplay-bottom-tabs.component';
 
 const IplayScreen = ({
   navigation,
@@ -346,7 +347,7 @@ const IplayScreen = ({
           </ContentWrap>
         </View>
       )}
-      <React.Fragment>
+      {/* <React.Fragment>
         <View style={{ paddingBottom: 100 }} />
 
         <View style={{ position: 'absolute', width: '100%', bottom: 0 }}>
@@ -383,7 +384,9 @@ const IplayScreen = ({
             </Pressable>
           </View>
         </View>
-      </React.Fragment>
+      </React.Fragment> */}
+
+      <IplayBottomTabs />
 
       <AlertModal
         visible={alertMessageVisible}

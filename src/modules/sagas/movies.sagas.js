@@ -142,5 +142,5 @@ export default function* movieSagas() {
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_SIMILAR_MOVIES, getSimilarMoviesRequest);
-  yield takeLatest(Types.GET_CATEGORIES, getCategoriesRequest);
+  // yield takeLatest(Types.GET_CATEGORIES, getCategoriesRequest);
 }

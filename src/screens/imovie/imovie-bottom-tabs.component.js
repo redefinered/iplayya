@@ -3,27 +3,19 @@ import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
+import Spacer from 'components/spacer.component';
 
-const ImovieBottomTabs = ({ handleBottomTabsLayoutEvent }) => {
+const ImovieBottomTabs = () => {
   const navigation = useNavigation();
-  // const [heartIconColor, setHeartIconColor] = React.useState('white');
-  // const [downloadIconColor, setDownloadIconColor] = React.useState('white');
+  const [bottomPadding, setBottomPadding] = React.useState(null);
 
-  // React.useEffect(() => {
-  //   if (typeof route !== 'undefined') {
-  //     if (route.name === 'ImovieFavoritesScreen') {
-  //       setHeartIconColor(theme.iplayya.colors.vibrantpussy);
-  //     } else {
-  //       setHeartIconColor('white');
-  //     }
+  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
+    const {
+      layout: { height }
+    } = nativeEvent;
 
-  //     if (route.name === 'ImovieDownloadsScreen') {
-  //       setDownloadIconColor(theme.iplayya.colors.vibrantpussy);
-  //     } else {
-  //       setDownloadIconColor('white');
-  //     }
-  //   }
-  // }, [route]);
+    setBottomPadding(height);
+  };
 
   const handleFavoritesButtonPress = () => {
     navigation.navigate('ImovieFavoritesScreen');
@@ -38,24 +30,32 @@ const ImovieBottomTabs = ({ handleBottomTabsLayoutEvent }) => {
   };
 
   return (
-    <SafeAreaView
-      onLayout={handleBottomTabsLayoutEvent}
-      style={{
-        flex: 1,
-        flexDirection: 'row',
-        backgroundColor: '#202530',
-        borderTopRightRadius: 24,
-        borderTopLeftRadius: 24,
-        paddingHorizontal: 4,
-        position: 'absolute',
-        width: '100%',
-        bottom: 0
-      }}
-    >
-      <TabMenuItem label="Favorites" icon="heart-solid" pressAction={handleFavoritesButtonPress} />
-      <TabMenuItem label="Home" icon="iplayya" pressAction={handleHomeButtonPress} />
-      <TabMenuItem label="Downloads" icon="download" pressAction={handleDownloadButtonPress} />
-    </SafeAreaView>
+    <React.Fragment>
+      <Spacer size={bottomPadding} />
+
+      <SafeAreaView
+        onLayout={handleBottomTabsLayoutEvent}
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          backgroundColor: '#202530',
+          borderTopRightRadius: 24,
+          borderTopLeftRadius: 24,
+          paddingHorizontal: 4,
+          position: 'absolute',
+          width: '100%',
+          bottom: 0
+        }}
+      >
+        <TabMenuItem
+          label="Favorites"
+          icon="heart-solid"
+          pressAction={handleFavoritesButtonPress}
+        />
+        <TabMenuItem label="Home" icon="iplayya" pressAction={handleHomeButtonPress} />
+        <TabMenuItem label="Downloads" icon="download" pressAction={handleDownloadButtonPress} />
+      </SafeAreaView>
+    </React.Fragment>
   );
 };
 

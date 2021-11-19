@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import Spacer from 'components/spacer.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
@@ -17,18 +16,17 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.component';
-import { selectHeaderHeight } from 'modules/app';
-import uniq from 'lodash/uniq';
+import { selectHeaderHeight, selectItvGenres } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
   selectPaginator,
-  selectGenres,
   selectChannels,
   selectFavorites,
   selectFavoritesListUpdated,
   selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
+import uniq from 'lodash/uniq';
 import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -62,7 +60,6 @@ const ItvScreen = ({
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
-  const [bottomPadding, setBottomPadding] = React.useState(null);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -323,14 +320,6 @@ const ItvScreen = ({
     );
   };
 
-  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
-    const {
-      layout: { height }
-    } = nativeEvent;
-
-    setBottomPadding(height);
-  };
-
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
@@ -348,9 +337,7 @@ const ItvScreen = ({
         {renderChannels()}
       </View>
 
-      <Spacer size={bottomPadding} />
-
-      <ItvBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
+      <ItvBottomTabs />
 
       <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
 
@@ -390,7 +377,7 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   paginator: selectPaginator,
   favoritesPaginator: selectFavoritesPaginator,
-  genres: selectGenres,
+  genres: selectItvGenres,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
   headerHeight: selectHeaderHeight

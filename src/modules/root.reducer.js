@@ -1,6 +1,6 @@
 import { persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
-import { resettableReducer } from 'reduxsauce';
+// import { resettableReducer } from 'reduxsauce';
 
 import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
@@ -25,31 +25,28 @@ import iplayReducer from './ducks/iplay/iplay.reducer';
 export const persistConfig = {
   key: 'primary',
   storage: AsyncStorage
-  // blacklist
 };
 
-const resettable = resettableReducer('RESET');
+// const resettable = resettableReducer('RESET'); /// maybe only remove this in production mode
 
 const rootReducer = persistCombineReducers(persistConfig, {
   app: appReducer,
   auth: authReducer,
-  // auth: resettable(authReducer),
   nav: navReducer,
   imovieDownloads: imovieDownloadsReducer,
-  user: resettable(userReducer),
-  password: resettable(passwordReducer),
-  // itv: resettable(itvReducer),
+  user: userReducer,
+  password: passwordReducer,
   itv: itvReducer,
-  notifications: resettable(notificationsReducer),
+  notifications: notificationsReducer,
   profile: profileReducer,
-  movies: resettable(moviesReducer),
-  music: resettable(musicReducer),
+  movies: moviesReducer,
+  music: musicReducer,
   imusicFavorites: imusicFavoritesReducer,
   imusicSearch: imusicSearchReducer,
   imusicDownloads: imusicDownloadsReducer,
-  sports: resettable(isportsReducer),
-  radios: resettable(iradioReducer),
-  iradioFavorites: resettable(iradioFavoritesRaducer),
+  sports: isportsReducer,
+  radios: iradioReducer,
+  iradioFavorites: iradioFavoritesRaducer,
   provider: providerReducer,
   iplay: iplayReducer
 });

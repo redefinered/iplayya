@@ -3,27 +3,28 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, InteractionManager } from 'react-native';
 import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
-import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators as AppActionCreators } from 'modules/ducks/app.reducer';
+import { Creators as AppActionCreators } from 'modules/app';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
+import { selectCategoriesOf } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
   selectMovies,
-  selectCategoriesOf,
   selectPaginatorInfo,
   selectCategoryPaginator
 } from 'modules/ducks/movies/movies.selectors';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
 import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
+import RNFetchBlob from 'rn-fetch-blob';
+import { downloadPath } from 'utils';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -50,19 +51,23 @@ const ImovieScreen = ({
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
-  const [bottomPadding, setBottomPadding] = React.useState(null);
+  const [downloads, setDownloads] = React.useState(null);
+
   // get movies on mount
   React.useEffect(() => {
     if (!paginatorInfo.length) return;
 
+    if (isFetching) return; /// stop if another request is running
+
     getMoviesAction(paginatorInfo, categoryPaginator);
 
-    // InteractionManager.runAfterInteractions(() => {
-    //   if (categoryPaginator.page === 1) {
-    //     getMoviesAction(paginatorInfo, categoryPaginator);
-    //   }
-    // });
+    getDownloadsList();
   }, []);
+
+  const getDownloadsList = async () => {
+    const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
+    setDownloads(downloadsList);
+  };
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
@@ -167,14 +172,18 @@ const ImovieScreen = ({
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
     // console.log({ category });
-    return <CategoryScroll category={category} onSelect={handleMovieSelect} />;
+    return (
+      <CategoryScroll category={category} onSelect={handleMovieSelect} downloads={downloads} />
+    );
   };
 
-  const handleEndReached = (info) => {
+  const handleEndReached = () => {
     if (!onEndReachedCalledDuringMomentum) {
-      console.log('end reached!', info);
-      getMoviesAction(paginatorInfo, categoryPaginator);
       setOnEndReachedCalledDuringMomentum(true);
+
+      if (isFetching) return; /// stop if another request is running
+
+      getMoviesAction(paginatorInfo, categoryPaginator);
     }
   };
 
@@ -209,12 +218,22 @@ const ImovieScreen = ({
     );
   };
 
-  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
-    const {
-      layout: { height }
-    } = nativeEvent;
+  const renderList = () => {
+    if (!downloads) return;
 
-    setBottomPadding(height);
+    return (
+      <FlatList
+        data={data}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(movie) => movie.category}
+        renderItem={renderItem}
+        initialScrollIndex={scrollIndex}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        ListFooterComponent={renderListFooter()}
+      />
+    );
   };
 
   return (
@@ -222,21 +241,10 @@ const ImovieScreen = ({
       {renderErrorBanner()}
       {renderEmptyErrorBanner()}
 
-      <FlatList
-        data={data}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(movie) => movie.category}
-        renderItem={renderItem}
-        initialScrollIndex={scrollIndex}
-        onEndReached={(info) => handleEndReached(info)}
-        onEndReachedThreshold={0.5}
-        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-        ListFooterComponent={renderListFooter()}
-      />
+      {renderList()}
 
-      <Spacer size={bottomPadding} />
+      <ImovieBottomTabs />
 
-      <ImovieBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
       <ImovieWalkthrough
         visible={showWalkthroughGuide}
         onButtonClick={handleWalkthroughGuideHide}
