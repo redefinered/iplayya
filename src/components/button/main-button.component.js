@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 
-const MainButton = ({ onPress, text, style }) => {
+const MainButton = ({ onPress, text, style, ...rest }) => {
   return (
     <TouchableRipple
       style={{
@@ -12,6 +12,7 @@ const MainButton = ({ onPress, text, style }) => {
       borderless={true}
       rippleColor="#B4166A"
       onPress={onPress}
+      {...rest}
     >
       <View style={styles.buttonContainer}>
         <Text style={styles.textContainer}>{text}</Text>

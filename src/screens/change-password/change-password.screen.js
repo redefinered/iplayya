@@ -4,7 +4,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';

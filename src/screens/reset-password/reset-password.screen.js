@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Button from 'components/button/button.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import ScreenContainer from 'components/screen-container.component';

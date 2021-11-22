@@ -5,7 +5,7 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import TextInput from 'components/text-input/text-input.component';
 // import PasswordInput from 'components/password-input/password-input.component';
 import { View, Modal, Dimensions } from 'react-native';

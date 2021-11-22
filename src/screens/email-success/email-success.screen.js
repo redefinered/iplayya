@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import { Title, Text, withTheme } from 'react-native-paper';
 import EmailSentSvg from 'assets/email_sent.svg';
 // import withScreenContainer from 'components/with-screen-container/with-screen-container.component';

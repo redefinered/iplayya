@@ -8,7 +8,7 @@ import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 // import Button from 'components/button/button.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 
 import ScreenContainer from 'components/screen-container.component';

@@ -5,7 +5,7 @@ import { StyleSheet, Platform } from 'react-native';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import withLoader from 'components/with-loader.component';
 import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';

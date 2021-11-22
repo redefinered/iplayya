@@ -4,7 +4,7 @@ import React from 'react';
 import { View, Pressable, TextInput as FormInput } from 'react-native';
 import { TextInput, Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 
 // import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';

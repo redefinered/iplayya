@@ -7,10 +7,9 @@ import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import UsernameInput from './username-input.component';
 import ScreenContainer from 'components/screen-container.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
-import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/auth/auth.actions';
@@ -495,7 +494,12 @@ class SignUpScreen extends React.Component {
             </Text>
             .
           </Text>
-          <MainButton onPress={() => this.handleSubmit()} text="Sign Up" style={styles.submit} />
+          <MainButton
+            onPress={() => this.handleSubmit()}
+            text="Sign Up"
+            style={styles.submit}
+            disabled={this.props.isFetching}
+          />
         </ContentWrap>
       </ScrollView>
     );
@@ -519,6 +523,6 @@ const mapStateToProps = createStructuredSelector({
   signedUp: selectSignedUp
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap);
 
 export default enhance(Container);
