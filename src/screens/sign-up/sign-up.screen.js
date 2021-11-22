@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Text } from 'react-native-paper';
-import { Platform, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import UsernameInput from './username-input.component';
