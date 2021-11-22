@@ -437,7 +437,9 @@ class SignUpScreen extends React.Component {
             name="email"
             placeholder="Email"
             handleChangeText={this.handleChange}
-            keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
+            // keyboardType={Platform.OS === 'ios' ? 'default' : 'visible-password'}
+            keyboardType="email-address"
+            autoCompleteType="email"
             error={errors.email || errors.commonError}
           />
           {errors.email && <Text style={{ marginBottom: 10 }}>{errors.email}</Text>}
