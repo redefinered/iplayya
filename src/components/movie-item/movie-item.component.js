@@ -13,7 +13,6 @@ const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
   const imdbIdCollection = React.useRef(db.collection('imdb-thumbnails'));
-  // console.log(item.title, { downloadedThumbnail });
   const { id, is_series, title, tmdb, kinopoisk } = item;
 
   const [thumbnail, setThumbnail] = React.useState(null);
@@ -186,6 +185,7 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
   };
 
   const renderContent = () => {
+    // console.log(`title: ${item.title}, thumbnail: ${thumbnail}`);
     if (!thumbnail) {
       return (
         <View
@@ -201,7 +201,7 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
         </View>
       );
     }
-    // console.log(item.title, thumbnail);
+
     return (
       <View
         style={{

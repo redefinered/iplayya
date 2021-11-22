@@ -32,13 +32,15 @@ const Home = ({
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
   React.useEffect(() => {
-    /// this resets movie paginator
-    // getMoviesStartAction();
-
-    enableSwipeAction(true);
+    /// resets isFetching to false if ever the user closes app while loading
+    /// resets movie screen paginator
+    /// resets error to null
+    getMoviesStartAction();
 
     // makes sure main tab navigation is always visible on application mount
     setBottomTabsVisibleAction({ hideTabs: false });
+
+    enableSwipeAction(true);
   }, []);
 
   React.useEffect(() => {
