@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { compose } from 'redux';
@@ -134,6 +134,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

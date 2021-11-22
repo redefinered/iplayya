@@ -9,8 +9,16 @@ import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { selectMovie } from 'modules/ducks/movies/movies.selectors';
 import { selectChannel } from 'modules/ducks/itv/itv.selectors';
+import { AirplayButton, useExternalPlaybackAvailability } from 'react-airplay';
+import { useIsFocused } from '@react-navigation/native';
+import theme from 'common/theme';
 
 const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
+  const isScreenFocused = useIsFocused();
+  const isExternalPlaybackAvailable = useExternalPlaybackAvailability({
+    useCachedValue: !isScreenFocused
+  });
+
   const castSession = useCastSession();
 
   const [castConnected, setCastConnected] = React.useState(false);
@@ -43,6 +51,14 @@ const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
         iconSize={3}
         pressAction={handlePressActionPress}
       />
+      {isExternalPlaybackAvailable && (
+        <AirplayButton
+          prioritizesVideoDevices={true}
+          tintColor="white"
+          activeTintColor={theme.iplayya.colors.vibrantpussy}
+          style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
+        />
+      )}
     </View>
   );
 };
