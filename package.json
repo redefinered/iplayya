@@ -46,6 +46,7 @@
     "graphql": "^15.4.0",
     "moment": "^2.29.1",
     "react": "16.13.1",
+    "react-airplay": "^1.1.0",
     "react-native": "0.63.3",
     "react-native-anchor-point": "https://github.com/redefinered/react-native-anchor-point.git",
     "react-native-background-downloader": "^2.3.4",
