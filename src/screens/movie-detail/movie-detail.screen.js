@@ -1,16 +1,23 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, Platform, Modal, StatusBar, Pressable, Dimensions } from 'react-native';
+import {
+  View,
+  ScrollView,
+  Platform,
+  Modal,
+  StatusBar,
+  Dimensions,
+  InteractionManager
+} from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
-import PlayMovieButton from './play-movie-button.component';
-import PlayTrailerButton from './play-trailer-button.component';
-import withLoader from 'components/with-loader.component';
+// import PlayMovieButton from './play-movie-button.component';
+// import PlayTrailerButton from './play-trailer-button.component';
+// import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -34,7 +41,7 @@ import { selectPlaybackSettings } from 'modules/ducks/user/user.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
-import { useRemoteMediaClient } from 'react-native-google-cast';
+// import { useRemoteMediaClient } from 'react-native-google-cast';
 import { MODULE_TYPES } from 'common/globals';
 import moment from 'moment';
 import theme from 'common/theme';
@@ -61,7 +68,7 @@ const MovieDetailScreen = ({
 
   playbackSettings
 }) => {
-  const client = useRemoteMediaClient();
+  // const client = useRemoteMediaClient();
   const [paused, setPaused] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
@@ -100,11 +107,22 @@ const MovieDetailScreen = ({
   }, [paused]);
 
   React.useEffect(() => {
+    // get downloads
     listDownloadedFiles();
+
+    // set start state for downloads screen
     downloadStartAction();
+
+    // set start state for playback
     playbackStartAction();
-    getMovieAction(videoId);
+
+    // set movie add to favorites state
     addMovieToFavoritesStartAction();
+
+    InteractionManager.runAfterInteractions(() => {
+      // get movie data
+      getMovieAction(videoId);
+    });
 
     const navListener = navigation.addListener('beforeRemove', () => {
       getMovieStartAction();
@@ -294,9 +312,9 @@ const MovieDetailScreen = ({
     };
   });
 
-  const playTrailer = () => {
-    console.log('playing trailer');
-  };
+  // const playTrailer = () => {
+  //   console.log('playing trailer');
+  // };
 
   const renderMediaPlayer = () => {
     if (!source)
@@ -505,6 +523,6 @@ const mapStateToProps = createStructuredSelector({
   playbackSettings: selectPlaybackSettings
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

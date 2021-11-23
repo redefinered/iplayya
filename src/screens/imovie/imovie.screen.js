@@ -54,15 +54,15 @@ const ImovieScreen = ({
   const [downloads, setDownloads] = React.useState(null);
 
   // get movies on mount
-  React.useEffect(() => {
-    if (!paginatorInfo.length) return;
+  // React.useEffect(() => {
+  //   if (!paginatorInfo.length) return;
 
-    if (isFetching) return; /// stop if another request is running
+  //   if (isFetching) return; /// stop if another request is running
 
-    getMoviesAction(paginatorInfo, categoryPaginator);
+  //   getMoviesAction(paginatorInfo, categoryPaginator);
 
-    getDownloadsList();
-  }, []);
+  //   getDownloadsList();
+  // }, []);
 
   const getDownloadsList = async () => {
     const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
@@ -74,6 +74,8 @@ const ImovieScreen = ({
       addMovieToFavoritesStartAction();
       enableSwipeAction(false);
 
+      getInitialContent();
+
       // Subscribe to network changes
       const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
         setNetworkInfoAction({ type, isConnected });
@@ -83,6 +85,16 @@ const ImovieScreen = ({
       return () => unsubscribe();
     });
   }, []);
+
+  const getInitialContent = () => {
+    if (!paginatorInfo.length) return;
+
+    if (isFetching) return; /// stop if another request is running
+
+    getMoviesAction(paginatorInfo, categoryPaginator);
+
+    getDownloadsList();
+  };
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
