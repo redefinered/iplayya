@@ -73,6 +73,7 @@ const AccountScreen = ({
   // purgeStoreAction,
   passwordUpdated,
   route: { params },
+  getProfileStartAction,
   resetAction
 }) => {
   const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
@@ -108,6 +109,7 @@ const AccountScreen = ({
   React.useEffect(() => {
     if (userUpdated) {
       getProfileAction();
+      getProfileStartAction();
     }
   }, [userUpdated]);
 
@@ -448,6 +450,7 @@ AccountScreen.propTypes = {
 const actions = {
   resetAction: Creators.reset, // for testing
   getProfileAction: ProfileCreators.get,
+  getProfileStartAction: ProfileCreators.start,
   signOutAction: Creators.signOut
 };
 

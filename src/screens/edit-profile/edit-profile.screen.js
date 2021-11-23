@@ -73,7 +73,7 @@ class EditProfileScreen extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.updated !== this.props.update) {
-      if (this.props.updated) this.props.navigation.goBack();
+      if (this.props.updated) this.props.navigation.navigate('ProfileScreen');
     }
 
     if (prevState.edited !== this.state.edited || prevProps.navigation !== this.props.navigation) {
@@ -215,7 +215,7 @@ class EditProfileScreen extends React.Component {
     const { isFetching, profile } = this.props;
     const { errors, valid, showModal, modalVisible, isValidPhone, ...form } = this.state;
     const { theme } = this.props;
-
+    console.log(profile.phone);
     const actions = [
       {
         key: 'male',
@@ -274,6 +274,7 @@ class EditProfileScreen extends React.Component {
               <View>
                 <PhoneNumberPicker
                   name="phone"
+                  // placeholder={profile.phone == null ? '+44' : profile.phone}
                   placeholder={profile.phone}
                   setPhone={this.setPhone}
                   setValidPhone={this.setValidPhone}
@@ -288,6 +289,7 @@ class EditProfileScreen extends React.Component {
               <View>
                 <DatePicker
                   name="birth_date"
+                  // placeholder={profile.birth_date == null ? 'mm/dd/yy' : profile.birth_date}
                   placeholder={profile.birth_date}
                   setBirthdate={this.setBirthdate}
                   error={stateError.birth_date}
@@ -314,16 +316,29 @@ class EditProfileScreen extends React.Component {
                       ...(stateError.gender ? styles.errorText : null)
                     }}
                   >
-                    <Text
-                      style={[
-                        this.state.gender === profile.gender
-                          ? styles.textChangeColor
-                          : styles.textUnchange,
-                        { fontSize: 16 }
-                      ]}
-                    >
-                      {form.gender}
-                    </Text>
+                    {form.gender == null ? (
+                      <Text
+                        style={[
+                          this.state.gender === profile.gender
+                            ? styles.textChangeColor
+                            : styles.textUnchange,
+                          { fontSize: 16 }
+                        ]}
+                      >
+                        Gender
+                      </Text>
+                    ) : (
+                      <Text
+                        style={[
+                          this.state.gender === profile.gender
+                            ? styles.textChangeColor
+                            : styles.textUnchange,
+                          { fontSize: 16 }
+                        ]}
+                      >
+                        {form.gender}
+                      </Text>
+                    )}
                     <View style={{ marginRight: 10, marginTop: -2 }}>
                       <Icon
                         name="account"
