@@ -61,7 +61,7 @@ import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
 import { selectFavorites as selectFavoriteIsportChannels } from 'modules/ducks/isports/isports.selectors';
 
-import { headerHeight } from 'common/values';
+import { headerHeight } from 'common/globals';
 import { selectIsInitialSignIn } from 'modules/ducks/auth/auth.selectors';
 import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
@@ -750,8 +750,8 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={parseInt(channelId)}
-                    module="itv"
                     active={typeof channel === 'undefined' ? false : channel.is_favorite}
+                    pressAction={rest.addChannelToFavoritesAction}
                   />
                 </View>
               )
@@ -780,7 +780,7 @@ const HomeStack = ({
                   <AddToFavoritesButton
                     sub={parseInt(channelId)}
                     active={typeof channel === 'undefined' ? false : channel.is_favorite}
-                    module="isports"
+                    pressAction={rest.addIsportsChannelToFavoritesAction}
                   />
                 </View>
               )
@@ -831,6 +831,7 @@ const actions = {
   updateDownloadsProgressAction: MoviesCreators.updateDownloadsProgress,
   updateProfileAction: Creators.update,
   addChannelToFavoritesAction: ItvCreators.addToFavorites,
+  addIsportsChannelToFavoritesAction: IsportsCreators.addToFavorites,
   addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites,
   addTrackToFavoritesAction: ImusicFavoritesCreators.addTrackToFavorites,
   addAlbumToFavoritesAction: ImusicFavoritesCreators.addAlbumToFavorites,

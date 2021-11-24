@@ -1,14 +1,13 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
 import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './movies.utils';
+import { IMOVIE_CATEGORY_PAGINATOR_LIMIT } from 'common/globals';
 import uniqBy from 'lodash/uniqBy';
-
-// import { setupPaginator } from 'screens/imovie/imovie.utils';
 
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
-  categories: [],
+  // categories: [],
   movie: null,
   favoriteVideos: [],
 
@@ -23,7 +22,7 @@ const INITIAL_STATE = {
 
   categoryPaginator: {
     page: 1,
-    limit: 5
+    limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT
   },
 
   // if a movie is added to favorites
@@ -38,6 +37,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_PAGINATOR_INFO]: (state, action) => {
+    return { ...state, paginatorInfo: setupPaginator(action.categories) };
+  },
   [Types.SET_EPISODE]: (state, action) => {
     const { season, episode } = action;
     return {
@@ -82,8 +84,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
-      categoryPaginator: { page: 1, limit: 5 },
-      movies: []
+      categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT }
     };
   },
   // get movies and update paginator i.e. increment pageNumber
@@ -148,7 +149,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.RESET_CATEGORY_PAGINATOR]: (state) => {
     return {
       ...state,
-      categoryPaginator: { page: 1, limit: 5 }
+      categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT }
     };
   },
   // setup paginator info
@@ -159,31 +160,31 @@ export default createReducer(INITIAL_STATE, {
   //     paginatorInfo
   //   };
   // },
-  [Types.GET_CATEGORIES]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null
-    };
-  },
-  // get all categories
-  [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
-    const { categories } = action;
-    return {
-      ...state,
-      error: null,
-      isFetching: false,
-      categories,
-      paginatorInfo: setupPaginator(categories)
-    };
-  },
-  [Types.GET_CATEGORIES_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      error: action.error,
-      isFetching: false
-    };
-  },
+  // [Types.GET_CATEGORIES]: (state) => {
+  //   return {
+  //     ...state,
+  //     isFetching: true,
+  //     error: null
+  //   };
+  // },
+  // // get all categories
+  // [Types.GET_CATEGORIES_SUCCESS]: (state, action) => {
+  //   const { categories } = action;
+  //   return {
+  //     ...state,
+  //     error: null,
+  //     isFetching: false,
+  //     categories,
+  //     paginatorInfo: setupPaginator(categories)
+  //   };
+  // },
+  // [Types.GET_CATEGORIES_FAILURE]: (state, action) => {
+  //   return {
+  //     ...state,
+  //     error: action.error,
+  //     isFetching: false
+  //   };
+  // },
   // not sure if I need this
   [Types.GET_MOVIES_BY_CATEGORIES]: (state) => {
     return {
@@ -346,8 +347,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       recentSearch: newRecentSearch.splice(0, 10)
     };
-  },
-  [Types.RESET]: (state) => {
-    return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
   }
+  // [Types.RESET]: (state) => {
+  //   return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
+  // }
 });

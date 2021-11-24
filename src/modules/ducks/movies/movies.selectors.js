@@ -76,23 +76,6 @@ export const selectPaginatorInfo = createSelector(
 
 export const selectPlaybackInfo = createSelector([moviesState], ({ playbackInfo }) => playbackInfo);
 
-export const selectCategories = createSelector([moviesState], ({ categories }) => {
-  return categories;
-});
-
-export const selectCategoriesOf = (type) =>
-  createSelector([selectCategories], (categories) => {
-    const collection = [];
-    categories.map(({ id, title }) => {
-      let category_alias = title.split(': ')[0];
-      if (type === category_alias.toLowerCase()) {
-        return collection.push({ id, title });
-      }
-    });
-
-    return collection;
-  });
-
 const selectMoviesForFilter = ({ movies: { movies } }, props) => {
   return movies.find(({ category }) => category === props.category);
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, Dimensions } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
@@ -19,17 +19,16 @@ import clone from 'lodash/clone';
 
 const NowPlaying = ({
   // eslint-disable-next-line react/prop-types
-  navigation,
+  // navigation,
   nowPlaying,
   progress,
-  setProgressAction,
-  setNowPlayingAction,
+  // setProgressAction,
+  // setNowPlayingAction,
   setNowPlayingLayoutInfoAction,
-  updatePlaybackInfoAction,
+  // updatePlaybackInfoAction,
   paused,
   setPausedAction
 }) => {
-  // console.log({ playbackCounter });
   const theme = useTheme();
   const rootComponent = React.useRef();
   const player = React.useRef();
@@ -37,38 +36,38 @@ const NowPlaying = ({
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
 
-  React.useEffect(() => {
-    if (playbackInfo) {
-      updatePlaybackInfoAction(playbackInfo);
+  // React.useEffect(() => {
+  //   if (playbackInfo) {
+  //     updatePlaybackInfoAction(playbackInfo);
 
-      const { seekableDuration, currentTime } = playbackInfo;
+  //     const { seekableDuration, currentTime } = playbackInfo;
 
-      let percentage = (currentTime / seekableDuration) * 100;
+  //     let percentage = (currentTime / seekableDuration) * 100;
 
-      percentage = percentage === Infinity ? 0 : percentage;
-      percentage = isNaN(percentage) ? 0 : percentage;
-      setProgressAction(percentage);
+  //     percentage = percentage === Infinity ? 0 : percentage;
+  //     percentage = isNaN(percentage) ? 0 : percentage;
+  //     setProgressAction(percentage);
 
-      if (Math.ceil(percentage) === 100) playRadio();
-    }
-  }, [playbackInfo]);
+  //     if (Math.ceil(percentage) === 100) playRadio();
+  //   }
+  // }, [playbackInfo]);
 
-  const playRadio = () => {
-    if (nowPlaying.length) {
-      const { number } = nowPlaying;
+  // const playRadio = () => {
+  //   if (nowPlaying.length) {
+  //     const { number } = nowPlaying;
 
-      setNowPlayingAction({
-        number: parseInt(number)
-      });
+  //     setNowPlayingAction({
+  //       number: parseInt(number)
+  //     });
 
-      setPausedAction(false);
+  //     setPausedAction(false);
 
-      // reset progress
-      setProgressAction(0);
+  //     // reset progress
+  //     setProgressAction(0);
 
-      return;
-    }
-  };
+  //     return;
+  //   }
+  // };
 
   React.useEffect(() => {
     if (nowPlaying) {
@@ -80,8 +79,8 @@ const NowPlaying = ({
         );
       }
 
-      const { source } = nowPlaying;
-      if (!source) return;
+      const { url } = nowPlaying;
+      if (!url) return;
 
       setPausedAction(false);
     }
@@ -111,10 +110,10 @@ const NowPlaying = ({
     setBuffering(false);
   };
 
-  const handlePress = () => {
-    const { number } = nowPlaying;
-    navigation.navigate('IradioScreen', { number });
-  };
+  // const handlePress = () => {
+  //   const { number } = nowPlaying;
+  //   navigation.navigate('IradioScreen', { number });
+  // };
 
   const renderContent = (nowPlaying) => {
     const { title } = nowPlaying;
@@ -152,8 +151,8 @@ const NowPlaying = ({
     // const { url: uri } = nowPlaying;
 
     return (
-      <Pressable
-        onPress={handlePress}
+      <View
+        // onPress={handlePress}
         onLayout={handleOnRootLayout}
         ref={rootComponent}
         style={{
@@ -228,7 +227,7 @@ const NowPlaying = ({
             <View style={{ height: 1, backgroundColor: theme.iplayya.colors.white10 }} />
           </View>
         )} */}
-      </Pressable>
+      </View>
     );
   }
 

@@ -4,8 +4,6 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import moment from 'moment';
-// import { selectCurrentProgram } from 'modules/ducks/isports/isports.selectors';
-// import { connect } from 'react-redux';
 
 const CurrentProgram = ({ currentProgram, channel }) => {
   const { title: channelTitle } = channel;
@@ -55,14 +53,9 @@ const CurrentProgram = ({ currentProgram, channel }) => {
   );
 };
 
-// const mapStateToProps = (state, props) => {
-//   return { currentProgram: selectCurrentProgram(state, props) };
-// };
-
 CurrentProgram.propTypes = {
-  currentProgram: PropTypes.object,
-  channel: PropTypes.object
+  channel: PropTypes.object,
+  currentProgram: PropTypes.object
 };
 
-// export default CurrentProgram;
 export default React.memo(CurrentProgram);

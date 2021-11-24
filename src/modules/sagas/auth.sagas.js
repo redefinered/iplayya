@@ -37,16 +37,16 @@ export function* registerRequest(action) {
     const { me: user } = yield call(getProfile);
 
     // reset state data
-    yield put(ItvCreators.reset());
-    yield put(MoviesCreators.reset());
-    yield put(MusicCreators.reset());
+    // yield put(ItvCreators.reset());
+    // yield put(MoviesCreators.reset());
+    // yield put(MusicCreators.reset());
 
     yield put(Creators.signInSuccess(user, true));
 
     yield put(UserCreators.userStart());
 
     // removes the loader at the root level
-    yield put(AppCreators.appReadySuccess());
+    // yield put(AppCreators.appReadySuccess());
   } catch (error) {
     yield put(Creators.registerFailure(error.message));
   }
@@ -55,7 +55,7 @@ export function* registerRequest(action) {
 export function* signInRequest(action) {
   const { username, password } = action.data;
   try {
-    yield put(AppCreators.appReady());
+    // yield put(AppCreators.appReady());
     const {
       login: { access_token }
     } = yield call(signIn, username, password);
@@ -66,15 +66,13 @@ export function* signInRequest(action) {
     const { me: user } = yield call(getProfile);
 
     // reset state data
-    yield put(ItvCreators.reset());
-    yield put(MoviesCreators.reset());
-    yield put(IsportsCreators.reset());
-    yield put(MusicCreators.reset());
-    yield put(IradioCreators.reset());
+    // yield put(ItvCreators.reset());
+    // yield put(MoviesCreators.reset());
+    // yield put(IsportsCreators.reset());
+    // yield put(MusicCreators.reset());
+    // yield put(IradioCreators.reset());
 
     yield put(Creators.signInSuccess(user));
-
-    yield put(AppCreators.appReadySuccess());
   } catch (error) {
     console.log({ error });
     yield put(Creators.signInFailure(error.message));

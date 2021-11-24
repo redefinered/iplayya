@@ -41,6 +41,9 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.SET_PAGINATOR_INFO]: (state, action) => {
+    return { ...state, paginatorInfo: setupPaginator(action.genres) };
+  },
   [Types.SWITCH_IN_IMUSIC_SCREEN]: (state, action) => {
     return { ...state, isInImusicScreen: action.value };
   },
@@ -97,30 +100,30 @@ export default createReducer(INITIAL_STATE, {
     return { ...state, playbackInfo: action.playbackInfo };
   },
 
-  [Types.GET_GENRES]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null
-    };
-  },
-  [Types.GET_GENRES_SUCCESS]: (state, action) => {
-    const { genres } = action;
-    return {
-      ...state,
-      isFetching: false,
-      error: null,
-      genres,
-      paginatorInfo: setupPaginator(genres)
-    };
-  },
-  [Types.GET_GENRES_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: action.error
-    };
-  },
+  // [Types.GET_GENRES]: (state) => {
+  //   return {
+  //     ...state,
+  //     isFetching: true,
+  //     error: null
+  //   };
+  // },
+  // [Types.GET_GENRES_SUCCESS]: (state, action) => {
+  //   const { genres } = action;
+  //   return {
+  //     ...state,
+  //     isFetching: false,
+  //     error: null,
+  //     genres,
+  //     paginatorInfo: setupPaginator(genres)
+  //   };
+  // },
+  // [Types.GET_GENRES_FAILURE]: (state, action) => {
+  //   return {
+  //     ...state,
+  //     isFetching: false,
+  //     error: action.error
+  //   };
+  // },
 
   /// get tracks by album
   // [Types.GET_TRACKS_BY_ALBUM_START]: (state) => {

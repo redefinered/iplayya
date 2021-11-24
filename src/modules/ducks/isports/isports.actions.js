@@ -14,7 +14,6 @@ const { Types, Creators } = createActions(
     getChannelFailure: ['error'],
 
     /// get channels
-    getChannelsStart: null,
     getChannels: ['input'],
     getChannelsSuccess: ['data'],
     getChannelsFailure: ['error'],
@@ -31,7 +30,7 @@ const { Types, Creators } = createActions(
 
     favoritesStart: null,
     // add to favorites
-    addToFavorites: ['videoId'],
+    addToFavorites: ['id'],
     addToFavoritesSuccess: null,
     addToFavoritesFailure: ['error'],
 

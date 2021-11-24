@@ -1,16 +1,23 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, ScrollView, Platform, Modal, StatusBar, Pressable, Dimensions } from 'react-native';
+import {
+  View,
+  ScrollView,
+  Platform,
+  Modal,
+  StatusBar,
+  Dimensions,
+  InteractionManager
+} from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
-import PlayMovieButton from './play-movie-button.component';
-import PlayTrailerButton from './play-trailer-button.component';
-import withLoader from 'components/with-loader.component';
+// import PlayMovieButton from './play-movie-button.component';
+// import PlayTrailerButton from './play-trailer-button.component';
+// import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -30,11 +37,12 @@ import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
 } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
+import { selectPlaybackSettings } from 'modules/ducks/user/user.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
-import { useRemoteMediaClient } from 'react-native-google-cast';
-import { MODULE_TYPES } from 'common/values';
+// import { useRemoteMediaClient } from 'react-native-google-cast';
+import { MODULE_TYPES } from 'common/globals';
 import moment from 'moment';
 import theme from 'common/theme';
 
@@ -56,9 +64,11 @@ const MovieDetailScreen = ({
   downloadStarted,
   videoUrls,
   setMusicNowPlaying,
-  navigation
+  navigation,
+
+  playbackSettings
 }) => {
-  const client = useRemoteMediaClient();
+  // const client = useRemoteMediaClient();
   const [paused, setPaused] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
@@ -83,6 +93,12 @@ const MovieDetailScreen = ({
     navigation.setOptions({ headerShown: true });
   }, [fullscreen]);
 
+  React.useEffect(() => {
+    if (playbackSettings.is_autoplay_video === false) {
+      setPaused(true);
+    }
+  }, [playbackSettings.is_autoplay_video]);
+
   /// stop music player when a video is played
   React.useEffect(() => {
     if (!paused) {
@@ -91,40 +107,29 @@ const MovieDetailScreen = ({
   }, [paused]);
 
   React.useEffect(() => {
+    // get downloads
     listDownloadedFiles();
+
+    // set start state for downloads screen
     downloadStartAction();
+
+    // set start state for playback
     playbackStartAction();
-    getMovieStartAction();
-    getMovieAction(videoId);
+
+    // set movie add to favorites state
     addMovieToFavoritesStartAction();
+
+    InteractionManager.runAfterInteractions(() => {
+      // get movie data
+      getMovieAction(videoId);
+    });
+
+    const navListener = navigation.addListener('beforeRemove', () => {
+      getMovieStartAction();
+    });
+
+    return () => navListener;
   }, []);
-
-  /// cast functions
-  React.useEffect(() => {
-    if (!client) return;
-    // getChromecastStatus();
-
-    if (paused) {
-      handlePause();
-    } else {
-      handlePlay();
-    }
-  }, [client, paused]);
-
-  const handlePlay = async () => {
-    await client.play();
-  };
-
-  const handlePause = async () => {
-    await client.pause();
-  };
-  /// end cast functions
-
-  // const getChromecastStatus = async () => {
-  //   const chromecastStatus = await client.getMediaStatus();
-
-  //   console.log({ chromecastStatus });
-  // };
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -230,12 +235,12 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!movie) return <View />;
+  // return (
+  //   <ContentWrap>
+  //     <Text>Working...</Text>
+  //   </ContentWrap>
+  // );
 
   const {
     /// items to exclude in 'read more' section
@@ -307,9 +312,9 @@ const MovieDetailScreen = ({
     };
   });
 
-  const playTrailer = () => {
-    console.log('playing trailer');
-  };
+  // const playTrailer = () => {
+  //   console.log('playing trailer');
+  // };
 
   const renderMediaPlayer = () => {
     if (!source)
@@ -333,6 +338,7 @@ const MovieDetailScreen = ({
         source={source}
         thumbnail={thumbnail}
         title={title}
+        videoLength={movie.time}
         togglePlay={handleTogglePlay}
         setPaused={setPaused}
         setSource={handleSourceSet}
@@ -408,8 +414,8 @@ const MovieDetailScreen = ({
               </List.Section>
             </ContentWrap>
 
-            <PlayMovieButton setPaused={setPaused} />
-            <PlayTrailerButton playTrailer={playTrailer} />
+            {/* <PlayMovieButton setPaused={setPaused} />
+            <PlayTrailerButton playTrailer={playTrailer} /> */}
           </ScrollView>
 
           {/* loader for download starting */}
@@ -513,9 +519,10 @@ const mapStateToProps = createStructuredSelector({
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
   downloadStarted: selectDownloadStarted,
-  videoUrls: selectMovieVideoUrls
+  videoUrls: selectMovieVideoUrls,
+  playbackSettings: selectPlaybackSettings
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

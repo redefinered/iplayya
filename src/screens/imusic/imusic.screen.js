@@ -5,7 +5,6 @@ import { View, StyleSheet } from 'react-native';
 import { withTheme, ActivityIndicator } from 'react-native-paper';
 import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
-import withLoader from 'components/with-loader.component';
 import ImusicBottomTabs from './imusic-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -24,8 +23,12 @@ import GenreScroll from './genre-scroll.component';
 import { FlatList } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
+import theme from 'common/theme';
+
+const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
 const ImusicScreen = ({
+  isFetching,
   navigation,
   getAlbumsAction,
   paginatorInfo,
@@ -37,11 +40,14 @@ const ImusicScreen = ({
   setNowPlayingBackgroundModeAction,
   switchInImusicScreenAction
 }) => {
+  const brand = theme.iplayya.colors;
+
   const isFocused = useIsFocused();
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
   const [scrollIndex] = React.useState(0);
+  const [bottomPadding, setBottomPadding] = React.useState(null);
 
   React.useEffect(() => {
     setNowPlayingBackgroundModeAction(false);
@@ -87,10 +93,6 @@ const ImusicScreen = ({
     navigation.navigate('AlbumDetailScreen', { albumId: album.id });
   };
 
-  const renderEmpty = () => {
-    return <ActivityIndicator />;
-  };
-
   const renderItem = ({ item: { genre } }) => {
     if (typeof albums === 'undefined') return;
 
@@ -101,34 +103,54 @@ const ImusicScreen = ({
     if (!onEndReachedCalledDuringMomentum) {
       console.log('end reached!', info);
       getAlbumsAction(paginatorInfo, genrePaginator);
+
       setOnEndReachedCalledDuringMomentum(true);
     }
   };
 
+  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
+    const {
+      layout: { height }
+    } = nativeEvent;
+
+    setBottomPadding(height);
+  };
+
+  const renderListFooter = () => {
+    if (!isFetching) return;
+
+    return (
+      <View
+        style={{
+          width: CARD_DIMENSIONS.WIDTH,
+          height: CARD_DIMENSIONS.HEIGHT,
+          borderRadius: 8,
+          backgroundColor: brand.white10,
+          justifyContent: 'center',
+          marginLeft: theme.spacing(2)
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      {/* {renderErrorBanner()} */}
-      {albums.length ? (
-        <React.Fragment>
-          <FlatList
-            data={albums}
-            keyExtractor={(item) => item.id}
-            renderItem={renderItem}
-            initialScrollIndex={scrollIndex}
-            onEndReached={(info) => handleEndReached(info)}
-            onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-          />
-          <Spacer size={70} />
-        </React.Fragment>
-      ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {renderEmpty()}
-          <Spacer size={100} />
-        </View>
-      )}
+      <FlatList
+        data={albums}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        initialScrollIndex={scrollIndex}
+        onEndReached={(info) => handleEndReached(info)}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        ListFooterComponent={renderListFooter()}
+      />
 
-      <ImusicBottomTabs navigation={navigation} />
+      <Spacer size={bottomPadding} />
+
+      <ImusicBottomTabs handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent} />
     </View>
   );
 };
@@ -166,6 +188,6 @@ const actions = {
   switchInImusicScreenAction: Creators.switchInImusicScreen
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(Container);

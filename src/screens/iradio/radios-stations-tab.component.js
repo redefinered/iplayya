@@ -16,7 +16,6 @@ import {
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as FavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import ContentWrap from 'components/content-wrap.component';
-// import theme from 'common/theme';
 
 const ITEM_HEIGHT = 44;
 
@@ -28,31 +27,33 @@ const RadioStationsTab = ({
   handleSelectItem,
   isAddingToFavorites,
   added,
-  resetUpdateIndicatorsAction
+  resetUpdateIndicatorsAction,
+  getFavoritesAction
 }) => {
-  console.log({ xxxx: paginator });
   const [showSnackBar, setShowSnackBar] = React.useState(false);
-  const [favorited, setFavorited] = React.useState('');
-  const [radioStationsData, setRadioStationsData] = React.useState([]);
+  // const [favorited, setFavorited] = React.useState('');
+  // const [radioStationsData, setRadioStationsData] = React.useState([]);
 
   // setup radio data
-  React.useEffect(() => {
-    if (radioStations.length) {
-      let data = radioStations.map(({ id, name, is_favorite, number, ...rest }) => ({
-        id,
-        name,
-        is_favorite,
-        number,
-        ...rest
-      }));
-      setRadioStationsData(data);
-    } else {
-      setRadioStationsData([]);
-    }
-  }, [radioStations]);
+  // React.useEffect(() => {
+  //   if (radioStations.length) {
+  //     let data = radioStations.map(({ id, name, is_favorite, number, ...rest }) => ({
+  //       id,
+  //       name,
+  //       is_favorite,
+  //       number,
+  //       ...rest
+  //     }));
+  //     setRadioStationsData(data);
+  //   } else {
+  //     setRadioStationsData([]);
+  //   }
+  // }, [radioStations]);
 
   React.useEffect(() => {
     if (added) setShowSnackBar(true);
+    const prevPaginator = Object.assign(paginator, { pageNumber: paginator.pageNumber - 1 });
+    getFavoritesAction(prevPaginator);
   }, [added]);
 
   React.useEffect(() => {
@@ -66,13 +67,10 @@ const RadioStationsTab = ({
   const handleAddToFavorites = (radioId) => {
     let radio = radioStations.find(({ id }) => id === radioId);
 
-    const { name, is_favorite } = radio;
+    const { is_favorite } = radio;
 
     // stop if alreay in favorites
     if (is_favorite) return;
-
-    // set selected item name for notif
-    setFavorited(name);
 
     // exec add to favorites
     addToFavoritesAction(radio);
@@ -92,7 +90,7 @@ const RadioStationsTab = ({
   const renderItem = ({ item: { id, name, is_favorite, number, ...rest } }) => {
     return (
       <Pressable
-        onPress={() => handleSelectItem({ id, name, is_favorite, ...rest })}
+        onPress={() => handleSelectItem({ id, name, is_favorite, number, ...rest })}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
@@ -149,7 +147,7 @@ const RadioStationsTab = ({
     <View style={{ flex: 1 }}>
       {renderFavoriteLoader()}
       <FlatList
-        data={radioStationsData}
+        data={radioStations}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}
@@ -160,7 +158,7 @@ const RadioStationsTab = ({
       />
       <SnackBar
         visible={showSnackBar}
-        message={`${favorited} is added to your favorites list`}
+        message="Channel is added to your favorites list"
         iconName="heart-solid"
         iconColor="#FF5050"
       />

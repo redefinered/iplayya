@@ -3,30 +3,30 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, InteractionManager } from 'react-native';
 import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
-import Spacer from 'components/spacer.component';
 import ScreenContainer from 'components/screen-container.component';
-import withLoader from 'components/with-loader.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { Creators as AppActionCreators } from 'modules/ducks/app.reducer';
+import { Creators as AppActionCreators } from 'modules/app';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
+import { selectCategoriesOf } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
   selectMovies,
-  selectCategoriesOf,
   selectPaginatorInfo,
   selectCategoryPaginator
 } from 'modules/ducks/movies/movies.selectors';
-// import { urlEncodeTitle } from 'utils';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
-// import uniq
 import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
+import RNFetchBlob from 'rn-fetch-blob';
+import { downloadPath } from 'utils';
+
+const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieScreen = ({
   isFetching,
@@ -40,9 +40,10 @@ const ImovieScreen = ({
   categoryPaginator,
   movies,
   enableSwipeAction,
-  setNetworkInfoAction,
-  getFavoritesAction
+  setNetworkInfoAction
 }) => {
+  const brand = theme.iplayya.colors;
+
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
@@ -50,24 +51,30 @@ const ImovieScreen = ({
   const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  const [downloads, setDownloads] = React.useState(null);
+
   // get movies on mount
-  React.useEffect(() => {
-    if (!paginatorInfo.length) return;
+  // React.useEffect(() => {
+  //   if (!paginatorInfo.length) return;
 
-    getMoviesAction(paginatorInfo, categoryPaginator);
+  //   if (isFetching) return; /// stop if another request is running
 
-    // InteractionManager.runAfterInteractions(() => {
-    //   if (categoryPaginator.page === 1) {
-    //     getMoviesAction(paginatorInfo, categoryPaginator);
-    //   }
-    // });
-  }, []);
+  //   getMoviesAction(paginatorInfo, categoryPaginator);
+
+  //   getDownloadsList();
+  // }, []);
+
+  const getDownloadsList = async () => {
+    const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
+    setDownloads(downloadsList);
+  };
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       addMovieToFavoritesStartAction();
-      getFavoritesAction();
       enableSwipeAction(false);
+
+      getInitialContent();
 
       // Subscribe to network changes
       const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
@@ -78,6 +85,16 @@ const ImovieScreen = ({
       return () => unsubscribe();
     });
   }, []);
+
+  const getInitialContent = () => {
+    if (!paginatorInfo.length) return;
+
+    if (isFetching) return; /// stop if another request is running
+
+    getMoviesAction(paginatorInfo, categoryPaginator);
+
+    getDownloadsList();
+  };
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
@@ -105,9 +122,9 @@ const ImovieScreen = ({
     navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   };
 
-  const renderEmpty = () => {
-    return <ActivityIndicator size="small" />;
-  };
+  // const renderEmpty = () => {
+  //   return <ActivityIndicator size="small" />;
+  // };
 
   const handleRetry = () => {
     if (paginatorInfo.length) {
@@ -144,17 +161,41 @@ const ImovieScreen = ({
     );
   };
 
+  const renderEmptyErrorBanner = () => {
+    if (error === '')
+      return (
+        <Banner
+          visible={showBanner}
+          actions={[
+            {
+              label: 'Retry',
+              onPress: () => handleRetry()
+            }
+          ]}
+          icon={({ size }) => (
+            <Icon name="alert" size={size} color={theme.iplayya.colors.vibrantpussy} />
+          )}
+        >
+          <Text style={{ color: 'black' }}>{error}</Text>
+        </Banner>
+      );
+  };
+
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
     // console.log({ category });
-    return <CategoryScroll category={category} onSelect={handleMovieSelect} />;
+    return (
+      <CategoryScroll category={category} onSelect={handleMovieSelect} downloads={downloads} />
+    );
   };
 
-  const handleEndReached = (info) => {
+  const handleEndReached = () => {
     if (!onEndReachedCalledDuringMomentum) {
-      console.log('end reached!', info);
-      getMoviesAction(paginatorInfo, categoryPaginator);
       setOnEndReachedCalledDuringMomentum(true);
+
+      if (isFetching) return; /// stop if another request is running
+
+      getMoviesAction(paginatorInfo, categoryPaginator);
     }
   };
 
@@ -170,46 +211,52 @@ const ImovieScreen = ({
     setShowWalkthroughGuide(false);
   };
 
+  const renderListFooter = () => {
+    if (!isFetching) return;
+
+    return (
+      <View
+        style={{
+          width: CARD_DIMENSIONS.WIDTH,
+          height: CARD_DIMENSIONS.HEIGHT,
+          backgroundColor: brand.white10,
+          borderRadius: 8,
+          justifyContent: 'center',
+          marginLeft: theme.spacing(2)
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  };
+
+  const renderList = () => {
+    if (!downloads) return;
+
+    return (
+      <FlatList
+        data={data}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(movie) => movie.category}
+        renderItem={renderItem}
+        initialScrollIndex={scrollIndex}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        ListFooterComponent={renderListFooter()}
+      />
+    );
+  };
+
   return (
     <View style={styles.container}>
       {renderErrorBanner()}
-      {data.length ? (
-        <React.Fragment>
-          {/* <ScrollView contentOffset={{ y: scrollOffset }}>
-            {movies.map(({ category }) => {
-              return (
-                <View
-                  key={category}
-                  onLayout={({ nativeEvent: { layout } }) =>
-                    handleSetItemsPosition(category, layout)
-                  }
-                >
-                  <CategoryScroll category={category} onSelect={handleMovieSelect} />
-                </View>
-              );
-            })}
-            <Spacer size={100} />
-          </ScrollView> */}
-          <FlatList
-            data={data}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(movie) => movie.category}
-            renderItem={renderItem}
-            initialScrollIndex={scrollIndex}
-            onEndReached={(info) => handleEndReached(info)}
-            onEndReachedThreshold={0.5}
-            onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
-          />
-          <Spacer size={80} />
-        </React.Fragment>
-      ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          {!isFetching ? renderEmpty() : null}
-          <Spacer size={100} />
-        </View>
-      )}
+      {renderEmptyErrorBanner()}
 
-      <ImovieBottomTabs navigation={navigation} />
+      {renderList()}
+
+      <ImovieBottomTabs />
+
       <ImovieWalkthrough
         visible={showWalkthroughGuide}
         onButtonClick={handleWalkthroughGuideHide}
@@ -249,6 +296,6 @@ const actions = {
   getFavoritesAction: Creators.getFavoriteMovies
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(Container);

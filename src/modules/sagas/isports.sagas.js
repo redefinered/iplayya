@@ -67,7 +67,7 @@ export function* getChannelsByCategoriesRequest(action) {
 
 export function* addToFavoritesRequest(action) {
   try {
-    const { addIsportToFavorites } = yield call(addToFavorites, action.videoId);
+    const { addIsportToFavorites } = yield call(addToFavorites, action.id);
     if (addIsportToFavorites.status !== 'success')
       throw new Error('Error adding item to favorites');
     yield put(Creators.addToFavoritesSuccess());

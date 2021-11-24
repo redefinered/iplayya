@@ -5,16 +5,17 @@ import PropTypes from 'prop-types';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
 import { useTheme, Text, TouchableRipple } from 'react-native-paper';
-import { View, alert, SafeAreaView } from 'react-native';
+import { View, SafeAreaView, InteractionManager } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
-import { selectProfile } from 'modules/ducks/profile/profile.selectors';
+import { selectProfile, selectUpdated } from 'modules/ducks/profile/profile.selectors';
 import { selectIsFetching as selectAuthIsFetching } from 'modules/ducks/auth/auth.selectors';
-import { selectUpdated } from 'modules/ducks/user/user.selectors';
+// import { selectUpdated } from 'modules/ducks/user/user.selectors';
 
+import SnackBar from 'components/snackbar/snackbar.component';
 import Icon from 'components/icon/icon.component';
 
 const ManageEmailScreen = ({
@@ -22,10 +23,12 @@ const ManageEmailScreen = ({
   currentUserId,
   userUpdated,
   getProfileAction,
-  enableSwipeAction
+  enableSwipeAction,
+  startAction
 }) => {
   const theme = useTheme();
   const navigation = useNavigation();
+  const [showSnackBar, setShowSnackbar] = React.useState(false);
 
   React.useEffect(() => {
     if (!profile) {
@@ -37,10 +40,25 @@ const ManageEmailScreen = ({
     getProfileAction();
   }, [currentUserId, profile]);
 
+  const hideSnackBar = () => {
+    setTimeout(() => {
+      setShowSnackbar(false);
+    }, 3000);
+  };
+
   React.useEffect(() => {
-    if (userUpdated) {
-      getProfileAction();
-    }
+    InteractionManager.runAfterInteractions(() => {
+      if (userUpdated) {
+        // show snackbar after update
+        setShowSnackbar(true);
+
+        getProfileAction();
+        // reset state
+        startAction();
+        // hide snackbar in 3 seconds
+        hideSnackBar();
+      }
+    });
   }, [userUpdated]);
 
   React.useEffect(() => {
@@ -98,7 +116,7 @@ const ManageEmailScreen = ({
         </View>
       </ContentWrap>
       <View style={{ padding: theme.spacing(2) }} />
-      <View>
+      {/* <View>
         <TouchableRipple
           rippleColor="rgba(0,0,0,0.28)"
           onPress={() => alert('You tapped the button!')}
@@ -116,7 +134,13 @@ const ManageEmailScreen = ({
             </Text>
           </View>
         </TouchableRipple>
-      </View>
+      </View> */}
+      <SnackBar
+        visible={showSnackBar}
+        iconName="circular-check"
+        iconColor="#13BD38"
+        message="To activate, a link was sent to your new email to verify your account."
+      />
     </SafeAreaView>
   );
 };
@@ -134,7 +158,8 @@ ManageEmailScreen.propTypes = {
 
 const actions = {
   getProfileAction: ProfileCreators.get,
-  enableSwipeAction: NavActionCreators.enableSwipe
+  enableSwipeAction: NavActionCreators.enableSwipe,
+  startAction: ProfileCreators.start
 };
 
 const mapStateToProps = createStructuredSelector({

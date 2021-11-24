@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Image, FlatList, Platform, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { TouchableOpacity, Image, FlatList, View } from 'react-native';
+import { Text, ActivityIndicator } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectIsFetching, selectError } from 'modules/ducks/music/music.selectors';
@@ -14,8 +14,36 @@ const coverplaceholder = require('assets/imusic-placeholder.png');
 const SPACING_FOR_CARD_INSET = theme.spacing(2);
 const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
-const GenreScrollList = ({ data, onSelect, getAlbumsByGenresAction, paginatorOfGenre }) => {
+const GenreScrollList = ({
+  data,
+  onSelect,
+  isFetching,
+  paginatorOfGenre,
+  getAlbumsByGenresAction
+}) => {
   const brand = theme.iplayya.colors;
+
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
+
+  const renderListFooter = () => {
+    if (!isFetching) return;
+
+    return (
+      <View
+        style={{
+          width: CARD_DIMENSIONS.WIDTH,
+          height: CARD_DIMENSIONS.HEIGHT,
+          borderRadius: 8,
+          backgroundColor: brand.white10,
+          justifyContent: 'center'
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  };
 
   // eslint-disable-next-line react/prop-types
   const renderThumbnail = ({ cover, name, performer }) => {
@@ -100,10 +128,14 @@ const GenreScrollList = ({ data, onSelect, getAlbumsByGenresAction, paginatorOfG
   };
 
   const handleOnEndReached = () => {
-    // set pageNumber prop to get the next n albums
-    if (typeof paginatorOfGenre === 'undefined') return;
-    const { paginator } = paginatorOfGenre;
-    getAlbumsByGenresAction(paginator);
+    if (!onEndReachedCalledDuringMomentum) {
+      // set pageNumber prop to get the next n albums
+      if (typeof paginatorOfGenre === 'undefined') return;
+      const { paginator } = paginatorOfGenre;
+      getAlbumsByGenresAction(paginator);
+
+      setOnEndReachedCalledDuringMomentum(true);
+    }
   };
 
   return (
@@ -112,26 +144,23 @@ const GenreScrollList = ({ data, onSelect, getAlbumsByGenresAction, paginatorOfG
       showsHorizontalScrollIndicator={false}
       horizontal
       bounces={false}
-      // decelerationRate={0}
       snapToInterval={CARD_DIMENSIONS.WIDTH + 10}
       snapToAlignment="start"
       contentInset={{
         top: 0,
         bottom: 0
-        // left: SPACING_FOR_CARD_INSET,
-        // right: SPACING_FOR_CARD_INSET
       }}
       contentContainerStyle={{
         // contentInset alternative for Android
         paddingHorizontal: SPACING_FOR_CARD_INSET
-        // paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0 // Horizontal spacing before and after the ScrollView
       }}
       renderItem={renderItem}
       // eslint-disable-next-line react/prop-types
       keyExtractor={(item) => item.id}
-      // style={{ paddingHorizontal: 10 }}
       onEndReached={() => handleOnEndReached()}
-      onEndReachedThreshold={0}
+      onEndReachedThreshold={0.5}
+      onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+      ListFooterComponent={renderListFooter()}
     />
   );
 };

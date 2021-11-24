@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/auth/auth.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
+import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import {
   selectProfile,
   selectError as selectProfileError
@@ -70,11 +71,11 @@ const AccountScreen = ({
   authIsFetching,
   currentUserId,
   userUpdated,
-  // purgeStoreAction,
   passwordUpdated,
   route: { params },
   getProfileStartAction,
-  resetAction
+  resetAction,
+  changePasswordStartAction
 }) => {
   const [authErrorVisible, setAuthErrorVisible] = React.useState(false);
   const [profileErrorVisible, setProfileErrorVisible] = React.useState(false);
@@ -116,6 +117,7 @@ const AccountScreen = ({
   React.useEffect(() => {
     if (passwordUpdated) handlePasswordChanged();
     hideSnackBar();
+    changePasswordStartAction();
   }, [passwordUpdated]);
 
   const handlePasswordChanged = () => {
@@ -223,27 +225,28 @@ const AccountScreen = ({
             >
               {profile.email}
             </Text>
-            <TouchableRipple
-              borderless={false}
-              rippleColor="rgba(0,0,0,0.28)"
-              onPress={() => navigation.navigate('ProfileScreen')}
-              style={{
-                width: 90,
-                padding: theme.spacing(1),
-                marginLeft: theme.spacing(1)
-              }}
-            >
-              <View>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    lineHeight: 19
-                  }}
-                >
-                  View Profile
-                </Text>
-              </View>
-            </TouchableRipple>
+            <View style={{ alignItems: 'flex-start' }}>
+              <TouchableRipple
+                borderless={false}
+                rippleColor="rgba(0,0,0,0.28)"
+                onPress={() => navigation.navigate('ProfileScreen')}
+                style={{
+                  padding: theme.spacing(1),
+                  marginLeft: theme.spacing(1)
+                }}
+              >
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      lineHeight: 19
+                    }}
+                  >
+                    View Profile
+                  </Text>
+                </View>
+              </TouchableRipple>
+            </View>
           </View>
         </View>
       </ContentWrap>
@@ -451,7 +454,8 @@ const actions = {
   resetAction: Creators.reset, // for testing
   getProfileAction: ProfileCreators.get,
   getProfileStartAction: ProfileCreators.start,
-  signOutAction: Creators.signOut
+  signOutAction: Creators.signOut,
+  changePasswordStartAction: PasswordActionCreators.changePasswordStart
 };
 
 const mapStateToProps = createStructuredSelector({

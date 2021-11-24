@@ -8,7 +8,7 @@ import TextInput from 'components/text-input/text-input.component';
 import PasswordInput from 'components/password-input/password-input.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 // import Button from 'components/button/button.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 
 import ScreenContainer from 'components/screen-container.component';
@@ -25,7 +25,6 @@ import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectIsFetching,
-  selectProviders,
   selectCreated,
   selectUpdated
 } from 'modules/ducks/provider/provider.selectors';
@@ -34,11 +33,7 @@ import { selectOnboardinginfo } from 'modules/ducks/profile/profile.selectors';
 import styles from './add-iptv.styles';
 import clone from 'lodash/clone';
 
-// eslint-disable-next-line no-unused-vars
 import { isValidUsername, isValidWebsite } from 'common/validate';
-// import { selectIsProviderSetupSkipped } from 'modules/ducks/provider/provider.selectors';
-// import { profileState } from 'modules/ducks/profile/profile.selectors';
-// import {  } from 'modules/ducks/auth/auth.selectors';
 class AddIptvScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -335,18 +330,14 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   created: selectCreated,
   updated: selectUpdated,
-  providers: selectProviders,
-  // skippedProviderAdd: selectSkippedProviderAdd,
   userId: selectCurrentUserId,
   onboardinginfo: selectOnboardinginfo,
   isInitialSignIn: selectIsInitialSignIn
-  // isProviderSetupSkipped: selectIsProviderSetupSkipped
 });
 
 const actions = {
   createStartAction: ProviderCreators.createStart,
   createAction: ProviderCreators.create,
-  // skipProviderAddAction: UserCreators.skipProviderAdd,
   getProfileAction: ProfileCreators.get,
   enableSwipeAction: NavActionCreators.enableSwipe,
   updateProfileAction: Creators.update

@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
+
 import React from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-// import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
-// import withHeaderPush from 'components/with-header-push/with-header-push.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
@@ -136,8 +135,6 @@ const IsportsFavoritesScreen = ({
 
   const handleConfirmDelete = () => {
     // do delete action here
-    // console.log('delete action');
-    // setShowDeleteConfirmation(false);
     setShowDeleteConfirmation(false);
     handleRemoveItems();
   };
@@ -176,8 +173,6 @@ const IsportsFavoritesScreen = ({
                 <RadioButton selected={selectedItems.length === favorites.length} />
               </Pressable>
             </View>
-
-            {/* <Spacer size={30} /> */}
           </ContentWrap>
         )}
 
@@ -207,17 +202,6 @@ const IsportsFavoritesScreen = ({
                   paddingLeft: 75
                 }}
               >
-                {/* <Image
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 8,
-                    position: 'absolute',
-                    top: 2,
-                    left: 10
-                  }}
-                  source={channelplaceholder}
-                /> */}
                 <View
                   style={{
                     width: 60,
@@ -325,26 +309,6 @@ const IsportsFavoritesScreen = ({
           );
         })}
 
-        {/* <View style={{ marginTop: 30 }}>
-          {listData.map(({ id, ...itemProps }) => (
-            <ListItemChanel
-              key={id}
-              id={id}
-              handleLongPress={handleLongPress}
-              onSelect={handleSelectItem}
-              onRightActionPress={null}
-              selected={selectedItems.findIndex((i) => i === id) >= 0}
-              activateCheckboxes={activateCheckboxes}
-              isFavorite={
-                typeof favorites.find(({ id: fid }) => parseInt(fid) === id) !== 'undefined'
-                  ? true
-                  : false
-              }
-              {...itemProps}
-              full
-            />
-          ))}
-        </View> */}
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"

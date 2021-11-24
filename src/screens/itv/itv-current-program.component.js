@@ -4,8 +4,6 @@ import { View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import moment from 'moment';
-// import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
-// import { connect } from 'react-redux';
 
 const CurrentProgram = ({ currentProgram, channel }) => {
   const { title: channelTitle } = channel;
@@ -60,5 +58,4 @@ CurrentProgram.propTypes = {
   currentProgram: PropTypes.object
 };
 
-// export default CurrentProgram;
 export default React.memo(CurrentProgram);

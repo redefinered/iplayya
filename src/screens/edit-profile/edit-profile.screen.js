@@ -7,7 +7,7 @@ import { Text, TouchableRipple, withTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import TextInput from 'components/text-input/text-input.component';
 import Button from 'components/button/button.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import ScreenContainer from 'components/screen-container.component';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 // import Loader from 'components/loader.component';

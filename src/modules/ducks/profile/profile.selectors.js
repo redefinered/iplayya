@@ -19,3 +19,8 @@ export const selectOnboardinginfo = createSelector([profileState], ({ profile })
 
   return JSON.parse(onboardinginfo);
 });
+
+export const selectAuthenticatedEmailChange = createSelector(
+  [profileState],
+  ({ authenticatedEmailChange }) => authenticatedEmailChange
+);

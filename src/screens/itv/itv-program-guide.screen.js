@@ -1,19 +1,18 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import Icon from 'components/icon/icon.component';
 import withLoader from 'components/with-loader.component';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import ProgramGuideComponent from 'components/program-guide/program-guide.component';
-import ItemContent from './item-content.component';
+import CurrentProgram from './itv-current-program.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectChannel, selectPrograms } from 'modules/ducks/itv/itv.selectors';
-import { selectCurrentProgram } from 'modules/ducks/itv/itv.selectors';
-import { urlEncodeTitle } from 'utils';
 import { compose } from 'redux';
 import moment from 'moment';
 import theme from 'common/theme';
@@ -27,7 +26,6 @@ const styles = StyleSheet.create({
 const ProgramGuide = ({
   channel,
   programs,
-  currentProgram,
   route: {
     params: { channelId }
   },
@@ -35,35 +33,21 @@ const ProgramGuide = ({
   getChannelAction,
   getProgramsByChannelAction
 }) => {
-  const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
-  const [isFavorite] = React.useState(false);
   const [contentHeight, setContentHeight] = React.useState(null);
   const [showSnackBar, setShowSnackBar] = React.useState(false);
+  const [currentProgram, setCurrentProgram] = React.useState(null);
 
   React.useEffect(() => {
-    // let date = new Date(moment().startOf('day'));
+    if (!programs.length) return;
+
+    setCurrentProgram(programs[0]);
+  }, [programs]);
+
+  React.useEffect(() => {
     let date = new Date(moment());
     getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
   }, []);
-
-  React.useEffect(() => {
-    if (channel && currentProgram) {
-      const { title: epgtitle, time, time_to } = currentProgram;
-      const data = {
-        title: channel.title,
-        epgtitle,
-        time,
-        time_to,
-        thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
-      };
-      setCurrentlyPlaying(data);
-    }
-  }, [channel, currentProgram]);
-
-  const handleFovoritePress = () => {
-    console.log('add to favorites');
-  };
 
   const handleShowSnackBar = () => {
     setShowSnackBar(true);
@@ -93,18 +77,20 @@ const ProgramGuide = ({
           }}
         >
           <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center', paddingTop: 10 }}>
-            <Image
-              style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-              source={{
-                url: 'http://via.placeholder.com/60x60.png'
+            <View
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 8,
+                marginRight: 10,
+                backgroundColor: theme.iplayya.colors.white10,
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
-            />
-            <ItemContent
-              {...currentlyPlaying}
-              channeltitle={channel.title}
-              onRightActionPress={handleFovoritePress}
-              isFavorite={isFavorite}
-            />
+            >
+              <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+            </View>
+            <CurrentProgram channel={channel} currentProgram={currentProgram} />
           </View>
         </View>
       </ContentWrap>
@@ -141,8 +127,7 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({
   programs: selectPrograms,
-  channel: selectChannel,
-  currentProgram: selectCurrentProgram
+  channel: selectChannel
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);
