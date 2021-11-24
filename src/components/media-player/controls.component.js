@@ -26,6 +26,7 @@ import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import DeviceInfo from 'react-native-device-info';
 import CastOptions from './cast-options.component';
 import { MODULE_TYPES } from 'common/globals';
+import { useAirplayConnectivity } from 'react-airplay';
 
 const VideoControls = ({
   playbackInfo,
@@ -43,6 +44,7 @@ const VideoControls = ({
   setPlaybackInfo,
   ...controlProps
 }) => {
+  const isAirplayConnected = useAirplayConnectivity();
   const sessionManager = GoogleCast.getSessionManager();
   const discoveryManager = GoogleCast.getDiscoveryManager();
   const client = useRemoteMediaClient();
@@ -501,6 +503,9 @@ const VideoControls = ({
         </TouchableRipple>
         {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
+
+      {/* <Text style={{ alignSelf: 'center' }}>Connected to Airplay</Text> */}
+      {isAirplayConnected && <Text style={{ alignSelf: 'center' }}>Connected to Airplay</Text>}
 
       <View style={{ position: 'relative', zIndex: 111 }}>
         {renderBottomControls()}
