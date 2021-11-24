@@ -34,23 +34,23 @@ const channelplaceholder = require('assets/channel-placeholder.png');
 const ITEM_HEIGHT = 96;
 
 const ItvScreen = ({
-  navigation,
-  isFetching,
   error,
   updated,
   genres,
   channels,
-  getChannelsAction,
   paginator,
-  favoritesPaginator,
-  resetPaginatorAction,
-  getChannelsByCategoriesStartAction,
-  getChannelsByCategoriesAction,
-  addToFavoritesAction,
-  getFavoritesAction,
-  enableSwipeAction,
+  navigation,
+  isFetching,
+  headerHeight,
   route: { params },
-  headerHeight
+  favoritesPaginator,
+  getChannelsAction,
+  enableSwipeAction,
+  getFavoritesAction,
+  addToFavoritesAction,
+  resetPaginatorAction,
+  getChannelsByCategoriesAction,
+  getChannelsByCategoriesStartAction
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
