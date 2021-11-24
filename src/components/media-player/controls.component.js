@@ -12,8 +12,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { createFontFormat } from 'utils';
 import MediaPlayerSlider from './media-player-slider.component';
-import CastButtonAndroid from 'components/cast-button/cast-button-android.component';
-// import CastButton from 'components/cast-button/cast-button.component';
+import CastButton from 'components/cast-button/cast-button.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
   selectCurrentTime,
@@ -27,7 +26,6 @@ import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import DeviceInfo from 'react-native-device-info';
 import CastOptions from './cast-options.component';
 import { MODULE_TYPES } from 'common/globals';
-// import { useAirplayConnectivity } from 'react-airplay';
 
 const VideoControls = ({
   playbackInfo,
@@ -45,7 +43,6 @@ const VideoControls = ({
   setPlaybackInfo,
   ...controlProps
 }) => {
-  // const isAirplayConnected = useAirplayConnectivity();
   const sessionManager = GoogleCast.getSessionManager();
   const discoveryManager = GoogleCast.getDiscoveryManager();
   const client = useRemoteMediaClient();
@@ -359,7 +356,7 @@ const VideoControls = ({
     const { title, seriesTitle, source } = controlProps;
     return (
       <View style={{ position: 'relative', zIndex: 111 }}>
-        <CastButtonAndroid
+        <CastButton
           title={title || seriesTitle}
           subtitle="Test subtitle"
           source={source}
@@ -504,9 +501,6 @@ const VideoControls = ({
         </TouchableRipple>
         {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
-
-      {/* <Text style={{ alignSelf: 'center' }}>Connected to Airplay</Text> */}
-      {/* {isAirplayConnected && <Text style={{ alignSelf: 'center' }}>Connected to Airplay</Text>} */}
 
       <View style={{ position: 'relative', zIndex: 111 }}>
         {renderBottomControls()}
