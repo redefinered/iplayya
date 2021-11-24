@@ -4,8 +4,8 @@ import React from 'react';
 import {
   View,
   ScrollView,
-  StyleSheet,
-  Pressable,
+  // StyleSheet,
+  // Pressable,
   Platform,
   Modal,
   StatusBar,
@@ -18,7 +18,7 @@ import { Text, List } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import { withTheme } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+// import Icon from 'components/icon/icon.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -30,17 +30,17 @@ import {
   selectIsFetching,
   selectMovie,
   selectPlaybackInfo,
-  selectUpdatedFavoritesCheck
+  selectUpdatedFavoritesCheck,
+  selectRemainingTime
 } from 'modules/ducks/movies/movies.selectors';
 import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
 } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
+import { selectPlaybackSettings } from 'modules/ducks/user/user.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
-
-import { useRemoteMediaClient } from 'react-native-google-cast';
 
 export const selectSource = (videourls) => {
   const urls = videourls.map(({ link }) => link);
@@ -62,7 +62,6 @@ const SeriesDetailScreen = ({
     params: { videoId }
   },
   movie: seriesdata,
-  // videoSource,
   playbackStartAction,
   getMovieAction,
   getMovieStartAction,
@@ -76,11 +75,12 @@ const SeriesDetailScreen = ({
 
   setMusicNowPlaying,
   setEpisodeAction,
-  navigation
-}) => {
-  // const dummyvideo = dummydata.video;
-  const client = useRemoteMediaClient();
+  navigation,
 
+  remainingTime,
+  playbackSettings,
+  playbackInfo
+}) => {
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
@@ -122,32 +122,23 @@ const SeriesDetailScreen = ({
     // getMovieAction(316); /// for testing
   }, []);
 
-  /// cast functions
   React.useEffect(() => {
-    if (!client) return;
-    // getChromecastStatus();
-
-    if (paused) {
-      handlePause();
-    } else {
-      handlePlay();
+    if (playbackSettings.is_autoplay_video === false) {
+      setPaused(true);
     }
-  }, [client, paused]);
+  }, [playbackSettings.is_autoplay_video]);
 
-  const handlePlay = async () => {
-    await client.play();
-  };
-
-  const handlePause = async () => {
-    await client.pause();
-  };
-
-  // const getChromecastStatus = async () => {
-  //   const chromecastStatus = await client.getMediaStatus();
-
-  //   console.log({ chromecastStatus });
-  // };
-  /// end cast functions
+  React.useEffect(() => {
+    if (playbackInfo !== null) {
+      if (remainingTime.toFixed() == 0) {
+        if (playbackSettings.is_autoplay_next_ep === true) {
+          handleNextEpisode();
+        } else {
+          return;
+        }
+      }
+    }
+  }, [playbackInfo]);
 
   React.useEffect(() => {
     if (showSnackbar) {
@@ -320,12 +311,12 @@ const SeriesDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!seriesdata)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!seriesdata) return <View />;
+  // return (
+  //   <ContentWrap>
+  //     <Text>Working...</Text>
+  //   </ContentWrap>
+  // );
 
   const {
     title,
@@ -339,12 +330,12 @@ const SeriesDetailScreen = ({
     ...otherFields
   } = seriesdata;
 
-  if (!series)
-    return (
-      <ContentWrap>
-        <Text>Working...</Text>
-      </ContentWrap>
-    );
+  if (!series) return <View />;
+  // return (
+  //   <ContentWrap>
+  //     <Text>Working...</Text>
+  //   </ContentWrap>
+  // );
 
   const renderMediaPlayer = () => {
     if (!source)
@@ -444,7 +435,7 @@ const SeriesDetailScreen = ({
                 </List.Accordion>
               </List.Section>
 
-              <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
+              {/* <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
                 <View style={styles.iconContainer}>
                   <Icon name="circular-play" size={theme.iconSize(3)} />
                 </View>
@@ -463,29 +454,34 @@ const SeriesDetailScreen = ({
                     Watch trailer
                   </Text>
                 </View>
-              </Pressable>
+              </Pressable> */}
             </ContentWrap>
 
             <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
-              {series.map(({ season }, index) => {
+              {series.map(({ season: so }, index) => {
                 const { episodes } = series[index];
                 return (
                   <List.Accordion
                     key={index}
-                    title={`Season ${season}`}
+                    title={`Season ${so}`}
                     style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
                     titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
                   >
-                    {episodes.map(({ episode }, index) => {
+                    {episodes.map(({ episode: e }, index) => {
+                      // console.log({ so, season, e, episode });
+                      let active = parseInt(e) === episode && parseInt(so) === season;
                       return (
                         <List.Item
                           key={index}
-                          onPress={() => handleEpisodeSelect({ season, episode })}
+                          onPress={() => handleEpisodeSelect({ season: so, episode: e })}
                           titleStyle={{ marginBottom: -10 }}
                           title={
                             <Text
-                              style={{ ...createFontFormat(14, 20) }}
-                            >{`Episode ${episode}`}</Text>
+                              style={{
+                                ...createFontFormat(14, 20),
+                                color: active ? theme.iplayya.colors.vibrantpussy : 'white'
+                              }}
+                            >{`Episode ${e}`}</Text>
                           }
                         />
                       );
@@ -554,19 +550,19 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
-const styles = StyleSheet.create({
-  settingItem: {
-    flexDirection: 'row',
-    paddingVertical: 10
-  },
-  iconContainer: {
-    width: 42,
-    justifyContent: 'center'
-  },
-  controls: {
-    position: 'absolute'
-  }
-});
+// const styles = StyleSheet.create({
+//   settingItem: {
+//     flexDirection: 'row',
+//     paddingVertical: 10
+//   },
+//   iconContainer: {
+//     width: 42,
+//     justifyContent: 'center'
+//   },
+//   controls: {
+//     position: 'absolute'
+//   }
+// });
 
 const actions = {
   getMovieAction: Creators.getMovie,
@@ -587,7 +583,9 @@ const mapStateToProps = createStructuredSelector({
   playbackInfo: selectPlaybackInfo,
   isFavListUpdated: selectUpdatedFavoritesCheck,
   downloadsIsFetching: selectDownloading,
-  downloadStarted: selectDownloadStarted
+  downloadStarted: selectDownloadStarted,
+  remainingTime: selectRemainingTime,
+  playbackSettings: selectPlaybackSettings
 });
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);

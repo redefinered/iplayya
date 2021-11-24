@@ -41,10 +41,14 @@ export const getMoviesByCategories = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
-    if (error.graphQLErrors.length) {
-      throw new Error(error.graphQLErrors[0].extensions.reason);
-    }
+    // console.log({ error });
+    // if (error.graphQLErrors.length) {
+    //   const err = error.graphQLErrors[0];
+    //   /// sometimes error message comes from extensions property
+    //   if (err.extensions) throw new Error(err.extensions.reason);
+
+    //   throw new Error(err.debugMessage);
+    // }
     throw new Error(error);
   }
 };

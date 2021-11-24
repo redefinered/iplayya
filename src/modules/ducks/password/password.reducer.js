@@ -81,6 +81,9 @@ export default createReducer(INITIAL_STATE, {
       updateResponse: null
     };
   },
+  [Types.CHANGE_PASSWORD_START]: (state) => {
+    return { ...state, updated: false };
+  },
   [Types.CHANGE_PASSWORD]: (state) => {
     return {
       ...state,

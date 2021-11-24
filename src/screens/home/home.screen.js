@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-import withLoader from 'components/with-loader.component';
+// import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { compose } from 'redux';
@@ -32,11 +32,15 @@ const Home = ({
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
   React.useEffect(() => {
+    /// resets isFetching to false if ever the user closes app while loading
+    /// resets movie screen paginator
+    /// resets error to null
     getMoviesStartAction();
-    enableSwipeAction(true);
 
     // makes sure main tab navigation is always visible on application mount
     setBottomTabsVisibleAction({ hideTabs: false });
+
+    enableSwipeAction(true);
   }, []);
 
   React.useEffect(() => {
@@ -75,11 +79,26 @@ const Home = ({
 
   const handleProfileErrorConfirmAction = () => {
     getMoviesStartAction();
-    // getCategoriesAction();
+
+    // reset the paginator for the horizontal scrolling categories
     resetCategoryPaginatorAction();
 
     // hide error modal after retry
     setShowErrorModal(false);
+  };
+
+  const renderErrorModal = () => {
+    if (!error) return;
+    return (
+      <AlertModal
+        variant="danger"
+        message={error}
+        visible={showErrorModal}
+        hideAction={handleHideErrorModal}
+        confirmText="Retry"
+        confirmAction={handleProfileErrorConfirmAction}
+      />
+    );
   };
 
   return (
@@ -87,16 +106,7 @@ const Home = ({
       <HomeMenu navigation={navigation} />
       <WelcomeDialog visible={showWelcomeDialog} onButtonPress={handleWelcomeHide} />
       <HomeGuide visible={showHomeGuide} onButtonTouch={handleHomeGuideHide} />
-      {error && (
-        <AlertModal
-          variant="danger"
-          message={error}
-          visible={showErrorModal}
-          hideAction={handleHideErrorModal}
-          confirmText="Retry"
-          confirmAction={handleProfileErrorConfirmAction}
-        />
-      )}
+      {renderErrorModal()}
     </ContentWrap>
   );
 };
@@ -126,6 +136,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

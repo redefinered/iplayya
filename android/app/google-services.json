@@ -29,6 +29,13 @@
             {
               "client_id": "109432224894-2kquakko5t7cbb881mfhfmeskc1r5vfu.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "109432224894-7f47mui759b5eilhf4mq30m39tk3cvvd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.delugetech.iplayya"
+              }
             }
           ]
         }

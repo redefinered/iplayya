@@ -14,9 +14,7 @@ import ContentWrap from 'components/content-wrap.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import NotifService from 'NotifService';
-
-// eslint-disable-next-line no-unused-vars
-import { Button } from 'react-native-paper';
+import theme from 'common/theme';
 
 const NotificationsScreen = ({
   notifications,
@@ -24,7 +22,6 @@ const NotificationsScreen = ({
   onNotifAction,
   deleteNotificationAction
 }) => {
-  const theme = useTheme();
   const notif = new NotifService(onRegisterAction, onNotifAction);
   const [selected, setSelected] = React.useState(null);
   const [showActionSheet, setShowActionSheet] = React.useState(false);

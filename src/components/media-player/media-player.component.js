@@ -12,7 +12,7 @@ import ChromecastOptionsModal from './modal-cast-options.component';
 import GoogleCast, { useCastSession, useRemoteMediaClient } from 'react-native-google-cast';
 import SystemSetting from 'react-native-system-setting';
 import theme from 'common/theme';
-import { MODULE_TYPES } from 'common/values';
+import { MODULE_TYPES } from 'common/globals';
 import uuid from 'react-uuid';
 
 const VIDEO_HEIGHT = 211;
@@ -28,30 +28,32 @@ const VIDEO_STYLE_FULLSCREEN = {
 };
 
 const MediaPlayer = ({
+  title,
+  source,
+  setSource,
   fullscreen,
   setFullscreen,
-  source,
-  qualitySwitchable,
   thumbnail,
-  title,
   seriesTitle,
   paused,
   togglePlay,
   setPaused,
   multipleMedia,
   videoUrls,
-  setSource,
   previousAction,
   nextAction,
   isFirstEpisode,
   isLastEpisode,
   isSeries,
   currentProgram,
-  moduleType
+  moduleType,
+  updatePlaybackInfoAction,
+  qualitySwitchable,
+  // eslint-disable-next-line react/prop-types
+  videoLength
 }) => {
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
-  const discoveryManager = GoogleCast.getDiscoveryManager();
 
   let player = React.useRef();
 
@@ -75,15 +77,36 @@ const MediaPlayer = ({
   const [castSessionActive, setCastSessionActive] = React.useState(false);
   const [videoStyle, setVideoStyle] = React.useState(VIDEO_STYLE);
   const [showChromecastOptions, setShowChromecastOptions] = React.useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [isLandscape, setIsLandscape] = React.useState(false);
   // const [chromeCastSession, setChromeCastSession] = React.useState(null);
-  // console.log({ playbackInfo, thumbnail });
 
   const timer = React.useRef(null);
 
   React.useEffect(() => {
-    /// starts discovery of chromcast devices
-    discoveryManager.startDiscovery();
+    // subscribe to orientation change
+    const orientationChangeListener = Dimensions.addEventListener('change', ({ window }) => {
+      const { width, height } = window;
 
+      if (width > height) {
+        setIsLandscape(true);
+      } else {
+        setIsLandscape(false);
+      }
+    });
+
+    return () => orientationChangeListener?.remove();
+  });
+
+  // React.useEffect(() => {
+  //   if (isLandscape) {
+  //     setFullscreen(true);
+  //   } else {
+  //     setFullscreen(false);
+  //   }
+  // }, [isLandscape]);
+
+  React.useEffect(() => {
     setCastSession();
 
     volumeListener = SystemSetting.addVolumeListener(({ value }) => {
@@ -118,6 +141,17 @@ const MediaPlayer = ({
     return () => handleCleanup({ castListener, volumeListener });
   }, []);
 
+  // const onOrientationChange = ({ window }) => {
+  //   const { width, height } = window;
+  //   if (width > height) {
+  //     setIsLandscape(true);
+  //   } else {
+  //     setIsLandscape(false);
+  //   }
+  // };
+
+  // console.log({ isLandscape });
+
   const handleCleanup = ({ castListener, volumeListener }) => {
     /// remove google-cast listener
     castListener.remove();
@@ -131,14 +165,21 @@ const MediaPlayer = ({
     loadMedia(source);
   }, [source, client]);
 
+  React.useEffect(() => {
+    if (castSessionActive) return;
+    if (!playbackInfo) return;
+
+    player.current.seek(playbackInfo.currentTime);
+  }, [source]);
+
   const getMetadata = () => {
-    const common = {
-      images: [
-        {
-          url: thumbnail
-        }
-      ]
-    };
+    // const common = {
+    //   images: [
+    //     {
+    //       url: thumbnail
+    //     }
+    //   ]
+    // };
 
     if (moduleType === MODULE_TYPES.TV) {
       /// use generic title if no title found
@@ -155,19 +196,20 @@ const MediaPlayer = ({
     if (isSeries) {
       return {
         type: 'tvShow',
-        title: seriesTitle,
-        ...common
+        title: seriesTitle
+        // ...common
       };
     }
 
     return {
       type: 'movie',
-      title,
-      ...common
+      title
+      // ...common
     };
   };
 
   const loadMedia = async (source) => {
+    console.log({ source });
     if (!client) return;
 
     try {
@@ -175,11 +217,12 @@ const MediaPlayer = ({
         // autoplay: false,
         mediaInfo: {
           contentUrl: source,
+          // contentUrl: 'http://vod3.freeddns.org:80/195181164146/12AngryMen.mp4',
           streamType: moduleType === MODULE_TYPES.TV ? 'live' : 'buffered',
           metadata: {
             ...getMetadata()
           },
-          streamDuration: playbackInfo.seekableDuration
+          streamDuration: videoLength * 60
         }
         // startTime: playbackInfo.currentTime // seconds
       });
@@ -335,7 +378,7 @@ const MediaPlayer = ({
   const handleProgress = (playbackInfo) => {
     // console.log({ playbackInfo });
     setBuffering(false);
-    // updatePlaybackInfoAction({ playbackInfo });
+    updatePlaybackInfoAction({ playbackInfo });
     setPlaybackInfo(playbackInfo);
   };
 
@@ -453,6 +496,7 @@ const MediaPlayer = ({
         setShowChromecastOptions={setShowChromecastOptions}
         moduleType={moduleType}
         style={{ position: 'absolute' }}
+        handleHideList={() => setShowChromecastOptions(false)}
       />
     );
   };
@@ -509,14 +553,15 @@ const MediaPlayer = ({
 
 MediaPlayer.defaultProps = {
   qualitySwitchable: false,
-  moduleType: MODULE_TYPES.VOD
-  // thumbnail:
+  moduleType: MODULE_TYPES.VOD,
+  videoLength: 0
 };
 
 MediaPlayer.propTypes = {
   currentProgram: PropTypes.object,
   fullscreen: PropTypes.bool,
   title: PropTypes.string,
+  // videoLength: PropTypes.string,
   seriesTitle: PropTypes.string,
   source: PropTypes.string,
   thumbnail: PropTypes.string,

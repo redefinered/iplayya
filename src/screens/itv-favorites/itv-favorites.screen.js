@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
+
 import React from 'react';
 import { View, Pressable, ScrollView } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-// import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
 import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -34,40 +34,57 @@ const ItvFavoritesScreen = ({
   navigation,
   favorites,
   getFavoritesAction,
+  paginator,
   favoritesPaginator,
-  favoritesListRemoveUpdated,
-  getChannelsAction,
+  favoritesRemoved,
   removeFromFavoritesAction,
-
-  resetFavoritesPaginatorAction
+  getChannelsAction,
+  resetPaginatorAction,
+  resetFavoritesPaginatorAction,
+  favoritesStartAction
 }) => {
+  const updated = React.useRef(false);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [listData, setListData] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
-  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-  //   true
-  // );
-
   React.useEffect(() => {
+    // call start action to reset update checkers
+    favoritesStartAction();
+
     resetFavoritesPaginatorAction();
+
+    const subscribeToViewRemove = navigation.addListener('beforeRemove', () => {
+      if (updated.current) getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+    });
+
+    return subscribeToViewRemove;
   }, []);
 
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
-      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
     }
   }, [favoritesPaginator]);
 
   React.useEffect(() => {
-    if (favoritesListRemoveUpdated) {
+    if (favoritesRemoved) {
+      resetPaginatorAction();
+
+      updated.current = true;
       setActivateCheckboxes(false);
-      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+
+      // get favorites when favorites list is updated
+      /// TODO: troubleshoot why cache is not updated even after refetching from removeFavorites mutation
+      /// TODO: troubleshoot why cache is not updated even after refetching from removeFavorites mutation
+      /// TODO: troubleshoot why cache is not updated even after refetching from removeFavorites mutation
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+    } else {
+      updated.current = false;
     }
-  }, [favoritesListRemoveUpdated]);
+  }, [favoritesRemoved]);
 
   // setup channels data
   React.useEffect(() => {
@@ -437,18 +454,19 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
-  favoritesListRemoveUpdated: selectfavoritesListRemoveUpdated,
+  favoritesRemoved: selectfavoritesListRemoveUpdated,
   paginator: selectPaginator,
   channels: selectChannels
 });
 
 const actions = {
+  favoritesStartAction: Creators.favoritesStart,
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavorites,
   getChannelsAction: Creators.getChannels,
   getChannelsStartAction: Creators.getChannelsStart,
-  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
-  favoritesStartAction: Creators.favoritesStart
+  resetPaginatorAction: Creators.resetPaginator,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);

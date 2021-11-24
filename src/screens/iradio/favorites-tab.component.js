@@ -159,7 +159,7 @@ const FavoritesTab = ({
   const renderItem = ({ item }) => {
     return (
       <Pressable
-        delayLongPress={1500}
+        // delayLongPress={500}
         underlayColor={theme.iplayya.colors.black80}
         style={({ pressed }) => [
           {
@@ -278,7 +278,7 @@ const FavoritesTab = ({
             variant="confirmation"
             message={`Are you sure you want to delete ${
               selectedItems.length > 1 ? 'these' : 'this'
-            } channel/s from your Favorites list?`}
+            } station/s from your Favorites list?`}
             visible={showDeleteConfirmation}
             onCancel={handleHideConfirmDeleteModal}
             hideAction={handleHideConfirmDeleteModal}

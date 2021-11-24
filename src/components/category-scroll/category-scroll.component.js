@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import CategoryScrollList from './category-scroll-list';
+import CategoryScrollList from './category-scroll-list.component';
 import { Text } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import {
@@ -10,7 +10,13 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import { connect } from 'react-redux';
 
-const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCategory }) => {
+const CategoryScroll = ({
+  category,
+  movies: { videos },
+  onSelect,
+  paginatorOfCategory,
+  downloads
+}) => {
   if (typeof videos === 'undefined' || videos.length === 0) return <View />;
   let movies = videos.map(({ thumbnail, ...rest }) => {
     return {
@@ -29,6 +35,7 @@ const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCat
         data={movies}
         onSelect={onSelect}
         paginatorOfCategory={paginatorOfCategory}
+        downloads={downloads}
       />
     </View>
   );
@@ -39,6 +46,7 @@ CategoryScroll.propTypes = {
   movies: PropTypes.object,
   onSelect: PropTypes.func,
   category: PropTypes.string,
+  downloads: PropTypes.array,
   paginatorOfCategory: PropTypes.object
 };
 

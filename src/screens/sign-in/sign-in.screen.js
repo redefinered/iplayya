@@ -15,7 +15,7 @@ import {
 import { Text, withTheme } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
 import TextInput from 'components/text-input/text-input.component';
-import MainButton from 'components/button/mainbutton.component';
+import MainButton from 'components/button/main-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';

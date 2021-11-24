@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { createFontFormat } from 'utils';
 import MediaPlayerSlider from './media-player-slider.component';
-import ChromecastButton from 'components/cast-button/cast-button.component';
+import CastButton from 'components/cast-button/cast-button.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import {
   selectCurrentTime,
@@ -24,6 +24,8 @@ import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
 import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import DeviceInfo from 'react-native-device-info';
+import CastOptions from './cast-options.component';
+import { MODULE_TYPES } from 'common/globals';
 
 const VideoControls = ({
   playbackInfo,
@@ -42,17 +44,22 @@ const VideoControls = ({
   ...controlProps
 }) => {
   const sessionManager = GoogleCast.getSessionManager();
+  const discoveryManager = GoogleCast.getDiscoveryManager();
   const client = useRemoteMediaClient();
   const [mediaStatus, setMediaStatus] = React.useState(null);
   const [showVolume, setShowVolume] = React.useState(true);
   const [showFullscreenQualityOptions, setShowFullscreenQualityOptions] = React.useState(false);
+  const [showFullscreenCastOptions, setShowFullscreenCastOptions] = React.useState(false);
+
+  /// hide fullscreen screencast options when exiting fullscreen
+  React.useEffect(() => {
+    if (!isFullscreen) setShowFullscreenCastOptions(false);
+  }, [isFullscreen]);
 
   React.useEffect(() => {
     if (client) {
       const mediaStatusListener = client.onMediaStatusUpdated((mediaStatus) => {
         if (!mediaStatus) return;
-
-        console.log({ playerStatus: mediaStatus.playerState });
 
         setMediaStatus(mediaStatus);
       });
@@ -253,7 +260,27 @@ const VideoControls = ({
   };
 
   const renderBottomControls = () => {
-    if (castSessionActive) return;
+    if (castSessionActive) {
+      if (!isFullscreen) return;
+
+      return (
+        <View
+          style={{
+            position: 'relative',
+            zIndex: 111,
+            marginBottom: controlProps.moduleType === MODULE_TYPES.TV ? 0 : -10
+          }}
+        >
+          <View style={{ alignSelf: 'flex-end' }}>
+            <ButtonIconDefault
+              iconName={isFullscreen ? 'normal-screen' : 'fullscreen'}
+              pressAction={controlProps.toggleFullscreen}
+              iconSize={3}
+            />
+          </View>
+        </View>
+      );
+    }
 
     return (
       <View
@@ -263,7 +290,7 @@ const VideoControls = ({
           justifyContent: 'space-between',
           position: 'relative',
           zIndex: 111,
-          marginBottom: -10
+          marginBottom: controlProps.moduleType === MODULE_TYPES.TV ? 0 : -10
         }}
       >
         <View style={{ flexDirection: 'row' }}>
@@ -280,14 +307,14 @@ const VideoControls = ({
           pressAction={controlProps.toggleFullscreen}
           iconSize={3}
         />
-        {/* <Pressable onPress={() => controlProps.toggleFullscreen()}>
-          <Icon name="fullscreen" size={theme.iconSize(3)} />
-        </Pressable> */}
       </View>
     );
   };
 
   const renderProgressSlider = () => {
+    /// hide progress slider in TV
+    if (controlProps.moduleType === MODULE_TYPES.TV) return;
+
     return (
       <View
         style={{ flexDirection: 'row', alignItems: 'center', position: 'relative', zIndex: 105 }}
@@ -317,17 +344,42 @@ const VideoControls = ({
     await sessionManager.endCurrentSession(true);
   };
 
+  const handleCastButtonPress = () => {
+    discoveryManager.startDiscovery();
+
+    if (isFullscreen) return setShowFullscreenCastOptions(!showFullscreenCastOptions);
+
+    controlProps.setShowChromecastOptions(true);
+  };
+
   const renderCastButton = () => {
     const { title, seriesTitle, source } = controlProps;
     return (
-      <ChromecastButton
-        title={title || seriesTitle}
-        subtitle="Test subtitle"
-        source={source}
-        showListAction={() => controlProps.setShowChromecastOptions(true)}
-        stopCastingAction={handleStopCasting}
-        style={{ width: 24, height: 24 }}
-      />
+      <View style={{ position: 'relative', zIndex: 111 }}>
+        <CastButton
+          title={title || seriesTitle}
+          subtitle="Test subtitle"
+          source={source}
+          onPressAction={handleCastButtonPress}
+          stopCastingAction={handleStopCasting}
+          style={{ width: 24, height: 24 }}
+        />
+
+        {/* fullscreen cast options container */}
+        {showFullscreenCastOptions && (
+          <View
+            style={{
+              backgroundColor: '#202530',
+              width: 250,
+              position: 'absolute',
+              top: '100%',
+              right: 0
+            }}
+          >
+            <CastOptions handleHideList={controlProps.handleHideList} />
+          </View>
+        )}
+      </View>
     );
   };
 

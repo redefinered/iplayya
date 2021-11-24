@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "109432224894",
+    "project_id": "iplayya",
+    "storage_bucket": "iplayya.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109432224894:android:088fa953abb8c56bf0ec2f",
+        "android_client_info": {
+          "package_name": "com.iplayya"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "109432224894-2kquakko5t7cbb881mfhfmeskc1r5vfu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNt6iaXsEJuP6keRyhNxUrjffkGUgvrbU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109432224894-2kquakko5t7cbb881mfhfmeskc1r5vfu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

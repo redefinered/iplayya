@@ -276,7 +276,6 @@ const IsportsChannelDetailScreen = ({
 
           <SnackBar
             visible={showFavSnackBar}
-            // message={`${channel.title} is added to your favorites list`}
             message="Channel has been added to Favorites list"
             iconName="heart-solid"
             iconColor={theme.iplayya.colors.vibrantpussy}

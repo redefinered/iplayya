@@ -1,4 +1,5 @@
 import uniqBy from 'lodash/uniqBy';
+import { IMOVIE_PAGINATOR_INFO_LIMIT } from 'common/globals';
 
 export const updateMoviesState = (state, newMovies) => {
   let { movies } = state;
@@ -34,6 +35,6 @@ export const setupPaginator = (categories) => {
   return categories.map(({ id, title }) => ({
     id,
     title,
-    paginator: { pageNumber: 1, limit: 10, categories: [parseInt(id)] }
+    paginator: { pageNumber: 1, limit: IMOVIE_PAGINATOR_INFO_LIMIT, categories: [parseInt(id)] }
   }));
 };
