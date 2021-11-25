@@ -27,6 +27,7 @@ export const persistConfig = {
   storage: AsyncStorage
 };
 
+// eslint-disable-next-line no-unused-vars
 const resettable = resettableReducer('RESET'); /// maybe only remove this in production mode
 
 const rootReducer = persistCombineReducers(persistConfig, {
@@ -36,7 +37,7 @@ const rootReducer = persistCombineReducers(persistConfig, {
   imovieDownloads: imovieDownloadsReducer,
   user: userReducer,
   password: passwordReducer,
-  itv: resettable(itvReducer),
+  itv: itvReducer,
   notifications: notificationsReducer,
   profile: profileReducer,
   movies: moviesReducer,
