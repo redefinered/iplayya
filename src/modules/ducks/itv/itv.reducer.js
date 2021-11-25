@@ -3,7 +3,7 @@ import { Types } from './itv.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
 import { updateChannelsWithFavorited } from './itv.helpers';
-import { PAGINATOR_LIMIT } from 'common/globals';
+import { PAGINATOR_LIMIT, ITV_SEARCH_RESULTS_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -31,7 +31,7 @@ const INITIAL_STATE = {
 
   favorites: [],
   favoritesPaginator: {
-    limit: 10,
+    limit: PAGINATOR_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -39,9 +39,10 @@ const INITIAL_STATE = {
   favoritesListUpdated: false,
   favoritesListRemoveUpdated: false,
 
+  isSearching: false,
   searchResults: [],
   searchResultsPaginator: {
-    limit: 10,
+    limit: ITV_SEARCH_RESULTS_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -259,6 +260,8 @@ export default createReducer(INITIAL_STATE, {
     };
   },
 
+  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }), /// is searching for favorites
+
   /// get favorites
   [Types.GET_FAVORITES]: (state) => {
     return {
@@ -268,20 +271,21 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
-    const { data, nextPaginator } = action;
+    const { favorites } = action;
+    const { favoritesPaginator } = state;
 
     // const updatedData = uniqBy([...state.favorites, ...data], 'id');
-    const updatedData = uniqBy(data, 'id');
+    const updatedData = uniqBy(favorites, 'id');
 
     return {
       ...state,
       isFetching: false,
       error: null,
-      // addedToFavorites: false,
       favoritesListUpdated: false,
-      // favoritesListRemoveUpdated: false,
       favorites: orderBy(updatedData, 'number', 'asc'), /// overkill yata to
-      favoritesPaginator: nextPaginator
+      favoritesPaginator: Object.assign(favoritesPaginator, {
+        pageNumber: favoritesPaginator.pageNumber + 1
+      })
     };
   },
   [Types.GET_FAVORITES_FAILURE]: (state, action) => {
@@ -295,7 +299,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       favoritesPaginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'
@@ -356,7 +360,8 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
-    const { results, nextPaginatorInfo } = action;
+    const { results } = action;
+    const { searchResultsPaginator } = state;
 
     const updatedSearchResults = uniqBy([...results, ...state.searchResults], 'id');
 
@@ -366,7 +371,11 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       searchResults: orderBy(updatedSearchResults, 'number', 'asc'),
-      searchResultsPaginator: { orderBy: 'number', order: 'asc', ...nextPaginatorInfo }
+
+      /// takes current searchResultPaginator and increment it's pageNumber property
+      searchResultsPaginator: Object.assign(searchResultsPaginator, {
+        pageNumber: searchResultsPaginator.pageNumber + 1
+      })
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
@@ -377,22 +386,34 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
-    let newRecentSearch = [];
-    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
-      newRecentSearch = state.recentSearch;
-    } else {
-      newRecentSearch = [action.term, ...state.recentSearch];
+    const { channel } = action;
+
+    const x = state.recentSearch.find(({ id }) => id === channel.id);
+
+    if (typeof x !== 'undefined') {
+      /// channel is already added
+      return { ...state };
     }
-    return {
-      ...state,
-      recentSearch: newRecentSearch.splice(0, 10)
-    };
+
+    return { ...state, recentSearch: [channel, ...state.recentSearch] };
+    // let newRecentSearch = [];
+    // if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+    //   newRecentSearch = state.recentSearch;
+    // } else {
+    //   newRecentSearch = [action.term, ...state.recentSearch];
+    // }
+    // return {
+    //   ...state,
+    //   recentSearch: newRecentSearch.splice(0, 10)
+    // };
   },
+
+  [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] }),
   [Types.RESET_SEARCH_RESULTS_PAGINATOR]: (state) => {
     return {
       ...state,
       searchResultsPaginator: {
-        limit: 10,
+        limit: ITV_SEARCH_RESULTS_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'

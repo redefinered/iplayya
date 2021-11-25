@@ -9,16 +9,9 @@ import { createFontFormat } from 'utils';
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
-const ItemPreview = ({
-  id,
-  title,
-  epgtitle,
-  thumbnail,
-  onSelect,
-  variant,
-  handleSubscribeToItem,
-  isNotificationActive
-}) => {
+const ItemPreview = ({ item, onSelect, variant, handleSubscribeToItem, isNotificationActive }) => {
+  const { id, title, epgtitle, thumbnail } = item;
+
   const navigation = useNavigation();
   const theme = useTheme();
   // eslint-disable-next-line no-unused-vars
@@ -125,10 +118,7 @@ const styles = StyleSheet.create({
 });
 
 ItemPreview.propTypes = {
-  id: PropTypes.string,
-  title: PropTypes.string,
-  epgtitle: PropTypes.string,
-  thumbnail: PropTypes.any,
+  item: PropTypes.object,
   onSelect: PropTypes.func,
   variant: PropTypes.string,
   handleSubscribeToItem: PropTypes.func,

@@ -28,6 +28,7 @@ const { Types, Creators } = createActions(
     getChannelsByCategoriesSuccess: ['channels', 'nextPaginatorInfo'],
     getChannelsByCategoriesFailure: ['error'],
 
+    setIsSearching: ['isSearching'], /// is searching for favorites
     favoritesStart: null,
     // add to favorites
     addToFavorites: ['id'],
@@ -39,7 +40,7 @@ const { Types, Creators } = createActions(
     removeFromFavoritesFailure: ['error'],
 
     getFavorites: ['input'],
-    getFavoritesSuccess: ['data', 'nextPaginator'],
+    getFavoritesSuccess: ['favorites'],
     getFavoritesFailure: ['error'],
     resetFavoritesPaginator: null,
 
@@ -48,13 +49,14 @@ const { Types, Creators } = createActions(
     updateDownloadsProgress: ['data'],
 
     searchStart: null,
-    search: ['input', 'shouldIncrement'],
-    searchSuccess: ['results', 'nextPaginatorInfo'],
+    search: ['input'],
+    searchSuccess: ['results'],
     searchFailure: ['error'],
     resetSearchResultsPaginator: null,
 
     //recent search
-    updateRecentSearch: ['term'],
+    updateRecentSearch: ['channel'],
+    clearRecentSearch: null,
 
     /**
      * status:

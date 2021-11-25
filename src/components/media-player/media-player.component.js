@@ -516,12 +516,7 @@ const MediaPlayer = ({
 
   return (
     <React.Fragment>
-      <View
-        style={{
-          marginTop: fullscreen ? 0 : theme.spacing(2),
-          marginBottom: fullscreen ? 0 : theme.spacing(2)
-        }}
-      >
+      <View>
         <View
           style={{
             backgroundColor: 'black',

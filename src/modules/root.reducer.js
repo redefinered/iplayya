@@ -1,6 +1,6 @@
 import { persistCombineReducers } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
-// import { resettableReducer } from 'reduxsauce';
+import { resettableReducer } from 'reduxsauce';
 
 import appReducer from './app';
 import navReducer from './ducks/nav/nav.reducer';
@@ -27,7 +27,8 @@ export const persistConfig = {
   storage: AsyncStorage
 };
 
-// const resettable = resettableReducer('RESET'); /// maybe only remove this in production mode
+// eslint-disable-next-line no-unused-vars
+const resettable = resettableReducer('RESET'); /// maybe only remove this in production mode
 
 const rootReducer = persistCombineReducers(persistConfig, {
   app: appReducer,

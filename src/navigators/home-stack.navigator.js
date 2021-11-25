@@ -7,6 +7,7 @@ import { withTheme, TouchableRipple } from 'react-native-paper';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import Icon from 'components/icon/icon.component.js';
+import ItvSearchButton from 'screens/itv/itv-search-button.component';
 
 import HomeScreen from 'screens/home/home.screen';
 
@@ -147,6 +148,7 @@ const HomeStack = ({
     <React.Fragment>
       <Stack.Navigator
         screenOptions={{
+          animationEnabled: false,
           headerTransparent: true,
           headerTintColor: 'white',
           headerBackTitleVisible: false,
@@ -221,18 +223,19 @@ const HomeStack = ({
             title: 'Favorites',
             animationEnabled: false,
             headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <TouchableRipple
-                  borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
-                  rippleColor="rgba(0,0,0,0.28)"
-                  onPress={() => navigation.navigate('ItvSearchScreen')}
-                >
-                  <View style={{ ...styles.headerButtonContainer }}>
-                    <Icon name="search" size={theme.iconSize(3)} />
-                  </View>
-                </TouchableRipple>
-              </View>
+              // <View style={{ flexDirection: 'row' }}>
+              //   <TouchableRipple
+              //     borderless={true}
+              //     style={{ borderRadius: 44, padding: 8 }}
+              //     rippleColor="rgba(0,0,0,0.28)"
+              //     onPress={() => rest.setIsSearchingAction(true)}
+              //   >
+              //     <View style={{ ...styles.headerButtonContainer }}>
+              //       <Icon name="search" size={theme.iconSize(3)} />
+              //     </View>
+              //   </TouchableRipple>
+              // </View>
+              <ItvSearchButton />
             )
           })}
           listeners={{
