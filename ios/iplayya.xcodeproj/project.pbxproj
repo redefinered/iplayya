@@ -23,6 +23,7 @@
 		A5085E3D254AB9C9009CB339 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = A5085E3C254AB9C9009CB339 /* AppCenter-Config.plist */; };
 		A516792D25ED473300DAB8BE /* NodeMediaClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A516792C25ED473300DAB8BE /* NodeMediaClient.framework */; };
 		A59A49D027449DEE00CDD278 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A59A49CF27449DEE00CDD278 /* GoogleService-Info.plist */; };
+		A5A9BF7E274F98E300AE6BD6 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5A9BF7D274F98E300AE6BD6 /* File.swift */; };
 		A5AF4FDE25FA66620034A2CE /* NotoSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5AF4FD925FA66610034A2CE /* NotoSans-Bold.ttf */; };
 		A5AF4FDF25FA66620034A2CE /* NotoSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5AF4FDA25FA66610034A2CE /* NotoSans-Italic.ttf */; };
 		A5AF4FE025FA66620034A2CE /* iplayyaicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A5AF4FDB25FA66610034A2CE /* iplayyaicons.ttf */; };
@@ -83,6 +84,8 @@
 		A516792C25ED473300DAB8BE /* NodeMediaClient.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NodeMediaClient.framework; path = "../node_modules/react-native-live-stream/ios/libs/NodeMediaClient.framework"; sourceTree = "<group>"; };
 		A59A49CF27449DEE00CDD278 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A5A87677271E8F5100769901 /* iplayya.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = iplayya.entitlements; path = iplayya/iplayya.entitlements; sourceTree = "<group>"; };
+		A5A9BF7C274F98E300AE6BD6 /* iplayya-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iplayya-Bridging-Header.h"; sourceTree = "<group>"; };
+		A5A9BF7D274F98E300AE6BD6 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		A5AF4FD925FA66610034A2CE /* NotoSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Bold.ttf"; sourceTree = "<group>"; };
 		A5AF4FDA25FA66610034A2CE /* NotoSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSans-Italic.ttf"; sourceTree = "<group>"; };
 		A5AF4FDB25FA66610034A2CE /* iplayyaicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = iplayyaicons.ttf; sourceTree = "<group>"; };
@@ -228,6 +231,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				A5A9BF7D274F98E300AE6BD6 /* File.swift */,
 				A59A49CF27449DEE00CDD278 /* GoogleService-Info.plist */,
 				A5085E3C254AB9C9009CB339 /* AppCenter-Config.plist */,
 				13B07FAE1A68108700A75B9A /* iplayya */,
@@ -238,6 +242,7 @@
 				86EE22A1D765C6AE515C8C2F /* Pods */,
 				A51678E525ED465500DAB8BE /* Recovered References */,
 				08F629444B7A47AA95195514 /* Resources */,
+				A5A9BF7C274F98E300AE6BD6 /* iplayya-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -375,7 +380,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = JLDCKJRS6D;
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1300;
 						ProvisioningStyle = Manual;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -748,6 +753,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				A5A9BF7E274F98E300AE6BD6 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -789,6 +795,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4060A0734568C76A6D5BC596 /* Pods-iplayya-iplayyaTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -814,6 +821,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 80825D11D94FB42DE7E83F9E /* Pods-iplayya-iplayyaTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -862,6 +870,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.delugetech.iplayya;
 				PRODUCT_NAME = iplayya;
 				PROVISIONING_PROFILE_SPECIFIER = "DTTC Internal";
+				SWIFT_OBJC_BRIDGING_HEADER = "iplayya-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -898,6 +907,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.delugetech.iplayya;
 				PRODUCT_NAME = iplayya;
 				PROVISIONING_PROFILE_SPECIFIER = "DTTC Internal";
+				SWIFT_OBJC_BRIDGING_HEADER = "iplayya-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
