@@ -2,25 +2,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import GoogleCast, { useCastSession } from 'react-native-google-cast';
 import ButtonIconDefault from 'components/button-icon-default/button-icon-default.component';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import { selectMovie } from 'modules/ducks/movies/movies.selectors';
 import { selectChannel } from 'modules/ducks/itv/itv.selectors';
-import { AirplayButton, useExternalPlaybackAvailability } from 'react-airplay';
-import { useIsFocused } from '@react-navigation/native';
-import theme from 'common/theme';
 
 const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
-  const isScreenFocused = useIsFocused();
-  const isExternalPlaybackAvailable = useExternalPlaybackAvailability({
-    useCachedValue: !isScreenFocused
-  });
-
   const castSession = useCastSession();
-
   const [castConnected, setCastConnected] = React.useState(false);
 
   const handlePressActionPress = () => {
@@ -41,21 +32,6 @@ const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
     return () => castListener.remove();
   }, []);
 
-  const renderAirplayButton = () => {
-    if (Platform.OS === 'android') return;
-
-    if (isExternalPlaybackAvailable) {
-      return (
-        <AirplayButton
-          prioritizesVideoDevices={true}
-          tintColor="white"
-          activeTintColor={theme.iplayya.colors.vibrantpussy}
-          style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
-        />
-      );
-    }
-  };
-
   return (
     <View style={{ flexDirection: 'row' }}>
       {castSession && (
@@ -66,7 +42,6 @@ const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
         iconSize={3}
         pressAction={handlePressActionPress}
       />
-      {renderAirplayButton()}
     </View>
   );
 };
