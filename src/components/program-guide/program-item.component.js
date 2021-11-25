@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, View, StyleSheet } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { connect } from 'react-redux';
@@ -11,13 +11,17 @@ import moment from 'moment';
 import { createStructuredSelector } from 'reselect';
 import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
 import SnackBar from 'components/snackbar/snackbar.component';
+import { compose } from 'redux';
 
 const ProgramItem = ({
+  theme,
+
   id,
   channelId,
   channelName,
   title,
   time,
+  time_to,
   isCurrentlyPlaying,
   parentType,
 
@@ -36,11 +40,16 @@ const ProgramItem = ({
 
   ...rest
 }) => {
-  const theme = useTheme();
   const [active, setActive] = React.useState(false);
   const [exists, setExists] = React.useState(false);
   const [isPressed, setIsPressed] = React.useState(false);
   const [showCancelSnackBar, setShowCancelSnackBar] = React.useState(false);
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
+  React.useEffect(() => {
+    const i = isCurrentlyPlaying(time, time_to);
+    setIsPlaying(i);
+  }, [time, time_to]);
 
   React.useEffect(() => {
     if (notifications.length) {
@@ -108,10 +117,40 @@ const ProgramItem = ({
     if (showCancelSnackBar) hideSnackBar();
   }, [showCancelSnackBar]);
 
-  const getColor = (time, time_to) => {
-    return isCurrentlyPlaying(time, time_to)
-      ? theme.iplayya.colors.vibrantpussy
-      : theme.iplayya.colors.white100;
+  const getColor = () => {
+    return isPlaying ? theme.iplayya.colors.vibrantpussy : theme.iplayya.colors.white100;
+  };
+
+  const renderNotificationIcon = () => {
+    if (isPlaying)
+      return (
+        <View
+          style={{
+            marginRight: theme.spacing(2),
+            backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
+            ...styles.button
+          }}
+        />
+      );
+
+    return (
+      <Pressable
+        onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+        onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
+        onPress={() => handleNotify()}
+        style={{
+          marginRight: theme.spacing(2),
+          backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
+          ...styles.button
+        }}
+      >
+        <Icon
+          name="notifications"
+          size={theme.iconSize(3)}
+          color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
+        />
+      </Pressable>
+    );
   };
 
   return (
@@ -135,31 +174,17 @@ const ProgramItem = ({
       >
         <Text
           style={{
-            color: getColor(time, rest.time_to)
+            color: getColor()
           }}
         >
           {moment(time).format('h:mm A')}
         </Text>
       </View>
       <View style={{ flex: 8, paddingLeft: 12 }}>
-        <Text style={{ color: getColor(time, rest.time_to) }}>{title}</Text>
+        <Text style={{ color: getColor() }}>{title}</Text>
       </View>
-      <Pressable
-        onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
-        onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
-        onPress={() => handleNotify()}
-        style={{
-          marginRight: theme.spacing(2),
-          backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
-          ...styles.button
-        }}
-      >
-        <Icon
-          name="notifications"
-          size={theme.iconSize(3)}
-          color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
-        />
-      </Pressable>
+
+      {renderNotificationIcon()}
 
       <SnackBar
         visible={showCancelSnackBar}
@@ -209,4 +234,6 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({ notifications: selectNotifications });
 
-export default connect(mapStateToProps, actions)(ProgramItem);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
+
+export default enhance(ProgramItem);

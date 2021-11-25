@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Pressable, FlatList, TextInput as FormInput } from 'react-native';
-import { Text, withTheme, TextInput as RNPTextInput } from 'react-native-paper';
+import { View, Pressable, FlatList } from 'react-native';
+import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
-import TextInput from 'components/text-input/text-input.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -26,31 +25,29 @@ import {
   selectfavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
-import { selectIsSearching } from 'modules/ducks/itv/itv.selectors';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
+import moment from 'moment';
 
 const ItvFavoritesScreen = ({
   theme,
-  paginator,
-  favorites,
   navigation,
-  isSearching,
-  favoritesRemoved,
+  favorites,
   getFavoritesAction,
+  paginator,
   favoritesPaginator,
-  getChannelsAction,
-  favoritesStartAction,
-  resetPaginatorAction,
+  favoritesRemoved,
   removeFromFavoritesAction,
-  resetFavoritesPaginatorAction
+  getChannelsAction,
+  resetPaginatorAction,
+  resetFavoritesPaginatorAction,
+  favoritesStartAction
 }) => {
   const updated = React.useRef(false);
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
-  const [data, setData] = React.useState([]);
-  const [searchTerm, setSearchTerm] = React.useState([]);
+  // const [data, setListData] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
@@ -67,15 +64,6 @@ const ItvFavoritesScreen = ({
   }, []);
 
   React.useEffect(() => {
-    if (searchTerm) {
-      const d = favorites.filter(({ title }) => title.toLowerCase().includes(searchTerm));
-      return setData(d);
-    }
-
-    setData(favorites);
-  }, [favorites, searchTerm]);
-
-  React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
       getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
     }
@@ -88,11 +76,28 @@ const ItvFavoritesScreen = ({
       updated.current = true;
       setActivateCheckboxes(false);
 
+      // get favorites when favorites list is updated
+      /// TODO: troubleshoot why cache is not updated even after refetching from removeFavorites mutation
+      /// TODO: troubleshoot why cache is not updated even after refetching from removeFavorites mutation
+      /// TODO: troubleshoot why cache is not updated even after refetching from removeFavorites mutation
       getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
     } else {
       updated.current = false;
     }
   }, [favoritesRemoved]);
+
+  // setup channels data
+  // React.useEffect(() => {
+  //   if (favorites) {
+  //     let data = favorites.map(({ id, title, ...rest }) => ({
+  //       id,
+  //       title,
+  //       thumbnail: channelplaceholder,
+  //       ...rest
+  //     }));
+  //     setListData(data);
+  //   }
+  // }, [favorites]);
 
   const handleItemPress = (item) => {
     if (activateCheckboxes) {
@@ -150,52 +155,21 @@ const ItvFavoritesScreen = ({
   };
 
   const handleConfirmDelete = () => {
+    // do delete action here
+    // console.log('delete action');
+    // setShowDeleteConfirmation(false);
+
     setShowDeleteConfirmation(false);
     handleRemoveItems();
   };
 
-  const handleChange = (term) => {
-    setSearchTerm(term);
-  };
-
-  const renderSearchBar = () => {
-    if (isSearching)
-      return (
-        <ContentWrap>
-          <TextInput
-            multiline={false}
-            name="search"
-            handleChangeText={(term) => handleChange(term)}
-            returnKeyType="search"
-            autoFocus
-            autoCapitalize="none"
-            clearButtonMode="while-editing"
-            autoCompleteType="email"
-            style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
-            placeholder="Search a favorite"
-            render={(props) => (
-              <FormInput
-                {...props}
-                style={{
-                  flex: 1,
-                  marginLeft: 40,
-                  fontSize: 16,
-                  justifyContent: 'center',
-                  color: '#ffffff'
-                }}
-              />
-            )}
-            left={
-              <RNPTextInput.Icon
-                name={() => (
-                  <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
-                )}
-              />
-            }
-          />
-        </ContentWrap>
-      );
-  };
+  // const handleEndReached = () => {
+  //   console.log({ favoritesPaginator });
+  //   if (!onEndReachedCalledDuringMomentum) {
+  //     getFavoritesAction(favoritesPaginator);
+  //     setOnEndReachedCalledDuringMomentum(true);
+  //   }
+  // };
 
   const getDeleteAlertMessage = () => {
     if (selectedItems.length === favorites.length)
@@ -244,10 +218,8 @@ const ItvFavoritesScreen = ({
           </ContentWrap>
         )}
 
-        {renderSearchBar()}
-
         <FlatList
-          data={data}
+          data={favorites}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <ListItemChanel
@@ -257,10 +229,157 @@ const ItvFavoritesScreen = ({
               isCatchUpAvailable={false}
               thumbnail={channelplaceholder}
               handleItemPress={handleItemPress}
-              handleLongPress={handleLongPress}
             />
           )}
         />
+        {/* <FlatList data={favorites} keyExtractor={(id) => item.id} /> */}
+        {listData.map(({ id, title, epgtitle, number, time, time_to }) => {
+          const getSchedule = (time, time_to) => {
+            if (!time || !time_to) return;
+
+            return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+          };
+          return (
+            <Pressable
+              key={id}
+              underlayColor={theme.iplayya.colors.black80}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
+                  // flexDirection: 'row',
+                  // alignItems: 'center',
+                  // justifyContent: 'space-between',
+                  // marginBottom: 5,
+                }
+              ]}
+              onLongPress={() => handleLongPress(id)}
+              onPress={() => handleSelectItem(id)}
+            >
+              <ContentWrap
+                style={{
+                  marginTop: 10,
+                  position: 'relative',
+                  height: 80,
+                  paddingLeft: 75
+                }}
+              >
+                {/* <Image
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    position: 'absolute',
+                    top: 2,
+                    left: 10
+                  }}
+                  source={channelplaceholder}
+                /> */}
+                <View
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 8,
+                    marginRight: 10,
+                    backgroundColor: theme.iplayya.colors.white10,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    top: 2,
+                    left: 10
+                  }}
+                >
+                  <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: 3,
+                    marginLeft: 5
+                  }}
+                >
+                  <View style={{ justifyContent: 'center' }}>
+                    <View>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          marginBottom: 5,
+                          color: theme.iplayya.colors.white50
+                        }}
+                      >
+                        {`${number}: ${title}`}
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white80,
+                          marginBottom: 5
+                        }}
+                      >
+                        {epgtitle}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width: '75%'
+                      }}
+                    >
+                      <Text
+                        style={{
+                          ...createFontFormat(12, 16),
+                          color: theme.iplayya.colors.white50,
+                          marginBottom: 5
+                        }}
+                      >
+                        {getSchedule(time, time_to)}
+                      </Text>
+
+                      {!activateCheckboxes && (
+                        <Pressable
+                          underlayColor={theme.iplayya.colors.black80}
+                          onPress={() =>
+                            navigation.navigate('ItvProgramGuideScreen', { channelId: id })
+                          }
+                          style={({ pressed }) => [
+                            {
+                              backgroundColor: pressed
+                                ? theme.iplayya.colors.black80
+                                : 'transparent',
+                              width: 44,
+                              height: 44,
+                              borderRadius: 22,
+                              justifyContent: 'center',
+                              alignItems: 'center'
+                            }
+                          ]}
+                        >
+                          <Text
+                            style={{
+                              fontWeight: 'bold',
+                              fontSize: 12,
+                              color: theme.iplayya.colors.white50
+                            }}
+                          >
+                            EPG
+                          </Text>
+                        </Pressable>
+                      )}
+                    </View>
+                  </View>
+                  {activateCheckboxes && (
+                    <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                  )}
+                </View>
+              </ContentWrap>
+            </Pressable>
+          );
+        })}
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
@@ -313,8 +432,7 @@ const mapStateToProps = createStructuredSelector({
   favoritesPaginator: selectFavoritesPaginator,
   favoritesRemoved: selectfavoritesListRemoveUpdated,
   paginator: selectPaginator,
-  channels: selectChannels,
-  isSearching: selectIsSearching
+  channels: selectChannels
 });
 
 const actions = {

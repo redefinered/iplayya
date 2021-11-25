@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
 import ItvPlayer from './itv-player.component';
@@ -46,7 +47,8 @@ const ItvChannelDetailScreen = ({
   onNotifResetAction,
   // addToFavoritesAction,
   favoritesListUpdated,
-  setMusicNowPlaying
+  setMusicNowPlaying,
+  setBottomTabsVisibleAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -97,7 +99,11 @@ const ItvChannelDetailScreen = ({
 
     /// set programs to start state when a user leaves this page
     const unsubscribeToRouteRemove = navigation.addListener('beforeRemove', () => {
+      /// reset programs to start state
       getProgramsByChannelStartAction();
+
+      // hide bottom menu tabs
+      setBottomTabsVisibleAction({ hideTabs: true });
     });
 
     return () => {
@@ -402,7 +408,8 @@ const actions = {
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
 const enhance = compose(connect(mapStateToProps, actions));
