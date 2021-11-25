@@ -504,7 +504,6 @@ const VideoControls = ({
         {multipleMedia && <NextButton onPress={handleNextButtonPress} disabled={isLastEpisode} />}
       </View>
 
-      {/* <Text style={{ alignSelf: 'center' }}>Connected to Airplay</Text> */}
       {isAirplayConnected && <Text style={{ alignSelf: 'center' }}>Connected to Airplay</Text>}
 
       <View style={{ position: 'relative', zIndex: 111 }}>

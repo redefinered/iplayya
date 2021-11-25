@@ -424,6 +424,8 @@ const MediaPlayer = ({
           onError={handleVideoError}
           resizeMode="contain"
           style={videoStyle}
+          playInBackground // allows airplay background playback
+          ignoreSilentSwitch="ignore" // allows airplay background playback
         />
       </Pressable>
     );
