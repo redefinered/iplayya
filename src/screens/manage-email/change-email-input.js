@@ -154,10 +154,10 @@ class ChangeEmailInput extends React.Component {
                 error: '#E34398',
                 placeholder: 'transparent'
               },
-              fonts: { regular: { fontFamily: 'sans-serif' } },
+              fonts: { regular: { fontFamily: 'NotoSans' } },
               roundness: 10
             }}
-            ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'sans-serif' } })}
+            ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans' } })}
           />
           <Pressable
             onPress={() => this.setState({ showPassword: !showPassword })}
