@@ -9,7 +9,6 @@ import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import ContentWrap from 'components/content-wrap.component';
 import ScreenContainer from 'components/screen-container.component';
-import useComponentSize from 'hooks/use-component-size.hook';
 import IsportsBottomTabs from './isports-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -34,33 +33,28 @@ const channelplaceholder = require('assets/channel-placeholder.png');
 const ITEM_HEIGHT = 96;
 
 const IsportsScreen = ({
-  navigation,
-  isFetching,
   error,
   genres,
+  updated,
   channels,
-  getChannelsByCategoriesStartAction,
-  getChannelsAction,
   paginator,
+  navigation,
+  isFetching,
+  headerHeight,
+  enableSwipeAction,
+  getChannelsAction,
+  getFavoritesAction,
   favoritesPaginator,
   resetPaginatorAction,
-  getChannelsByCategoriesAction,
   addToFavoritesAction,
-  updated,
-  getFavoritesAction,
-  enableSwipeAction,
-  headerHeight
+  getChannelsByCategoriesAction,
+  getChannelsByCategoriesStartAction
 }) => {
-  // eslint-disable-next-line no-unused-vars
-  const [size, onLayout] = useComponentSize();
-
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
-  // eslint-disable-next-line no-unused-vars
-  const [favorited, setFavorited] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
 
@@ -140,15 +134,7 @@ const IsportsScreen = ({
 
     if (is_favorite) return;
 
-    let title = channels.find(({ id }) => id === channelId).title;
-    setFavorited(title);
-
     addToFavoritesAction(parseInt(channelId));
-
-    // let title = channels.find(({ id }) => id === channelId).title;
-    // setFavorited(title);
-
-    // addToFavoritesAction({ videoId: parseInt(channelId) });
   };
 
   const hideSnackBar = () => {
@@ -163,9 +149,13 @@ const IsportsScreen = ({
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
 
-  const handleItemSelect = (channelId) => {
+  const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('IsportsChannelDetailScreen', { channelId });
+    navigation.navigate('IsportsChannelDetailScreen', { channelId: item.id });
+  };
+
+  const handleItemLongPress = (id) => {
+    console.log({ id });
   };
 
   const onCategorySelect = (id) => {
@@ -234,15 +224,15 @@ const IsportsScreen = ({
       );
   };
 
-  const renderFeaturedItem = ({ item: { id, ...itemProps } }) => {
-    let isNotificationActive = notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
+  const renderFeaturedItem = ({ item }) => {
+    let isNotificationActive =
+      notifyIds.findIndex((i) => i === parseInt(item.id)) >= 0 ? true : false;
     return (
       <ItemPreview
-        id={id}
-        onSelect={handleItemSelect}
+        item={item}
+        onSelect={handleItemPress}
         handleSubscribeToItem={handleSubscribeToItem}
         isNotificationActive={isNotificationActive}
-        {...itemProps}
       />
     );
   };
@@ -300,15 +290,15 @@ const IsportsScreen = ({
         getItemLayout={(data, index) => {
           return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
         }}
-        renderItem={({ item: { epgtitle, ...itemProps } }) => (
+        renderItem={({ item }) => (
           <ListItemChanel
+            full
+            item={item}
             isCatchUpAvailable={false}
-            onSelect={handleItemSelect}
             onRightActionPress={handleAddToFavorites}
             onEpgButtonPressed={handleEpgButtonPress}
-            full
-            epgtitle={epgtitle}
-            {...itemProps}
+            handleItemPress={handleItemPress}
+            handleItemLongPress={handleItemLongPress}
           />
         )}
         ListFooterComponent={renderListFooter()}
@@ -379,7 +369,6 @@ const mapStateToProps = createStructuredSelector({
 
 const actions = {
   getChannelsStartAction: Creators.getChannelsStart,
-  // getGenresAction: Creators.getGenres,
   getChannelsAction: Creators.getChannels,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,
   resetPaginatorAction: Creators.resetPaginator,

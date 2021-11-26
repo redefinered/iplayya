@@ -12,7 +12,6 @@ import { selectChannel } from 'modules/ducks/itv/itv.selectors';
 
 const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
   const castSession = useCastSession();
-
   const [castConnected, setCastConnected] = React.useState(false);
 
   const handlePressActionPress = () => {

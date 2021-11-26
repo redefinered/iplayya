@@ -15,9 +15,6 @@ import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
-// import PlayMovieButton from './play-movie-button.component';
-// import PlayTrailerButton from './play-trailer-button.component';
-// import withLoader from 'components/with-loader.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
@@ -68,7 +65,6 @@ const MovieDetailScreen = ({
 
   playbackSettings
 }) => {
-  // const client = useRemoteMediaClient();
   const [paused, setPaused] = React.useState(false);
   const [isMovieDownloaded, setIsMoviedownloaded] = React.useState(false);
   const [source, setSource] = React.useState('');
@@ -470,9 +466,6 @@ const MovieDetailScreen = ({
         {renderVideoCaption()}
       </View>
 
-      {/* <Button onPress={handleGooleCastPlay}>Play</Button>
-      <Button onPress={handleGooleCastPause}>Pause</Button> */}
-
       {/* content */}
       {renderScreenContent()}
     </View>
@@ -484,20 +477,6 @@ const Container = (props) => (
     <MovieDetailScreen {...props} />
   </ScreenContainer>
 );
-
-// const styles = StyleSheet.create({
-//   settingItem: {
-//     flexDirection: 'row',
-//     paddingVertical: 10
-//   },
-//   iconContainer: {
-//     width: 42,
-//     justifyContent: 'center'
-//   },
-//   controls: {
-//     position: 'absolute'
-//   }
-// });
 
 const actions = {
   getMovieAction: Creators.getMovie,

@@ -90,11 +90,7 @@ export function* getFavoritesRequest(action) {
   const { input } = action;
   try {
     const { favoriteIptvs } = yield call(getFavorites, input);
-
-    /// increment paginator pageNumber
-    Object.assign(input, { pageNumber: input.pageNumber + 1 });
-
-    yield put(Creators.getFavoritesSuccess(favoriteIptvs, input));
+    yield put(Creators.getFavoritesSuccess(favoriteIptvs));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
   }
@@ -112,13 +108,12 @@ export function* getProgramsByChannelRequest(action) {
 
 export function* searchRequest(action) {
   const { limit, pageNumber } = action.input;
-  const { shouldIncrement } = action;
 
   try {
     const { iptvs: results } = yield call(search, action.input);
 
     /// increment pageNumber each successful request
-    const nextPaginatorInfo = { limit, pageNumber: shouldIncrement ? pageNumber + 1 : pageNumber };
+    const nextPaginatorInfo = { limit, pageNumber: pageNumber + 1 };
 
     // console.log({ loc: 'saga', ...nextPaginatorInfo });
     yield put(Creators.searchSuccess(results, nextPaginatorInfo));

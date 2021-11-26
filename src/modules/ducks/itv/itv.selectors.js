@@ -59,17 +59,9 @@ export const selectRecentSearch = createSelector([itvState], ({ recentSearch }) 
 export const selectNotifications = createSelector([itvState], ({ notifications }) => notifications);
 export const selectSubscriptions = createSelector([itvState], ({ subscriptions }) => subscriptions);
 
-// const selectChannelForFilter = (state, props) => {
-//   return state.itv.channels.find(({ id }) => id === props.channelId)
-// }
-
-// const selectCurrentProgram
-
-const selectChannelsAndCurrentChannelNumberForFilter = (
-  { itv: { channels } },
-  { channel: { number } }
-) => {
-  const currentChannelNumber = parseInt(number);
+const selectChannelsAndCurrentChannelNumberForFilter = ({ itv: { channels } }, { channel }) => {
+  if (!channel) return;
+  const currentChannelNumber = parseInt(channel.number);
   return { channels: channels.map(({ id, number }) => ({ id, number })), currentChannelNumber };
 };
 
@@ -83,8 +75,13 @@ export const selectNextChannel = createSelector(
 
 export const selectPreviousChannel = createSelector(
   [selectChannelsAndCurrentChannelNumberForFilter],
-  ({ channels, currentChannelNumber }) => {
+  (currentChannel) => {
+    if (!currentChannel) return;
+
+    const { channels, currentChannelNumber } = currentChannel;
     const previousChannel = channels.find(({ number }) => number === currentChannelNumber - 1);
     return previousChannel;
   }
 );
+
+export const selectIsSearching = createSelector([itvState], ({ isSearching }) => isSearching);
