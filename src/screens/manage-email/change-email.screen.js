@@ -128,7 +128,7 @@ class ChangeEmailScreen extends React.Component {
     // });
 
     return (
-      <ContentWrap style={{ paddingTop: theme.spacing(3) }}>
+      <ContentWrap style={{ paddingTop: theme.spacing(5) }}>
         <Modal
           animationType="slide"
           visible={modalVisible}

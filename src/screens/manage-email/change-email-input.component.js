@@ -107,7 +107,7 @@ class ChangeEmailInput extends React.Component {
     const { theme } = this.props;
 
     return (
-      <View style={{ paddingHorizontal: 25, paddingBottom: theme.spacing(3) }}>
+      <View style={{ paddingHorizontal: 25, paddingBottom: theme.spacing(2) }}>
         <View style={{ position: 'relative' }}>
           <TextInput
             render={(props) => (
@@ -132,7 +132,7 @@ class ChangeEmailInput extends React.Component {
             placeholder="Enter Password"
             placeholderTextColor="#000000"
             style={{
-              marginBottom: theme.spacing(3),
+              marginBottom: theme.spacing(2),
               backgroundColor: 'rgba(13, 17, 29, 0.1)',
               borderRadius: 8
             }}
@@ -165,7 +165,7 @@ class ChangeEmailInput extends React.Component {
             />
           </Pressable>
         </View>
-        <View style={{ paddingBottom: theme.spacing(3), justifyContent: 'center' }}>
+        <View style={{ paddingBottom: theme.spacing(2), justifyContent: 'center' }}>
           {errors.password && <Text style={{ color: '#000000' }}>{errors.password}</Text>}
           {this.props.error && <Text style={{ color: '#000000' }}>Your password is Incorrect</Text>}
         </View>
