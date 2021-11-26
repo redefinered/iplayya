@@ -292,7 +292,10 @@ const IsportsChannelDetailScreen = ({
         justifyContent: 'center'
       };
 
-    return {};
+    return {
+      marginTop: fullscreen ? 0 : theme.spacing(2),
+      marginBottom: fullscreen ? 0 : theme.spacing(2)
+    };
   };
 
   const renderMediaPlayer = () => {
