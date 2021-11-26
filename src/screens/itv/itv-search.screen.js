@@ -2,22 +2,19 @@
 
 import React from 'react';
 import {
-  StyleSheet,
   TextInput as FormInput,
   FlatList,
   View,
   Keyboard,
-  Dimensions
+  Pressable,
+  ScrollView
 } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
-// import withHeaderPush from 'components/with-header-push/with-header-push.component';
-// import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
-// import suggestions from './suggestions.json';
 import ContentWrap from 'components/content-wrap.component';
-import withLoader from 'components/with-loader.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
@@ -34,47 +31,70 @@ import {
   selectIsFetching
 } from 'modules/ducks/itv/itv.selectors';
 import { selectItvGenres } from 'modules/app';
-import { ScrollView } from 'react-native-gesture-handler';
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 
+const ITEM_HEIGHT = 96;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvSearchScreen = ({
-  navigation,
   theme,
-  // eslint-disable-next-line no-unused-vars
-  error,
-  searchStartAction,
-  searchAction,
-  results,
-  searchResultsPaginator,
   genres,
+  results,
+  navigation,
   isFetching,
-
-  updateRecentSearchAction,
+  searchAction,
   recentSearch,
-
-  resetSearchResultsPaginatorAction,
-
-  setBottomTabsVisibleAction
+  searchStartAction,
+  searchResultsPaginator,
+  clearRecentSearchAction,
+  updateRecentSearchAction,
+  setBottomTabsVisibleAction,
+  resetSearchResultsPaginatorAction
 }) => {
-  // console.log({ loc: 'screen', ...searchResultsPaginator });
   const [term, setTerm] = React.useState('');
   const [showKeyboard, setShowKeyboard] = React.useState(false);
-
-  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-  //   true
-  // );
+  const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
+  const [isSearching, setIsSearching] = React.useState(false);
+  // const [data, setData] = React.useState([]);
 
   // React.useEffect(() => {
-  //   setBottomTabsVisibleAction({ hideTabs: true }); // does not work here!!!
-  // });
+  //   if (isSearching) {
+  //     if (recentSearch.length) {
+  //       const data = [
+  //         {
+  //           title: 'Recently Searched',
+  //         }
+  //       ]
+  //     }
+
+  //   }
+
+  //   if (results.length) {
+  //     const data = [
+  //       {
+  //         title: 'Search Results',
+  //         data: results
+  //       }
+  //     ]
+
+  //     return setData(data);
+  //   }
+
+  //   if ()
+  // }, [results, recentSearch, genres, isSearching]);
 
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
     resetSearchResultsPaginatorAction();
   }, []);
+
+  React.useEffect(() => {
+    // do not update the list while searching
+    if (isFetching) return;
+
+    /// only display 5 most recent search terms
+    setRecents(recentSearch.slice(0, 5));
+  }, [recentSearch]);
 
   const handleChange = (value) => {
     setTerm(value);
@@ -86,6 +106,7 @@ const ItvSearchScreen = ({
 
     if (term.length) {
       if (term.length >= 2) {
+        // execute the search
         search(term, false);
       }
     }
@@ -93,54 +114,22 @@ const ItvSearchScreen = ({
 
   const search = React.useCallback(
     debounce((keyword, shouldIncrement) => {
-      // console.log({ loc: 'screen before search action call', ...searchResultsPaginator });
+      // execute search
       searchAction({ keyword, ...searchResultsPaginator }, shouldIncrement);
-      return;
     }, 1500),
     [searchResultsPaginator]
   );
 
-  const onSubmitEditing = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-      setTerm(term);
-    } else {
-      return;
-    }
-  };
+  const handleItemPress = ({ id, title }) => {
+    /// the recent searched item is the one selected by user
+    updateRecentSearchAction({ id, title });
 
-  const handleRecentSearch = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-    } else {
-      return;
-    }
-  };
-
-  const handleItemPress = (channelId) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ItvChannelDetailScreen', { channelId });
+    navigation.navigate('ItvChannelDetailScreen', { channelId: id });
   };
 
   const handleGenrePress = (genreId) => {
     navigation.navigate('ItvScreen', { genreId, openItvGuide: false });
-  };
-
-  const handleEndReached = () => {
-    console.log('end reached!');
-    // if (!onEndReachedCalledDuringMomentum) {
-    //   if (term.length) {
-    //     if (term.length <= 1) return;
-    //     search(term, true);
-    //   }
-
-    //   setOnEndReachedCalledDuringMomentum(true);
-    // }
-
-    if (term.length) {
-      if (term.length <= 20) return;
-      search(term, true);
-    }
   };
 
   const handleScrollAction = () => {
@@ -163,19 +152,6 @@ const ItvSearchScreen = ({
   };
 
   const renderResult = () => {
-    // if (error)
-    //   return (
-    //     <Text
-    //       style={{
-    //         ...createFontFormat(14, 19),
-    //         fontWeight: '700',
-    //         color: theme.iplayya.colors.white50,
-    //         paddingVertical: 15
-    //       }}
-    //     >
-    //       Zero result
-    //     </Text>
-    //   );
     if (results.length)
       return (
         <FlatList
@@ -198,68 +174,66 @@ const ItvSearchScreen = ({
           onScroll={handleScrollAction}
           data={results}
           keyExtractor={(item) => item.id}
-          renderItem={({ item: { id, epgtitle, ...itemProps } }) => (
-            // <TouchableRipple
-            //   style={{ paddingHorizontal: theme.spacing(2), height: 52 }}
-            //   key={id}
-            //   onPress={() => handleItemPress(id)}
-            // >
-            //   <Text
-            //     style={{
-            //       ...createFontFormat(16, 22),
-            //       paddingVertical: 15,
-            //       paddingHorizontal: theme.spacing(2)
-            //     }}
-            //   >
-            //     {title}
-            //   </Text>
-            // </TouchableRipple>
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+          renderItem={({ item }) => (
             <ListItemChanel
-              onSelect={() => handleItemPress(id)}
-              isCatchUpAvailable={false}
-              // onRightActionPress={handleAddToFavorites}
               full
+              showepg={false}
+              item={item}
+              isCatchUpAvailable={false}
               thumbnail={channelplaceholder}
-              epgtitle={epgtitle}
-              {...itemProps}
+              handleItemPress={handleItemPress}
             />
           )}
-          onEndReached={() => handleEndReached()}
-          // onEndReachedThreshold={0.9}
-          // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+          // onEndReached={() => handleEndReached()}
         />
       );
   };
 
   const renderRecentSearch = () => {
-    if (term.length || !term.length) {
-      if (results.length) return;
-      return (
-        <React.Fragment>
-          <ContentWrap>
-            <Text
-              style={{
-                ...createFontFormat(14, 19),
-                fontWeight: '700',
-                color: theme.iplayya.colors.white50,
-                paddingVertical: theme.spacing(2)
-              }}
-            >
-              Recent Search
+    /// do not show if searchbar is not in use
+    if (!isSearching) return;
+
+    // do not show if there is results
+    if (results.length) return;
+
+    // do not show if there is no recent search items
+    if (!recents.length) return;
+
+    return (
+      <ContentWrap>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Text
+            style={{
+              ...createFontFormat(14, 19),
+              fontWeight: '700',
+              color: theme.iplayya.colors.white50,
+              paddingVertical: theme.spacing(2)
+            }}
+          >
+            Recent Search
+          </Text>
+          <Pressable onPress={clearRecentSearchAction}>
+            <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
+          </Pressable>
+        </View>
+        {recents.map(({ id, title }, index) => (
+          <TouchableRipple key={index} onPress={() => handleItemPress({ id, title })}>
+            <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+              {title}
             </Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {recentSearch.map((term, index) => (
-                <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
-                    {term}
-                  </Text>
-                </TouchableRipple>
-              ))}
-            </ScrollView>
-          </ContentWrap>
-        </React.Fragment>
-      );
-    }
+          </TouchableRipple>
+        ))}
+      </ContentWrap>
+    );
   };
 
   const renderSuggestedSearch = () => {
@@ -269,7 +243,7 @@ const ItvSearchScreen = ({
 
       if (genres.length)
         return (
-          <React.Fragment>
+          <View>
             <ContentWrap>
               <Text
                 style={{
@@ -282,7 +256,22 @@ const ItvSearchScreen = ({
                 Suggested Search
               </Text>
             </ContentWrap>
-            <ScrollView>
+            {/* <FlatList
+              data={genres}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item: { id, title } }) => (
+                <ContentWrap>
+                  <TouchableRipple onPress={() => handleGenrePress(id)}>
+                    <Text
+                      style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
+                    >
+                      {title}
+                    </Text>
+                  </TouchableRipple>
+                </ContentWrap>
+              )}
+            /> */}
+            <View>
               {genres.map(({ id, title }) => (
                 <ContentWrap key={id}>
                   <TouchableRipple onPress={() => handleGenrePress(id)}>
@@ -294,18 +283,43 @@ const ItvSearchScreen = ({
                   </TouchableRipple>
                 </ContentWrap>
               ))}
-            </ScrollView>
-          </React.Fragment>
+            </View>
+          </View>
         );
     }
   };
 
+  const handleSeachFocus = () => {
+    setIsSearching(true);
+
+    /// resets search result paginator so the result is page 1
+    resetSearchResultsPaginatorAction();
+
+    // reset search state
+    searchStartAction();
+
+    setBottomTabsVisibleAction({ hideTabs: true });
+  };
+
   return (
-    <View style={styles.container}>
+    <View>
       <ContentWrap>
         <TextInput
-          // onFocus={() => setBottomTabsVisibleAction({ hideTabs: true })}
+          onFocus={handleSeachFocus}
+          onBlur={() => setIsSearching(false)}
           multiline={false}
+          name="search"
+          returnKeyType="search"
+          autoFocus
+          showSoftInputOnFocus={showKeyboard}
+          focusAction={handleShowKeyboard}
+          handleChangeText={(term) => handleChange(term)}
+          value={term}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
+          autoCompleteType="email"
+          style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
+          placeholder="Search a channel"
           render={(props) => (
             <FormInput
               {...props}
@@ -318,44 +332,33 @@ const ItvSearchScreen = ({
               }}
             />
           )}
-          name="search"
-          returnKeyType="search"
-          autoFocus
-          showSoftInputOnFocus={showKeyboard}
-          focusAction={handleShowKeyboard}
-          onSubmitEditing={(term) => onSubmitEditing(term)}
-          handleChangeText={(term) => handleChange(term)}
-          value={term}
-          autoCapitalize="none"
-          clearButtonMode="while-editing"
-          autoCompleteType="email"
-          style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
-          placeholder="Search a channel"
           left={
             <RNPTextInput.Icon
               name={() => {
                 return isFetching ? (
-                  <Icon
-                    name="search"
-                    size={theme.iconSize(4)}
-                    style={{ marginRight: theme.spacing(-0.3) }}
-                  />
+                  <ActivityIndicator size="small" style={{ marginRight: 5 }} />
                 ) : (
-                  <Icon
-                    name="search"
-                    size={theme.iconSize(4)}
-                    style={{ marginRight: theme.spacing(-0.3) }}
-                  />
+                  <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
                 );
               }}
-              onPress={() => handleRecentSearch()}
             />
           }
         />
       </ContentWrap>
-      <View style={{ flex: 1, height: Dimensions.get('window').height }}>{renderResult()}</View>
-      {renderRecentSearch()}
-      {renderSuggestedSearch()}
+      {/* <View style={{ flex: 1, height: Dimensions.get('window').height }}></View> */}
+      <ScrollView>
+        {renderResult()}
+        {renderRecentSearch()}
+        {renderSuggestedSearch()}
+      </ScrollView>
+
+      {/* <SectionList
+        IF NEEDS OPTIMIZATION CONVERT SCREEN TO SECTION LIST INSTEAD OF DISPLAYING SEPARATE LISTS PER DATA
+        sections={DATA}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) => <Item title={item} />}
+        renderSectionHeader={({ section: { title } }) => <Text style={styles.header}>{title}</Text>}
+      /> */}
     </View>
   );
 };
@@ -366,18 +369,13 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});
-
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
+  clearRecentSearchAction: Creators.clearRecentSearch,
   updateRecentSearchAction: Creators.updateRecentSearch,
-  resetSearchResultsPaginatorAction: Creators.resetSearchResultsPaginator,
-  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
+  resetSearchResultsPaginatorAction: Creators.resetSearchResultsPaginator
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -389,6 +387,6 @@ const mapStateToProps = createStructuredSelector({
   genres: selectItvGenres
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(Container);

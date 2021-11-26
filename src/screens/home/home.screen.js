@@ -54,7 +54,14 @@ const Home = ({
   React.useEffect(() => {
     if (!newNotification) return;
 
-    navigation.navigate('ChannelDetailScreen', { channelId: newNotification.data.channelId });
+    if (newNotification.parentType === 'ITV')
+      navigation.navigate('ItvChannelDetailScreen', {
+        channelId: newNotification.data.channelId
+      });
+
+    navigation.navigate('IsportsChannelDetailScreen', {
+      channelId: newNotification.data.channelId
+    });
   }, [newNotification]);
 
   const handleWelcomeHide = () => {

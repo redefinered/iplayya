@@ -16,9 +16,6 @@ import {
 } from 'modules/ducks/notifications/notifications.selectors';
 import { createFontFormat } from 'utils';
 import NotifService from 'NotifService';
-
-// eslint-disable-next-line no-unused-vars
-import { Button } from 'react-native-paper';
 import { FlatList } from 'react-native-gesture-handler';
 import { useHeaderHeight } from '@react-navigation/stack';
 import moment from 'moment';
@@ -30,15 +27,15 @@ const PILLS_HEIGHT = 12 + 40;
 // eslint-disable-next-line no-unused-vars
 const ProgramGuide = ({
   programs,
-  onDateSelect,
-  // getProgramsByChannelAction,
+  getProgramsByChannelAction,
   channelId,
   channelName,
   onRegisterAction,
   onNotifAction,
   showSnackBar,
   contentHeight,
-  screen
+  screen,
+  parentType
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
@@ -57,9 +54,7 @@ const ProgramGuide = ({
   const handleDateSelect = (id) => {
     const { value } = dates.find(({ id: dateId }) => dateId === id);
     const date = new Date(value).toISOString();
-    onDateSelect(date);
-    // console.log({ date });
-    // getProgramsByChannelAction({ channelId, date });
+    getProgramsByChannelAction({ channelId, date });
   };
 
   const renderTitle = () => {
@@ -76,7 +71,12 @@ const ProgramGuide = ({
 
   /// CREATE SCHEDULED NOTIFICATIONS
   const handleCreateScheduledNotif = ({ id, ...rest }) => {
-    notifService.scheduleNotif({ id, channelId, channelName, program: { id, ...rest } });
+    notifService.scheduleNotif({
+      id,
+      channelId,
+      channelName,
+      program: { id, parentType, ...rest }
+    });
 
     notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
@@ -135,7 +135,8 @@ const ProgramGuide = ({
     return moment().isBetween(a, b);
   }, []);
 
-  const renderItem = (item) => {
+  // eslint-disable-next-line react/prop-types
+  const renderItem = ({ item }) => {
     return (
       <ProgramItem
         channelId={channelId}
@@ -144,19 +145,11 @@ const ProgramGuide = ({
         createScheduledNotif={handleCreateScheduledNotif}
         cancelNotification={handleCancelScheduledNotif}
         isCurrentlyPlaying={isCurrentlyPlaying}
+        parentType={parentType}
         {...item}
       />
     );
   };
-
-  // const handleLayoutChange = () => {
-  //   flatlistref.current.measure((fx, fy, width, height, px, py) => {
-  //     console.log('Component width is: ' + width);
-  //     console.log('Component height is: ' + height);
-  //     console.log('X offset to page: ' + px);
-  //     console.log('Y offset to page: ' + py);
-  //   });
-  // };
 
   // return empty componet if no available programs
   if (!programs.length) return <View />;
@@ -187,8 +180,9 @@ const ProgramGuide = ({
           getItemLayout={(data, index) => {
             return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
           }}
+          // eslint-disable-next-line react/prop-types
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => renderItem(item)}
+          renderItem={renderItem}
           style={{ height: Dimensions.get('window').height - programsPageYOffset }}
         />
       </View>
@@ -200,6 +194,7 @@ ProgramGuide.propTypes = {
   screen: PropTypes.bool,
   dates: PropTypes.array,
   channelId: PropTypes.string,
+  parentType: PropTypes.string,
   channelName: PropTypes.string,
   getProgramsByChannelAction: PropTypes.func,
   programs: PropTypes.array,

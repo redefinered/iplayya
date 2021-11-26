@@ -1,11 +1,10 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StatusBar, Dimensions } from 'react-native';
+import { View, StatusBar, Dimensions, InteractionManager } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
-import withLoader from 'components/with-loader.component';
 import ProgramGuide from 'components/program-guide/program-guide.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
@@ -13,8 +12,7 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
-// import { urlEncodeTitle } from 'utils';
-// import MediaPlayer from 'components/media-player/media-player.component';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
 import ItvPlayer from './itv-player.component';
@@ -28,10 +26,12 @@ import {
   selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import theme from 'common/theme';
+import { ActivityIndicator } from 'react-native-paper';
 
 const dirs = RNFetchBlob.fs.dirs;
 
 const ItvChannelDetailScreen = ({
+  isFetching,
   route: {
     params: { channelId }
   },
@@ -47,7 +47,8 @@ const ItvChannelDetailScreen = ({
   onNotifResetAction,
   // addToFavoritesAction,
   favoritesListUpdated,
-  setMusicNowPlaying
+  setMusicNowPlaying,
+  setBottomTabsVisibleAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -91,21 +92,37 @@ const ItvChannelDetailScreen = ({
   }, [paused]);
 
   React.useEffect(() => {
+    InteractionManager.runAfterInteractions(() => getInitialData());
+
     /// clears the indicator that there is a new notification
     onNotifResetAction();
-    navigation.addListener('beforeRemove', () => {
-      getProgramsByChannelStartAction();
-    });
 
-    let date = new Date(Date.now());
-    getProgramsByChannelAction({ channelId, date: date.toISOString() });
-    getChannelAction({ videoId: channelId });
+    /// set programs to start state when a user leaves this page
+    const unsubscribeToRouteRemove = navigation.addListener('beforeRemove', () => {
+      /// reset programs to start state
+      getProgramsByChannelStartAction();
+
+      // hide bottom menu tabs
+      setBottomTabsVisibleAction({ hideTabs: true });
+    });
 
     return () => {
       /// this will set the channel to null so that when viewing a channel there is no UI flickering
       startAction();
+
+      /// unsibscribe to navigation listener
+      unsubscribeToRouteRemove;
     };
   }, []);
+
+  const getInitialData = () => {
+    // get channel detail
+    getChannelAction({ videoId: channelId });
+
+    /// get programs starting at current time and date
+    let date = new Date(Date.now());
+    getProgramsByChannelAction({ channelId, date: date.toISOString() });
+  };
 
   React.useEffect(() => {
     if (favoritesListUpdated) {
@@ -113,21 +130,6 @@ const ItvChannelDetailScreen = ({
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
-
-  // React.useEffect(() => {
-  //   console.log({ currentProgram });
-  //   if (channel && currentProgram) {
-  //     const { title: epgtitle, time, time_to } = currentProgram; /// this has bugs because when there is no programs it wont get the current playing
-  //     const data = {
-  //       channelTitle: channel.title,
-  //       epgtitle,
-  //       time,
-  //       time_to,
-  //       thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
-  //     };
-  //     setCurrentlyPlaying(data);
-  //   }
-  // }, [channel, currentProgram]);
 
   React.useEffect(() => {
     if (channel) navigation.setParams({ channel });
@@ -239,8 +241,38 @@ const ItvChannelDetailScreen = ({
     getProgramsByChannelAction({ channelId, date });
   }, []);
 
+  const renderProgramGuide = () => {
+    if (isFetching)
+      return (
+        <View>
+          <ActivityIndicator />
+        </View>
+      );
+
+    return (
+      <ProgramGuide
+        programs={programs}
+        onDateSelect={handleDateSelect}
+        channelId={channelId}
+        channelName={channel.title}
+        title="Program Guide"
+        showSnackBar={handleShowSnackBar}
+        contentHeight={contentHeight}
+        screen={false}
+        parentType="ITV"
+      />
+    );
+  };
+
   const renderScreenContent = () => {
-    if (!fullscreen)
+    if (!fullscreen) {
+      if (isFetching || !channel)
+        return (
+          <View>
+            <ActivityIndicator />
+          </View>
+        );
+
       return (
         <React.Fragment>
           <View>
@@ -275,17 +307,7 @@ const ItvChannelDetailScreen = ({
             </ContentWrap>
             {/* program guide */}
 
-            <ProgramGuide
-              programs={programs}
-              onDateSelect={handleDateSelect}
-              channelId={channelId}
-              channelName={channel.title}
-              title="Program Guide"
-              showSnackBar={handleShowSnackBar}
-              contentHeight={contentHeight}
-              screen={false}
-              parentType="ITV"
-            />
+            {renderProgramGuide()}
           </View>
 
           <SnackBar
@@ -303,6 +325,7 @@ const ItvChannelDetailScreen = ({
           />
         </React.Fragment>
       );
+    }
   };
 
   const setFullScreenPlayerStyle = () => {
@@ -313,7 +336,10 @@ const ItvChannelDetailScreen = ({
         justifyContent: 'center'
       };
 
-    return {};
+    return {
+      marginTop: fullscreen ? 0 : theme.spacing(2),
+      marginBottom: fullscreen ? 0 : theme.spacing(2)
+    };
   };
 
   const renderMediaPlayer = () => {
@@ -348,8 +374,6 @@ const ItvChannelDetailScreen = ({
     );
   };
 
-  if (!channel) return <View />;
-
   return (
     <View style={{ flex: 1 }}>
       {renderStatusbar()}
@@ -361,47 +385,6 @@ const ItvChannelDetailScreen = ({
     </View>
   );
 };
-
-// eslint-disable-next-line react/prop-types
-// const Content = ({ channeltitle, title, epgtitle, time, time_to }) => {
-//   const renderEpgtitle = () => {
-//     if (!epgtitle)
-//       return (
-//         <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-//           Program title unavailable
-//         </Text>
-//       );
-
-//     return (
-//       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-//         {epgtitle}
-//       </Text>
-//     );
-//   };
-
-//   const getSchedule = (time, time_to) => {
-//     if (!time || !time_to) return;
-
-//     return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
-//   };
-
-//   return (
-//     <View style={{ flex: 1 }}>
-//       <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title || channeltitle}</Text>
-//       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-//         {renderEpgtitle()}
-//       </Text>
-//       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-//         <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
-//           {getSchedule(time, time_to)}
-//         </Text>
-//         {/* <Icon name="history" color="#13BD38" /> */}
-//       </View>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2) } });
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
@@ -425,9 +408,10 @@ const actions = {
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

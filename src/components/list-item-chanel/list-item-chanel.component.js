@@ -5,28 +5,28 @@ import { Text, useTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
-import Spacer from 'components/spacer.component';
 import moment from 'moment';
 import theme from 'common/theme';
 // import { useNavigation } from '@react-navigation/native';
 
-const spacer = 20;
+const ITEM_HEIGHT = 60 + theme.spacing(1) * 2;
 
 const ListItemChanel = ({
-  id,
+  item,
   full,
-  onSelect,
+  showepg,
+  handleItemPress,
+  handleLongPress,
   selected,
-  is_favorite,
   onRightActionPress,
   activateCheckboxes,
-  onEpgButtonPressed,
-  ...contentProps
+  onEpgButtonPressed
 }) => {
+  const { id, title, is_favorite } = item;
   const [isPressed, setIsPressed] = React.useState(false);
 
-  const handleItemPress = () => {
-    onSelect(id);
+  const handlePress = () => {
+    handleItemPress(item);
   };
 
   if (full)
@@ -34,11 +34,14 @@ const ListItemChanel = ({
       <Pressable
         onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
         onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
+        onLongPress={() => handleLongPress(item.id)}
         underlayColor={theme.iplayya.colors.black80}
-        onPress={handleItemPress}
+        onPress={handlePress}
         style={{
           flex: 1,
           flexDirection: 'row',
+          height: ITEM_HEIGHT,
+          paddingVertical: theme.spacing(1),
           alignItems: 'center',
           justifyContent: 'space-between',
           backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent'
@@ -49,8 +52,8 @@ const ListItemChanel = ({
             flex: 11,
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: 10,
-            paddingVertical: 2
+            paddingHorizontal: 10
+            // paddingVertical: theme.spacing(1)
           }}
         >
           <View
@@ -67,8 +70,9 @@ const ListItemChanel = ({
             <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
           </View>
           <Content
-            {...contentProps}
+            {...item}
             id={id}
+            showepg={showepg}
             selected={selected}
             onRightActionPress={onRightActionPress}
             isFavorite={is_favorite}
@@ -83,12 +87,11 @@ const ListItemChanel = ({
   return (
     <ContentWrap>
       <Pressable
-        onPress={handleItemPress}
+        onPress={handlePress}
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 20
+          justifyContent: 'space-between'
         }}
       >
         <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
@@ -105,15 +108,13 @@ const ListItemChanel = ({
           >
             <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
           </View>
-          <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>
-            {contentProps.title}
-          </Text>
+          <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{title}</Text>
         </View>
-        <Pressable onPress={() => onRightActionPress(contentProps.title)}>
+        <Pressable onPress={() => onRightActionPress(title)}>
           <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: 'red' }} />
         </Pressable>
       </Pressable>
-      <Spacer size={spacer} />
+      {/* <Spacer size={spacer} /> */}
     </ContentWrap>
   );
 };
@@ -123,6 +124,7 @@ const Content = ({
   id,
   // eslint-disable-next-line react/prop-types
   number,
+  showepg,
   title,
   epgtitle,
   time,
@@ -228,30 +230,29 @@ const Content = ({
           </Pressable>
         ) : null}
 
-        <Pressable
-          underlayColor={theme.iplayya.colors.black80}
-          onPress={() => onEpgButtonPressed(id)}
-          style={({ pressed }) => [
-            {
-              width: 44,
-              height: 44,
-              borderRadius: 22,
-              backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }
-          ]}
-        >
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 12,
-              color: theme.iplayya.colors.white50
-            }}
+        {showepg && (
+          <Pressable
+            underlayColor={theme.iplayya.colors.black80}
+            onPress={() => onEpgButtonPressed(id)}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }
+            ]}
           >
-            EPG
-          </Text>
-        </Pressable>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                fontSize: 12,
+                color: theme.iplayya.colors.white50
+              }}
+            >
+              EPG
+            </Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -259,6 +260,7 @@ const Content = ({
 
 Content.propTypes = {
   // number: PropTypes.string,
+  showepg: PropTypes.bool,
   time: PropTypes.string,
   time_to: PropTypes.string,
   chanel: PropTypes.string,
@@ -273,15 +275,18 @@ Content.propTypes = {
   onEpgButtonPressed: PropTypes.func
 };
 
+Content.defaultProps = {
+  showepg: true
+};
+
 ListItemChanel.propTypes = {
-  id: PropTypes.string,
-  title: PropTypes.string,
-  is_favorite: PropTypes.bool,
+  item: PropTypes.object,
   full: PropTypes.bool,
-  onSelect: PropTypes.func,
+  showepg: PropTypes.bool,
+  handleItemPress: PropTypes.func,
+  handleLongPress: PropTypes.func,
   onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
-  handleLongPress: PropTypes.func,
   activateCheckboxes: PropTypes.bool,
   onEpgButtonPressed: PropTypes.func
 };
