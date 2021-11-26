@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, Pressable, TextInput as FormInput } from 'react-native';
-import { TextInput, Text } from 'react-native-paper';
+import { TextInput, Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import MainButton from 'components/button/main-button.component';
 
@@ -19,7 +19,6 @@ import {
 } from 'modules/ducks/profile/profile.selectors';
 
 import { isValidPassword } from 'common/validate';
-import theme from 'common/theme';
 
 class ChangeEmailInput extends React.Component {
   constructor(props) {
@@ -105,9 +104,10 @@ class ChangeEmailInput extends React.Component {
 
   render() {
     const { showPassword, errors, password } = this.state;
+    const { theme } = this.props;
 
     return (
-      <View style={{ paddingHorizontal: 25, paddingBottom: 10 }}>
+      <View style={{ paddingHorizontal: theme.spacing(2), paddingBottom: theme.spacing(1) }}>
         <View style={{ position: 'relative' }}>
           <TextInput
             render={(props) => (
@@ -132,7 +132,7 @@ class ChangeEmailInput extends React.Component {
             placeholder="Enter Password"
             placeholderTextColor="#000000"
             style={{
-              marginBottom: 10,
+              marginBottom: theme.spacing(1),
               backgroundColor: 'rgba(13, 17, 29, 0.1)',
               borderRadius: 8
             }}
@@ -165,7 +165,7 @@ class ChangeEmailInput extends React.Component {
             />
           </Pressable>
         </View>
-        <View style={{ paddingBottom: 10, justifyContent: 'center' }}>
+        <View style={{ paddingBottom: theme.spacing(1), justifyContent: 'center' }}>
           {errors.password && <Text style={{ color: '#000000' }}>{errors.password}</Text>}
           {this.props.error && <Text style={{ color: '#000000' }}>Your password is Incorrect</Text>}
         </View>
@@ -192,6 +192,6 @@ const mapStateToProps = createStructuredSelector({
   authenticatedEmailChange: selectAuthenticatedEmailChange
 });
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(ChangeEmailInput);

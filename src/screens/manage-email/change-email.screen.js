@@ -9,7 +9,7 @@ import MainButton from 'components/button/main-button.component';
 import TextInput from 'components/text-input/text-input.component';
 // import PasswordInput from 'components/password-input/password-input.component';
 import { View, Modal, Dimensions, KeyboardAvoidingView } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { Text, TouchableRipple, withTheme } from 'react-native-paper';
 
 import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
@@ -28,7 +28,7 @@ import {
 // import Icon from 'components/icon/icon.component';
 
 import { isValidEmail } from 'common/validate';
-import ChangeEmailInput from './change-email-input';
+import ChangeEmailInput from './change-email-input.component';
 
 class ChangeEmailScreen extends React.Component {
   constructor(props) {
@@ -120,6 +120,7 @@ class ChangeEmailScreen extends React.Component {
   render() {
     const { email } = this.props.profile;
     const { errors, modalVisible, ...form } = this.state;
+    const { theme } = this.props;
 
     // let stateError = {};
     // errors.map(({ key, val }) => {
@@ -127,7 +128,7 @@ class ChangeEmailScreen extends React.Component {
     // });
 
     return (
-      <ContentWrap style={{ paddingTop: 30 }}>
+      <ContentWrap style={{ paddingTop: theme.spacing(3) }}>
         <Modal
           animationType="slide"
           visible={modalVisible}
@@ -152,10 +153,12 @@ class ChangeEmailScreen extends React.Component {
                   // borderRadius: 30,
                   borderTopLeftRadius: 30,
                   borderTopRightRadius: 30,
-                  paddingVertical: 15
+                  paddingVertical: theme.spacing(2)
                 }}
               >
-                <View style={{ paddingHorizontal: 25, paddingVertical: 10 }}>
+                <View
+                  style={{ paddingHorizontal: theme.spacing(2), paddingVertical: theme.spacing(1) }}
+                >
                   <Text
                     style={{
                       fontSize: 14,
@@ -167,7 +170,7 @@ class ChangeEmailScreen extends React.Component {
                     Enter your password below to continue changing your email.
                   </Text>
                 </View>
-                <View style={{ paddingBottom: 25 }}>
+                <View style={{ paddingBottom: theme.spacing(2) }}>
                   <ChangeEmailInput
                     newEmail={form.email}
                     navigation={this.props.navigation}
@@ -175,7 +178,7 @@ class ChangeEmailScreen extends React.Component {
                   />
                 </View>
                 <TouchableRipple
-                  style={{ paddingVertical: 10 }}
+                  style={{ paddingVertical: theme.spacing(1) }}
                   rippleColor="rgba(0,0,0,0.05)"
                   onPress={() => this.handleClose()}
                 >
@@ -197,7 +200,7 @@ class ChangeEmailScreen extends React.Component {
 
         <Text
           style={{
-            marginBottom: 20,
+            marginBottom: theme.spacing(3),
             textAlign: 'left',
             fontSize: 16
           }}
@@ -218,7 +221,7 @@ class ChangeEmailScreen extends React.Component {
             error={errors.email || this.props.error}
           />
 
-          <View style={{ paddingBottom: 20, justifyContent: 'center' }}>
+          <View style={{ paddingBottom: theme.spacing(2), justifyContent: 'center' }}>
             {errors.email && <Text>{errors.email}</Text>}
             {/* {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null} */}
             {this.props.error && <Text>The email has already been taken.</Text>}
@@ -249,6 +252,6 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader, withTheme);
 
 export default enhance(Container);
