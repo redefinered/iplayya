@@ -61,7 +61,7 @@ const PhoneNumberPicker = ({ setPhone, placeholder, style, setValidPhone }) => {
         value={value}
         onChange={setValue}
         autoFormat={true}
-        initialValue={placeholder}
+        initialValue={placeholder == null ? '+44' : placeholder}
         textComponent={TextInput}
         textProps={{
           onFocus: () => setFocused(true),

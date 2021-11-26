@@ -75,9 +75,15 @@ const DatePicker = ({ setBirthdate, style, placeholder }) => {
       onPress={() => showDatePicker()}
     >
       <View style={isDatePickerVisible ? styles.textHolderFocus : styles.textHolderBlur}>
-        <Text style={chosenDate === placeholder ? styles.textBlur : styles.textFocus}>
-          {chosenDate}
-        </Text>
+        {chosenDate == null ? (
+          <Text style={chosenDate === placeholder ? styles.textBlur : styles.textFocus}>
+            mm/dd/yy
+          </Text>
+        ) : (
+          <Text style={chosenDate === placeholder ? styles.textBlur : styles.textFocus}>
+            {chosenDate}
+          </Text>
+        )}
         <View style={styles.dateIcon}>
           <Icon name="birthday" size={theme.iconSize(3)} />
         </View>

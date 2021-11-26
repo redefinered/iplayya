@@ -34,7 +34,8 @@ const ProgramGuide = ({
   onNotifAction,
   showSnackBar,
   contentHeight,
-  screen
+  screen,
+  parentType
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
@@ -70,7 +71,12 @@ const ProgramGuide = ({
 
   /// CREATE SCHEDULED NOTIFICATIONS
   const handleCreateScheduledNotif = ({ id, ...rest }) => {
-    notifService.scheduleNotif({ id, channelId, channelName, program: { id, ...rest } });
+    notifService.scheduleNotif({
+      id,
+      channelId,
+      channelName,
+      program: { id, parentType, ...rest }
+    });
 
     notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
@@ -139,6 +145,7 @@ const ProgramGuide = ({
         createScheduledNotif={handleCreateScheduledNotif}
         cancelNotification={handleCancelScheduledNotif}
         isCurrentlyPlaying={isCurrentlyPlaying}
+        parentType={parentType}
         {...item}
       />
     );
@@ -187,6 +194,7 @@ ProgramGuide.propTypes = {
   screen: PropTypes.bool,
   dates: PropTypes.array,
   channelId: PropTypes.string,
+  parentType: PropTypes.string,
   channelName: PropTypes.string,
   getProgramsByChannelAction: PropTypes.func,
   programs: PropTypes.array,

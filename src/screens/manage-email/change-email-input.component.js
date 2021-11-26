@@ -2,12 +2,9 @@
 
 import React from 'react';
 import { View, Pressable, TextInput as FormInput } from 'react-native';
-import { TextInput, Text } from 'react-native-paper';
+import { TextInput, Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import MainButton from 'components/button/main-button.component';
-
-// import withLoader from 'components/with-loader.component';
-import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -22,7 +19,6 @@ import {
 } from 'modules/ducks/profile/profile.selectors';
 
 import { isValidPassword } from 'common/validate';
-import theme from 'common/theme';
 
 class ChangeEmailInput extends React.Component {
   constructor(props) {
@@ -49,8 +45,6 @@ class ChangeEmailInput extends React.Component {
   };
 
   setError = (field, val) => {
-    // const index = stateError.findIndex(({ key }) => key === field);
-    // stateError[index].val = val;
     this.setState({ errors: Object.assign(this.state.errors, { [field]: val }) });
   };
 
@@ -81,7 +75,6 @@ class ChangeEmailInput extends React.Component {
       this.setState({ valid: true });
     }
 
-    // console.log('no error go next');
     authenticateEmailChangeAction({ username: email, password });
   };
 
@@ -111,15 +104,10 @@ class ChangeEmailInput extends React.Component {
 
   render() {
     const { showPassword, errors, password } = this.state;
-
-    // let stateError = {};
-
-    // errors.map(({ key, val }) => {
-    //   Object.assign(stateError, { [key]: val });
-    // });
+    const { theme } = this.props;
 
     return (
-      <View style={{ paddingHorizontal: 25, paddingBottom: 10 }}>
+      <View style={{ paddingHorizontal: 25, paddingBottom: theme.spacing(2) }}>
         <View style={{ position: 'relative' }}>
           <TextInput
             render={(props) => (
@@ -144,7 +132,7 @@ class ChangeEmailInput extends React.Component {
             placeholder="Enter Password"
             placeholderTextColor="#000000"
             style={{
-              marginBottom: 10,
+              marginBottom: theme.spacing(2),
               backgroundColor: 'rgba(13, 17, 29, 0.1)',
               borderRadius: 8
             }}
@@ -154,10 +142,10 @@ class ChangeEmailInput extends React.Component {
                 error: '#E34398',
                 placeholder: 'transparent'
               },
-              fonts: { regular: { fontFamily: 'sans-serif' } },
+              fonts: { regular: { fontFamily: 'NotoSans' } },
               roundness: 10
             }}
-            ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'sans-serif' } })}
+            ref={(ref) => ref && ref.setNativeProps({ style: { fontFamily: 'NotoSans' } })}
           />
           <Pressable
             onPress={() => this.setState({ showPassword: !showPassword })}
@@ -177,11 +165,8 @@ class ChangeEmailInput extends React.Component {
             />
           </Pressable>
         </View>
-        <View style={{ paddingBottom: 10, justifyContent: 'center' }}>
+        <View style={{ paddingBottom: theme.spacing(2), justifyContent: 'center' }}>
           {errors.password && <Text style={{ color: '#000000' }}>{errors.password}</Text>}
-          {/* {!valid ? (
-            <Text style={{ color: '#000000' }}>There are errors in your entries. Please fix!</Text>
-          ) : null} */}
           {this.props.error && <Text style={{ color: '#000000' }}>Your password is Incorrect</Text>}
         </View>
         <View>
@@ -207,6 +192,6 @@ const mapStateToProps = createStructuredSelector({
   authenticatedEmailChange: selectAuthenticatedEmailChange
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(ChangeEmailInput);
