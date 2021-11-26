@@ -153,12 +153,10 @@ class ChangeEmailScreen extends React.Component {
                   // borderRadius: 30,
                   borderTopLeftRadius: 30,
                   borderTopRightRadius: 30,
-                  paddingVertical: theme.spacing(2)
+                  paddingVertical: theme.spacing(3)
                 }}
               >
-                <View
-                  style={{ paddingHorizontal: theme.spacing(2), paddingVertical: theme.spacing(1) }}
-                >
+                <View style={{ paddingHorizontal: 25, paddingVertical: theme.spacing(3) }}>
                   <Text
                     style={{
                       fontSize: 14,
@@ -170,7 +168,7 @@ class ChangeEmailScreen extends React.Component {
                     Enter your password below to continue changing your email.
                   </Text>
                 </View>
-                <View style={{ paddingBottom: theme.spacing(2) }}>
+                <View style={{ paddingBottom: theme.spacing(3) }}>
                   <ChangeEmailInput
                     newEmail={form.email}
                     navigation={this.props.navigation}
@@ -178,7 +176,7 @@ class ChangeEmailScreen extends React.Component {
                   />
                 </View>
                 <TouchableRipple
-                  style={{ paddingVertical: theme.spacing(1) }}
+                  style={{ paddingVertical: theme.spacing(3) }}
                   rippleColor="rgba(0,0,0,0.05)"
                   onPress={() => this.handleClose()}
                 >
@@ -221,7 +219,7 @@ class ChangeEmailScreen extends React.Component {
             error={errors.email || this.props.error}
           />
 
-          <View style={{ paddingBottom: theme.spacing(2), justifyContent: 'center' }}>
+          <View style={{ paddingBottom: theme.spacing(3), justifyContent: 'center' }}>
             {errors.email && <Text>{errors.email}</Text>}
             {/* {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null} */}
             {this.props.error && <Text>The email has already been taken.</Text>}
