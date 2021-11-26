@@ -110,11 +110,6 @@ const NowPlaying = ({
     setBuffering(false);
   };
 
-  // const handlePress = () => {
-  //   const { number } = nowPlaying;
-  //   navigation.navigate('IradioScreen', { number });
-  // };
-
   const handlePress = () => {
     navigation.navigate('IradioPlayerScreen', { radio: nowPlaying.item });
   };
