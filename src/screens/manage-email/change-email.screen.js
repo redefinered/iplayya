@@ -8,8 +8,8 @@ import ScreenContainer from 'components/screen-container.component';
 import MainButton from 'components/button/main-button.component';
 import TextInput from 'components/text-input/text-input.component';
 // import PasswordInput from 'components/password-input/password-input.component';
-import { View, Modal, Dimensions } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
+import { View, Modal, Dimensions, KeyboardAvoidingView } from 'react-native';
+import { Text, TouchableRipple, withTheme } from 'react-native-paper';
 
 import withLoader from 'components/with-loader.component';
 import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
@@ -28,7 +28,7 @@ import {
 // import Icon from 'components/icon/icon.component';
 
 import { isValidEmail } from 'common/validate';
-import ChangeEmailInput from './change-email-input';
+import ChangeEmailInput from './change-email-input.component';
 
 class ChangeEmailScreen extends React.Component {
   constructor(props) {
@@ -120,6 +120,7 @@ class ChangeEmailScreen extends React.Component {
   render() {
     const { email } = this.props.profile;
     const { errors, modalVisible, ...form } = this.state;
+    const { theme } = this.props;
 
     // let stateError = {};
     // errors.map(({ key, val }) => {
@@ -127,14 +128,15 @@ class ChangeEmailScreen extends React.Component {
     // });
 
     return (
-      <ContentWrap style={{ paddingTop: 30 }}>
+      <ContentWrap style={{ paddingTop: theme.spacing(5) }}>
         <Modal
           animationType="slide"
           visible={modalVisible}
           transparent={true}
           statusBarTranslucent={true}
         >
-          <View
+          <KeyboardAvoidingView
+            behavior={'padding'}
             style={{
               flex: 1,
               justifyContent: 'flex-end',
@@ -142,55 +144,61 @@ class ChangeEmailScreen extends React.Component {
               backgroundColor: 'rgba(0,0,0,0.5)'
             }}
           >
-            <View
-              style={{
-                backgroundColor: '#ffffff',
-                width: Dimensions.get('window').width - 20,
-                height: Dimensions.get('window').height - 0.25 * Dimensions.get('window').height,
-                borderRadius: 30
-              }}
-            >
-              <View style={{ paddingHorizontal: 25, paddingVertical: 10 }}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    textAlign: 'left',
-                    color: 'rgba(0, 0, 0, 0.7)',
-                    fontWeight: '700'
-                  }}
-                >
-                  Enter your password below to continue changing your email.
-                </Text>
-              </View>
-              <View style={{ height: 150 }}>
-                <ChangeEmailInput
-                  newEmail={form.email}
-                  navigation={this.props.navigation}
-                  handleModalClose={this.handleModalClose}
-                />
-              </View>
-              <TouchableRipple
-                style={{ paddingVertical: 10 }}
-                rippleColor="rgba(0,0,0,0.05)"
-                onPress={() => this.handleClose()}
+            <View>
+              <View
+                style={{
+                  backgroundColor: '#ffffff',
+                  width: Dimensions.get('window').width - 20,
+                  // height: Dimensions.get('window').height - 0.25 * Dimensions.get('window').height,
+                  // borderRadius: 30,
+                  borderTopLeftRadius: 30,
+                  borderTopRightRadius: 30,
+                  paddingVertical: theme.spacing(3)
+                }}
               >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    textAlign: 'center',
-                    color: '#000000',
-                    fontWeight: 'bold'
-                  }}
+                <View style={{ paddingHorizontal: 25, paddingVertical: theme.spacing(3) }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      textAlign: 'left',
+                      color: 'rgba(0, 0, 0, 0.7)',
+                      fontWeight: '400'
+                    }}
+                  >
+                    Enter your password below to continue changing your email.
+                  </Text>
+                </View>
+                <View style={{ paddingBottom: theme.spacing(3) }}>
+                  <ChangeEmailInput
+                    newEmail={form.email}
+                    navigation={this.props.navigation}
+                    handleModalClose={this.handleModalClose}
+                  />
+                </View>
+                <TouchableRipple
+                  style={{ paddingVertical: theme.spacing(3) }}
+                  rippleColor="rgba(0,0,0,0.05)"
+                  onPress={() => this.handleClose()}
                 >
-                  Cancel
-                </Text>
-              </TouchableRipple>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      textAlign: 'center',
+                      color: '#000000',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    Cancel
+                  </Text>
+                </TouchableRipple>
+              </View>
             </View>
-          </View>
+          </KeyboardAvoidingView>
         </Modal>
+
         <Text
           style={{
-            marginBottom: 20,
+            marginBottom: theme.spacing(3),
             textAlign: 'left',
             fontSize: 16
           }}
@@ -211,7 +219,7 @@ class ChangeEmailScreen extends React.Component {
             error={errors.email || this.props.error}
           />
 
-          <View style={{ paddingBottom: 20, justifyContent: 'center' }}>
+          <View style={{ paddingBottom: theme.spacing(3), justifyContent: 'center' }}>
             {errors.email && <Text>{errors.email}</Text>}
             {/* {!valid ? <Text>There are errors in your entries. Please fix!</Text> : null} */}
             {this.props.error && <Text>The email has already been taken.</Text>}
@@ -242,6 +250,6 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader, withTheme);
 
 export default enhance(Container);
