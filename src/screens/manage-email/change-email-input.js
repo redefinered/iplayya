@@ -6,9 +6,6 @@ import { TextInput, Text } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import MainButton from 'components/button/main-button.component';
 
-// import withLoader from 'components/with-loader.component';
-import withFormWrap from 'components/with-form-wrap/with-form-wrap.component';
-
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/profile/profile.actions';
@@ -49,8 +46,6 @@ class ChangeEmailInput extends React.Component {
   };
 
   setError = (field, val) => {
-    // const index = stateError.findIndex(({ key }) => key === field);
-    // stateError[index].val = val;
     this.setState({ errors: Object.assign(this.state.errors, { [field]: val }) });
   };
 
@@ -81,7 +76,6 @@ class ChangeEmailInput extends React.Component {
       this.setState({ valid: true });
     }
 
-    // console.log('no error go next');
     authenticateEmailChangeAction({ username: email, password });
   };
 
@@ -111,12 +105,6 @@ class ChangeEmailInput extends React.Component {
 
   render() {
     const { showPassword, errors, password } = this.state;
-
-    // let stateError = {};
-
-    // errors.map(({ key, val }) => {
-    //   Object.assign(stateError, { [key]: val });
-    // });
 
     return (
       <View style={{ paddingHorizontal: 25, paddingBottom: 10 }}>
@@ -179,9 +167,6 @@ class ChangeEmailInput extends React.Component {
         </View>
         <View style={{ paddingBottom: 10, justifyContent: 'center' }}>
           {errors.password && <Text style={{ color: '#000000' }}>{errors.password}</Text>}
-          {/* {!valid ? (
-            <Text style={{ color: '#000000' }}>There are errors in your entries. Please fix!</Text>
-          ) : null} */}
           {this.props.error && <Text style={{ color: '#000000' }}>Your password is Incorrect</Text>}
         </View>
         <View>
@@ -207,6 +192,6 @@ const mapStateToProps = createStructuredSelector({
   authenticatedEmailChange: selectAuthenticatedEmailChange
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(ChangeEmailInput);
