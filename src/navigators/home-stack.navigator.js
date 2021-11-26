@@ -31,6 +31,7 @@ import ImovieDownloadButton from 'screens/imovie-downloads/imovie-download-butto
 
 import IradioScreen from 'screens/iradio/iradio.screen';
 import IradioSearchScreen from 'screens/iradio/iradio-search.screen';
+import IradioPlayerScreen from 'screens/iradio/iradio-player.screen';
 
 import ImusicScreen from 'screens/imusic/imusic.screen';
 import ImusicSearchScreen from 'screens/imusic/imusic-search.screen';
@@ -57,6 +58,7 @@ import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions'
 import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
 import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
 import { Creators as ImusicFavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
+import { Creators as IradioFavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
@@ -451,6 +453,38 @@ const HomeStack = ({
           })}
         />
 
+        <Stack.Screen
+          name="IradioPlayerScreen"
+          component={IradioPlayerScreen}
+          // eslint-disable-next-line no-unused-vars
+          options={(props) => {
+            const {
+              route: {
+                params: { radio }
+              }
+            } = props;
+
+            return {
+              title: null,
+              headerBackImage: () => <HeaderBackImage vertical />,
+              headerRight: () => (
+                <View style={{ flexDirection: 'row' }}>
+                  <AddToFavoritesButton
+                    sub={radio}
+                    pressAction={rest.addIradioStationToFavoritesAction}
+                    active={typeof radio === 'undefined' ? false : radio.is_favorite}
+                  />
+                </View>
+              ),
+              ...TransitionPresets.ModalSlideFromBottomIOS
+            };
+          }}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
+            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
+        />
+
         {/* iMusic */}
         <Stack.Screen
           name="ImusicScreen"
@@ -838,7 +872,8 @@ const actions = {
   addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites,
   addTrackToFavoritesAction: ImusicFavoritesCreators.addTrackToFavorites,
   addAlbumToFavoritesAction: ImusicFavoritesCreators.addAlbumToFavorites,
-  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites
+  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites,
+  addIradioStationToFavoritesAction: IradioFavoritesCreators.addToFavorites
 };
 
 const mapStateToProps = createStructuredSelector({

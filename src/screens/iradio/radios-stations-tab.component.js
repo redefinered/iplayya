@@ -158,7 +158,7 @@ const RadioStationsTab = ({
       />
       <SnackBar
         visible={showSnackBar}
-        message="Channel is added to your favorites list"
+        message="Station is added to your favorites list"
         iconName="heart-solid"
         iconColor="#FF5050"
       />

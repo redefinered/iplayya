@@ -19,7 +19,7 @@ import clone from 'lodash/clone';
 
 const NowPlaying = ({
   // eslint-disable-next-line react/prop-types
-  // navigation,
+  navigation,
   nowPlaying,
   progress,
   // setProgressAction,
@@ -115,6 +115,10 @@ const NowPlaying = ({
   //   navigation.navigate('IradioScreen', { number });
   // };
 
+  const handlePress = () => {
+    navigation.navigate('IradioPlayerScreen', { radio: nowPlaying.item });
+  };
+
   const renderContent = (nowPlaying) => {
     const { title } = nowPlaying;
 
@@ -165,63 +169,69 @@ const NowPlaying = ({
           ...visibilityStyles()
         }}
       >
-        {renderPlayer()}
+        <TouchableRipple onPress={() => handlePress()}>
+          <React.Fragment>
+            {renderPlayer()}
 
-        <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
-          <View
-            style={{
-              width: (progress * Dimensions.get('window').width) / 100,
-              height: 1,
-              backgroundColor: theme.iplayya.colors.white10
-            }}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingVertical: theme.spacing(2),
-            paddingHorizontal: theme.spacing(2)
-          }}
-        >
-          <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
-            {renderContent(nowPlaying)}
-          </View>
-          <View
-            style={{
-              flex: 4,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            {paused ? (
-              <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-            ) : (
-              <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-            )}
-
-            <TouchableRipple
-              style={{
-                borderRadius: theme.iconSize(4),
-                height: theme.iconSize(4),
-                width: theme.iconSize(4),
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginHorizontal: 10
-              }}
-              borderless={true}
-              rippleColor="rgba(255,255,255,0.25)"
-              onPress={() => setPausedAction(!paused)}
+            <View
+              style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}
             >
-              <Icon
-                name={paused ? 'circular-play' : 'circular-pause'}
-                size={theme.iconSize(4)}
-                // style={{ marginHorizontal: 10 }}
+              <View
+                style={{
+                  width: (progress * Dimensions.get('window').width) / 100,
+                  height: 1,
+                  backgroundColor: theme.iplayya.colors.white10
+                }}
               />
-            </TouchableRipple>
-          </View>
-        </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: theme.spacing(2),
+                paddingHorizontal: theme.spacing(2)
+              }}
+            >
+              <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
+                {renderContent(nowPlaying)}
+              </View>
+              <View
+                style={{
+                  flex: 4,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {paused ? (
+                  <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+                ) : (
+                  <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+                )}
+
+                <TouchableRipple
+                  style={{
+                    borderRadius: theme.iconSize(4),
+                    height: theme.iconSize(4),
+                    width: theme.iconSize(4),
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginHorizontal: 10
+                  }}
+                  borderless={true}
+                  rippleColor="rgba(255,255,255,0.25)"
+                  onPress={() => setPausedAction(!paused)}
+                >
+                  <Icon
+                    name={paused ? 'circular-play' : 'circular-pause'}
+                    size={theme.iconSize(4)}
+                    // style={{ marginHorizontal: 10 }}
+                  />
+                </TouchableRipple>
+              </View>
+            </View>
+          </React.Fragment>
+        </TouchableRipple>
         {/* {hasNotch && (
           <View style={{ height: 20, backgroundColor: '#202530' }}>
             <View style={{ height: 1, backgroundColor: theme.iplayya.colors.white10 }} />

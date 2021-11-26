@@ -5,7 +5,7 @@ import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
 import Spacer from 'components/spacer.component';
 
-const IradioBottomTabs = () => {
+const IradioBottomTabs = ({ nowPlaying }) => {
   const navigation = useNavigation();
   const [bottomPadding, setBottomPadding] = React.useState(null);
 
@@ -31,8 +31,8 @@ const IradioBottomTabs = () => {
           flex: 1,
           flexDirection: 'row',
           backgroundColor: '#202530',
-          borderTopRightRadius: 24,
-          borderTopLeftRadius: 24,
+          borderTopRightRadius: nowPlaying ? 0 : 24,
+          borderTopLeftRadius: nowPlaying ? 0 : 24,
           paddingHorizontal: 4,
           position: 'absolute',
           width: '100%',
@@ -46,7 +46,8 @@ const IradioBottomTabs = () => {
 };
 
 IradioBottomTabs.propTypes = {
-  handleBottomTabsLayoutEvent: PropTypes.func
+  handleBottomTabsLayoutEvent: PropTypes.func,
+  nowPlaying: PropTypes.object
 };
 
 export default React.memo(IradioBottomTabs);

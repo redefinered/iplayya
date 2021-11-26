@@ -73,8 +73,8 @@ const IradioScreen = ({
     // const { source, title, artist, thumbnail } = item;
     const { cmd, name, number } = item;
 
-    setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
-    setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
+    setNowPlaying({ source: cmd, title: name, number: parseInt(number), item });
+    setNowPlayingAction({ number: parseInt(number), url: cmd, title: name, item });
   };
 
   const renderScene = ({ route }) => {
@@ -106,7 +106,7 @@ const IradioScreen = ({
 
       <View>{nowPlaying && <NowPlaying navigation={navigation} />}</View>
 
-      <IradioBottomTabs />
+      <IradioBottomTabs nowPlaying={nowPlaying} />
     </View>
   );
 };
