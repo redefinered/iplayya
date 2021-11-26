@@ -107,7 +107,7 @@ class ChangeEmailInput extends React.Component {
     const { theme } = this.props;
 
     return (
-      <View style={{ paddingHorizontal: theme.spacing(2), paddingBottom: theme.spacing(1) }}>
+      <View style={{ paddingHorizontal: 25, paddingBottom: theme.spacing(1) }}>
         <View style={{ position: 'relative' }}>
           <TextInput
             render={(props) => (
