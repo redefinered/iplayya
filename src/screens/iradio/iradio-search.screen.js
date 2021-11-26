@@ -51,7 +51,6 @@ const IradioSearchScreen = ({
   setBottomTabsVisibleAction
 }) => {
   const [term, setTerm] = React.useState('');
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
 
   /// clear previous search result
   React.useEffect(() => {
@@ -117,10 +116,6 @@ const IradioSearchScreen = ({
       if (term.length <= 20) return;
       search(term, true);
     }
-  };
-
-  const handleShowKeyboard = () => {
-    setShowKeyboard(true);
   };
 
   const renderListLoader = () => {
@@ -260,8 +255,6 @@ const IradioSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
-          howSoftInputOnFocus={showKeyboard}
-          focusAction={handleShowKeyboard}
           onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}
