@@ -7,7 +7,8 @@ import {
   View,
   Keyboard,
   Pressable,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView
 } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
@@ -53,34 +54,7 @@ const ItvSearchScreen = ({
   const [term, setTerm] = React.useState('');
   const [showKeyboard, setShowKeyboard] = React.useState(false);
   const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
-  const [isSearching, setIsSearching] = React.useState(false);
-  // const [data, setData] = React.useState([]);
-
-  // React.useEffect(() => {
-  //   if (isSearching) {
-  //     if (recentSearch.length) {
-  //       const data = [
-  //         {
-  //           title: 'Recently Searched',
-  //         }
-  //       ]
-  //     }
-
-  //   }
-
-  //   if (results.length) {
-  //     const data = [
-  //       {
-  //         title: 'Search Results',
-  //         data: results
-  //       }
-  //     ]
-
-  //     return setData(data);
-  //   }
-
-  //   if ()
-  // }, [results, recentSearch, genres, isSearching]);
+  const [resultPadding, setResultPadding] = React.useState(0);
 
   /// clear previous search result
   React.useEffect(() => {
@@ -154,47 +128,50 @@ const ItvSearchScreen = ({
   const renderResult = () => {
     if (results.length)
       return (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            <ContentWrap>
-              <Text
-                style={{
-                  ...createFontFormat(14, 19),
-                  fontWeight: '700',
-                  color: theme.iplayya.colors.white50,
-                  paddingVertical: theme.spacing(2)
-                }}
-              >
-                Search Results
-              </Text>
-            </ContentWrap>
-          }
-          ListFooterComponent={renderListLoader()}
-          onScroll={handleScrollAction}
-          data={results}
-          keyExtractor={(item) => item.id}
-          getItemLayout={(data, index) => {
-            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-          }}
-          renderItem={({ item }) => (
-            <ListItemChanel
-              full
-              showepg={false}
-              item={item}
-              isCatchUpAvailable={false}
-              thumbnail={channelplaceholder}
-              handleItemPress={handleItemPress}
-            />
-          )}
-          // onEndReached={() => handleEndReached()}
-        />
+        <React.Fragment>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <ContentWrap>
+                <Text
+                  style={{
+                    ...createFontFormat(14, 19),
+                    fontWeight: '700',
+                    color: theme.iplayya.colors.white50,
+                    paddingVertical: theme.spacing(2)
+                  }}
+                >
+                  Search Results
+                </Text>
+              </ContentWrap>
+            }
+            ListFooterComponent={renderListLoader()}
+            onScroll={handleScrollAction}
+            data={results}
+            keyExtractor={(item) => item.id}
+            getItemLayout={(data, index) => {
+              return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+            }}
+            renderItem={({ item }) => (
+              <ListItemChanel
+                full
+                showepg={false}
+                item={item}
+                isCatchUpAvailable={false}
+                thumbnail={channelplaceholder}
+                handleItemPress={handleItemPress}
+              />
+            )}
+            // onEndReached={() => handleEndReached()}
+          />
+          <View style={{ height: resultPadding + theme.spacing(5) }} />
+        </React.Fragment>
       );
   };
 
   const renderRecentSearch = () => {
     /// do not show if searchbar is not in use
-    if (!isSearching) return;
+    // if (!isSearching) return;
 
     // do not show if there is results
     if (results.length) return;
@@ -243,7 +220,7 @@ const ItvSearchScreen = ({
 
       if (genres.length)
         return (
-          <View>
+          <React.Fragment>
             <ContentWrap>
               <Text
                 style={{
@@ -256,21 +233,6 @@ const ItvSearchScreen = ({
                 Suggested Search
               </Text>
             </ContentWrap>
-            {/* <FlatList
-              data={genres}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item: { id, title } }) => (
-                <ContentWrap>
-                  <TouchableRipple onPress={() => handleGenrePress(id)}>
-                    <Text
-                      style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
-                    >
-                      {title}
-                    </Text>
-                  </TouchableRipple>
-                </ContentWrap>
-              )}
-            /> */}
             <View>
               {genres.map(({ id, title }) => (
                 <ContentWrap key={id}>
@@ -284,14 +246,13 @@ const ItvSearchScreen = ({
                 </ContentWrap>
               ))}
             </View>
-          </View>
+            <View style={{ height: resultPadding + theme.spacing(5) }} />
+          </React.Fragment>
         );
     }
   };
 
   const handleSeachFocus = () => {
-    setIsSearching(true);
-
     /// resets search result paginator so the result is page 1
     resetSearchResultsPaginatorAction();
 
@@ -301,12 +262,15 @@ const ItvSearchScreen = ({
     setBottomTabsVisibleAction({ hideTabs: true });
   };
 
+  const handleSearchbarLayout = ({ nativeEvent: { layout } }) => {
+    setResultPadding(layout.height);
+  };
+
   return (
-    <View>
-      <ContentWrap>
+    <KeyboardAvoidingView behavior="padding">
+      <ContentWrap onLayout={handleSearchbarLayout}>
         <TextInput
           onFocus={handleSeachFocus}
-          onBlur={() => setIsSearching(false)}
           multiline={false}
           name="search"
           returnKeyType="search"
@@ -359,7 +323,7 @@ const ItvSearchScreen = ({
         renderItem={({ item }) => <Item title={item} />}
         renderSectionHeader={({ section: { title } }) => <Text style={styles.header}>{title}</Text>}
       /> */}
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
