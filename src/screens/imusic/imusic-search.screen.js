@@ -62,7 +62,6 @@ const ImusicSearchScreen = ({
   setBottomTabsVisibleAction
 }) => {
   const [term, setTerm] = React.useState('');
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
 
   const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
@@ -157,10 +156,6 @@ const ImusicSearchScreen = ({
     Keyboard.dismiss();
     // setOnEndReachedCalledDuringMomentum(false);
     setBottomTabsVisibleAction({ hideTabs: true });
-  };
-
-  const handleShowKeyboard = () => {
-    setShowKeyboard(true);
   };
 
   const renderThumbnail = ({ cover, name, performer }) => {
@@ -259,7 +254,7 @@ const ImusicSearchScreen = ({
   const renderListLoader = () => {
     if (isFetching)
       return (
-        <View style={{ paddingTop: 0, paddingBottom: 30 }}>
+        <View style={{ paddingTop: 0, paddingBottom: theme.spacing(5) }}>
           <ActivityIndicator size="small" />
         </View>
       );
@@ -425,8 +420,6 @@ const ImusicSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
-          showSoftInputOnFocus={showKeyboard}
-          focusAction={handleShowKeyboard}
           onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}

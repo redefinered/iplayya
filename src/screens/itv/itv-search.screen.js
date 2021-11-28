@@ -52,7 +52,6 @@ const ItvSearchScreen = ({
   resetSearchResultsPaginatorAction
 }) => {
   const [term, setTerm] = React.useState('');
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
   const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
   const [resultPadding, setResultPadding] = React.useState(0);
 
@@ -110,10 +109,6 @@ const ItvSearchScreen = ({
     Keyboard.dismiss();
     // setOnEndReachedCalledDuringMomentum(false);
     setBottomTabsVisibleAction({ hideTabs: true });
-  };
-
-  const handleShowKeyboard = () => {
-    setShowKeyboard(true);
   };
 
   const renderListLoader = () => {
@@ -275,8 +270,6 @@ const ItvSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
-          showSoftInputOnFocus={showKeyboard}
-          focusAction={handleShowKeyboard}
           handleChangeText={(term) => handleChange(term)}
           value={term}
           autoCapitalize="none"
