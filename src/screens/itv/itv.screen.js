@@ -27,11 +27,12 @@ import {
   selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
 import uniq from 'lodash/uniq';
+import orderBy from 'lodash/uniq';
 import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
-const ITEM_HEIGHT = 96;
+const ITEM_HEIGHT = 84;
 
 const ItvScreen = ({
   error,
@@ -59,6 +60,7 @@ const ItvScreen = ({
   const [subscribed, setSubscribed] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
+  const [pillsInitialIndex, setPillsInitialIndex] = React.useState(0);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
@@ -76,8 +78,12 @@ const ItvScreen = ({
     if (typeof params !== 'undefined') {
       const { openItvGuide, genreId } = params;
 
+      // set category pill initial index
+      const i = genresData.findIndex(({ id }) => id === genreId);
+      if (typeof i !== 'undefined') setPillsInitialIndex(i);
+
+      // set category for fetching
       setSelectedCategory(genreId);
-      getChannelsByCategoriesAction({ categories: [parseInt(genreId)] });
 
       if (!openItvGuide) return;
 
@@ -89,10 +95,10 @@ const ItvScreen = ({
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       if (genres.length) {
-        let data = genres.map(({ id, title }) => ({ id, title }));
-        data.unshift({ id: 'all', title: 'All channels' });
+        let data = genres.map(({ id, number, title }) => ({ id, number, title }));
+        data.unshift({ id: 'all', number: 0, title: 'All channels' });
 
-        setGenresData(data);
+        setGenresData(orderBy(data, 'number', 'asc'));
       }
     });
   }, [genres]);
@@ -141,7 +147,8 @@ const ItvScreen = ({
           thumbnail: channelplaceholder,
           ...rest
         }));
-        setChannelsData(data);
+
+        setChannelsData(data.filter(({ c }) => c.toString() === selectedCategory));
       } else {
         setChannelsData([]);
       }
@@ -202,14 +209,18 @@ const ItvScreen = ({
   };
 
   React.useEffect(() => {
+    console.log({ selectedCategory });
+    // when changing category, reset the pagination info
+    resetPaginatorAction();
+
+    // console.log({ selectedCategory });
     InteractionManager.runAfterInteractions(() => {
-      // if (paginator.pageNumber > 1) return;
       if (selectedCategory === 'all') {
         getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
       } else {
         getChannelsByCategoriesAction({
           categories: [parseInt(selectedCategory)],
-          ...paginator
+          ...Object.assign(paginator, { pageNumber: 1 })
         });
       }
     });
@@ -299,7 +310,7 @@ const ItvScreen = ({
 
     return (
       <FlatList
-        ListHeaderComponent={renderLisHeader()}
+        ListHeaderComponent={renderLisHeader}
         data={channelsData}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
@@ -323,12 +334,12 @@ const ItvScreen = ({
       />
     );
   };
-
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
         <CategoryPills
           data={genresData}
+          index={pillsInitialIndex}
           labelkey="title"
           onSelect={onCategorySelect}
           selected={selectedCategory}

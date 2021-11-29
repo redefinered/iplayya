@@ -31,7 +31,12 @@ export function* getChannelsRequest(action) {
 
   try {
     const { iptvs } = yield call(getChannels, action.input);
-    yield put(Creators.getChannelsSuccess(iptvs, nextPaginatorInfo));
+    yield put(
+      Creators.getChannelsSuccess(
+        iptvs.map((i) => ({ ...i, c: 'all' })),
+        nextPaginatorInfo
+      )
+    );
   } catch (error) {
     yield put(Creators.getChannelsFailure(error.message));
   }
@@ -53,14 +58,19 @@ export function* getChannelRequest(action) {
 }
 
 export function* getChannelsByCategoriesRequest(action) {
-  const { limit, pageNumber } = action.input;
+  const { limit, pageNumber, categories } = action.input;
 
   /// increment pageNumber each successful request
   const nextPaginatorInfo = { limit, pageNumber: pageNumber + 1 };
 
   try {
     const { iptvByCategory } = yield call(getChannelsByCategory, action.input);
-    yield put(Creators.getChannelsByCategoriesSuccess(iptvByCategory, nextPaginatorInfo));
+    yield put(
+      Creators.getChannelsByCategoriesSuccess(
+        iptvByCategory.map((i) => ({ ...i, c: categories[0] })),
+        nextPaginatorInfo
+      )
+    );
   } catch (error) {
     yield put(Creators.getChannelsByCategoriesFailure(error.message));
   }
