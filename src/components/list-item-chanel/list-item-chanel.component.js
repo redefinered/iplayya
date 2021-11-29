@@ -1,28 +1,34 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Pressable, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text, withTheme } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import RadioButton from 'components/radio-button/radio-button.component';
+import FavoriteButton from 'components/button-favorite/favorite-button.component';
 import ContentWrap from 'components/content-wrap.component';
 import { createFontFormat } from 'utils';
 import moment from 'moment';
-import theme from 'common/theme';
-// import { useNavigation } from '@react-navigation/native';
-
-const ITEM_HEIGHT = 60 + theme.spacing(1) * 2;
+import { connect } from 'react-redux';
+import { compose } from 'redux';
+import { Creators } from 'modules/ducks/itv/itv.actions';
+import { useMutation } from '@apollo/client';
+import { ADD_TO_FAVORITES } from 'graphql/itv.graphql';
+import SnackBar from 'components/snackbar/snackbar.component';
 
 const ListItemChanel = ({
+  theme,
   item,
   full,
+  selected,
   showepg,
   handleItemPress,
   handleLongPress,
-  selected,
-  onRightActionPress,
   activateCheckboxes,
+  addToFavoritesAction,
   onEpgButtonPressed
 }) => {
-  const { id, title, is_favorite } = item;
+  const ITEM_HEIGHT = 60 + theme.spacing(1) * 2;
+
   const [isPressed, setIsPressed] = React.useState(false);
 
   const handlePress = () => {
@@ -70,13 +76,12 @@ const ListItemChanel = ({
             <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
           </View>
           <Content
-            {...item}
-            id={id}
-            showepg={showepg}
+            theme={theme}
+            item={item}
             selected={selected}
-            onRightActionPress={onRightActionPress}
-            isFavorite={is_favorite}
+            showepg={showepg}
             activateCheckboxes={activateCheckboxes}
+            addToFavoritesAction={addToFavoritesAction}
             isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
             onEpgButtonPressed={onEpgButtonPressed}
           />
@@ -108,43 +113,77 @@ const ListItemChanel = ({
           >
             <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
           </View>
-          <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{title}</Text>
+          <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16) }}>{item.title}</Text>
         </View>
-        <Pressable onPress={() => onRightActionPress(title)}>
-          <Icon name="heart-solid" size={theme.iconSize(3)} style={{ color: 'red' }} />
-        </Pressable>
       </Pressable>
-      {/* <Spacer size={spacer} /> */}
     </ContentWrap>
   );
 };
 
 // eslint-disable-next-line react/prop-types
 const Content = ({
-  id,
-  // eslint-disable-next-line react/prop-types
-  number,
+  theme,
+  item,
+  selected,
   showepg,
-  title,
-  epgtitle,
-  time,
-  time_to,
-  onRightActionPress,
-  isFavorite,
   isCatchUpAvailable,
-  onEpgButtonPressed
+  onEpgButtonPressed,
+  activateCheckboxes
 }) => {
-  const theme = useTheme();
+  const { id, number, title, epgtitle, time, time_to } = item;
+
+  const [showError, setShowError] = React.useState(false);
+  const [showSuccess, setShowSuccess] = React.useState(false);
+
+  // eslint-disable-next-line no-unused-vars
+  const [addToFavorites, { data, loading, error }] = useMutation(ADD_TO_FAVORITES, {
+    // update(cache) {
+    //   console.log({ data });
+    //   cache.modify({
+    //     id: cache.identify(item),
+    //     fields: {
+    //       is_favorite: true
+    //     }
+    //   });
+    // }
+  });
+
+  React.useEffect(() => {
+    if (error) setShowError(true);
+  }, [error]);
+
+  React.useEffect(() => {
+    if (data) setShowSuccess(true);
+  }, [data]);
+
+  React.useEffect(() => {
+    if (showSuccess) hideSuccessModal();
+  }, [showSuccess]);
+
+  React.useEffect(() => {
+    if (showError) hideErrorModal();
+  }, [showError]);
+
+  const hideSuccessModal = () => {
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 3000);
+  };
+
+  const hideErrorModal = () => {
+    setTimeout(() => {
+      setShowError(false);
+    }, 3000);
+  };
+
+  const handleFavoritePress = () => {
+    addToFavorites({ variables: { input: { videoId: item.id } } });
+  };
 
   const renderCatchUpIndicator = () => {
     if (typeof isCatchUpAvailable === 'undefined') return;
 
     if (isCatchUpAvailable) return <Icon name="history" color="#13BD38" />;
-  };
-
-  const handleRightActionPress = () => {
-    if (isFavorite) return;
-    onRightActionPress(id);
   };
 
   const renderEpgtitle = () => {
@@ -169,6 +208,50 @@ const Content = ({
     if (!time || !time_to) return;
 
     return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+  };
+
+  const renderRightComponent = () => {
+    if (activateCheckboxes)
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <RadioButton selected={selected} />
+        </View>
+      );
+
+    return (
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
+        <FavoriteButton item={item} pressAction={() => handleFavoritePress()} />
+
+        {showepg && (
+          <Pressable
+            underlayColor={theme.iplayya.colors.black80}
+            onPress={() => onEpgButtonPressed(id)}
+            style={({ pressed }) => [
+              {
+                backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }
+            ]}
+          >
+            <Text
+              style={{
+                fontWeight: 'bold',
+                fontSize: 12,
+                color: theme.iplayya.colors.white50
+              }}
+            >
+              EPG
+            </Text>
+          </Pressable>
+        )}
+      </View>
+    );
   };
 
   return (
@@ -202,76 +285,34 @@ const Content = ({
         {renderCatchUpIndicator()}
       </View>
 
-      <View
-        style={{
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}
-      >
-        {onRightActionPress ? (
-          <Pressable
-            onPress={() => handleRightActionPress()}
-            style={({ pressed }) => [
-              {
-                width: 44,
-                height: 44,
-                borderRadius: 22,
-                backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }
-            ]}
-          >
-            <Icon
-              name="heart-solid"
-              size={theme.iconSize(3)}
-              style={{ color: isFavorite ? theme.iplayya.colors.vibrantpussy : 'white' }}
-            />
-          </Pressable>
-        ) : null}
+      {renderRightComponent()}
 
-        {showepg && (
-          <Pressable
-            underlayColor={theme.iplayya.colors.black80}
-            onPress={() => onEpgButtonPressed(id)}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }
-            ]}
-          >
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 12,
-                color: theme.iplayya.colors.white50
-              }}
-            >
-              EPG
-            </Text>
-          </Pressable>
-        )}
-      </View>
+      <SnackBar
+        visible={showError}
+        message="Something went wrong. Please try again."
+        iconName="alert"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+
+      <SnackBar
+        visible={showSuccess}
+        message={`${title} is added to your Favorites list`}
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </View>
   );
 };
 
 Content.propTypes = {
-  // number: PropTypes.string,
-  showepg: PropTypes.bool,
-  time: PropTypes.string,
-  time_to: PropTypes.string,
-  chanel: PropTypes.string,
-  id: PropTypes.string,
-  title: PropTypes.string,
-  epgtitle: PropTypes.string,
-  isFavorite: PropTypes.bool,
-  onRightActionPress: PropTypes.func,
+  theme: PropTypes.object,
+  item: PropTypes.object,
   selected: PropTypes.bool,
+  showepg: PropTypes.bool,
+  handleFavoritePress: PropTypes.func,
   activateCheckboxes: PropTypes.bool,
   isCatchUpAvailable: PropTypes.bool,
+  addToFavoritesAction: PropTypes.func,
   onEpgButtonPressed: PropTypes.func
 };
 
@@ -280,15 +321,22 @@ Content.defaultProps = {
 };
 
 ListItemChanel.propTypes = {
+  theme: PropTypes.object,
   item: PropTypes.object,
   full: PropTypes.bool,
   showepg: PropTypes.bool,
   handleItemPress: PropTypes.func,
   handleLongPress: PropTypes.func,
-  onRightActionPress: PropTypes.func,
   selected: PropTypes.bool,
+  addToFavoritesAction: PropTypes.func,
   activateCheckboxes: PropTypes.bool,
   onEpgButtonPressed: PropTypes.func
 };
 
-export default React.memo(ListItemChanel);
+const actions = {
+  addToFavoritesAction: Creators.addToFavorites
+};
+
+const enhance = compose(connect(null, actions), withTheme);
+
+export default enhance(React.memo(ListItemChanel));

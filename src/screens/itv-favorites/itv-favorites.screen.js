@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, Pressable, FlatList, TextInput as FormInput } from 'react-native';
-import { Text, withTheme, TextInput as RNPTextInput } from 'react-native-paper';
+import { Text, withTheme, TextInput as RNPTextInput, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import TextInput from 'components/text-input/text-input.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -28,10 +28,12 @@ import {
 import { createFontFormat } from 'utils';
 import { selectIsSearching } from 'modules/ducks/itv/itv.selectors';
 
+const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvFavoritesScreen = ({
   theme,
+  isFetching,
   paginator,
   favorites,
   navigation,
@@ -97,12 +99,12 @@ const ItvFavoritesScreen = ({
   const handleItemPress = (item) => {
     if (activateCheckboxes) {
       const newItems = selectedItems;
-      const index = selectedItems.findIndex((i) => i === item);
+      const index = selectedItems.findIndex((i) => i === item.id);
       if (index >= 0) {
         newItems.splice(index, 1);
         setSelectedItems([...newItems]);
       } else {
-        setSelectedItems([item, ...selectedItems]);
+        setSelectedItems([item.id, ...selectedItems]);
       }
     } else {
       // navigation.navigate('MovieDetailScreen', { videoId: item });
@@ -209,14 +211,20 @@ const ItvFavoritesScreen = ({
 
   if (favorites.length)
     return (
-      <View style={{ marginTop: 20 }}>
+      <View style={{ marginTop: theme.spacing(3) }}>
+        {isFetching && (
+          <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+            <ActivityIndicator />
+          </View>
+        )}
         {activateCheckboxes && (
           <ContentWrap>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                marginBottom: theme.spacing(2)
               }}
             >
               <Pressable
@@ -254,6 +262,8 @@ const ItvFavoritesScreen = ({
               full
               showipg={false}
               item={item}
+              activateCheckboxes={activateCheckboxes}
+              selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
               isCatchUpAvailable={false}
               thumbnail={channelplaceholder}
               handleItemPress={handleItemPress}

@@ -4,17 +4,20 @@ import { Pressable } from 'react-native';
 import Icon from 'components/icon/icon.component';
 import theme from 'common/theme';
 
-const FavoriteButton = ({ id, pressAction, isFavorite }) => {
+const FavoriteButton = ({ item, pressAction }) => {
   const [active, setActive] = React.useState(false);
 
   React.useEffect(() => {
-    setActive(isFavorite);
-  }, [isFavorite]);
+    setActive(item.is_favorite);
+  }, [item]);
 
   const handlePressAction = () => {
+    // do not execute if already favorited
+    if (active) return;
+
     setActive(true);
 
-    pressAction(id);
+    pressAction(item);
   };
 
   return (
@@ -43,8 +46,7 @@ const FavoriteButton = ({ id, pressAction, isFavorite }) => {
 };
 
 FavoriteButton.propTypes = {
-  id: PropTypes.string,
-  name: PropTypes.string,
+  item: PropTypes.object,
   pressAction: PropTypes.func,
   isFavorite: PropTypes.bool
 };

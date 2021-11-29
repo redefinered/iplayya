@@ -199,10 +199,11 @@ export default createReducer(INITIAL_STATE, {
       programs: []
     };
   },
+  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }), /// is searching for favorites
 
-  [Types.FAVORITES_START]: (state) => {
-    return { ...state, favoritesListUpdated: false, favoritesListRemoveUpdated: false };
-  },
+  // [Types.FAVORITES_START]: (state) => {
+  //   return { ...state, favoritesListUpdated: false, favoritesListRemoveUpdated: false };
+  // },
 
   // add to favorites
   [Types.ADD_TO_FAVORITES]: (state, action) => {
@@ -259,8 +260,6 @@ export default createReducer(INITIAL_STATE, {
       favoritesListRemoveUpdated: false
     };
   },
-
-  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }), /// is searching for favorites
 
   /// get favorites
   [Types.GET_FAVORITES]: (state) => {

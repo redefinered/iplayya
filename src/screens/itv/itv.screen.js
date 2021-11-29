@@ -36,7 +36,6 @@ const ITEM_HEIGHT = 84;
 
 const ItvScreen = ({
   error,
-  updated,
   genres,
   channels,
   paginator,
@@ -44,11 +43,8 @@ const ItvScreen = ({
   isFetching,
   headerHeight,
   route: { params },
-  favoritesPaginator,
   getChannelsAction,
   enableSwipeAction,
-  getFavoritesAction,
-  addToFavoritesAction,
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
@@ -103,14 +99,6 @@ const ItvScreen = ({
     });
   }, [genres]);
 
-  React.useEffect(() => {
-    if (updated) {
-      handleShowSnackBar();
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
-    }
-  }, [updated]);
-
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
 
@@ -159,20 +147,6 @@ const ItvScreen = ({
     setShowWalkthroughGuide(false);
   };
 
-  const handleAddToFavorites = (channelId) => {
-    let channel = channels.find(({ id }) => id === channelId);
-    // if channel is not found stop
-    if (typeof channel === 'undefined') return;
-
-    const { is_favorite } = channel;
-
-    // stop if already added
-    if (is_favorite) return;
-
-    addToFavoritesAction(parseInt(channelId));
-    // setShowSnackBar(true);
-  };
-
   const hideSnackBar = () => {
     setTimeout(() => {
       setShowSnackBar(false);
@@ -185,9 +159,9 @@ const ItvScreen = ({
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
 
-  const handleShowSnackBar = () => {
-    setShowSnackBar(true);
-  };
+  // const handleShowSnackBar = () => {
+  //   setShowSnackBar(true);
+  // };
 
   const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
@@ -324,7 +298,6 @@ const ItvScreen = ({
             full
             item={item}
             isCatchUpAvailable={false}
-            onRightActionPress={handleAddToFavorites}
             onEpgButtonPressed={handleEpgButtonPress}
             handleItemPress={handleItemPress}
             handleLongPress={handleItemLongPress}
