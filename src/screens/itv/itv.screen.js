@@ -187,6 +187,10 @@ const ItvScreen = ({
     navigation.navigate('ItvChannelDetailScreen', { channelId: item.id });
   };
 
+  const handleItemLongPress = (id) => {
+    console.log({ id });
+  };
+
   const onCategorySelect = (id) => {
     getChannelsByCategoriesStartAction();
 
@@ -239,7 +243,8 @@ const ItvScreen = ({
   };
 
   const renderFeaturedItem = ({ item }) => {
-    let isNotificationActive = notifyIds.findIndex((i) => i === parseInt(item)) >= 0 ? true : false;
+    let isNotificationActive =
+      notifyIds.findIndex((i) => i === parseInt(item.id)) >= 0 ? true : false;
     return (
       <ItemPreview
         item={item}
@@ -311,6 +316,7 @@ const ItvScreen = ({
             onRightActionPress={handleAddToFavorites}
             onEpgButtonPressed={handleEpgButtonPress}
             handleItemPress={handleItemPress}
+            handleLongPress={handleItemLongPress}
           />
         )}
         ListFooterComponent={renderListFooter()}

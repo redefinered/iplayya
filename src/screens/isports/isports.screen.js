@@ -149,9 +149,13 @@ const IsportsScreen = ({
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
 
-  const handleItemSelect = (channelId) => {
+  const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('IsportsChannelDetailScreen', { channelId });
+    navigation.navigate('IsportsChannelDetailScreen', { channelId: item.id });
+  };
+
+  const handleItemLongPress = (id) => {
+    console.log({ id });
   };
 
   const onCategorySelect = (id) => {
@@ -220,15 +224,15 @@ const IsportsScreen = ({
       );
   };
 
-  const renderFeaturedItem = ({ item: { id, ...itemProps } }) => {
-    let isNotificationActive = notifyIds.findIndex((i) => i === parseInt(id)) >= 0 ? true : false;
+  const renderFeaturedItem = ({ item }) => {
+    let isNotificationActive =
+      notifyIds.findIndex((i) => i === parseInt(item.id)) >= 0 ? true : false;
     return (
       <ItemPreview
-        id={id}
-        onSelect={handleItemSelect}
+        item={item}
+        onSelect={handleItemPress}
         handleSubscribeToItem={handleSubscribeToItem}
         isNotificationActive={isNotificationActive}
-        {...itemProps}
       />
     );
   };
@@ -286,15 +290,15 @@ const IsportsScreen = ({
         getItemLayout={(data, index) => {
           return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
         }}
-        renderItem={({ item: { epgtitle, ...itemProps } }) => (
+        renderItem={({ item }) => (
           <ListItemChanel
+            full
+            item={item}
             isCatchUpAvailable={false}
-            onSelect={handleItemSelect}
             onRightActionPress={handleAddToFavorites}
             onEpgButtonPressed={handleEpgButtonPress}
-            full
-            epgtitle={epgtitle}
-            {...itemProps}
+            handleItemPress={handleItemPress}
+            handleItemLongPress={handleItemLongPress}
           />
         )}
         ListFooterComponent={renderListFooter()}

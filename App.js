@@ -64,7 +64,7 @@ const App = ({
   setImusicPaginatorInfoAction
 }) => {
   const [providerError, setProviderError] = React.useState(false);
-  const [testMode] = React.useState(false);
+  const [testMode, setTestMode] = React.useState(false);
   const [notif, setNotif] = React.useState(null);
 
   React.useEffect(() => {
@@ -166,10 +166,24 @@ const App = ({
   //   }
   // }, [isLoggedIn, currentUser]);
 
+  const handleTestNotif = () => {
+    setTestMode(false);
+
+    // create a dummy notification that will notify after 1 minute
+    // ITV: TLC - 304
+    // ISPORTS: |US| NBA League Pass 1 (live Events) - 3611
+    notif.localNotif({
+      id: 123,
+      channelId: '3611',
+      channelName: '|US| NBA League Pass 1 (live Events)',
+      parentType: 'ISPORTS'
+    });
+  };
+
   if (testMode)
     return (
       <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
-        <Button onPress={() => notif.localNotif()}>Test notication</Button>
+        <Button onPress={handleTestNotif}>Test notication</Button>
         <Button
           onPress={() =>
             notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }))

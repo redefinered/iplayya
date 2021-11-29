@@ -46,7 +46,6 @@ const ISportsSearchScreen = ({
 }) => {
   const theme = useTheme();
   const [term, setTerm] = React.useState('');
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
 
   /// clear previous search result
   React.useEffect(() => {
@@ -132,10 +131,6 @@ const ISportsSearchScreen = ({
     }
   };
 
-  const handleShowKeyboard = () => {
-    setShowKeyboard(true);
-  };
-
   const handleScrollAction = () => {
     Keyboard.dismiss();
   };
@@ -192,65 +187,7 @@ const ISportsSearchScreen = ({
               </ContentWrap>
             )}
           />
-          {/* <FlatList
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
-              <ContentWrap>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white80,
-                    paddingVertical: 15
-                  }}
-                >
-                  Search Results
-                </Text>
-              </ContentWrap>
-            }
-            ListFooterComponent={renderListLoader()}
-            onScroll={handleScrollAction}
-            data={results}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item: { id, epgtitle, ...itemProps } }) => (
-              <ListItemChanel
-                onSelect={() => handleItemPress(id)}
-                full
-                thumbnail={channelplaceholder}
-                epgtitle={epgtitle}
-                {...itemProps}
-              />
-            )}
-            onEndReached={() => handleEndReached()}
-          /> */}
         </React.Fragment>
-        // {/* <React.Fragment>
-        //   <Text
-        //     style={{
-        //       ...createFontFormat(14, 19),
-        //       fontWeight: '700',
-        //       color: theme.iplayya.colors.white50,
-        //       paddingVertical: 15
-        //     }}
-        //   >
-        //     Search Results
-        //   </Text>
-        //   <ScrollView>
-        //     {results.map(({ id, title }) => (
-        //       <TouchableRipple key={id} onPress={() => handleItemPress(id)}>
-        //         <Text
-        //           style={{
-        //             ...createFontFormat(16, 22),
-        //             paddingVertical: 15,
-        //             paddingHorizontal: theme.spacing(2)
-        //           }}
-        //         >
-        //           {title}
-        //         </Text>
-        //       </TouchableRipple>
-        //     ))}
-        //   </ScrollView>
-        // </React.Fragment> */}
       );
   };
 
@@ -354,8 +291,6 @@ const ISportsSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
-          showSoftInputOnFocus={showKeyboard}
-          focusAction={handleShowKeyboard}
           onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}

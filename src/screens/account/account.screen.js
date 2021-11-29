@@ -73,6 +73,7 @@ const AccountScreen = ({
   userUpdated,
   passwordUpdated,
   route: { params },
+  getProfileStartAction,
   resetAction,
   changePasswordStartAction
 }) => {
@@ -109,6 +110,7 @@ const AccountScreen = ({
   React.useEffect(() => {
     if (userUpdated) {
       getProfileAction();
+      getProfileStartAction();
     }
   }, [userUpdated]);
 
@@ -451,6 +453,7 @@ AccountScreen.propTypes = {
 const actions = {
   resetAction: Creators.reset, // for testing
   getProfileAction: ProfileCreators.get,
+  getProfileStartAction: ProfileCreators.start,
   signOutAction: Creators.signOut,
   changePasswordStartAction: PasswordActionCreators.changePasswordStart
 };
