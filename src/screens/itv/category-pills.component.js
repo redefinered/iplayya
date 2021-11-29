@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, FlatList } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { FlatList } from 'react-native';
+import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import uniqBy from 'lodash/uniqBy';
 import orderBy from 'lodash/orderBy';
@@ -97,7 +97,7 @@ CategorySelectorPills.defaultProps = {
 const Pill = ({ id, label, selected, onSelect, ...otherProps }) => {
   const theme = useTheme();
   return (
-    <Pressable
+    <TouchableRipple
       onPress={() => onSelect(id)}
       style={{
         justifyContent: 'center',
@@ -111,7 +111,7 @@ const Pill = ({ id, label, selected, onSelect, ...otherProps }) => {
       {...otherProps}
     >
       <Text style={{ ...createFontFormat(12, 16) }}>{label}</Text>
-    </Pressable>
+    </TouchableRipple>
   );
 };
 
