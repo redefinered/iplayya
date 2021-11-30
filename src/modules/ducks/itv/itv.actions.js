@@ -30,12 +30,6 @@ const { Types, Creators } = createActions(
 
     setIsSearching: ['isSearching'], /// is searching for favorites
 
-    favoritesStart: null,
-    // add to favorites
-    addToFavorites: ['id'],
-    addToFavoritesSuccess: null,
-    addToFavoritesFailure: ['error'],
-
     removeFromFavorites: ['channelIds'],
     removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],

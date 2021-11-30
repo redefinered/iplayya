@@ -42,7 +42,6 @@ const ItvFavoritesScreen = ({
   getFavoritesAction,
   favoritesPaginator,
   getChannelsAction,
-  favoritesStartAction,
   resetPaginatorAction,
   removeFromFavoritesAction,
   resetFavoritesPaginatorAction
@@ -56,9 +55,6 @@ const ItvFavoritesScreen = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
-    // call start action to reset update checkers
-    favoritesStartAction();
-
     resetFavoritesPaginatorAction();
 
     const subscribeToViewRemove = navigation.addListener('beforeRemove', () => {
@@ -260,7 +256,8 @@ const ItvFavoritesScreen = ({
           renderItem={({ item }) => (
             <ListItemChanel
               full
-              showipg={false}
+              showepg={false}
+              showFavoriteButton={false}
               item={item}
               activateCheckboxes={activateCheckboxes}
               selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
@@ -328,7 +325,6 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
-  favoritesStartAction: Creators.favoritesStart,
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavorites,
   getChannelsAction: Creators.getChannels,

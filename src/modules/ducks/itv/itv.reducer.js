@@ -2,7 +2,6 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './itv.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
-import { updateChannelsWithFavorited } from './itv.helpers';
 import { PAGINATOR_LIMIT, ITV_SEARCH_RESULTS_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
@@ -201,39 +200,6 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }), /// is searching for favorites
 
-  // [Types.FAVORITES_START]: (state) => {
-  //   return { ...state, favoritesListUpdated: false, favoritesListRemoveUpdated: false };
-  // },
-
-  // add to favorites
-  [Types.ADD_TO_FAVORITES]: (state, action) => {
-    const channels = updateChannelsWithFavorited(state, action);
-
-    return {
-      ...state,
-      isFetching: true,
-      error: null,
-      channels,
-      favoritesListUpdated: false
-    };
-  },
-  [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null,
-      favoritesListUpdated: true
-    };
-  },
-  [Types.ADD_TO_FAVORITES_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: action.error,
-      favoritesListUpdated: false
-    };
-  },
-
   // add to favorites
   [Types.REMOVE_FROM_FAVORITES]: (state) => {
     return {
@@ -419,8 +385,4 @@ export default createReducer(INITIAL_STATE, {
       }
     };
   }
-
-  // [Types.RESET]: (state) => {
-  //   return { ...state, ...INITIAL_STATE };
-  // }
 });

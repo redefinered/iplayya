@@ -8,7 +8,7 @@ const FavoriteButton = ({ item, pressAction }) => {
   const [active, setActive] = React.useState(false);
 
   React.useEffect(() => {
-    setActive(item.is_favorite);
+    if (item.is_favorite) setActive(item.is_favorite);
   }, [item]);
 
   const handlePressAction = () => {

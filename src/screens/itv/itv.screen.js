@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
+import ListItemChanel from './itv-list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
@@ -26,6 +26,7 @@ import {
   selectFavoritesListUpdated,
   selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
+import { ADD_TO_FAVORITES } from 'graphql/itv.graphql';
 import uniq from 'lodash/uniq';
 import orderBy from 'lodash/uniq';
 import theme from 'common/theme';
@@ -183,7 +184,6 @@ const ItvScreen = ({
   };
 
   React.useEffect(() => {
-    console.log({ selectedCategory });
     // when changing category, reset the pagination info
     resetPaginatorAction();
 
@@ -301,6 +301,7 @@ const ItvScreen = ({
             onEpgButtonPressed={handleEpgButtonPress}
             handleItemPress={handleItemPress}
             handleLongPress={handleItemLongPress}
+            addToFavoritesMutation={ADD_TO_FAVORITES}
           />
         )}
         ListFooterComponent={renderListFooter()}

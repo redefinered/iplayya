@@ -6,7 +6,7 @@ import {
   getChannels,
   getChannelsByCategory,
   getChannelToken,
-  addToFavorites,
+  // addToFavorites,
   removeFromFavorites,
   getFavorites,
   getProgramsByChannel,
@@ -76,16 +76,6 @@ export function* getChannelsByCategoriesRequest(action) {
   }
 }
 
-export function* addToFavoritesRequest(action) {
-  try {
-    const { addIptvToFavorites } = yield call(addToFavorites, action.id);
-    if (addIptvToFavorites.status !== 'success') throw new Error('Error adding item to favorites');
-    yield put(Creators.addToFavoritesSuccess());
-  } catch (error) {
-    yield put(Creators.addToFavoritesFailure(error.message));
-  }
-}
-
 export function* removeFromFavoritesRequest(action) {
   const { channelIds } = action;
   try {
@@ -137,7 +127,6 @@ export default function* itvSagas() {
   yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
   yield takeLatest(Types.GET_CHANNELS, getChannelsRequest);
   yield takeLatest(Types.GET_CHANNELS_BY_CATEGORIES, getChannelsByCategoriesRequest);
-  yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
   yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
