@@ -17,16 +17,15 @@ import { Creators } from 'modules/ducks/itv/itv.actions';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
-  selectFavorites,
   selectError,
-  selectIsFetching,
-  selectFavoritesPaginator,
+  selectFavorites,
   selectPaginator,
-  selectChannels,
+  selectIsFetching,
+  selectIsSearching,
+  selectFavoritesPaginator,
   selectfavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
-import { selectIsSearching } from 'modules/ducks/itv/itv.selectors';
 
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -39,14 +38,15 @@ const ItvFavoritesScreen = ({
   navigation,
   isSearching,
   favoritesRemoved,
-  getFavoritesAction,
   favoritesPaginator,
   getChannelsAction,
+  getFavoritesAction,
   resetPaginatorAction,
   removeFromFavoritesAction,
   resetFavoritesPaginatorAction
 }) => {
   const updated = React.useRef(false);
+
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
@@ -205,7 +205,7 @@ const ItvFavoritesScreen = ({
     return 'Are you sure you want to delete this channel/s from your Favorites list?';
   };
 
-  if (favorites.length)
+  if (data.length)
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
         {isFetching && (
@@ -213,6 +213,7 @@ const ItvFavoritesScreen = ({
             <ActivityIndicator />
           </View>
         )}
+
         {activateCheckboxes && (
           <ContentWrap>
             <View
@@ -320,7 +321,6 @@ const mapStateToProps = createStructuredSelector({
   favoritesPaginator: selectFavoritesPaginator,
   favoritesRemoved: selectfavoritesListRemoveUpdated,
   paginator: selectPaginator,
-  channels: selectChannels,
   isSearching: selectIsSearching
 });
 

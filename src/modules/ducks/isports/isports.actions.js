@@ -28,18 +28,14 @@ const { Types, Creators } = createActions(
     getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],
 
-    favoritesStart: null,
-    // add to favorites
-    addToFavorites: ['id'],
-    addToFavoritesSuccess: null,
-    addToFavoritesFailure: ['error'],
+    setIsSearching: ['isSearching'], /// is searching for favorites
 
     removeFromFavorites: ['channelIds'],
     removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],
 
     getFavorites: ['input'],
-    getFavoritesSuccess: ['data', 'nextPaginator'],
+    getFavoritesSuccess: ['favorites'],
     getFavoritesFailure: ['error'],
     resetFavoritesPaginator: null,
 

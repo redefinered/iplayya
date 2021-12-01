@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
+import ListItemChanel from './isports-list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
@@ -25,7 +25,9 @@ import {
   selectFavoritesListUpdated,
   selectFavoritesPaginator
 } from 'modules/ducks/isports/isports.selectors';
+import { ADD_TO_FAVORITES } from 'graphql/isports.graphql';
 import uniq from 'lodash/uniq';
+import orderBy from 'lodash/uniq';
 import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -35,18 +37,15 @@ const ITEM_HEIGHT = 96;
 const IsportsScreen = ({
   error,
   genres,
-  updated,
   channels,
   paginator,
   navigation,
   isFetching,
   headerHeight,
+  route: { params },
   enableSwipeAction,
   getChannelsAction,
-  getFavoritesAction,
-  favoritesPaginator,
   resetPaginatorAction,
-  addToFavoritesAction,
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
 }) => {
@@ -69,24 +68,31 @@ const IsportsScreen = ({
     resetPaginatorAction();
   }, []);
 
+  React.useEffect(() => {
+    // set this up like itv screen
+    // if (typeof params !== 'undefined') {
+    //   const { openItvGuide, genreId } = params;
+    //   // set category pill initial index
+    //   const i = genresData.findIndex(({ id }) => id === genreId);
+    //   if (typeof i !== 'undefined') setPillsInitialIndex(i);
+    //   // set category for fetching
+    //   setSelectedCategory(genreId);
+    //   if (!openItvGuide) return;
+    //   setShowWalkthroughGuide(true);
+    // }
+  }, [params]);
+
   // setup genres data
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       if (genres.length) {
         let data = genres.map(({ id, title }) => ({ id, title }));
         data.unshift({ id: 'all', title: 'All channels' });
-        setGenresData(data);
+
+        setGenresData(orderBy(data, 'number', 'asc'));
       }
     });
   }, [genres]);
-
-  React.useEffect(() => {
-    if (updated) {
-      setShowSnackBar(true);
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
-    }
-  }, [updated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -123,19 +129,6 @@ const IsportsScreen = ({
       }
     });
   }, [channels]);
-
-  const handleAddToFavorites = (channelId) => {
-    let channel = channels.find(({ id }) => id === channelId);
-
-    // if channel is not found stop
-    if (typeof channel === 'undefined') return;
-
-    const { is_favorite } = channel;
-
-    if (is_favorite) return;
-
-    addToFavoritesAction(parseInt(channelId));
-  };
 
   const hideSnackBar = () => {
     setTimeout(() => {
@@ -295,10 +288,10 @@ const IsportsScreen = ({
             full
             item={item}
             isCatchUpAvailable={false}
-            onRightActionPress={handleAddToFavorites}
             onEpgButtonPressed={handleEpgButtonPress}
             handleItemPress={handleItemPress}
             handleItemLongPress={handleItemLongPress}
+            addToFavoritesMutation={ADD_TO_FAVORITES}
           />
         )}
         ListFooterComponent={renderListFooter()}
@@ -375,7 +368,6 @@ const actions = {
   getChannelsByCategoriesStartAction: Creators.getChannelsByCategoriesStart,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
-  addToFavoritesAction: Creators.addToFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 

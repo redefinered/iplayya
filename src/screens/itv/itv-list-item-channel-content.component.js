@@ -16,8 +16,6 @@ const Content = ({
   theme,
   item,
   selected,
-  showepg,
-  showFavoriteButton,
   isCatchUpAvailable,
   onEpgButtonPressed,
   activateCheckboxes
@@ -119,33 +117,28 @@ const Content = ({
           justifyContent: 'space-between'
         }}
       >
-        {showFavoriteButton && (
-          <FavoriteButton item={item} pressAction={() => handleFavoritePress()} />
-        )}
-
-        {showepg && (
-          <Pressable
-            underlayColor={theme.iplayya.colors.black80}
-            onPress={() => onEpgButtonPressed(id)}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }
-            ]}
+        <FavoriteButton item={item} pressAction={() => handleFavoritePress()} />
+        <Pressable
+          underlayColor={theme.iplayya.colors.black80}
+          onPress={() => onEpgButtonPressed(id)}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }
+          ]}
+        >
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 12,
+              color: theme.iplayya.colors.white50
+            }}
           >
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 12,
-                color: theme.iplayya.colors.white50
-              }}
-            >
-              EPG
-            </Text>
-          </Pressable>
-        )}
+            EPG
+          </Text>
+        </Pressable>
       </View>
     );
   };

@@ -379,7 +379,6 @@ const actions = {
   getChannelsByCategoriesStartAction: Creators.getChannelsByCategoriesStart,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
-  addToFavoritesAction: Creators.addToFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe,
   reset: Creators.reset
 };

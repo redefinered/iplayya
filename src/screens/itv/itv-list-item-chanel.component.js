@@ -13,8 +13,6 @@ const ItvListItemChanel = ({
   item,
   full,
   selected,
-  showepg,
-  showFavoriteButton,
   handleItemPress,
   handleLongPress,
   activateCheckboxes,
@@ -72,8 +70,6 @@ const ItvListItemChanel = ({
             theme={theme}
             item={item}
             selected={selected}
-            showepg={showepg}
-            showFavoriteButton={showFavoriteButton}
             activateCheckboxes={activateCheckboxes}
             isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
             onEpgButtonPressed={onEpgButtonPressed}

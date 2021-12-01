@@ -80,14 +80,12 @@ export const GET_FAVORITES = gql`
       id
       number
       title
-      url
       description
+      number
       time
       time_to
       epgtitle
       epgdescription
-      is_favorite
-      archived_link
     }
   }
 `;

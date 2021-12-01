@@ -18,7 +18,7 @@ const IsportsBottomTabs = () => {
   };
 
   const handleFavoritesButtonPress = () => {
-    navigation.navigate('ItvFavoritesScreen');
+    navigation.navigate('IsportsFavoritesScreen');
   };
 
   const handleHomeButtonPress = () => {

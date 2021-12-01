@@ -78,12 +78,20 @@ export const removeFromFavorites = async (input) => {
       variables: { input },
 
       // this updates the favorites list in local cache
-      update(cache) {
+      update(cache, { data }) {
         cache.modify({
           fields: {
-            favoriteIsports: () => {
-              return null;
+            favoriteIsports: (previous = []) => {
+              const normalizedId = cache.identify({
+                id: data.removeIsportToFavorites.id,
+                __typename: 'ISports'
+              });
+              const updatedItems = previous.filter((r) => r.__ref !== normalizedId);
+              return updatedItems;
             }
+            // isports: (previous = [], { toReference }) => {
+            //   return [...previous, toReference(data.addIsportToFavorites)];
+            // }
           }
         });
       }

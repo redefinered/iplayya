@@ -118,6 +118,7 @@ const Content = ({
         }}
       >
         <FavoriteButton item={item} pressAction={() => handleFavoritePress()} />
+
         <Pressable
           underlayColor={theme.iplayya.colors.black80}
           onPress={() => onEpgButtonPressed(id)}
@@ -197,9 +198,12 @@ Content.propTypes = {
   theme: PropTypes.object,
   item: PropTypes.object,
   selected: PropTypes.bool,
+  showepg: PropTypes.bool,
+  showFavoriteButton: PropTypes.bool,
   handleFavoritePress: PropTypes.func,
   activateCheckboxes: PropTypes.bool,
   isCatchUpAvailable: PropTypes.bool,
+  addToFavoritesAction: PropTypes.func,
   onEpgButtonPressed: PropTypes.func
 };
 

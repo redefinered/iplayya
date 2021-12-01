@@ -1,53 +1,78 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Pressable, ScrollView } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { View, Pressable, FlatList, TextInput as FormInput } from 'react-native';
+import { Text, withTheme, TextInput as RNPTextInput, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import TextInput from 'components/text-input/text-input.component';
+import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import ScreenContainer from 'components/screen-container.component';
-import withLoader from 'components/with-loader.component';
 import ContentWrap from 'components/content-wrap.component';
 import Spacer from 'components/spacer.component';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import { selectPaginatorInfo } from 'modules/ducks/isports/isports.selectors';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
-  selectFavorites,
   selectError,
+  selectFavorites,
+  selectPaginator,
   selectIsFetching,
+  selectIsSearching,
   selectFavoritesPaginator,
-  selectFavoritesListRemoveUpdated,
-  selectPaginator
+  selectFavoritesListRemoveUpdated
 } from 'modules/ducks/isports/isports.selectors';
-import { urlEncodeTitle, createFontFormat } from 'utils';
-import { Creators } from 'modules/ducks/isports/isports.actions';
-import moment from 'moment';
+import { createFontFormat } from 'utils';
+
+const ITEM_HEIGHT = 84;
+const channelplaceholder = require('assets/channel-placeholder.png');
 
 const IsportsFavoritesScreen = ({
   theme,
-  navigation,
+  isFetching,
+  paginator,
   favorites,
+  navigation,
+  isSearching,
+  favoritesRemoved,
+  favoritesPaginator,
   getChannelsAction,
   getFavoritesAction,
+  resetPaginatorAction,
   removeFromFavoritesAction,
-  favoritesPaginator,
-  favoriteListsRemoveUpdated,
-
   resetFavoritesPaginatorAction
 }) => {
+  const updated = React.useRef(false);
+
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
-  const [listData, setListData] = React.useState([]);
+  const [data, setData] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
+
+    const subscribeToViewRemove = navigation.addListener('beforeRemove', () => {
+      if (updated.current) getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+    });
+
+    return subscribeToViewRemove;
   }, []);
+
+  React.useEffect(() => {
+    if (searchTerm) {
+      const d = favorites.filter(({ title }) => title.toLowerCase().includes(searchTerm));
+      return setData(d);
+    }
+
+    setData(favorites);
+  }, [favorites, searchTerm]);
 
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
@@ -55,39 +80,30 @@ const IsportsFavoritesScreen = ({
     }
   }, [favoritesPaginator]);
 
-  // setup channels data
   React.useEffect(() => {
-    if (favorites) {
-      let data = favorites.map(({ id, title, number }) => ({
-        id,
-        title,
-        number,
-        thumbnail: `http://via.placeholder.com/60x60.png?text=${urlEncodeTitle(title)}`
-      }));
-      setListData(data);
-    }
-  }, [favorites]);
+    if (favoritesRemoved) {
+      resetPaginatorAction();
 
-  React.useEffect(() => {
-    if (favoriteListsRemoveUpdated) {
+      updated.current = true;
       setActivateCheckboxes(false);
-      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-      getChannelsAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
-    }
-  }, [favoriteListsRemoveUpdated]);
 
-  const handleSelectItem = (item) => {
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+    } else {
+      updated.current = false;
+    }
+  }, [favoritesRemoved]);
+
+  const handleItemPress = (item) => {
     if (activateCheckboxes) {
       const newItems = selectedItems;
-      const index = selectedItems.findIndex((i) => i === item);
+      const index = selectedItems.findIndex((i) => i === item.id);
       if (index >= 0) {
         newItems.splice(index, 1);
         setSelectedItems([...newItems]);
       } else {
-        setSelectedItems([item, ...selectedItems]);
+        setSelectedItems([item.id, ...selectedItems]);
       }
     } else {
-      // navigation.navigate('MovieDetailScreen', { videoId: item });
       navigation.navigate('IsportsChannelDetailScreen', { channelId: item });
     }
   };
@@ -127,8 +143,6 @@ const IsportsFavoritesScreen = ({
     }
   };
 
-  console.log({ selectedItems });
-
   const handleHideConfirmDeleteModal = () => {
     setShowDeleteConfirmation(false);
   };
@@ -139,9 +153,68 @@ const IsportsFavoritesScreen = ({
     handleRemoveItems();
   };
 
-  if (listData.length || favorites.length)
+  const handleChange = (term) => {
+    setSearchTerm(term);
+  };
+
+  const renderSearchBar = () => {
+    if (isSearching)
+      return (
+        <ContentWrap>
+          <TextInput
+            multiline={false}
+            name="search"
+            handleChangeText={(term) => handleChange(term)}
+            returnKeyType="search"
+            autoFocus
+            autoCapitalize="none"
+            clearButtonMode="while-editing"
+            autoCompleteType="email"
+            style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
+            placeholder="Search a favorite"
+            render={(props) => (
+              <FormInput
+                {...props}
+                style={{
+                  flex: 1,
+                  marginLeft: 40,
+                  fontSize: 16,
+                  justifyContent: 'center',
+                  color: '#ffffff'
+                }}
+              />
+            )}
+            left={
+              <RNPTextInput.Icon
+                name={() => (
+                  <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
+                )}
+              />
+            }
+          />
+        </ContentWrap>
+      );
+  };
+
+  const getDeleteAlertMessage = () => {
+    if (selectedItems.length === favorites.length)
+      return 'Are you sure you want to delete this channel/s from your Favorites list?';
+
+    if (selectedItems.length > 1)
+      return 'Are you sure you want to delete this channel/s from your Favorites list?';
+
+    return 'Are you sure you want to delete this channel/s from your Favorites list?';
+  };
+
+  if (data.length)
     return (
-      <ScrollView>
+      <View style={{ marginTop: theme.spacing(3) }}>
+        {isFetching && (
+          <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+            <ActivityIndicator />
+          </View>
+        )}
+
         {activateCheckboxes && (
           <ContentWrap>
             <View
@@ -176,145 +249,31 @@ const IsportsFavoritesScreen = ({
           </ContentWrap>
         )}
 
-        {listData.map(({ id, title, epgtitle, number, time, time_to }) => {
-          const getSchedule = (time, time_to) => {
-            if (!time || !time_to) return;
+        {renderSearchBar()}
 
-            return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
-          };
-          return (
-            <Pressable
-              key={id}
-              underlayColor={theme.iplayya.colors.black80}
-              style={({ pressed }) => [
-                {
-                  backgroundColor: pressed ? theme.iplayya.colors.black80 : 'transparent'
-                }
-              ]}
-              onLongPress={() => handleLongPress(id)}
-              onPress={() => handleSelectItem(id)}
-            >
-              <ContentWrap
-                style={{
-                  marginTop: 10,
-                  position: 'relative',
-                  height: 80,
-                  paddingLeft: 75
-                }}
-              >
-                <View
-                  style={{
-                    width: 60,
-                    height: 60,
-                    borderRadius: 8,
-                    marginRight: 10,
-                    backgroundColor: theme.iplayya.colors.white10,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'absolute',
-                    top: 2,
-                    left: 10
-                  }}
-                >
-                  <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
-                </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginTop: 3,
-                    marginLeft: 5
-                  }}
-                >
-                  <View style={{ justifyContent: 'center' }}>
-                    <View>
-                      <Text
-                        style={{
-                          fontWeight: '700',
-                          ...createFontFormat(12, 16),
-                          marginBottom: 5,
-                          color: theme.iplayya.colors.white50
-                        }}
-                      >
-                        {`${number}: ${title}`}
-                      </Text>
-                      <Text
-                        style={{
-                          fontWeight: '700',
-                          ...createFontFormat(12, 16),
-                          color: theme.iplayya.colors.white80,
-                          marginBottom: 5
-                        }}
-                      >
-                        {epgtitle}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        width: '75%'
-                      }}
-                    >
-                      <Text
-                        style={{
-                          ...createFontFormat(12, 16),
-                          color: theme.iplayya.colors.white50,
-                          marginBottom: 5
-                        }}
-                      >
-                        {getSchedule(time, time_to)}
-                      </Text>
-
-                      {!activateCheckboxes && (
-                        <Pressable
-                          underlayColor={theme.iplayya.colors.black80}
-                          onPress={() =>
-                            navigation.navigate('ProgramGuideScreen', { channelId: id })
-                          }
-                          style={({ pressed }) => [
-                            {
-                              backgroundColor: pressed
-                                ? theme.iplayya.colors.black80
-                                : 'transparent',
-                              width: 44,
-                              height: 44,
-                              borderRadius: 22,
-                              justifyContent: 'center',
-                              alignItems: 'center'
-                            }
-                          ]}
-                        >
-                          <Text
-                            style={{
-                              fontWeight: 'bold',
-                              fontSize: 12,
-                              color: theme.iplayya.colors.white50
-                            }}
-                          >
-                            EPG
-                          </Text>
-                        </Pressable>
-                      )}
-                    </View>
-                  </View>
-                  {activateCheckboxes && (
-                    <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
-                  )}
-                </View>
-              </ContentWrap>
-            </Pressable>
-          );
-        })}
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ListItemChanel
+              full
+              showepg={false}
+              showFavoriteButton={false}
+              item={item}
+              activateCheckboxes={activateCheckboxes}
+              selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
+              isCatchUpAvailable={false}
+              thumbnail={channelplaceholder}
+              handleItemPress={handleItemPress}
+              handleLongPress={handleLongPress}
+            />
+          )}
+        />
 
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
-            message={`Are you sure you want to delete ${
-              selectedItems.length > 1 ? 'these' : 'this'
-            } channel/s from your Favorites list?`}
+            message={getDeleteAlertMessage()}
             visible={showDeleteConfirmation}
             onCancel={handleHideConfirmDeleteModal}
             hideAction={handleHideConfirmDeleteModal}
@@ -322,7 +281,7 @@ const IsportsFavoritesScreen = ({
             confirmAction={handleConfirmDelete}
           />
         )}
-      </ScrollView>
+      </View>
     );
 
   return <EmptyState theme={theme} navigation={navigation} />;
@@ -362,8 +321,9 @@ const mapStateToProps = createStructuredSelector({
   paginatorInfo: selectPaginatorInfo,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
-  favoriteListsRemoveUpdated: selectFavoritesListRemoveUpdated,
-  paginator: selectPaginator
+  favoritesRemoved: selectFavoritesListRemoveUpdated,
+  paginator: selectPaginator,
+  isSearching: selectIsSearching
 });
 
 const actions = {
@@ -371,10 +331,10 @@ const actions = {
   getFavoritesAction: Creators.getFavorites,
   getChannelsAction: Creators.getChannels,
   getChannelsStartAction: Creators.getChannelsStart,
-  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
-  favoritesStartAction: Creators.favoritesStart
+  resetPaginatorAction: Creators.resetPaginator,
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(Container);
