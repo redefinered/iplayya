@@ -5,7 +5,7 @@ import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
 import Spacer from 'components/spacer.component';
 
-const IsportsBottomTabs = () => {
+const IsportsBottomTabs = ({ selectedCategory }) => {
   const navigation = useNavigation();
   const [bottomPadding, setBottomPadding] = React.useState(null);
 
@@ -18,7 +18,7 @@ const IsportsBottomTabs = () => {
   };
 
   const handleFavoritesButtonPress = () => {
-    navigation.navigate('ItvFavoritesScreen');
+    navigation.navigate('IsportsFavoritesScreen', { selectedCategory });
   };
 
   const handleHomeButtonPress = () => {
@@ -59,7 +59,7 @@ const IsportsBottomTabs = () => {
 };
 
 IsportsBottomTabs.propTypes = {
-  handleBottomTabsLayoutEvent: PropTypes.func
+  selectedCategory: PropTypes.string
 };
 
 export default React.memo(IsportsBottomTabs);

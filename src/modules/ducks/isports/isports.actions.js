@@ -15,7 +15,7 @@ const { Types, Creators } = createActions(
 
     /// get channels
     getChannels: ['input'],
-    getChannelsSuccess: ['data'],
+    getChannelsSuccess: ['channels', 'nextPaginatorInfo'],
     getChannelsFailure: ['error'],
 
     getProgramsByChannelStart: null,
@@ -25,21 +25,18 @@ const { Types, Creators } = createActions(
 
     getChannelsByCategoriesStart: null,
     getChannelsByCategories: ['input'],
-    getChannelsByCategoriesSuccess: ['data'],
+    getChannelsByCategoriesSuccess: ['channels', 'nextPaginatorInfo'],
+    // getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],
 
-    favoritesStart: null,
-    // add to favorites
-    addToFavorites: ['id'],
-    addToFavoritesSuccess: null,
-    addToFavoritesFailure: ['error'],
+    setIsSearching: ['isSearching'], /// is searching for favorites
 
     removeFromFavorites: ['channelIds'],
     removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],
 
     getFavorites: ['input'],
-    getFavoritesSuccess: ['data', 'nextPaginator'],
+    getFavoritesSuccess: ['favorites'],
     getFavoritesFailure: ['error'],
     resetFavoritesPaginator: null,
 

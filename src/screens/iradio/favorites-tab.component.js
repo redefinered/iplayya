@@ -62,7 +62,6 @@ const FavoritesTab = ({
 
   // setup favorites
   React.useEffect(() => {
-    console.log({ x: favorites });
     if (favorites) {
       setListData(favorites);
     }
@@ -107,8 +106,6 @@ const FavoritesTab = ({
     setSelectedItems([item]);
     setActivateCheckboxes(true);
   };
-
-  console.log({ selectedItems });
 
   const handleRemoveItems = () => {
     if (selectedItems.length) {

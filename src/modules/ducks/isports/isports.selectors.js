@@ -77,3 +77,5 @@ export const selectPreviousChannel = createSelector(
     return previousChannel;
   }
 );
+
+export const selectIsSearching = createSelector([iSportsState], ({ isSearching }) => isSearching);

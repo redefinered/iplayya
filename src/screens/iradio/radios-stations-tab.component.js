@@ -4,7 +4,7 @@ import { View, Pressable, FlatList, StyleSheet } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { createFontFormat } from 'utils';
-import FavoriteButton from './iradio-favorite-button.component';
+import FavoriteButton from 'components/button-favorite/favorite-button.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -64,16 +64,14 @@ const RadioStationsTab = ({
     getRadioStationsAction(paginator);
   };
 
-  const handleAddToFavorites = (radioId) => {
-    let radio = radioStations.find(({ id }) => id === radioId);
-
-    const { is_favorite } = radio;
+  const handleAddToFavorites = (item) => {
+    const { is_favorite } = item;
 
     // stop if alreay in favorites
     if (is_favorite) return;
 
     // exec add to favorites
-    addToFavoritesAction(radio);
+    addToFavoritesAction(item);
   };
 
   const hideSnackBar = () => {
@@ -87,10 +85,12 @@ const RadioStationsTab = ({
   }, [showSnackBar]);
 
   // eslint-disable-next-line react/prop-types
-  const renderItem = ({ item: { id, name, is_favorite, number, ...rest } }) => {
+  const renderItem = ({ item }) => {
+    // eslint-disable-next-line react/prop-types
+    const { name, number } = item;
     return (
       <Pressable
-        onPress={() => handleSelectItem({ id, name, is_favorite, number, ...rest })}
+        onPress={() => handleSelectItem(item)}
         style={({ pressed }) => [
           {
             backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent'
@@ -121,7 +121,7 @@ const RadioStationsTab = ({
               </Text>
             </View>
           </View>
-          <FavoriteButton id={id} isFavorite={is_favorite} pressAction={handleAddToFavorites} />
+          <FavoriteButton item={item} pressAction={handleAddToFavorites} />
         </ContentWrap>
       </Pressable>
     );
@@ -148,6 +148,7 @@ const RadioStationsTab = ({
       {renderFavoriteLoader()}
       <FlatList
         data={radioStations}
+        // eslint-disable-next-line react/prop-types
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}

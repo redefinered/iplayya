@@ -8,6 +8,7 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import HeaderBackImage from 'components/header-back-image/header-back-image.component';
 import Icon from 'components/icon/icon.component.js';
 import ItvSearchButton from 'screens/itv/itv-search-button.component';
+import IsportsSearchButton from 'screens/isports/isports-search-button.component';
 
 import HomeScreen from 'screens/home/home.screen';
 
@@ -726,18 +727,19 @@ const HomeStack = ({
             title: 'Favorites',
             animationEnabled: false,
             headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <TouchableRipple
-                  borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
-                  rippleColor="rgba(0,0,0,0.28)"
-                  onPress={() => navigation.navigate('ItvSearchScreen')}
-                >
-                  <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={theme.iconSize(3)} />
-                  </View>
-                </TouchableRipple>
-              </View>
+              // <View style={{ flexDirection: 'row' }}>
+              //   <TouchableRipple
+              //     borderless={true}
+              //     style={{ borderRadius: 44, padding: 8 }}
+              //     rippleColor="rgba(0,0,0,0.28)"
+              //     onPress={() => navigation.navigate('ItvSearchScreen')}
+              //   >
+              //     <View style={styles.headerButtonContainer}>
+              //       <Icon name="search" size={theme.iconSize(3)} />
+              //     </View>
+              //   </TouchableRipple>
+              // </View>
+              <IsportsSearchButton />
             )
           })}
           listeners={{

@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, StyleSheet, FlatList, Dimensions, InteractionManager } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
+import ListItemChanel from './itv-list-item-chanel.component';
 import ItemPreview from 'components/item-preview/item-preview.component';
 import CategoryPills from './category-pills.component';
 import SnackBar from 'components/snackbar/snackbar.component';
@@ -26,16 +26,17 @@ import {
   selectFavoritesListUpdated,
   selectFavoritesPaginator
 } from 'modules/ducks/itv/itv.selectors';
+import { ADD_TO_FAVORITES } from 'graphql/itv.graphql';
 import uniq from 'lodash/uniq';
+import orderBy from 'lodash/uniq';
 import theme from 'common/theme';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
-const ITEM_HEIGHT = 96;
+const ITEM_HEIGHT = 84;
 
 const ItvScreen = ({
   error,
-  updated,
   genres,
   channels,
   paginator,
@@ -43,11 +44,8 @@ const ItvScreen = ({
   isFetching,
   headerHeight,
   route: { params },
-  favoritesPaginator,
   getChannelsAction,
   enableSwipeAction,
-  getFavoritesAction,
-  addToFavoritesAction,
   resetPaginatorAction,
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
@@ -59,6 +57,7 @@ const ItvScreen = ({
   const [subscribed, setSubscribed] = React.useState('');
   const [genresData, setGenresData] = React.useState([]);
   const [channelsData, setChannelsData] = React.useState([]);
+  const [pillsInitialIndex, setPillsInitialIndex] = React.useState(0);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
@@ -76,8 +75,12 @@ const ItvScreen = ({
     if (typeof params !== 'undefined') {
       const { openItvGuide, genreId } = params;
 
+      // set category pill initial index
+      const i = genresData.findIndex(({ id }) => id === genreId);
+      if (typeof i !== 'undefined') setPillsInitialIndex(i);
+
+      // set category for fetching
       setSelectedCategory(genreId);
-      getChannelsByCategoriesAction({ categories: [parseInt(genreId)] });
 
       if (!openItvGuide) return;
 
@@ -89,21 +92,13 @@ const ItvScreen = ({
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       if (genres.length) {
-        let data = genres.map(({ id, title }) => ({ id, title }));
-        data.unshift({ id: 'all', title: 'All channels' });
+        let data = genres.map(({ id, number, title }) => ({ id, number, title }));
+        data.unshift({ id: 'all', number: 0, title: 'All channels' });
 
-        setGenresData(data);
+        setGenresData(orderBy(data, 'number', 'asc'));
       }
     });
   }, [genres]);
-
-  React.useEffect(() => {
-    if (updated) {
-      handleShowSnackBar();
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-      getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
-    }
-  }, [updated]);
 
   const handleSubscribeToItem = (channelId) => {
     let index = notifyIds.findIndex((x) => x === parseInt(channelId));
@@ -141,7 +136,9 @@ const ItvScreen = ({
           thumbnail: channelplaceholder,
           ...rest
         }));
-        setChannelsData(data);
+
+        setChannelsData(data.filter(({ c }) => c.toString() === selectedCategory));
+        // setChannelsData(data);
       } else {
         setChannelsData([]);
       }
@@ -150,20 +147,6 @@ const ItvScreen = ({
 
   const handleWalkthroughGuideHide = () => {
     setShowWalkthroughGuide(false);
-  };
-
-  const handleAddToFavorites = (channelId) => {
-    let channel = channels.find(({ id }) => id === channelId);
-    // if channel is not found stop
-    if (typeof channel === 'undefined') return;
-
-    const { is_favorite } = channel;
-
-    // stop if already added
-    if (is_favorite) return;
-
-    addToFavoritesAction(parseInt(channelId));
-    // setShowSnackBar(true);
   };
 
   const hideSnackBar = () => {
@@ -178,9 +161,9 @@ const ItvScreen = ({
     if (showNotificationSnackBar) hideSnackBar();
   }, [showSnackBar, showNotificationSnackBar]);
 
-  const handleShowSnackBar = () => {
-    setShowSnackBar(true);
-  };
+  // const handleShowSnackBar = () => {
+  //   setShowSnackBar(true);
+  // };
 
   const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
@@ -202,14 +185,17 @@ const ItvScreen = ({
   };
 
   React.useEffect(() => {
+    // when changing category, reset the pagination info
+    resetPaginatorAction();
+
+    // console.log({ selectedCategory });
     InteractionManager.runAfterInteractions(() => {
-      // if (paginator.pageNumber > 1) return;
       if (selectedCategory === 'all') {
         getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
       } else {
         getChannelsByCategoriesAction({
           categories: [parseInt(selectedCategory)],
-          ...paginator
+          ...Object.assign(paginator, { pageNumber: 1 })
         });
       }
     });
@@ -299,7 +285,7 @@ const ItvScreen = ({
 
     return (
       <FlatList
-        ListHeaderComponent={renderLisHeader()}
+        ListHeaderComponent={renderLisHeader}
         data={channelsData}
         keyExtractor={(item) => item.id}
         onEndReached={() => handleEndReached()}
@@ -313,22 +299,22 @@ const ItvScreen = ({
             full
             item={item}
             isCatchUpAvailable={false}
-            onRightActionPress={handleAddToFavorites}
             onEpgButtonPressed={handleEpgButtonPress}
             handleItemPress={handleItemPress}
             handleLongPress={handleItemLongPress}
+            addToFavoritesMutation={ADD_TO_FAVORITES}
           />
         )}
         ListFooterComponent={renderListFooter()}
       />
     );
   };
-
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
         <CategoryPills
           data={genresData}
+          index={pillsInitialIndex}
           labelkey="title"
           onSelect={onCategorySelect}
           selected={selectedCategory}
@@ -341,7 +327,7 @@ const ItvScreen = ({
         {renderChannels()}
       </View>
 
-      <ItvBottomTabs />
+      <ItvBottomTabs selectedCategory={selectedCategory} />
 
       <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
 
@@ -394,7 +380,6 @@ const actions = {
   getChannelsByCategoriesStartAction: Creators.getChannelsByCategoriesStart,
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
-  addToFavoritesAction: Creators.addToFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe,
   reset: Creators.reset
 };
