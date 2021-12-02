@@ -35,7 +35,7 @@ const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ITEM_HEIGHT = 84;
 
-const ItvScreen = ({
+const IsportsScreen = ({
   error,
   genres,
   channels,
@@ -350,7 +350,7 @@ const ItvScreen = ({
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush>
-    <ItvScreen {...props} />
+    <IsportsScreen {...props} />
   </ScreenContainer>
 );
 
