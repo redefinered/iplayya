@@ -41,9 +41,6 @@ const FavoritesTab = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [selectAll, setSellectAll] = React.useState(false);
   const [listData, setListData] = React.useState([]);
-  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-  //   true
-  // );
 
   React.useEffect(() => {
     resetPaginatorAction();

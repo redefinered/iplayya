@@ -16,13 +16,14 @@ import {
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as FavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import ContentWrap from 'components/content-wrap.component';
+import { useMutation } from '@apollo/client';
+import { ADD_RADIO_TO_FAVORITES } from 'graphql/radios.graphql';
 
 const ITEM_HEIGHT = 44;
 
 const RadioStationsTab = ({
   getRadioStationsAction,
   radioStations,
-  addToFavoritesAction,
   paginator,
   handleSelectItem,
   isAddingToFavorites,
@@ -31,24 +32,6 @@ const RadioStationsTab = ({
   getFavoritesAction
 }) => {
   const [showSnackBar, setShowSnackBar] = React.useState(false);
-  // const [favorited, setFavorited] = React.useState('');
-  // const [radioStationsData, setRadioStationsData] = React.useState([]);
-
-  // setup radio data
-  // React.useEffect(() => {
-  //   if (radioStations.length) {
-  //     let data = radioStations.map(({ id, name, is_favorite, number, ...rest }) => ({
-  //       id,
-  //       name,
-  //       is_favorite,
-  //       number,
-  //       ...rest
-  //     }));
-  //     setRadioStationsData(data);
-  //   } else {
-  //     setRadioStationsData([]);
-  //   }
-  // }, [radioStations]);
 
   React.useEffect(() => {
     if (added) setShowSnackBar(true);
@@ -64,14 +47,29 @@ const RadioStationsTab = ({
     getRadioStationsAction(paginator);
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const [addToFavorites, { data, loading, error }] = useMutation(ADD_RADIO_TO_FAVORITES, {
+    update(cache, { data }) {
+      cache.modify({
+        fields: {
+          favoriteRadios: (previous = [], { toReference }) => {
+            const varia = [...previous, toReference(data.addRadioToFavorites)];
+            console.log({ varia, previous, data });
+            return varia;
+            // return [...previous, toReference(data.addRadioToFavorites)];
+          },
+          radios: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addRadioToFavorites)];
+          }
+        }
+      });
+    }
+  });
+
   const handleAddToFavorites = (item) => {
-    const { is_favorite } = item;
+    setShowSnackBar(true);
 
-    // stop if alreay in favorites
-    if (is_favorite) return;
-
-    // exec add to favorites
-    addToFavoritesAction(item);
+    addToFavorites({ variables: { input: { radioId: item.id } } });
   };
 
   const hideSnackBar = () => {
@@ -173,8 +171,6 @@ RadioStationsTab.propTypes = {
   isAddingToFavorites: PropTypes.bool,
   getRadioStationsAction: PropTypes.func,
   radioStations: PropTypes.array,
-  addedToFavorites: PropTypes.bool,
-  addToFavoritesAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
   handleSelectItem: PropTypes.func,
   resetUpdateIndicatorsAction: PropTypes.func,
@@ -184,7 +180,6 @@ RadioStationsTab.propTypes = {
 const actions = {
   getRadioStationsAction: Creators.get,
   getFavoritesAction: FavoritesCreators.getFavorites,
-  addToFavoritesAction: FavoritesCreators.addToFavorites,
   resetUpdateIndicatorsAction: FavoritesCreators.resetUpdateIndicators
 };
 

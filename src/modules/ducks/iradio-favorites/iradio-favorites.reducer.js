@@ -3,6 +3,7 @@ import { Types } from './iradio-favorites.actions';
 import { filterOutRemovedItems } from './iradio-favorites.helpers';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
+import { PAGINATOR_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -12,7 +13,7 @@ const INITIAL_STATE = {
   added: false,
   removed: false,
   paginator: {
-    limit: 10,
+    limit: PAGINATOR_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -27,7 +28,7 @@ export default createReducer(INITIAL_STATE, {
       removed: false,
       favorites: [],
       paginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'
@@ -122,7 +123,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       paginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'

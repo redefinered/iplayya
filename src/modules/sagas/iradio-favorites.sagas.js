@@ -1,6 +1,6 @@
 import { call, put, takeLatest, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
-import { getFavorites, addToFavorites, removeFromFavorites } from 'services/iradio.service';
+import { getFavorites, removeFromFavorites } from 'services/iradio.service';
 
 export function* getFavoritesRequest(action) {
   const { input } = action;
@@ -19,17 +19,6 @@ export function* getFavoritesRequest(action) {
   }
 }
 
-export function* addToFavoritesRequest(action) {
-  try {
-    const { radio } = action;
-    const { addRadioToFavorites } = yield call(addToFavorites, radio.id, radio.pn);
-    if (addRadioToFavorites.status !== 'success') throw new Error('Something went wrong');
-    yield put(Creators.addToFavoritesSuccess(radio));
-  } catch (error) {
-    yield put(Creators.addToFavoritesFailure(error.message));
-  }
-}
-
 export function* removeFromFavoritesRequest(action) {
   const { radios } = action;
   try {
@@ -42,6 +31,5 @@ export function* removeFromFavoritesRequest(action) {
 
 export default function* iradioFavoritesSagas() {
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
-  yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
 }

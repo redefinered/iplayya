@@ -20,8 +20,8 @@ export const GET_RADIO_STATIONS = gql`
 export const ADD_RADIO_TO_FAVORITES = gql`
   mutation ADD_RADIO_TO_FAVORITES($input: radioToFavoritesInput) {
     addRadioToFavorites(input: $input) {
-      status
-      message
+      id
+      is_favorite
     }
   }
 `;
@@ -29,8 +29,8 @@ export const ADD_RADIO_TO_FAVORITES = gql`
 export const REMOVE_RADIO_FROM_FAVORITES = gql`
   mutation REMOVE_RADIO_FROM_FAVORITES($input: radioToFavoritesInput) {
     removeRadioToFavorites(input: $input) {
-      status
-      message
+      id
+      is_favorite
     }
   }
 `;

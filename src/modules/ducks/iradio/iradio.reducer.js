@@ -2,6 +2,7 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './iradio.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
+import { PAGINATOR_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -9,7 +10,7 @@ const INITIAL_STATE = {
   radioStation: null,
   radioStations: [],
   paginator: {
-    limit: 10,
+    limit: PAGINATOR_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -17,7 +18,7 @@ const INITIAL_STATE = {
   recentSearch: [],
   searchResults: [],
   searchResultsPaginator: {
-    limit: 10,
+    limit: PAGINATOR_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -38,7 +39,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       radioStations: [],
       paginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'
@@ -172,7 +173,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       searchResultsPaginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'
@@ -183,7 +184,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       paginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'

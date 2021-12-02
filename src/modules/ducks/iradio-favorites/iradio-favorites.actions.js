@@ -6,12 +6,15 @@ const { Types, Creators } = createActions(
     getFavorites: ['input'],
     getFavoritesSuccess: ['data', 'nextPaginator'],
     getFavoritesFailure: ['error'],
+
     addToFavorites: ['radio'],
     addToFavoritesSuccess: ['radio'],
     addToFavoritesFailure: ['error'],
+
     removeFromFavorites: ['radios'],
     removeFromFavoritesSuccess: ['radios'],
     removeFromFavoritesFailure: ['error'],
+
     resetPaginator: null,
     resetUpdateIndicators: null
   },

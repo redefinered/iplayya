@@ -22,7 +22,6 @@ import {
   selectNowPlaying
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
-import withLoader from 'components/with-loader.component';
 import { useIsFocused } from '@react-navigation/native';
 
 const initialLayout = { width: Dimensions.get('window').width };
@@ -80,12 +79,12 @@ const IradioScreen = ({
 
   React.useEffect(() => {
     if (index === 0) {
-      getRadiosAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
+      getRadiosAction({ pageNumber: 1, limit: 100, orderBy: 'number', order: 'asc' });
     }
 
     if (index === 1) {
       startAction();
-      getFavoritesAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
+      getFavoritesAction({ pageNumber: 1, limit: 100, orderBy: 'number', order: 'asc' });
     }
   }, [index]);
 
@@ -219,6 +218,6 @@ const actions = {
   setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);
