@@ -16,6 +16,7 @@ import {
 } from 'modules/ducks/iradio/iradio.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import clone from 'lodash/clone';
 
@@ -31,7 +32,8 @@ const NowPlaying = ({
   paused,
   setPausedAction,
   isRadioBackgroundMode,
-  isInIradioScreen
+  isInIradioScreen,
+  setMusicNowPlaying
 }) => {
   const theme = useTheme();
   const rootComponent = React.useRef();
@@ -54,6 +56,12 @@ const NowPlaying = ({
       if (!url) return;
 
       setPausedAction(false);
+    }
+  }, [nowPlaying]);
+
+  React.useEffect(() => {
+    if (nowPlaying) {
+      setMusicNowPlaying(null);
     }
   }, [nowPlaying]);
 
@@ -211,7 +219,8 @@ NowPlaying.propTypes = {
   updatePlaybackInfoAction: PropTypes.func,
   progress: PropTypes.number,
   isRadioBackgroundMode: PropTypes.bool,
-  isInIradioScreen: PropTypes.bool
+  isInIradioScreen: PropTypes.bool,
+  setMusicNowPlaying: PropTypes.object
 };
 
 const actions = {
@@ -219,7 +228,8 @@ const actions = {
   setProgressAction: Creators.setProgress,
   setNowPlayingLayoutInfoAction: Creators.setNowPlayingLayoutInfo,
   updatePlaybackInfoAction: Creators.updatePlaybackInfo,
-  setPausedAction: Creators.setPaused
+  setPausedAction: Creators.setPaused,
+  setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
 const mapStateToProps = createStructuredSelector({

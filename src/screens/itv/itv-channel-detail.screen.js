@@ -11,6 +11,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/itv/itv.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as RadioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -48,6 +49,7 @@ const ItvChannelDetailScreen = ({
   // addToFavoritesAction,
   favoritesListUpdated,
   setMusicNowPlaying,
+  setRadioNowPlaying,
   setBottomTabsVisibleAction
 }) => {
   const [paused, setPaused] = React.useState(false);
@@ -88,6 +90,7 @@ const ItvChannelDetailScreen = ({
   React.useEffect(() => {
     if (!paused) {
       setMusicNowPlaying(null);
+      setRadioNowPlaying(null);
     }
   }, [paused]);
 
@@ -409,6 +412,7 @@ const actions = {
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset,
   setMusicNowPlaying: MusicCreators.setNowPlaying,
+  setRadioNowPlaying: RadioCreators.setNowPlaying,
   setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 

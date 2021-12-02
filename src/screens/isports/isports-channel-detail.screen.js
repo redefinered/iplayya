@@ -13,6 +13,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as RadioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
@@ -42,7 +43,8 @@ const IsportsChannelDetailScreen = ({
   favoritesListUpdated,
   getProgramsByChannelStartAction,
   navigation,
-  setMusicNowPlaying
+  setMusicNowPlaying,
+  setRadioNowPlaying
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -82,6 +84,7 @@ const IsportsChannelDetailScreen = ({
   React.useEffect(() => {
     if (!paused) {
       setMusicNowPlaying(null);
+      setRadioNowPlaying(null);
     }
   }, [paused]);
 
@@ -403,7 +406,8 @@ const actions = {
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  setRadioNowPlaying: RadioCreators.setNowplaying
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader);

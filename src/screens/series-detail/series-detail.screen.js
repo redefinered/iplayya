@@ -23,6 +23,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as RadioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/imovie-downloads/imovie-downloads.actions';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -74,6 +75,7 @@ const SeriesDetailScreen = ({
   downloadStarted,
 
   setMusicNowPlaying,
+  setRadioNowPlaying,
   setEpisodeAction,
   navigation,
 
@@ -101,6 +103,7 @@ const SeriesDetailScreen = ({
   React.useEffect(() => {
     if (!paused) {
       setMusicNowPlaying(null);
+      setRadioNowPlaying(null);
     }
   }, [paused]);
 
@@ -573,7 +576,8 @@ const actions = {
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   downloadStartAction: DownloadsCreators.downloadStart,
   setEpisodeAction: Creators.setEpisode,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  setRadioNowPlaying: RadioCreators.setNowPlaying
 };
 
 const mapStateToProps = createStructuredSelector({

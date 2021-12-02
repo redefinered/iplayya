@@ -4,10 +4,11 @@ import { View, StatusBar } from 'react-native';
 import ScreenContainer from 'components/screen-container.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as RadioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { connect } from 'react-redux';
 
 // eslint-disable-next-line react/prop-types
-const IplayDetailScreen = ({ navigation, route, setMusicNowPlaying }) => {
+const IplayDetailScreen = ({ navigation, route, setMusicNowPlaying, setRadioNowPlaying }) => {
   const { file } = route.params;
   const [fullscreen, setFullscreen] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
@@ -26,6 +27,7 @@ const IplayDetailScreen = ({ navigation, route, setMusicNowPlaying }) => {
   React.useEffect(() => {
     if (!paused) {
       setMusicNowPlaying(null);
+      setRadioNowPlaying(null);
     }
   }, [paused]);
 
@@ -82,7 +84,8 @@ const Container = (props) => (
 );
 
 const actions = {
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  setRadioNowPlaying: RadioCreators.setNowPlaying
 };
 
 // export default IplayDetailScreen;

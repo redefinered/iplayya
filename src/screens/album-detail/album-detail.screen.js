@@ -15,6 +15,7 @@ import MoreButton from 'components/button-more/more-button.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
+import { Creators as RadioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/imusic-downloads/imusic-downloads.actions';
 import { createStructuredSelector } from 'reselect';
@@ -69,7 +70,8 @@ const AlbumDetail = ({
   // addTrackToFavoritesAction,
   getAlbumDetailsAction,
   downloadStarted,
-  downloadsStartAction
+  downloadsStartAction,
+  setRadioNowPlaying
 }) => {
   const { albumId } = route.params;
   const [showSnackbar, setShowSnackbar] = React.useState(false);
@@ -96,6 +98,12 @@ const AlbumDetail = ({
 
     navigation.setParams({ album });
   }, [album]);
+
+  React.useEffect(() => {
+    if (nowPlaying) {
+      setRadioNowPlaying(null);
+    }
+  }, [nowPlaying]);
 
   /// show update notification
   React.useEffect(() => {
@@ -374,7 +382,8 @@ const actions = {
   clearRepeatAction: Creators.clearRepeat,
   addTrackToFavoritesAction: FavoritesCreators.addTrackToFavorites,
   addAlbumToFavoritesStartAction: FavoritesCreators.addAlbumToFavoritesStart,
-  downloadsStartAction: DownloadsCreators.downloadStart
+  downloadsStartAction: DownloadsCreators.downloadStart,
+  setRadioNowPlaying: RadioCreators.setNowPlaying
 };
 
 const mapStateToProps = createStructuredSelector({
