@@ -32,6 +32,7 @@ const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvFavoritesScreen = ({
   theme,
+  route,
   isFetching,
   paginator,
   favorites,
@@ -43,6 +44,7 @@ const ItvFavoritesScreen = ({
   getFavoritesAction,
   resetPaginatorAction,
   removeFromFavoritesAction,
+  getChannelsByCategoriesAction,
   resetFavoritesPaginatorAction
 }) => {
   const updated = React.useRef(false);
@@ -51,14 +53,25 @@ const ItvFavoritesScreen = ({
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [data, setData] = React.useState([]);
-  const [searchTerm, setSearchTerm] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
 
     const subscribeToViewRemove = navigation.addListener('beforeRemove', () => {
-      if (updated.current) getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+      if (updated.current) {
+        const { selectedCategory } = route.params;
+
+        if (selectedCategory !== 'all') {
+          getChannelsByCategoriesAction({
+            categories: [parseInt(selectedCategory)],
+            ...Object.assign(paginator, { pageNumber: 1 })
+          });
+        } else {
+          getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+        }
+      }
     });
 
     return subscribeToViewRemove;
@@ -72,6 +85,8 @@ const ItvFavoritesScreen = ({
 
     setData(favorites);
   }, [favorites, searchTerm]);
+
+  // console.log({ favorites, searchTerm });
 
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
@@ -330,6 +345,7 @@ const actions = {
   getChannelsAction: Creators.getChannels,
   getChannelsStartAction: Creators.getChannelsStart,
   resetPaginatorAction: Creators.resetPaginator,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 

@@ -5,11 +5,11 @@ import { TouchableRipple, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { selectFavorites, selectIsSearching } from 'modules/ducks/itv/itv.selectors';
-import { Creators } from 'modules/ducks/itv/itv.actions';
+import { selectFavorites, selectIsSearching } from 'modules/ducks/isports/isports.selectors';
+import { Creators } from 'modules/ducks/isports/isports.actions';
 import Icon from 'components/icon/icon.component.js';
 
-const ItvSearchButton = ({ theme, isSearching, setIsSearchingAction, favorites }) => {
+const IsportsSearchButton = ({ theme, isSearching, setIsSearchingAction, favorites }) => {
   const handlePress = () => {
     if (!favorites.length) return;
 
@@ -37,7 +37,7 @@ const ItvSearchButton = ({ theme, isSearching, setIsSearchingAction, favorites }
   );
 };
 
-ItvSearchButton.propTypes = {
+IsportsSearchButton.propTypes = {
   theme: PropTypes.object,
   isSearching: PropTypes.bool,
   favorites: PropTypes.array,
@@ -65,4 +65,4 @@ const actions = {
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme);
-export default enhance(ItvSearchButton);
+export default enhance(IsportsSearchButton);

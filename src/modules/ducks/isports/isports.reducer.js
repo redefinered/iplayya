@@ -101,7 +101,7 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_CHANNELS_SUCCESS]: (state, action) => {
-    const { channels, nextPaginatorInfo } = action.data;
+    const { channels, nextPaginatorInfo } = action;
 
     let updatedChannels = uniqBy([...channels, ...state.channels], 'id');
 
@@ -193,6 +193,8 @@ export default createReducer(INITIAL_STATE, {
       programs: []
     };
   },
+
+  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }), /// is searching for favorites
 
   [Types.REMOVE_FROM_FAVORITES]: (state) => {
     return {

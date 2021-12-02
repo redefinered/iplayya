@@ -87,15 +87,16 @@ export const removeFromFavorites = async (input) => {
                 __typename: 'ISports'
               });
               const updatedItems = previous.filter((r) => r.__ref !== normalizedId);
+
+              console.log({ previous, normalizedId, updatedItems });
               return updatedItems;
             }
-            // isports: (previous = [], { toReference }) => {
-            //   return [...previous, toReference(data.addIsportToFavorites)];
-            // }
           }
         });
       }
     });
+
+    console.log({ data });
     return data;
   } catch (error) {
     throw new Error(error);

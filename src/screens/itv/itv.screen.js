@@ -138,6 +138,7 @@ const ItvScreen = ({
         }));
 
         setChannelsData(data.filter(({ c }) => c.toString() === selectedCategory));
+        // setChannelsData(data);
       } else {
         setChannelsData([]);
       }
@@ -326,7 +327,7 @@ const ItvScreen = ({
         {renderChannels()}
       </View>
 
-      <ItvBottomTabs />
+      <ItvBottomTabs selectedCategory={selectedCategory} />
 
       <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
 

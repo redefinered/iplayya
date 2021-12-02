@@ -92,6 +92,8 @@ export const removeFromFavorites = async (input) => {
         });
       }
     });
+
+    console.log({ data });
     return data;
   } catch (error) {
     console.log({ error });

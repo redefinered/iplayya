@@ -14,7 +14,6 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/isports/isports.actions';
-import { selectPaginatorInfo } from 'modules/ducks/isports/isports.selectors';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
@@ -33,6 +32,7 @@ const channelplaceholder = require('assets/channel-placeholder.png');
 
 const IsportsFavoritesScreen = ({
   theme,
+  route,
   isFetching,
   paginator,
   favorites,
@@ -44,6 +44,7 @@ const IsportsFavoritesScreen = ({
   getFavoritesAction,
   resetPaginatorAction,
   removeFromFavoritesAction,
+  getChannelsByCategoriesAction,
   resetFavoritesPaginatorAction
 }) => {
   const updated = React.useRef(false);
@@ -52,14 +53,25 @@ const IsportsFavoritesScreen = ({
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [data, setData] = React.useState([]);
-  const [searchTerm, setSearchTerm] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
 
     const subscribeToViewRemove = navigation.addListener('beforeRemove', () => {
-      if (updated.current) getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+      if (updated.current) {
+        const { selectedCategory } = route.params;
+
+        if (selectedCategory !== 'all') {
+          getChannelsByCategoriesAction({
+            categories: [parseInt(selectedCategory)],
+            ...Object.assign(paginator, { pageNumber: 1 })
+          });
+        } else {
+          getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+        }
+      }
     });
 
     return subscribeToViewRemove;
@@ -73,6 +85,8 @@ const IsportsFavoritesScreen = ({
 
     setData(favorites);
   }, [favorites, searchTerm]);
+
+  // console.log({ favorites, searchTerm });
 
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
@@ -318,7 +332,6 @@ const Container = (props) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  paginatorInfo: selectPaginatorInfo,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
   favoritesRemoved: selectFavoritesListRemoveUpdated,
@@ -332,6 +345,7 @@ const actions = {
   getChannelsAction: Creators.getChannels,
   getChannelsStartAction: Creators.getChannelsStart,
   resetPaginatorAction: Creators.resetPaginator,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 

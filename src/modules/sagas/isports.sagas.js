@@ -29,7 +29,12 @@ export function* getChannelsRequest(action) {
 
   try {
     const { isports } = yield call(getChannels, action.input);
-    yield put(Creators.getChannelsSuccess({ channels: isports, nextPaginatorInfo }));
+    yield put(
+      Creators.getChannelsSuccess(
+        isports.map((i) => ({ ...i, c: 'all' })),
+        nextPaginatorInfo
+      )
+    );
   } catch (error) {
     yield put(Creators.getChannelsFailure(error.message));
   }
@@ -49,7 +54,7 @@ export function* getChannelRequest(action) {
 }
 
 export function* getChannelsByCategoriesRequest(action) {
-  const { limit, pageNumber } = action.input;
+  const { limit, pageNumber, categories } = action.input;
 
   /// increment pageNumber each successful request
   const nextPaginatorInfo = { limit, pageNumber: pageNumber + 1 };
@@ -57,7 +62,10 @@ export function* getChannelsByCategoriesRequest(action) {
   try {
     const { isportsByCategory } = yield call(getChannelsByCategory, action.input);
     yield put(
-      Creators.getChannelsByCategoriesSuccess({ channels: isportsByCategory, nextPaginatorInfo })
+      Creators.getChannelsByCategoriesSuccess(
+        isportsByCategory.map((i) => ({ ...i, c: categories[0] })),
+        nextPaginatorInfo
+      )
     );
   } catch (error) {
     yield put(Creators.getChannelsByCategoriesFailure(error.message));

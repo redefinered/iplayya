@@ -53,30 +53,28 @@ const CategorySelectorPills = ({ index, data, labelkey, onSelect, selected, scre
   };
 
   return (
-    <React.Fragment>
-      <FlatList
-        ref={pills}
-        style={{
-          height: 34,
-          paddingBottom: screen ? 40 : 0,
-          marginBottom: theme.spacing(2)
-        }}
-        horizontal
-        data={data}
-        keyExtractor={(item) => item.id}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item: { id, ...d } }) => (
-          <Pill
-            id={id.toString()}
-            onLayout={(e) => handlePillOnLayout(e, { id, ...d })}
-            label={d[labelkey]}
-            onSelect={onSelect}
-            selected={selected}
-            {...d}
-          />
-        )}
-      />
-    </React.Fragment>
+    <FlatList
+      ref={pills}
+      style={{
+        height: 34,
+        paddingBottom: screen ? 40 : 0,
+        marginBottom: theme.spacing(2)
+      }}
+      horizontal
+      data={data}
+      keyExtractor={(item) => item.id}
+      showsHorizontalScrollIndicator={false}
+      renderItem={({ item: { id, ...d } }) => (
+        <Pill
+          id={id.toString()}
+          onLayout={(e) => handlePillOnLayout(e, { id, ...d })}
+          label={d[labelkey]}
+          onSelect={onSelect}
+          selected={selected}
+          {...d}
+        />
+      )}
+    />
   );
 };
 
