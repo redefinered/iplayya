@@ -5,13 +5,11 @@ import {
   GET_CHANNELS,
   GET_CHANNEL_TOKEN,
   GET_TV_CHANNELS_BY_CATEGORIES,
-  ADD_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITES,
   GET_PROGRAMS_BY_CHANNEL,
   SEARCH
 } from 'graphql/itv.graphql';
-import { PAGINATOR_LIMIT } from 'common/globals';
 
 export const getGenres = async () => {
   try {
@@ -52,9 +50,7 @@ export const getChannels = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_CHANNELS,
-      variables: { input },
-      /// adding network-only for now, remove when refetchQuery is working as expected
-      fetchPolicy: 'network-only'
+      variables: { input }
     });
     return data;
   } catch (error) {
@@ -74,66 +70,43 @@ export const getChannelsByCategory = async (input) => {
   }
 };
 
-export const addToFavorites = async (videoId) => {
-  try {
-    const { data } = await client.mutate({
-      mutation: ADD_TO_FAVORITES,
-      variables: { input: { videoId } },
-      refetchQueries: [
-        {
-          query: GET_FAVORITES,
-          fetchPolicy: 'network-only'
-        },
-        // {
-        //   query: GET_CHANNELS,
-        //   variables: { input: paginator },
-        //   fetchPolicy: 'network-only'
-        // },
-        {
-          query: GET_CHANNEL,
-          variables: { input: { videoId } },
-          fetchPolicy: 'network-only'
-        }
-      ],
-      awaitRefetchQueries: true
-    });
-    return data;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
 export const removeFromFavorites = async (input) => {
   try {
     const { data } = await client.mutate({
       mutation: REMOVE_FROM_FAVORITES,
       variables: { input },
-      refetchQueries: [
-        {
-          query: GET_FAVORITES,
-          variables: { input: { limit: 10, pageNumber: 1 } },
-          fetchPolicy: 'network-only'
-        },
-        {
-          query: GET_CHANNELS,
-          variables: { input: { limit: PAGINATOR_LIMIT, pageNumber: 1 } },
-          fetchPolicy: 'network-only'
-        }
-      ],
-      awaitRefetchQueries: true
+
+      // this updates the favorites list in local cache
+      update(cache, { data }) {
+        cache.modify({
+          fields: {
+            favoriteIptvs: (previous = []) => {
+              const normalizedId = cache.identify({
+                id: data.removeIptvToFavorites.id,
+                __typename: 'Iptv'
+              });
+              const updatedItems = previous.filter((r) => r.__ref !== normalizedId);
+              return updatedItems;
+            },
+            iptv: (_previous, { toReference }) => {
+              return toReference(data.removeIptvToFavorites);
+            }
+          }
+        });
+      }
     });
+
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
 
 export const getFavorites = async (input) => {
-  // console.log({ getFavoritesInput: input });
   try {
     const { data } = await client.query({
       query: GET_FAVORITES,
-      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;
@@ -159,7 +132,6 @@ export const search = async (input) => {
   try {
     const { data } = await client.query({
       query: SEARCH,
-      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;

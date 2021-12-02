@@ -29,6 +29,11 @@ export const selectFavoritesListUpdated = createSelector(
   ({ favoritesListUpdated }) => favoritesListUpdated
 );
 
+export const selectSearchResultsPaginator = createSelector(
+  [iSportsState],
+  ({ searchResultsPaginator }) => searchResultsPaginator
+);
+
 const selectChannelForFilter = (state, props) => {
   return state.sports.channels.find(({ id }) => id === props.channelId);
 };
@@ -76,4 +81,11 @@ export const selectPreviousChannel = createSelector(
     const previousChannel = channels.find(({ number }) => number === currentChannelNumber - 1);
     return previousChannel;
   }
+);
+
+export const selectIsSearching = createSelector([iSportsState], ({ isSearching }) => isSearching);
+
+export const selectFeaturedChannels = createSelector(
+  [iSportsState],
+  ({ featuredChannels }) => featuredChannels
 );

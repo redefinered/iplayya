@@ -1,143 +1,114 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, TextInput as FormInput, Keyboard, View, SectionList } from 'react-native';
-import { Text, useTheme, TouchableRipple, ActivityIndicator } from 'react-native-paper';
+import {
+  TextInput as FormInput,
+  FlatList,
+  View,
+  Keyboard,
+  Pressable,
+  ScrollView,
+  KeyboardAvoidingView
+} from 'react-native';
+import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
 import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
 import ContentWrap from 'components/content-wrap.component';
-import withLoader from 'components/with-loader.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/isports/isports.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectSearchResults,
-  selectIsFetching,
+  selectSearchResultsPaginator,
   selectRecentSearch,
-  selectSimilarChannel
+  selectIsFetching
 } from 'modules/ducks/isports/isports.selectors';
 import { selectIsportsGenres } from 'modules/app';
-import { ScrollView } from 'react-native-gesture-handler';
-import uniq from 'lodash/uniq';
 
-import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
-
+const ITEM_HEIGHT = 96;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
-const ISportsSearchScreen = ({
-  navigation,
-  error,
-  searchStartAction,
-  searchAction,
-  results,
+const ItvSearchScreen = ({
+  theme,
   genres,
+  results,
+  navigation,
   isFetching,
+  searchAction,
   recentSearch,
+  searchStartAction,
+  searchResultsPaginator,
+  clearRecentSearchAction,
   updateRecentSearchAction,
-  getSimilarChannelAction,
-  getSimilarChannelStartAction,
-  similarChannel
+  setBottomTabsVisibleAction,
+  resetSearchResultsPaginatorAction
 }) => {
-  const theme = useTheme();
   const [term, setTerm] = React.useState('');
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
+  const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
+  const [resultPadding, setResultPadding] = React.useState(0);
 
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
+    resetSearchResultsPaginatorAction();
   }, []);
+
+  React.useEffect(() => {
+    // do not update the list while searching
+    if (isFetching) return;
+
+    /// only display 5 most recent search terms
+    setRecents(recentSearch.slice(0, 5));
+  }, [recentSearch]);
 
   const handleChange = (value) => {
     setTerm(value);
   };
 
   React.useEffect(() => {
-    if (term.length === 0) {
-      searchStartAction();
-    }
+    searchStartAction();
+    resetSearchResultsPaginatorAction();
+
     if (term.length) {
       if (term.length >= 2) {
+        // execute the search
         search(term, false);
       }
     }
   }, [term]);
 
   const search = React.useCallback(
-    debounce((keyword) => searchAction({ keyword, pageNumber: 1, limit: 10 }), 300),
-    []
+    debounce((keyword, shouldIncrement) => {
+      // execute search
+      searchAction({ keyword, ...searchResultsPaginator }, shouldIncrement);
+    }, 1500),
+    [searchResultsPaginator]
   );
 
-  const handleItemPress = (channelId) => {
+  const handleItemPress = ({ id, title }) => {
+    /// the recent searched item is the one selected by user
+    updateRecentSearchAction({ id, title });
+
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('IsportsChannelDetailScreen', { channelId });
+    navigation.navigate('IsportsChannelDetailScreen', { channelId: id });
   };
-
-  React.useEffect(() => {
-    if (results.length) {
-      let mapChannel = results.map(({ genre }) => {
-        const { id } = genres.find(({ title }) => title === genre);
-        return parseInt(id);
-      });
-      mapChannel = uniq(mapChannel);
-      getSimilarChannelAction({ limit: 6, categories: mapChannel });
-      Keyboard.dismiss();
-    } else {
-      getSimilarChannelStartAction();
-    }
-  }, [results]);
-
-  const DATA = [
-    {
-      title: 'Search Results',
-      data: results
-    },
-    {
-      title: 'Similar Channel',
-      data: similarChannel
-    }
-  ];
 
   const handleGenrePress = (genreId) => {
-    navigation.navigate('IsportsScreen', { genreId });
-  };
-
-  const onSubmitEditing = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-      setTerm(term);
-    } else {
-      return;
-    }
-  };
-
-  const handleRecentSearch = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-    } else {
-      return;
-    }
-  };
-
-  const handleEndReached = () => {
-    console.log('end reached!');
-    if (term.length) {
-      if (term.length <= 20) return;
-      search(term, true);
-    }
-  };
-
-  const handleShowKeyboard = () => {
-    setShowKeyboard(true);
+    navigation.navigate('IsportsScreen', { genreId, openItvGuide: false });
   };
 
   const handleScrollAction = () => {
     Keyboard.dismiss();
+    // setOnEndReachedCalledDuringMomentum(false);
+    setBottomTabsVisibleAction({ hideTabs: true });
   };
 
   const renderListLoader = () => {
@@ -150,49 +121,10 @@ const ISportsSearchScreen = ({
   };
 
   const renderResult = () => {
-    if (error)
-      return (
-        <ContentWrap>
-          <Text
-            style={{
-              ...createFontFormat(14, 19),
-              fontWeight: '700',
-              color: theme.iplayya.colors.white50,
-              paddingVertical: theme.spacing(2)
-            }}
-          >
-            Zero result
-          </Text>
-        </ContentWrap>
-      );
-
     if (results.length)
       return (
         <React.Fragment>
-          <SectionList
-            showsVerticalScrollIndicator={false}
-            sections={DATA}
-            keyExtractor={(item) => item.id}
-            onScroll={handleScrollAction}
-            renderSectionFooter={renderListLoader}
-            renderItem={renderSection}
-            onEndReached={() => handleEndReached()}
-            renderSectionHeader={({ section }) => (
-              <ContentWrap>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white80,
-                    paddingVertical: theme.spacing(2)
-                  }}
-                >
-                  {section.title}
-                </Text>
-              </ContentWrap>
-            )}
-          />
-          {/* <FlatList
+          <FlatList
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={
               <ContentWrap>
@@ -200,8 +132,8 @@ const ISportsSearchScreen = ({
                   style={{
                     ...createFontFormat(14, 19),
                     fontWeight: '700',
-                    color: theme.iplayya.colors.white80,
-                    paddingVertical: 15
+                    color: theme.iplayya.colors.white50,
+                    paddingVertical: theme.spacing(2)
                   }}
                 >
                   Search Results
@@ -212,94 +144,72 @@ const ISportsSearchScreen = ({
             onScroll={handleScrollAction}
             data={results}
             keyExtractor={(item) => item.id}
-            renderItem={({ item: { id, epgtitle, ...itemProps } }) => (
+            getItemLayout={(data, index) => {
+              return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+            }}
+            renderItem={({ item }) => (
               <ListItemChanel
-                onSelect={() => handleItemPress(id)}
+                item={item}
                 full
+                showepg={false}
+                showFavoriteButton={false}
+                isCatchUpAvailable={false}
                 thumbnail={channelplaceholder}
-                epgtitle={epgtitle}
-                {...itemProps}
+                handleItemPress={handleItemPress}
               />
             )}
-            onEndReached={() => handleEndReached()}
-          /> */}
+            // onEndReached={() => handleEndReached()}
+          />
+          <View style={{ height: resultPadding + theme.spacing(5) }} />
         </React.Fragment>
-        // {/* <React.Fragment>
-        //   <Text
-        //     style={{
-        //       ...createFontFormat(14, 19),
-        //       fontWeight: '700',
-        //       color: theme.iplayya.colors.white50,
-        //       paddingVertical: 15
-        //     }}
-        //   >
-        //     Search Results
-        //   </Text>
-        //   <ScrollView>
-        //     {results.map(({ id, title }) => (
-        //       <TouchableRipple key={id} onPress={() => handleItemPress(id)}>
-        //         <Text
-        //           style={{
-        //             ...createFontFormat(16, 22),
-        //             paddingVertical: 15,
-        //             paddingHorizontal: theme.spacing(2)
-        //           }}
-        //         >
-        //           {title}
-        //         </Text>
-        //       </TouchableRipple>
-        //     ))}
-        //   </ScrollView>
-        // </React.Fragment> */}
       );
-  };
-
-  const renderSection = ({ item: { id, epgtitle, ...itemProps } }) => {
-    return (
-      <ListItemChanel
-        isCatchUpAvailable={false}
-        onSelect={() => handleItemPress(id)}
-        full
-        thumbnail={channelplaceholder}
-        epgtitle={epgtitle}
-        {...itemProps}
-      />
-    );
   };
 
   const renderRecentSearch = () => {
-    if (term.length || !term.length) {
-      if (results.length) return;
-      return (
-        <React.Fragment>
-          <ContentWrap>
-            <Text
-              style={{
-                ...createFontFormat(14, 19),
-                fontWeight: '700',
-                color: theme.iplayya.colors.white50,
-                paddingVertical: theme.spacing(2)
-              }}
-            >
-              Recent Search
+    /// do not show if searchbar is not in use
+    // if (!isSearching) return;
+
+    // do not show if there is results
+    if (results.length) return;
+
+    // do not show if there is no recent search items
+    if (!recents.length) return;
+
+    return (
+      <ContentWrap>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Text
+            style={{
+              ...createFontFormat(14, 19),
+              fontWeight: '700',
+              color: theme.iplayya.colors.white50,
+              paddingVertical: theme.spacing(2)
+            }}
+          >
+            Recent Search
+          </Text>
+          <Pressable onPress={clearRecentSearchAction}>
+            <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
+          </Pressable>
+        </View>
+        {recents.map(({ id, title }, index) => (
+          <TouchableRipple key={index} onPress={() => handleItemPress({ id, title })}>
+            <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+              {title}
             </Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {recentSearch.map((term, index) => (
-                <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
-                    {term}
-                  </Text>
-                </TouchableRipple>
-              ))}
-            </ScrollView>
-          </ContentWrap>
-        </React.Fragment>
-      );
-    }
+          </TouchableRipple>
+        ))}
+      </ContentWrap>
+    );
   };
 
   const renderSuggestedSearch = () => {
-    // if (term.length > 0 && term.length <= 3)
     if (term.length || !term.length) {
       /// return if search results is not empty
       if (results.length) return;
@@ -318,112 +228,123 @@ const ISportsSearchScreen = ({
               >
                 Suggested Search
               </Text>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                {genres.map(({ id, title }) => (
-                  <TouchableRipple key={id} onPress={() => handleGenrePress(id)}>
+            </ContentWrap>
+            <View>
+              {genres.map(({ id, title }) => (
+                <ContentWrap key={id}>
+                  <TouchableRipple onPress={() => handleGenrePress(id)}>
                     <Text
                       style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
                     >
                       {title}
                     </Text>
                   </TouchableRipple>
-                ))}
-              </ScrollView>
-            </ContentWrap>
+                </ContentWrap>
+              ))}
+            </View>
+            <View style={{ height: resultPadding + theme.spacing(5) }} />
           </React.Fragment>
         );
     }
   };
 
+  const handleSeachFocus = () => {
+    /// resets search result paginator so the result is page 1
+    resetSearchResultsPaginatorAction();
+
+    // reset search state
+    searchStartAction();
+
+    setBottomTabsVisibleAction({ hideTabs: true });
+  };
+
+  const handleSearchbarLayout = ({ nativeEvent: { layout } }) => {
+    setResultPadding(layout.height);
+  };
+
   return (
-    <View style={styles.container}>
-      <ContentWrap>
+    <KeyboardAvoidingView behavior="padding">
+      <ContentWrap onLayout={handleSearchbarLayout}>
         <TextInput
-          render={(props) => (
-            <FormInput
-              {...props}
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                marginLeft: 40,
-                fontSize: 16,
-                color: '#ffffff'
-              }}
-            />
-          )}
+          onFocus={handleSeachFocus}
+          multiline={false}
           name="search"
           returnKeyType="search"
           autoFocus
-          showSoftInputOnFocus={showKeyboard}
-          focusAction={handleShowKeyboard}
-          onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}
           autoCapitalize="none"
           clearButtonMode="while-editing"
           autoCompleteType="email"
           style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
-          placeholder="Search a sports channel"
+          placeholder="Search a channel"
+          render={(props) => (
+            <FormInput
+              {...props}
+              style={{
+                flex: 1,
+                marginLeft: 40,
+                fontSize: 16,
+                justifyContent: 'center',
+                color: '#ffffff'
+              }}
+            />
+          )}
           left={
             <RNPTextInput.Icon
               name={() => {
                 return isFetching ? (
-                  <Icon
-                    name="search"
-                    size={theme.iconSize(4)}
-                    style={{ marginRight: theme.spacing(-0.3) }}
-                  />
+                  <ActivityIndicator size="small" style={{ marginRight: 5 }} />
                 ) : (
-                  <Icon
-                    name="search"
-                    size={theme.iconSize(4)}
-                    style={{ marginRight: theme.spacing(-0.3) }}
-                  />
+                  <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
                 );
               }}
-              onPress={() => handleRecentSearch()}
             />
           }
-          // onFocus={() => this.setState({ isolatedInputs: true })}
-          // onBlur={() => this.setState({ isolatedInputs: false })}
         />
       </ContentWrap>
-      {renderResult()}
-      {renderRecentSearch()}
-      {renderSuggestedSearch()}
-    </View>
+      {/* <View style={{ flex: 1, height: Dimensions.get('window').height }}></View> */}
+      <ScrollView>
+        {renderResult()}
+        {renderRecentSearch()}
+        {renderSuggestedSearch()}
+      </ScrollView>
+
+      {/* <SectionList
+        IF NEEDS OPTIMIZATION CONVERT SCREEN TO SECTION LIST INSTEAD OF DISPLAYING SEPARATE LISTS PER DATA
+        sections={DATA}
+        keyExtractor={(item, index) => item + index}
+        renderItem={({ item }) => <Item title={item} />}
+        renderSectionHeader={({ section: { title } }) => <Text style={styles.header}>{title}</Text>}
+      /> */}
+    </KeyboardAvoidingView>
   );
 };
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush>
-    <ISportsSearchScreen {...props} />
+    <ItvSearchScreen {...props} />
   </ScreenContainer>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});
 
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
+  clearRecentSearchAction: Creators.clearRecentSearch,
   updateRecentSearchAction: Creators.updateRecentSearch,
-  getSimilarChannelAction: Creators.getSimilarChannel,
-  getSimilarChannelStartAction: Creators.getSimilarChannelStart
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
+  resetSearchResultsPaginatorAction: Creators.resetSearchResultsPaginator
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
-  genres: selectIsportsGenres,
+  searchResultsPaginator: selectSearchResultsPaginator,
   recentSearch: selectRecentSearch,
-  similarChannel: selectSimilarChannel
+  genres: selectIsportsGenres
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(Container);

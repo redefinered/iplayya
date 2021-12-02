@@ -15,6 +15,7 @@ import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import NotifService from 'NotifService';
 import theme from 'common/theme';
+import { FlatList } from 'react-native-gesture-handler';
 
 const NotificationsScreen = ({
   notifications,
@@ -120,12 +121,12 @@ const NotificationsScreen = ({
     );
 
   return (
-    <View>
-      {/* <Button onPress={() => checkScheduledNotifs()}>check scheduled notifications</Button>
-      <Button onPress={() => cancelAllNotifications()}>cancel all scheduled notifications</Button> */}
-      {notifications.map((item, key) => (
-        <NotificationItem key={key} {...item} handleSelect={handleSelect} />
-      ))}
+    <View style={{ paddingVertical: theme.spacing(2) }}>
+      <FlatList
+        data={notifications}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <NotificationItem {...item} handleSelect={handleSelect} />}
+      />
       <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
       <SnackBar
         visible={showSnackBar}

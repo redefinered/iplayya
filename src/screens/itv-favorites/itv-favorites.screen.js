@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, Pressable, FlatList, TextInput as FormInput } from 'react-native';
-import { Text, withTheme, TextInput as RNPTextInput } from 'react-native-paper';
+import { Text, withTheme, TextInput as RNPTextInput, ActivityIndicator } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import TextInput from 'components/text-input/text-input.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -17,50 +17,61 @@ import { Creators } from 'modules/ducks/itv/itv.actions';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
-  selectFavorites,
   selectError,
-  selectIsFetching,
-  selectFavoritesPaginator,
+  selectFavorites,
   selectPaginator,
-  selectChannels,
+  selectIsFetching,
+  selectIsSearching,
+  selectFavoritesPaginator,
   selectfavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
-import { selectIsSearching } from 'modules/ducks/itv/itv.selectors';
 
+const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvFavoritesScreen = ({
   theme,
+  route,
+  isFetching,
   paginator,
   favorites,
   navigation,
   isSearching,
   favoritesRemoved,
-  getFavoritesAction,
   favoritesPaginator,
   getChannelsAction,
-  favoritesStartAction,
+  getFavoritesAction,
   resetPaginatorAction,
   removeFromFavoritesAction,
+  getChannelsByCategoriesAction,
   resetFavoritesPaginatorAction
 }) => {
   const updated = React.useRef(false);
+
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [data, setData] = React.useState([]);
-  const [searchTerm, setSearchTerm] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
 
   React.useEffect(() => {
-    // call start action to reset update checkers
-    favoritesStartAction();
-
     resetFavoritesPaginatorAction();
 
     const subscribeToViewRemove = navigation.addListener('beforeRemove', () => {
-      if (updated.current) getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+      if (updated.current) {
+        const { selectedCategory } = route.params;
+
+        if (selectedCategory !== 'all') {
+          getChannelsByCategoriesAction({
+            categories: [parseInt(selectedCategory)],
+            ...Object.assign(paginator, { pageNumber: 1 })
+          });
+        } else {
+          getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+        }
+      }
     });
 
     return subscribeToViewRemove;
@@ -74,6 +85,8 @@ const ItvFavoritesScreen = ({
 
     setData(favorites);
   }, [favorites, searchTerm]);
+
+  // console.log({ favorites, searchTerm });
 
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
@@ -97,12 +110,12 @@ const ItvFavoritesScreen = ({
   const handleItemPress = (item) => {
     if (activateCheckboxes) {
       const newItems = selectedItems;
-      const index = selectedItems.findIndex((i) => i === item);
+      const index = selectedItems.findIndex((i) => i === item.id);
       if (index >= 0) {
         newItems.splice(index, 1);
         setSelectedItems([...newItems]);
       } else {
-        setSelectedItems([item, ...selectedItems]);
+        setSelectedItems([item.id, ...selectedItems]);
       }
     } else {
       // navigation.navigate('MovieDetailScreen', { videoId: item });
@@ -207,16 +220,23 @@ const ItvFavoritesScreen = ({
     return 'Are you sure you want to delete this channel/s from your Favorites list?';
   };
 
-  if (favorites.length)
+  if (data.length)
     return (
-      <View style={{ marginTop: 20 }}>
+      <View style={{ marginTop: theme.spacing(3) }}>
+        {isFetching && (
+          <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+            <ActivityIndicator />
+          </View>
+        )}
+
         {activateCheckboxes && (
           <ContentWrap>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                marginBottom: theme.spacing(2)
               }}
             >
               <Pressable
@@ -252,8 +272,11 @@ const ItvFavoritesScreen = ({
           renderItem={({ item }) => (
             <ListItemChanel
               full
-              showipg={false}
+              showepg={false}
+              showFavoriteButton={false}
               item={item}
+              activateCheckboxes={activateCheckboxes}
+              selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
               isCatchUpAvailable={false}
               thumbnail={channelplaceholder}
               handleItemPress={handleItemPress}
@@ -275,10 +298,10 @@ const ItvFavoritesScreen = ({
       </View>
     );
 
-  return <EmptyState theme={theme} navigation={navigation} />;
+  return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
-const EmptyState = ({ theme, navigation }) => (
+const EmptyState = ({ isFetching, theme, navigation }) => (
   <View
     style={{
       flex: 1,
@@ -288,6 +311,11 @@ const EmptyState = ({ theme, navigation }) => (
       paddingBottom: 130
     }}
   >
+    {isFetching && (
+      <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+        <ActivityIndicator />
+      </View>
+    )}
     <NoFavorites />
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>
@@ -313,17 +341,16 @@ const mapStateToProps = createStructuredSelector({
   favoritesPaginator: selectFavoritesPaginator,
   favoritesRemoved: selectfavoritesListRemoveUpdated,
   paginator: selectPaginator,
-  channels: selectChannels,
   isSearching: selectIsSearching
 });
 
 const actions = {
-  favoritesStartAction: Creators.favoritesStart,
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavorites,
   getChannelsAction: Creators.getChannels,
   getChannelsStartAction: Creators.getChannelsStart,
   resetPaginatorAction: Creators.resetPaginator,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 

@@ -6,7 +6,7 @@ import {
   getChannels,
   getChannelsByCategory,
   getChannelToken,
-  addToFavorites,
+  // addToFavorites,
   removeFromFavorites,
   getFavorites,
   getProgramsByChannel,
@@ -30,7 +30,12 @@ export function* getChannelsRequest(action) {
 
   try {
     const { isports } = yield call(getChannels, action.input);
-    yield put(Creators.getChannelsSuccess({ channels: isports, nextPaginatorInfo }));
+    yield put(
+      Creators.getChannelsSuccess(
+        isports.map((i) => ({ ...i, c: 'all' })),
+        nextPaginatorInfo
+      )
+    );
   } catch (error) {
     yield put(Creators.getChannelsFailure(error.message));
   }
@@ -39,6 +44,8 @@ export function* getChannelsRequest(action) {
 export function* getChannelRequest(action) {
   try {
     const { isport: channel } = yield call(getChannel, action.input);
+
+    /// get token
     const {
       getItvChannelToken: { token }
     } = yield call(getChannelToken, { channelId: action.input.videoId });
@@ -50,7 +57,7 @@ export function* getChannelRequest(action) {
 }
 
 export function* getChannelsByCategoriesRequest(action) {
-  const { limit, pageNumber } = action.input;
+  const { limit, pageNumber, categories } = action.input;
 
   /// increment pageNumber each successful request
   const nextPaginatorInfo = { limit, pageNumber: pageNumber + 1 };
@@ -58,30 +65,20 @@ export function* getChannelsByCategoriesRequest(action) {
   try {
     const { isportsByCategory } = yield call(getChannelsByCategory, action.input);
     yield put(
-      Creators.getChannelsByCategoriesSuccess({ channels: isportsByCategory, nextPaginatorInfo })
+      Creators.getChannelsByCategoriesSuccess(
+        isportsByCategory.map((i) => ({ ...i, c: categories[0] })),
+        nextPaginatorInfo
+      )
     );
   } catch (error) {
     yield put(Creators.getChannelsByCategoriesFailure(error.message));
   }
 }
 
-export function* addToFavoritesRequest(action) {
-  try {
-    const { addIsportToFavorites } = yield call(addToFavorites, action.id);
-    if (addIsportToFavorites.status !== 'success')
-      throw new Error('Error adding item to favorites');
-    yield put(Creators.addToFavoritesSuccess());
-  } catch (error) {
-    yield put(Creators.addToFavoritesFailure(error.message));
-  }
-}
-
 export function* removeFromFavoritesRequest(action) {
   const { channelIds } = action;
   try {
-    const response = yield all(channelIds.map((id) => call(removeFromFavorites, { videoId: id })));
-    // const { removeIptvToFavorites } = yield call(removeFromFavorites, { videoId: 4117 });
-    console.log({ response });
+    yield all(channelIds.map((id) => call(removeFromFavorites, { videoId: id })));
     yield put(Creators.removeFromFavoritesSuccess());
   } catch (error) {
     yield put(Creators.removeFromFavoritesFailure(error.message));
@@ -92,11 +89,7 @@ export function* getFavoritesRequest(action) {
   const { input } = action;
   try {
     const { favoriteIsports } = yield call(getFavorites, input);
-
-    /// increment paginator pageNumber
-    Object.assign(input, { pageNumber: input.pageNumber + 1 });
-
-    yield put(Creators.getFavoritesSuccess(favoriteIsports, input));
+    yield put(Creators.getFavoritesSuccess(favoriteIsports));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
   }
@@ -113,9 +106,16 @@ export function* getProgramsByChannelRequest(action) {
 }
 
 export function* searchRequest(action) {
+  const { limit, pageNumber } = action.input;
+
   try {
     const { isports: results } = yield call(search, action.input);
-    yield put(Creators.searchSuccess(results));
+
+    /// increment pageNumber each successful request
+    const nextPaginatorInfo = { limit, pageNumber: pageNumber + 1 };
+
+    // console.log({ loc: 'saga', ...nextPaginatorInfo });
+    yield put(Creators.searchSuccess(results, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
   }
@@ -131,16 +131,14 @@ export function* getSimilarChannelRequest(action) {
   }
 }
 
-export default function* itvSagas() {
+export default function* isportsSagas() {
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
   yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
   yield takeLatest(Types.GET_CHANNELS, getChannelsRequest);
   yield takeLatest(Types.GET_CHANNELS_BY_CATEGORIES, getChannelsByCategoriesRequest);
-  yield takeLatest(Types.ADD_TO_FAVORITES, addToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITES, getFavoritesRequest);
   yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_SIMILAR_CHANNEL, getSimilarChannelRequest);
-  yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
 }

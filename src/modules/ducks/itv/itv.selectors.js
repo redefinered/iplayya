@@ -85,3 +85,8 @@ export const selectPreviousChannel = createSelector(
 );
 
 export const selectIsSearching = createSelector([itvState], ({ isSearching }) => isSearching);
+
+export const selectFeaturedChannels = createSelector(
+  [itvState],
+  ({ featuredChannels }) => featuredChannels
+);

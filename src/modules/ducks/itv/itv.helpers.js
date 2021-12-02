@@ -4,8 +4,12 @@ export const updateChannelsWithFavorited = (state, action) => {
   const { id: channelId } = action;
   const channels = clone(state.channels);
 
+  console.log({ channelId });
+
   /// favorited channel
-  const channel = channels.find(({ id }) => parseInt(id) === channelId);
+  const channel = channels.find(({ id }) => id === channelId);
+
+  console.log({ channel });
 
   /// stop ececution if channel is not found from the list
   if (typeof channel === 'undefined') return channels;

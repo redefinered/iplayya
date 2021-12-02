@@ -53,7 +53,6 @@ const ImovieSearchScreen = ({
   getSimilarMoviesStartAction
 }) => {
   const [term, setTerm] = React.useState('');
-  const [showKeyboard, setShowKeyboard] = React.useState(false);
   const [downloads, setDownloads] = React.useState(null);
 
   console.log({ results });
@@ -153,10 +152,6 @@ const ImovieSearchScreen = ({
     } else {
       return;
     }
-  };
-
-  const handleShowKeyboard = () => {
-    setShowKeyboard(true);
   };
 
   const renderItem = ({ item }) => {
@@ -321,8 +316,6 @@ const ImovieSearchScreen = ({
         name="search"
         returnKeyType="search"
         autoFocus
-        showSoftInputOnFocus={showKeyboard}
-        focusAction={handleShowKeyboard}
         onSubmitEditing={(term) => onSubmitEditing(term)}
         handleChangeText={(term) => handleChange(term)}
         value={term}

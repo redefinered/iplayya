@@ -2,7 +2,6 @@ import { createReducer } from 'reduxsauce';
 import { Types } from './itv.actions';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
-import { updateChannelsWithFavorited } from './itv.helpers';
 import { PAGINATOR_LIMIT, ITV_SEARCH_RESULTS_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
@@ -18,13 +17,12 @@ const INITIAL_STATE = {
     order: 'asc'
   },
 
-  // random channels from getChannelsByCategory
-  featuredChannels: [],
-
   channel: null,
   /// channels per category
   // changes depending on user click in itv screen
   channels: [],
+
+  featuredChannels: [],
 
   // programs per selected channel
   programs: [],
@@ -132,6 +130,11 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  [Types.SET_FEATURED_CHANNELS]: (state, action) => {
+    return { ...state, featuredChannels: action.channels };
+  },
+
   [Types.GET_CHANNELS_BY_CATEGORIES_START]: (state) => {
     return {
       ...state,
@@ -199,39 +202,7 @@ export default createReducer(INITIAL_STATE, {
       programs: []
     };
   },
-
-  [Types.FAVORITES_START]: (state) => {
-    return { ...state, favoritesListUpdated: false, favoritesListRemoveUpdated: false };
-  },
-
-  // add to favorites
-  [Types.ADD_TO_FAVORITES]: (state, action) => {
-    const channels = updateChannelsWithFavorited(state, action);
-
-    return {
-      ...state,
-      isFetching: true,
-      error: null,
-      channels,
-      favoritesListUpdated: false
-    };
-  },
-  [Types.ADD_TO_FAVORITES_SUCCESS]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null,
-      favoritesListUpdated: true
-    };
-  },
-  [Types.ADD_TO_FAVORITES_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: action.error,
-      favoritesListUpdated: false
-    };
-  },
+  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }), /// is searching for favorites
 
   // add to favorites
   [Types.REMOVE_FROM_FAVORITES]: (state) => {
@@ -259,8 +230,6 @@ export default createReducer(INITIAL_STATE, {
       favoritesListRemoveUpdated: false
     };
   },
-
-  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }), /// is searching for favorites
 
   /// get favorites
   [Types.GET_FAVORITES]: (state) => {
@@ -420,8 +389,4 @@ export default createReducer(INITIAL_STATE, {
       }
     };
   }
-
-  // [Types.RESET]: (state) => {
-  //   return { ...state, ...INITIAL_STATE };
-  // }
 });
