@@ -22,6 +22,7 @@ import {
   selectIsFetching,
   selectChannel,
   selectPrograms,
+  selectPaginator,
   selectCurrentProgram,
   selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
@@ -33,10 +34,11 @@ const dirs = RNFetchBlob.fs.dirs;
 const ItvChannelDetailScreen = ({
   isFetching,
   route: {
-    params: { channelId }
+    params: { channelId, selectedCategory }
   },
   channel,
   programs,
+  paginator,
   getProgramsByChannelAction,
   getProgramsByChannelStartAction,
   getChannelAction,
@@ -48,7 +50,9 @@ const ItvChannelDetailScreen = ({
   // addToFavoritesAction,
   favoritesListUpdated,
   setMusicNowPlaying,
-  setBottomTabsVisibleAction
+  setBottomTabsVisibleAction,
+  getChannelsAction,
+  getChannelsByCategoriesAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -104,6 +108,16 @@ const ItvChannelDetailScreen = ({
 
       // hide bottom menu tabs
       setBottomTabsVisibleAction({ hideTabs: true });
+
+      // fetch updated cache when going back to master screen
+      if (selectedCategory !== 'all') {
+        getChannelsByCategoriesAction({
+          categories: [parseInt(selectedCategory)],
+          ...Object.assign(paginator, { pageNumber: 1 })
+        });
+      } else {
+        getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+      }
     });
 
     return () => {
@@ -397,6 +411,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   channel: selectChannel,
   programs: selectPrograms,
+  paginator: selectPaginator,
   currentProgram: selectCurrentProgram,
   favoritesListUpdated: selectFavoritesListUpdated
 });
@@ -405,6 +420,8 @@ const actions = {
   addToFavoritesAction: Creators.addToFavorites,
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
+  getChannelsAction: Creators.getChannels,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset,

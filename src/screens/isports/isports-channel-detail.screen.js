@@ -1,12 +1,10 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, StatusBar, Dimensions } from 'react-native';
-// import { Text } from 'react-native-paper';
+import { View, StatusBar, Dimensions, InteractionManager } from 'react-native';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
-import withLoader from 'components/with-loader.component';
 import ProgramGuide from 'components/program-guide/program-guide.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { compose } from 'redux';
@@ -14,35 +12,47 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as NotificationCreators } from 'modules/ducks/notifications/notifications.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import RNFetchBlob from 'rn-fetch-blob';
 import { createStructuredSelector } from 'reselect';
-import IsportsPlayer from './isports-player.component';
+import ItvPlayer from './isports-player.component';
 import CurrentProgram from './isports-current-program.component';
 import {
   selectError,
   selectIsFetching,
   selectChannel,
   selectPrograms,
+  selectPaginator,
+  selectCurrentProgram,
   selectFavoritesListUpdated
 } from 'modules/ducks/isports/isports.selectors';
 import theme from 'common/theme';
+import { ActivityIndicator } from 'react-native-paper';
 
 const dirs = RNFetchBlob.fs.dirs;
 
 const IsportsChannelDetailScreen = ({
+  isFetching,
   route: {
-    params: { channelId }
+    params: { channelId, selectedCategory }
   },
   channel,
   programs,
+  paginator,
   getProgramsByChannelAction,
+  getProgramsByChannelStartAction,
   getChannelAction,
+  navigation,
+  /// the program that is playing at this moment
+  // currentProgram,
   startAction,
   onNotifResetAction,
+  // addToFavoritesAction,
   favoritesListUpdated,
-  getProgramsByChannelStartAction,
-  navigation,
-  setMusicNowPlaying
+  setMusicNowPlaying,
+  setBottomTabsVisibleAction,
+  getChannelsAction,
+  getChannelsByCategoriesAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -86,42 +96,54 @@ const IsportsChannelDetailScreen = ({
   }, [paused]);
 
   React.useEffect(() => {
+    InteractionManager.runAfterInteractions(() => getInitialData());
+
     /// clears the indicator that there is a new notification
     onNotifResetAction();
-    navigation.addListener('beforeRemove', () => {
-      getProgramsByChannelStartAction();
-    });
 
-    let date = new Date(Date.now());
-    getProgramsByChannelAction({ channelId, date: date.toISOString() });
-    getChannelAction({ videoId: channelId });
+    /// set programs to start state when a user leaves this page
+    const unsubscribeToRouteRemove = navigation.addListener('beforeRemove', () => {
+      /// reset programs to start state
+      getProgramsByChannelStartAction();
+
+      // hide bottom menu tabs
+      setBottomTabsVisibleAction({ hideTabs: true });
+
+      // fetch updated cache when going back to master screen
+      if (selectedCategory !== 'all') {
+        getChannelsByCategoriesAction({
+          categories: [parseInt(selectedCategory)],
+          ...Object.assign(paginator, { pageNumber: 1 })
+        });
+      } else {
+        getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+      }
+    });
 
     return () => {
       /// this will set the channel to null so that when viewing a channel there is no UI flickering
       startAction();
+
+      /// unsibscribe to navigation listener
+      unsubscribeToRouteRemove;
     };
   }, []);
 
+  const getInitialData = () => {
+    // get channel detail
+    getChannelAction({ videoId: channelId });
+
+    /// get programs starting at current time and date
+    let date = new Date(Date.now());
+    getProgramsByChannelAction({ channelId, date: date.toISOString() });
+  };
+
   React.useEffect(() => {
     if (favoritesListUpdated) {
-      getChannelAction({ videoId: channelId });
+      // getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
-
-  // React.useEffect(() => {
-  //   if (channel && currentProgram) {
-  //     const { title: epgtitle, time, time_to } = currentProgram;
-  //     const data = {
-  //       title: channel.title,
-  //       epgtitle,
-  //       time,
-  //       time_to,
-  //       thumbnail: `http://via.placeholder.com/240x133.png?text=${urlEncodeTitle('Program Title')}`
-  //     };
-  //     setCurrentlyPlaying(data);
-  //   }
-  // }, [channel, currentProgram]);
 
   React.useEffect(() => {
     if (channel) navigation.setParams({ channel });
@@ -180,6 +202,26 @@ const IsportsChannelDetailScreen = ({
     navigation.setParams({ channelId: previousChannelId });
   };
 
+  // const renderPlayer = () => {
+  //   if (source) {
+  //     return (
+  //       <ItvPlayer
+  //         channel={channel}
+  //         paused={paused}
+  //         source={source}
+  //         handleNextChannel={handleNextChannel}
+  //         handlePreviousChannel={handlePreviousChannel}
+  //         loading={loading}
+  //         setLoading={setLoading}
+  //         setPaused={setPaused}
+  //         handleTogglePlay={handleTogglePlay}
+  //         fullscreen={fullscreen}
+  //         setFullscreen={setFullscreen}
+  //       />
+  //     );
+  //   }
+  // };
+
   const handleShowSnackBar = () => {
     setShowSnackBar(true);
   };
@@ -204,6 +246,7 @@ const IsportsChannelDetailScreen = ({
     }, 3000);
   };
 
+  // hide fav snackbar
   React.useEffect(() => {
     if (showFavSnackBar) hideFavSnackBar();
   }, [showFavSnackBar]);
@@ -212,8 +255,38 @@ const IsportsChannelDetailScreen = ({
     getProgramsByChannelAction({ channelId, date });
   }, []);
 
+  const renderProgramGuide = () => {
+    if (isFetching)
+      return (
+        <View>
+          <ActivityIndicator />
+        </View>
+      );
+
+    return (
+      <ProgramGuide
+        programs={programs}
+        onDateSelect={handleDateSelect}
+        channelId={channelId}
+        channelName={channel.title}
+        title="Program Guide"
+        showSnackBar={handleShowSnackBar}
+        contentHeight={contentHeight}
+        screen={false}
+        parentType="ITV"
+      />
+    );
+  };
+
   const renderScreenContent = () => {
-    if (!fullscreen)
+    if (!fullscreen) {
+      if (isFetching || !channel)
+        return (
+          <View>
+            <ActivityIndicator />
+          </View>
+        );
+
       return (
         <React.Fragment>
           <View>
@@ -229,12 +302,6 @@ const IsportsChannelDetailScreen = ({
                 }}
               >
                 <View style={{ flex: 11, flexDirection: 'row', alignItems: 'center' }}>
-                  {/* <Image
-                style={{ width: 60, height: 60, borderRadius: 8, marginRight: 10 }}
-                source={{
-                  url: 'http://via.placeholder.com/60x60.png'
-                }}
-              /> */}
                   <View
                     style={{
                       width: 60,
@@ -254,17 +321,7 @@ const IsportsChannelDetailScreen = ({
             </ContentWrap>
             {/* program guide */}
 
-            <ProgramGuide
-              programs={programs}
-              onDateSelect={handleDateSelect}
-              channelId={channelId}
-              channelName={channel.title}
-              title="Program Guide"
-              showSnackBar={handleShowSnackBar}
-              contentHeight={contentHeight}
-              screen={false}
-              parentType="ISPORTS"
-            />
+            {renderProgramGuide()}
           </View>
 
           <SnackBar
@@ -282,6 +339,7 @@ const IsportsChannelDetailScreen = ({
           />
         </React.Fragment>
       );
+    }
   };
 
   const setFullScreenPlayerStyle = () => {
@@ -292,7 +350,10 @@ const IsportsChannelDetailScreen = ({
         justifyContent: 'center'
       };
 
-    return {};
+    return {
+      marginTop: fullscreen ? 0 : theme.spacing(2),
+      marginBottom: fullscreen ? 0 : theme.spacing(2)
+    };
   };
 
   const renderMediaPlayer = () => {
@@ -310,7 +371,7 @@ const IsportsChannelDetailScreen = ({
       );
 
     return (
-      <IsportsPlayer
+      <ItvPlayer
         channel={channel}
         currentProgram={currentProgram}
         paused={paused}
@@ -327,8 +388,6 @@ const IsportsChannelDetailScreen = ({
     );
   };
 
-  if (!channel) return <View />;
-
   return (
     <View style={{ flex: 1 }}>
       {renderStatusbar()}
@@ -341,47 +400,6 @@ const IsportsChannelDetailScreen = ({
   );
 };
 
-// eslint-disable-next-line react/prop-types
-// const Content = ({ title, epgtitle, time, time_to }) => {
-//   const renderEpgtitle = () => {
-//     if (!epgtitle)
-//       return (
-//         <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-//           Program title unavailable
-//         </Text>
-//       );
-
-//     return (
-//       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-//         {epgtitle}
-//       </Text>
-//     );
-//   };
-
-//   const getSchedule = (time, time_to) => {
-//     if (!time || !time_to) return;
-
-//     return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
-//   };
-
-//   return (
-//     <View style={{ flex: 1 }}>
-//       <Text style={{ ...createFontFormat(12, 16), marginBottom: 5 }}>{title}</Text>
-//       <Text style={{ fontWeight: 'bold', ...createFontFormat(12, 16), marginBottom: 5 }}>
-//         {renderEpgtitle()}
-//       </Text>
-//       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-//         <Text style={{ ...createFontFormat(12, 16), marginRight: 6 }}>
-//           {getSchedule(time, time_to)}
-//         </Text>
-//         {/* <Icon name="history" color="#13BD38" /> */}
-//       </View>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({ root: { flex: 1, paddingTop: theme.spacing(2) } });
-
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
     <IsportsChannelDetailScreen {...props} />
@@ -393,6 +411,8 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   channel: selectChannel,
   programs: selectPrograms,
+  paginator: selectPaginator,
+  currentProgram: selectCurrentProgram,
   favoritesListUpdated: selectFavoritesListUpdated
 });
 
@@ -400,12 +420,15 @@ const actions = {
   addToFavoritesAction: Creators.addToFavorites,
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
+  getChannelsAction: Creators.getChannels,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getProgramsByChannelAction: Creators.getProgramsByChannel,
   getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
   onNotifResetAction: NotificationCreators.onNotifReset,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

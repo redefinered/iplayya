@@ -89,15 +89,16 @@ export const removeFromFavorites = async (input) => {
               });
               const updatedItems = previous.filter((r) => r.__ref !== normalizedId);
 
-              console.log({ previous, normalizedId, updatedItems });
               return updatedItems;
+            },
+            isport: (_previous, { toReference }) => {
+              return toReference(data.removeIsportToFavorites);
             }
           }
         });
       }
     });
 
-    console.log({ data });
     return data;
   } catch (error) {
     console.log({ error });
@@ -134,7 +135,6 @@ export const search = async (input) => {
   try {
     const { data } = await client.query({
       query: SEARCH,
-      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;

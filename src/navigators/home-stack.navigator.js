@@ -9,6 +9,10 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import Icon from 'components/icon/icon.component.js';
 import ItvSearchButton from 'screens/itv/itv-search-button.component';
 import IsportsSearchButton from 'screens/isports/isports-search-button.component';
+import { useMutation } from '@apollo/client';
+import SnackBar from 'components/snackbar/snackbar.component';
+import { ADD_TO_FAVORITES as ADD_ITV_CHANNEL_TO_FAVORITES } from 'graphql/itv.graphql';
+import { ADD_TO_FAVORITES as ADD_ISPORT_CHANNEL_TO_FAVORITES } from 'graphql/isports.graphql';
 
 import HomeScreen from 'screens/home/home.screen';
 
@@ -18,6 +22,13 @@ import ItvFavoritesScreen from 'screens/itv-favorites/itv-favorites.screen';
 import ItvSearchScreen from 'screens/itv/itv-search.screen';
 import ItvChannelDetailScreen from 'screens/itv/itv-channel-detail.screen';
 import NotificationsScreen from 'screens/notifications/notifications.screen';
+
+import IsportsScreen from 'screens/isports/isports.screen';
+import IsportsProgramGuideScreen from 'screens/isports/isports-program-guide.screen';
+import IsportsSearchScreen from 'screens/isports/isports-search.screen';
+import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
+import IsportsChannelDetailScreen from 'screens/isports/isports-channel-detail.screen';
+import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 
 import AddIptvScreen from 'screens/iptv/add-iptv.screen';
 
@@ -43,13 +54,6 @@ import MusicPlayerScreen from 'screens/music-player/music-player.screen';
 import IplayScreen from 'screens/iplay/iplay.screen';
 import IplayDetailScreen from 'screens/iplay/iplay-detail.screen';
 import IplaySearchScreen from 'screens/iplay/iplay-search.screen';
-
-import IsportsScreen from 'screens/isports/isports.screen';
-import IsportsProgramGuideScreen from 'screens/isports/isports-program-guide.screen';
-import IsportsSearchScreen from 'screens/isports/isports-search.screen';
-import IsportsFavoritesScreen from 'screens/isports-favorites/isports-favorites.screen';
-import IsportsChannelDetailScreen from 'screens/isports/isports-channel-detail.screen';
-import IsportsDownloadsScreen from 'screens/isports-downloads/isports-downloads.screen';
 
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -90,6 +94,10 @@ const HomeStack = ({
 }) => {
   const navigation = useNavigation();
 
+  const [showError, setShowError] = React.useState(false);
+  const [showSuccess, setShowSuccess] = React.useState(false);
+  // const [title, setTitle] = React.useState(false);
+
   React.useEffect(() => {
     if (created) {
       const { userId, onboardinginfo, updateProfileAction } = rest;
@@ -104,6 +112,76 @@ const HomeStack = ({
       });
     }
   }, [created]);
+
+  const [addIptvChannelToFavorites] = useMutation(ADD_ITV_CHANNEL_TO_FAVORITES, {
+    update(cache, { data }) {
+      cache.modify({
+        fields: {
+          favoriteIptvs: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addIptvToFavorites)];
+          },
+          iptvs: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addIptvToFavorites)];
+          },
+          /// this will update the single channel so the channel detail heart icon updates color
+          iptv: (_previous, { toReference }) => {
+            return toReference(data.addIptvToFavorites);
+          }
+        }
+      });
+    }
+  });
+
+  const [addIsportChannelToFavorites] = useMutation(ADD_ISPORT_CHANNEL_TO_FAVORITES, {
+    update(cache, { data }) {
+      cache.modify({
+        fields: {
+          favoriteIsports: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addIsportToFavorites)];
+          },
+          isports: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addIsportToFavorites)];
+          },
+          /// this will update the single channel so the channel detail heart icon updates color
+          isport: (_previous, { toReference }) => {
+            return toReference(data.addIsportToFavorites);
+          }
+        }
+      });
+    }
+  });
+
+  React.useEffect(() => {
+    if (showSuccess) hideSuccessModal();
+  }, [showSuccess]);
+
+  React.useEffect(() => {
+    if (showError) hideErrorModal();
+  }, [showError]);
+
+  const hideSuccessModal = () => {
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 3000);
+  };
+
+  const hideErrorModal = () => {
+    setTimeout(() => {
+      setShowError(false);
+    }, 3000);
+  };
+
+  const handleItvFavPress = (videoId) => {
+    setShowSuccess(true);
+
+    addIptvChannelToFavorites({ variables: { input: { videoId } } });
+  };
+
+  const handleIsportsFavPress = (videoId) => {
+    setShowSuccess(true);
+
+    addIsportChannelToFavorites({ variables: { input: { videoId } } });
+  };
 
   if (isInitialSignIn) {
     return (
@@ -751,15 +829,15 @@ const HomeStack = ({
 
             return {
               title: null,
-              headerRight: () => (
-                <View style={{ flexDirection: 'row' }}>
+              headerRight: () => {
+                return (
                   <AddToFavoritesButton
                     sub={parseInt(channelId)}
                     active={typeof channel === 'undefined' ? false : channel.is_favorite}
-                    pressAction={rest.addChannelToFavoritesAction}
+                    pressAction={handleItvFavPress}
                   />
-                </View>
-              )
+                );
+              }
             };
           }}
           listeners={{
@@ -785,7 +863,7 @@ const HomeStack = ({
                   <AddToFavoritesButton
                     sub={parseInt(channelId)}
                     active={typeof channel === 'undefined' ? false : channel.is_favorite}
-                    pressAction={rest.addIsportsChannelToFavoritesAction}
+                    pressAction={handleIsportsFavPress}
                   />
                 </View>
               )
@@ -799,6 +877,20 @@ const HomeStack = ({
       </Stack.Navigator>
 
       <NowPlaying navigation={navigation} />
+
+      <SnackBar
+        visible={showError}
+        message="Something went wrong. Please try again."
+        iconName="alert"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+
+      <SnackBar
+        visible={showSuccess}
+        message="Channel is added to your Favorites list"
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </React.Fragment>
   );
 };

@@ -19,12 +19,13 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectHeaderHeight, selectIsportsGenres } from 'modules/app';
 import {
   selectError,
-  selectIsFetching,
-  selectPaginator,
   selectChannels,
   selectFavorites,
-  selectFavoritesListUpdated,
-  selectFavoritesPaginator
+  selectPaginator,
+  selectIsFetching,
+  selectFeaturedChannels,
+  selectFavoritesPaginator,
+  selectFavoritesListUpdated
 } from 'modules/ducks/isports/isports.selectors';
 import { ADD_TO_FAVORITES } from 'graphql/isports.graphql';
 import uniq from 'lodash/uniq';
@@ -43,15 +44,17 @@ const IsportsScreen = ({
   navigation,
   isFetching,
   headerHeight,
+  featuredChannels,
   route: { params },
   getChannelsAction,
   enableSwipeAction,
   resetPaginatorAction,
+  setFeaturedChannelsAction,
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
-  const [showSnackBar, setShowSnackBar] = React.useState(false);
+  // const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
@@ -131,6 +134,9 @@ const IsportsScreen = ({
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       if (channels.length) {
+        /// add featured channels
+        if (!featuredChannels.length) setFeaturedChannelsAction(channels.slice(0, 9));
+
         let data = channels.map(({ id, title, ...rest }) => ({
           id,
           title,
@@ -150,17 +156,17 @@ const IsportsScreen = ({
   //   setShowWalkthroughGuide(false);
   // };
 
-  const hideSnackBar = () => {
-    setTimeout(() => {
-      setShowSnackBar(false);
-      setShowNotificationSnackBar(false);
-    }, 3000);
-  };
+  // const hideSnackBar = () => {
+  //   setTimeout(() => {
+  //     setShowSnackBar(false);
+  //     setShowNotificationSnackBar(false);
+  //   }, 3000);
+  // };
 
-  React.useEffect(() => {
-    if (showSnackBar) hideSnackBar();
-    if (showNotificationSnackBar) hideSnackBar();
-  }, [showSnackBar, showNotificationSnackBar]);
+  // React.useEffect(() => {
+  //   if (showSnackBar) hideSnackBar();
+  //   if (showNotificationSnackBar) hideSnackBar();
+  // }, [showSnackBar, showNotificationSnackBar]);
 
   // const handleShowSnackBar = () => {
   //   setShowSnackBar(true);
@@ -168,7 +174,7 @@ const IsportsScreen = ({
 
   const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ItvChannelDetailScreen', { channelId: item.id });
+    navigation.navigate('IsportsChannelDetailScreen', { channelId: item.id, selectedCategory });
   };
 
   const handleItemLongPress = (id) => {
@@ -255,7 +261,7 @@ const IsportsScreen = ({
           </Text>
         </ContentWrap>
         <FlatList
-          data={channelsData.slice(0, 9)}
+          data={featuredChannels}
           horizontal
           bounces={false}
           renderItem={renderFeaturedItem}
@@ -332,13 +338,13 @@ const IsportsScreen = ({
 
       {/* <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} /> */}
 
-      <SnackBar
+      {/* <SnackBar
         visible={showSnackBar}
         message="Channel is added to your Favorites list"
         // message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
-      />
+      /> */}
       <SnackBar
         visible={showNotificationSnackBar}
         message={`You will now receive notifications from ${subscribed}`}
@@ -371,7 +377,8 @@ const mapStateToProps = createStructuredSelector({
   genres: selectIsportsGenres,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
-  headerHeight: selectHeaderHeight
+  headerHeight: selectHeaderHeight,
+  featuredChannels: selectFeaturedChannels
 });
 
 const actions = {
@@ -382,6 +389,7 @@ const actions = {
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe,
+  setFeaturedChannelsAction: Creators.setFeaturedChannels,
   reset: Creators.reset
 };
 

@@ -84,3 +84,8 @@ export const selectPreviousChannel = createSelector(
 );
 
 export const selectIsSearching = createSelector([iSportsState], ({ isSearching }) => isSearching);
+
+export const selectFeaturedChannels = createSelector(
+  [iSportsState],
+  ({ featuredChannels }) => featuredChannels
+);

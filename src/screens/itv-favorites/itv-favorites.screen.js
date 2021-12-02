@@ -298,10 +298,10 @@ const ItvFavoritesScreen = ({
       </View>
     );
 
-  return <EmptyState theme={theme} navigation={navigation} />;
+  return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
-const EmptyState = ({ theme, navigation }) => (
+const EmptyState = ({ isFetching, theme, navigation }) => (
   <View
     style={{
       flex: 1,
@@ -311,6 +311,11 @@ const EmptyState = ({ theme, navigation }) => (
       paddingBottom: 130
     }}
   >
+    {isFetching && (
+      <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+        <ActivityIndicator />
+      </View>
+    )}
     <NoFavorites />
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>

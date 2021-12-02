@@ -19,12 +19,13 @@ import ItvWalkThrough from 'components/walkthrough-guide/itv-walkthrough.compone
 import { selectHeaderHeight, selectItvGenres } from 'modules/app';
 import {
   selectError,
-  selectIsFetching,
-  selectPaginator,
   selectChannels,
   selectFavorites,
-  selectFavoritesListUpdated,
-  selectFavoritesPaginator
+  selectPaginator,
+  selectIsFetching,
+  selectFeaturedChannels,
+  selectFavoritesPaginator,
+  selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { ADD_TO_FAVORITES } from 'graphql/itv.graphql';
 import uniq from 'lodash/uniq';
@@ -43,15 +44,17 @@ const ItvScreen = ({
   navigation,
   isFetching,
   headerHeight,
+  featuredChannels,
   route: { params },
   getChannelsAction,
   enableSwipeAction,
   resetPaginatorAction,
+  setFeaturedChannelsAction,
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
-  const [showSnackBar, setShowSnackBar] = React.useState(false);
+  // const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
@@ -130,6 +133,9 @@ const ItvScreen = ({
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       if (channels.length) {
+        /// add featured channels
+        if (!featuredChannels.length) setFeaturedChannelsAction(channels.slice(0, 9));
+
         let data = channels.map(({ id, title, ...rest }) => ({
           id,
           title,
@@ -149,17 +155,17 @@ const ItvScreen = ({
     setShowWalkthroughGuide(false);
   };
 
-  const hideSnackBar = () => {
-    setTimeout(() => {
-      setShowSnackBar(false);
-      setShowNotificationSnackBar(false);
-    }, 3000);
-  };
+  // const hideSnackBar = () => {
+  //   setTimeout(() => {
+  //     setShowSnackBar(false);
+  //     setShowNotificationSnackBar(false);
+  //   }, 3000);
+  // };
 
-  React.useEffect(() => {
-    if (showSnackBar) hideSnackBar();
-    if (showNotificationSnackBar) hideSnackBar();
-  }, [showSnackBar, showNotificationSnackBar]);
+  // React.useEffect(() => {
+  //   if (showSnackBar) hideSnackBar();
+  //   if (showNotificationSnackBar) hideSnackBar();
+  // }, [showSnackBar, showNotificationSnackBar]);
 
   // const handleShowSnackBar = () => {
   //   setShowSnackBar(true);
@@ -167,7 +173,7 @@ const ItvScreen = ({
 
   const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ItvChannelDetailScreen', { channelId: item.id });
+    navigation.navigate('ItvChannelDetailScreen', { channelId: item.id, selectedCategory });
   };
 
   const handleItemLongPress = (id) => {
@@ -254,7 +260,7 @@ const ItvScreen = ({
           </Text>
         </ContentWrap>
         <FlatList
-          data={channelsData.slice(0, 9)}
+          data={featuredChannels}
           horizontal
           bounces={false}
           renderItem={renderFeaturedItem}
@@ -281,8 +287,6 @@ const ItvScreen = ({
   };
 
   const renderChannels = () => {
-    if (!channelsData) return;
-
     return (
       <FlatList
         ListHeaderComponent={renderLisHeader}
@@ -309,6 +313,7 @@ const ItvScreen = ({
       />
     );
   };
+
   return (
     <View style={{ height: Dimensions.get('window').height - headerHeight, ...styles.container }}>
       <View>
@@ -331,13 +336,13 @@ const ItvScreen = ({
 
       <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} />
 
-      <SnackBar
+      {/* <SnackBar
         visible={showSnackBar}
         message="Channel is added to your Favorites list"
         // message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
-      />
+      /> */}
       <SnackBar
         visible={showNotificationSnackBar}
         message={`You will now receive notifications from ${subscribed}`}
@@ -370,7 +375,8 @@ const mapStateToProps = createStructuredSelector({
   genres: selectItvGenres,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
-  headerHeight: selectHeaderHeight
+  headerHeight: selectHeaderHeight,
+  featuredChannels: selectFeaturedChannels
 });
 
 const actions = {
@@ -381,6 +387,7 @@ const actions = {
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe,
+  setFeaturedChannelsAction: Creators.setFeaturedChannels,
   reset: Creators.reset
 };
 

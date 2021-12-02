@@ -17,13 +17,12 @@ const INITIAL_STATE = {
     order: 'asc'
   },
 
-  // random channels from getChannelsByCategory
-  featuredChannels: [],
-
   channel: null,
   /// channels per category
   // changes depending on user click in itv screen
   channels: [],
+
+  featuredChannels: [],
 
   // programs per selected channel
   programs: [],
@@ -131,6 +130,11 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  [Types.SET_FEATURED_CHANNELS]: (state, action) => {
+    return { ...state, featuredChannels: action.channels };
+  },
+
   [Types.GET_CHANNELS_BY_CATEGORIES_START]: (state) => {
     return {
       ...state,
