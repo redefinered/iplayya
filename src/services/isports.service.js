@@ -3,6 +3,7 @@ import {
   GET_GENRES,
   GET_CHANNEL,
   GET_CHANNELS,
+  // GET_CHANNEL_TOKEN,
   GET_SPORTS_CHANNELS_BY_CATEGORIES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITES,
@@ -99,6 +100,7 @@ export const removeFromFavorites = async (input) => {
     console.log({ data });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -123,7 +125,7 @@ export const getProgramsByChannel = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
+    console.log({ graphqlerror: error.message });
     throw new Error(error);
   }
 };
@@ -132,6 +134,7 @@ export const search = async (input) => {
   try {
     const { data } = await client.query({
       query: SEARCH,
+      fetchPolicy: 'network-only',
       variables: { input }
     });
     return data;

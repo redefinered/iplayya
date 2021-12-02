@@ -149,9 +149,10 @@ const ItvSearchScreen = ({
             }}
             renderItem={({ item }) => (
               <ListItemChanel
+                item={item}
                 full
                 showepg={false}
-                item={item}
+                showFavoriteButton={false}
                 isCatchUpAvailable={false}
                 thumbnail={channelplaceholder}
                 handleItemPress={handleItemPress}

@@ -29,6 +29,11 @@ export const selectFavoritesListUpdated = createSelector(
   ({ favoritesListUpdated }) => favoritesListUpdated
 );
 
+export const selectSearchResultsPaginator = createSelector(
+  [iSportsState],
+  ({ searchResultsPaginator }) => searchResultsPaginator
+);
+
 const selectChannelForFilter = (state, props) => {
   return state.sports.channels.find(({ id }) => id === props.channelId);
 };

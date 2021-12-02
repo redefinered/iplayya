@@ -6,6 +6,7 @@ import {
   getChannels,
   getChannelsByCategory,
   getChannelToken,
+  // addToFavorites,
   removeFromFavorites,
   getFavorites,
   getProgramsByChannel,
@@ -43,6 +44,8 @@ export function* getChannelsRequest(action) {
 export function* getChannelRequest(action) {
   try {
     const { isport: channel } = yield call(getChannel, action.input);
+
+    /// get token
     const {
       getItvChannelToken: { token }
     } = yield call(getChannelToken, { channelId: action.input.videoId });
@@ -86,11 +89,7 @@ export function* getFavoritesRequest(action) {
   const { input } = action;
   try {
     const { favoriteIsports } = yield call(getFavorites, input);
-
-    /// increment paginator pageNumber
-    Object.assign(input, { pageNumber: input.pageNumber + 1 });
-
-    yield put(Creators.getFavoritesSuccess(favoriteIsports, input));
+    yield put(Creators.getFavoritesSuccess(favoriteIsports));
   } catch (error) {
     yield put(Creators.getFavoritesFailure(error.message));
   }
@@ -107,9 +106,16 @@ export function* getProgramsByChannelRequest(action) {
 }
 
 export function* searchRequest(action) {
+  const { limit, pageNumber } = action.input;
+
   try {
     const { isports: results } = yield call(search, action.input);
-    yield put(Creators.searchSuccess(results));
+
+    /// increment pageNumber each successful request
+    const nextPaginatorInfo = { limit, pageNumber: pageNumber + 1 };
+
+    // console.log({ loc: 'saga', ...nextPaginatorInfo });
+    yield put(Creators.searchSuccess(results, nextPaginatorInfo));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
   }
@@ -125,7 +131,7 @@ export function* getSimilarChannelRequest(action) {
   }
 }
 
-export default function* itvSagas() {
+export default function* isportsSagas() {
   yield takeLatest(Types.GET_GENRES, getGenresRequest);
   yield takeLatest(Types.GET_CHANNEL, getChannelRequest);
   yield takeLatest(Types.GET_CHANNELS, getChannelsRequest);
@@ -135,5 +141,4 @@ export default function* itvSagas() {
   yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
   yield takeLatest(Types.SEARCH, searchRequest);
   yield takeLatest(Types.GET_SIMILAR_CHANNEL, getSimilarChannelRequest);
-  yield takeLatest(Types.GET_PROGRAMS_BY_CHANNEL, getProgramsByChannelRequest);
 }

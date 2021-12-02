@@ -16,7 +16,7 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 // import ItvWalkThrough from 'components/walkthrough-guide/isports-walkthrough.component';
-import { selectHeaderHeight, selectItvGenres } from 'modules/app';
+import { selectHeaderHeight, selectIsportsGenres } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
@@ -73,7 +73,8 @@ const IsportsScreen = ({
 
   React.useEffect(() => {
     if (typeof params !== 'undefined') {
-      const { openItvGuide, genreId } = params;
+      const { genreId } = params;
+      // const { openItvGuide, genreId } = params;
 
       // set category pill initial index
       const i = genresData.findIndex(({ id }) => id === genreId);
@@ -82,7 +83,7 @@ const IsportsScreen = ({
       // set category for fetching
       setSelectedCategory(genreId);
 
-      if (!openItvGuide) return;
+      // if (!openItvGuide) return;
 
       // setShowWalkthroughGuide(true);
     }
@@ -367,7 +368,7 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   paginator: selectPaginator,
   favoritesPaginator: selectFavoritesPaginator,
-  genres: selectItvGenres,
+  genres: selectIsportsGenres,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
   headerHeight: selectHeaderHeight
