@@ -47,7 +47,7 @@ const IradioBottomTabs = ({ nowPlaying }) => {
 
 IradioBottomTabs.propTypes = {
   handleBottomTabsLayoutEvent: PropTypes.func,
-  nowPlaying: PropTypes.object
+  nowPlaying: PropTypes.bool
 };
 
 export default React.memo(IradioBottomTabs);

@@ -26,7 +26,9 @@ const INITIAL_STATE = {
   paused: false,
   nowPlaying: null,
   nowPlayingLayoutInfo: null,
-  isBackgroundMode: false,
+  iradioBottomNavLayout: null,
+  isRadioBackgroundMode: false,
+  isInIradioScreen: false,
   playbackProgress: 0
 };
 
@@ -96,12 +98,24 @@ export default createReducer(INITIAL_STATE, {
   [Types.SET_PROGRESS]: (state, action) => {
     return { ...state, playbackProgress: action.progress };
   },
+  [Types.RESET_NOW_PLAYING]: (state) => {
+    return { ...state, nowPlaying: null };
+  },
+  [Types.SET_IRADIO_BOTTOM_NAV_LAYOUT]: (state, action) => {
+    return { ...state, iradioBottomNavLayout: action.layout };
+  },
   [Types.SET_NOW_PLAYING_LAYOUT_INFO]: (state, action) => {
     return { ...state, nowPlayingLayoutInfo: action.layoutInfo };
   },
   [Types.SET_NOW_PLAYING]: (state, action) => {
     const { track } = action;
     return { ...state, nowPlaying: track };
+  },
+  [Types.SET_NOW_PLAYING_BACKGROUND_MODE]: (state, action) => {
+    return { ...state, isRadioBackgroundMode: action.isRadioBackgroundMode };
+  },
+  [Types.SWITCH_IN_IRADIO_SCREEN]: (state, action) => {
+    return { ...state, isInIradioScreen: action.value };
   },
 
   /// search

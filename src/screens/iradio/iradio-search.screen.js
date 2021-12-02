@@ -82,9 +82,8 @@ const IradioSearchScreen = ({
     [searchResultsPaginator]
   );
 
-  const handleItemPress = ({ cmd, number, name }) => {
-    navigation.navigate('IradioScreen', { cmd, name, number });
-    console.log(cmd, number, name);
+  const handleItemPress = ({ cmd, number, name, ...rest }) => {
+    navigation.navigate('IradioScreen', { cmd, name, number, ...rest });
   };
 
   const onSubmitEditing = () => {
@@ -167,11 +166,11 @@ const IradioSearchScreen = ({
           onEndReached={() => handleEndReached()}
           ListFooterComponent={renderListLoader()}
           keyExtractor={(item) => item.id}
-          renderItem={({ item: { name, cmd, id, number } }) => {
+          renderItem={({ item: { name, cmd, id, number, ...rest } }) => {
             return (
               <React.Fragment>
                 <Pressable
-                  onPress={() => handleItemPress({ cmd, id, number, name })}
+                  onPress={() => handleItemPress({ cmd, id, number, name, ...rest })}
                   style={({ pressed }) => [
                     {
                       backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',

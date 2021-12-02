@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Dimensions } from 'react-native';
+import { View } from 'react-native';
 import { Text, useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
@@ -10,7 +10,9 @@ import { createFontFormat } from 'utils';
 import {
   selectNowPlaying,
   selectPaused,
-  selectPlaybackProgress
+  selectPlaybackProgress,
+  selectIsRadioBackgroundMode,
+  selectIsInIradioScreen
 } from 'modules/ducks/iradio/iradio.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
@@ -21,13 +23,15 @@ const NowPlaying = ({
   // eslint-disable-next-line react/prop-types
   navigation,
   nowPlaying,
-  progress,
+  // progress,
   // setProgressAction,
   // setNowPlayingAction,
   setNowPlayingLayoutInfoAction,
   // updatePlaybackInfoAction,
   paused,
-  setPausedAction
+  setPausedAction,
+  isRadioBackgroundMode,
+  isInIradioScreen
 }) => {
   const theme = useTheme();
   const rootComponent = React.useRef();
@@ -35,39 +39,6 @@ const NowPlaying = ({
 
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
-
-  // React.useEffect(() => {
-  //   if (playbackInfo) {
-  //     updatePlaybackInfoAction(playbackInfo);
-
-  //     const { seekableDuration, currentTime } = playbackInfo;
-
-  //     let percentage = (currentTime / seekableDuration) * 100;
-
-  //     percentage = percentage === Infinity ? 0 : percentage;
-  //     percentage = isNaN(percentage) ? 0 : percentage;
-  //     setProgressAction(percentage);
-
-  //     if (Math.ceil(percentage) === 100) playRadio();
-  //   }
-  // }, [playbackInfo]);
-
-  // const playRadio = () => {
-  //   if (nowPlaying.length) {
-  //     const { number } = nowPlaying;
-
-  //     setNowPlayingAction({
-  //       number: parseInt(number)
-  //     });
-
-  //     setPausedAction(false);
-
-  //     // reset progress
-  //     setProgressAction(0);
-
-  //     return;
-  //   }
-  // };
 
   React.useEffect(() => {
     if (nowPlaying) {
@@ -87,9 +58,13 @@ const NowPlaying = ({
   }, [nowPlaying]);
 
   const visibilityStyles = () => {
-    if (nowPlaying.length) return { top: '100%' };
+    if (isRadioBackgroundMode) return { top: '100%' };
 
-    return { bottom: 0 };
+    if (!isInIradioScreen) {
+      return { opacity: 0 };
+    }
+
+    return { bottom: 70 };
   };
 
   const handleOnRootLayout = ({ nativeEvent }) => {
@@ -111,7 +86,7 @@ const NowPlaying = ({
   };
 
   const handlePress = () => {
-    navigation.navigate('IradioPlayerScreen', { radio: nowPlaying.item });
+    navigation.navigate('IradioPlayerScreen', { radio: nowPlaying });
   };
 
   const renderContent = (nowPlaying) => {
@@ -142,6 +117,7 @@ const NowPlaying = ({
         onBuffer={handleBuffer}
         onError={handleError}
         onProgress={handleProgress}
+        playInBackground
       />
     );
   };
@@ -150,89 +126,72 @@ const NowPlaying = ({
     // const { url: uri } = nowPlaying;
 
     return (
-      <View
-        // onPress={handlePress}
+      <TouchableRipple
+        onPress={handlePress}
         onLayout={handleOnRootLayout}
         ref={rootComponent}
         style={{
           backgroundColor: '#202530',
           borderBottomWidth: 1,
           borderColor: theme.iplayya.colors.white10,
+          zIndex: theme.iplayya.zIndex.loader,
           position: 'absolute',
           left: 0,
           right: 0,
           ...visibilityStyles()
         }}
       >
-        <TouchableRipple onPress={() => handlePress()}>
-          <React.Fragment>
-            {renderPlayer()}
+        <React.Fragment>
+          {renderPlayer()}
 
-            <View
-              style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}
-            >
-              <View
-                style={{
-                  width: (progress * Dimensions.get('window').width) / 100,
-                  height: 1,
-                  backgroundColor: theme.iplayya.colors.white10
-                }}
-              />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingVertical: theme.spacing(2),
+              paddingHorizontal: theme.spacing(2)
+            }}
+          >
+            <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
+              {renderContent(nowPlaying)}
             </View>
             <View
               style={{
+                flex: 4,
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingVertical: theme.spacing(2),
-                paddingHorizontal: theme.spacing(2)
+                justifyContent: 'center'
               }}
             >
-              <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
-                {renderContent(nowPlaying)}
-              </View>
-              <View
-                style={{
-                  flex: 4,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                {paused ? (
-                  <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-                ) : (
-                  <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-                )}
+              {paused ? (
+                <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+              ) : (
+                <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+              )}
 
-                <TouchableRipple
-                  style={{
-                    borderRadius: theme.iconSize(4),
-                    height: theme.iconSize(4),
-                    width: theme.iconSize(4),
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginHorizontal: 10
-                  }}
-                  borderless={true}
-                  rippleColor="rgba(255,255,255,0.25)"
-                  onPress={() => setPausedAction(!paused)}
-                >
-                  <Icon
-                    name={paused ? 'circular-play' : 'circular-pause'}
-                    size={theme.iconSize(4)}
-                    // style={{ marginHorizontal: 10 }}
-                  />
-                </TouchableRipple>
-              </View>
+              <TouchableRipple
+                style={{
+                  borderRadius: theme.iconSize(4),
+                  height: theme.iconSize(4),
+                  width: theme.iconSize(4),
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginHorizontal: 10
+                }}
+                borderless={true}
+                rippleColor="rgba(255,255,255,0.25)"
+                onPress={() => setPausedAction(!paused)}
+              >
+                <Icon
+                  name={paused ? 'circular-play' : 'circular-pause'}
+                  size={theme.iconSize(4)}
+                  // style={{ marginHorizontal: 10 }}
+                />
+              </TouchableRipple>
             </View>
-          </React.Fragment>
-        </TouchableRipple>
-        {/* {hasNotch && (
-          <View style={{ height: 20, backgroundColor: '#202530' }}>
-            <View style={{ height: 1, backgroundColor: theme.iplayya.colors.white10 }} />
           </View>
-        )} */}
-      </View>
+        </React.Fragment>
+      </TouchableRipple>
     );
   }
 
@@ -250,7 +209,9 @@ NowPlaying.propTypes = {
   setNowPlayingAction: PropTypes.func,
   setNowPlayingLayoutInfoAction: PropTypes.func,
   updatePlaybackInfoAction: PropTypes.func,
-  progress: PropTypes.number
+  progress: PropTypes.number,
+  isRadioBackgroundMode: PropTypes.bool,
+  isInIradioScreen: PropTypes.bool
 };
 
 const actions = {
@@ -264,7 +225,9 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   paused: selectPaused,
   progress: selectPlaybackProgress,
-  nowPlaying: selectNowPlaying
+  nowPlaying: selectNowPlaying,
+  isRadioBackgroundMode: selectIsRadioBackgroundMode,
+  isInIradioScreen: selectIsInIradioScreen
 });
 
-export default connect(mapStateToProps, actions)(NowPlaying);
+export default connect(mapStateToProps, actions)(React.memo(NowPlaying));

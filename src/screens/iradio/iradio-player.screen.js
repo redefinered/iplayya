@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { View, Image, Dimensions } from 'react-native';
+import { View, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
@@ -19,7 +19,8 @@ import { createStructuredSelector } from 'reselect';
 import {
   selectNowPlaying,
   selectPaused,
-  selectPlaybackProgress
+  selectPlaybackProgress,
+  selectRadioStations
 } from 'modules/ducks/iradio/iradio.selectors';
 import {
   selectIsFetching,
@@ -32,16 +33,87 @@ const coverplaceholder = require('assets/imusic-placeholder.png');
 const IradioPlayerScreen = ({
   //   navigation,
   nowPlaying,
-  progress,
+  // progress,
   paused,
   setPausedAction,
   added,
   favoritesStartAction,
-  getRadiosAction
+  getRadiosAction,
+  radioStations,
+  setNowPlayingAction
 }) => {
   const [disablePrevious, setDisablePrevious] = React.useState(true);
   const [disableNext, setDisableNext] = React.useState(false);
   const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
+
+  React.useEffect(() => {
+    updateButtons(nowPlaying);
+  }, [nowPlaying]);
+
+  const updateButtons = (nowPlaying) => {
+    if (nowPlaying) {
+      const { number } = nowPlaying;
+      const nextStation = number + 1;
+      const previousStation = number - 1;
+      const totalStations = radioStations.length;
+
+      setDisableNext(false);
+      setDisablePrevious(false);
+
+      if (nextStation > totalStations) {
+        setDisableNext(true);
+      }
+
+      if (previousStation < 1) {
+        setDisablePrevious(true);
+      }
+    }
+  };
+
+  const playNext = () => {
+    const nextStationNumber = nowPlaying.number + 1;
+
+    if (nextStationNumber > radioStations.length) {
+      setDisablePrevious(false);
+
+      setPausedAction(true);
+
+      return;
+    }
+
+    const nextStation = radioStations.find(({ number }) => nextStationNumber === parseInt(number));
+
+    const { number, name: title, cmd, ...rest } = nextStation;
+    setNowPlayingAction({
+      number: parseInt(number),
+      title,
+      url: cmd,
+      ...rest
+    });
+  };
+
+  const playPrevious = () => {
+    const nextStationNumber = nowPlaying.number - 1;
+
+    if (nextStationNumber <= 0) {
+      setPausedAction(true);
+
+      return;
+    }
+
+    const nextStation = radioStations.find(({ number }) => nextStationNumber === parseInt(number));
+
+    const { number, name: title, cmd, ...rest } = nextStation;
+    setNowPlayingAction(
+      {
+        number: parseInt(number),
+        title,
+        url: cmd,
+        ...rest
+      },
+      false
+    );
+  };
 
   /// show update notification
   React.useEffect(() => {
@@ -108,21 +180,12 @@ const IradioPlayerScreen = ({
           </View>
         </View>
 
-        <View style={{ width: '100%', height: 1, backgroundColor: theme.iplayya.colors.white10 }}>
-          <View
-            style={{
-              width: (progress * Dimensions.get('window').width) / 100,
-              height: 1,
-              backgroundColor: theme.iplayya.colors.vibrantpussy
-            }}
-          />
-        </View>
         {/* <MediaProgressVisualizer /> */}
 
         <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-          <PrevButton disabled={disablePrevious} />
+          <PrevButton pressAction={playPrevious} disabled={disablePrevious} />
           <PlayButton paused={paused} pressAction={handleTogglePlayAction} />
-          <NextButton disabled={disableNext} />
+          <NextButton pressAction={playNext} disabled={disableNext} />
         </View>
 
         {renderUpdateNotification()}
@@ -154,6 +217,7 @@ const mapStateToProps = createStructuredSelector({
   paused: selectPaused,
   nowPlaying: selectNowPlaying,
   progress: selectPlaybackProgress,
+  radioStations: selectRadioStations,
   isAddingToFavorites: selectIsFetching,
   added: selectAdded
 });

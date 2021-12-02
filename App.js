@@ -21,6 +21,7 @@ import {
 // import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as ImusicCreators } from 'modules/ducks/music/music.actions';
+import { Creators as IradioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as ImovieCreators } from 'modules/ducks/movies/movies.actions';
 import { Creators as NotifCreators } from 'modules/ducks/notifications/notifications.actions';
 import { selectIsLoggedIn } from 'modules/ducks/auth/auth.selectors';
@@ -59,6 +60,7 @@ const App = ({
   // getProfileAction,
   setProviderAction,
   resetNowPlayingAction,
+  resetIradioNowPlayingAction,
   updatePasswordStartAction,
   setImoviePaginatorInfoAction,
   setImusicPaginatorInfoAction
@@ -98,6 +100,7 @@ const App = ({
     // resetStore(); /// for development
 
     resetNowPlayingAction();
+    resetIradioNowPlayingAction();
 
     Linking.addEventListener('url', ({ url }) => {
       /// decode uri from deep link
@@ -251,6 +254,7 @@ const mapStateToProps = createStructuredSelector({
 const actions = {
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   resetNowPlayingAction: ImusicCreators.resetNowPlaying,
+  resetIradioNowPlayingAction: IradioCreators.resetNowPlaying,
   setProviderAction: AppCreators.setProvider,
   // getProfileAction: ProfileCreators.get,
   onRegisterAction: NotifCreators.onRegister,

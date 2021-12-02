@@ -71,6 +71,7 @@ import { selectCurrentUserId } from 'modules/ducks/auth/auth.selectors';
 import { Creators } from 'modules/ducks/profile/profile.actions';
 import { selectCreated } from 'modules/ducks/provider/provider.selectors';
 
+import IradioNowPlaying from 'screens/iradio/iradio-nowplaying.component';
 import NowPlaying from 'components/now-playing/now-playing.component';
 import NotificationButton from 'components/notification-button.component';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
@@ -830,6 +831,7 @@ const HomeStack = ({
         />
       </Stack.Navigator>
 
+      <IradioNowPlaying navigation={navigation} />
       <NowPlaying navigation={navigation} />
     </React.Fragment>
   );
