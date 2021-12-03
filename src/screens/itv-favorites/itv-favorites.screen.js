@@ -118,8 +118,10 @@ const ItvFavoritesScreen = ({
         setSelectedItems([item.id, ...selectedItems]);
       }
     } else {
-      // navigation.navigate('MovieDetailScreen', { videoId: item });
-      navigation.navigate('ItvChannelDetailScreen', { channelId: item });
+      navigation.navigate('ItvChannelDetailScreen', {
+        channelId: item.id,
+        selectedCategory: route.params.selectedCategory
+      });
     }
   };
 
@@ -220,14 +222,20 @@ const ItvFavoritesScreen = ({
     return 'Are you sure you want to delete this channel/s from your Favorites list?';
   };
 
-  if (data.length)
+  const renderLoader = () => {
+    if (isFetching) {
+      return (
+        <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+  };
+
+  if (favorites.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
-        {isFetching && (
-          <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
-            <ActivityIndicator />
-          </View>
-        )}
+        {renderLoader()}
 
         {activateCheckboxes && (
           <ContentWrap>
@@ -297,6 +305,7 @@ const ItvFavoritesScreen = ({
         )}
       </View>
     );
+  }
 
   return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
