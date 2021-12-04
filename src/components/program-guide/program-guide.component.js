@@ -115,6 +115,7 @@ const ProgramGuide = ({
       id,
       channelId,
       channelName,
+      module: parentType,
       program: { id, parentType, ...rest }
     });
 
