@@ -176,7 +176,7 @@ const App = ({
       id: 123,
       channelId: '3611',
       channelName: '|US| NBA League Pass 1 (live Events)',
-      parentType: 'ISPORTS'
+      module: 'isports'
     });
   };
 
