@@ -3,7 +3,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import Icon from 'components/icon/icon.component';
-import withLoader from 'components/with-loader.component';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
 import ProgramGuideComponent from 'components/program-guide/program-guide.component';
@@ -14,8 +13,11 @@ import { Creators } from 'modules/ducks/itv/itv.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectChannel, selectPrograms } from 'modules/ducks/itv/itv.selectors';
 import { compose } from 'redux';
-import moment from 'moment';
 import theme from 'common/theme';
+import { selectIsFetching } from 'modules/ducks/itv/itv.selectors';
+import { generateDatesFromToday } from 'utils';
+
+const TODAY = new Date().toISOString();
 
 const styles = StyleSheet.create({
   root: {
@@ -24,28 +26,35 @@ const styles = StyleSheet.create({
 });
 
 const ProgramGuide = ({
+  isFetching,
   channel,
-  programs,
+  getChannelAction,
   route: {
     params: { channelId }
-  },
-
-  getChannelAction,
-  getProgramsByChannelAction
+  }
 }) => {
   const [contentHeight, setContentHeight] = React.useState(null);
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [currentProgram, setCurrentProgram] = React.useState(null);
+  const [date, setDate] = React.useState(TODAY);
+
+  const handleDateSelect = (dateId) => {
+    /// generate dates
+    let dates = generateDatesFromToday();
+
+    /// convert date ids to string
+    dates = dates.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
+
+    /// get the date's value
+    const { value } = dates.find(({ id }) => id === dateId);
+
+    /// convert the date's value to string
+    const d = new Date(value).toISOString();
+
+    setDate(d);
+  };
 
   React.useEffect(() => {
-    if (!programs.length) return;
-
-    setCurrentProgram(programs[0]);
-  }, [programs]);
-
-  React.useEffect(() => {
-    let date = new Date(moment());
-    getProgramsByChannelAction({ channelId, date: date.toISOString() });
     getChannelAction({ videoId: channelId });
   }, []);
 
@@ -64,6 +73,11 @@ const ProgramGuide = ({
   }, [showSnackBar]);
 
   if (!channel) return <View />;
+
+  const renderCurrentProgram = () => {
+    if (isFetching) return;
+    return <CurrentProgram channel={channel} currentProgram={currentProgram} />;
+  };
 
   return (
     <View style={styles.root}>
@@ -90,17 +104,19 @@ const ProgramGuide = ({
             >
               <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
             </View>
-            <CurrentProgram channel={channel} currentProgram={currentProgram} />
+            {renderCurrentProgram()}
           </View>
         </View>
       </ContentWrap>
 
       <ProgramGuideComponent
+        date={date}
+        handleDateSelect={handleDateSelect}
         contentHeight={contentHeight}
         channelId={channelId}
-        programs={programs}
         channelName={channel.title}
         showSnackBar={handleShowSnackBar}
+        setCurrentProgram={setCurrentProgram}
         screen
       />
 
@@ -127,9 +143,10 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({
   programs: selectPrograms,
-  channel: selectChannel
+  channel: selectChannel,
+  isFetching: selectIsFetching
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions));
 
 export default enhance(Container);

@@ -40,14 +40,14 @@ const ItemPreview = ({ item, onSelect, variant, handleSubscribeToItem, isNotific
 
   if (variant === 'image')
     return (
-      <Pressable onPress={() => onSelect(id)} key={id} style={{ marginRight: 10 }}>
+      <Pressable onPress={() => onSelect(item)} key={id} style={{ marginRight: 10 }}>
         <Image style={{ width: 336, height: 190, borderRadius: 8 }} source={thumbnail} />
       </Pressable>
     );
 
   return (
     <View style={{ marginRight: 10, flex: 1 }}>
-      <TouchableOpacity onPress={() => onSelect(id)}>
+      <TouchableOpacity onPress={() => onSelect(item)}>
         <View
           style={{
             width: 240,
@@ -71,7 +71,7 @@ const ItemPreview = ({ item, onSelect, variant, handleSubscribeToItem, isNotific
         }}
       >
         <View style={{ flex: 1 }}>
-          <TouchableOpacity onPress={() => onSelect(id)}>
+          <TouchableOpacity onPress={() => onSelect(item)}>
             <Text numberOfLines={1} style={styles.title}>
               {title}
             </Text>

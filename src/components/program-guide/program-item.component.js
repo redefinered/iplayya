@@ -122,7 +122,11 @@ const ProgramItem = ({
   };
 
   const renderNotificationIcon = () => {
-    if (isPlaying)
+    const momentTime = moment(time);
+
+    // if (momentTime.isBefore(moment())) return;
+
+    if (isPlaying || momentTime.isBefore(moment()))
       return (
         <View
           style={{

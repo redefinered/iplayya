@@ -28,8 +28,6 @@ const NotificationsScreen = ({
   const [showActionSheet, setShowActionSheet] = React.useState(false);
   const [showSnackBar, setShowSnackBar] = React.useState(false);
 
-  console.log({ selected });
-
   const handleDeactivateNotification = () => {
     if (!selected) return;
 

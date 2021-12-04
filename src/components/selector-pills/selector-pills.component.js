@@ -11,9 +11,8 @@ const ITEM_WIDTH = 110;
 const ITEM_WIDTH_WITH_OFFSET = 110 + 12;
 const ITEM_HEIGHT = 34;
 
-const SelectorPills = ({ data, labelkey, onSelect, screen }) => {
+const SelectorPills = ({ data, labelkey, onSelect, screen, selected, setSelected }) => {
   const theme = useTheme();
-  const [selected, setSelected] = React.useState('8');
 
   const handlePress = (selected) => {
     setSelected(selected);
@@ -73,6 +72,7 @@ SelectorPills.propTypes = {
   labelkey: PropTypes.string,
   onSelect: PropTypes.func,
   selected: PropTypes.string,
+  setSelected: PropTypes.func,
   screen: PropTypes.bool,
   style: PropTypes.object
 };
@@ -80,40 +80,5 @@ SelectorPills.propTypes = {
 SelectorPills.defaultProps = {
   labelkey: 'label'
 };
-
-// const Pill = ({ id, label, selected, onSelect }) => {
-//   const theme = useTheme();
-//   return (
-//     <Pressable
-//       onPress={() => onSelect(id.toString())}
-//       style={{
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//         marginLeft: theme.spacing(2),
-//         // paddingHorizontal: 15,
-//         backgroundColor:
-//           selected === id.toString()
-//             ? theme.iplayya.colors.vibrantpussy
-//             : theme.iplayya.colors.white25,
-//         height: ITEM_HEIGHT,
-//         width: ITEM_WIDTH,
-//         borderRadius: ITEM_HEIGHT
-//       }}
-//     >
-//       <Text style={{ ...createFontFormat(12, 16) }}>{label}</Text>
-//     </Pressable>
-//   );
-// };
-
-// Pill.propTypes = {
-//   id: PropTypes.string,
-//   label: PropTypes.string,
-//   selected: PropTypes.string,
-//   onSelect: PropTypes.func
-// };
-
-// Pill.defaultProps = {
-//   selected: 'all'
-// };
 
 export default React.memo(SelectorPills);

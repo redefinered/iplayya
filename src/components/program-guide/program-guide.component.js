@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import ProgramItem from './program-item.component';
 import SelectorPills from 'components/selector-pills/selector-pills.component';
@@ -14,20 +14,20 @@ import {
   selectNotifications,
   selectSubscriptions
 } from 'modules/ducks/notifications/notifications.selectors';
+import { selectIsFetching } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
 import NotifService from 'NotifService';
 import { FlatList } from 'react-native-gesture-handler';
 import { useHeaderHeight } from '@react-navigation/stack';
 import moment from 'moment';
+import { useQuery } from '@apollo/client';
+import { GET_PROGRAMS_BY_CHANNEL } from 'graphql/itv.graphql';
 
 const ITEM_HEIGHT = 50;
 const PLAYER_HEIGHT = 211;
 const PILLS_HEIGHT = 12 + 40;
 
-// eslint-disable-next-line no-unused-vars
 const ProgramGuide = ({
-  programs,
-  getProgramsByChannelAction,
   channelId,
   channelName,
   onRegisterAction,
@@ -35,26 +35,66 @@ const ProgramGuide = ({
   showSnackBar,
   contentHeight,
   screen,
-  parentType
+  parentType,
+  setCurrentProgram,
+  date,
+  handleDateSelect
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
   const [notifService, setNotifService] = React.useState(null);
   const [programsPageYOffset, setProgramsPageYOffset] = React.useState(null);
+  const [selectedDateId, setSelectedDateId] = React.useState('8');
+  const [programs, setPrograms] = React.useState([]);
+
+  const { error, loading, data } = useQuery(GET_PROGRAMS_BY_CHANNEL, {
+    variables: {
+      input: {
+        channelId,
+        date
+      }
+    }
+  });
+
+  console.log({ error, loading, data });
+
+  React.useEffect(() => {
+    if (data) {
+      setPrograms(data.getPrograms);
+    }
+  }, [data]);
 
   // generates an array of dates 7 days from now
   let dates = generateDatesFromToday();
   dates = dates.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
 
   React.useEffect(() => {
+    if (selectedDateId !== '8') return;
+
+    setCurrentProgram(programs[0]);
+  });
+
+  React.useEffect(() => {
     const notif = new NotifService(onRegisterAction, onNotifAction);
     setNotifService(notif);
   }, []);
 
-  const handleDateSelect = (id) => {
-    const { value } = dates.find(({ id: dateId }) => dateId === id);
-    const date = new Date(value).toISOString();
-    getProgramsByChannelAction({ channelId, date });
+  React.useEffect(() => {
+    if (selectedDateId === '8') {
+      setCurrentProgram(programs[0]);
+    }
+  }, [selectedDateId]);
+
+  const handlePillPress = (id) => {
+    /// reset programs
+    setPrograms([]);
+
+    /// records selected ID for selecting current program
+    // this prevents setting current program everytime a date pill is pressed
+    setSelectedDateId(id);
+
+    /// set the date ID for fetching programs
+    handleDateSelect(id);
   };
 
   const renderTitle = () => {
@@ -151,21 +191,42 @@ const ProgramGuide = ({
     );
   };
 
+  const renderProgramsLoader = () => {
+    if (loading) {
+      return (
+        <View style={{ height: ITEM_HEIGHT, justifyContent: 'center' }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+  };
+
   // return empty componet if no available programs
-  if (!programs.length) return <View />;
+  // if (!programs.length) return <View />;
+
+  const renderSelectorPills = () => {
+    if (error) return;
+
+    return (
+      <View>
+        <SelectorPills
+          data={dates}
+          labelkey="formatted"
+          onSelect={handlePillPress}
+          selected={selectedDateId}
+          setSelected={setSelectedDateId}
+          screen={screen}
+        />
+      </View>
+    );
+  };
 
   return (
     <View>
       {renderTitle()}
 
-      <View>
-        <SelectorPills
-          data={dates}
-          labelkey="formatted"
-          onSelect={handleDateSelect}
-          screen={screen}
-        />
-      </View>
+      {renderSelectorPills()}
+
       <View
         onLayout={(event) => {
           event.target.measure((x, y, width, height, pageX, pageY) => {
@@ -173,6 +234,7 @@ const ProgramGuide = ({
           });
         }}
       >
+        {renderProgramsLoader()}
         <FlatList
           initialScrollIndex={0}
           scrollEnabled
@@ -191,7 +253,9 @@ const ProgramGuide = ({
 };
 
 ProgramGuide.propTypes = {
+  isFetching: PropTypes.bool,
   screen: PropTypes.bool,
+  date: PropTypes.string,
   dates: PropTypes.array,
   channelId: PropTypes.string,
   parentType: PropTypes.string,
@@ -204,7 +268,9 @@ ProgramGuide.propTypes = {
   onRegisterAction: PropTypes.func,
   onNotifAction: PropTypes.func,
   contentHeight: PropTypes.number,
-  onDateSelect: PropTypes.func
+  setCurrentProgram: PropTypes.func,
+  onDateSelect: PropTypes.func,
+  handleDateSelect: PropTypes.func
 };
 
 const actions = {
@@ -214,6 +280,7 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  isFetching: selectIsFetching,
   notifications: selectNotifications,
   subscriptions: selectSubscriptions
 });

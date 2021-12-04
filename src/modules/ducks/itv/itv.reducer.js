@@ -183,6 +183,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {
     return {
       ...state,
+      programs: [],
       isFetching: true,
       error: null
     };

@@ -172,6 +172,7 @@ const ItvScreen = ({
   // };
 
   const handleItemPress = (item) => {
+    // console.log({ item, id: item.id });
     // navigate to chanel details screen with `id` parameter
     navigation.navigate('ItvChannelDetailScreen', { channelId: item.id, selectedCategory });
   };
@@ -234,7 +235,7 @@ const ItvScreen = ({
       );
   };
 
-  const renderFeaturedItem = ({ item }) => {
+  const renderFeaturedItem = (item) => {
     let isNotificationActive =
       notifyIds.findIndex((i) => i === parseInt(item.id)) >= 0 ? true : false;
     return (
