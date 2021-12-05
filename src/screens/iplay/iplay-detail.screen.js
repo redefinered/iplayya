@@ -5,6 +5,8 @@ import ScreenContainer from 'components/screen-container.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 // eslint-disable-next-line react/prop-types
 const IplayDetailScreen = ({ navigation, route, setMusicNowPlaying }) => {
@@ -85,5 +87,7 @@ const actions = {
   setMusicNowPlaying: MusicCreators.setNowPlaying
 };
 
+const enhance = compose(connect(null, actions), withNotifRedirect);
+
 // export default IplayDetailScreen;
-export default connect(null, actions)(Container);
+export default enhance(Container);

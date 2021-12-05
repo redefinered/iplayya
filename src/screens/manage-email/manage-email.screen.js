@@ -17,6 +17,8 @@ import { selectIsFetching as selectAuthIsFetching } from 'modules/ducks/auth/aut
 
 import SnackBar from 'components/snackbar/snackbar.component';
 import Icon from 'components/icon/icon.component';
+import { compose } from 'redux';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ManageEmailScreen = ({
   profile,
@@ -168,4 +170,6 @@ const mapStateToProps = createStructuredSelector({
   userUpdated: selectUpdated
 });
 
-export default connect(mapStateToProps, actions)(Container);
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
+
+export default enhance(Container);

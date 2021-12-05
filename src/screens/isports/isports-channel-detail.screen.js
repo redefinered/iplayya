@@ -29,6 +29,7 @@ import {
 import theme from 'common/theme';
 import { ActivityIndicator } from 'react-native-paper';
 import { generateDatesFromToday } from 'utils';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const dirs = RNFetchBlob.fs.dirs;
 const TODAY = new Date().toISOString();
@@ -399,6 +400,6 @@ const actions = {
   setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
 
 export default enhance(Container);

@@ -26,6 +26,7 @@ import {
   selectFavoritesListRemoveUpdated
 } from 'modules/ducks/isports/isports.selectors';
 import { createFontFormat } from 'utils';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -360,6 +361,6 @@ const actions = {
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

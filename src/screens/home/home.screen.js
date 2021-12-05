@@ -10,12 +10,11 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { selectError, selectIsFetching } from 'modules/ducks/movies/movies.selectors';
-// import withLoader from 'components/with-loader.component';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import { compose } from 'redux';
 import HomeGuide from 'components/walkthrough-guide/home-guide.component';
-import { selectNewNotification } from 'modules/ducks/notifications/notifications.selectors.js';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const Home = ({
   error,
@@ -24,8 +23,7 @@ const Home = ({
   setBottomTabsVisibleAction,
   getMoviesStartAction,
   resetCategoryPaginatorAction,
-  enableSwipeAction,
-  newNotification
+  enableSwipeAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
@@ -50,19 +48,6 @@ const Home = ({
       setShowWelcomeDialog(true);
     }
   }, [completedOnboarding]);
-
-  React.useEffect(() => {
-    if (!newNotification) return;
-
-    if (newNotification.parentType === 'ITV')
-      navigation.navigate('ItvChannelDetailScreen', {
-        channelId: newNotification.data.channelId
-      });
-
-    navigation.navigate('IsportsChannelDetailScreen', {
-      channelId: newNotification.data.channelId
-    });
-  }, [newNotification]);
 
   const handleWelcomeHide = () => {
     setShowWelcomeDialog(false);
@@ -132,8 +117,7 @@ Home.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching,
-  newNotification: selectNewNotification
+  isFetching: selectIsFetching
 });
 
 const actions = {
@@ -143,6 +127,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
 
 export default enhance(Container);

@@ -16,6 +16,8 @@ import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import NotifService from 'NotifService';
 import theme from 'common/theme';
 import { FlatList } from 'react-native-gesture-handler';
+import { compose } from 'redux';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const NotificationsScreen = ({
   notifications,
@@ -158,4 +160,6 @@ const mapStateToProps = createStructuredSelector({
   notifications: selectNotifications
 });
 
-export default connect(mapStateToProps, actions)(Container);
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
+
+export default enhance(Container);

@@ -17,8 +17,8 @@ import {
   selectIsFetching,
   selectGetLinkResponse
 } from 'modules/ducks/password/password.selectors';
-
 import { isValidEmail } from 'common/validate';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const styles = StyleSheet.create({
   textInput: { backgroundColor: 'rgba(255,255,255,0.1)' }
@@ -114,6 +114,6 @@ const actions = {
   updateStartAction: Creators.updateStart
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withLoader, withNotifRedirect);
 
 export default enhance(Container);

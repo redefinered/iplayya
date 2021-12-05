@@ -29,6 +29,7 @@ import {
 
 import { isValidEmail } from 'common/validate';
 import ChangeEmailInput from './change-email-input.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 class ChangeEmailScreen extends React.Component {
   constructor(props) {
@@ -250,6 +251,12 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader, withTheme);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withFormWrap,
+  withLoader,
+  withTheme,
+  withNotifRedirect
+);
 
 export default enhance(Container);

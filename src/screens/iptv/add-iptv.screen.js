@@ -34,6 +34,7 @@ import styles from './add-iptv.styles';
 import clone from 'lodash/clone';
 
 import { isValidUsername, isValidWebsite } from 'common/validate';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 class AddIptvScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -343,6 +344,11 @@ const actions = {
   updateProfileAction: Creators.update
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader, withFormWrap);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withLoader,
+  withFormWrap,
+  withNotifRedirect
+);
 
 export default enhance(Container);

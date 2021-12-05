@@ -31,6 +31,7 @@ import AlertModal from 'components/alert-modal/alert-modal.component';
 import { StyleSheet } from 'react-native';
 import { headerHeight } from 'common/globals';
 import ImagePick from 'components/image-picker/image-picker.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -324,4 +325,6 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-export default compose(withTheme, connect(mapStateToProps, actions))(ProfileScreen);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
+
+export default enhance(ProfileScreen);

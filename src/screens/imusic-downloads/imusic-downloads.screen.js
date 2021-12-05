@@ -34,6 +34,7 @@ import { createFontFormat, downloadPath, createFilenameForAudioTrack } from 'uti
 // import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
 import orderBy from 'lodash/orderBy';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ITEM_HEIGHT = 64;
 // listDownloadedFiles();
@@ -471,6 +472,6 @@ const mapStateToProps = createStructuredSelector({
   downloadsProgress: selectDownloadsProgress
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

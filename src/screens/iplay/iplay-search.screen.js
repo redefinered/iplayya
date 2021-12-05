@@ -14,6 +14,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { selectVideoFiles } from 'modules/ducks/iplay/iplay.selectors';
 import MediaItem from './media-item.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const IplaySearchScreen = ({ navigation, isFetching, videoFiles }) => {
   const theme = useTheme();
@@ -160,6 +161,6 @@ const mapStateToProps = createStructuredSelector({
   videoFiles: selectVideoFiles
 });
 
-const enhance = compose(connect(mapStateToProps));
+const enhance = compose(connect(mapStateToProps), withNotifRedirect);
 
 export default enhance(Container);

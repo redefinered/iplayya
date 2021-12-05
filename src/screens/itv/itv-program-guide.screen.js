@@ -16,6 +16,7 @@ import { compose } from 'redux';
 import theme from 'common/theme';
 import { selectIsFetching } from 'modules/ducks/itv/itv.selectors';
 import { generateDatesFromToday } from 'utils';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const TODAY = new Date().toISOString();
 
@@ -147,6 +148,6 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching
 });
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
 
 export default enhance(Container);

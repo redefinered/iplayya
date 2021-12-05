@@ -32,6 +32,8 @@ import uniq from 'lodash/uniq';
 import orderBy from 'lodash/uniq';
 import theme from 'common/theme';
 
+import withNotifRedirect from 'components/with-notif-redirect.component';
+
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ITEM_HEIGHT = 84;
@@ -392,6 +394,6 @@ const actions = {
   reset: Creators.reset
 };
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
 
 export default enhance(Container);

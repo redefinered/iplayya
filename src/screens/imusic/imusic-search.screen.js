@@ -36,6 +36,7 @@ import {
 import { selectAlbums, selectGenres } from 'modules/ducks/music/music.selectors';
 import { ScrollView } from 'react-native-gesture-handler';
 import uniq from 'lodash/uniq';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
@@ -488,6 +489,11 @@ const mapStateToProps = createStructuredSelector({
   allGenres: selectGenres
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withTheme,
+  withLoader,
+  withNotifRedirect
+);
 
 export default enhance(Container);

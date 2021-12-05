@@ -32,6 +32,7 @@ import {
   selectIsFetching
 } from 'modules/ducks/isports/isports.selectors';
 import { selectIsportsGenres } from 'modules/app';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ITEM_HEIGHT = 96;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -345,6 +346,6 @@ const mapStateToProps = createStructuredSelector({
   genres: selectIsportsGenres
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

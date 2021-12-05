@@ -21,6 +21,7 @@ import {
   selectPlaybackSettings,
   selectUpdated
 } from 'modules/ducks/user/user.selectors';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 // import languages from 'common/languages.json';
 
@@ -219,6 +220,11 @@ const mapStateToProps = createStructuredSelector({
   updated: selectUpdated
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withTheme,
+  withLoader,
+  withNotifRedirect
+);
 
 export default enhance(Container);

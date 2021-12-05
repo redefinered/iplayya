@@ -22,6 +22,7 @@ import {
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
 import withLoader from 'components/with-loader.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -185,6 +186,6 @@ const actions = {
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withLoader, withNotifRedirect);
 
 export default enhance(Container);
