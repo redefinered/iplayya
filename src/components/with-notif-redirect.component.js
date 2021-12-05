@@ -6,10 +6,19 @@ import { selectNewNotification } from 'modules/ducks/notifications/notifications
 
 export default function withNotifRedirect(WrappedComponent) {
   const NotifRedirect = ({ route, navigation, newNotification, ...otherProps }) => {
+    // console.log({ route, navigation });
     React.useEffect(() => {
       if (!newNotification) return;
 
       const { channelId, module } = newNotification.data;
+
+      /// a workaround for screens inside a stack in the tabNavigator
+      // pushes to the top of the stack
+      navigation.popToTop();
+
+      // navigates to home so the app is able to reset the navigation without being stuck in
+      // the previous screen which is inside a tab navigator
+      navigation.navigate('Home');
 
       navigation.reset({
         index: 1,
