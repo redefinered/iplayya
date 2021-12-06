@@ -250,6 +250,9 @@ const HomeStack = ({
             title: 'iPlayya',
             animationEnabled: false
           }}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: false })
+          }}
         />
         <Stack.Screen
           name="ItvScreen"
