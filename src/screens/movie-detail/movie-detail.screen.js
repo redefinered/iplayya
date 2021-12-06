@@ -62,7 +62,6 @@ const MovieDetailScreen = ({
   videoUrls,
   setMusicNowPlaying,
   navigation,
-
   playbackSettings
 }) => {
   const [paused, setPaused] = React.useState(false);
@@ -486,7 +485,8 @@ const actions = {
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   downloadStartAction: DownloadsCreators.downloadStart,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  getMoviesAction: Creators.getMovies
 };
 
 const mapStateToProps = createStructuredSelector({

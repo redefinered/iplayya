@@ -3,7 +3,6 @@ import {
   GET_MOVIE,
   GET_CATEGORIES,
   GET_MOVIES_BY_CATEGORIES,
-  ADD_MOVIE_TO_FAVORITES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITE_MOVIES,
   GET_DOWNLOADS,
@@ -49,23 +48,6 @@ export const getMoviesByCategories = async (input) => {
 
     //   throw new Error(err.debugMessage);
     // }
-    throw new Error(error);
-  }
-};
-
-export const addMovieToFavorites = async (videoId) => {
-  try {
-    const { data } = await client.mutate({
-      mutation: ADD_MOVIE_TO_FAVORITES,
-      variables: { input: { videoId } },
-      refetchQueries: [
-        { query: GET_FAVORITE_MOVIES, fetchPolicy: 'network-only' },
-        { query: GET_MOVIE, fetchPolicy: 'network-only', variables: { input: { videoId } } }
-      ],
-      awaitRefetchQueries: true
-    });
-    return data;
-  } catch (error) {
     throw new Error(error);
   }
 };
