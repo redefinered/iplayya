@@ -64,7 +64,7 @@ const App = ({
   setImusicPaginatorInfoAction
 }) => {
   const [providerError, setProviderError] = React.useState(false);
-  const [testMode, setTestMode] = React.useState(false);
+  const [testMode, setTestMode] = React.useState(true);
   const [notif, setNotif] = React.useState(null);
 
   React.useEffect(() => {
