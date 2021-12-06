@@ -49,6 +49,9 @@ const IsportsPlayer = ({
     if (typeof previousChannel === 'undefined') return;
     handlePreviousChannel(previousChannel.id);
   };
+
+  if (!channel) return;
+
   return (
     <MediaPlayer
       multipleMedia
