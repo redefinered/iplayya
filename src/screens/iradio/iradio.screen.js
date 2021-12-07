@@ -23,6 +23,7 @@ import {
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
 import { useIsFocused } from '@react-navigation/native';
+import Spacer from 'components/spacer.component';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -37,10 +38,12 @@ const IradioScreen = ({
   switchInIradioScreenAction,
   setNowPlayingBackgroundModeAction,
   nowPlaying,
+  setIradioBottomNavLayoutAction,
   route: { params }
 }) => {
   const [index, setIndex] = React.useState(0);
   const [isNowPlaying, setIsNowPlaying] = React.useState(false);
+  const [bottomPadding, setBottomPadding] = React.useState(null);
   const isFocused = useIsFocused();
 
   React.useEffect(() => {
@@ -109,6 +112,15 @@ const IradioScreen = ({
     setNowPlayingAction({ number: parseInt(number), url: cmd, title: name, ...rest });
   };
 
+  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
+    const {
+      layout: { height }
+    } = nativeEvent;
+
+    setBottomPadding(height);
+    setIradioBottomNavLayoutAction(height);
+  };
+
   const renderScene = ({ route }) => {
     switch (route.key) {
       case 'favorites':
@@ -136,7 +148,12 @@ const IradioScreen = ({
         />
       </React.Fragment>
 
-      <IradioBottomTabs nowPlaying={isNowPlaying} />
+      <Spacer size={bottomPadding} />
+
+      <IradioBottomTabs
+        nowPlaying={isNowPlaying}
+        handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent}
+      />
     </View>
   );
 };
@@ -215,7 +232,8 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe,
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
   switchInIradioScreenAction: Creators.switchInIradioScreen,
-  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode
+  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  setIradioBottomNavLayoutAction: Creators.setIradioBottomNavLayout
 };
 
 const enhance = compose(connect(mapStateToProps, actions));

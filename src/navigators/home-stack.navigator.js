@@ -482,8 +482,8 @@ const HomeStack = ({
             };
           }}
           listeners={{
-            focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
-            beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
+            focus: () => setBottomTabsVisibleAction({ hideTabs: true })
+            // beforeRemove: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
 

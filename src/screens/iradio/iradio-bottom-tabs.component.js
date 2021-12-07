@@ -3,28 +3,15 @@ import PropTypes from 'prop-types';
 import { SafeAreaView } from 'react-native';
 import TabMenuItem from 'components/tab-menu-item/tab-menu-item.component';
 import { useNavigation } from '@react-navigation/core';
-import Spacer from 'components/spacer.component';
 
-const IradioBottomTabs = ({ nowPlaying }) => {
+const IradioBottomTabs = ({ nowPlaying, handleBottomTabsLayoutEvent }) => {
   const navigation = useNavigation();
-  const [bottomPadding, setBottomPadding] = React.useState(null);
-
-  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
-    const {
-      layout: { height }
-    } = nativeEvent;
-
-    setBottomPadding(height);
-  };
-
   const handleHomeButtonPress = () => {
     navigation.reset({ index: 0, routes: [{ name: 'HomeScreen' }] });
   };
 
   return (
     <React.Fragment>
-      <Spacer size={bottomPadding} />
-
       <SafeAreaView
         onLayout={handleBottomTabsLayoutEvent}
         style={{

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { Text, useTheme, TouchableRipple } from 'react-native-paper';
+import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
 import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
@@ -12,13 +12,15 @@ import {
   selectPaused,
   selectPlaybackProgress,
   selectIsRadioBackgroundMode,
-  selectIsInIradioScreen
+  selectIsInIradioScreen,
+  selectIradioBottomNavLayout
 } from 'modules/ducks/iradio/iradio.selectors';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import clone from 'lodash/clone';
+import theme from 'common/theme';
 
 const NowPlaying = ({
   // eslint-disable-next-line react/prop-types
@@ -33,10 +35,10 @@ const NowPlaying = ({
   setPausedAction,
   isRadioBackgroundMode,
   isInIradioScreen,
-  setMusicNowPlaying
+  setMusicNowPlaying,
+  radioBottomNavLayout
 }) => {
-  const theme = useTheme();
-  const rootComponent = React.useRef();
+  // const rootComponent = React.useRef();
   const player = React.useRef();
 
   const [buffering, setBuffering] = React.useState(false);
@@ -72,7 +74,7 @@ const NowPlaying = ({
       return { opacity: 0 };
     }
 
-    return { bottom: 70 };
+    return { bottom: isInIradioScreen ? radioBottomNavLayout : 0 };
   };
 
   const handleOnRootLayout = ({ nativeEvent }) => {
@@ -134,72 +136,74 @@ const NowPlaying = ({
     // const { url: uri } = nowPlaying;
 
     return (
-      <TouchableRipple
-        onPress={handlePress}
-        onLayout={handleOnRootLayout}
-        ref={rootComponent}
-        style={{
-          backgroundColor: '#202530',
-          borderBottomWidth: 1,
-          borderColor: theme.iplayya.colors.white10,
-          zIndex: theme.iplayya.zIndex.loader,
-          position: 'absolute',
-          left: 0,
-          right: 0,
-          ...visibilityStyles()
-        }}
-      >
-        <React.Fragment>
-          {renderPlayer()}
+      <React.Fragment>
+        <TouchableRipple
+          onPress={handlePress}
+          onLayout={handleOnRootLayout}
+          // ref={rootComponent}
+          style={{
+            backgroundColor: '#202530',
+            borderBottomWidth: 1,
+            borderColor: theme.iplayya.colors.white10,
+            zIndex: theme.iplayya.zIndex.loader,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            ...visibilityStyles()
+          }}
+        >
+          <React.Fragment>
+            {renderPlayer()}
 
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingVertical: theme.spacing(2),
-              paddingHorizontal: theme.spacing(2)
-            }}
-          >
-            <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
-              {renderContent(nowPlaying)}
-            </View>
             <View
               style={{
-                flex: 4,
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'center'
+                paddingVertical: theme.spacing(2),
+                paddingHorizontal: theme.spacing(2)
               }}
             >
-              {paused ? (
-                <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-              ) : (
-                <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-              )}
-
-              <TouchableRipple
+              <View style={{ flex: 8, flexDirection: 'row', alignItems: 'center' }}>
+                {renderContent(nowPlaying)}
+              </View>
+              <View
                 style={{
-                  borderRadius: theme.iconSize(4),
-                  height: theme.iconSize(4),
-                  width: theme.iconSize(4),
+                  flex: 4,
+                  flexDirection: 'row',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  marginHorizontal: 10
+                  justifyContent: 'center'
                 }}
-                borderless={true}
-                rippleColor="rgba(255,255,255,0.25)"
-                onPress={() => setPausedAction(!paused)}
               >
-                <Icon
-                  name={paused ? 'circular-play' : 'circular-pause'}
-                  size={theme.iconSize(4)}
-                  // style={{ marginHorizontal: 10 }}
-                />
-              </TouchableRipple>
+                {paused ? (
+                  <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+                ) : (
+                  <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
+                )}
+
+                <TouchableRipple
+                  style={{
+                    borderRadius: theme.iconSize(4),
+                    height: theme.iconSize(4),
+                    width: theme.iconSize(4),
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginHorizontal: 10
+                  }}
+                  borderless={true}
+                  rippleColor="rgba(255,255,255,0.25)"
+                  onPress={() => setPausedAction(!paused)}
+                >
+                  <Icon
+                    name={paused ? 'circular-play' : 'circular-pause'}
+                    size={theme.iconSize(4)}
+                    // style={{ marginHorizontal: 10 }}
+                  />
+                </TouchableRipple>
+              </View>
             </View>
-          </View>
-        </React.Fragment>
-      </TouchableRipple>
+          </React.Fragment>
+        </TouchableRipple>
+      </React.Fragment>
     );
   }
 
@@ -220,7 +224,8 @@ NowPlaying.propTypes = {
   progress: PropTypes.number,
   isRadioBackgroundMode: PropTypes.bool,
   isInIradioScreen: PropTypes.bool,
-  setMusicNowPlaying: PropTypes.object
+  setMusicNowPlaying: PropTypes.func,
+  radioBottomNavLayout: PropTypes.number
 };
 
 const actions = {
@@ -237,7 +242,8 @@ const mapStateToProps = createStructuredSelector({
   progress: selectPlaybackProgress,
   nowPlaying: selectNowPlaying,
   isRadioBackgroundMode: selectIsRadioBackgroundMode,
-  isInIradioScreen: selectIsInIradioScreen
+  isInIradioScreen: selectIsInIradioScreen,
+  radioBottomNavLayout: selectIradioBottomNavLayout
 });
 
 export default connect(mapStateToProps, actions)(React.memo(NowPlaying));

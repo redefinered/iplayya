@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, FlatList, StyleSheet } from 'react-native';
+import { View, Pressable, FlatList } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { createFontFormat } from 'utils';
@@ -26,7 +26,7 @@ const RadioStationsTab = ({
   radioStations,
   paginator,
   handleSelectItem,
-  isAddingToFavorites,
+  // isAddingToFavorites,
   added,
   resetUpdateIndicatorsAction,
   getFavoritesAction
@@ -125,25 +125,8 @@ const RadioStationsTab = ({
     );
   };
 
-  const renderFavoriteLoader = () => {
-    if (!isAddingToFavorites) return;
-
-    return (
-      <View
-        style={{
-          ...StyleSheet.absoluteFillObject,
-          // backgroundColor: theme.iplayya.colors.black80,
-          zIndex: 1,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      />
-    );
-  };
-
   return (
     <View style={{ flex: 1 }}>
-      {renderFavoriteLoader()}
       <FlatList
         data={radioStations}
         // eslint-disable-next-line react/prop-types
