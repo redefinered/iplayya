@@ -1,20 +1,33 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
+import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectNewNotification } from 'modules/ducks/notifications/notifications.selectors';
+import { selectNotification } from 'modules/ducks/notifications/notifications.selectors';
+import { useNavigationState } from '@react-navigation/core';
 
 export default function withNotifRedirect(WrappedComponent) {
-  const NotifRedirect = ({ route, navigation, newNotification, ...otherProps }) => {
-    console.log({ newNotification, route, navigation });
-    React.useEffect(() => {
-      if (!newNotification) return;
+  const NotifRedirect = ({
+    route,
+    navigation,
+    notification,
+    // markNotificationAsReadAction,
+    ...otherProps
+  }) => {
+    const index = useNavigationState((state) => {
+      return state.index;
+    });
 
-      const { channelId, module } = newNotification.data;
+    React.useEffect(() => {
+      if (!notification) return;
+
+      // markNotificationAsReadAction(notification);
+
+      const { channelId, module } = notification.data;
 
       /// a workaround for screens inside a stack in the tabNavigator
       // pushes to the top of the stack
-      navigation.popToTop();
+      if (index > 0) navigation.popToTop();
 
       // navigates to home so the app is able to reset the navigation without being stuck in
       // the previous screen which is inside a tab navigator
@@ -31,12 +44,14 @@ export default function withNotifRedirect(WrappedComponent) {
           }
         ]
       });
-    }, [newNotification]);
+    }, [notification]);
 
     return <WrappedComponent route={route} navigation={navigation} {...otherProps} />;
   };
 
-  const mapStateToProps = createStructuredSelector({ newNotification: selectNewNotification });
+  const mapStateToProps = createStructuredSelector({ notification: selectNotification });
 
-  return connect(mapStateToProps)(NotifRedirect);
+  return connect(mapStateToProps, {
+    markNotificationAsReadAction: Creators.markNotificationAsRead
+  })(React.memo(NotifRedirect));
 }

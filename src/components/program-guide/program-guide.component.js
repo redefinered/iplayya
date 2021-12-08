@@ -16,12 +16,12 @@ import {
 } from 'modules/ducks/notifications/notifications.selectors';
 import { selectIsFetching } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
-import NotifService from 'NotifService';
 import { FlatList } from 'react-native-gesture-handler';
 import { useHeaderHeight } from '@react-navigation/stack';
 import moment from 'moment';
 import { useQuery } from '@apollo/client';
 import { GET_PROGRAMS_BY_CHANNEL } from 'graphql/itv.graphql';
+import { selectNotificationService } from 'modules/ducks/notifications/notifications.selectors';
 
 const ITEM_HEIGHT = 50;
 const PLAYER_HEIGHT = 211;
@@ -30,8 +30,7 @@ const PILLS_HEIGHT = 12 + 40;
 const ProgramGuide = ({
   channelId,
   channelName,
-  onRegisterAction,
-  onNotifAction,
+  notifService,
   showSnackBar,
   contentHeight,
   screen,
@@ -42,7 +41,7 @@ const ProgramGuide = ({
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
-  const [notifService, setNotifService] = React.useState(null);
+  // const [notifService, setNotifService] = React.useState(null);
   const [programsPageYOffset, setProgramsPageYOffset] = React.useState(null);
   const [selectedDateId, setSelectedDateId] = React.useState('8');
   const [programs, setPrograms] = React.useState([]);
@@ -56,7 +55,7 @@ const ProgramGuide = ({
     }
   });
 
-  console.log({ error, loading, data });
+  // console.log({ error, loading, data });
 
   React.useEffect(() => {
     if (data) {
@@ -73,11 +72,6 @@ const ProgramGuide = ({
 
     setCurrentProgram(programs[0]);
   });
-
-  React.useEffect(() => {
-    const notif = new NotifService(onRegisterAction, onNotifAction);
-    setNotifService(notif);
-  }, []);
 
   React.useEffect(() => {
     if (selectedDateId === '8') {
@@ -110,13 +104,14 @@ const ProgramGuide = ({
   };
 
   /// CREATE SCHEDULED NOTIFICATIONS
-  const handleCreateScheduledNotif = ({ id, ...rest }) => {
+  const handleCreateScheduledNotif = ({ parentType, ...rest }) => {
+    // console.log({ parentType, ...rest });
     notifService.scheduleNotif({
-      id,
-      channelId,
-      channelName,
+      id: rest.id,
+      channelId: rest.channelId,
+      channelName: rest.channelName,
       module: parentType,
-      program: { id, parentType, ...rest }
+      program: { id: rest.id, parentType, ...rest }
     });
 
     notifService.getScheduledLocalNotifications((notifications) => {
@@ -271,7 +266,8 @@ ProgramGuide.propTypes = {
   contentHeight: PropTypes.number,
   setCurrentProgram: PropTypes.func,
   onDateSelect: PropTypes.func,
-  handleDateSelect: PropTypes.func
+  handleDateSelect: PropTypes.func,
+  notifService: PropTypes.any
 };
 
 const actions = {
@@ -283,7 +279,8 @@ const actions = {
 const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   notifications: selectNotifications,
-  subscriptions: selectSubscriptions
+  subscriptions: selectSubscriptions,
+  notifService: selectNotificationService
 });
 
 export default connect(mapStateToProps, actions)(ProgramGuide);

@@ -1,62 +1,91 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { Text, withTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import Icon from 'components/icon/icon.component';
 import moment from 'moment';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { connect } from 'react-redux';
+// import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { compose } from 'redux';
 
 const NotificationItem = ({
-  theme,
-  read,
-  notification,
-  markNotificationAsReadAction,
-  handleSelect
+  id,
+  channelName,
+  channelId,
+  data: { title },
+  createdAt,
+  status,
+  updateNotificationStatusAction,
+  handleSelect,
+  parentType
 }) => {
-  const { id, title, date, channelId, parentType } = notification.data;
-
+  const theme = useTheme();
   const navigtation = useNavigation();
+  const [isPressed, setIsPressed] = React.useState(false);
+  const [unRead, setUnread] = React.useState(false);
+
+  React.useEffect(() => {
+    /**
+     * statuses
+     * 0: pending
+     * 1: delivered
+     * 2: read
+     */
+    switch (status) {
+      case 1:
+        setUnread(true);
+        break;
+      case 2:
+        setUnread(false);
+        break;
+      default:
+        setUnread(false);
+    }
+  }, [status]);
 
   const renderFromNow = () => {
-    if (!date) return;
+    if (!createdAt) return;
 
-    return moment(date).fromNow();
+    return moment(createdAt).fromNow();
   };
 
   // eslint-disable-next-line no-unused-vars
   const handleSelectItem = (id) => {
-    // if (!unRead) return;
+    if (!unRead) return;
 
     // set unread to false
-    // setUnread(false);
+    setUnread(false);
 
     // set notification status to read
-    markNotificationAsReadAction(notification);
+    updateNotificationStatusAction(id, 2);
 
     // navigate to channel
     if (parentType === 'ITV') return navigtation.navigate('ItvChannelDetailScreen', { channelId });
-
     return navigtation.navigate('IsportsChannelDetailScreen', { channelId });
   };
 
   const backgroundColor = () => {
-    if (read) return theme.iplayya.colors.white10;
+    if (unRead) {
+      return theme.iplayya.colors.white10;
+    } else {
+      if (isPressed) return theme.iplayya.colors.black80;
 
-    return 'transparent';
+      return 'transparent';
+    }
   };
 
   return (
     <Pressable
+      onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+      onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
       onPress={() => handleSelectItem(id)}
       underlayColor={theme.iplayya.colors.black80}
-      style={({ pressed }) => ({
-        backgroundColor: pressed ? theme.iplayya.colors.black80 : backgroundColor(),
+      style={{
+        backgroundColor: backgroundColor(),
         paddingVertical: theme.spacing(2)
-      })}
+      }}
     >
       <ContentWrap>
         <View
@@ -64,7 +93,7 @@ const NotificationItem = ({
         >
           <View>
             <Text style={{ fontSize: 14, fontWeight: '700', marginBottom: theme.spacing(1) }}>
-              {title}
+              {channelName}
             </Text>
             <Text
               style={{
@@ -100,17 +129,19 @@ const styles = StyleSheet.create({
 });
 
 NotificationItem.propTypes = {
-  notification: PropTypes.object,
-  read: PropTypes.bool,
-  theme: PropTypes.object,
+  id: PropTypes.string,
+  channelName: PropTypes.string,
+  channelId: PropTypes.string,
+  data: PropTypes.object,
+  createdAt: PropTypes.number,
+  status: PropTypes.number,
   handleSelect: PropTypes.func,
-  markNotificationAsReadAction: PropTypes.func
+  updateNotificationStatusAction: PropTypes.func,
+  parentType: PropTypes.string
 };
 
 const actions = {
-  markNotificationAsReadAction: Creators.markNotificationAsRead
+  updateNotificationStatusAction: Creators.updateNotificationStatus
 };
 
-const enhance = compose(connect(null, actions), withTheme);
-
-export default enhance(NotificationItem);
+export default connect(null, actions)(NotificationItem);

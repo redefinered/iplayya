@@ -18,7 +18,6 @@ import {
   selectMovieCategories,
   selectMusicGenres
 } from 'modules/app';
-// import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
 import { Creators as PasswordActionCreators } from 'modules/ducks/password/password.actions';
 import { Creators as ImusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as ImovieCreators } from 'modules/ducks/movies/movies.actions';
@@ -36,6 +35,7 @@ import theme from 'common/theme';
 // eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
 import Test from './test.component.js';
+import { selectNotificationService } from 'modules/ducks/notifications/notifications.selectors.js';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -51,21 +51,26 @@ const App = ({
   isLoggedIn,
   passwordUpdateParams,
   profile,
-  // profileUpdated,
   movieCategories,
   musicGenres,
+
+  /// notifications-specific actions
   onNotifAction,
   onRegisterAction,
-  // getProfileAction,
+  setNotificationServiceAction,
+
+  notifService,
+
   setProviderAction,
   resetNowPlayingAction,
   updatePasswordStartAction,
   setImoviePaginatorInfoAction,
   setImusicPaginatorInfoAction
 }) => {
+  const notif = React.useRef(new NotifService(onRegisterAction, onNotifAction));
+
   const [providerError, setProviderError] = React.useState(false);
-  const [testMode, setTestMode] = React.useState(true);
-  const [notif, setNotif] = React.useState(null);
+  const [testMode, setTestMode] = React.useState(false);
 
   React.useEffect(() => {
     /// set the paginator information for imovie screen
@@ -84,16 +89,18 @@ const App = ({
     setProviderError(false);
   }, [userError]);
 
-  React.useEffect(() => {
-    if (testMode) {
-      const notif = new NotifService(onRegisterAction, onNotifAction);
+  // React.useEffect(() => {
+  //   if (testMode) {
+  //     const notif = new NotifService(onRegisterAction, onNotifAction);
 
-      setNotif(notif);
-    }
-  }, [testMode]);
+  //     setNotif(notif);
+  //   }
+  // }, [testMode]);
 
   React.useEffect(() => {
     if (Platform.OS === 'android') SplashScreen.hide();
+
+    setNotificationServiceAction(notif.current);
 
     // resetStore(); /// for development
 
@@ -130,6 +137,8 @@ const App = ({
       //   getProfileAction();
       // }
     });
+
+    notif.current.cancelAll();
   }, []);
 
   React.useEffect(() => {
@@ -172,7 +181,7 @@ const App = ({
     // create a dummy notification that will notify after 1 minute
     // ITV: TLC - 304
     // ISPORTS: |US| NBA League Pass 1 (live Events) - 3611
-    notif.localNotif({
+    notifService.localNotif({
       id: 123,
       channelId: '3611',
       channelName: '|US| NBA League Pass 1 (live Events)',
@@ -184,14 +193,14 @@ const App = ({
     return (
       <View style={{ flex: 1, alignContent: 'center', justifyContent: 'center' }}>
         <Button onPress={handleTestNotif}>Test notication</Button>
-        <Button
+        {/* <Button
           onPress={() =>
             notif.getScheduledLocalNotifications((notifications) => console.log({ notifications }))
           }
         >
           check notifs notication
         </Button>
-        <Button onPress={() => notif.cancelAll()}>cancel all notications</Button>
+        <Button onPress={() => notif.cancelAll()}>cancel all notications</Button> */}
       </View>
     );
 
@@ -245,7 +254,8 @@ const mapStateToProps = createStructuredSelector({
   profile: selectProfile,
   profileUpdated: selectUpdated,
   movieCategories: selectMovieCategories,
-  musicGenres: selectMusicGenres
+  musicGenres: selectMusicGenres,
+  notifService: selectNotificationService
 });
 
 const actions = {
@@ -253,6 +263,7 @@ const actions = {
   resetNowPlayingAction: ImusicCreators.resetNowPlaying,
   setProviderAction: AppCreators.setProvider,
   // getProfileAction: ProfileCreators.get,
+  setNotificationServiceAction: NotifCreators.setNotificationService,
   onRegisterAction: NotifCreators.onRegister,
   onNotifAction: NotifCreators.onNotif,
   setImoviePaginatorInfoAction: ImovieCreators.setPaginatorInfo,

@@ -1,21 +1,16 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, Button, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { Pressable, StyleSheet, Image, View } from 'react-native';
 import Icon from 'components/icon/icon.component';
 import Spacer from 'components/spacer.component';
 import { createFontFormat } from 'utils';
-import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import NotifyButton from 'components/button-notify/button-notify.component';
 
-const ItemPreview = ({ item, onSelect, variant, handleSubscribeToItem, isNotificationActive }) => {
+const ItemPreview = ({ item, onSelect, variant }) => {
   const { id, title, epgtitle, thumbnail } = item;
-
-  const navigation = useNavigation();
   const theme = useTheme();
-  // eslint-disable-next-line no-unused-vars
-  // const [isNotificationActive, setIsNotificationActive] = React.useState(true);
 
   const renderEpgtitle = () => {
     if (!epgtitle)
@@ -78,7 +73,7 @@ const ItemPreview = ({ item, onSelect, variant, handleSubscribeToItem, isNotific
             {renderEpgtitle()}
           </TouchableOpacity>
         </View>
-        <TouchableHighlight
+        {/* <TouchableHighlight
           underlayColor="rgba(255,255,255,0.1)"
           style={styles.buttonContainer}
           onPress={() => navigation.navigate('ItvProgramGuideScreen', { channelId: id })}
@@ -88,7 +83,8 @@ const ItemPreview = ({ item, onSelect, variant, handleSubscribeToItem, isNotific
             size={theme.iconSize(3)}
             color={isNotificationActive ? theme.iplayya.colors.vibrantpussy : 'white'}
           />
-        </TouchableHighlight>
+        </TouchableHighlight> */}
+        <NotifyButton program={{ id, title, epgtitle, ...item }} />
       </View>
     </View>
   );

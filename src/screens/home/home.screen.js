@@ -33,12 +33,12 @@ const Home = ({
     /// resets isFetching to false if ever the user closes app while loading
     /// resets movie screen paginator
     /// resets error to null
-    getMoviesStartAction();
+    // getMoviesStartAction();
 
     // makes sure main tab navigation is always visible on application mount
     setBottomTabsVisibleAction({ hideTabs: false });
 
-    enableSwipeAction(true);
+    // enableSwipeAction(true);
   }, []);
 
   React.useEffect(() => {

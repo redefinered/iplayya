@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { selectNextChannel, selectPreviousChannel } from 'modules/ducks/isports/isports.selectors';
 import { connect } from 'react-redux';
@@ -50,7 +51,7 @@ const IsportsPlayer = ({
     handlePreviousChannel(previousChannel.id);
   };
 
-  if (!channel) return;
+  if (!channel) return <View />;
 
   return (
     <MediaPlayer

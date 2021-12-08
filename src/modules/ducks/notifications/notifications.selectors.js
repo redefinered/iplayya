@@ -11,12 +11,22 @@ export const selectSubscriptions = createSelector(
   ({ subscriptions }) => subscriptions
 );
 
-export const selectNewNotification = createSelector(
+export const selectNotification = createSelector(
   [notificationsState],
-  ({ newNotification }) => newNotification
+  ({ notification }) => notification
 );
 
 export const selectSelectedForDeactivation = createSelector(
   [notificationsState],
   ({ selectedForDeactivation }) => selectedForDeactivation
+);
+
+export const selectNotificationService = createSelector(
+  [notificationsState],
+  ({ notificationService }) => notificationService
+);
+
+export const selectReadNotifications = createSelector(
+  [notificationsState],
+  ({ readNotifications }) => readNotifications
 );
