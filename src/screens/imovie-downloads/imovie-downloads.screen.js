@@ -33,6 +33,7 @@ import { createFontFormat, getFilename, downloadPath, getConfig } from 'utils';
 import clone from 'lodash/clone';
 import uniqBy from 'lodash/uniqBy';
 import RNFetchBlob from 'rn-fetch-blob';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ITEM_HEIGHT = 144;
 
@@ -397,6 +398,6 @@ const mapStateToProps = createStructuredSelector({
   downloadsProgress: selectDownloadsProgress
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

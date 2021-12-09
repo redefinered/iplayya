@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "channelId": "12",
+    "channelName": "Nickelodeon",
+    "status": 1,
+    "active": true,
+    "parentType": "ITV",
+    "data": {
+      "id": "123",
+      "title": "The Adventures of Gumball",
+      "time": "2021-12-07T03:45:00.000Z",
+      "duration": "3300",
+      "description": "George meets newly-weds who are investing their savings in a dilapidated yacht, and visits a stunning tree house in an Italian olive grove. And his wilderness lodge starts to take shape."
+    }
+  },
+  {
+    "id": "2",
+    "channelId": "13",
+    "channelName": "Nickelodeon",
+    "status": 1,
+    "active": true,
+    "parentType": "ITV",
+    "data": {
+      "id": "456",
+      "title": "Spongebob Squarepants",
+      "time": "2021-12-07T03:45:00.000Z",
+      "duration": "3300",
+      "description": "George meets newly-weds who are investing their savings in a dilapidated yacht, and visits a stunning tree house in an Italian olive grove. And his wilderness lodge starts to take shape."
+    }
+  }
+]

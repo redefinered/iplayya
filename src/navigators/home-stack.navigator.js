@@ -75,7 +75,7 @@ import { Creators } from 'modules/ducks/profile/profile.actions';
 import { selectCreated } from 'modules/ducks/provider/provider.selectors';
 
 import NowPlaying from 'components/now-playing/now-playing.component';
-import NotificationButton from 'components/notification-button.component';
+import NotificationButton from 'components/button-notification/notification-button.component';
 import AddToFavoritesButton from 'components/add-to-favorites-button/add-to-favorites-button.component';
 import ImusicDownloadButton from 'screens/imusic-downloads/imusic-download-button.component';
 
@@ -249,6 +249,9 @@ const HomeStack = ({
           options={{
             title: 'iPlayya',
             animationEnabled: false
+          }}
+          listeners={{
+            focus: () => setBottomTabsVisibleAction({ hideTabs: false })
           }}
         />
         <Stack.Screen

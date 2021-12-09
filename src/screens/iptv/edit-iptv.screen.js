@@ -26,6 +26,7 @@ import {
 import { isValidUsername, isValidWebsite, isValidPassword } from 'common/validate';
 
 import styles from './add-iptv.styles';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 class EditIptvScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -219,6 +220,11 @@ const mapStateToProps = createStructuredSelector({
   provider: selectActiveProvider
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader, withFormWrap);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withLoader,
+  withFormWrap,
+  withNotifRedirect
+);
 
 export default enhance(Container);

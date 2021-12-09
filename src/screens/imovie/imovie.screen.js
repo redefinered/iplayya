@@ -26,6 +26,8 @@ import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.c
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath } from 'utils';
 
+import withNotifRedirect from 'components/with-notif-redirect.component';
+
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieScreen = ({
@@ -296,6 +298,6 @@ const actions = {
   getFavoritesAction: Creators.getFavoriteMovies
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

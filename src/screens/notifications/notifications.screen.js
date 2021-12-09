@@ -7,28 +7,69 @@ import { Text, useTheme } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import SnackBar from 'components/snackbar/snackbar.component';
 import NotificationItem from './notification-item.component';
-import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
+import {
+  selectNotifications,
+  selectReadNotifications,
+  selectNotificationService
+} from 'modules/ducks/notifications/notifications.selectors';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 import ContentWrap from 'components/content-wrap.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
-import NotifService from 'NotifService';
+// import NotifService from 'NotifService';
 import theme from 'common/theme';
 import { FlatList } from 'react-native-gesture-handler';
+import { compose } from 'redux';
+import withNotifRedirect from 'components/with-notif-redirect.component';
+import moment from 'moment';
 
 const NotificationsScreen = ({
   notifications,
-  onRegisterAction,
-  onNotifAction,
-  deleteNotificationAction
+  deleteNotificationAction,
+  notifService,
+  readNotifications
 }) => {
-  const notif = new NotifService(onRegisterAction, onNotifAction);
+  // const notif = new NotifService(onRegisterAction, onNotifAction);
   const [selected, setSelected] = React.useState(null);
   const [showActionSheet, setShowActionSheet] = React.useState(false);
   const [showSnackBar, setShowSnackBar] = React.useState(false);
+  const [deliveredItems, setDeliveredItems] = React.useState([]);
+  const [list, setList] = React.useState([]);
 
-  console.log({ selected });
+  React.useEffect(() => {
+    if (!notifService) return;
+
+    notifService.getDeliveredNotifications((notifications) => {
+      console.log({ deliveredNotifcations: notifications });
+      setDeliveredItems(notifications);
+    });
+
+    // notifService.getScheduledLocalNotifications((notifications) => {
+    //   console.log({
+    //     notifications: notifications.map(({ date, ...rest }) => moment(date).format('HH:mm'))
+    //   });
+    //   // console.log('xxx')
+    // });
+  }, [notifService]);
+
+  // map list data
+  React.useEffect(() => {
+    if (!notifications.length) return;
+
+    const ls = notifications.map(({ id, ...rest }) => {
+      /// find the item in the delivered notifications list
+      const d = deliveredItems.find(({ userInfo }) => userInfo.id === id);
+
+      /// set unread to true if the item is found
+      const unread = typeof d === 'undefined';
+
+      /// add the unread property into the item
+      return { id, unread, ...rest };
+    });
+
+    setList(ls);
+  }, [deliveredItems, notifications]);
 
   const handleDeactivateNotification = () => {
     if (!selected) return;
@@ -41,9 +82,9 @@ const NotificationsScreen = ({
   /// CANCEL A NOTIFICATION
   const handleCancelScheduledNotif = (id) => {
     // console.log({ id });
-    notif.cancelNotif(id);
+    notifService.cancelNotif(id);
 
-    notif.getScheduledLocalNotifications((notifications) => {
+    notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
     });
 
@@ -63,24 +104,6 @@ const NotificationsScreen = ({
     setShowActionSheet(false);
   };
 
-  /// for testing
-  const checkScheduledNotifs = () => {
-    notif.getScheduledLocalNotifications((notifications) => {
-      console.log({ notifications });
-    });
-  };
-
-  // /// cancel all
-  const cancelAllNotifications = () => {
-    notif.cancelAll((notifications) => {
-      console.log({ notifications });
-    });
-
-    notif.getScheduledLocalNotifications((notifications) => {
-      console.log({ notifications });
-    });
-  };
-
   const actions = [
     {
       icon: 'notifications-off',
@@ -95,6 +118,7 @@ const NotificationsScreen = ({
   ];
 
   const handleSelect = (id) => {
+    console.log({ id });
     setSelected(id);
     setShowActionSheet(true);
   };
@@ -115,7 +139,7 @@ const NotificationsScreen = ({
 
   if (!notifications.length)
     return (
-      <ContentWrap>
+      <ContentWrap style={{ marginTop: theme.spacing(2) }}>
         <Text>No notifications found.</Text>
       </ContentWrap>
     );
@@ -123,9 +147,11 @@ const NotificationsScreen = ({
   return (
     <View style={{ paddingVertical: theme.spacing(2) }}>
       <FlatList
-        data={notifications}
+        data={list}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <NotificationItem {...item} handleSelect={handleSelect} />}
+        renderItem={({ item }) => (
+          <NotificationItem notification={item} read={!item.unread} handleSelect={handleSelect} />
+        )}
       />
       <ActionSheet visible={showActionSheet} actions={actions} hideAction={hideActionSheet} />
       <SnackBar
@@ -157,7 +183,11 @@ const actions = {
 };
 
 const mapStateToProps = createStructuredSelector({
-  notifications: selectNotifications
+  notifications: selectNotifications,
+  notifService: selectNotificationService,
+  readNotifications: selectReadNotifications
 });
 
-export default connect(mapStateToProps, actions)(Container);
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
+
+export default enhance(Container);

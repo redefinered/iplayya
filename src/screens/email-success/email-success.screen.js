@@ -8,8 +8,8 @@ import EmailSentSvg from 'assets/email_sent.svg';
 // import withScreenContainer from 'components/with-screen-container/with-screen-container.component';
 import ScreenContainer from 'components/screen-container.component';
 import ContentWrap from 'components/content-wrap.component';
-
 import { compose } from 'redux';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const EmailSuccessScreen = ({
   theme,
@@ -97,5 +97,6 @@ const Container = (props) => (
 
 export default compose(
   // withScreenContainer({ backgroundType: 'gradient' }),
-  withTheme
+  withTheme,
+  withNotifRedirect
 )(Container);

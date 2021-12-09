@@ -33,17 +33,18 @@ export const getFavorites = async (input) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
 
 /// IN PROGRESS! addToFavorites and getFavorites
 
-export const addToFavorites = async (radioId) => {
+export const addToFavorites = async (input) => {
   try {
     const { data } = await client.mutate({
       mutation: ADD_RADIO_TO_FAVORITES,
-      variables: { input: { radioId } }
+      variables: { input }
       // refetchQueries: [
       //   {
       //     query: GET_FAVORITE_RADIOS,
@@ -61,6 +62,7 @@ export const addToFavorites = async (radioId) => {
     });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

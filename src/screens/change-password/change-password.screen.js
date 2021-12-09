@@ -22,6 +22,7 @@ import {
 } from 'modules/ducks/password/password.selectors';
 
 import { isValidPassword } from 'common/validate';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const styles = StyleSheet.create({
   textInput: {
@@ -184,6 +185,11 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withLoader);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withFormWrap,
+  withLoader,
+  withNotifRedirect
+);
 
 export default enhance(container);
