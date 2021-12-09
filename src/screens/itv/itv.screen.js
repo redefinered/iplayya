@@ -55,6 +55,7 @@ const ItvScreen = ({
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
 }) => {
+  console.log({ featuredChannels });
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   // const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -237,7 +238,7 @@ const ItvScreen = ({
       );
   };
 
-  const renderFeaturedItem = (item) => {
+  const renderFeaturedItem = ({ item }) => {
     let isNotificationActive =
       notifyIds.findIndex((i) => i === parseInt(item.id)) >= 0 ? true : false;
     return (
