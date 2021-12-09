@@ -145,54 +145,54 @@ const ButtonNotify = ({
     });
   };
 
-  // const renderNotificationIcon = () => {
-  //   const momentTime = moment(program.time);
+  const renderNotificationIcon = () => {
+    const momentTime = moment(program.time);
 
-  //   if (!program.epgtitle)
-  //     return (
-  //       <View
-  //         style={{
-  //           marginRight: theme.spacing(2),
-  //           backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
-  //           ...styles.button
-  //         }}
-  //       />
-  //     );
+    if (!program.time)
+      return (
+        <View
+          style={{
+            marginRight: theme.spacing(2),
+            backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
+            ...styles.button
+          }}
+        />
+      );
 
-  //   if (isPlaying || momentTime.isBefore(moment()))
-  //     return (
-  //       <View
-  //         style={{
-  //           marginRight: theme.spacing(2),
-  //           backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
-  //           ...styles.button
-  //         }}
-  //       />
-  //     );
+    if (isPlaying || momentTime.isBefore(moment()))
+      return (
+        <View
+          style={{
+            marginRight: theme.spacing(2),
+            backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
+            ...styles.button
+          }}
+        />
+      );
 
-  //   return (
-  //     <Pressable
-  //       onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
-  //       onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
-  //       onPress={() => handleNotify()}
-  //       style={{
-  //         marginRight: theme.spacing(2),
-  //         backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
-  //         ...styles.button
-  //       }}
-  //     >
-  //       <Icon
-  //         name="notifications"
-  //         size={theme.iconSize(3)}
-  //         color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
-  //       />
-  //     </Pressable>
-  //   );
-  // };
+    return (
+      <Pressable
+        onPressIn={() => setIsPressed(true)} // replicates TouchableHighlight
+        onPressOut={() => setIsPressed(false)} // replicates TouchableHighlight
+        onPress={() => handleNotify()}
+        style={{
+          marginRight: theme.spacing(2),
+          backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent',
+          ...styles.button
+        }}
+      >
+        <Icon
+          name="notifications"
+          size={theme.iconSize(3)}
+          color={active ? theme.iplayya.colors.vibrantpussy : 'white'}
+        />
+      </Pressable>
+    );
+  };
 
   return (
     <React.Fragment>
-      {/* {renderNotificationIcon()} */}
+      {renderNotificationIcon()}
       <SnackBar
         visible={showSnackBar}
         message="We will remind you before the program start."
