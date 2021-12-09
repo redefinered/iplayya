@@ -65,13 +65,25 @@ const RadioStationsTab = ({
   };
 
   const handleAddToFavorites = (item) => {
-    const { is_favorite } = item;
+    // eslint-disable-next-line no-unused-vars
+    const { is_favorite, pn, __typename, monitoring_status_updated, ...rest } = item;
+
+    const reqInput = {
+      is_favorite,
+      monitoring_status_updated: monitoring_status_updated || '0',
+      ...rest
+    };
+    // console.log({
+    //   is_favorite,
+    //   monitoring_status_updated: monitoring_status_updated || '0',
+    //   ...rest
+    // });
 
     // stop if alreay in favorites
     if (is_favorite) return;
 
     // exec add to favorites
-    addToFavoritesAction(item);
+    addToFavoritesAction(reqInput);
   };
 
   const hideSnackBar = () => {
