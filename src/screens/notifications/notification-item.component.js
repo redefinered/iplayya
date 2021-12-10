@@ -17,7 +17,7 @@ const NotificationItem = ({
   markNotificationAsReadAction,
   handleSelect
 }) => {
-  const { id, title, date, channelId, parentType } = notification.data;
+  const { id, title, date, channelName, channelId, parentType } = notification.data;
 
   const navigtation = useNavigation();
 
@@ -74,7 +74,7 @@ const NotificationItem = ({
                 marginBottom: theme.spacing(1)
               }}
             >
-              {title}
+              {channelName}
             </Text>
             <Text style={{ fontSize: 10, fontWeight: '300', color: theme.iplayya.colors.white50 }}>
               {renderFromNow()}
