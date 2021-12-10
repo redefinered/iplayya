@@ -10,6 +10,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import withLoader from 'components/with-loader.component';
 import theme from 'common/theme';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
@@ -63,6 +64,6 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
-const enhance = compose(connect(mapStateToProps, null), withLoader);
+const enhance = compose(connect(mapStateToProps, null), withLoader, withNotifRedirect);
 
 export default enhance(Container);

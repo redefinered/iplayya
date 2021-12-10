@@ -23,34 +23,36 @@ import {
   selectIsFetching,
   selectChannel,
   selectPrograms,
+  selectPaginator,
   selectCurrentProgram,
   selectFavoritesListUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import theme from 'common/theme';
 import { ActivityIndicator } from 'react-native-paper';
+import { generateDatesFromToday } from 'utils';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const dirs = RNFetchBlob.fs.dirs;
+const TODAY = new Date().toISOString();
 
-const ItvChannelDetailScreen = ({
+const ChannelDetailScreen = ({
   isFetching,
   route: {
-    params: { channelId }
+    params: { channelId, selectedCategory }
   },
   channel,
   programs,
-  getProgramsByChannelAction,
-  getProgramsByChannelStartAction,
+  paginator,
   getChannelAction,
   navigation,
-  /// the program that is playing at this moment
-  // currentProgram,
   startAction,
   onNotifResetAction,
-  // addToFavoritesAction,
   favoritesListUpdated,
   setMusicNowPlaying,
   setRadioNowPlaying,
-  setBottomTabsVisibleAction
+  setBottomTabsVisibleAction,
+  getChannelsAction,
+  getChannelsByCategoriesAction
 }) => {
   const [paused, setPaused] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -61,12 +63,23 @@ const ItvChannelDetailScreen = ({
   const [contentHeight, setContentHeight] = React.useState(null);
   const [fullscreen, setFullscreen] = React.useState(false);
   const [currentProgram, setCurrentProgram] = React.useState(null);
+  const [date, setDate] = React.useState(TODAY);
 
-  React.useEffect(() => {
-    if (!programs.length) return;
+  const handleDateSelect = (dateId) => {
+    /// generate dates
+    let dates = generateDatesFromToday();
 
-    setCurrentProgram(programs[0]);
-  }, [programs]);
+    /// convert date ids to string
+    dates = dates.map(({ id, ...rest }) => ({ id: id.toString(), ...rest }));
+
+    /// get the date's value
+    const { value } = dates.find(({ id }) => id === dateId);
+
+    /// convert the date's value to string
+    const d = new Date(value).toISOString();
+
+    setDate(d);
+  };
 
   React.useEffect(() => {
     if (!channel) return;
@@ -102,11 +115,20 @@ const ItvChannelDetailScreen = ({
 
     /// set programs to start state when a user leaves this page
     const unsubscribeToRouteRemove = navigation.addListener('beforeRemove', () => {
-      /// reset programs to start state
-      getProgramsByChannelStartAction();
-
       // hide bottom menu tabs
       setBottomTabsVisibleAction({ hideTabs: true });
+
+      // fetch updated cache when going back to master screen
+      if (selectedCategory) {
+        if (selectedCategory !== 'all') {
+          getChannelsByCategoriesAction({
+            categories: [parseInt(selectedCategory)],
+            ...Object.assign(paginator, { pageNumber: 1 })
+          });
+        } else {
+          getChannelsAction(Object.assign(paginator, { pageNumber: 1 }));
+        }
+      }
     });
 
     return () => {
@@ -123,13 +145,12 @@ const ItvChannelDetailScreen = ({
     getChannelAction({ videoId: channelId });
 
     /// get programs starting at current time and date
-    let date = new Date(Date.now());
-    getProgramsByChannelAction({ channelId, date: date.toISOString() });
+    // let date = new Date(Date.now());
+    // getProgramsByChannelAction({ channelId, date: date.toISOString() });
   };
 
   React.useEffect(() => {
     if (favoritesListUpdated) {
-      // getChannelAction({ videoId: channelId });
       handleShowFavSnackBar();
     }
   }, [favoritesListUpdated]);
@@ -142,40 +163,28 @@ const ItvChannelDetailScreen = ({
       const title = titlesplit.join('_');
       const filename = `${channelId}_${title}.m3u8`;
 
-      // console.log({ filename });
-
       // set source
       if (isMovieDownloaded) {
         setSource(`${dirs.DocumentDir}/${filename}`);
-        // setSource(`${dirs.DocumentDir}/112238_test112238.m3u8`);
       } else {
         let sourceSplit = url.split(' ');
         setSource(`${sourceSplit[1]}?token=${token}`);
       }
     }
-    // console.log({ isMovieDownloaded });
   }, [channel, isMovieDownloaded]);
-
-  // const isFavorite = false;
 
   const handleTogglePlay = () => {
     setLoading(true);
     setPaused(!paused);
   };
 
-  // const handleFovoritePress = () => {
-  //   if (channel.is_favorite) return;
-
-  //   addToFavoritesAction(parseInt(channelId));
-  // };
-
   const handleNextChannel = (nextChannelId) => {
     if (!channel) return;
 
-    let date = new Date(Date.now());
+    // let date = new Date(Date.now());
 
     getChannelAction({ videoId: nextChannelId });
-    getProgramsByChannelAction({ channelId: nextChannelId, date: date.toISOString() });
+    // getProgramsByChannelAction({ channelId: nextChannelId, date: date.toISOString() });
 
     navigation.setParams({ channelId: nextChannelId });
   };
@@ -183,33 +192,13 @@ const ItvChannelDetailScreen = ({
   const handlePreviousChannel = (previousChannelId) => {
     if (!channel) return;
 
-    let date = new Date(Date.now());
+    // let date = new Date(Date.now());
 
     getChannelAction({ videoId: previousChannelId });
-    getProgramsByChannelAction({ channelId: previousChannelId, date: date.toISOString() });
+    // getProgramsByChannelAction({ channelId: previousChannelId, date: date.toISOString() });
 
     navigation.setParams({ channelId: previousChannelId });
   };
-
-  // const renderPlayer = () => {
-  //   if (source) {
-  //     return (
-  //       <ItvPlayer
-  //         channel={channel}
-  //         paused={paused}
-  //         source={source}
-  //         handleNextChannel={handleNextChannel}
-  //         handlePreviousChannel={handlePreviousChannel}
-  //         loading={loading}
-  //         setLoading={setLoading}
-  //         setPaused={setPaused}
-  //         handleTogglePlay={handleTogglePlay}
-  //         fullscreen={fullscreen}
-  //         setFullscreen={setFullscreen}
-  //       />
-  //     );
-  //   }
-  // };
 
   const handleShowSnackBar = () => {
     setShowSnackBar(true);
@@ -240,10 +229,6 @@ const ItvChannelDetailScreen = ({
     if (showFavSnackBar) hideFavSnackBar();
   }, [showFavSnackBar]);
 
-  const handleDateSelect = React.useCallback((date) => {
-    getProgramsByChannelAction({ channelId, date });
-  }, []);
-
   const renderProgramGuide = () => {
     if (isFetching)
       return (
@@ -254,12 +239,14 @@ const ItvChannelDetailScreen = ({
 
     return (
       <ProgramGuide
+        date={date}
         programs={programs}
-        onDateSelect={handleDateSelect}
+        handleDateSelect={handleDateSelect}
         channelId={channelId}
         channelName={channel.title}
         title="Program Guide"
         showSnackBar={handleShowSnackBar}
+        setCurrentProgram={setCurrentProgram}
         contentHeight={contentHeight}
         screen={false}
         parentType="ITV"
@@ -391,7 +378,7 @@ const ItvChannelDetailScreen = ({
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush backgroundType="solid">
-    <ItvChannelDetailScreen {...props} />
+    <ChannelDetailScreen {...props} />
   </ScreenContainer>
 );
 
@@ -400,6 +387,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   channel: selectChannel,
   programs: selectPrograms,
+  paginator: selectPaginator,
   currentProgram: selectCurrentProgram,
   favoritesListUpdated: selectFavoritesListUpdated
 });
@@ -408,14 +396,14 @@ const actions = {
   addToFavoritesAction: Creators.addToFavorites,
   startAction: Creators.start,
   getChannelAction: Creators.getChannel,
-  getProgramsByChannelAction: Creators.getProgramsByChannel,
-  getProgramsByChannelStartAction: Creators.getProgramsByChannelStart,
+  getChannelsAction: Creators.getChannels,
+  getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   onNotifResetAction: NotificationCreators.onNotifReset,
   setMusicNowPlaying: MusicCreators.setNowPlaying,
   setRadioNowPlaying: RadioCreators.setNowPlaying,
   setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
 
 export default enhance(Container);

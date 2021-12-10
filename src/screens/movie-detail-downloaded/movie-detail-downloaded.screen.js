@@ -29,7 +29,7 @@ import {
 } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
-import withLoader from 'components/with-loader.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const MovieDetailScreen = ({
   navigation,
@@ -376,6 +376,6 @@ const mapStateToProps = createStructuredSelector({
   videoUrls: selectMovieVideoUrls
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

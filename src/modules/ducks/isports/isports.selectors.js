@@ -29,6 +29,11 @@ export const selectFavoritesListUpdated = createSelector(
   ({ favoritesListUpdated }) => favoritesListUpdated
 );
 
+export const selectSearchResultsPaginator = createSelector(
+  [iSportsState],
+  ({ searchResultsPaginator }) => searchResultsPaginator
+);
+
 const selectChannelForFilter = (state, props) => {
   return state.sports.channels.find(({ id }) => id === props.channelId);
 };
@@ -54,17 +59,29 @@ export const selectSimilarChannel = createSelector(
   ({ similarChannel }) => similarChannel
 );
 
-const selectChannelsAndCurrentChannelNumberForFilter = (
-  { sports: { channels } },
-  { channel: { number } }
-) => {
+const selectChannelsAndCurrentChannelNumberForFilter = (state, props) => {
+  if (!props.channel) return;
+
+  // console.log({ state, props });
+  // if ()
+  const {
+    sports: { channels }
+  } = state;
+  const {
+    channel: { number }
+  } = props;
+
   const currentChannelNumber = parseInt(number);
   return { channels, currentChannelNumber };
 };
 
 export const selectNextChannel = createSelector(
   [selectChannelsAndCurrentChannelNumberForFilter],
-  ({ channels, currentChannelNumber }) => {
+  (c) => {
+    if (!c) return;
+
+    const { channels, currentChannelNumber } = c;
+
     const nextChannel = channels.find(({ number }) => number === currentChannelNumber + 1);
     return nextChannel;
   }
@@ -72,10 +89,18 @@ export const selectNextChannel = createSelector(
 
 export const selectPreviousChannel = createSelector(
   [selectChannelsAndCurrentChannelNumberForFilter],
-  ({ channels, currentChannelNumber }) => {
+  (c) => {
+    if (!c) return;
+    const { channels, currentChannelNumber } = c;
+
     const previousChannel = channels.find(({ number }) => number === currentChannelNumber - 1);
     return previousChannel;
   }
 );
 
 export const selectIsSearching = createSelector([iSportsState], ({ isSearching }) => isSearching);
+
+export const selectFeaturedChannels = createSelector(
+  [iSportsState],
+  ({ featuredChannels }) => featuredChannels
+);

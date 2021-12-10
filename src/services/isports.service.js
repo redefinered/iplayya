@@ -3,6 +3,7 @@ import {
   GET_GENRES,
   GET_CHANNEL,
   GET_CHANNELS,
+  // GET_CHANNEL_TOKEN,
   GET_SPORTS_CHANNELS_BY_CATEGORIES,
   REMOVE_FROM_FAVORITES,
   GET_FAVORITES,
@@ -88,17 +89,19 @@ export const removeFromFavorites = async (input) => {
               });
               const updatedItems = previous.filter((r) => r.__ref !== normalizedId);
 
-              console.log({ previous, normalizedId, updatedItems });
               return updatedItems;
+            },
+            isport: (_previous, { toReference }) => {
+              return toReference(data.removeIsportToFavorites);
             }
           }
         });
       }
     });
 
-    console.log({ data });
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };
@@ -123,7 +126,7 @@ export const getProgramsByChannel = async (input) => {
     });
     return data;
   } catch (error) {
-    console.log({ error });
+    console.log({ graphqlerror: error.message });
     throw new Error(error);
   }
 };

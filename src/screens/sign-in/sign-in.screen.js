@@ -37,6 +37,7 @@ import withLoader from 'components/with-loader.component';
 
 import { isValidEmail } from 'common/validate';
 import theme from 'common/theme';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const SignInScreen = ({
   error: loginError,
@@ -238,6 +239,11 @@ const actions = {
   appReadyAction: AppCreators.appReady
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withTheme,
+  withLoader,
+  withNotifRedirect
+);
 
 export default enhance(Container);

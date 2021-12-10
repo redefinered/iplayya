@@ -7,11 +7,11 @@ export const GET_RADIO_STATIONS = gql`
       name
       number
       cmd
-      # count
-      # volume_correction
-      # enable_monitoring
-      # monitoring_status
-      # monitoring_status_updated
+      count
+      volume_correction
+      enable_monitoring
+      monitoring_status
+      monitoring_status_updated
       is_favorite
     }
   }

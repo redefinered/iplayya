@@ -9,6 +9,7 @@ import ScreenContainer from 'components/screen-container.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const styles = StyleSheet.create({
   textQuestion: {
@@ -235,4 +236,6 @@ const actions = {
   enableSwipeAction: NavActionCreators.enableSwipe
 };
 
-export default compose(withTheme, connect(null, actions))(Container);
+const enhance = compose(connect(null, actions), withTheme, withNotifRedirect);
+
+export default enhance(Container);

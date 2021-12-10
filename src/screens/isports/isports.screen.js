@@ -16,26 +16,28 @@ import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/isports/isports.actions';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 // import ItvWalkThrough from 'components/walkthrough-guide/isports-walkthrough.component';
-import { selectHeaderHeight, selectItvGenres } from 'modules/app';
+import { selectHeaderHeight, selectIsportsGenres } from 'modules/app';
 import {
   selectError,
-  selectIsFetching,
-  selectPaginator,
   selectChannels,
   selectFavorites,
-  selectFavoritesListUpdated,
-  selectFavoritesPaginator
+  selectPaginator,
+  selectIsFetching,
+  selectFeaturedChannels,
+  selectFavoritesPaginator,
+  selectFavoritesListUpdated
 } from 'modules/ducks/isports/isports.selectors';
 import { ADD_TO_FAVORITES } from 'graphql/isports.graphql';
 import uniq from 'lodash/uniq';
 import orderBy from 'lodash/uniq';
 import theme from 'common/theme';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ITEM_HEIGHT = 84;
 
-const ItvScreen = ({
+const IsportsScreen = ({
   error,
   genres,
   channels,
@@ -43,15 +45,17 @@ const ItvScreen = ({
   navigation,
   isFetching,
   headerHeight,
+  featuredChannels,
   route: { params },
   getChannelsAction,
   enableSwipeAction,
   resetPaginatorAction,
+  setFeaturedChannelsAction,
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
 }) => {
   const [selectedCategory, setSelectedCategory] = React.useState('all');
-  const [showSnackBar, setShowSnackBar] = React.useState(false);
+  // const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
   const [notifyIds, setNotifyIds] = React.useState([]);
   const [subscribed, setSubscribed] = React.useState('');
@@ -73,7 +77,8 @@ const ItvScreen = ({
 
   React.useEffect(() => {
     if (typeof params !== 'undefined') {
-      const { openItvGuide, genreId } = params;
+      const { genreId } = params;
+      // const { openItvGuide, genreId } = params;
 
       // set category pill initial index
       const i = genresData.findIndex(({ id }) => id === genreId);
@@ -82,7 +87,7 @@ const ItvScreen = ({
       // set category for fetching
       setSelectedCategory(genreId);
 
-      if (!openItvGuide) return;
+      // if (!openItvGuide) return;
 
       // setShowWalkthroughGuide(true);
     }
@@ -130,6 +135,9 @@ const ItvScreen = ({
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
       if (channels.length) {
+        /// add featured channels
+        if (!featuredChannels.length) setFeaturedChannelsAction(channels.slice(0, 9));
+
         let data = channels.map(({ id, title, ...rest }) => ({
           id,
           title,
@@ -149,17 +157,17 @@ const ItvScreen = ({
   //   setShowWalkthroughGuide(false);
   // };
 
-  const hideSnackBar = () => {
-    setTimeout(() => {
-      setShowSnackBar(false);
-      setShowNotificationSnackBar(false);
-    }, 3000);
-  };
+  // const hideSnackBar = () => {
+  //   setTimeout(() => {
+  //     setShowSnackBar(false);
+  //     setShowNotificationSnackBar(false);
+  //   }, 3000);
+  // };
 
-  React.useEffect(() => {
-    if (showSnackBar) hideSnackBar();
-    if (showNotificationSnackBar) hideSnackBar();
-  }, [showSnackBar, showNotificationSnackBar]);
+  // React.useEffect(() => {
+  //   if (showSnackBar) hideSnackBar();
+  //   if (showNotificationSnackBar) hideSnackBar();
+  // }, [showSnackBar, showNotificationSnackBar]);
 
   // const handleShowSnackBar = () => {
   //   setShowSnackBar(true);
@@ -167,7 +175,7 @@ const ItvScreen = ({
 
   const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
-    navigation.navigate('ItvChannelDetailScreen', { channelId: item.id });
+    navigation.navigate('IsportsChannelDetailScreen', { channelId: item.id, selectedCategory });
   };
 
   const handleItemLongPress = (id) => {
@@ -254,7 +262,7 @@ const ItvScreen = ({
           </Text>
         </ContentWrap>
         <FlatList
-          data={channelsData.slice(0, 9)}
+          data={featuredChannels}
           horizontal
           bounces={false}
           renderItem={renderFeaturedItem}
@@ -331,13 +339,13 @@ const ItvScreen = ({
 
       {/* <ItvWalkThrough visible={showWalkthroughGuide} onButtonClick={handleWalkthroughGuideHide} /> */}
 
-      <SnackBar
+      {/* <SnackBar
         visible={showSnackBar}
         message="Channel is added to your Favorites list"
         // message={`${favorited} is added to your Favorites list`}
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
-      />
+      /> */}
       <SnackBar
         visible={showNotificationSnackBar}
         message={`You will now receive notifications from ${subscribed}`}
@@ -350,7 +358,7 @@ const ItvScreen = ({
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush>
-    <ItvScreen {...props} />
+    <IsportsScreen {...props} />
   </ScreenContainer>
 );
 
@@ -367,10 +375,11 @@ const mapStateToProps = createStructuredSelector({
   favorites: selectFavorites,
   paginator: selectPaginator,
   favoritesPaginator: selectFavoritesPaginator,
-  genres: selectItvGenres,
+  genres: selectIsportsGenres,
   channels: selectChannels,
   updated: selectFavoritesListUpdated,
-  headerHeight: selectHeaderHeight
+  headerHeight: selectHeaderHeight,
+  featuredChannels: selectFeaturedChannels
 });
 
 const actions = {
@@ -381,9 +390,10 @@ const actions = {
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   getFavoritesAction: Creators.getFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe,
+  setFeaturedChannelsAction: Creators.setFeaturedChannels,
   reset: Creators.reset
 };
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
 
 export default enhance(Container);

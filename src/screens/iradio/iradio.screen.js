@@ -24,6 +24,8 @@ import {
 import { createFontFormat } from 'utils';
 import { useIsFocused } from '@react-navigation/native';
 import Spacer from 'components/spacer.component';
+import withLoader from 'components/with-loader.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -236,6 +238,6 @@ const actions = {
   setIradioBottomNavLayoutAction: Creators.setIradioBottomNavLayout
 };
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withLoader, withNotifRedirect);
 
 export default enhance(Container);

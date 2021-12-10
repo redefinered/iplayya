@@ -30,6 +30,7 @@ import {
 import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.selectors';
 import { selectDownloadStarted } from 'modules/ducks/imusic-downloads/imusic-downloads.selectors';
 import theme from 'common/theme';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
@@ -397,6 +398,6 @@ const mapStateToProps = createStructuredSelector({
   downloadStarted: selectDownloadStarted
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withLoader, withNotifRedirect);
 
 export default enhance(Container);

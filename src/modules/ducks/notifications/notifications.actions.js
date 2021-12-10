@@ -4,15 +4,19 @@ const { Types, Creators } = createActions(
   {
     onRegister: ['token'],
     onNotif: ['notification'],
+    setNotificationService: ['service'],
+
+    markNotificationAsRead: ['notification'],
+    clearNotifications: null,
 
     onNotifReset: null,
 
-    createNotification: ['notification'], /// an object
-    activateNotification: ['notificationId'],
-    deactivateNotification: ['notificationId'],
+    /// actions from this point might all become useless moving forward
     deleteNotification: ['notificationId'],
-    updateNotificationStatus: ['id', 'status'],
-
+    deactivateNotification: ['notificationId'],
+    activateNotification: ['notificationId'],
+    createNotification: ['notification'], /// an object
+    updateNotificationStatus: ['id', 'status'], /// removing together with other notifcations actions that will be useless when notifications services is used to list notifications
     setSelectedForDeactivation: ['notificationId'],
     clearSelectedForDeactivation: null
   },

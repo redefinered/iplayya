@@ -42,6 +42,7 @@ import { selectPlaybackSettings } from 'modules/ducks/user/user.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath, createFontFormat } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 export const selectSource = (videourls) => {
   const urls = videourls.map(({ link }) => link);
@@ -592,6 +593,11 @@ const mapStateToProps = createStructuredSelector({
   playbackSettings: selectPlaybackSettings
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withTheme,
+  withLoader,
+  withNotifRedirect
+);
 
 export default enhance(Container);

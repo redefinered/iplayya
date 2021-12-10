@@ -24,6 +24,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useIsFocused } from '@react-navigation/native';
 import NetInfo from '@react-native-community/netinfo';
 import theme from 'common/theme';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
@@ -188,6 +189,6 @@ const actions = {
   switchInImusicScreenAction: Creators.switchInImusicScreen
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

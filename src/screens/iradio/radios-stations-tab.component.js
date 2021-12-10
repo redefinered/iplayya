@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Pressable, FlatList } from 'react-native';
+import { View, Pressable, FlatList, StyleSheet } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { createFontFormat } from 'utils';
@@ -26,7 +26,8 @@ const RadioStationsTab = ({
   radioStations,
   paginator,
   handleSelectItem,
-  // isAddingToFavorites,
+  isAddingToFavorites,
+  // addToFavoritesAction,
   added,
   resetUpdateIndicatorsAction,
   getFavoritesAction
@@ -53,10 +54,7 @@ const RadioStationsTab = ({
       cache.modify({
         fields: {
           favoriteRadios: (previous = [], { toReference }) => {
-            const varia = [...previous, toReference(data.addRadioToFavorites)];
-            console.log({ varia, previous, data });
-            return varia;
-            // return [...previous, toReference(data.addRadioToFavorites)];
+            return [...previous, toReference(data.addRadioToFavorites)];
           },
           radios: (previous = [], { toReference }) => {
             return [...previous, toReference(data.addRadioToFavorites)];
@@ -67,9 +65,24 @@ const RadioStationsTab = ({
   });
 
   const handleAddToFavorites = (item) => {
-    setShowSnackBar(true);
+    // eslint-disable-next-line no-unused-vars
+    const { is_favorite, number, pn, __typename, monitoring_status_updated, ...rest } = item;
 
-    addToFavorites({ variables: { input: { radioId: item.id } } });
+    const reqInput = {
+      // is_favorite,
+      number: parseInt(number),
+      monitoring_status_updated: monitoring_status_updated || '0',
+      ...rest
+    };
+
+    // stop if alreay in favorites
+    if (is_favorite) return;
+
+    // setShowSnackBar(true);
+    // exec add to favorites
+    // addToFavoritesAction(reqInput);
+    addToFavorites(reqInput);
+    // console.log(reqInput);
   };
 
   const hideSnackBar = () => {
@@ -125,8 +138,25 @@ const RadioStationsTab = ({
     );
   };
 
+  const renderFavoriteLoader = () => {
+    if (!isAddingToFavorites) return;
+
+    return (
+      <View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          // backgroundColor: theme.iplayya.colors.black80,
+          zIndex: 1,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      />
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
+      {renderFavoriteLoader()}
       <FlatList
         data={radioStations}
         // eslint-disable-next-line react/prop-types
@@ -154,6 +184,7 @@ RadioStationsTab.propTypes = {
   isAddingToFavorites: PropTypes.bool,
   getRadioStationsAction: PropTypes.func,
   radioStations: PropTypes.array,
+  addToFavoritesAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
   handleSelectItem: PropTypes.func,
   resetUpdateIndicatorsAction: PropTypes.func,
@@ -163,6 +194,7 @@ RadioStationsTab.propTypes = {
 const actions = {
   getRadioStationsAction: Creators.get,
   getFavoritesAction: FavoritesCreators.getFavorites,
+  addToFavoritesAction: FavoritesCreators.addToFavorites,
   resetUpdateIndicatorsAction: FavoritesCreators.resetUpdateIndicators
 };
 

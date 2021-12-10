@@ -72,7 +72,7 @@ export default class NotifService {
     );
   }
 
-  localNotif({ id, channelId, channelName }, soundName) {
+  localNotif({ id, channelId, channelName, module }, soundName) {
     this.lastId++;
     PushNotification.localNotification({
       /* Android Only Properties */
@@ -106,7 +106,7 @@ export default class NotifService {
       // title: 'Local Notification', // (optional)
       title: channelName || 'Scheduled Notification', // (optional)
       message: 'My Notification Message', // (required)
-      userInfo: { id, channelId },
+      userInfo: { id, channelId, module },
       // userInfo: { channelId: '1' }, // (optional) default: {} (using null throws a JSON value '<null>' error)
       playSound: !!soundName, // (optional) default: true
       soundName: soundName ? soundName : 'default' // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
@@ -114,7 +114,7 @@ export default class NotifService {
     });
   }
 
-  scheduleNotif({ id, channelId, channelName, program }, soundName) {
+  scheduleNotif({ id, channelId, channelName, program, module }, soundName) {
     this.lastId++;
     const { title, description, time } = program;
     const datetime = new Date(time);
@@ -159,7 +159,7 @@ export default class NotifService {
       title: channelName || 'Scheduled Notification', // (optional)
       message: description || 'My Notification Message', // (required)
       // userInfo: { screen: 'home' }, // (optional) default: {} (using null throws a JSON value '<null>' error)
-      userInfo: { id, channelId },
+      userInfo: { id, channelId, module },
       playSound: !!soundName, // (optional) default: true
       soundName: soundName ? soundName : 'default' // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
       // number: 10 // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
@@ -197,7 +197,7 @@ export default class NotifService {
       title: channelName || 'Scheduled Notification', // (optional)
       message: description || 'My Notification Message', // (required)
       // userInfo: { screen: 'home' }, // (optional) default: {} (using null throws a JSON value '<null>' error)
-      userInfo: { id, channelId },
+      userInfo: { id, channelId, module },
       playSound: !!soundName, // (optional) default: true
       soundName: soundName ? soundName : 'default' // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
       // number: 10 // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)

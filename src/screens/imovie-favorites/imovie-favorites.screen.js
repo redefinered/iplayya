@@ -21,6 +21,7 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import NoFavorites from 'assets/favorite-movies-empty-state.svg';
 import { createFontFormat } from 'utils';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ImovieFavoritesScreen = ({
   theme,
@@ -311,6 +312,11 @@ const actions = {
   getFavoritesAction: Creators.getFavoriteMovies
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withTheme,
+  withLoader,
+  withNotifRedirect
+);
 
 export default enhance(Container);

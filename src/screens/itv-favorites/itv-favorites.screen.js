@@ -26,6 +26,7 @@ import {
   selectfavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -118,8 +119,10 @@ const ItvFavoritesScreen = ({
         setSelectedItems([item.id, ...selectedItems]);
       }
     } else {
-      // navigation.navigate('MovieDetailScreen', { videoId: item });
-      navigation.navigate('ItvChannelDetailScreen', { channelId: item });
+      navigation.navigate('ItvChannelDetailScreen', {
+        channelId: item.id,
+        selectedCategory: route.params.selectedCategory
+      });
     }
   };
 
@@ -220,14 +223,20 @@ const ItvFavoritesScreen = ({
     return 'Are you sure you want to delete this channel/s from your Favorites list?';
   };
 
-  if (data.length)
+  const renderLoader = () => {
+    if (isFetching) {
+      return (
+        <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+  };
+
+  if (favorites.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
-        {isFetching && (
-          <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
-            <ActivityIndicator />
-          </View>
-        )}
+        {renderLoader()}
 
         {activateCheckboxes && (
           <ContentWrap>
@@ -297,11 +306,12 @@ const ItvFavoritesScreen = ({
         )}
       </View>
     );
+  }
 
-  return <EmptyState theme={theme} navigation={navigation} />;
+  return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
-const EmptyState = ({ theme, navigation }) => (
+const EmptyState = ({ isFetching, theme, navigation }) => (
   <View
     style={{
       flex: 1,
@@ -311,6 +321,11 @@ const EmptyState = ({ theme, navigation }) => (
       paddingBottom: 130
     }}
   >
+    {isFetching && (
+      <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+        <ActivityIndicator />
+      </View>
+    )}
     <NoFavorites />
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>
@@ -349,6 +364,6 @@ const actions = {
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

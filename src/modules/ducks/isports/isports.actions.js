@@ -5,7 +5,7 @@ const { Types, Creators } = createActions(
     start: null,
 
     /// query: GET_GENRES
-    getGenres: [],
+    getGenres: null,
     getGenresSuccess: ['data'],
     getGenresFailure: ['error'],
 
@@ -18,6 +18,8 @@ const { Types, Creators } = createActions(
     getChannelsSuccess: ['channels', 'nextPaginatorInfo'],
     getChannelsFailure: ['error'],
 
+    setFeaturedChannels: ['channels'],
+
     getProgramsByChannelStart: null,
     getProgramsByChannel: ['input'],
     getProgramsByChannelSuccess: ['data'],
@@ -26,7 +28,6 @@ const { Types, Creators } = createActions(
     getChannelsByCategoriesStart: null,
     getChannelsByCategories: ['input'],
     getChannelsByCategoriesSuccess: ['channels', 'nextPaginatorInfo'],
-    // getChannelsByCategoriesSuccess: ['data'],
     getChannelsByCategoriesFailure: ['error'],
 
     setIsSearching: ['isSearching'], /// is searching for favorites
@@ -40,18 +41,45 @@ const { Types, Creators } = createActions(
     getFavoritesFailure: ['error'],
     resetFavoritesPaginator: null,
 
+    /// downloads
+    updateDownloads: ['data'],
+    updateDownloadsProgress: ['data'],
+
+    searchStart: null,
+    search: ['input'],
+    searchSuccess: ['results'],
+    searchFailure: ['error'],
+    resetSearchResultsPaginator: null,
+
+    //recent search
+    updateRecentSearch: ['channel'],
+    clearRecentSearch: null,
+
+    /**
+     * status:
+     * 0 - inactive
+     * 1 - active
+     */
+    subscribeToProgram: ['status', 'programId'],
+
+    createNotification: ['notification'], /// an object
+    activateSubscription: ['subscriptionId'],
+    deactivateSubscription: ['subscriptionId'],
+    setNotificationToRead: ['notificationId'],
+    deleteNotification: ['notificationId'],
+
+    /// set deactivateNotification state to null
+    clearActivateKey: null,
+    clearDeactivateKey: null,
+    cancelNotification: ['notificationId'],
+
+    onRegister: ['token'],
+    onNotif: ['notification'],
+
     // misc
     reset: null,
     setPaginatorInfo: ['data'],
     resetPaginator: null,
-
-    searchStart: null,
-    search: ['input'],
-    searchSuccess: ['data'],
-    searchFailure: ['error'],
-
-    //recent search
-    updateRecentSearch: ['term'],
 
     getSimilarChannelStart: null,
     getSimilarChannel: ['input'],

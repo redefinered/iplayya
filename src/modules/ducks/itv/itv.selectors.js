@@ -67,7 +67,10 @@ const selectChannelsAndCurrentChannelNumberForFilter = ({ itv: { channels } }, {
 
 export const selectNextChannel = createSelector(
   [selectChannelsAndCurrentChannelNumberForFilter],
-  ({ channels, currentChannelNumber }) => {
+  (c) => {
+    if (!c) return;
+
+    const { channels, currentChannelNumber } = c;
     const nextChannel = channels.find(({ number }) => number === currentChannelNumber + 1);
     return nextChannel;
   }
@@ -85,3 +88,13 @@ export const selectPreviousChannel = createSelector(
 );
 
 export const selectIsSearching = createSelector([itvState], ({ isSearching }) => isSearching);
+
+export const selectFeaturedChannels = createSelector(
+  [itvState],
+  ({ featuredChannels }) => featuredChannels
+);
+
+export const selectSearchNorResult = createSelector(
+  [itvState],
+  ({ searchNoResult }) => searchNoResult
+);

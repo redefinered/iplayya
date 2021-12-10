@@ -17,13 +17,12 @@ const INITIAL_STATE = {
     order: 'asc'
   },
 
-  // random channels from getChannelsByCategory
-  featuredChannels: [],
-
   channel: null,
   /// channels per category
   // changes depending on user click in itv screen
   channels: [],
+
+  featuredChannels: [],
 
   // programs per selected channel
   programs: [],
@@ -40,6 +39,7 @@ const INITIAL_STATE = {
 
   isSearching: false,
   searchResults: [],
+  searchNoResult: false,
   searchResultsPaginator: {
     limit: ITV_SEARCH_RESULTS_LIMIT,
     pageNumber: 1,
@@ -131,6 +131,11 @@ export default createReducer(INITIAL_STATE, {
       error: action.error
     };
   },
+
+  [Types.SET_FEATURED_CHANNELS]: (state, action) => {
+    return { ...state, featuredChannels: action.channels };
+  },
+
   [Types.GET_CHANNELS_BY_CATEGORIES_START]: (state) => {
     return {
       ...state,
@@ -178,6 +183,7 @@ export default createReducer(INITIAL_STATE, {
   [Types.GET_PROGRAMS_BY_CHANNEL]: (state) => {
     return {
       ...state,
+      programs: [],
       isFetching: true,
       error: null
     };
@@ -321,7 +327,8 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
@@ -340,14 +347,17 @@ export default createReducer(INITIAL_STATE, {
       /// takes current searchResultPaginator and increment it's pageNumber property
       searchResultsPaginator: Object.assign(searchResultsPaginator, {
         pageNumber: searchResultsPaginator.pageNumber + 1
-      })
+      }),
+      searchNoResult: false
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      error: action.error
+      error: action.error,
+      searchResults: [],
+      searchNoResult: true
     };
   },
   [Types.UPDATE_RECENT_SEARCH]: (state, action) => {

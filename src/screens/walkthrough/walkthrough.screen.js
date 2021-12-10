@@ -6,6 +6,8 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import ScreenContainer from 'components/screen-container.component';
+import { compose } from 'redux';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const styles = StyleSheet.create({
   walkthroughText: {
@@ -89,4 +91,6 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
-export default Container;
+const enhance = compose(withNotifRedirect);
+
+export default enhance(Container);

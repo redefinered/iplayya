@@ -32,6 +32,7 @@ import {
   selectRecentSearch,
   selectIsFetching
 } from 'modules/ducks/iradio/iradio.selectors';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const IradioSearchScreen = ({
   navigation,
@@ -312,6 +313,11 @@ const mapStateToProps = createStructuredSelector({
   recentSearch: selectRecentSearch
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withLoader);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withTheme,
+  withLoader,
+  withNotifRedirect
+);
 
 export default enhance(Container);
