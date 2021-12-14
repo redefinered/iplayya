@@ -9,13 +9,18 @@ import { Creators } from 'modules/ducks/notifications/notifications.actions';
 import { connect } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { compose } from 'redux';
+import { selectNotificationService } from 'modules/ducks/notifications/notifications.selectors';
+import { createStructuredSelector } from 'reselect';
 
 const NotificationItem = ({
   theme,
   read,
   notification,
-  markNotificationAsReadAction,
-  handleSelect
+  // markNotificationAsReadAction,
+  handleSelect,
+
+  // eslint-disable-next-line react/prop-types
+  notifService
 }) => {
   const { id, title, date, channelName, channelId, parentType } = notification.data;
 
@@ -28,14 +33,12 @@ const NotificationItem = ({
   };
 
   // eslint-disable-next-line no-unused-vars
-  const handleSelectItem = (id) => {
-    // if (!unRead) return;
-
-    // set unread to false
-    // setUnread(false);
-
-    // set notification status to read
-    markNotificationAsReadAction(notification);
+  const handleSelectItem = () => {
+    // console.log({ nid });
+    // this will remove the item to the delivered notifications
+    if (notification.nid) {
+      notifService.removeDeliveredNotifs([notification.nid]);
+    }
 
     // navigate to channel
     if (parentType === 'ITV') return navigtation.navigate('ItvChannelDetailScreen', { channelId });
@@ -51,7 +54,7 @@ const NotificationItem = ({
 
   return (
     <Pressable
-      onPress={() => handleSelectItem(id)}
+      onPress={handleSelectItem}
       underlayColor={theme.iplayya.colors.black80}
       style={({ pressed }) => ({
         backgroundColor: pressed ? theme.iplayya.colors.black80 : backgroundColor(),
@@ -104,13 +107,15 @@ NotificationItem.propTypes = {
   read: PropTypes.bool,
   theme: PropTypes.object,
   handleSelect: PropTypes.func,
-  markNotificationAsReadAction: PropTypes.func
+  notifService: PropTypes.any
 };
 
 const actions = {
   markNotificationAsReadAction: Creators.markNotificationAsRead
 };
 
-const enhance = compose(connect(null, actions), withTheme);
+const mapStateToProps = createStructuredSelector({ notifService: selectNotificationService });
+
+const enhance = compose(connect(mapStateToProps, actions), withTheme);
 
 export default enhance(NotificationItem);
