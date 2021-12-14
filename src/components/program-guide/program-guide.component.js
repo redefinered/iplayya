@@ -104,15 +104,9 @@ const ProgramGuide = ({
   };
 
   /// CREATE SCHEDULED NOTIFICATIONS
-  const handleCreateScheduledNotif = ({ parentType, ...rest }) => {
+  const handleCreateScheduledNotif = (program) => {
     // console.log({ parentType, ...rest });
-    notifService.scheduleNotif({
-      id: rest.id,
-      channelId: rest.channelId,
-      channelName: rest.channelName,
-      module: parentType,
-      program: { id: rest.id, parentType, ...rest }
-    });
+    notifService.scheduleNotif(program);
 
     notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
@@ -123,26 +117,6 @@ const ProgramGuide = ({
   const handleCancelScheduledNotif = (id) => {
     // console.log({ id });
     notifService.cancelNotif(id);
-
-    notifService.getScheduledLocalNotifications((notifications) => {
-      console.log({ notifications });
-    });
-  };
-
-  /// for testing
-  // eslint-disable-next-line no-unused-vars
-  const checkScheduledNotifs = () => {
-    notifService.getScheduledLocalNotifications((notifications) => {
-      console.log({ notifications });
-    });
-  };
-
-  // /// cancel all
-  // eslint-disable-next-line no-unused-vars
-  const cancelAllNotifications = () => {
-    notifService.cancelAll((notifications) => {
-      console.log({ notifications });
-    });
 
     notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
