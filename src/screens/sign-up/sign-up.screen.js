@@ -28,6 +28,7 @@ import {
   isValidUsername
   // isValidPassword
 } from 'common/validate';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 class SignUpScreen extends React.Component {
   state = {
@@ -523,6 +524,6 @@ const mapStateToProps = createStructuredSelector({
   signedUp: selectSignedUp
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withFormWrap);
+const enhance = compose(connect(mapStateToProps, actions), withFormWrap, withNotifRedirect);
 
 export default enhance(Container);

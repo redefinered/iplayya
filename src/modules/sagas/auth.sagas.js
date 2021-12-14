@@ -1,23 +1,12 @@
-/* eslint-disable no-unused-vars */
-
 import { takeLatest, put, call } from 'redux-saga/effects';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Types, Creators } from 'modules/ducks/auth/auth.actions';
 
-import { Creators as AppCreators } from 'modules/app';
 import { Creators as UserCreators } from 'modules/ducks/user/user.actions';
 import { Creators as ProfileCreators } from 'modules/ducks/profile/profile.actions';
-import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
-import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions';
-import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
-import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
-import { Creators as IradioCreators } from 'modules/ducks/iradio/iradio.actions';
 
 import { register, signIn, signOut, validateUsername } from 'services/auth.service';
-import { getCategories } from 'services/movies.service';
 import { get as getProfile } from 'services/profile.service';
-import { getGenres } from 'services/itv.service';
-import { getGenres as getMusicGenres } from 'services/music.service';
 
 export function* registerRequest(action) {
   const { ...input } = action.data;
@@ -25,28 +14,24 @@ export function* registerRequest(action) {
     const {
       register: {
         status,
-        tokens: { access_token }
+        tokens: { access_token, refresh_token }
       }
     } = yield call(register, input);
 
     // not sure if this is necessary
     if (status !== 'SUCCESS') throw new Error('Something went wrong during registration process');
 
+    /// saves access_token to local storage
     yield AsyncStorage.setItem('access_token', access_token);
 
-    const { me: user } = yield call(getProfile);
+    /// saves access_token to local storage
+    yield AsyncStorage.setItem('refresh_token', refresh_token);
 
-    // reset state data
-    // yield put(ItvCreators.reset());
-    // yield put(MoviesCreators.reset());
-    // yield put(MusicCreators.reset());
+    const { me: user } = yield call(getProfile);
 
     yield put(Creators.signInSuccess(user, true));
 
     yield put(UserCreators.userStart());
-
-    // removes the loader at the root level
-    // yield put(AppCreators.appReadySuccess());
   } catch (error) {
     yield put(Creators.registerFailure(error.message));
   }
@@ -55,7 +40,6 @@ export function* registerRequest(action) {
 export function* signInRequest(action) {
   const { username, password } = action.data;
   try {
-    // yield put(AppCreators.appReady());
     const {
       login: { access_token }
     } = yield call(signIn, username, password);
@@ -64,13 +48,6 @@ export function* signInRequest(action) {
     yield AsyncStorage.setItem('access_token', access_token);
 
     const { me: user } = yield call(getProfile);
-
-    // reset state data
-    // yield put(ItvCreators.reset());
-    // yield put(MoviesCreators.reset());
-    // yield put(IsportsCreators.reset());
-    // yield put(MusicCreators.reset());
-    // yield put(IradioCreators.reset());
 
     yield put(Creators.signInSuccess(user));
   } catch (error) {

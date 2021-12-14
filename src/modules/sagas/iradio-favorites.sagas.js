@@ -22,9 +22,9 @@ export function* getFavoritesRequest(action) {
 export function* addToFavoritesRequest(action) {
   try {
     const { radio } = action;
-    const { addRadioToFavorites } = yield call(addToFavorites, radio.id, radio.pn);
-    if (addRadioToFavorites.status !== 'success') throw new Error('Something went wrong');
-    yield put(Creators.addToFavoritesSuccess(radio));
+    const { addRadioToFavorites: r } = yield call(addToFavorites, radio);
+    // if (addRadioToFavorites.status !== 'success') throw new Error('Something went wrong');
+    yield put(Creators.addToFavoritesSuccess(r));
   } catch (error) {
     yield put(Creators.addToFavoritesFailure(error.message));
   }

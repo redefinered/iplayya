@@ -42,6 +42,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { createFontFormat } from 'utils';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const IptvScreen = ({
   navigation,
@@ -417,6 +418,6 @@ const mapStateToProps = createStructuredSelector({
   activeProvider: selectActiveProvider
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withLoader);
+const enhance = compose(connect(mapStateToProps, actions), withLoader, withNotifRedirect);
 
 export default enhance(Container);

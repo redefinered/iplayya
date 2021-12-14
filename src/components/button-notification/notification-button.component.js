@@ -6,20 +6,24 @@ import { useNavigation } from '@react-navigation/core';
 import Icon from 'components/icon/icon.component';
 import theme from 'common/theme';
 import { createStructuredSelector } from 'reselect';
-import { selectNotifications } from 'modules/ducks/notifications/notifications.selectors';
+import {
+  selectReadNotifications,
+  selectNotificationService
+} from 'modules/ducks/notifications/notifications.selectors';
 import { connect } from 'react-redux';
 
-const NotificationButton = ({ notifications }) => {
+const NotificationButton = ({ notifService }) => {
   const navigation = useNavigation();
+  const [delivered, setDelivered] = React.useState([]);
+
+  React.useEffect(() => {
+    notifService.getDeliveredNotifications((notifications) => setDelivered(notifications));
+  });
 
   const renderIndicator = () => {
-    const someUnreadItem = notifications.find(({ status }) => status === 1);
-
-    /// if no unread items found, do nothing
-    if (typeof someUnreadItem === 'undefined') return;
-
-    return <View style={styles.indicator} />;
+    if (delivered.length) return <View style={styles.indicator} />;
   };
+
   return (
     <TouchableRipple
       borderless={true}
@@ -56,9 +60,13 @@ const styles = StyleSheet.create({
 });
 
 NotificationButton.propTypes = {
-  notifications: PropTypes.array
+  notifService: PropTypes.any,
+  readNotifactions: PropTypes.array
 };
 
-const mapStateToProps = createStructuredSelector({ notifications: selectNotifications });
+const mapStateToProps = createStructuredSelector({
+  readNotifactions: selectReadNotifications,
+  notifService: selectNotificationService
+});
 
 export default connect(mapStateToProps)(NotificationButton);

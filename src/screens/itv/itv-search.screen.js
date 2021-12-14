@@ -29,9 +29,11 @@ import {
   selectSearchResults,
   selectSearchResultsPaginator,
   selectRecentSearch,
-  selectIsFetching
+  selectIsFetching,
+  selectSearchNorResult
 } from 'modules/ducks/itv/itv.selectors';
 import { selectItvGenres } from 'modules/app';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ITEM_HEIGHT = 96;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -40,6 +42,7 @@ const ItvSearchScreen = ({
   theme,
   genres,
   results,
+  noResult,
   navigation,
   isFetching,
   searchAction,
@@ -54,6 +57,7 @@ const ItvSearchScreen = ({
   const [term, setTerm] = React.useState('');
   const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
   const [resultPadding, setResultPadding] = React.useState(0);
+  const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
 
   /// clear previous search result
   React.useEffect(() => {
@@ -70,6 +74,9 @@ const ItvSearchScreen = ({
   }, [recentSearch]);
 
   const handleChange = (value) => {
+    /// hide empty message when typing
+    setShowEmptyMessage(false);
+
     setTerm(value);
   };
 
@@ -262,6 +269,29 @@ const ItvSearchScreen = ({
     setResultPadding(layout.height);
   };
 
+  React.useEffect(() => {
+    if (noResult) return setShowEmptyMessage(true);
+
+    /// hide empty message if input is empty
+    if (!term) return setShowEmptyMessage(false);
+
+    setShowEmptyMessage(false);
+  }, [noResult]);
+
+  const renderNoResultText = () => {
+    if (!showEmptyResult) return;
+
+    if (!term) return;
+
+    return (
+      <ContentWrap>
+        <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+          {`There is nothing found for "${term}"`}
+        </Text>
+      </ContentWrap>
+    );
+  };
+
   return (
     <KeyboardAvoidingView behavior="padding">
       <ContentWrap onLayout={handleSearchbarLayout}>
@@ -304,6 +334,9 @@ const ItvSearchScreen = ({
         />
       </ContentWrap>
       {/* <View style={{ flex: 1, height: Dimensions.get('window').height }}></View> */}
+
+      {renderNoResultText()}
+
       <ScrollView>
         {renderResult()}
         {renderRecentSearch()}
@@ -340,11 +373,12 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
+  noResult: selectSearchNorResult,
   searchResultsPaginator: selectSearchResultsPaginator,
   recentSearch: selectRecentSearch,
   genres: selectItvGenres
 });
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

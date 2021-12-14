@@ -35,6 +35,7 @@ import DatePicker from 'components/date-picker/date-picker.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import PhoneNumberPicker from 'components/phone-number-picker/phone-number-picker.component';
 import { CommonActions } from '@react-navigation/routers';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 class EditProfileScreen extends React.Component {
   constructor(props) {
@@ -401,6 +402,11 @@ const mapStateToProps = createStructuredSelector({
 
 // export default withFormWrap()(EditProfileScreen);
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme, withFormWrap);
+const enhance = compose(
+  connect(mapStateToProps, actions),
+  withNotifRedirect,
+  withTheme,
+  withFormWrap
+);
 
 export default enhance(Container);

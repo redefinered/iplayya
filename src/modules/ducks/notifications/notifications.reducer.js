@@ -3,35 +3,63 @@ import { Types } from './notifications.actions';
 import {
   deactivateNotificationById,
   activateNotificationById,
-  setNotificationToUnreadById,
+  // setNotificationToUnreadById,
   updateNotificationStatus
 } from './notifications.helpers';
 
 const INITIAL_STATE = {
   notifications: [], // notifications delivered
-  newNotification: null,
+
+  notificationService: null,
+
+  notification: null,
   token: null,
 
-  selectedForDeactivation: null
+  selectedForDeactivation: null,
+
+  readNotifications: []
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.ON_NOTIF]: (state, action) => {
-    const notifications = setNotificationToUnreadById(state, action);
+  // this sets the notification service that will be used app-wide
+  [Types.SET_NOTIFICATION_SERVICE]: (state, { service: notificationService }) => ({
+    ...state,
+    notificationService
+  }),
 
-    return {
-      ...state,
-      newNotification: action.notification,
-      notifications
-    };
-  },
+  // sets the new notification
+  [Types.ON_NOTIF]: (state, { notification }) => ({
+    ...state,
+    notification
+  }),
+
+  [Types.ON_REGISTER]: (state, { token }) => ({ ...state, token }),
+
+  [Types.MARK_NOTIFICATION_AS_READ]: (state, action) => ({
+    ...state,
+    readNotifications: [action.notification, ...state.readNotifications]
+  }),
+
+  [Types.CLEAR_NOTIFICATIONS]: (state) => ({ ...state, readNotifications: [] }),
+
   [Types.ON_NOTIF_RESET]: (state) => {
-    return { ...state, newNotification: null };
-  },
-  [Types.ON_REGISTER]: (state, action) => {
-    return { ...state, token: action.token };
+    return { ...state, notification: null };
   },
 
+  // [Types.ON_NOTIF]: (state, action) => {
+  //   const notifications = setNotificationToUnreadById(state, action);
+
+  //   return {
+  //     ...state,
+  //     notification: action.notification,
+  //     notifications
+  //   };
+  // },
+  // [Types.ON_REGISTER]: (state, action) => {
+  //   return { ...state, token: action.token };
+  // },
+
+  /// actions from this point might all become useless moving forward
   [Types.CREATE_NOTIFICATION]: (state, action) => {
     return {
       ...state,

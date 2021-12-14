@@ -37,6 +37,8 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import Button from 'components/button/button.component';
 import theme from 'common/theme';
 import WalkThrougGuide from 'components/walkthrough-guide/walkthrough-guide.component';
+import withNotifRedirect from 'components/with-notif-redirect.component';
+import { compose } from 'redux';
 
 const styles = StyleSheet.create({
   settingItem: {
@@ -467,4 +469,6 @@ const mapStateToProps = createStructuredSelector({
   passwordUpdated: selectPasswordUpdated
 });
 
-export default connect(mapStateToProps, actions)(Container);
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
+
+export default enhance(Container);

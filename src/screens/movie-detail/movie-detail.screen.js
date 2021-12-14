@@ -42,6 +42,7 @@ import SnackBar from 'components/snackbar/snackbar.component';
 import { MODULE_TYPES } from 'common/globals';
 import moment from 'moment';
 import theme from 'common/theme';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const MovieDetailScreen = ({
   error,
@@ -502,6 +503,6 @@ const mapStateToProps = createStructuredSelector({
   playbackSettings: selectPlaybackSettings
 });
 
-const enhance = compose(connect(mapStateToProps, actions));
+const enhance = compose(connect(mapStateToProps, actions), withNotifRedirect);
 
 export default enhance(Container);

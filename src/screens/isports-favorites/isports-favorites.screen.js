@@ -26,6 +26,7 @@ import {
   selectFavoritesListRemoveUpdated
 } from 'modules/ducks/isports/isports.selectors';
 import { createFontFormat } from 'utils';
+import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -220,14 +221,20 @@ const IsportsFavoritesScreen = ({
     return 'Are you sure you want to delete this channel/s from your Favorites list?';
   };
 
-  if (data.length)
+  const renderLoader = () => {
+    if (isFetching) {
+      return (
+        <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
+  };
+
+  if (favorites.length)
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
-        {isFetching && (
-          <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
-            <ActivityIndicator />
-          </View>
-        )}
+        {renderLoader()}
 
         {activateCheckboxes && (
           <ContentWrap>
@@ -354,6 +361,6 @@ const actions = {
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
 };
 
-const enhance = compose(connect(mapStateToProps, actions), withTheme);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);
