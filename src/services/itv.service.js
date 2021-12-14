@@ -14,7 +14,8 @@ import {
 export const getGenres = async () => {
   try {
     const { data } = await client.query({
-      query: GET_GENRES
+      query: GET_GENRES,
+      fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {

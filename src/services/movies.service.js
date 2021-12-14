@@ -25,7 +25,8 @@ export const getMovie = async (input) => {
 export const getCategories = async () => {
   try {
     const { data } = await client.query({
-      query: GET_CATEGORIES
+      query: GET_CATEGORIES,
+      fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
