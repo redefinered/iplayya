@@ -4,7 +4,8 @@ const { Types, Creators } = createActions(
   {
     start: null,
     getFavorites: ['input'],
-    getFavoritesSuccess: ['data', 'nextPaginator'],
+    // getFavoritesSuccess: ['data', 'nextPaginator'],
+    getFavoritesSuccess: ['favorites'],
     getFavoritesFailure: ['error'],
 
     addToFavorites: ['radio'],

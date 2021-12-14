@@ -31,7 +31,7 @@ import theme from 'common/theme';
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
 const IradioPlayerScreen = ({
-  //   navigation,
+  // navigation,
   nowPlaying,
   // progress,
   paused,

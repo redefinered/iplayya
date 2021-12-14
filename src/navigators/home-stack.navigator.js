@@ -13,6 +13,7 @@ import { useMutation } from '@apollo/client';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { ADD_TO_FAVORITES as ADD_ITV_CHANNEL_TO_FAVORITES } from 'graphql/itv.graphql';
 import { ADD_TO_FAVORITES as ADD_ISPORT_CHANNEL_TO_FAVORITES } from 'graphql/isports.graphql';
+import { ADD_RADIO_TO_FAVORITES } from 'graphql/radios.graphql';
 
 import HomeScreen from 'screens/home/home.screen';
 
@@ -63,7 +64,8 @@ import { Creators as MoviesCreators } from 'modules/ducks/movies/movies.actions'
 import { Creators as ItvCreators } from 'modules/ducks/itv/itv.actions';
 import { Creators as IsportsCreators } from 'modules/ducks/isports/isports.actions';
 import { Creators as ImusicFavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
-import { Creators as IradioFavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
+// import { Creators as IradioFavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
+import { Creators as IradioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { createStructuredSelector } from 'reselect';
 import { selectFavorites } from 'modules/ducks/movies/movies.selectors';
 import { selectFavorites as selectFavoriteChannels } from 'modules/ducks/itv/itv.selectors';
@@ -93,12 +95,14 @@ const HomeStack = ({
   favorites,
   isInitialSignIn,
   created,
+  getRadiosAction,
   ...rest
 }) => {
   const navigation = useNavigation();
 
   const [showError, setShowError] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
+  const [showRadioFavSuccess, setShowRadioFavSuccess] = React.useState(false);
   // const [title, setTitle] = React.useState(false);
 
   React.useEffect(() => {
@@ -154,9 +158,28 @@ const HomeStack = ({
     }
   });
 
+  const [addIradioStationToFavorites] = useMutation(ADD_RADIO_TO_FAVORITES, {
+    update(cache, { data }) {
+      cache.modify({
+        fields: {
+          favoriteRadios: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addRadioToFavorites)];
+          },
+          radios: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addRadioToFavorites)];
+          }
+        }
+      });
+    }
+  });
+
   React.useEffect(() => {
     if (showSuccess) hideSuccessModal();
   }, [showSuccess]);
+
+  React.useEffect(() => {
+    if (showRadioFavSuccess) hideRadioFavSuccesModal();
+  }, [showRadioFavSuccess]);
 
   React.useEffect(() => {
     if (showError) hideErrorModal();
@@ -165,6 +188,12 @@ const HomeStack = ({
   const hideSuccessModal = () => {
     setTimeout(() => {
       setShowSuccess(false);
+    }, 3000);
+  };
+
+  const hideRadioFavSuccesModal = () => {
+    setTimeout(() => {
+      setShowRadioFavSuccess(false);
     }, 3000);
   };
 
@@ -184,6 +213,34 @@ const HomeStack = ({
     setShowSuccess(true);
 
     addIsportChannelToFavorites({ variables: { input: { videoId } } });
+  };
+
+  const handleIradioFavPress = (radio) => {
+    const {
+      is_favorite,
+      number,
+      // eslint-disable-next-line no-unused-vars
+      __typename,
+      monitoring_status_updated,
+      // eslint-disable-next-line no-unused-vars
+      c,
+      url,
+      title,
+      ...rest
+    } = radio;
+
+    const reqInput = {
+      is_favorite,
+      cmd: url,
+      name: title,
+      number: parseInt(number),
+      monitoring_status_updated: monitoring_status_updated || '0',
+      ...rest
+    };
+    setShowRadioFavSuccess(true);
+
+    addIradioStationToFavorites({ variables: { input: reqInput } });
+    getRadiosAction({ pageNumber: 1, limit: 100, orderBy: 'number', order: 'asc' });
   };
 
   if (isInitialSignIn) {
@@ -554,7 +611,7 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={radio}
-                    pressAction={rest.addIradioStationToFavoritesAction}
+                    pressAction={handleIradioFavPress}
                     active={typeof radio === 'undefined' ? false : radio.is_favorite}
                   />
                 </View>
@@ -925,6 +982,13 @@ const HomeStack = ({
       />
 
       <SnackBar
+        visible={showRadioFavSuccess}
+        message="Station is added to your Favorites list"
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
+
+      <SnackBar
         visible={showSuccess}
         message="Channel is added to your Favorites list"
         iconName="heart-solid"
@@ -972,7 +1036,8 @@ const actions = {
   addTrackToFavoritesAction: ImusicFavoritesCreators.addTrackToFavorites,
   addAlbumToFavoritesAction: ImusicFavoritesCreators.addAlbumToFavorites,
   addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites,
-  addIradioStationToFavoritesAction: IradioFavoritesCreators.addToFavorites
+  // addIradioStationToFavoritesAction: IradioFavoritesCreators.addToFavorites,
+  getRadiosAction: IradioCreators.get
 };
 
 const mapStateToProps = createStructuredSelector({

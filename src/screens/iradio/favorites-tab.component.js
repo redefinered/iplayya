@@ -106,7 +106,16 @@ const FavoritesTab = ({
 
   const handleRemoveItems = () => {
     if (selectedItems.length) {
-      removeFromFavoritesAction(selectedItems);
+      const { is_favorite, number, monitoring_status_updated, ...rest } = selectedItems;
+
+      const reqInput = {
+        is_favorite,
+        number: parseInt(number),
+        monitoring_status_updated: monitoring_status_updated || '0',
+        ...rest
+      };
+
+      removeFromFavoritesAction(reqInput);
     }
   };
 

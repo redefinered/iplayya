@@ -66,10 +66,10 @@ const RadioStationsTab = ({
 
   const handleAddToFavorites = (item) => {
     // eslint-disable-next-line no-unused-vars
-    const { is_favorite, number, pn, __typename, monitoring_status_updated, ...rest } = item;
+    const { is_favorite, number, __typename, monitoring_status_updated, c, ...rest } = item;
 
     const reqInput = {
-      // is_favorite,
+      is_favorite,
       number: parseInt(number),
       monitoring_status_updated: monitoring_status_updated || '0',
       ...rest
@@ -78,11 +78,10 @@ const RadioStationsTab = ({
     // stop if alreay in favorites
     if (is_favorite) return;
 
-    // setShowSnackBar(true);
+    setShowSnackBar(true);
     // exec add to favorites
     // addToFavoritesAction(reqInput);
-    addToFavorites(reqInput);
-    // console.log(reqInput);
+    addToFavorites({ variables: { input: reqInput } });
   };
 
   const hideSnackBar = () => {
