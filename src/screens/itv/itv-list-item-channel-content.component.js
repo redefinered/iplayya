@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
-import Icon from 'components/icon/icon.component';
+// import Icon from 'components/icon/icon.component';
 import RadioButton from 'components/radio-button/radio-button.component';
 import FavoriteButton from 'components/button-favorite/favorite-button.component';
 import { createFontFormat } from 'utils';
@@ -16,11 +16,11 @@ const Content = ({
   theme,
   item,
   selected,
-  isCatchUpAvailable,
-  onEpgButtonPressed,
+  // isCatchUpAvailable,
+  // onEpgButtonPressed,
   activateCheckboxes
 }) => {
-  const { id, number, title, epgtitle, time, time_to } = item;
+  const { number, title, epgtitle, time, time_to } = item;
 
   const [showError, setShowError] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
@@ -72,11 +72,11 @@ const Content = ({
     addToFavorites({ variables: { input: { videoId: item.id } } });
   };
 
-  const renderCatchUpIndicator = () => {
-    if (typeof isCatchUpAvailable === 'undefined') return;
+  // const renderCatchUpIndicator = () => {
+  //   if (typeof isCatchUpAvailable === 'undefined') return;
 
-    if (isCatchUpAvailable) return <Icon name="history" color="#13BD38" />;
-  };
+  //   if (isCatchUpAvailable) return <Icon name="history" color="#13BD38" />;
+  // };
 
   const renderEpgtitle = () => {
     if (!epgtitle)
@@ -99,7 +99,23 @@ const Content = ({
   const getSchedule = (time, time_to) => {
     if (!time || !time_to) return;
 
-    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')} `;
+  };
+
+  const renderEpgIndicator = () => {
+    if (!epgtitle) return;
+
+    return (
+      <Text
+        style={{
+          fontWeight: 'bold',
+          fontSize: 12,
+          color: theme.iplayya.colors.white50
+        }}
+      >
+        | EPG
+      </Text>
+    );
   };
 
   const renderRightComponent = () => {
@@ -118,27 +134,6 @@ const Content = ({
         }}
       >
         <FavoriteButton item={item} pressAction={() => handleFavoritePress()} />
-        <Pressable
-          underlayColor={theme.iplayya.colors.black80}
-          onPress={() => onEpgButtonPressed(id)}
-          style={({ pressed }) => [
-            {
-              backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }
-          ]}
-        >
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 12,
-              color: theme.iplayya.colors.white50
-            }}
-          >
-            EPG
-          </Text>
-        </Pressable>
       </View>
     );
   };
@@ -170,8 +165,8 @@ const Content = ({
           }}
         >
           {getSchedule(time, time_to)}
+          {renderEpgIndicator()}
         </Text>
-        {renderCatchUpIndicator()}
       </View>
 
       {renderRightComponent()}

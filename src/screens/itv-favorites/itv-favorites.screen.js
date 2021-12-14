@@ -281,7 +281,7 @@ const ItvFavoritesScreen = ({
           renderItem={({ item }) => (
             <ListItemChanel
               full
-              showepg={false}
+              // showepg={false}
               showFavoriteButton={false}
               item={item}
               activateCheckboxes={activateCheckboxes}

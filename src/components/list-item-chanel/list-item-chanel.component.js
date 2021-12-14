@@ -127,13 +127,13 @@ const Content = ({
   theme,
   item,
   selected,
-  showepg,
+  // showepg,
   showFavoriteButton,
   isCatchUpAvailable,
-  onEpgButtonPressed,
+  // onEpgButtonPressed,
   activateCheckboxes
 }) => {
-  const { id, number, title, epgtitle, time, time_to } = item;
+  const { number, title, epgtitle, time, time_to } = item;
 
   const [showError, setShowError] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
@@ -210,6 +210,22 @@ const Content = ({
     );
   };
 
+  const renderEpgIndicator = () => {
+    if (!epgtitle) return;
+
+    return (
+      <Text
+        style={{
+          fontWeight: 'bold',
+          fontSize: 12,
+          color: theme.iplayya.colors.white50
+        }}
+      >
+        EPG
+      </Text>
+    );
+  };
+
   const getSchedule = (time, time_to) => {
     if (!time || !time_to) return;
 
@@ -235,7 +251,7 @@ const Content = ({
           <FavoriteButton item={item} pressAction={() => handleFavoritePress()} />
         )}
 
-        {showepg && (
+        {/* {showepg && (
           <Pressable
             underlayColor={theme.iplayya.colors.black80}
             onPress={() => onEpgButtonPressed(id)}
@@ -247,17 +263,9 @@ const Content = ({
               }
             ]}
           >
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontSize: 12,
-                color: theme.iplayya.colors.white50
-              }}
-            >
-              EPG
-            </Text>
+            
           </Pressable>
-        )}
+        )} */}
       </View>
     );
   };
@@ -291,6 +299,7 @@ const Content = ({
           {getSchedule(time, time_to)}
         </Text>
         {renderCatchUpIndicator()}
+        {renderEpgIndicator()}
       </View>
 
       {renderRightComponent()}

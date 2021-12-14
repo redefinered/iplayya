@@ -15,8 +15,8 @@ const ItvListItemChanel = ({
   selected,
   handleItemPress,
   handleLongPress,
-  activateCheckboxes,
-  onEpgButtonPressed
+  activateCheckboxes
+  // onEpgButtonPressed
 }) => {
   const ITEM_HEIGHT = 60 + theme.spacing(1) * 2;
 
@@ -72,7 +72,7 @@ const ItvListItemChanel = ({
             selected={selected}
             activateCheckboxes={activateCheckboxes}
             isCatchUpAvailable={false} /// set to false for now since no catchup property in chanels yet
-            onEpgButtonPressed={onEpgButtonPressed}
+            // onEpgButtonPressed={onEpgButtonPressed}
           />
         </View>
       </Pressable>
