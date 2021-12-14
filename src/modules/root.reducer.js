@@ -25,6 +25,7 @@ import iplayReducer from './ducks/iplay/iplay.reducer';
 export const persistConfig = {
   key: 'primary',
   storage: AsyncStorage
+  // blacklist: ['notifications']
 };
 
 // eslint-disable-next-line no-unused-vars

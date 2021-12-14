@@ -17,41 +17,40 @@ import { connect } from 'react-redux';
 import ContentWrap from 'components/content-wrap.component';
 import ActionSheet from 'components/action-sheet/action-sheet.component';
 import { Creators } from 'modules/ducks/notifications/notifications.actions';
-// import NotifService from 'NotifService';
 import theme from 'common/theme';
 import { FlatList } from 'react-native-gesture-handler';
 import { compose } from 'redux';
 import withNotifRedirect from 'components/with-notif-redirect.component';
-import moment from 'moment';
 
 const NotificationsScreen = ({
+  navigation,
   notifications,
   deleteNotificationAction,
-  notifService,
-  readNotifications
+  notifService
 }) => {
-  // const notif = new NotifService(onRegisterAction, onNotifAction);
   const [selected, setSelected] = React.useState(null);
   const [showActionSheet, setShowActionSheet] = React.useState(false);
   const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [deliveredItems, setDeliveredItems] = React.useState([]);
   const [list, setList] = React.useState([]);
 
+  const unsubscribe = navigation.addListener('focus', () => {
+    notifService.getDeliveredNotifications((notifications) => {
+      setDeliveredItems(notifications);
+    });
+  });
+
+  React.useEffect(() => {
+    return () => unsubscribe;
+  }, []);
+
   React.useEffect(() => {
     if (!notifService) return;
 
     notifService.getDeliveredNotifications((notifications) => {
-      console.log({ deliveredNotifcations: notifications });
       setDeliveredItems(notifications);
     });
-
-    // notifService.getScheduledLocalNotifications((notifications) => {
-    //   console.log({
-    //     notifications: notifications.map(({ date, ...rest }) => moment(date).format('HH:mm'))
-    //   });
-    //   // console.log('xxx')
-    // });
-  }, [notifService]);
+  }, [notifications]);
 
   // map list data
   React.useEffect(() => {
@@ -65,7 +64,7 @@ const NotificationsScreen = ({
       const unread = typeof d === 'undefined';
 
       /// add the unread property into the item
-      return { id, unread, ...rest };
+      return { id, unread, nid: d ? d.identifier : null, ...rest };
     });
 
     setList(ls);
@@ -118,7 +117,6 @@ const NotificationsScreen = ({
   ];
 
   const handleSelect = (id) => {
-    console.log({ id });
     setSelected(id);
     setShowActionSheet(true);
   };

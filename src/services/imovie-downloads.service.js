@@ -13,7 +13,6 @@ export const deleteFile = async (filename = null) => {
   }
   // eslint-disable-next-line no-unused-vars
   const ls = await RNFetchBlob.fs.ls(downloadPath);
-  console.log('remaining files after delete', ls);
 };
 
 export const checkExistingDownloads = async () => {
