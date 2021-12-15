@@ -41,7 +41,6 @@ const ProgramGuide = ({
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
-  // const [notifService, setNotifService] = React.useState(null);
   const [programsPageYOffset, setProgramsPageYOffset] = React.useState(null);
   const [selectedDateId, setSelectedDateId] = React.useState('8');
   const [programs, setPrograms] = React.useState([]);
@@ -54,8 +53,6 @@ const ProgramGuide = ({
       }
     }
   });
-
-  // console.log({ error, loading, data });
 
   React.useEffect(() => {
     if (data) {
@@ -105,7 +102,6 @@ const ProgramGuide = ({
 
   /// CREATE SCHEDULED NOTIFICATIONS
   const handleCreateScheduledNotif = (program) => {
-    // console.log({ parentType, ...rest });
     notifService.scheduleNotif(program);
 
     notifService.getScheduledLocalNotifications((notifications) => {
@@ -115,7 +111,6 @@ const ProgramGuide = ({
 
   /// CANCEL A NOTIFICATION
   const handleCancelScheduledNotif = (id) => {
-    // console.log({ id });
     notifService.cancelNotif(id);
 
     notifService.getScheduledLocalNotifications((notifications) => {
@@ -170,9 +165,6 @@ const ProgramGuide = ({
       );
     }
   };
-
-  // return empty componet if no available programs
-  // if (!programs.length) return <View />;
 
   const renderSelectorPills = () => {
     if (error) return;
