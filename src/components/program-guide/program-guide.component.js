@@ -51,9 +51,13 @@ const ProgramGuide = ({
         channelId,
         date
       }
-    }
+    },
+    /// this needs to be tested as I'm not sure what the impact of it
+    // with the server when a million user is in a channel detail screen
+    pollInterval: 500
   });
 
+  console.log({ error, loading, data, channelId, date });
   React.useEffect(() => {
     if (data) {
       setPrograms(data.getPrograms);
@@ -71,10 +75,12 @@ const ProgramGuide = ({
   });
 
   React.useEffect(() => {
+    if (loading) return;
+
     if (selectedDateId === '8') {
       setCurrentProgram(programs[0]);
     }
-  }, [selectedDateId]);
+  }, [selectedDateId, loading, programs]);
 
   const handlePillPress = (id) => {
     /// reset programs
