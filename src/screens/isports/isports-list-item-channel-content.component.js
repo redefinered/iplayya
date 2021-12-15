@@ -12,14 +12,7 @@ import { useMutation } from '@apollo/client';
 import { ADD_TO_FAVORITES } from 'graphql/isports.graphql';
 import SnackBar from 'components/snackbar/snackbar.component';
 
-const Content = ({
-  theme,
-  item,
-  selected,
-  // isCatchUpAvailable,
-  // onEpgButtonPressed,
-  activateCheckboxes
-}) => {
+const Content = ({ theme, item, selected, activateCheckboxes }) => {
   const { number, title, epgtitle, time, time_to } = item;
 
   const [showError, setShowError] = React.useState(false);

@@ -23,7 +23,7 @@ import {
   selectIsFetching,
   selectIsSearching,
   selectFavoritesPaginator,
-  selectfavoritesListRemoveUpdated
+  selectFavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
 import withNotifRedirect from 'components/with-notif-redirect.component';
@@ -53,10 +53,10 @@ const ItvFavoritesScreen = ({
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
-
+  console.log({ data });
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
 
@@ -84,8 +84,14 @@ const ItvFavoritesScreen = ({
       return setData(d);
     }
 
+    if (!favorites.length) return setData([]);
+
     setData(favorites);
   }, [favorites, searchTerm]);
+
+  React.useEffect(() => {
+    if (isFetching) setData(null);
+  }, [isFetching]);
 
   // console.log({ favorites, searchTerm });
 
@@ -233,7 +239,7 @@ const ItvFavoritesScreen = ({
     }
   };
 
-  if (favorites.length) {
+  if (data && data.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
         {renderLoader()}
@@ -308,6 +314,10 @@ const ItvFavoritesScreen = ({
     );
   }
 
+  // if data is null return an empty component
+  if (!data) return <View />;
+
+  /// return empty state if data is an empty array
   return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
@@ -349,7 +359,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
-  favoritesRemoved: selectfavoritesListRemoveUpdated,
+  favoritesRemoved: selectFavoritesListRemoveUpdated,
   paginator: selectPaginator,
   isSearching: selectIsSearching
 });

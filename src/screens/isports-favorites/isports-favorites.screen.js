@@ -31,7 +31,7 @@ import withNotifRedirect from 'components/with-notif-redirect.component';
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
-const IsportsFavoritesScreen = ({
+const ItvFavoritesScreen = ({
   theme,
   route,
   isFetching,
@@ -53,10 +53,10 @@ const IsportsFavoritesScreen = ({
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
-
+  console.log({ data });
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
 
@@ -84,14 +84,20 @@ const IsportsFavoritesScreen = ({
       return setData(d);
     }
 
+    if (!favorites.length) return setData([]);
+
     setData(favorites);
   }, [favorites, searchTerm]);
+
+  React.useEffect(() => {
+    if (isFetching) setData(null);
+  }, [isFetching]);
 
   // console.log({ favorites, searchTerm });
 
   React.useEffect(() => {
     if (favoritesPaginator.pageNumber === 1) {
-      getFavoritesAction({ limit: 10, pageNumber: 1, orderBy: 'number', order: 'asc' });
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
     }
   }, [favoritesPaginator]);
 
@@ -119,7 +125,10 @@ const IsportsFavoritesScreen = ({
         setSelectedItems([item.id, ...selectedItems]);
       }
     } else {
-      navigation.navigate('IsportsChannelDetailScreen', { channelId: item });
+      navigation.navigate('ItvChannelDetailScreen', {
+        channelId: item.id,
+        selectedCategory: route.params.selectedCategory
+      });
     }
   };
 
@@ -163,7 +172,6 @@ const IsportsFavoritesScreen = ({
   };
 
   const handleConfirmDelete = () => {
-    // do delete action here
     setShowDeleteConfirmation(false);
     handleRemoveItems();
   };
@@ -231,7 +239,7 @@ const IsportsFavoritesScreen = ({
     }
   };
 
-  if (favorites.length)
+  if (data && data.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
         {renderLoader()}
@@ -242,7 +250,8 @@ const IsportsFavoritesScreen = ({
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                marginBottom: theme.spacing(2)
               }}
             >
               <Pressable
@@ -290,7 +299,6 @@ const IsportsFavoritesScreen = ({
             />
           )}
         />
-
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
@@ -304,7 +312,12 @@ const IsportsFavoritesScreen = ({
         )}
       </View>
     );
+  }
 
+  // if data is null return an empty component
+  if (!data) return <View />;
+
+  /// return empty state if data is an empty array
   return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
@@ -327,7 +340,7 @@ const EmptyState = ({ isFetching, theme, navigation }) => (
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>
     <Spacer size={30} />
-    <Pressable onPress={() => navigation.navigate('IsportsScreen')}>
+    <Pressable onPress={() => navigation.navigate('ItvScreen', { openItvGuide: false })}>
       <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
         Heart a channel to add in your Favorites list.
       </Text>
@@ -337,7 +350,7 @@ const EmptyState = ({ isFetching, theme, navigation }) => (
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush>
-    <IsportsFavoritesScreen {...props} />
+    <ItvFavoritesScreen {...props} />
   </ScreenContainer>
 );
 

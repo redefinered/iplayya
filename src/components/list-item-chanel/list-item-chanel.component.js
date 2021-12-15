@@ -49,6 +49,7 @@ const ListItemChanel = ({
           flexDirection: 'row',
           height: ITEM_HEIGHT,
           paddingVertical: theme.spacing(1),
+          // marginBottom: theme.spacing(2),
           alignItems: 'center',
           justifyContent: 'space-between',
           backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent'
@@ -92,7 +93,7 @@ const ListItemChanel = ({
     );
 
   return (
-    <ContentWrap>
+    <ContentWrap style={{ marginBottom: theme.spacing(2) }}>
       <Pressable
         onPress={handlePress}
         style={{
@@ -127,10 +128,8 @@ const Content = ({
   theme,
   item,
   selected,
-  // showepg,
   showFavoriteButton,
-  isCatchUpAvailable,
-  // onEpgButtonPressed,
+  // isCatchUpAvailable,
   activateCheckboxes
 }) => {
   const { number, title, epgtitle, time, time_to } = item;
@@ -186,11 +185,11 @@ const Content = ({
     addToFavorites({ variables: { input: { videoId: item.id } } });
   };
 
-  const renderCatchUpIndicator = () => {
-    if (typeof isCatchUpAvailable === 'undefined') return;
+  // const renderCatchUpIndicator = () => {
+  //   if (typeof isCatchUpAvailable === 'undefined') return;
 
-    if (isCatchUpAvailable) return <Icon name="history" color="#13BD38" />;
-  };
+  //   if (isCatchUpAvailable) return <Icon name="history" color="#13BD38" />;
+  // };
 
   const renderEpgtitle = () => {
     if (!epgtitle)
@@ -221,7 +220,7 @@ const Content = ({
           color: theme.iplayya.colors.white50
         }}
       >
-        EPG
+        | EPG
       </Text>
     );
   };
@@ -229,7 +228,7 @@ const Content = ({
   const getSchedule = (time, time_to) => {
     if (!time || !time_to) return;
 
-    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')}`;
+    return `${moment(time).format('HH:mm A')} - ${moment(time_to).format('HH:mm A')} `;
   };
 
   const renderRightComponent = () => {
@@ -250,22 +249,6 @@ const Content = ({
         {showFavoriteButton && (
           <FavoriteButton item={item} pressAction={() => handleFavoritePress()} />
         )}
-
-        {/* {showepg && (
-          <Pressable
-            underlayColor={theme.iplayya.colors.black80}
-            onPress={() => onEpgButtonPressed(id)}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? 'rgba(0,0,0,0.28)' : 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }
-            ]}
-          >
-            
-          </Pressable>
-        )} */}
       </View>
     );
   };
@@ -282,8 +265,8 @@ const Content = ({
         <Text
           style={{
             ...createFontFormat(12, 16),
-            color: theme.iplayya.colors.white80,
-            marginBottom: 5
+            color: theme.iplayya.colors.white80
+            // marginBottom: 5
           }}
         >{`${number}: ${title}`}</Text>
 
@@ -297,9 +280,9 @@ const Content = ({
           }}
         >
           {getSchedule(time, time_to)}
+          {renderEpgIndicator()}
         </Text>
-        {renderCatchUpIndicator()}
-        {renderEpgIndicator()}
+        {/* {renderCatchUpIndicator()} */}
       </View>
 
       {renderRightComponent()}
