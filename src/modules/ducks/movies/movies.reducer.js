@@ -30,6 +30,7 @@ const INITIAL_STATE = {
   removedFromFavorites: false,
 
   searchResults: [],
+  searchNoResult: false,
   recentSearch: [],
   similarMovies: [],
 
@@ -318,14 +319,16 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      searchResults: action.data
+      searchResults: action.data,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
@@ -333,7 +336,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error,
-      searchResults: []
+      searchResults: [],
+      searchNoResult: true
     };
   },
   [Types.UPDATE_RECENT_SEARCH]: (state, action) => {

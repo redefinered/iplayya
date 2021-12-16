@@ -202,3 +202,8 @@ export const selectCurrentEpisode = createSelector(
   [moviesState],
   ({ currentEpisode }) => currentEpisode
 );
+
+export const selectSearchNorResult = createSelector(
+  [moviesState],
+  ({ searchNoResult }) => searchNoResult
+);

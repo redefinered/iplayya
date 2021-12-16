@@ -106,8 +106,7 @@ export function* getFavoriteMoviesRequest() {
 export function* removeFromFavoritesRequest(action) {
   const { videoIds } = action;
   try {
-    const response = yield all(videoIds.map((id) => call(removeFromFavorites, { videoId: id })));
-    console.log({ response });
+    yield all(videoIds.map((id) => call(removeFromFavorites, { videoId: id })));
     yield put(Creators.removeFromFavoritesSuccess());
   } catch (error) {
     yield put(Creators.removeFromFavoritesFailure(error.message));
@@ -117,6 +116,9 @@ export function* removeFromFavoritesRequest(action) {
 export function* searchRequest(action) {
   try {
     const { videos: results } = yield call(search, action.input);
+
+    if (!results.length) throw new Error('Empty result');
+
     yield put(Creators.searchSuccess(results));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
@@ -126,7 +128,6 @@ export function* searchRequest(action) {
 export function* getSimilarMoviesRequest(action) {
   try {
     const { videoByCategory: results } = yield call(getMoviesByCategories, { input: action.input });
-    console.log({ results });
     yield put(Creators.getSimilarMoviesSuccess(results));
   } catch (error) {
     yield put(Creators.getSimilarMoviesFailure(error.message));

@@ -2,14 +2,14 @@
 
 import React from 'react';
 import {
+  TextInput as FormInput,
   Pressable,
-  StyleSheet,
   ScrollView,
   View,
   FlatList,
   SectionList,
-  TextInput as FormInput,
-  Keyboard
+  Keyboard,
+  KeyboardAvoidingView
 } from 'react-native';
 import MovieItem from 'components/movie-item/movie-item.component';
 import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
@@ -36,12 +36,14 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath } from 'utils';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
+import { selectSearchNorResult } from 'modules/ducks/movies/movies.selectors';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieSearchScreen = ({
   navigation,
   error,
+  noResult,
   searchStartAction,
   searchAction,
   results,
@@ -57,8 +59,8 @@ const ImovieSearchScreen = ({
   const [term, setTerm] = React.useState('');
   const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
   const [downloads, setDownloads] = React.useState(null);
+  const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
 
-  console.log({ results });
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
@@ -81,6 +83,9 @@ const ImovieSearchScreen = ({
   };
 
   const handleChange = (value) => {
+    /// hide empty message when typing
+    setShowEmptyMessage(false);
+
     setTerm(value);
   };
 
@@ -302,17 +307,19 @@ const ImovieSearchScreen = ({
       if (categories.length)
         return (
           <React.Fragment>
-            <Text
-              style={{
-                ...createFontFormat(14, 19),
-                fontWeight: '700',
-                color: theme.iplayya.colors.white50,
-                paddingVertical: theme.spacing(2)
-              }}
-            >
-              Suggested Search
-            </Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: theme.spacing(2)
+                }}
+              >
+                Suggested Search
+              </Text>
+            </ContentWrap>
+            <ContentWrap>
               {categories.map(({ id, title }) => (
                 <TouchableRipple key={id} onPress={() => handleCategoryPress(id, title)}>
                   <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
@@ -320,55 +327,85 @@ const ImovieSearchScreen = ({
                   </Text>
                 </TouchableRipple>
               ))}
-            </ScrollView>
+            </ContentWrap>
           </React.Fragment>
         );
     }
   };
 
+  React.useEffect(() => {
+    if (noResult) return setShowEmptyMessage(true);
+
+    /// hide empty message if input is empty
+    if (!term) return setShowEmptyMessage(false);
+
+    setShowEmptyMessage(false);
+  }, [noResult]);
+
+  const renderNoResultText = () => {
+    if (!showEmptyResult) return;
+
+    if (!term) return;
+
+    return (
+      <ContentWrap>
+        <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+          {`There is nothing found for "${term}"`}
+        </Text>
+      </ContentWrap>
+    );
+  };
+
   return (
-    <ContentWrap style={styles.container}>
-      <TextInput
-        render={(props) => (
-          <FormInput
-            {...props}
-            style={{
-              flex: 1,
-              marginLeft: 40,
-              justifyContent: 'center',
-              fontSize: 16,
-              color: '#ffffff'
-            }}
-          />
-        )}
-        name="search"
-        returnKeyType="search"
-        autoFocus
-        onSubmitEditing={(term) => onSubmitEditing(term)}
-        handleChangeText={(term) => handleChange(term)}
-        value={term}
-        autoCapitalize="none"
-        clearButtonMode="while-editing"
-        style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
-        placeholder="Search a movie"
-        left={
-          <RNPTextInput.Icon
-            name={() => {
-              return isFetching ? (
-                <ActivityIndicator size="small" style={{ marginRight: 5 }} />
-              ) : (
-                <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
-              );
-            }}
-          />
-        }
-        // onFocus={() => this.setState({ isolatedInputs: true })}
-        // onBlur={() => this.setState({ isolatedInputs: false })}
-      />
-      {renderResult()}
-      {renderRecentSearch()}
-      {renderSuggestedSearch()}
-    </ContentWrap>
+    <KeyboardAvoidingView behavior="padding">
+      <ContentWrap>
+        <TextInput
+          name="search"
+          returnKeyType="search"
+          autoFocus
+          onSubmitEditing={(term) => onSubmitEditing(term)}
+          handleChangeText={(term) => handleChange(term)}
+          value={term}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
+          style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
+          placeholder="Search a movie"
+          render={(props) => (
+            <FormInput
+              {...props}
+              style={{
+                flex: 1,
+                marginLeft: 40,
+                justifyContent: 'center',
+                fontSize: 16,
+                color: '#ffffff'
+              }}
+            />
+          )}
+          left={
+            <RNPTextInput.Icon
+              name={() => {
+                return isFetching ? (
+                  <ActivityIndicator size="small" style={{ marginRight: 5 }} />
+                ) : (
+                  <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
+                );
+              }}
+            />
+          }
+          // onFocus={() => this.setState({ isolatedInputs: true })}
+          // onBlur={() => this.setState({ isolatedInputs: false })}
+        />
+      </ContentWrap>
+
+      {renderNoResultText()}
+
+      <ScrollView>
+        {renderResult()}
+        {renderRecentSearch()}
+        {renderSuggestedSearch()}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -377,13 +414,6 @@ const Container = (props) => (
     <ImovieSearchScreen {...props} />
   </ScreenContainer>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 10
-  }
-});
 
 const actions = {
   searchAction: Creators.search,
@@ -398,7 +428,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
-  // categories: selectCategoriesOf('movies'),
+  noResult: selectSearchNorResult,
   recentSearch: selectRecentSearch,
   similarMovies: selectSimilarMovies,
   categories: selectMovieCategories

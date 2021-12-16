@@ -234,19 +234,15 @@ const ItvSearchScreen = ({
                 Suggested Search
               </Text>
             </ContentWrap>
-            <View>
+            <ContentWrap>
               {genres.map(({ id, title }) => (
-                <ContentWrap key={id}>
-                  <TouchableRipple onPress={() => handleGenrePress(id)}>
-                    <Text
-                      style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
-                    >
-                      {title}
-                    </Text>
-                  </TouchableRipple>
-                </ContentWrap>
+                <TouchableRipple key={id} onPress={() => handleGenrePress(id)}>
+                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+                    {title}
+                  </Text>
+                </TouchableRipple>
               ))}
-            </View>
+            </ContentWrap>
             <View style={{ height: resultPadding + theme.spacing(5) }} />
           </React.Fragment>
         );
