@@ -350,7 +350,7 @@ const MovieDetailScreen = ({
   const renderVideoCaption = () => {
     if (!fullscreen)
       return (
-        <ContentWrap>
+        <ContentWrap style={{ marginTop: theme.spacing(2) }}>
           <Text
             style={{
               ...createFontFormat(12, 16),
@@ -453,7 +453,10 @@ const MovieDetailScreen = ({
         justifyContent: 'center'
       };
 
-    return {};
+    return {
+      marginTop: fullscreen ? 0 : theme.spacing(2),
+      marginBottom: fullscreen ? 0 : theme.spacing(2)
+    };
   };
 
   /// MAIN
