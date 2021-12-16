@@ -423,7 +423,13 @@ const MovieDetailScreen = ({
             ) : null}
             <TouchableRipple onPress={handleShowMore} rippleColor={theme.iplayya.colors.white25}>
               <ContentWrap>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: theme.spacing(2)
+                  }}
+                >
                   <Text
                     style={{
                       color: theme.iplayya.colors.strongpussy,
