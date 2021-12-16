@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {
+  Pressable,
   StyleSheet,
   ScrollView,
   View,
@@ -50,9 +51,11 @@ const ImovieSearchScreen = ({
   recentSearch,
   similarMovies,
   getSimilarMoviesAction,
-  getSimilarMoviesStartAction
+  getSimilarMoviesStartAction,
+  clearRecentSearchAction
 }) => {
   const [term, setTerm] = React.useState('');
+  const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
   const [downloads, setDownloads] = React.useState(null);
 
   console.log({ results });
@@ -63,6 +66,14 @@ const ImovieSearchScreen = ({
 
     getDownloadsList();
   }, []);
+
+  React.useEffect(() => {
+    // do not update the list while searching
+    if (isFetching) return;
+
+    /// only display 5 most recent search terms
+    setRecents(recentSearch.slice(0, 5));
+  }, [recentSearch]);
 
   const getDownloadsList = async () => {
     const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
@@ -90,12 +101,16 @@ const ImovieSearchScreen = ({
       searchAction({ keyword, pageNumber: 1, limit: 10 });
 
       /// update recent search terms
-      updateRecentSearchAction(term);
+      // updateRecentSearchAction(term);
     }, 300),
     []
   );
 
-  const handleItemPress = ({ id: videoId, is_series }) => {
+  const handleItemPress = ({ id: videoId, is_series, title, ...rest }) => {
+    console.log({ id: videoId, is_series, title, ...rest });
+    /// the recent searched item is the one selected by user
+    updateRecentSearchAction({ id: videoId, title });
+
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
     navigation.navigate('MovieDetailScreen', { videoId });
   };
@@ -147,7 +162,7 @@ const ImovieSearchScreen = ({
 
   const onSubmitEditing = () => {
     if (term.length) {
-      updateRecentSearchAction(term);
+      // updateRecentSearchAction(term);
       setTerm(term);
     } else {
       return;
@@ -237,10 +252,21 @@ const ImovieSearchScreen = ({
   };
 
   const renderRecentSearch = () => {
-    if (term.length || !term.length) {
-      if (results.length) return;
-      return (
-        <React.Fragment>
+    // do not show if there is results
+    if (results.length) return;
+
+    // do not show if there is no recent search items
+    if (!recents.length) return;
+
+    return (
+      <ContentWrap>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <Text
             style={{
               ...createFontFormat(14, 19),
@@ -251,18 +277,20 @@ const ImovieSearchScreen = ({
           >
             Recent Search
           </Text>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {recentSearch.map((term, index) => (
-              <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
-                  {term}
-                </Text>
-              </TouchableRipple>
-            ))}
-          </ScrollView>
-        </React.Fragment>
-      );
-    }
+          <Pressable onPress={clearRecentSearchAction}>
+            <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
+          </Pressable>
+        </View>
+
+        {recents.map(({ id, title }, index) => (
+          <TouchableRipple key={index} onPress={() => handleItemPress({ id, title })}>
+            <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+              {title}
+            </Text>
+          </TouchableRipple>
+        ))}
+      </ContentWrap>
+    );
   };
   // console.log({ categories, categories });
   const renderSuggestedSearch = () => {
@@ -360,6 +388,7 @@ const styles = StyleSheet.create({
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
+  clearRecentSearchAction: Creators.clearRecentSearch,
   updateRecentSearchAction: Creators.updateRecentSearch,
   getSimilarMoviesAction: Creators.getSimilarMovies,
   getSimilarMoviesStartAction: Creators.getSimilarMoviesStart

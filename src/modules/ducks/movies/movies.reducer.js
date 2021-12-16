@@ -337,17 +337,27 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
-    let newRecentSearch = [];
-    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
-      newRecentSearch = state.recentSearch;
-    } else {
-      newRecentSearch = [action.term, ...state.recentSearch];
-    }
-    return {
-      ...state,
-      recentSearch: newRecentSearch.splice(0, 10)
-    };
-  }
+    const { movie } = action;
+    console.log({ movie });
+
+    const x = state.recentSearch.find(({ id }) => id === movie.id);
+
+    if (typeof x !== 'undefined') return { ...state };
+
+    return { ...state, recentSearch: [movie, ...state.recentSearch] };
+
+    // let newRecentSearch = [];
+    // if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+    //   newRecentSearch = state.recentSearch;
+    // } else {
+    //   newRecentSearch = [action.term, ...state.recentSearch];
+    // }
+    // return {
+    //   ...state,
+    //   recentSearch: newRecentSearch.splice(0, 10)
+    // };
+  },
+  [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] })
   // [Types.RESET]: (state) => {
   //   return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
   // }

@@ -233,7 +233,7 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
   return (
     <TouchableOpacity
       style={{ marginRight: 10, marginBottom: theme.spacing(2) }}
-      onPress={() => onSelect({ id, is_series })}
+      onPress={() => onSelect(item)}
     >
       {renderContent()}
     </TouchableOpacity>
