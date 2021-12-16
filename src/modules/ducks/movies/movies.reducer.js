@@ -1,7 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
 import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './movies.utils';
-import { IMOVIE_CATEGORY_PAGINATOR_LIMIT } from 'common/globals';
+import { PAGINATOR_LIMIT, IMOVIE_CATEGORY_PAGINATOR_LIMIT } from 'common/globals';
 import uniqBy from 'lodash/uniqBy';
 
 const INITIAL_STATE = {
@@ -29,6 +29,12 @@ const INITIAL_STATE = {
   updatedFavorites: false,
   removedFromFavorites: false,
 
+  favoritesPaginator: {
+    pageNumber: 1,
+    limit: PAGINATOR_LIMIT
+  },
+
+  isSearching: false,
   searchResults: [],
   recentSearch: [],
   similarMovies: [],
@@ -288,14 +294,20 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_FAVORITE_MOVIES_SUCCESS]: (state, action) => {
-    const { favoriteVideos } = action.data;
+    const { favoriteVideos } = action;
+    const { favoritesPaginator } = state;
+
+    const updatedData = uniqBy(favoriteVideos, 'id');
     return {
       ...state,
       isFetching: false,
       error: null,
       removedFromFavorites: false,
       updatedFavorites: false,
-      favoriteVideos
+      favoriteVideos: updatedData,
+      favoritesPaginator: Object.assign(favoritesPaginator, {
+        pageNumber: favoritesPaginator.pageNumber + 1
+      })
     };
   },
   [Types.GET_FAVORITE_MOVIES_FAILURE]: (state) => {
@@ -305,6 +317,16 @@ export default createReducer(INITIAL_STATE, {
       error: null
     };
   },
+  [Types.RESET_FAVORITES_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      favoritesPaginator: {
+        limit: PAGINATOR_LIMIT,
+        pageNumber: 1
+      }
+    };
+  },
+  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }),
   /// search
   [Types.SEARCH_START]: (state) => {
     return {

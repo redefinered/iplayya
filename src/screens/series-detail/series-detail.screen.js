@@ -68,7 +68,7 @@ const SeriesDetailScreen = ({
   getMovieStartAction,
   isFavListUpdated,
   getFavoriteMoviesAction,
-  addMovieToFavoritesStartAction,
+  // addMovieToFavoritesStartAction,
 
   downloadsIsFetching,
   downloadStartAction,
@@ -98,6 +98,15 @@ const SeriesDetailScreen = ({
   const renderStatusbar = () => {
     if (fullscreen) return <StatusBar hidden />;
   };
+
+  React.useEffect(() => {
+    if (!seriesdata) return;
+    // eslint-disable-next-line no-unused-vars
+    const { series, ...movie } = seriesdata;
+
+    navigation.setParams({ ...movie });
+  }, [seriesdata]);
+
   /// stop music player when a video is played
   React.useEffect(() => {
     if (!paused) {
@@ -116,11 +125,16 @@ const SeriesDetailScreen = ({
     downloadStartAction();
     playbackStartAction();
     getMovieStartAction();
-    addMovieToFavoritesStartAction();
+    // addMovieToFavoritesStartAction();
 
     // get movie series data
     getMovieAction(videoId);
     // getMovieAction(316); /// for testing
+    const navListener = navigation.addListener('beforeRemove', () => {
+      getMovieStartAction();
+    });
+
+    return () => navListener;
   }, []);
 
   React.useEffect(() => {

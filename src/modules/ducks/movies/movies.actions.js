@@ -34,9 +34,10 @@ const { Types, Creators } = createActions(
 
     addVideoToContinueWatching: ['data'],
 
-    getFavoriteMovies: [],
-    getFavoriteMoviesSuccess: ['data'],
+    getFavoriteMovies: ['input'],
+    getFavoriteMoviesSuccess: ['favoriteVideos'],
     getFavoriteMoviesFailure: ['error'],
+    resetFavoritesPaginator: null,
 
     addMovieToFavoritesStart: [],
     addMovieToFavorites: ['videoId'],
@@ -47,6 +48,8 @@ const { Types, Creators } = createActions(
     removeFromFavorites: ['videoIds'],
     removeFromFavoritesSuccess: [],
     removeFromFavoritesFailure: ['error'],
+
+    setIsSearching: ['isSearching'], /// is searching for favorites
 
     searchStart: [],
     search: ['input'],

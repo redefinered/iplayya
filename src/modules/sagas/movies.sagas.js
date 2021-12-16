@@ -79,10 +79,11 @@ export function* getMoviesByCategoriesRequest(action) {
   }
 }
 
-export function* getFavoriteMoviesRequest() {
+export function* getFavoriteMoviesRequest(action) {
+  const { input } = action;
   try {
-    const { favoriteVideos } = yield call(getFavoriteMovies);
-    yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
+    const { favoriteVideos } = yield call(getFavoriteMovies, input);
+    yield put(Creators.getFavoriteMoviesSuccess(favoriteVideos));
   } catch (error) {
     yield put(Creators.getFavoriteMoviesFailure(error.message));
   }

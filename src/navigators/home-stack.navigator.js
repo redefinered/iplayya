@@ -9,6 +9,7 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import Icon from 'components/icon/icon.component.js';
 import ItvSearchButton from 'screens/itv/itv-search-button.component';
 import IsportsSearchButton from 'screens/isports/isports-search-button.component';
+import ImovieSearchButton from 'screens/imovie/imovie-search-buttom.component';
 import { useMutation } from '@apollo/client';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { ADD_TO_FAVORITES as ADD_ITV_CHANNEL_TO_FAVORITES } from 'graphql/itv.graphql';
@@ -89,7 +90,6 @@ const Stack = createStackNavigator();
 const HomeStack = ({
   setBottomTabsVisibleAction,
   getMovieAction,
-  favorites,
   isInitialSignIn,
   created,
   ...rest
@@ -426,19 +426,7 @@ const HomeStack = ({
           options={({ navigation }) => ({
             title: 'Favorites',
             animationEnabled: false,
-            headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <TouchableRipple
-                  borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
-                  rippleColor="rgba(0,0,0,0.28)"
-                >
-                  <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={theme.iconSize(3)} />
-                  </View>
-                </TouchableRipple>
-              </View>
-            )
+            headerRight: () => <ImovieSearchButton />
           })}
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
@@ -493,11 +481,11 @@ const HomeStack = ({
           options={(props) => {
             const {
               route: {
-                params: { videoId }
+                params: { videoId, seriesdata }
               }
             } = props;
 
-            const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+            // const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
 
             return {
               title: null,
@@ -505,8 +493,8 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={parseInt(videoId)}
-                    pressAction={rest.addMovieToFavoritesAction}
-                    active={isInFavorites >= 0 ? true : false}
+                    pressAction={handleImovieFavPress}
+                    active={typeof seriesdata === 'undefined' ? false : seriesdata.is_favorite}
                   />
                   <ImovieDownloadButton videoId={videoId} />
                 </View>
