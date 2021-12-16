@@ -173,9 +173,6 @@ const ItvSearchScreen = ({
   };
 
   const renderRecentSearch = () => {
-    /// do not show if searchbar is not in use
-    // if (!isSearching) return;
-
     // do not show if there is results
     if (results.length) return;
 
@@ -205,6 +202,7 @@ const ItvSearchScreen = ({
             <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
           </Pressable>
         </View>
+
         {recents.map(({ id, title }, index) => (
           <TouchableRipple key={index} onPress={() => handleItemPress({ id, title })}>
             <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
