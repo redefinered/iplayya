@@ -228,7 +228,7 @@ const ProfileScreen = ({
                 top: 105,
                 width: 40,
                 height: 40,
-                backgroundColor: theme.iplayya.colors.white10,
+                backgroundColor: theme.iplayya.colors.vibrantpussy,
                 borderRadius: 100 / 2,
                 alignItems: 'center',
                 justifyContent: 'center'
