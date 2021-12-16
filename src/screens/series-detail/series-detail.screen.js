@@ -511,7 +511,13 @@ const SeriesDetailScreen = ({
             ) : null}
             <TouchableRipple onPress={handleShowMore} rippleColor={theme.iplayya.colors.white25}>
               <ContentWrap>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: theme.spacing(2)
+                  }}
+                >
                   <Text
                     style={{
                       color: theme.iplayya.colors.strongpussy,
@@ -620,7 +626,10 @@ const SeriesDetailScreen = ({
         justifyContent: 'center'
       };
 
-    return {};
+    return {
+      marginTop: fullscreen ? 0 : theme.spacing(2),
+      marginBottom: fullscreen ? 0 : theme.spacing(2)
+    };
   };
 
   /// MAIN
