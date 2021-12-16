@@ -57,7 +57,7 @@ const HomeMenu = ({ navigation }) => {
       <Pressable
         style={({ pressed }) => [
           {
-            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+            backgroundColor: pressed ? 'rgba(255,255,255,0.25)' : null
           },
           styles.menuitem
         ]}
@@ -68,10 +68,11 @@ const HomeMenu = ({ navigation }) => {
         </View>
         <Text style={styles.label}>iTV</Text>
       </Pressable>
+
       <Pressable
         style={({ pressed }) => [
           {
-            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+            backgroundColor: pressed ? 'rgba(255,255,255,0.25)' : null
           },
           styles.menuitem
         ]}
@@ -85,7 +86,7 @@ const HomeMenu = ({ navigation }) => {
       <Pressable
         style={({ pressed }) => [
           {
-            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+            backgroundColor: pressed ? 'rgba(255,255,255,0.25)' : null
           },
           styles.menuitem
         ]}
@@ -99,7 +100,7 @@ const HomeMenu = ({ navigation }) => {
       <Pressable
         style={({ pressed }) => [
           {
-            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+            backgroundColor: pressed ? 'rgba(255,255,255,0.25)' : null
           },
           styles.menuitem
         ]}
@@ -113,7 +114,7 @@ const HomeMenu = ({ navigation }) => {
       <Pressable
         style={({ pressed }) => [
           {
-            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+            backgroundColor: pressed ? 'rgba(255,255,255,0.25)' : null
           },
           styles.menuitem
         ]}
@@ -127,7 +128,7 @@ const HomeMenu = ({ navigation }) => {
       <Pressable
         style={({ pressed }) => [
           {
-            backgroundColor: pressed ? 'rgba(0,0,0,0.20)' : null
+            backgroundColor: pressed ? 'rgba(255,255,255,0.25)' : null
           },
           styles.menuitem
         ]}
