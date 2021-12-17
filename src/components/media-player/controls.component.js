@@ -6,7 +6,7 @@ import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ButtonIconDefault from 'components/button-icon-default/button-icon-default.component';
-import Slider from '@react-native-community/slider';
+// import Slider from '@react-native-community/slider';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -22,8 +22,9 @@ import {
 import GoogleCast, { useRemoteMediaClient } from 'react-native-google-cast';
 import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
-import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
-import DeviceInfo from 'react-native-device-info';
+// import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
+import VolumeSlider from './volume-slider.component';
+// import DeviceInfo from 'react-native-device-info';
 import CastOptions from './cast-options.component';
 import { MODULE_TYPES } from 'common/globals';
 
@@ -36,7 +37,7 @@ const VideoControls = ({
   isFirstEpisode,
   isLastEpisode,
   multipleMedia,
-  setVolume,
+  // setVolume,
   isFullscreen,
   castSessionActive,
   // updatePlaybackInfoAction,
@@ -102,10 +103,10 @@ const VideoControls = ({
   //   controlProps.setPaused(false);
   // };
 
-  const handleVolumeChange = (volume) => {
-    setVolume(parseFloat(volume.toFixed(4)));
-    // setSavedVolume(parseFloat(v));
-  };
+  // const handleVolumeChange = (volume) => {
+  //   setVolume(parseFloat(volume.toFixed(4)));
+  //   // setSavedVolume(parseFloat(v));
+  // };
 
   const toggleVolume = () => {
     /// toggle visibility
@@ -118,72 +119,12 @@ const VideoControls = ({
     // return setVolume(savedVolume);
   };
 
-  const getFullscreenStyle = () => {
-    let WIDTH, TOP_OFFSET;
-
-    const SLIDER_WIDTH = 5;
-    const ROTATED_TOP_ZERO = 25 + SLIDER_WIDTH;
-    const ROTATED_LEFT_ZERO = -25 - SLIDER_WIDTH;
-
-    const V_SLIDER_MARGIN = 10;
-    const NORMAL_SCREEN_VIDEO_HEIGHT = 211;
-
-    const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-    if (isFullscreen) {
-      WIDTH = 200;
-
-      const FULLSCREEN_ROTATED_LEFT_ZERO = -65;
-      const FULLSCREEN_ROTATED_TOP_ZERO = 80;
-
-      const SCREEN_WIDTH_DIVIDED_BY_TWO = SCREEN_WIDTH / 2;
-      const WIDTH_WIDTH_DIVIDED_BY_TWO = WIDTH / 2;
-
-      return {
-        width: 200,
-        top: FULLSCREEN_ROTATED_TOP_ZERO + SCREEN_WIDTH_DIVIDED_BY_TWO - WIDTH_WIDTH_DIVIDED_BY_TWO,
-        left: DeviceInfo.hasNotch()
-          ? FULLSCREEN_ROTATED_LEFT_ZERO + 30
-          : FULLSCREEN_ROTATED_LEFT_ZERO
-      };
-    } else {
-      WIDTH = 100;
-      TOP_OFFSET = NORMAL_SCREEN_VIDEO_HEIGHT / 2 - 15; /// 15 is to nudge the slider a little up ward so it does not ovarlap with the volume button
-
-      return {
-        width: 100,
-        top: ROTATED_TOP_ZERO + TOP_OFFSET - WIDTH / 2,
-        left: ROTATED_LEFT_ZERO + V_SLIDER_MARGIN
-      };
-    }
-  };
-
   const renderVolumeSlider = () => {
     /// replace thumbimage with a rectangle for easier control
     if (castSessionActive) return;
     if (!showVolume) return;
 
-    return (
-      <View
-        style={{
-          zIndex: 110,
-          position: 'absolute',
-          // backgroundColor: 'green',
-          transform: [{ rotate: '-90deg' }],
-          ...getFullscreenStyle()
-        }}
-      >
-        <Slider
-          thumbImage={volumeThumbTransparent}
-          onValueChange={handleVolumeChange}
-          value={controlProps.volume}
-          minimumValue={0}
-          maximumValue={1}
-          minimumTrackTintColor={theme.iplayya.colors.white100}
-          maximumTrackTintColor={theme.iplayya.colors.white25}
-        />
-      </View>
-    );
+    return <VolumeSlider isFullscreen={isFullscreen} />;
   };
 
   // const resolutionOptions = () => {

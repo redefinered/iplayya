@@ -14,6 +14,7 @@ import SystemSetting from 'react-native-system-setting';
 import theme from 'common/theme';
 import { MODULE_TYPES } from 'common/globals';
 import uuid from 'react-uuid';
+import VolumeContext from 'contexts/volume/volume.context';
 
 const VIDEO_HEIGHT = 211;
 
@@ -52,6 +53,9 @@ const MediaPlayer = ({
   // eslint-disable-next-line react/prop-types
   videoLength
 }) => {
+  // const { volume, setVolume } = React.useContext(VolumeContext);
+
+  // console.log({ volume });
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
 
@@ -66,7 +70,7 @@ const MediaPlayer = ({
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [showControls, setShowControls] = React.useState(true);
   const [sliderPosition, setSliderPosition] = React.useState(null);
-  const [volume, setVolume] = React.useState(0.5);
+  const [volume, setVolume] = React.useState(0);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
@@ -460,44 +464,46 @@ const MediaPlayer = ({
       );
 
     return (
-      <Controls
-        visible={showControls}
-        // visible
-        setShowControls={setShowControls}
-        playbackInfo={playbackInfo}
-        setPlaybackInfo={setPlaybackInfo}
-        qualitySwitchable={qualitySwitchable}
-        volume={volume}
-        setVolume={setVolume}
-        buffering={buffering}
-        multipleMedia={multipleMedia}
-        title={title}
-        seriesTitle={seriesTitle}
-        togglePlay={togglePlay}
-        paused={paused}
-        setPaused={setPaused}
-        toggleFullscreen={handleFullscreenToggle}
-        setSliderPosition={setSliderPosition}
-        toggleVolumeSliderVisible={toggleVolumeSliderVisible}
-        toggleCastOptions={handleToggleCastOptions}
-        toggleVideoOptions={handleToggleVideoOptions}
-        previousAction={previousAction}
-        nextAction={nextAction}
-        isFirstEpisode={isFirstEpisode}
-        isLastEpisode={isLastEpisode}
-        resolutions={resolutions}
-        resolution={resolution}
-        activeState={activeState}
-        setActiveState={setActiveState}
-        handleSelectResolution={handleSelectResolution}
-        source={source}
-        castSessionActive={castSessionActive}
-        isFullscreen={fullscreen}
-        setShowChromecastOptions={setShowChromecastOptions}
-        moduleType={moduleType}
-        style={{ position: 'absolute' }}
-        handleHideList={() => setShowChromecastOptions(false)}
-      />
+      <VolumeContext.Provider value={{ volume, setVolume }}>
+        <Controls
+          // visible={showControls}
+          visible
+          setShowControls={setShowControls}
+          playbackInfo={playbackInfo}
+          setPlaybackInfo={setPlaybackInfo}
+          qualitySwitchable={qualitySwitchable}
+          volume={volume}
+          setVolume={setVolume}
+          buffering={buffering}
+          multipleMedia={multipleMedia}
+          title={title}
+          seriesTitle={seriesTitle}
+          togglePlay={togglePlay}
+          paused={paused}
+          setPaused={setPaused}
+          toggleFullscreen={handleFullscreenToggle}
+          setSliderPosition={setSliderPosition}
+          toggleVolumeSliderVisible={toggleVolumeSliderVisible}
+          toggleCastOptions={handleToggleCastOptions}
+          toggleVideoOptions={handleToggleVideoOptions}
+          previousAction={previousAction}
+          nextAction={nextAction}
+          isFirstEpisode={isFirstEpisode}
+          isLastEpisode={isLastEpisode}
+          resolutions={resolutions}
+          resolution={resolution}
+          activeState={activeState}
+          setActiveState={setActiveState}
+          handleSelectResolution={handleSelectResolution}
+          source={source}
+          castSessionActive={castSessionActive}
+          isFullscreen={fullscreen}
+          setShowChromecastOptions={setShowChromecastOptions}
+          moduleType={moduleType}
+          style={{ position: 'absolute' }}
+          handleHideList={() => setShowChromecastOptions(false)}
+        />
+      </VolumeContext.Provider>
     );
   };
 
