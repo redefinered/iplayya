@@ -23,7 +23,6 @@ import { Creators as DownloadsCreators } from 'modules/ducks/imovie-downloads/im
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
-  selectIsFetching,
   selectMovie,
   selectPlaybackInfo,
   selectUpdatedFavoritesCheck,
@@ -242,7 +241,7 @@ const MovieDetailScreen = ({
       </ContentWrap>
     );
 
-  if (!movie) return <View />;
+  if (!movie) return <ActivityIndicator />;
   // return (
   //   <ContentWrap>
   //     <Text>Working...</Text>
@@ -534,7 +533,6 @@ const actions = {
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching,
   movie: selectMovie,
   videoSource: selectUrlForVodPlayer,
   playbackInfo: selectPlaybackInfo,
