@@ -57,7 +57,6 @@ const ProgramGuide = ({
     pollInterval: 500
   });
 
-  console.log({ error, loading, data, channelId, date });
   React.useEffect(() => {
     if (data) {
       setPrograms(data.getPrograms);

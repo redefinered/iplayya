@@ -18,10 +18,10 @@ const CategoryScroll = ({
   downloads
 }) => {
   if (typeof videos === 'undefined' || videos.length === 0) return <View />;
-  let movies = videos.map(({ thumbnail, ...rest }) => {
+  let movies = videos.map(({ thumbnail, ...otherProps }) => {
     return {
       thumbnail: thumbnail === '' || thumbnail === 'N/A' ? null : thumbnail,
-      ...rest
+      ...otherProps
     };
   });
 
