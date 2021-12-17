@@ -31,6 +31,7 @@ import withNotifRedirect from 'components/with-notif-redirect.component';
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieScreen = ({
+  resetAction,
   isFetching,
   navigation,
   error,
@@ -55,23 +56,15 @@ const ImovieScreen = ({
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
   const [downloads, setDownloads] = React.useState(null);
 
-  // get movies on mount
-  // React.useEffect(() => {
-  //   if (!paginatorInfo.length) return;
-
-  //   if (isFetching) return; /// stop if another request is running
-
-  //   getMoviesAction(paginatorInfo, categoryPaginator);
-
-  //   getDownloadsList();
-  // }, []);
-
   const getDownloadsList = async () => {
     const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
     setDownloads(downloadsList);
   };
 
   React.useEffect(() => {
+    /// resets the category paginator
+    resetAction();
+
     InteractionManager.runAfterInteractions(() => {
       addMovieToFavoritesStartAction();
       enableSwipeAction(false);
@@ -290,6 +283,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  resetAction: Creators.reset,
   setNetworkInfoAction: AppActionCreators.setNetworkInfo,
   getMoviesAction: Creators.getMovies,
   setBottomTabsVisibleAction: NavActionCreators.setBottomTabsVisible,

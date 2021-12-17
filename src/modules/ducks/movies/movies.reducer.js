@@ -361,8 +361,8 @@ export default createReducer(INITIAL_STATE, {
     //   recentSearch: newRecentSearch.splice(0, 10)
     // };
   },
-  [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] })
-  // [Types.RESET]: (state) => {
-  //   return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
-  // }
+  [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] }),
+  [Types.RESET]: (state) => {
+    return { ...state, categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT } };
+  }
 });
