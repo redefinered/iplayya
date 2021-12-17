@@ -11,7 +11,7 @@ import {
   StatusBar,
   Dimensions
 } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
@@ -40,9 +40,11 @@ import {
 } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
 import { selectPlaybackSettings } from 'modules/ducks/user/user.selectors';
 import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath, createFontFormat } from 'utils';
+import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
+import moment from 'moment';
 import SnackBar from 'components/snackbar/snackbar.component';
 import withNotifRedirect from 'components/with-notif-redirect.component';
+import Icon from 'components/icon/icon.component';
 
 export const selectSource = (videourls) => {
   const urls = videourls.map(({ link }) => link);
@@ -96,6 +98,7 @@ const SeriesDetailScreen = ({
   const [isLastEpisode, setIsLastEpisode] = React.useState(false);
   const [seriesTitle, setSeriesTitle] = React.useState();
   const [fullscreen, setFullscreen] = React.useState(false);
+  const [showMore, setShowMore] = React.useState(false);
 
   const renderStatusbar = () => {
     if (fullscreen) return <StatusBar hidden />;
@@ -229,6 +232,14 @@ const SeriesDetailScreen = ({
     setDownloadedFiles(ls);
   };
 
+  const handleShowMore = () => {
+    if (showMore === false) {
+      setShowMore(true);
+    } else {
+      setShowMore(false);
+    }
+  };
+
   React.useEffect(() => {
     if (seriesdata) {
       console.log({ seriesdata });
@@ -323,16 +334,80 @@ const SeriesDetailScreen = ({
   // );
 
   const {
+    /// items to exclude in 'read more' section
+    // eslint-disable-next-line no-unused-vars
+    id,
+    // eslint-disable-next-line no-unused-vars
+    __typename,
+    // eslint-disable-next-line no-unused-vars
+    video_urls,
+    // eslint-disable-next-line no-unused-vars
+    is_hd,
+    // eslint-disable-next-line no-unused-vars
+    is_censored,
+    // eslint-disable-next-line no-unused-vars
+    is_favorite,
+    // eslint-disable-next-line no-unused-vars
+    is_series,
     title,
     year,
     description,
     rating_mpaa,
     category,
-    director,
     thumbnail,
     series,
     ...otherFields
   } = seriesdata;
+
+  const readMoreData = Object.keys(otherFields).map((key) => {
+    if (key === 'director') {
+      return {
+        key,
+        label: 'Director',
+        value: otherFields[key]
+      };
+    }
+
+    if (key === 'time') {
+      const timeToDate = toDateTime(otherFields.time * 60);
+
+      return {
+        key,
+        label: 'Duration',
+        value: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
+      };
+    }
+
+    if (key === 'country') {
+      return {
+        key,
+        label: 'Country of origin',
+        value: otherFields[key]
+      };
+    }
+
+    if (key === 'rating_imdb') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
+      };
+    }
+
+    if (key === 'rating_kinopoisk') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
+      };
+    }
+
+    return {
+      key,
+      label: toTitleCase(key.replace('_', ' ')),
+      value: otherFields[key]
+    };
+  });
 
   if (!series) return <View />;
   // return (
@@ -350,7 +425,8 @@ const SeriesDetailScreen = ({
             height: 211,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'black'
+            backgroundColor: 'black',
+            marginBottom: theme.spacing(1)
           }}
         />
       );
@@ -385,7 +461,8 @@ const SeriesDetailScreen = ({
           <Text
             style={{
               ...createFontFormat(12, 16),
-              color: theme.iplayya.colors.white50
+              color: theme.iplayya.colors.white50,
+              marginTop: theme.spacing(2)
             }}
           >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
         </ContentWrap>
@@ -397,49 +474,74 @@ const SeriesDetailScreen = ({
       return (
         <React.Fragment>
           {/* content */}
-          <ScrollView style={{ height: 300 }}>
+          {/* <ScrollView style={{ height: 300 }}> */}
+          <ContentWrap>
+            <Text
+              style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
+            >{`${title} (${year})`}</Text>
+          </ContentWrap>
+          <ScrollView>
             <ContentWrap>
-              <Text
-                style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
-              >{`${title} (${year})`}</Text>
-              <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
-              <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
-                <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
-                  Director{' '}
-                </Text>
-                {director}
+              <Text numberOfLines={showMore ? null : 4} style={{ ...createFontFormat(14, 20) }}>
+                {description}
               </Text>
-              <List.Section>
-                <List.Accordion
-                  title="Read more"
-                  style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
-                  titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
-                >
-                  {Object.keys(otherFields).map((key) => {
-                    return (
-                      <List.Item
-                        key={key}
-                        titleStyle={{ marginBottom: -10 }}
-                        title={
-                          <Text style={{ ...createFontFormat(14, 20) }}>
-                            <Text
-                              style={{
-                                color: theme.iplayya.colors.white50,
-                                ...createFontFormat(14, 20)
-                              }}
-                            >
-                              {key}{' '}
-                            </Text>
-                            {otherFields[key]}
+            </ContentWrap>
+            {showMore ? (
+              <View style={{ marginBottom: theme.spacing(3) }}>
+                {readMoreData.map(({ key, label, value }) => {
+                  return (
+                    <List.Item
+                      key={key}
+                      titleStyle={{ marginBottom: theme.spacing(-4) }}
+                      title={
+                        <Text style={{ ...createFontFormat(14, 20) }}>
+                          <Text
+                            style={{
+                              color: theme.iplayya.colors.white50,
+                              ...createFontFormat(14, 20)
+                            }}
+                          >
+                            {label}
+                            {': '}
                           </Text>
-                        }
-                      />
-                    );
-                  })}
-                </List.Accordion>
-              </List.Section>
+                          {value}
+                        </Text>
+                      }
+                    />
+                  );
+                })}
+              </View>
+            ) : null}
+            <TouchableRipple onPress={handleShowMore} rippleColor={theme.iplayya.colors.white25}>
+              <ContentWrap>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: theme.spacing(2)
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: theme.iplayya.colors.strongpussy,
+                      ...createFontFormat(14, 20)
+                    }}
+                  >
+                    {showMore ? 'Read Less' : 'Read More'}
+                  </Text>
+                  <Icon
+                    name={showMore ? 'caret-up' : 'caret-down'}
+                    size={theme.iconSize(3)}
+                    style={{
+                      color: theme.iplayya.colors.white80,
+                      marginRight: theme.spacing(1)
+                    }}
+                  />
+                </View>
+              </ContentWrap>
+            </TouchableRipple>
 
-              {/* <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
+            {/* <Pressable style={styles.settingItem} onPress={() => setPaused(false)}>
                 <View style={styles.iconContainer}>
                   <Icon name="circular-play" size={theme.iconSize(3)} />
                 </View>
@@ -459,7 +561,6 @@ const SeriesDetailScreen = ({
                   </Text>
                 </View>
               </Pressable> */}
-            </ContentWrap>
 
             <ContentWrap style={{ marginTop: theme.spacing(2), marginBottom: theme.spacing(6) }}>
               {series.map(({ season: so }, index) => {
@@ -528,7 +629,10 @@ const SeriesDetailScreen = ({
         justifyContent: 'center'
       };
 
-    return {};
+    return {
+      marginTop: fullscreen ? 0 : theme.spacing(2),
+      marginBottom: fullscreen ? 0 : theme.spacing(2)
+    };
   };
 
   /// MAIN
