@@ -50,7 +50,14 @@ export function* getMoviesRequest(action) {
     const filtered = videos.filter(({ videoByCategory }) => videoByCategory.length > 0);
 
     const movies = filtered.map(({ videoByCategory }) => {
-      return { category: videoByCategory[0].category, videos: videoByCategory };
+      return {
+        category: videoByCategory[0].category,
+        videos: videoByCategory.map(({ id, ...rest }) => ({
+          id,
+          dlfname: `mt_${id}_.jpg`,
+          ...rest
+        }))
+      };
     });
 
     /// increment paginator with every successful request
@@ -74,7 +81,16 @@ export function* getMoviesByCategoriesRequest(action) {
     const { videoByCategory: newMovies } = yield call(getMoviesByCategories, {
       input: nextPageInput
     });
-    yield put(Creators.getMoviesByCategoriesSuccess({ newMovies, nextPaginator: nextPageInput }));
+    yield put(
+      Creators.getMoviesByCategoriesSuccess({
+        newMovies: newMovies.map(({ id, ...rest }) => ({
+          id,
+          dlfname: `mt_${id}_.jpg`,
+          ...rest
+        })),
+        nextPaginator: nextPageInput
+      })
+    );
   } catch (error) {
     yield put(Creators.getMoviesByCategoriesFailure(error.message));
   }

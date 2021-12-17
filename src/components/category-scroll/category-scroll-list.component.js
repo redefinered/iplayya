@@ -40,14 +40,8 @@ const CategoryScrollList = ({
 
   // eslint-disable-next-line react/prop-types
   const renderItem = ({ item }) => {
-    const downloadedThumbnail = downloads.find((file) => {
-      /// split item filename
-      // filename format: mt_id.jpg. e.g. mt_12390_.jpg
-      const splitFilename = file.split('_');
-      const id = splitFilename[1];
-      // eslint-disable-next-line react/prop-types
-      return id === item.id;
-    });
+    // eslint-disable-next-line react/prop-types
+    const downloadedThumbnail = downloads.find((file) => file === item.dlfname);
 
     return <MovieItem item={item} onSelect={onSelect} downloadedThumbnail={downloadedThumbnail} />;
   };
