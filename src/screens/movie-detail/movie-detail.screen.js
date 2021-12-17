@@ -56,7 +56,7 @@ const MovieDetailScreen = ({
   getMovieStartAction,
   isFavListUpdated,
   getFavoriteMoviesAction,
-  addMovieToFavoritesStartAction,
+  // addMovieToFavoritesStartAction,
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
@@ -113,7 +113,7 @@ const MovieDetailScreen = ({
     playbackStartAction();
 
     // set movie add to favorites state
-    addMovieToFavoritesStartAction();
+    // addMovieToFavoritesStartAction();
 
     InteractionManager.runAfterInteractions(() => {
       // get movie data

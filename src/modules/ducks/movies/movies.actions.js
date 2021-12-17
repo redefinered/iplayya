@@ -46,7 +46,7 @@ const { Types, Creators } = createActions(
 
     // remove movies from favorites
     removeFromFavorites: ['videoIds'],
-    removeFromFavoritesSuccess: [],
+    removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],
 
     setIsSearching: ['isSearching'], /// is searching for favorites

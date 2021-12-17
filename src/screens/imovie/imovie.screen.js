@@ -36,7 +36,7 @@ const ImovieScreen = ({
   error,
   getMoviesAction,
   paginatorInfo,
-  addMovieToFavoritesStartAction,
+  // addMovieToFavoritesStartAction,
   theme,
   route: { params },
   categoryPaginator,
@@ -73,7 +73,7 @@ const ImovieScreen = ({
 
   React.useEffect(() => {
     InteractionManager.runAfterInteractions(() => {
-      addMovieToFavoritesStartAction();
+      // addMovieToFavoritesStartAction();
       enableSwipeAction(false);
 
       getInitialContent();

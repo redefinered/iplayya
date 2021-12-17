@@ -39,6 +39,8 @@ const ImovieFavoritesScreen = ({
   resetFavoritesPaginatorAction,
   isSearching
 }) => {
+  const updated = React.useRef(false);
+
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
@@ -48,7 +50,7 @@ const ImovieFavoritesScreen = ({
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
-    getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+    // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
   }, []);
 
   React.useEffect(() => {
@@ -70,8 +72,14 @@ const ImovieFavoritesScreen = ({
 
   React.useEffect(() => {
     if (removedFromFavorites) {
-      getFavoritesAction();
-      setSelectedItems([]);
+      resetFavoritesPaginatorAction();
+
+      updated.current = true;
+      setActivateCheckboxes(false);
+
+      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+    } else {
+      updated.current = false;
     }
   }, [removedFromFavorites]);
 
@@ -347,7 +355,7 @@ const ImovieFavoritesScreen = ({
       </View>
     );
   }
-  return <EmptyState theme={theme} navigation={navigation} />;
+  return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
 const EmptyState = ({ isFetching, theme, navigation }) => (

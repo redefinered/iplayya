@@ -52,20 +52,6 @@ export const getMoviesByCategories = async (input) => {
   }
 };
 
-// export const removeFromFavorites = async (input) => {
-//   try {
-//     const { data } = await client.mutate({
-//       mutation: REMOVE_FROM_FAVORITES,
-//       variables: { input },
-//       refetchQueries: [{ query: GET_FAVORITE_MOVIES, fetchPolicy: 'network-only' }],
-//       awaitRefetchQueries: true
-//     });
-//     return data;
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// };
-
 export const removeFromFavorites = async (input) => {
   try {
     const { data } = await client.mutate({
@@ -79,7 +65,7 @@ export const removeFromFavorites = async (input) => {
             favoriteVideos: (previous = []) => {
               const normalizedId = cache.identify({
                 id: data.removeVideoToFavorites.id,
-                __typename: 'SingleVideo'
+                __typename: 'Video'
               });
               const updatedItems = previous.filter((r) => r.__ref !== normalizedId);
               return updatedItems;
