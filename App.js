@@ -31,6 +31,7 @@ import NotifService from 'NotifService';
 import { Button } from 'react-native-paper';
 import { selectError } from 'modules/ducks/user/user.selectors.js';
 import theme from 'common/theme';
+import MovieContextProvider from 'contexts/providers/movie/movie.provider';
 
 // eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
@@ -242,7 +243,11 @@ const App = ({
     );
   }
 
-  return <HomeComponent />;
+  return (
+    <MovieContextProvider>
+      <HomeComponent />
+    </MovieContextProvider>
+  );
 };
 
 const mapStateToProps = createStructuredSelector({

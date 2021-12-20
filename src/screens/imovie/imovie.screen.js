@@ -27,6 +27,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath } from 'utils';
 
 import withNotifRedirect from 'components/with-notif-redirect.component';
+import { MovieContext } from 'contexts/providers/movie/movie.provider';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -45,6 +46,8 @@ const ImovieScreen = ({
   enableSwipeAction,
   setNetworkInfoAction
 }) => {
+  const { selected, setSelected } = React.useContext(MovieContext);
+
   const brand = theme.iplayya.colors;
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
@@ -65,6 +68,8 @@ const ImovieScreen = ({
     /// resets the category paginator
     resetAction();
 
+    setSelected(null);
+
     InteractionManager.runAfterInteractions(() => {
       addMovieToFavoritesStartAction();
       enableSwipeAction(false);
@@ -80,6 +85,16 @@ const ImovieScreen = ({
       return () => unsubscribe();
     });
   }, []);
+
+  React.useEffect(() => {
+    if (!selected) return;
+
+    const { id: videoId, is_series } = selected;
+
+    if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+
+    navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
+  }, [selected]);
 
   const getInitialContent = () => {
     if (!paginatorInfo.length) return;
@@ -112,10 +127,10 @@ const ImovieScreen = ({
     setScrollIndex(0);
   }, [params, data]);
 
-  const handleMovieSelect = ({ id: videoId, is_series }) => {
-    if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
-    navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
-  };
+  // const handleMovieSelect = ({ id: videoId, is_series }) => {
+  //   if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+  //   navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
+  // };
 
   // const renderEmpty = () => {
   //   return <ActivityIndicator size="small" />;
@@ -179,9 +194,7 @@ const ImovieScreen = ({
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
     // console.log({ category });
-    return (
-      <CategoryScroll category={category} onSelect={handleMovieSelect} downloads={downloads} />
-    );
+    return <CategoryScroll category={category} downloads={downloads} />;
   };
 
   const handleEndReached = () => {
