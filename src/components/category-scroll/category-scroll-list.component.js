@@ -14,8 +14,6 @@ const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const CategoryScrollList = ({
   data,
-  onSelect,
-  downloads,
   isFetching,
   paginatorOfCategory,
   getMoviesByCategoriesAction
@@ -40,15 +38,11 @@ const CategoryScrollList = ({
 
   // eslint-disable-next-line react/prop-types
   const renderItem = ({ item }) => {
-    // eslint-disable-next-line react/prop-types
-    const downloadedThumbnail = downloads.find((file) => file === item.dlfname);
-
-    return <MovieItem item={item} onSelect={onSelect} downloadedThumbnail={downloadedThumbnail} />;
+    return <MovieItem {...item} />;
   };
 
   const handleOnEndReached = () => {
     // set pageNumber prop to get the next n movies
-    console.log('end');
     if (typeof paginatorOfCategory === 'undefined') return;
     const { paginator } = paginatorOfCategory;
     getMoviesByCategoriesAction(paginator);

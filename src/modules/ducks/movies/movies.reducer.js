@@ -85,6 +85,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
+      movies: [],
       categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT }
     };
   },

@@ -14,9 +14,9 @@ export const GET_MOVIES_BY_CATEGORIES = gql`
     videoByCategory(input: $input) {
       id
       title
-      thumbnail
       category
       is_series
+      rating_imdb
       kinopoisk {
         api_key
         api_link
