@@ -174,20 +174,6 @@ const ImovieSearchScreen = ({
     }
   };
 
-  const renderItem = ({ item }) => {
-    const downloadedThumbnail = downloads.find((file) => {
-      /// split item filename
-      // filename format: mt_id.jpg. e.g. mt_12390_.jpg
-      const splitFilename = file.split('_');
-      const id = splitFilename[1];
-      // eslint-disable-next-line react/prop-types
-      return id === item.id;
-    });
-    return (
-      <MovieItem item={item} onSelect={handleItemPress} downloadedThumbnail={downloadedThumbnail} />
-    );
-  };
-
   const renderResult = () => {
     if (error)
       return (
@@ -249,7 +235,7 @@ const ImovieSearchScreen = ({
           // contentInset={{ top: theme.spacing(2), left: 0, right: 0, bottom: theme.spacing(2) }}
           data={item}
           numColumns={3}
-          renderItem={renderItem}
+          renderItem={() => <MovieItem {...item} />}
           keyExtractor={(item) => item.id}
         />
       </React.Fragment>
