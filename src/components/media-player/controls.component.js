@@ -6,7 +6,6 @@ import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ButtonIconDefault from 'components/button-icon-default/button-icon-default.component';
-// import Slider from '@react-native-community/slider';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -22,9 +21,7 @@ import {
 import GoogleCast, { useRemoteMediaClient } from 'react-native-google-cast';
 import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
-// import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import VolumeSlider from './volume-slider.component';
-// import DeviceInfo from 'react-native-device-info';
 import CastOptions from './cast-options.component';
 import { MODULE_TYPES } from 'common/globals';
 
@@ -37,10 +34,8 @@ const VideoControls = ({
   isFirstEpisode,
   isLastEpisode,
   multipleMedia,
-  // setVolume,
   isFullscreen,
   castSessionActive,
-  // updatePlaybackInfoAction,
   setPlaybackInfo,
   ...controlProps
 }) => {
@@ -88,54 +83,20 @@ const VideoControls = ({
     controlProps.setShowControls(true);
   };
 
-  // const handleSlidingStart = () => {
-  //   controlProps.setPaused(true);
-  // };
-
-  // const handleSlidingComplete = async (position) => {
-  //   if (castSessionActive) {
-  //     if (!client) return;
-
-  //     await client.seek({ position });
-  //   }
-
-  //   controlProps.setSliderPosition(position);
-  //   controlProps.setPaused(false);
-  // };
-
-  // const handleVolumeChange = (volume) => {
-  //   setVolume(parseFloat(volume.toFixed(4)));
-  //   // setSavedVolume(parseFloat(v));
-  // };
-
-  const toggleVolume = () => {
-    /// toggle visibility
-    setShowVolume(!showVolume);
-
-    /// toggle value
-    // const { volume } = controlProps;
-    // if (volume > 0) return setVolume(0);
-
-    // return setVolume(savedVolume);
-  };
+  const toggleVolume = () => setShowVolume(!showVolume);
 
   const renderVolumeSlider = () => {
     /// replace thumbimage with a rectangle for easier control
     if (castSessionActive) return;
     if (!showVolume) return;
 
-    return <VolumeSlider isFullscreen={isFullscreen} />;
+    return (
+      <VolumeSlider
+        isFullscreen={isFullscreen}
+        bottomControlHidden={controlProps.moduleType === 'tv'}
+      />
+    );
   };
-
-  // const resolutionOptions = () => {
-  //   const { resolutions } = controlProps;
-
-  //   // if (typeof resolutions === 'undefined') return;
-
-  //   if (controlProps.showVideoOptions) {
-  //     return;
-  //   }
-  // };
 
   const handleVideoQualityButtonPress = () => {
     if (isFullscreen) return setShowFullscreenQualityOptions(!showFullscreenQualityOptions);
@@ -400,17 +361,6 @@ const VideoControls = ({
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{getContentTitle()}</Text>
 
         {renderCastButton()}
-
-        {/* <View style={{ flexDirection: 'row' }}>
-          {castSession && (
-            <ButtonIconDefault iconName="close" iconSize={3} pressAction={handleStopCasting} />
-          )}
-          <ButtonIconDefault
-            iconName={castConnected ? 'cast-connected' : 'cast'}
-            iconSize={3}
-            pressAction={() => controlProps.setShowChromecastOptions(true)}
-          />
-        </View> */}
       </View>
 
       <View
@@ -418,7 +368,6 @@ const VideoControls = ({
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
-          // marginTop: 10,
           position: 'relative',
           zIndex: 100
         }}
@@ -435,7 +384,6 @@ const VideoControls = ({
             borderRadius: 60,
             justifyContent: 'center',
             alignItems: 'center'
-            // backgroundColor: 'red'
           }}
         >
           <React.Fragment>{renderPlayButton()}</React.Fragment>
@@ -460,7 +408,6 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     justifyContent: 'space-between',
     zIndex: 99
-    // backgroundColor: 'red'
   },
   containerStyleFullScreen: {
     width: Dimensions.get('window').height,

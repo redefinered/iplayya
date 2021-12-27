@@ -7,11 +7,11 @@ import DeviceInfo from 'react-native-device-info';
 import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
 import VolumeContext from 'contexts/volume/volume.context';
 
-const VolumeSlider = ({ theme, isFullscreen }) => {
+const VolumeSlider = ({ theme, isFullscreen, bottomControlHidden }) => {
   const { volume, setVolume } = React.useContext(VolumeContext);
 
   const getFullscreenStyle = () => {
-    let WIDTH, TOP_OFFSET;
+    let WIDTH;
 
     const SLIDER_WIDTH = 5;
     const ROTATED_TOP_ZERO = 25 + SLIDER_WIDTH;
@@ -40,16 +40,19 @@ const VolumeSlider = ({ theme, isFullscreen }) => {
       };
     } else {
       WIDTH = Platform.OS === 'ios' ? 100 : 150;
-      TOP_OFFSET = NORMAL_SCREEN_VIDEO_HEIGHT / 2; /// 15 is to nudge the slider a little up ward so it does not ovarlap with the volume button
+      const TOP_OFFSET = NORMAL_SCREEN_VIDEO_HEIGHT / 2; /// 15 is to nudge the slider a little up ward so it does not ovarlap with the volume button
+
+      const BOTTOM_CONTROLS_SPACE = bottomControlHidden ? 10 : -12;
 
       const OG_TOP_OFFSET = ROTATED_TOP_ZERO + TOP_OFFSET - WIDTH / 2;
-      const HACK_OFFSET = OG_TOP_OFFSET + 40; // this is a temporary dix for volume positioning
+      const IOS_TOP_OFFSET = OG_TOP_OFFSET + BOTTOM_CONTROLS_SPACE; /// works in ITV channel
+      const ANDROID_TOP_OFFSET = OG_TOP_OFFSET + 40; // this is a temporary fix for volume positioning
       const OG_LEFT = ROTATED_LEFT_ZERO + V_SLIDER_MARGIN;
-      const HACK_LEFT = OG_LEFT - 20; // this is a temporary dix for volume positioning
+      const HACK_LEFT = OG_LEFT - 20; // this is a temporary fix for volume positioning
 
       return {
         width: WIDTH,
-        top: Platform.OS === 'ios' ? OG_TOP_OFFSET : HACK_OFFSET,
+        top: Platform.OS === 'ios' ? IOS_TOP_OFFSET : ANDROID_TOP_OFFSET,
         left: Platform.OS === 'ios' ? OG_LEFT : HACK_LEFT
       };
     }
@@ -80,7 +83,12 @@ const VolumeSlider = ({ theme, isFullscreen }) => {
 
 VolumeSlider.propTypes = {
   theme: PropTypes.object,
-  isFullscreen: PropTypes.bool
+  isFullscreen: PropTypes.bool,
+  bottomControlHidden: PropTypes.bool
+};
+
+VolumeSlider.defaultProps = {
+  hideBottomControls: false
 };
 
 export default withTheme(VolumeSlider);
