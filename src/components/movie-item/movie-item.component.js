@@ -6,12 +6,14 @@ import { Text } from 'react-native-paper';
 import theme from 'common/theme';
 import { MovieContext } from 'contexts/providers/movie/movie.provider';
 import LinearGradient from 'react-native-linear-gradient';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import axios from 'axios';
 import { OMDB_API_KEY, RAPID_API_KEY } from '@env';
+import { connect } from 'react-redux';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
-const MovieItem = ({ id, title, rating_imdb, is_series, tmdb }) => {
+const MovieItem = ({ id, title, rating_imdb, is_series, tmdb, updateRecentSearchAction }) => {
   let source = axios.CancelToken.source();
 
   const { setSelected } = React.useContext(MovieContext);
@@ -128,6 +130,14 @@ const MovieItem = ({ id, title, rating_imdb, is_series, tmdb }) => {
     }
   };
 
+  const handleSelect = () => {
+    /// set selected var to navigate
+    setSelected({ id, is_series });
+
+    /// the recent searched item is the one selected by user
+    updateRecentSearchAction({ id, title });
+  };
+
   const renderContent = () => {
     const renderRating = (r) => {
       if (!parseFloat(r)) return;
@@ -218,7 +228,7 @@ const MovieItem = ({ id, title, rating_imdb, is_series, tmdb }) => {
   return (
     <TouchableOpacity
       style={{ marginRight: 10, marginBottom: theme.spacing(2) }}
-      onPress={() => setSelected({ id, is_series })}
+      onPress={handleSelect}
     >
       {renderContent()}
     </TouchableOpacity>
@@ -232,7 +242,12 @@ MovieItem.propTypes = {
   is_series: PropTypes.bool.isRequired,
   tmdb: PropTypes.array,
   kinopoisk: PropTypes.array,
-  dlfname: PropTypes.string
+  dlfname: PropTypes.string,
+  updateRecentSearchAction: PropTypes.func
 };
 
-export default MovieItem;
+const actions = {
+  updateRecentSearchAction: Creators.updateRecentSearch
+};
+
+export default connect(null, actions)(MovieItem);

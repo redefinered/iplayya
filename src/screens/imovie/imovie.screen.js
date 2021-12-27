@@ -18,8 +18,7 @@ import {
   selectIsFetching,
   selectMovies,
   selectPaginatorInfo,
-  selectCategoryPaginator,
-  selectThumbnails
+  selectCategoryPaginator
 } from 'modules/ducks/movies/movies.selectors';
 import CategoryScroll from 'components/category-scroll/category-scroll.component';
 import NetInfo from '@react-native-community/netinfo';
@@ -29,7 +28,7 @@ import { downloadPath } from 'utils';
 
 import withNotifRedirect from 'components/with-notif-redirect.component';
 import { MovieContext } from 'contexts/providers/movie/movie.provider';
-import differenceBy from 'lodash/differenceBy';
+// import differenceBy from 'lodash/differenceBy';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
@@ -47,9 +46,9 @@ const ImovieScreen = ({
   movies,
   enableSwipeAction,
   setNetworkInfoAction,
-  getMoviesStartAction,
-  getMovieThumbnailsAction,
-  thumbnails
+  getMoviesStartAction
+  // getMovieThumbnailsAction,
+  // thumbnails
 }) => {
   const { selected, setSelected, downloads, setDownloads } = React.useContext(MovieContext);
 
@@ -311,8 +310,7 @@ const mapStateToProps = createStructuredSelector({
   movies: selectMovies,
   paginatorInfo: selectPaginatorInfo,
   categoryPaginator: selectCategoryPaginator,
-  categories: selectCategoriesOf('movies'),
-  thumbnails: selectThumbnails
+  categories: selectCategoriesOf('movies')
 });
 
 const actions = {

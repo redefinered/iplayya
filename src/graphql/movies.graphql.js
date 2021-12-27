@@ -123,9 +123,17 @@ export const SEARCH = gql`
     videos(input: $input) {
       id
       title
-      is_series
-      thumbnail
       category
+      is_series
+      rating_imdb
+      kinopoisk {
+        api_key
+        api_link
+      }
+      tmdb {
+        api_key
+        api_link
+      }
     }
   }
 `;

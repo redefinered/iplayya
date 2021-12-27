@@ -128,48 +128,48 @@ const ItvSearchScreen = ({
   };
 
   const renderResult = () => {
-    if (results.length)
-      return (
-        <React.Fragment>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
-              <ContentWrap>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white50,
-                    paddingVertical: theme.spacing(2)
-                  }}
-                >
-                  Search Results
-                </Text>
-              </ContentWrap>
-            }
-            ListFooterComponent={renderListLoader()}
-            onScroll={handleScrollAction}
-            data={results}
-            keyExtractor={(item) => item.id}
-            getItemLayout={(data, index) => {
-              return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-            }}
-            renderItem={({ item }) => (
-              <ListItemChanel
-                item={item}
-                full
-                // showepg={false}
-                showFavoriteButton={false}
-                isCatchUpAvailable={false}
-                thumbnail={channelplaceholder}
-                handleItemPress={handleItemPress}
-              />
-            )}
-            // onEndReached={() => handleEndReached()}
-          />
-          <View style={{ height: resultPadding + theme.spacing(5) }} />
-        </React.Fragment>
-      );
+    if (!results.length) return;
+
+    return (
+      <React.Fragment>
+        <FlatList
+          ListHeaderComponent={
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: theme.spacing(2)
+                }}
+              >
+                Search Results
+              </Text>
+            </ContentWrap>
+          }
+          ListFooterComponent={renderListLoader()}
+          onScroll={handleScrollAction}
+          data={results}
+          keyExtractor={(item) => item.id}
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+          renderItem={({ item }) => (
+            <ListItemChanel
+              item={item}
+              full
+              // showepg={false}
+              showFavoriteButton={false}
+              isCatchUpAvailable={false}
+              thumbnail={channelplaceholder}
+              handleItemPress={handleItemPress}
+            />
+          )}
+          // onEndReached={() => handleEndReached()}
+        />
+        <View style={{ height: resultPadding + theme.spacing(5) }} />
+      </React.Fragment>
+    );
   };
 
   const renderRecentSearch = () => {

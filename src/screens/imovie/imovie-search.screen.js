@@ -7,7 +7,7 @@ import {
   ScrollView,
   View,
   FlatList,
-  SectionList,
+  // SectionList,
   Keyboard,
   KeyboardAvoidingView
 } from 'react-native';
@@ -22,6 +22,7 @@ import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -32,8 +33,6 @@ import {
   selectSimilarMovies
 } from 'modules/ducks/movies/movies.selectors';
 import { selectMovieCategories } from 'modules/app';
-import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath } from 'utils';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
 import { selectSearchNorResult } from 'modules/ducks/movies/movies.selectors';
@@ -42,31 +41,34 @@ const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieSearchScreen = ({
   navigation,
-  error,
+  // error,
   noResult,
   searchStartAction,
   searchAction,
   results,
   categories,
   isFetching,
-  updateRecentSearchAction,
   recentSearch,
-  similarMovies,
+  // similarMovies,
   getSimilarMoviesAction,
   getSimilarMoviesStartAction,
-  clearRecentSearchAction
+  clearRecentSearchAction,
+  setBottomTabsVisibleAction,
+  resetSearchResultsPaginatorAction,
+  getMovieStartAction
 }) => {
   const [term, setTerm] = React.useState('');
   const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
-  const [downloads, setDownloads] = React.useState(null);
+  // const [downloads, setDownloads] = React.useState(null);
   const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
+  const [resultPadding, setResultPadding] = React.useState(0);
 
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
     getSimilarMoviesStartAction();
 
-    getDownloadsList();
+    // getDownloadsList();
   }, []);
 
   React.useEffect(() => {
@@ -77,10 +79,10 @@ const ImovieSearchScreen = ({
     setRecents(recentSearch.slice(0, 5));
   }, [recentSearch]);
 
-  const getDownloadsList = async () => {
-    const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
-    setDownloads(downloadsList);
-  };
+  // const getDownloadsList = async () => {
+  //   const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
+  //   setDownloads(downloadsList);
+  // };
 
   const handleChange = (value) => {
     /// hide empty message when typing
@@ -111,12 +113,12 @@ const ImovieSearchScreen = ({
     []
   );
 
-  const handleItemPress = ({ id: videoId, is_series, title, ...rest }) => {
-    console.log({ id: videoId, is_series, title, ...rest });
-    /// the recent searched item is the one selected by user
-    updateRecentSearchAction({ id: videoId, title });
+  const handleItemPress = ({ id: videoId, is_series }) => {
+    /// clear movie to prevent flicker
+    getMovieStartAction();
 
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+
     navigation.navigate('MovieDetailScreen', { videoId });
   };
 
@@ -140,16 +142,16 @@ const ImovieSearchScreen = ({
     }
   }, [results]);
 
-  const DATA = [
-    {
-      title: 'Search Results',
-      data: [results]
-    },
-    {
-      title: 'Similar Movies',
-      data: [similarMovies]
-    }
-  ];
+  // const DATA = [
+  //   {
+  //     title: 'Search Results',
+  //     data: [results]
+  //   },
+  //   {
+  //     title: 'Similar Movies',
+  //     data: [similarMovies]
+  //   }
+  // ];
 
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
   //   console.log({ videoId, is_series });
@@ -165,82 +167,125 @@ const ImovieSearchScreen = ({
     });
   };
 
-  const onSubmitEditing = () => {
-    if (term.length) {
-      // updateRecentSearchAction(term);
-      setTerm(term);
-    } else {
-      return;
-    }
+  // const onSubmitEditing = () => {
+  //   if (term.length) {
+  //     // updateRecentSearchAction(term);
+  //     setTerm(term);
+  //   } else {
+  //     return;
+  //   }
+  // };
+
+  const renderListLoader = () => {
+    if (isFetching)
+      return (
+        <View style={{ paddingTop: 0, paddingBottom: 30 }}>
+          <ActivityIndicator size="small" />
+        </View>
+      );
   };
 
   const renderResult = () => {
-    if (error)
-      return (
-        <Text
-          style={{
-            ...createFontFormat(14, 19),
-            fontWeight: '700',
-            color: theme.iplayya.colors.white50,
-            paddingVertical: theme.spacing(2)
-          }}
-        >
-          Zero result
-        </Text>
-      );
+    if (!results.length) return;
 
-    if (!downloads) return;
-
-    if (results.length)
-      return (
-        <React.Fragment>
-          <SectionList
-            showsVerticalScrollIndicator={false}
-            getItemLayout={(data, index) => ({
-              length: CARD_DIMENSIONS.HEIGHT,
-              offset: CARD_DIMENSIONS.HEIGHT * index,
-              index
-            })}
-            keyExtractor={(item) => item.id}
-            sections={DATA}
-            renderItem={renderSection}
-            renderSectionHeader={({ section }) => (
-              <View>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white80,
-                    paddingVertical: theme.spacing(2)
-                  }}
-                >
-                  {section.title}
-                </Text>
-              </View>
-            )}
-          />
-        </React.Fragment>
-      );
-  };
-
-  const renderSection = ({ item }) => {
     return (
-      <React.Fragment>
+      <ContentWrap>
         <FlatList
+          ListHeaderComponent={
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: theme.spacing(2)
+                }}
+              >
+                Search Results
+              </Text>
+            </ContentWrap>
+          }
+          ListFooterComponent={renderListLoader()}
           getItemLayout={(data, index) => ({
             length: CARD_DIMENSIONS.HEIGHT,
             offset: CARD_DIMENSIONS.HEIGHT * index,
             index
           })}
-          // contentInset={{ top: theme.spacing(2), left: 0, right: 0, bottom: theme.spacing(2) }}
-          data={item}
+          data={results}
           numColumns={3}
-          renderItem={() => <MovieItem {...item} />}
+          renderItem={({ item }) => <MovieItem {...item} handleItemPress={handleItemPress} />}
           keyExtractor={(item) => item.id}
         />
-      </React.Fragment>
+        <View style={{ height: resultPadding + theme.spacing(5) }} />
+      </ContentWrap>
     );
+
+    // if (error)
+    //   return (
+    //     <Text
+    //       style={{
+    //         ...createFontFormat(14, 19),
+    //         fontWeight: '700',
+    //         color: theme.iplayya.colors.white50,
+    //         paddingVertical: theme.spacing(2)
+    //       }}
+    //     >
+    //       Zero result
+    //     </Text>
+    //   );
+
+    // if (!downloads) return;
+
+    // if (results.length)
+    //   return (
+    //     <React.Fragment>
+    //       <SectionList
+    //         showsVerticalScrollIndicator={false}
+    //         getItemLayout={(data, index) => ({
+    //           length: CARD_DIMENSIONS.HEIGHT,
+    //           offset: CARD_DIMENSIONS.HEIGHT * index,
+    //           index
+    //         })}
+    //         keyExtractor={(item) => item.id}
+    //         sections={DATA}
+    //         renderItem={renderSection}
+    //         renderSectionHeader={({ section }) => (
+    //           <View>
+    //             <Text
+    //               style={{
+    //                 ...createFontFormat(14, 19),
+    //                 fontWeight: '700',
+    //                 color: theme.iplayya.colors.white80,
+    //                 paddingVertical: theme.spacing(2)
+    //               }}
+    //             >
+    //               {section.title}
+    //             </Text>
+    //           </View>
+    //         )}
+    //       />
+    //     </React.Fragment>
+    //   );
   };
+
+  // const renderSection = ({ item }) => {
+  //   return (
+  //     <React.Fragment>
+  //       <FlatList
+  //         getItemLayout={(data, index) => ({
+  //           length: CARD_DIMENSIONS.HEIGHT,
+  //           offset: CARD_DIMENSIONS.HEIGHT * index,
+  //           index
+  //         })}
+  //         // contentInset={{ top: theme.spacing(2), left: 0, right: 0, bottom: theme.spacing(2) }}
+  //         data={item}
+  //         numColumns={3}
+  //         renderItem={() => <MovieItem {...item} />}
+  //         keyExtractor={(item) => item.id}
+  //       />
+  //     </React.Fragment>
+  //   );
+  // };
 
   const renderRecentSearch = () => {
     // do not show if there is results
@@ -319,6 +364,10 @@ const ImovieSearchScreen = ({
     }
   };
 
+  const handleSearchbarLayout = ({ nativeEvent: { layout } }) => {
+    setResultPadding(layout.height);
+  };
+
   React.useEffect(() => {
     if (noResult) return setShowEmptyMessage(true);
 
@@ -327,6 +376,16 @@ const ImovieSearchScreen = ({
 
     setShowEmptyMessage(false);
   }, [noResult]);
+
+  const handleSeachFocus = () => {
+    /// resets search result paginator so the result is page 1
+    resetSearchResultsPaginatorAction();
+
+    // reset search state
+    searchStartAction();
+
+    setBottomTabsVisibleAction({ hideTabs: true });
+  };
 
   const renderNoResultText = () => {
     if (!showEmptyResult) return;
@@ -344,12 +403,13 @@ const ImovieSearchScreen = ({
 
   return (
     <KeyboardAvoidingView behavior="padding">
-      <ContentWrap>
+      <ContentWrap onLayout={handleSearchbarLayout}>
         <TextInput
+          onFocus={handleSeachFocus}
+          multiline={false}
           name="search"
           returnKeyType="search"
           autoFocus
-          onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}
           autoCapitalize="none"
@@ -405,9 +465,11 @@ const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
   clearRecentSearchAction: Creators.clearRecentSearch,
-  updateRecentSearchAction: Creators.updateRecentSearch,
   getSimilarMoviesAction: Creators.getSimilarMovies,
-  getSimilarMoviesStartAction: Creators.getSimilarMoviesStart
+  getSimilarMoviesStartAction: Creators.getSimilarMoviesStart,
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
+  getMovieStartAction: Creators.getMovieStart,
+  resetSearchResultsPaginatorAction: Creators.resetSearchResultsPaginator
 };
 
 const mapStateToProps = createStructuredSelector({
