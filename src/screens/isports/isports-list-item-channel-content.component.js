@@ -141,6 +141,7 @@ const Content = ({ theme, item, selected, activateCheckboxes }) => {
         }}
       >
         <Text
+          numberOfLines={1}
           style={{
             ...createFontFormat(12, 16),
             color: theme.iplayya.colors.white80,
