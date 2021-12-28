@@ -56,7 +56,9 @@ const ItvFavoritesScreen = ({
   const [data, setData] = React.useState(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
-  console.log({ data });
+
+  const [noResult, setNoResult] = React.useState(false);
+
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
 
@@ -81,7 +83,13 @@ const ItvFavoritesScreen = ({
   React.useEffect(() => {
     if (searchTerm) {
       const d = favorites.filter(({ title }) => title.toLowerCase().includes(searchTerm));
-      return setData(d);
+
+      if (!d.length) {
+        setNoResult(true);
+      } else {
+        setNoResult(false);
+        return setData(d);
+      }
     }
 
     if (!favorites.length) return setData([]);
@@ -239,6 +247,37 @@ const ItvFavoritesScreen = ({
     }
   };
 
+  const renderContent = () => {
+    if (noResult) {
+      return (
+        <ContentWrap>
+          <Text>NO RESULT</Text>
+        </ContentWrap>
+      );
+    }
+
+    return (
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ListItemChanel
+            full
+            // showepg={false}
+            showFavoriteButton={false}
+            item={item}
+            activateCheckboxes={activateCheckboxes}
+            selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
+            isCatchUpAvailable={false}
+            thumbnail={channelplaceholder}
+            handleItemPress={handleItemPress}
+            handleLongPress={handleLongPress}
+          />
+        )}
+      />
+    );
+  };
+
   if (data && data.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
@@ -281,24 +320,8 @@ const ItvFavoritesScreen = ({
 
         {renderSearchBar()}
 
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ListItemChanel
-              full
-              // showepg={false}
-              showFavoriteButton={false}
-              item={item}
-              activateCheckboxes={activateCheckboxes}
-              selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
-              isCatchUpAvailable={false}
-              thumbnail={channelplaceholder}
-              handleItemPress={handleItemPress}
-              handleLongPress={handleLongPress}
-            />
-          )}
-        />
+        {renderContent()}
+
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
