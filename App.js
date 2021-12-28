@@ -37,7 +37,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { resetStore } from 'modules/store';
 import Test from './test.component.js';
 import { selectNotificationService } from 'modules/ducks/notifications/notifications.selectors.js';
-// import LottieView from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -69,7 +69,6 @@ const App = ({
   setImoviePaginatorInfoAction,
   setImusicPaginatorInfoAction
 }) => {
-  console.log({ isLoading, isLoggedIn });
   const notif = React.useRef(new NotifService(onRegisterAction, onNotifAction));
 
   const [providerError, setProviderError] = React.useState(false);
@@ -77,11 +76,8 @@ const App = ({
   const [isScreenLoad, setIsScreenLoad] = React.useState(true);
 
   React.useEffect(() => {
-    if (isLoading) setIsScreenLoad(true);
-    if (isLoggedIn) return setIsScreenLoad(false);
-
-    setIsScreenLoad(true);
-  }, [isLoading, isLoggedIn]);
+    if (!isLoading) return setIsScreenLoad(false);
+  }, [isLoading]);
 
   React.useEffect(() => {
     /// set the paginator information for imovie screen
@@ -215,6 +211,19 @@ const App = ({
       </View>
     );
 
+  const renderHomeLoader = () => {
+    if (Platform.OS === 'ios')
+      return <Image source={require('./animation.gif')} style={{ width: 200, height: 200 }} />;
+
+    return (
+      <LottieView
+        source={require('./animation.json')}
+        autoPlay
+        loop
+        style={{ width: 200, height: 200 }}
+      />
+    );
+  };
   if (isScreenLoad) {
     return (
       <LinearGradient
@@ -226,7 +235,7 @@ const App = ({
         }}
       >
         <StatusBar barStyle="light-content" />
-        <Image source={require('./animation.gif')} style={{ width: 200, height: 200 }} />
+        {renderHomeLoader()}
       </LinearGradient>
     );
   }
