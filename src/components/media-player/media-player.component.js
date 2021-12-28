@@ -242,9 +242,9 @@ const MediaPlayer = ({
     return setVideoStyle(VIDEO_STYLE);
   }, [fullscreen]);
 
-  React.useEffect(() => {
-    SystemSetting.setVolume(volume, { showUI: false });
-  }, [volume]);
+  // React.useEffect(() => {
+  //   SystemSetting.setVolume(volume, { showUI: false });
+  // }, [volume]);
 
   React.useEffect(() => {
     if (!client) {
@@ -466,7 +466,8 @@ const MediaPlayer = ({
     return (
       <VolumeContext.Provider value={{ volume, setVolume }}>
         <Controls
-          visible={showControls}
+          visible
+          // visible={showControls}
           setShowControls={setShowControls}
           playbackInfo={playbackInfo}
           setPlaybackInfo={setPlaybackInfo}

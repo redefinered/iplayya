@@ -9,16 +9,28 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import axios from 'axios';
 import { OMDB_API_KEY, RAPID_API_KEY } from '@env';
+// import { OMDB_API_KEY, RAPID_API_KEY, KINOPOISK_API_KEY } from '@env';
 import { connect } from 'react-redux';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
-const MovieItem = ({ id, title, rating_imdb, is_series, tmdb, updateRecentSearchAction }) => {
+const MovieItem = ({
+  id,
+  title,
+  rating_imdb,
+  is_series,
+  tmdb,
+  // kinopoisk,
+  updateRecentSearchAction
+}) => {
   let source = axios.CancelToken.source();
 
   const { setSelected } = React.useContext(MovieContext);
 
   const [thumbnail, setThumbnail] = React.useState(null);
+
+  /// last resort is make this true to fetch poster from kino
+  // const [fetchKino, setFetchKino] = React.useState(false);
 
   // eslint-disable-next-line no-unused-vars
   const [imgGetErrorOmdb, setImgGetErrorOmdb] = React.useState(false); /// we can use this error to call the next priority image source
@@ -31,7 +43,24 @@ const MovieItem = ({ id, title, rating_imdb, is_series, tmdb, updateRecentSearch
     return () => source.cancel();
   }, []);
 
-  const getThumbnailFromOmdb = async (imdbid = null) => {
+  // React.useEffect(() => {
+  //   if (fetchKino)
+  // }, [fetchKino])
+
+  /// last option
+  // const getPosterFromKinopoisk = async (url) => {
+  //   try {
+  //     const { data } = await axios.get(url, {
+  //       cancelToken: source.token,
+  //       headers: { 'X-API-KEY': KINOPOISK_API_KEY }
+  //     });
+  //     return data;
+  //   } catch (error) {
+  //     throw new Error(error);
+  //   }
+  // };
+
+  const getThumbnailFromOmdb = async ({ imdbid = null, title }) => {
     // stop if movie already has a thumbnail
     if (thumbnail) return;
 
@@ -43,10 +72,22 @@ const MovieItem = ({ id, title, rating_imdb, is_series, tmdb, updateRecentSearch
       /// fetch the data
       const { data } = await axios.get(url, { cancelToken: source.token });
 
-      // console.log({ data });
       const { Poster: poster } = data;
 
-      // if (!poster) throw new Error('alaws thumbnail sorry reps');
+      /// get from kinopoisk as last option
+      // if (poster === 'N/A') {
+      //   console.log({ poster });
+      //   console.log('fetching from kinopoisk...');
+      //   // if no kinopoisk data set thumbnail to null
+      //   if (!kinopoisk) return setThumbnail(null);
+
+      //   const { posterUrl } = await getPosterFromKinopoisk(kinopoisk[0].api_link);
+
+      //   // if no posterUrl set thumbnail to null
+      //   if (!posterUrl) return setThumbnail(null);
+
+      //   return setThumbnail(posterUrl);
+      // }
 
       return poster;
     } catch (error) {
@@ -108,6 +149,14 @@ const MovieItem = ({ id, title, rating_imdb, is_series, tmdb, updateRecentSearch
         const { data } = await axios.get(API_URL, { cancelToken: source.token });
 
         const { poster_path } = data;
+
+        if (!poster_path) {
+          // return setThumbnail(null);
+
+          const posterFromOmdb = await getThumbnailFromOmdb(title);
+          return setThumbnail(posterFromOmdb);
+        }
+
         const thumbnailUrl = `https://image.tmdb.org/t/p/w200/${poster_path}`;
 
         // set state thumbnail
@@ -115,11 +164,11 @@ const MovieItem = ({ id, title, rating_imdb, is_series, tmdb, updateRecentSearch
       }
 
       // for items that has no TMDB data try getting info from IMDB unofficial api
-      const { id: imdbId, poster } = await getMovieDataFromImdbOfficial(title);
+      const { id, poster } = await getMovieDataFromImdbOfficial(title);
 
       if (!poster && id) {
         /// for items without poster but has imdbid, try getting thumbnail frim OMDB using imdbid
-        const posterFromOmdb = await getThumbnailFromOmdb(imdbId);
+        const posterFromOmdb = await getThumbnailFromOmdb(id);
         return setThumbnail(posterFromOmdb);
       }
 
@@ -216,10 +265,10 @@ const MovieItem = ({ id, title, rating_imdb, is_series, tmdb, updateRecentSearch
             paddingTop: theme.spacing(2)
           }}
         >
-          {renderRating(rating_imdb)}
-          <Text numberOfLines={2} style={{ fontSize: 12 }}>
+          <Text numberOfLines={2} style={{ fontSize: 12, marginBottom: theme.spacing(1) }}>
             {title}
           </Text>
+          {renderRating(rating_imdb)}
         </View>
       </View>
     );

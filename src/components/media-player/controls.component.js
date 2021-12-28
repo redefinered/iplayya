@@ -453,4 +453,4 @@ const actions = {
   updatePlaybackInfoAction: Creators.updatePlaybackInfo
 };
 
-export default compose(connect(mapStateToProps, actions), withTheme)(VideoControls);
+export default compose(connect(mapStateToProps, actions), withTheme)(React.memo(VideoControls));

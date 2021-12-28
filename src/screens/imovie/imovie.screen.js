@@ -241,17 +241,37 @@ const ImovieScreen = ({
     if (!isFetching) return;
 
     return (
-      <View
-        style={{
-          width: CARD_DIMENSIONS.WIDTH,
-          height: CARD_DIMENSIONS.HEIGHT,
-          backgroundColor: brand.white10,
-          borderRadius: 8,
-          justifyContent: 'center',
-          marginLeft: theme.spacing(2)
-        }}
-      >
-        <ActivityIndicator />
+      <View style={{ flexDirection: 'row' }}>
+        <View
+          style={{
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
+            backgroundColor: brand.white10,
+            borderRadius: 8,
+            justifyContent: 'center',
+            marginLeft: theme.spacing(2)
+          }}
+        />
+        <View
+          style={{
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
+            backgroundColor: brand.white10,
+            borderRadius: 8,
+            justifyContent: 'center',
+            marginLeft: theme.spacing(2)
+          }}
+        />
+        <View
+          style={{
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
+            backgroundColor: brand.white10,
+            borderRadius: 8,
+            justifyContent: 'center',
+            marginLeft: theme.spacing(2)
+          }}
+        />
       </View>
     );
   };
