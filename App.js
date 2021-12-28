@@ -69,7 +69,6 @@ const App = ({
   setImoviePaginatorInfoAction,
   setImusicPaginatorInfoAction
 }) => {
-  console.log({ isLoading, isLoggedIn });
   const notif = React.useRef(new NotifService(onRegisterAction, onNotifAction));
 
   const [providerError, setProviderError] = React.useState(false);
@@ -77,11 +76,8 @@ const App = ({
   const [isScreenLoad, setIsScreenLoad] = React.useState(true);
 
   React.useEffect(() => {
-    if (isLoading) setIsScreenLoad(true);
-    if (isLoggedIn) return setIsScreenLoad(false);
-
-    setIsScreenLoad(true);
-  }, [isLoading, isLoggedIn]);
+    if (!isLoading) return setIsScreenLoad(false);
+  }, [isLoading]);
 
   React.useEffect(() => {
     /// set the paginator information for imovie screen
