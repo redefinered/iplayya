@@ -22,8 +22,7 @@ const Home = ({
   completedOnboarding,
   setBottomTabsVisibleAction,
   getMoviesStartAction,
-  resetCategoryPaginatorAction,
-  enableSwipeAction
+  resetCategoryPaginatorAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
