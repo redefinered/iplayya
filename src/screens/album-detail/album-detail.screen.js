@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import { StyleSheet, View, Image, FlatList } from 'react-native';
+import { StyleSheet, View, Image, FlatList, InteractionManager } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Button from 'components/button/button.component';
 import ScreenContainer from 'components/screen-container.component';
@@ -15,6 +15,7 @@ import MoreButton from 'components/button-more/more-button.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
+import { Creators as AppActionCreators } from 'modules/app';
 import { Creators as RadioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as FavoritesCreators } from 'modules/ducks/imusic-favorites/imusic-favorites.actions';
 import { Creators as DownloadsCreators } from 'modules/ducks/imusic-downloads/imusic-downloads.actions';
@@ -31,6 +32,8 @@ import { selectUpdated } from 'modules/ducks/imusic-favorites/imusic-favorites.s
 import { selectDownloadStarted } from 'modules/ducks/imusic-downloads/imusic-downloads.selectors';
 import theme from 'common/theme';
 import withNotifRedirect from 'components/with-notif-redirect.component';
+import { useIsFocused } from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
 
 const coverplaceholder = require('assets/imusic-placeholder.png');
 
@@ -72,8 +75,12 @@ const AlbumDetail = ({
   getAlbumDetailsAction,
   downloadStarted,
   downloadsStartAction,
-  setRadioNowPlaying
+  setRadioNowPlaying,
+  switchInAlbumDetailScreenAction,
+  setNetworkInfoAction
 }) => {
+  const isFocused = useIsFocused();
+
   const { albumId } = route.params;
   const [showSnackbar, setShowSnackbar] = React.useState(false);
   const [showActionSheet, setShowActionSheet] = React.useState(false);
@@ -84,15 +91,39 @@ const AlbumDetail = ({
   // console.log({ shuffleButtonLayout });
 
   React.useEffect(() => {
-    downloadsStartAction();
+    InteractionManager.runAfterInteractions(() => {
+      downloadsStartAction();
 
-    getAlbumDetailsAction(albumId);
+      getAlbumDetailsAction(albumId);
 
-    /// clean up
-    // return () => {
-    //   getAlbumDetailsStartAction();
-    // };
+      /// clean up
+      // return () => {
+      //   getAlbumDetailsStartAction();
+      // };
+    });
   }, []);
+
+  React.useEffect(() => {
+    // Subscribe to network changes
+    const unsubscribe = NetInfo.addEventListener(({ type, isConnected }) => {
+      setNetworkInfoAction({ type, isConnected });
+    });
+
+    // Unsubscribe
+    return () => {
+      unsubscribe();
+
+      switchInAlbumDetailScreenAction(false);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      switchInAlbumDetailScreenAction(true);
+    } else {
+      switchInAlbumDetailScreenAction(false);
+    }
+  }, [isFocused]);
 
   React.useEffect(() => {
     if (!album) return;
@@ -384,7 +415,9 @@ const actions = {
   addTrackToFavoritesAction: FavoritesCreators.addTrackToFavorites,
   addAlbumToFavoritesStartAction: FavoritesCreators.addAlbumToFavoritesStart,
   downloadsStartAction: DownloadsCreators.downloadStart,
-  setRadioNowPlaying: RadioCreators.setNowPlaying
+  setRadioNowPlaying: RadioCreators.setNowPlaying,
+  switchInAlbumDetailScreenAction: Creators.switchInAlbumDetailScreen,
+  setNetworkInfoAction: AppActionCreators.setNetworkInfo
 };
 
 const mapStateToProps = createStructuredSelector({
