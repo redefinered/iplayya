@@ -37,7 +37,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { resetStore } from 'modules/store';
 import Test from './test.component.js';
 import { selectNotificationService } from 'modules/ducks/notifications/notifications.selectors.js';
-// import LottieView from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -211,6 +211,19 @@ const App = ({
       </View>
     );
 
+  const renderHomeLoader = () => {
+    if (Platform.OS === 'ios')
+      return <Image source={require('./animation.gif')} style={{ width: 200, height: 200 }} />;
+
+    return (
+      <LottieView
+        source={require('./animation.json')}
+        autoPlay
+        loop
+        style={{ width: 200, height: 200 }}
+      />
+    );
+  };
   if (isScreenLoad) {
     return (
       <LinearGradient
@@ -222,7 +235,7 @@ const App = ({
         }}
       >
         <StatusBar barStyle="light-content" />
-        <Image source={require('./animation.gif')} style={{ width: 200, height: 200 }} />
+        {renderHomeLoader()}
       </LinearGradient>
     );
   }
