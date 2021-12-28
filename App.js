@@ -4,7 +4,6 @@ import 'react-native-gesture-handler';
 
 import React from 'react';
 import { View, Linking, Platform, StatusBar, StyleSheet, Image } from 'react-native';
-// import { ActivityIndicator } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
@@ -224,21 +223,6 @@ const App = ({
       />
     );
   };
-  if (isScreenLoad) {
-    return (
-      <LinearGradient
-        colors={['#2D1449', '#0D0637']}
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          ...StyleSheet.absoluteFillObject
-        }}
-      >
-        <StatusBar barStyle="light-content" />
-        {renderHomeLoader()}
-      </LinearGradient>
-    );
-  }
 
   if (testMode) return <Test />;
 
@@ -261,6 +245,23 @@ const App = ({
       <NavigationContainer>
         <IptvStack />
       </NavigationContainer>
+    );
+  }
+
+  if (isScreenLoad) {
+    return (
+      <LinearGradient
+        colors={['#2D1449', '#0D0637']}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          ...StyleSheet.absoluteFillObject
+        }}
+      >
+        <StatusBar barStyle="light-content" />
+        {renderHomeLoader()}
+      </LinearGradient>
     );
   }
 
@@ -288,7 +289,6 @@ const actions = {
   updatePasswordStartAction: PasswordActionCreators.updateStart,
   resetNowPlayingAction: ImusicCreators.resetNowPlaying,
   setProviderAction: AppCreators.setProvider,
-  // getProfileAction: ProfileCreators.get,
   setNotificationServiceAction: NotifCreators.setNotificationService,
   onRegisterAction: NotifCreators.onRegister,
   onNotifAction: NotifCreators.onNotif,
