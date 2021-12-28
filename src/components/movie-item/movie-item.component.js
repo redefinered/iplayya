@@ -1,231 +1,275 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, TouchableOpacity, StyleSheet, InteractionManager } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { Image, View, TouchableOpacity } from 'react-native';
+import Icon from 'components/icon/icon.component';
+import { Text } from 'react-native-paper';
 import theme from 'common/theme';
+import { MovieContext } from 'contexts/providers/movie/movie.provider';
+import LinearGradient from 'react-native-linear-gradient';
+import { Creators } from 'modules/ducks/movies/movies.actions';
 import axios from 'axios';
-import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath } from 'utils';
-import { db } from 'firebase/firebase.client';
 import { OMDB_API_KEY, RAPID_API_KEY } from '@env';
+// import { OMDB_API_KEY, RAPID_API_KEY, KINOPOISK_API_KEY } from '@env';
+import { connect } from 'react-redux';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
-const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
-  const imdbIdCollection = React.useRef(db.collection('imdb-thumbnails'));
-  const { id, is_series, title, tmdb, kinopoisk } = item;
+const MovieItem = ({
+  id,
+  title,
+  rating_imdb,
+  is_series,
+  tmdb,
+  // kinopoisk,
+  updateRecentSearchAction
+}) => {
+  let source = axios.CancelToken.source();
+
+  const { setSelected } = React.useContext(MovieContext);
 
   const [thumbnail, setThumbnail] = React.useState(null);
-  const [imgGetError, setImgGetError] = React.useState(false);
-  const [imgLoaded, setImgLoaded] = React.useState(false);
+
+  /// last resort is make this true to fetch poster from kino
+  // const [fetchKino, setFetchKino] = React.useState(false);
 
   // eslint-disable-next-line no-unused-vars
   const [imgGetErrorOmdb, setImgGetErrorOmdb] = React.useState(false); /// we can use this error to call the next priority image source
 
   React.useEffect(() => {
-    InteractionManager.runAfterInteractions(() => {
-      getThumbnail();
-
-      recordImbdId();
-    });
-  }, []);
+    getThumbnail();
+  });
 
   React.useEffect(() => {
-    if (imgGetError) {
-      /// try omdb if kino
-      getImageFromOmdb();
-    }
-  }, [imgGetError]);
+    return () => source.cancel();
+  }, []);
 
-  const getImageFromOmdb = async (imdbid = null) => {
+  // React.useEffect(() => {
+  //   if (fetchKino)
+  // }, [fetchKino])
+
+  /// last option
+  // const getPosterFromKinopoisk = async (url) => {
+  //   try {
+  //     const { data } = await axios.get(url, {
+  //       cancelToken: source.token,
+  //       headers: { 'X-API-KEY': KINOPOISK_API_KEY }
+  //     });
+  //     return data;
+  //   } catch (error) {
+  //     throw new Error(error);
+  //   }
+  // };
+
+  const getThumbnailFromOmdb = async ({ imdbid = null, title }) => {
     // stop if movie already has a thumbnail
     if (thumbnail) return;
 
     const url = imdbid
       ? `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${imdbid}`
-      : `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&t=${item.title}`;
+      : `http://www.omdbapi.com/?apikey=${OMDB_API_KEY}&t=${title}`;
 
     try {
       /// fetch the data
-      const { data } = await axios.get(url);
+      const { data } = await axios.get(url, { cancelToken: source.token });
 
       const { Poster: poster } = data;
 
-      // if (!poster) throw new Error('alaws thumbnail sorry reps');
+      /// get from kinopoisk as last option
+      // if (poster === 'N/A') {
+      //   console.log({ poster });
+      //   console.log('fetching from kinopoisk...');
+      //   // if no kinopoisk data set thumbnail to null
+      //   if (!kinopoisk) return setThumbnail(null);
 
-      setThumbnail(poster);
+      //   const { posterUrl } = await getPosterFromKinopoisk(kinopoisk[0].api_link);
 
-      /// put back image fetch error to false if this finds an image
-      setImgGetError(false);
+      //   // if no posterUrl set thumbnail to null
+      //   if (!posterUrl) return setThumbnail(null);
+
+      //   return setThumbnail(posterUrl);
+      // }
+
+      return poster;
     } catch (error) {
-      console.log(`omdb error for "${item.title}" ->`, { error });
-
-      setImgGetErrorOmdb(true);
+      throw new Error(error);
     }
   };
 
-  // records imdb id of a movie to firebase
-  const saveImdbDetails = async ({ t, imdbid }) => {
+  const getMovieDataFromImdbOfficial = async (title) => {
     try {
-      const data = {
-        imdbid,
-        t
-      };
+      const cleanTitle = title.replace(/\.|#/g, '');
 
-      await db.collection('imdb-thumbnails').doc(item.id).set(data);
-    } catch (error) {
-      console.log(`firestore error: ${error.message}`);
-    }
-  };
-
-  const recordImbdId = async () => {
-    // stop if movie already has a thumbnail
-    if (thumbnail) return;
-
-    /// searches imdb-unofficial for item title then saves imdb id to firebase
-    try {
-      const cleanTitle = item.title.replace(/\.|#/g, ''); // removes dots and #-signs for better performance with imdb-unofficial
-      // console.log({ cleanTitle });
-      const c = {
+      const { data } = await axios({
         method: 'get',
-        url: `https://imdb-internet-movie-database-unofficial.p.rapidapi.com/search/${cleanTitle}`,
+        url: `https://imdb-internet-movie-database-unofficial.p.rapidapi.com/film/${cleanTitle}`,
         headers: {
           'x-rapidapi-host': 'imdb-internet-movie-database-unofficial.p.rapidapi.com',
           'x-rapidapi-key': RAPID_API_KEY
-        }
-      };
-      const { data } = await axios(c);
-      const { titles } = data;
-
-      // stop if no result
-      if (typeof titles === 'undefined') return;
-      if (!titles.length) return;
-
-      /// save imdb id in firestore for future referrence
-      return saveImdbDetails({ t: item.title, imdbid: titles[0].id });
+        },
+        cancelToken: source.token
+      });
+      return data;
     } catch (error) {
-      // console.log({ id: item.id, title: item.title });
-      await db.collection('no-imdb-search-result').doc(item.id).set({ t: item.title });
-      console.log(`imdbx error: ${error.message}`);
+      throw new Error(error);
     }
   };
 
-  const downloadThumbnail = async (src) => {
-    return await RNFetchBlob.config({
-      fileCache: true,
-      path: `${downloadPath}/mt_${id}_.jpg`
-    }).fetch('GET', src);
-  };
-
+  /**
+   * sets thumbnail in the following priority of sources
+   * 1. tmdb
+   * 2. imdb-unofficial API
+   * 3. omdb
+   * ** download thumbnail will be implemented later
+   * @returns void
+   */
   const getThumbnail = async () => {
     // stop if movie already has a thumbnail
     if (thumbnail) return;
 
+    /// implement download later
+    // const isDownloaded = isMovieDownloaded(
+    //   { id, title, rating_imdb, is_series, tmdb, kinopoisk, dlfname },
+    //   downloads
+    // );
     /// get thumbnail from local filesystem
-    if (downloadedThumbnail) return setThumbnail(`${downloadPath}/${downloadedThumbnail}`);
+    // if (isDownloaded) return setThumbnail(`${downloadPath}/${dlfname}`);
 
-    /// if not in fs get from tmdb
-    if (tmdb) {
-      try {
+    // if not in fs get from tmdb
+    try {
+      if (tmdb) {
+        let API_URL = null;
         const { api_link } = tmdb[0];
-        const { data } = await axios.get(api_link);
+
+        if (is_series) {
+          API_URL = api_link.replace(/\/movie/, '/tv');
+        } else {
+          API_URL = api_link;
+        }
+
+        const { data } = await axios.get(API_URL, { cancelToken: source.token });
 
         const { poster_path } = data;
+
+        if (!poster_path) {
+          // return setThumbnail(null);
+
+          const posterFromOmdb = await getThumbnailFromOmdb(title);
+          return setThumbnail(posterFromOmdb);
+        }
+
         const thumbnailUrl = `https://image.tmdb.org/t/p/w200/${poster_path}`;
 
         // set state thumbnail
-        setThumbnail(thumbnailUrl);
-
-        /// download the image so next time this movies is displayed it's faster
-        return downloadThumbnail(thumbnailUrl);
-      } catch (error) {
-        setImgGetError(true);
-        // console.log(`tmdb error for "${item.title}" ->`, { error: error.toJSON().message });
+        return setThumbnail(thumbnailUrl);
       }
-    }
 
-    const docRef = imdbIdCollection.current.doc(item.id);
-    const snapshot = await docRef.get();
+      // for items that has no TMDB data try getting info from IMDB unofficial api
+      const { id, poster } = await getMovieDataFromImdbOfficial(title);
 
-    if (snapshot) {
-      /// if document exists basing from this item's ID
-      const d = snapshot.data();
-      if (d) return getImageFromOmdb(d.imdbid);
-    }
-
-    // console.log({ data: snapshot.data() });
-    /// if not in tmbd get from kinopoisk
-    if (kinopoisk) {
-      try {
-        const { api_link, api_key } = kinopoisk[0];
-        const { data } = await axios({
-          method: 'get',
-          url: api_link,
-          headers: { 'X-API-KEY': api_key }
-        });
-
-        const { posterUrl } = data;
-
-        // set state thumbnail
-        setThumbnail(posterUrl);
-
-        /// download the image so next time this movies is displayed it's faster
-        return downloadThumbnail(posterUrl);
-      } catch (error) {
-        setImgGetError(true);
-        // console.log(`kinopoisk error for "${item.title}" ->`, { error: error.toJSON().message });
+      if (!poster && id) {
+        /// for items without poster but has imdbid, try getting thumbnail frim OMDB using imdbid
+        const posterFromOmdb = await getThumbnailFromOmdb(id);
+        return setThumbnail(posterFromOmdb);
       }
+
+      return setThumbnail(poster);
+    } catch (error) {
+      console.log(`image fetch error: ${error.message}`);
+      // setThumbnailFetchError(true);
     }
   };
 
-  const renderImageLoader = () => {
-    if (imgLoaded) return;
+  const handleSelect = () => {
+    /// set selected var to navigate
+    setSelected({ id, is_series });
 
-    return <ActivityIndicator />;
+    /// the recent searched item is the one selected by user
+    updateRecentSearchAction({ id, title });
   };
 
   const renderContent = () => {
-    // console.log(`title: ${item.title}, thumbnail: ${thumbnail}`);
-    if (!thumbnail) {
+    const renderRating = (r) => {
+      if (!parseFloat(r)) return;
+
       return (
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', marginBottom: theme.spacing(1) }}
+        >
+          <Icon name="star" size={20} color="#FEC92E" style={{ marginRight: 3 }} />
+          <Text style={{ fontSize: 12 }}>{parseFloat(r).toFixed(1)}</Text>
+        </View>
+      );
+    };
+
+    const renderThumnail = () => {
+      if (!thumbnail)
+        return (
+          <LinearGradient
+            colors={['#2C1449', '#0E0638']}
+            style={{
+              width: CARD_DIMENSIONS.WIDTH,
+              height: CARD_DIMENSIONS.HEIGHT,
+              borderRadius: 8,
+              marginRight: 10,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Image source={require('assets/movie-thumbnail-placeholder.png')} />
+          </LinearGradient>
+        );
+
+      return (
+        <View
+          style={{
+            width: CARD_DIMENSIONS.WIDTH,
+            height: CARD_DIMENSIONS.HEIGHT,
+            borderRadius: 8,
+            marginRight: 10,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Image
+            // onLoadStart={() => setLoadingThumbnail(true)}
+            // onLoadEnd={() => setLoadingThumbnail(false)}
+            style={{
+              width: CARD_DIMENSIONS.WIDTH,
+              height: CARD_DIMENSIONS.HEIGHT,
+              borderRadius: 8
+            }}
+            source={{ uri: thumbnail }}
+          />
+        </View>
+      );
+    };
+
+    return (
+      <View>
         <View
           style={{
             width: CARD_DIMENSIONS.WIDTH,
             height: CARD_DIMENSIONS.HEIGHT,
             backgroundColor: theme.iplayya.colors.white10,
             borderRadius: 8,
-            padding: theme.spacing(1)
+            justifyContent: 'center',
+            position: 'relative'
           }}
         >
-          <Text style={{ fontSize: 16, color: theme.iplayya.colors.vibrantpussy }}>{title}</Text>
+          {renderThumnail()}
         </View>
-      );
-    }
 
-    return (
-      <View
-        style={{
-          width: CARD_DIMENSIONS.WIDTH,
-          height: CARD_DIMENSIONS.HEIGHT,
-          backgroundColor: theme.iplayya.colors.white10,
-          borderRadius: 8,
-          justifyContent: 'center',
-          position: 'relative'
-        }}
-      >
-        {renderImageLoader()}
-        <Image
-          // onLoad={() => setImgLoaded(true)}
-          onLoadStart={() => setImgLoaded(false)}
-          onLoadEnd={() => setImgLoaded(true)}
+        <View
           style={{
             width: CARD_DIMENSIONS.WIDTH,
-            height: CARD_DIMENSIONS.HEIGHT,
-            borderRadius: 8,
-            ...StyleSheet.absoluteFillObject
+            paddingTop: theme.spacing(2)
           }}
-          source={{ uri: thumbnail }}
-        />
+        >
+          <Text numberOfLines={2} style={{ fontSize: 12, marginBottom: theme.spacing(1) }}>
+            {title}
+          </Text>
+          {renderRating(rating_imdb)}
+        </View>
       </View>
     );
   };
@@ -233,7 +277,7 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
   return (
     <TouchableOpacity
       style={{ marginRight: 10, marginBottom: theme.spacing(2) }}
-      onPress={() => onSelect({ id, is_series })}
+      onPress={handleSelect}
     >
       {renderContent()}
     </TouchableOpacity>
@@ -241,9 +285,18 @@ const MovieItem = ({ item, onSelect, downloadedThumbnail }) => {
 };
 
 MovieItem.propTypes = {
-  item: PropTypes.object,
-  onSelect: PropTypes.func,
-  downloadedThumbnail: PropTypes.string
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  rating_imdb: PropTypes.string.isRequired,
+  is_series: PropTypes.bool.isRequired,
+  tmdb: PropTypes.array,
+  kinopoisk: PropTypes.array,
+  dlfname: PropTypes.string,
+  updateRecentSearchAction: PropTypes.func
 };
 
-export default MovieItem;
+const actions = {
+  updateRecentSearchAction: Creators.updateRecentSearch
+};
+
+export default connect(null, actions)(MovieItem);

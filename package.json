@@ -44,6 +44,8 @@
     "appcenter-crashes": "4.0.2",
     "axios": "^0.20.0",
     "graphql": "^15.4.0",
+    "lottie-ios": "3.2.3",
+    "lottie-react-native": "4.0.3",
     "moment": "^2.29.1",
     "react": "16.13.1",
     "react-airplay": "^1.1.0",

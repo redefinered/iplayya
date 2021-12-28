@@ -10,18 +10,12 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import { connect } from 'react-redux';
 
-const CategoryScroll = ({
-  category,
-  movies: { videos },
-  onSelect,
-  paginatorOfCategory,
-  downloads
-}) => {
+const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCategory }) => {
   if (typeof videos === 'undefined' || videos.length === 0) return <View />;
-  let movies = videos.map(({ thumbnail, ...rest }) => {
+  let movies = videos.map(({ thumbnail, ...otherProps }) => {
     return {
       thumbnail: thumbnail === '' || thumbnail === 'N/A' ? null : thumbnail,
-      ...rest
+      ...otherProps
     };
   });
 
@@ -35,7 +29,6 @@ const CategoryScroll = ({
         data={movies}
         onSelect={onSelect}
         paginatorOfCategory={paginatorOfCategory}
-        downloads={downloads}
       />
     </View>
   );
@@ -46,7 +39,6 @@ CategoryScroll.propTypes = {
   movies: PropTypes.object,
   onSelect: PropTypes.func,
   category: PropTypes.string,
-  downloads: PropTypes.array,
   paginatorOfCategory: PropTypes.object
 };
 

@@ -22,7 +22,6 @@ const ItvPlayer = ({
   setFullscreen,
   currentProgram
 }) => {
-  // console.log({ currentProgram });
   const [isFirstChannel, setIsFirstChannel] = React.useState(false);
   const [isLastChannel, setIsLastChannel] = React.useState(false);
 

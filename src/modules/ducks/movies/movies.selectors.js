@@ -209,3 +209,7 @@ export const selectFavoritesPaginator = createSelector(
 );
 
 export const selectIsSearching = createSelector([moviesState], ({ isSearching }) => isSearching);
+export const selectSearchNorResult = createSelector(
+  [moviesState],
+  ({ searchNoResult }) => searchNoResult
+);

@@ -49,7 +49,14 @@ export function* getMoviesRequest(action) {
     const filtered = videos.filter(({ videoByCategory }) => videoByCategory.length > 0);
 
     const movies = filtered.map(({ videoByCategory }) => {
-      return { category: videoByCategory[0].category, videos: videoByCategory };
+      return {
+        category: videoByCategory[0].category,
+        videos: videoByCategory.map(({ id, ...rest }) => ({
+          id,
+          dlfname: `mt_${id}_.jpg`,
+          ...rest
+        }))
+      };
     });
 
     /// increment paginator with every successful request
@@ -73,7 +80,16 @@ export function* getMoviesByCategoriesRequest(action) {
     const { videoByCategory: newMovies } = yield call(getMoviesByCategories, {
       input: nextPageInput
     });
-    yield put(Creators.getMoviesByCategoriesSuccess({ newMovies, nextPaginator: nextPageInput }));
+    yield put(
+      Creators.getMoviesByCategoriesSuccess({
+        newMovies: newMovies.map(({ id, ...rest }) => ({
+          id,
+          dlfname: `mt_${id}_.jpg`,
+          ...rest
+        })),
+        nextPaginator: nextPageInput
+      })
+    );
   } catch (error) {
     yield put(Creators.getMoviesByCategoriesFailure(error.message));
   }
@@ -92,8 +108,7 @@ export function* getFavoriteMoviesRequest(action) {
 export function* removeFromFavoritesRequest(action) {
   const { videoIds } = action;
   try {
-    const response = yield all(videoIds.map((id) => call(removeFromFavorites, { videoId: id })));
-    console.log({ response });
+    yield all(videoIds.map((id) => call(removeFromFavorites, { videoId: id })));
     yield put(Creators.removeFromFavoritesSuccess());
   } catch (error) {
     yield put(Creators.removeFromFavoritesFailure(error.message));
@@ -103,6 +118,9 @@ export function* removeFromFavoritesRequest(action) {
 export function* searchRequest(action) {
   try {
     const { videos: results } = yield call(search, action.input);
+
+    if (!results.length) throw new Error('Empty result');
+
     yield put(Creators.searchSuccess(results));
   } catch (error) {
     yield put(Creators.searchFailure(error.message));
@@ -112,7 +130,6 @@ export function* searchRequest(action) {
 export function* getSimilarMoviesRequest(action) {
   try {
     const { videoByCategory: results } = yield call(getMoviesByCategories, { input: action.input });
-    console.log({ results });
     yield put(Creators.getSimilarMoviesSuccess(results));
   } catch (error) {
     yield put(Creators.getSimilarMoviesFailure(error.message));

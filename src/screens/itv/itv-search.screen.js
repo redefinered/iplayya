@@ -128,54 +128,51 @@ const ItvSearchScreen = ({
   };
 
   const renderResult = () => {
-    if (results.length)
-      return (
-        <React.Fragment>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
-              <ContentWrap>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white50,
-                    paddingVertical: theme.spacing(2)
-                  }}
-                >
-                  Search Results
-                </Text>
-              </ContentWrap>
-            }
-            ListFooterComponent={renderListLoader()}
-            onScroll={handleScrollAction}
-            data={results}
-            keyExtractor={(item) => item.id}
-            getItemLayout={(data, index) => {
-              return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-            }}
-            renderItem={({ item }) => (
-              <ListItemChanel
-                item={item}
-                full
-                showepg={false}
-                showFavoriteButton={false}
-                isCatchUpAvailable={false}
-                thumbnail={channelplaceholder}
-                handleItemPress={handleItemPress}
-              />
-            )}
-            // onEndReached={() => handleEndReached()}
-          />
-          <View style={{ height: resultPadding + theme.spacing(5) }} />
-        </React.Fragment>
-      );
+    if (!results.length) return;
+
+    return (
+      <React.Fragment>
+        <FlatList
+          ListHeaderComponent={
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: theme.spacing(2)
+                }}
+              >
+                Search Results
+              </Text>
+            </ContentWrap>
+          }
+          ListFooterComponent={renderListLoader()}
+          onScroll={handleScrollAction}
+          data={results}
+          keyExtractor={(item) => item.id}
+          getItemLayout={(data, index) => {
+            return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
+          }}
+          renderItem={({ item }) => (
+            <ListItemChanel
+              item={item}
+              full
+              // showepg={false}
+              showFavoriteButton={false}
+              isCatchUpAvailable={false}
+              thumbnail={channelplaceholder}
+              handleItemPress={handleItemPress}
+            />
+          )}
+          // onEndReached={() => handleEndReached()}
+        />
+        <View style={{ height: resultPadding + theme.spacing(5) }} />
+      </React.Fragment>
+    );
   };
 
   const renderRecentSearch = () => {
-    /// do not show if searchbar is not in use
-    // if (!isSearching) return;
-
     // do not show if there is results
     if (results.length) return;
 
@@ -205,6 +202,7 @@ const ItvSearchScreen = ({
             <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
           </Pressable>
         </View>
+
         {recents.map(({ id, title }, index) => (
           <TouchableRipple key={index} onPress={() => handleItemPress({ id, title })}>
             <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
@@ -236,19 +234,15 @@ const ItvSearchScreen = ({
                 Suggested Search
               </Text>
             </ContentWrap>
-            <View>
+            <ContentWrap>
               {genres.map(({ id, title }) => (
-                <ContentWrap key={id}>
-                  <TouchableRipple onPress={() => handleGenrePress(id)}>
-                    <Text
-                      style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
-                    >
-                      {title}
-                    </Text>
-                  </TouchableRipple>
-                </ContentWrap>
+                <TouchableRipple key={id} onPress={() => handleGenrePress(id)}>
+                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+                    {title}
+                  </Text>
+                </TouchableRipple>
               ))}
-            </View>
+            </ContentWrap>
             <View style={{ height: resultPadding + theme.spacing(5) }} />
           </React.Fragment>
         );

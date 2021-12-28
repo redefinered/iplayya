@@ -6,7 +6,6 @@ import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ButtonIconDefault from 'components/button-icon-default/button-icon-default.component';
-import Slider from '@react-native-community/slider';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -22,8 +21,7 @@ import {
 import GoogleCast, { useRemoteMediaClient } from 'react-native-google-cast';
 import NextButton from './next-button.component';
 import PrevButton from './prev-button.component';
-import volumeThumbTransparent from 'assets/volume-thumb-transparent.png';
-import DeviceInfo from 'react-native-device-info';
+import VolumeSlider from './volume-slider.component';
 import CastOptions from './cast-options.component';
 import { MODULE_TYPES } from 'common/globals';
 
@@ -36,10 +34,8 @@ const VideoControls = ({
   isFirstEpisode,
   isLastEpisode,
   multipleMedia,
-  setVolume,
   isFullscreen,
   castSessionActive,
-  // updatePlaybackInfoAction,
   setPlaybackInfo,
   ...controlProps
 }) => {
@@ -87,76 +83,7 @@ const VideoControls = ({
     controlProps.setShowControls(true);
   };
 
-  // const handleSlidingStart = () => {
-  //   controlProps.setPaused(true);
-  // };
-
-  // const handleSlidingComplete = async (position) => {
-  //   if (castSessionActive) {
-  //     if (!client) return;
-
-  //     await client.seek({ position });
-  //   }
-
-  //   controlProps.setSliderPosition(position);
-  //   controlProps.setPaused(false);
-  // };
-
-  const handleVolumeChange = (volume) => {
-    setVolume(parseFloat(volume.toFixed(4)));
-    // setSavedVolume(parseFloat(v));
-  };
-
-  const toggleVolume = () => {
-    /// toggle visibility
-    setShowVolume(!showVolume);
-
-    /// toggle value
-    // const { volume } = controlProps;
-    // if (volume > 0) return setVolume(0);
-
-    // return setVolume(savedVolume);
-  };
-
-  const getFullscreenStyle = () => {
-    let WIDTH, TOP_OFFSET;
-
-    const SLIDER_WIDTH = 5;
-    const ROTATED_TOP_ZERO = 25 + SLIDER_WIDTH;
-    const ROTATED_LEFT_ZERO = -25 - SLIDER_WIDTH;
-
-    const V_SLIDER_MARGIN = 10;
-    const NORMAL_SCREEN_VIDEO_HEIGHT = 211;
-
-    const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-    if (isFullscreen) {
-      WIDTH = 200;
-
-      const FULLSCREEN_ROTATED_LEFT_ZERO = -65;
-      const FULLSCREEN_ROTATED_TOP_ZERO = 80;
-
-      const SCREEN_WIDTH_DIVIDED_BY_TWO = SCREEN_WIDTH / 2;
-      const WIDTH_WIDTH_DIVIDED_BY_TWO = WIDTH / 2;
-
-      return {
-        width: 200,
-        top: FULLSCREEN_ROTATED_TOP_ZERO + SCREEN_WIDTH_DIVIDED_BY_TWO - WIDTH_WIDTH_DIVIDED_BY_TWO,
-        left: DeviceInfo.hasNotch()
-          ? FULLSCREEN_ROTATED_LEFT_ZERO + 30
-          : FULLSCREEN_ROTATED_LEFT_ZERO
-      };
-    } else {
-      WIDTH = 100;
-      TOP_OFFSET = NORMAL_SCREEN_VIDEO_HEIGHT / 2 - 15; /// 15 is to nudge the slider a little up ward so it does not ovarlap with the volume button
-
-      return {
-        width: 100,
-        top: ROTATED_TOP_ZERO + TOP_OFFSET - WIDTH / 2,
-        left: ROTATED_LEFT_ZERO + V_SLIDER_MARGIN
-      };
-    }
-  };
+  const toggleVolume = () => setShowVolume(!showVolume);
 
   const renderVolumeSlider = () => {
     /// replace thumbimage with a rectangle for easier control
@@ -164,37 +91,12 @@ const VideoControls = ({
     if (!showVolume) return;
 
     return (
-      <View
-        style={{
-          zIndex: 110,
-          position: 'absolute',
-          // backgroundColor: 'green',
-          transform: [{ rotate: '-90deg' }],
-          ...getFullscreenStyle()
-        }}
-      >
-        <Slider
-          thumbImage={volumeThumbTransparent}
-          onValueChange={handleVolumeChange}
-          value={controlProps.volume}
-          minimumValue={0}
-          maximumValue={1}
-          minimumTrackTintColor={theme.iplayya.colors.white100}
-          maximumTrackTintColor={theme.iplayya.colors.white25}
-        />
-      </View>
+      <VolumeSlider
+        isFullscreen={isFullscreen}
+        bottomControlHidden={controlProps.moduleType === 'tv'}
+      />
     );
   };
-
-  // const resolutionOptions = () => {
-  //   const { resolutions } = controlProps;
-
-  //   // if (typeof resolutions === 'undefined') return;
-
-  //   if (controlProps.showVideoOptions) {
-  //     return;
-  //   }
-  // };
 
   const handleVideoQualityButtonPress = () => {
     if (isFullscreen) return setShowFullscreenQualityOptions(!showFullscreenQualityOptions);
@@ -459,17 +361,6 @@ const VideoControls = ({
         <Text style={{ fontWeight: 'bold', ...createFontFormat(14, 16) }}>{getContentTitle()}</Text>
 
         {renderCastButton()}
-
-        {/* <View style={{ flexDirection: 'row' }}>
-          {castSession && (
-            <ButtonIconDefault iconName="close" iconSize={3} pressAction={handleStopCasting} />
-          )}
-          <ButtonIconDefault
-            iconName={castConnected ? 'cast-connected' : 'cast'}
-            iconSize={3}
-            pressAction={() => controlProps.setShowChromecastOptions(true)}
-          />
-        </View> */}
       </View>
 
       <View
@@ -477,7 +368,6 @@ const VideoControls = ({
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
-          // marginTop: 10,
           position: 'relative',
           zIndex: 100
         }}
@@ -494,7 +384,6 @@ const VideoControls = ({
             borderRadius: 60,
             justifyContent: 'center',
             alignItems: 'center'
-            // backgroundColor: 'red'
           }}
         >
           <React.Fragment>{renderPlayButton()}</React.Fragment>
@@ -519,7 +408,6 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     justifyContent: 'space-between',
     zIndex: 99
-    // backgroundColor: 'red'
   },
   containerStyleFullScreen: {
     width: Dimensions.get('window').height,
@@ -565,4 +453,4 @@ const actions = {
   updatePlaybackInfoAction: Creators.updatePlaybackInfo
 };
 
-export default compose(connect(mapStateToProps, actions), withTheme)(VideoControls);
+export default compose(connect(mapStateToProps, actions), withTheme)(React.memo(VideoControls));
