@@ -15,7 +15,6 @@ import { createStructuredSelector } from 'reselect';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectError,
-  selectIsFetching,
   selectFavorites,
   selectRemovedFromFavorites,
   selectFavoritesPaginator,
@@ -24,64 +23,100 @@ import {
 import NoFavorites from 'assets/favorites-empty-screen.svg';
 import { createFontFormat } from 'utils';
 import withNotifRedirect from 'components/with-notif-redirect.component';
+import { useQuery } from '@apollo/client';
+import { GET_FAVORITE_MOVIES } from 'graphql/movies.graphql';
 
 const ITEM_HEIGHT = 84;
 
 const ImovieFavoritesScreen = ({
   theme,
   navigation,
-  favorites,
-  isFetching,
-  removedFromFavorites,
+  // favorites,
+  // removedFromFavorites,
   removeFromFavoritesAction,
-  getFavoritesAction,
-  favoritesPaginator,
-  resetFavoritesPaginatorAction,
+  // getFavoritesAction,
+  // favoritesPaginator,
+  // resetFavoritesPaginatorAction,
   isSearching
 }) => {
-  const updated = React.useRef(false);
+  // const updated = React.useRef(false);
 
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
-  const [data, setData] = React.useState([]);
+  const [listData, setListData] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+  const [noResult, setNoResult] = React.useState(false);
+
+  const { loading, data, error, fetchMore } = useQuery(GET_FAVORITE_MOVIES, { pollInterval: 300 });
+
+  console.log({ loading, data, error, fetchMore });
 
   React.useEffect(() => {
-    resetFavoritesPaginatorAction();
-    // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-  }, []);
+    if (data) setListData(data.favoriteVideos);
+  }, [data]);
+
+  // React.useEffect(() => {
+  //   resetFavoritesPaginatorAction();
+  //   // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+  // }, []);
+
+  // React.useEffect(() => {
+  //   if (favoritesPaginator.pageNumber === 1) {
+  //     getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+  //   }
+  // }, [favoritesPaginator]);
 
   React.useEffect(() => {
-    if (favoritesPaginator.pageNumber === 1) {
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+    if (data) {
+      if (!isSearching) {
+        setListData(data.favoriteVideos);
+        setNoResult(false);
+      }
     }
-  }, [favoritesPaginator]);
+  }, [data, isSearching]);
 
   React.useEffect(() => {
+    if (!searchTerm.length) {
+      if (data) setListData(data.favoriteVideos);
+    }
     if (searchTerm) {
-      const d = favorites.filter(({ title }) =>
+      const d = listData.filter(({ title }) =>
         title.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      return setData(d);
-    }
 
-    setData(favorites);
-  }, [favorites, searchTerm]);
+      if (!d.length) return setNoResult(true);
+      setNoResult(false);
+      return setListData(d);
+    }
+    if (data) setListData(data.favoriteVideos);
+  }, [data, searchTerm]);
 
   React.useEffect(() => {
-    if (removedFromFavorites) {
-      resetFavoritesPaginatorAction();
-
-      updated.current = true;
-      setActivateCheckboxes(false);
-
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-    } else {
-      updated.current = false;
+    if (!searchTerm.length) {
+      setNoResult(false);
     }
-  }, [removedFromFavorites]);
+  }, [searchTerm]);
+
+  React.useEffect(() => {
+    if (data) {
+      setActivateCheckboxes(false);
+    }
+  }, [data]);
+
+  // React.useEffect(() => {
+  //   if (removedFromFavorites) {
+  //     resetFavoritesPaginatorAction();
+
+  //     updated.current = true;
+  //     setActivateCheckboxes(false);
+
+  //     getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+  //   } else {
+  //     updated.current = false;
+  //   }
+  // }, [removedFromFavorites]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -107,7 +142,7 @@ const ImovieFavoritesScreen = ({
 
   React.useEffect(() => {
     if (selectAll) {
-      let collection = favorites.map(({ id }) => {
+      let collection = listData.map(({ id }) => {
         return id;
       });
       setSelectedItems(collection);
@@ -193,7 +228,7 @@ const ImovieFavoritesScreen = ({
   };
 
   const renderLoader = () => {
-    if (isFetching) {
+    if (loading) {
       return (
         <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
           <ActivityIndicator />
@@ -292,7 +327,17 @@ const ImovieFavoritesScreen = ({
     );
   };
 
-  if (favorites.length) {
+  const renderContent = () => {
+    if (noResult)
+      return (
+        <ContentWrap style={{ marginTop: theme.spacing(3) }}>
+          <Text>NO RESULTS FOUND</Text>
+        </ContentWrap>
+      );
+    return <FlatList data={listData} keyExtractor={(item) => item.id} renderItem={renderMain} />;
+  };
+
+  if (listData.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
         {renderLoader()}
@@ -327,7 +372,7 @@ const ImovieFavoritesScreen = ({
                 style={{ flexDirection: 'row', alignItems: 'center' }}
               >
                 <Text style={{ marginRight: 10 }}>All</Text>
-                <RadioButton selected={selectedItems.length === favorites.length} />
+                <RadioButton selected={selectedItems.length === listData.length} />
               </Pressable>
             </View>
 
@@ -336,9 +381,7 @@ const ImovieFavoritesScreen = ({
         )}
 
         {renderSearchBar()}
-
-        <FlatList data={data} keyExtractor={(item) => item.id} renderItem={renderMain} />
-
+        {renderContent()}
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
@@ -355,7 +398,8 @@ const ImovieFavoritesScreen = ({
       </View>
     );
   }
-  return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
+
+  return <EmptyState isFetching={loading} theme={theme} navigation={navigation} />;
 };
 
 const EmptyState = ({ isFetching, theme, navigation }) => (
@@ -393,7 +437,6 @@ const Container = (props) => (
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
-  isFetching: selectIsFetching,
   favorites: selectFavorites,
   removedFromFavorites: selectRemovedFromFavorites,
   favoritesPaginator: selectFavoritesPaginator,

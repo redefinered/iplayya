@@ -5,13 +5,13 @@ import { TouchableRipple, withTheme } from 'react-native-paper';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { selectFavorites, selectIsSearching } from 'modules/ducks/movies/movies.selectors';
+import { selectIsSearching } from 'modules/ducks/movies/movies.selectors';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component.js';
 
-const ImovieSearchButton = ({ theme, isSearching, setIsSearchingAction, favorites }) => {
+const ImovieSearchButton = ({ theme, isSearching, setIsSearchingAction }) => {
   const handlePress = () => {
-    if (!favorites.length) return;
+    // if (!favorites.length) return;
 
     if (isSearching) return setIsSearchingAction(false);
 
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = createStructuredSelector({
-  favorites: selectFavorites,
+  // favorites: selectFavorites,
   isSearching: selectIsSearching
 });
 
