@@ -64,9 +64,11 @@ const ImovieFavoritesScreen = ({
 
   const { loading, data, fetchMore } = useQuery(GET_FAVORITE_MOVIES, {
     variables: { input: { pageNumber: 1, limit: pageNumber.current * LIMIT } },
-    pollInterval: 300,
-    notifyOnNetworkStatusChange: true
+    pollInterval: 300
+    // notifyOnNetworkStatusChange: true
   });
+
+  console.log({ loading });
 
   const handleEndReached = () => {
     if (!onEndReachedCalledDuringMomentum) {
