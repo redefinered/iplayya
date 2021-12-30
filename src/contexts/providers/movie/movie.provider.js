@@ -14,7 +14,14 @@ const MovieContextProvider = ({ children }) => {
   const [downloads, setDownloads] = React.useState(null);
 
   return (
-    <MovieContext.Provider value={{ selected, setSelected, downloads, setDownloads }}>
+    <MovieContext.Provider
+      value={{
+        selected,
+        setSelected,
+        downloads,
+        setDownloads
+      }}
+    >
       {children}
     </MovieContext.Provider>
   );

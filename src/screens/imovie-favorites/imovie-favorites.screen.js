@@ -1,13 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { View, Pressable, Image, TextInput as FormInput, FlatList } from 'react-native';
-import {
-  Text,
-  withTheme,
-  TextInput as RNPTextInput,
-  ActivityIndicator,
-  Button
-} from 'react-native-paper';
+import { Text, withTheme, TextInput as RNPTextInput, ActivityIndicator } from 'react-native-paper';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import TextInput from 'components/text-input/text-input.component';
@@ -35,6 +29,7 @@ import { GET_FAVORITE_MOVIES } from 'graphql/movies.graphql';
 import uniqBy from 'lodash/uniqBy';
 
 const ITEM_HEIGHT = 84;
+const LIMIT = 10;
 
 const ImovieFavoritesScreen = ({
   theme,
@@ -63,62 +58,38 @@ const ImovieFavoritesScreen = ({
     resetRemovedAction();
   });
 
-  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-  //   true
-  // );
-
-  console.log({ p: pageNumber.current });
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
 
   const { loading, data, fetchMore } = useQuery(GET_FAVORITE_MOVIES, {
-    variables: { input: { pageNumber: 1, limit: pageNumber.current * 2 } },
+    variables: { input: { pageNumber: 1, limit: pageNumber.current * LIMIT } },
     pollInterval: 300
   });
 
-  console.log({ data });
+  const handleEndReached = () => {
+    if (!onEndReachedCalledDuringMomentum) {
+      fetchMore({ variables: { input: { pageNumber: pageNumber.current + 1 } } }).then(
+        ({ data: { favoriteVideos } }) => {
+          setListData(uniqBy([...listData, ...favoriteVideos], 'id'));
 
-  // const updateListData = ;
+          pageNumber.current = pageNumber.current + 1;
+        }
+      );
 
-  // const handleEndReached = () => {
-  //   if (!onEndReachedCalledDuringMomentum) {
-  //     fetchMore({ variables: { input: { pageNumber } } }).then(updateListData);
-
-  //     setOnEndReachedCalledDuringMomentum(true);
-  //   }
-  // };
-
-  const loadMore = () => {
-    fetchMore({
-      variables: { input: { pageNumber: pageNumber.current + 1, limit: 2 } }
-    }).then(({ data: { favoriteVideos } }) => {
-      setListData(uniqBy([...listData, ...favoriteVideos], 'id'));
-
-      pageNumber.current = pageNumber.current + 1;
-    });
+      setOnEndReachedCalledDuringMomentum(true);
+    }
   };
 
-  // console.log({ listData, pageNumber });
+  // const loadMore = () => {
+  //   fetchMore({
+  //     variables: { input: { pageNumber: pageNumber.current + 1, limit: 2 } }
+  //   }).then();
+  // };
 
   React.useEffect(() => {
-    if (data) {
-      // console.log({ data });
-      // setPagenumber(pageNumber + 1);
-
-      console.log('fuck');
-
-      setListData(data.favoriteVideos);
-    }
+    if (data) setListData(uniqBy(data.favoriteVideos, 'id'));
   }, [data]);
-
-  // React.useEffect(() => {
-  //   resetFavoritesPaginatorAction();
-  //   // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-  // }, []);
-
-  // React.useEffect(() => {
-  //   if (favoritesPaginator.pageNumber === 1) {
-  //     getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-  //   }
-  // }, [favoritesPaginator]);
 
   React.useEffect(() => {
     if (data) {
@@ -164,7 +135,7 @@ const ImovieFavoritesScreen = ({
       updated.current = true;
       setActivateCheckboxes(false);
 
-      if (data) setListData(data.favoriteVideos);
+      if (data) setListData(uniqBy(data.favoriteVideos, 'id'));
 
       // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
     } else {
@@ -304,75 +275,75 @@ const ImovieFavoritesScreen = ({
         onLongPress={() => handleLongPress(id)}
         onPress={() => handleSelectItem(id)}
       >
-        <ContentWrap
-          style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}
-        >
-          {thumbnail.length ? (
-            <Image
-              style={{
-                width: 65,
-                height: 96,
-                borderRadius: 8,
-                position: 'absolute',
-                top: 10,
-                left: 4
-              }}
-              source={{ uri }}
-            />
-          ) : (
-            <View
-              style={{
-                width: 65,
-                height: 96,
-                borderRadius: 8,
-                backgroundColor: theme.iplayya.colors.white10,
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'absolute',
-                top: 10,
-                left: 4
-              }}
-            >
-              <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
-            </View>
-          )}
-          <View
-            style={{
-              flexDirection: 'row',
-              marginBottom: 20,
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}
-          >
-            <View style={{ height: 96, justifyContent: 'center', flexShrink: 1 }}>
-              <Text
-                numberOfLines={1}
+        <ContentWrap>
+          <View style={{ position: 'relative', height: 96, paddingLeft: 75, marginBottom: 20 }}>
+            {thumbnail.length ? (
+              <Image
                 style={{
-                  fontWeight: '700',
-                  ...createFontFormat(16, 22),
-                  marginBottom: 5
+                  width: 65,
+                  height: 96,
+                  borderRadius: 8,
+                  position: 'absolute',
+                  top: 10,
+                  left: 4
+                }}
+                source={{ uri }}
+              />
+            ) : (
+              <View
+                style={{
+                  width: 65,
+                  height: 96,
+                  borderRadius: 8,
+                  backgroundColor: theme.iplayya.colors.white10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'absolute',
+                  top: 10,
+                  left: 4
                 }}
               >
-                {title}
-              </Text>
-              <Text
-                style={{
-                  ...createFontFormat(12, 16),
-                  color: theme.iplayya.colors.white50,
-                  marginBottom: 5
-                }}
-              >{`${year}, ${Math.floor(time / 60)}h ${time % 60}m`}</Text>
-              <Text
-                style={{
-                  ...createFontFormat(12, 16),
-                  color: theme.iplayya.colors.white50,
-                  marginBottom: 5
-                }}
-              >{`${rating_mpaa}-${age_rating}, ${category}`}</Text>
-            </View>
-            {activateCheckboxes && (
-              <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+                <Icon name="iplayya" size={theme.iconSize(4)} color="white" />
+              </View>
             )}
+            <View
+              style={{
+                flexDirection: 'row',
+                marginBottom: 20,
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <View style={{ height: 96, justifyContent: 'center', flexShrink: 1 }}>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    fontWeight: '700',
+                    ...createFontFormat(16, 22),
+                    marginBottom: 5
+                  }}
+                >
+                  {title}
+                </Text>
+                <Text
+                  style={{
+                    ...createFontFormat(12, 16),
+                    color: theme.iplayya.colors.white50,
+                    marginBottom: 5
+                  }}
+                >{`${year}, ${Math.floor(time / 60)}h ${time % 60}m`}</Text>
+                <Text
+                  style={{
+                    ...createFontFormat(12, 16),
+                    color: theme.iplayya.colors.white50,
+                    marginBottom: 5
+                  }}
+                >{`${rating_mpaa}-${age_rating}, ${category}`}</Text>
+              </View>
+              {activateCheckboxes && (
+                <RadioButton selected={selectedItems.findIndex((i) => i === id) >= 0} />
+              )}
+            </View>
           </View>
         </ContentWrap>
       </Pressable>
@@ -391,9 +362,9 @@ const ImovieFavoritesScreen = ({
         data={listData}
         keyExtractor={(item) => item.id}
         renderItem={renderMain}
-        // onEndReached={() => handleEndReached()}
-        // onEndReachedThreshold={0.5}
-        // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        onEndReached={() => handleEndReached()}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
       />
     );
   };
@@ -401,8 +372,6 @@ const ImovieFavoritesScreen = ({
   if (listData.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
-        {renderLoader()}
-
         {activateCheckboxes && (
           <ContentWrap>
             <View
@@ -443,7 +412,10 @@ const ImovieFavoritesScreen = ({
 
         {renderSearchBar()}
         {renderContent()}
-        <Button onPress={() => loadMore()}>load more</Button>
+
+        {renderLoader()}
+
+        {/* <Button onPress={() => loadMore()}>load more</Button> */}
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"

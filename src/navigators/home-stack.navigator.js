@@ -95,7 +95,6 @@ const HomeStack = ({
   ...rest
 }) => {
   const navigation = useNavigation();
-
   const [showError, setShowError] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
   const [showMovieSuccess, setShowMovieSuccess] = React.useState(false);
