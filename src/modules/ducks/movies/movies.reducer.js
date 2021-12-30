@@ -266,6 +266,8 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   // add to favorites
+
+  [Types.RESET_REMOVED]: (state) => ({ ...state, removedFromFavorites: false }),
   [Types.REMOVE_FROM_FAVORITES]: (state) => {
     return {
       ...state,

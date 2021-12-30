@@ -1,7 +1,13 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { View, Pressable, Image, TextInput as FormInput, FlatList } from 'react-native';
-import { Text, withTheme, TextInput as RNPTextInput, ActivityIndicator } from 'react-native-paper';
+import {
+  Text,
+  withTheme,
+  TextInput as RNPTextInput,
+  ActivityIndicator,
+  Button
+} from 'react-native-paper';
 import RadioButton from 'components/radio-button/radio-button.component';
 import Icon from 'components/icon/icon.component';
 import TextInput from 'components/text-input/text-input.component';
@@ -26,20 +32,24 @@ import withNotifRedirect from 'components/with-notif-redirect.component';
 import { useQuery } from '@apollo/client';
 import { GET_FAVORITE_MOVIES } from 'graphql/movies.graphql';
 
+import uniqBy from 'lodash/uniqBy';
+
 const ITEM_HEIGHT = 84;
 
 const ImovieFavoritesScreen = ({
   theme,
   navigation,
   // favorites,
-  // removedFromFavorites,
+  removedFromFavorites,
+  resetRemovedAction,
   removeFromFavoritesAction,
   // getFavoritesAction,
   // favoritesPaginator,
   // resetFavoritesPaginatorAction,
   isSearching
 }) => {
-  // const updated = React.useRef(false);
+  const updated = React.useRef(false);
+  const pageNumber = React.useRef(1);
 
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
@@ -49,12 +59,54 @@ const ImovieFavoritesScreen = ({
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [noResult, setNoResult] = React.useState(false);
 
-  const { loading, data, error, fetchMore } = useQuery(GET_FAVORITE_MOVIES, { pollInterval: 300 });
+  React.useEffect(() => {
+    resetRemovedAction();
+  });
 
-  console.log({ loading, data, error, fetchMore });
+  // const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+  //   true
+  // );
+
+  console.log({ p: pageNumber.current });
+
+  const { loading, data, fetchMore } = useQuery(GET_FAVORITE_MOVIES, {
+    variables: { input: { pageNumber: 1, limit: pageNumber.current * 2 } },
+    pollInterval: 300
+  });
+
+  console.log({ data });
+
+  // const updateListData = ;
+
+  // const handleEndReached = () => {
+  //   if (!onEndReachedCalledDuringMomentum) {
+  //     fetchMore({ variables: { input: { pageNumber } } }).then(updateListData);
+
+  //     setOnEndReachedCalledDuringMomentum(true);
+  //   }
+  // };
+
+  const loadMore = () => {
+    fetchMore({
+      variables: { input: { pageNumber: pageNumber.current + 1, limit: 2 } }
+    }).then(({ data: { favoriteVideos } }) => {
+      setListData(uniqBy([...listData, ...favoriteVideos], 'id'));
+
+      pageNumber.current = pageNumber.current + 1;
+    });
+  };
+
+  // console.log({ listData, pageNumber });
 
   React.useEffect(() => {
-    if (data) setListData(data.favoriteVideos);
+    if (data) {
+      // console.log({ data });
+      // setPagenumber(pageNumber + 1);
+
+      console.log('fuck');
+
+      setListData(data.favoriteVideos);
+    }
   }, [data]);
 
   // React.useEffect(() => {
@@ -100,23 +152,25 @@ const ImovieFavoritesScreen = ({
   }, [searchTerm]);
 
   React.useEffect(() => {
-    if (data) {
+    if (listData) {
       setActivateCheckboxes(false);
     }
-  }, [data]);
+  }, [listData]);
 
-  // React.useEffect(() => {
-  //   if (removedFromFavorites) {
-  //     resetFavoritesPaginatorAction();
+  React.useEffect(() => {
+    if (removedFromFavorites) {
+      // resetFavoritesPaginatorAction();
 
-  //     updated.current = true;
-  //     setActivateCheckboxes(false);
+      updated.current = true;
+      setActivateCheckboxes(false);
 
-  //     getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-  //   } else {
-  //     updated.current = false;
-  //   }
-  // }, [removedFromFavorites]);
+      if (data) setListData(data.favoriteVideos);
+
+      // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+    } else {
+      updated.current = false;
+    }
+  }, [removedFromFavorites]);
 
   const handleSelectItem = (item) => {
     if (activateCheckboxes) {
@@ -169,8 +223,6 @@ const ImovieFavoritesScreen = ({
       removeFromFavoritesAction(deleteItems);
     }
   };
-
-  console.log({ selectedItems });
 
   const handleHideConfirmDeleteModal = () => {
     setShowDeleteConfirmation(false);
@@ -334,7 +386,16 @@ const ImovieFavoritesScreen = ({
           <Text>NO RESULTS FOUND</Text>
         </ContentWrap>
       );
-    return <FlatList data={listData} keyExtractor={(item) => item.id} renderItem={renderMain} />;
+    return (
+      <FlatList
+        data={listData}
+        keyExtractor={(item) => item.id}
+        renderItem={renderMain}
+        // onEndReached={() => handleEndReached()}
+        // onEndReachedThreshold={0.5}
+        // onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+      />
+    );
   };
 
   if (listData.length) {
@@ -382,6 +443,7 @@ const ImovieFavoritesScreen = ({
 
         {renderSearchBar()}
         {renderContent()}
+        <Button onPress={() => loadMore()}>load more</Button>
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
@@ -444,6 +506,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  resetRemovedAction: Creators.resetRemoved,
   removeFromFavoritesAction: Creators.removeFromFavorites,
   getFavoritesAction: Creators.getFavoriteMovies,
   resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
