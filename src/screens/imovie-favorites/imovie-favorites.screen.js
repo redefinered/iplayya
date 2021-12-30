@@ -415,8 +415,6 @@ const ImovieFavoritesScreen = ({
         {renderSearchBar()}
         {renderContent()}
 
-        {renderLoader()}
-
         {/* <Button onPress={() => loadMore()}>load more</Button> */}
         {showDeleteConfirmation && (
           <AlertModal
