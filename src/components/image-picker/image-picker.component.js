@@ -4,6 +4,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { View, PermissionsAndroid, Platform, StyleSheet, Dimensions, Text } from 'react-native';
 import { useTheme, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
+import theme from 'common/theme';
 
 const ImagePick = ({ hideModalCamera, setProfileImage }) => {
   const [filePath, setFilePath] = useState();
@@ -130,28 +131,6 @@ const ImagePick = ({ hideModalCamera, setProfileImage }) => {
 
   return (
     <View style={styles.container}>
-      {/* <Button
-        icon={() => <Icon name="camera" size={28} style={{ marginRight: 10 }} />}
-        mode="contained"
-        style={{ ...styles.takePictureStyle, backgroundColor: theme.iplayya.colors.vibrantpussy }}
-        labelStyle={styles.textStyle}
-        contentStyle={{ height: 70 }}
-        onPress={() => captureImage('photo')}
-        theme={{ colors: { primary: theme.iplayya.colors.vibrantpussy } }}
-      >
-        Take Picture
-      </Button>
-      <Button
-        mode="contained"
-        icon={() => <Icon name="add-file" size={28} style={{ marginRight: 10 }} />}
-        style={styles.browseImageStyle}
-        labelStyle={styles.textStyle}
-        contentStyle={{ height: 70, paddingLeft: 10 }}
-        onPress={() => chooseFile('photo')}
-      >
-        Browse Image
-      </Button> */}
-
       <TouchableRipple
         borderless={true}
         rippleColor={theme.iplayya.colors.strongpussy}
@@ -173,7 +152,7 @@ const ImagePick = ({ hideModalCamera, setProfileImage }) => {
 
       <TouchableRipple
         borderless={true}
-        rippleColor="#118029"
+        rippleColor={theme.iplayya.colors.black50}
         style={styles.browseImageStyle}
         onPress={() => chooseFile('photo')}
       >
@@ -214,7 +193,7 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   browseImageStyle: {
-    backgroundColor: '#13BD38',
+    backgroundColor: theme.iplayya.colors.black25,
     marginVertical: 10,
     width: Dimensions.get('window').width - 50,
     borderRadius: 10,

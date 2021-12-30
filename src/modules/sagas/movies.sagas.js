@@ -5,7 +5,6 @@ import { Types, Creators } from 'modules/ducks/movies/movies.actions';
 import {
   getMovie,
   getMoviesByCategories,
-  addMovieToFavorites,
   getFavoriteMovies,
   removeFromFavorites,
   search,
@@ -96,24 +95,11 @@ export function* getMoviesByCategoriesRequest(action) {
   }
 }
 
-export function* addMovieToFavoritesRequest(action) {
-  const { videoId } = action;
+export function* getFavoriteMoviesRequest(action) {
+  const { input } = action;
   try {
-    const { addVideoToFavorites } = yield call(addMovieToFavorites, videoId);
-    if (!addMovieToFavorites) throw new Error('Failed to add video, something went wrong');
-    const { status, message } = addVideoToFavorites;
-    if (status !== 'success') throw new Error('Failed to add video, something went wrong');
-    console.log({ message });
-    yield put(Creators.addMovieToFavoritesSuccess());
-  } catch (error) {
-    yield put(Creators.addMovieToFavoritesFailure(error.message));
-  }
-}
-
-export function* getFavoriteMoviesRequest() {
-  try {
-    const { favoriteVideos } = yield call(getFavoriteMovies);
-    yield put(Creators.getFavoriteMoviesSuccess({ favoriteVideos }));
+    const { favoriteVideos } = yield call(getFavoriteMovies, input);
+    yield put(Creators.getFavoriteMoviesSuccess(favoriteVideos));
   } catch (error) {
     yield put(Creators.getFavoriteMoviesFailure(error.message));
   }
@@ -154,7 +140,6 @@ export default function* movieSagas() {
   yield takeLatest(Types.GET_MOVIE, getMovieRequest);
   yield takeLatest(Types.GET_MOVIES, getMoviesRequest);
   yield takeLatest(Types.GET_MOVIES_BY_CATEGORIES, getMoviesByCategoriesRequest);
-  yield takeLatest(Types.ADD_MOVIE_TO_FAVORITES, addMovieToFavoritesRequest);
   yield takeLatest(Types.REMOVE_FROM_FAVORITES, removeFromFavoritesRequest);
   yield takeLatest(Types.GET_FAVORITE_MOVIES, getFavoriteMoviesRequest);
   yield takeLatest(Types.SEARCH, searchRequest);

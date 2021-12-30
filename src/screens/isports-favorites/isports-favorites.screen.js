@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/isports/isports.actions';
-import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+import NoFavorites from 'assets/favorites-empty-screen.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectError,

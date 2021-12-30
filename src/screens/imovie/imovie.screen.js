@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
-import { Text, Banner, withTheme, ActivityIndicator } from 'react-native-paper';
+import { Text, Banner, withTheme } from 'react-native-paper';
 import ScreenContainer from 'components/screen-container.component';
 import ImovieBottomTabs from './imovie-bottom-tabs.component';
 import { compose } from 'redux';
@@ -39,7 +39,7 @@ const ImovieScreen = ({
   error,
   getMoviesAction,
   paginatorInfo,
-  addMovieToFavoritesStartAction,
+  // addMovieToFavoritesStartAction,
   theme,
   route: { params },
   categoryPaginator,
@@ -65,7 +65,7 @@ const ImovieScreen = ({
   React.useEffect(() => {
     /// resets the category paginator
     resetAction();
-    addMovieToFavoritesStartAction();
+    // addMovieToFavoritesStartAction();
     setSelected(null);
 
     // Subscribe to network changes

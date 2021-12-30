@@ -56,14 +56,13 @@ const MovieDetailScreen = ({
   getMovieStartAction,
   isFavListUpdated,
   getFavoriteMoviesAction,
-  addMovieToFavoritesStartAction,
+  // addMovieToFavoritesStartAction,
   downloadsIsFetching,
   downloadStartAction,
   downloadStarted,
   videoUrls,
   setMusicNowPlaying,
   navigation,
-
   playbackSettings
 }) => {
   const [paused, setPaused] = React.useState(false);
@@ -115,7 +114,7 @@ const MovieDetailScreen = ({
     playbackStartAction();
 
     // set movie add to favorites state
-    addMovieToFavoritesStartAction();
+    // addMovieToFavoritesStartAction();
 
     InteractionManager.runAfterInteractions(() => {
       // get movie data
@@ -528,7 +527,8 @@ const actions = {
   getFavoriteMoviesAction: Creators.getFavoriteMovies,
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   downloadStartAction: DownloadsCreators.downloadStart,
-  setMusicNowPlaying: MusicCreators.setNowPlaying
+  setMusicNowPlaying: MusicCreators.setNowPlaying,
+  getMoviesAction: Creators.getMovies
 };
 
 const mapStateToProps = createStructuredSelector({
