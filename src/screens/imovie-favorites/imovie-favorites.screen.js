@@ -64,7 +64,8 @@ const ImovieFavoritesScreen = ({
 
   const { loading, data, fetchMore } = useQuery(GET_FAVORITE_MOVIES, {
     variables: { input: { pageNumber: 1, limit: pageNumber.current * LIMIT } },
-    pollInterval: 300
+    pollInterval: 300,
+    notifyOnNetworkStatusChange: true
   });
 
   const handleEndReached = () => {
@@ -365,6 +366,7 @@ const ImovieFavoritesScreen = ({
         onEndReached={() => handleEndReached()}
         onEndReachedThreshold={0.5}
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+        ListFooterComponent={renderLoader()}
       />
     );
   };
