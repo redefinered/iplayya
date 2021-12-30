@@ -44,7 +44,7 @@ export const selectFavoritesListUpdated = createSelector(
   ({ favoritesListUpdated }) => favoritesListUpdated
 );
 
-export const selectfavoritesListRemoveUpdated = createSelector(
+export const selectFavoritesListRemoveUpdated = createSelector(
   [itvState],
   ({ favoritesListRemoveUpdated }) => favoritesListRemoveUpdated
 );

@@ -23,7 +23,7 @@ import {
   selectChannel,
   selectPrograms,
   selectPaginator,
-  selectCurrentProgram,
+  // selectCurrentProgram,
   selectFavoritesListUpdated
 } from 'modules/ducks/isports/isports.selectors';
 import theme from 'common/theme';
@@ -385,7 +385,7 @@ const mapStateToProps = createStructuredSelector({
   channel: selectChannel,
   programs: selectPrograms,
   paginator: selectPaginator,
-  currentProgram: selectCurrentProgram,
+  // currentProgram: selectCurrentProgram,
   favoritesListUpdated: selectFavoritesListUpdated
 });
 

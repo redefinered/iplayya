@@ -15,8 +15,8 @@ export const getStations = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_RADIO_STATIONS,
-      variables: { input },
-      fetchPolicy: 'network-only'
+      variables: { input }
+      // fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {
@@ -28,8 +28,8 @@ export const getFavorites = async (input) => {
   try {
     const { data } = await client.query({
       query: GET_FAVORITE_RADIOS,
-      variables: { input },
-      fetchPolicy: 'network-only'
+      variables: { input }
+      // fetchPolicy: 'network-only'
     });
     return data;
   } catch (error) {

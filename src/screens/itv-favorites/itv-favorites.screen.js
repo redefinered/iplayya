@@ -14,7 +14,7 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { Creators } from 'modules/ducks/itv/itv.actions';
-import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+import NoFavorites from 'assets/favorites-empty-screen.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectError,
@@ -23,7 +23,7 @@ import {
   selectIsFetching,
   selectIsSearching,
   selectFavoritesPaginator,
-  selectfavoritesListRemoveUpdated
+  selectFavoritesListRemoveUpdated
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
 import withNotifRedirect from 'components/with-notif-redirect.component';
@@ -53,9 +53,11 @@ const ItvFavoritesScreen = ({
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
-  const [data, setData] = React.useState([]);
+  const [data, setData] = React.useState(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+
+  const [noResult, setNoResult] = React.useState(false);
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
@@ -81,11 +83,23 @@ const ItvFavoritesScreen = ({
   React.useEffect(() => {
     if (searchTerm) {
       const d = favorites.filter(({ title }) => title.toLowerCase().includes(searchTerm));
-      return setData(d);
+
+      if (!d.length) {
+        setNoResult(true);
+      } else {
+        setNoResult(false);
+        return setData(d);
+      }
     }
+
+    if (!favorites.length) return setData([]);
 
     setData(favorites);
   }, [favorites, searchTerm]);
+
+  React.useEffect(() => {
+    if (isFetching) setData(null);
+  }, [isFetching]);
 
   // console.log({ favorites, searchTerm });
 
@@ -233,7 +247,38 @@ const ItvFavoritesScreen = ({
     }
   };
 
-  if (favorites.length) {
+  const renderContent = () => {
+    if (noResult) {
+      return (
+        <ContentWrap>
+          <Text>NO RESULT</Text>
+        </ContentWrap>
+      );
+    }
+
+    return (
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ListItemChanel
+            full
+            // showepg={false}
+            showFavoriteButton={false}
+            item={item}
+            activateCheckboxes={activateCheckboxes}
+            selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
+            isCatchUpAvailable={false}
+            thumbnail={channelplaceholder}
+            handleItemPress={handleItemPress}
+            handleLongPress={handleLongPress}
+          />
+        )}
+      />
+    );
+  };
+
+  if (data && data.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
         {renderLoader()}
@@ -275,24 +320,8 @@ const ItvFavoritesScreen = ({
 
         {renderSearchBar()}
 
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ListItemChanel
-              full
-              showepg={false}
-              showFavoriteButton={false}
-              item={item}
-              activateCheckboxes={activateCheckboxes}
-              selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
-              isCatchUpAvailable={false}
-              thumbnail={channelplaceholder}
-              handleItemPress={handleItemPress}
-              handleLongPress={handleLongPress}
-            />
-          )}
-        />
+        {renderContent()}
+
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
@@ -308,6 +337,10 @@ const ItvFavoritesScreen = ({
     );
   }
 
+  // if data is null return an empty component
+  if (!data) return <View />;
+
+  /// return empty state if data is an empty array
   return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
@@ -349,7 +382,7 @@ const mapStateToProps = createStructuredSelector({
   isFetching: selectIsFetching,
   favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
-  favoritesRemoved: selectfavoritesListRemoveUpdated,
+  favoritesRemoved: selectFavoritesListRemoveUpdated,
   paginator: selectPaginator,
   isSearching: selectIsSearching
 });

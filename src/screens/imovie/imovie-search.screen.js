@@ -2,13 +2,14 @@
 
 import React from 'react';
 import {
-  StyleSheet,
+  TextInput as FormInput,
+  Pressable,
   ScrollView,
   View,
   FlatList,
-  SectionList,
-  TextInput as FormInput,
-  Keyboard
+  // SectionList,
+  Keyboard,
+  KeyboardAvoidingView
 } from 'react-native';
 import MovieItem from 'components/movie-item/movie-item.component';
 import { ActivityIndicator, Text, TouchableRipple } from 'react-native-paper';
@@ -21,6 +22,7 @@ import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/movies/movies.actions';
+import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
@@ -31,45 +33,61 @@ import {
   selectSimilarMovies
 } from 'modules/ducks/movies/movies.selectors';
 import { selectMovieCategories } from 'modules/app';
-import RNFetchBlob from 'rn-fetch-blob';
-import { downloadPath } from 'utils';
 import uniq from 'lodash/uniq';
 import theme from 'common/theme';
+import { selectSearchNorResult } from 'modules/ducks/movies/movies.selectors';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieSearchScreen = ({
   navigation,
-  error,
+  // error,
+  noResult,
   searchStartAction,
   searchAction,
   results,
   categories,
   isFetching,
-  updateRecentSearchAction,
   recentSearch,
-  similarMovies,
+  // similarMovies,
   getSimilarMoviesAction,
-  getSimilarMoviesStartAction
+  getSimilarMoviesStartAction,
+  clearRecentSearchAction,
+  setBottomTabsVisibleAction,
+  resetSearchResultsPaginatorAction,
+  getMovieStartAction
 }) => {
   const [term, setTerm] = React.useState('');
-  const [downloads, setDownloads] = React.useState(null);
+  const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
+  // const [downloads, setDownloads] = React.useState(null);
+  const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
+  const [resultPadding, setResultPadding] = React.useState(0);
 
-  console.log({ results });
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
     getSimilarMoviesStartAction();
 
-    getDownloadsList();
+    // getDownloadsList();
   }, []);
 
-  const getDownloadsList = async () => {
-    const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
-    setDownloads(downloadsList);
-  };
+  React.useEffect(() => {
+    // do not update the list while searching
+    if (isFetching) return;
+
+    /// only display 5 most recent search terms
+    setRecents(recentSearch.slice(0, 5));
+  }, [recentSearch]);
+
+  // const getDownloadsList = async () => {
+  //   const downloadsList = await RNFetchBlob.fs.ls(downloadPath);
+  //   setDownloads(downloadsList);
+  // };
 
   const handleChange = (value) => {
+    /// hide empty message when typing
+    setShowEmptyMessage(false);
+
     setTerm(value);
   };
 
@@ -90,13 +108,17 @@ const ImovieSearchScreen = ({
       searchAction({ keyword, pageNumber: 1, limit: 10 });
 
       /// update recent search terms
-      updateRecentSearchAction(term);
+      // updateRecentSearchAction(term);
     }, 300),
     []
   );
 
   const handleItemPress = ({ id: videoId, is_series }) => {
+    /// clear movie to prevent flicker
+    getMovieStartAction();
+
     if (is_series) return navigation.navigate('SeriesDetailScreen', { videoId });
+
     navigation.navigate('MovieDetailScreen', { videoId });
   };
 
@@ -120,16 +142,16 @@ const ImovieSearchScreen = ({
     }
   }, [results]);
 
-  const DATA = [
-    {
-      title: 'Search Results',
-      data: [results]
-    },
-    {
-      title: 'Similar Movies',
-      data: [similarMovies]
-    }
-  ];
+  // const DATA = [
+  //   {
+  //     title: 'Search Results',
+  //     data: [results]
+  //   },
+  //   {
+  //     title: 'Similar Movies',
+  //     data: [similarMovies]
+  //   }
+  // ];
 
   // const handleMovieSelect = ({ id: videoId, is_series }) => {
   //   console.log({ videoId, is_series });
@@ -145,102 +167,142 @@ const ImovieSearchScreen = ({
     });
   };
 
-  const onSubmitEditing = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-      setTerm(term);
-    } else {
-      return;
-    }
-  };
+  // const onSubmitEditing = () => {
+  //   if (term.length) {
+  //     // updateRecentSearchAction(term);
+  //     setTerm(term);
+  //   } else {
+  //     return;
+  //   }
+  // };
 
-  const renderItem = ({ item }) => {
-    const downloadedThumbnail = downloads.find((file) => {
-      /// split item filename
-      // filename format: mt_id.jpg. e.g. mt_12390_.jpg
-      const splitFilename = file.split('_');
-      const id = splitFilename[1];
-      // eslint-disable-next-line react/prop-types
-      return id === item.id;
-    });
-    return (
-      <MovieItem item={item} onSelect={handleItemPress} downloadedThumbnail={downloadedThumbnail} />
-    );
+  const renderListLoader = () => {
+    if (isFetching)
+      return (
+        <View style={{ paddingTop: 0, paddingBottom: 30 }}>
+          <ActivityIndicator size="small" />
+        </View>
+      );
   };
 
   const renderResult = () => {
-    if (error)
-      return (
-        <Text
-          style={{
-            ...createFontFormat(14, 19),
-            fontWeight: '700',
-            color: theme.iplayya.colors.white50,
-            paddingVertical: theme.spacing(2)
-          }}
-        >
-          Zero result
-        </Text>
-      );
+    if (!results.length) return;
 
-    if (!downloads) return;
-
-    if (results.length)
-      return (
-        <React.Fragment>
-          <SectionList
-            showsVerticalScrollIndicator={false}
-            getItemLayout={(data, index) => ({
-              length: CARD_DIMENSIONS.HEIGHT,
-              offset: CARD_DIMENSIONS.HEIGHT * index,
-              index
-            })}
-            keyExtractor={(item) => item.id}
-            sections={DATA}
-            renderItem={renderSection}
-            renderSectionHeader={({ section }) => (
-              <View>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white80,
-                    paddingVertical: theme.spacing(2)
-                  }}
-                >
-                  {section.title}
-                </Text>
-              </View>
-            )}
-          />
-        </React.Fragment>
-      );
-  };
-
-  const renderSection = ({ item }) => {
     return (
-      <React.Fragment>
+      <ContentWrap>
         <FlatList
+          ListHeaderComponent={
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: theme.spacing(2)
+                }}
+              >
+                Search Results
+              </Text>
+            </ContentWrap>
+          }
+          ListFooterComponent={renderListLoader()}
           getItemLayout={(data, index) => ({
             length: CARD_DIMENSIONS.HEIGHT,
             offset: CARD_DIMENSIONS.HEIGHT * index,
             index
           })}
-          // contentInset={{ top: theme.spacing(2), left: 0, right: 0, bottom: theme.spacing(2) }}
-          data={item}
+          data={results}
           numColumns={3}
-          renderItem={renderItem}
+          renderItem={({ item }) => <MovieItem {...item} handleItemPress={handleItemPress} />}
           keyExtractor={(item) => item.id}
         />
-      </React.Fragment>
+        <View style={{ height: resultPadding + theme.spacing(5) }} />
+      </ContentWrap>
     );
+
+    // if (error)
+    //   return (
+    //     <Text
+    //       style={{
+    //         ...createFontFormat(14, 19),
+    //         fontWeight: '700',
+    //         color: theme.iplayya.colors.white50,
+    //         paddingVertical: theme.spacing(2)
+    //       }}
+    //     >
+    //       Zero result
+    //     </Text>
+    //   );
+
+    // if (!downloads) return;
+
+    // if (results.length)
+    //   return (
+    //     <React.Fragment>
+    //       <SectionList
+    //         showsVerticalScrollIndicator={false}
+    //         getItemLayout={(data, index) => ({
+    //           length: CARD_DIMENSIONS.HEIGHT,
+    //           offset: CARD_DIMENSIONS.HEIGHT * index,
+    //           index
+    //         })}
+    //         keyExtractor={(item) => item.id}
+    //         sections={DATA}
+    //         renderItem={renderSection}
+    //         renderSectionHeader={({ section }) => (
+    //           <View>
+    //             <Text
+    //               style={{
+    //                 ...createFontFormat(14, 19),
+    //                 fontWeight: '700',
+    //                 color: theme.iplayya.colors.white80,
+    //                 paddingVertical: theme.spacing(2)
+    //               }}
+    //             >
+    //               {section.title}
+    //             </Text>
+    //           </View>
+    //         )}
+    //       />
+    //     </React.Fragment>
+    //   );
   };
 
+  // const renderSection = ({ item }) => {
+  //   return (
+  //     <React.Fragment>
+  //       <FlatList
+  //         getItemLayout={(data, index) => ({
+  //           length: CARD_DIMENSIONS.HEIGHT,
+  //           offset: CARD_DIMENSIONS.HEIGHT * index,
+  //           index
+  //         })}
+  //         // contentInset={{ top: theme.spacing(2), left: 0, right: 0, bottom: theme.spacing(2) }}
+  //         data={item}
+  //         numColumns={3}
+  //         renderItem={() => <MovieItem {...item} />}
+  //         keyExtractor={(item) => item.id}
+  //       />
+  //     </React.Fragment>
+  //   );
+  // };
+
   const renderRecentSearch = () => {
-    if (term.length || !term.length) {
-      if (results.length) return;
-      return (
-        <React.Fragment>
+    // do not show if there is results
+    if (results.length) return;
+
+    // do not show if there is no recent search items
+    if (!recents.length) return;
+
+    return (
+      <ContentWrap>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <Text
             style={{
               ...createFontFormat(14, 19),
@@ -251,18 +313,20 @@ const ImovieSearchScreen = ({
           >
             Recent Search
           </Text>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {recentSearch.map((term, index) => (
-              <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
-                  {term}
-                </Text>
-              </TouchableRipple>
-            ))}
-          </ScrollView>
-        </React.Fragment>
-      );
-    }
+          <Pressable onPress={clearRecentSearchAction}>
+            <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
+          </Pressable>
+        </View>
+
+        {recents.map(({ id, title }, index) => (
+          <TouchableRipple key={index} onPress={() => handleItemPress({ id, title })}>
+            <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+              {title}
+            </Text>
+          </TouchableRipple>
+        ))}
+      </ContentWrap>
+    );
   };
   // console.log({ categories, categories });
   const renderSuggestedSearch = () => {
@@ -274,17 +338,19 @@ const ImovieSearchScreen = ({
       if (categories.length)
         return (
           <React.Fragment>
-            <Text
-              style={{
-                ...createFontFormat(14, 19),
-                fontWeight: '700',
-                color: theme.iplayya.colors.white50,
-                paddingVertical: theme.spacing(2)
-              }}
-            >
-              Suggested Search
-            </Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white50,
+                  paddingVertical: theme.spacing(2)
+                }}
+              >
+                Suggested Search
+              </Text>
+            </ContentWrap>
+            <ContentWrap>
               {categories.map(({ id, title }) => (
                 <TouchableRipple key={id} onPress={() => handleCategoryPress(id, title)}>
                   <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
@@ -292,55 +358,100 @@ const ImovieSearchScreen = ({
                   </Text>
                 </TouchableRipple>
               ))}
-            </ScrollView>
+            </ContentWrap>
           </React.Fragment>
         );
     }
   };
 
+  const handleSearchbarLayout = ({ nativeEvent: { layout } }) => {
+    setResultPadding(layout.height);
+  };
+
+  React.useEffect(() => {
+    if (noResult) return setShowEmptyMessage(true);
+
+    /// hide empty message if input is empty
+    if (!term) return setShowEmptyMessage(false);
+
+    setShowEmptyMessage(false);
+  }, [noResult]);
+
+  const handleSeachFocus = () => {
+    /// resets search result paginator so the result is page 1
+    resetSearchResultsPaginatorAction();
+
+    // reset search state
+    searchStartAction();
+
+    setBottomTabsVisibleAction({ hideTabs: true });
+  };
+
+  const renderNoResultText = () => {
+    if (!showEmptyResult) return;
+
+    if (!term) return;
+
+    return (
+      <ContentWrap>
+        <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+          {`There is nothing found for "${term}"`}
+        </Text>
+      </ContentWrap>
+    );
+  };
+
   return (
-    <ContentWrap style={styles.container}>
-      <TextInput
-        render={(props) => (
-          <FormInput
-            {...props}
-            style={{
-              flex: 1,
-              marginLeft: 40,
-              justifyContent: 'center',
-              fontSize: 16,
-              color: '#ffffff'
-            }}
-          />
-        )}
-        name="search"
-        returnKeyType="search"
-        autoFocus
-        onSubmitEditing={(term) => onSubmitEditing(term)}
-        handleChangeText={(term) => handleChange(term)}
-        value={term}
-        autoCapitalize="none"
-        clearButtonMode="while-editing"
-        style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
-        placeholder="Search a movie"
-        left={
-          <RNPTextInput.Icon
-            name={() => {
-              return isFetching ? (
-                <ActivityIndicator size="small" style={{ marginRight: 5 }} />
-              ) : (
-                <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
-              );
-            }}
-          />
-        }
-        // onFocus={() => this.setState({ isolatedInputs: true })}
-        // onBlur={() => this.setState({ isolatedInputs: false })}
-      />
-      {renderResult()}
-      {renderRecentSearch()}
-      {renderSuggestedSearch()}
-    </ContentWrap>
+    <KeyboardAvoidingView behavior="padding">
+      <ContentWrap onLayout={handleSearchbarLayout}>
+        <TextInput
+          onFocus={handleSeachFocus}
+          multiline={false}
+          name="search"
+          returnKeyType="search"
+          autoFocus
+          handleChangeText={(term) => handleChange(term)}
+          value={term}
+          autoCapitalize="none"
+          clearButtonMode="while-editing"
+          style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
+          placeholder="Search a movie"
+          render={(props) => (
+            <FormInput
+              {...props}
+              style={{
+                flex: 1,
+                marginLeft: 40,
+                justifyContent: 'center',
+                fontSize: 16,
+                color: '#ffffff'
+              }}
+            />
+          )}
+          left={
+            <RNPTextInput.Icon
+              name={() => {
+                return isFetching ? (
+                  <ActivityIndicator size="small" style={{ marginRight: 5 }} />
+                ) : (
+                  <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
+                );
+              }}
+            />
+          }
+          // onFocus={() => this.setState({ isolatedInputs: true })}
+          // onBlur={() => this.setState({ isolatedInputs: false })}
+        />
+      </ContentWrap>
+
+      {renderNoResultText()}
+
+      <ScrollView>
+        {renderResult()}
+        {renderRecentSearch()}
+        {renderSuggestedSearch()}
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -350,26 +461,22 @@ const Container = (props) => (
   </ScreenContainer>
 );
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 10
-  }
-});
-
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
-  updateRecentSearchAction: Creators.updateRecentSearch,
+  clearRecentSearchAction: Creators.clearRecentSearch,
   getSimilarMoviesAction: Creators.getSimilarMovies,
-  getSimilarMoviesStartAction: Creators.getSimilarMoviesStart
+  getSimilarMoviesStartAction: Creators.getSimilarMoviesStart,
+  setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible,
+  getMovieStartAction: Creators.getMovieStart,
+  resetSearchResultsPaginatorAction: Creators.resetSearchResultsPaginator
 };
 
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
-  // categories: selectCategoriesOf('movies'),
+  noResult: selectSearchNorResult,
   recentSearch: selectRecentSearch,
   similarMovies: selectSimilarMovies,
   categories: selectMovieCategories

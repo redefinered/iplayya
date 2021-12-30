@@ -18,7 +18,7 @@ const NotificationButton = ({ notifService }) => {
 
   React.useEffect(() => {
     notifService.getDeliveredNotifications((notifications) => setDelivered(notifications));
-  }, []);
+  });
 
   const renderIndicator = () => {
     if (delivered.length) return <View style={styles.indicator} />;

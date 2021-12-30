@@ -1,7 +1,7 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './movies.actions';
 import { updateMoviesState, updatePaginatorInfo, setupPaginator } from './movies.utils';
-import { IMOVIE_CATEGORY_PAGINATOR_LIMIT } from 'common/globals';
+import { PAGINATOR_LIMIT, IMOVIE_CATEGORY_PAGINATOR_LIMIT } from 'common/globals';
 import uniqBy from 'lodash/uniqBy';
 
 const INITIAL_STATE = {
@@ -29,7 +29,14 @@ const INITIAL_STATE = {
   updatedFavorites: false,
   removedFromFavorites: false,
 
+  favoritesPaginator: {
+    pageNumber: 1,
+    limit: PAGINATOR_LIMIT
+  },
+
+  isSearching: false,
   searchResults: [],
+  searchNoResult: false,
   recentSearch: [],
   similarMovies: [],
 
@@ -84,6 +91,7 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: null,
+      movies: [],
       categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT }
     };
   },
@@ -258,6 +266,8 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   // add to favorites
+
+  [Types.RESET_REMOVED]: (state) => ({ ...state, removedFromFavorites: false }),
   [Types.REMOVE_FROM_FAVORITES]: (state) => {
     return {
       ...state,
@@ -288,14 +298,20 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_FAVORITE_MOVIES_SUCCESS]: (state, action) => {
-    const { favoriteVideos } = action.data;
+    const { favoriteVideos } = action;
+    const { favoritesPaginator } = state;
+
+    const updatedData = uniqBy(favoriteVideos, 'id');
     return {
       ...state,
       isFetching: false,
       error: null,
       removedFromFavorites: false,
       updatedFavorites: false,
-      favoriteVideos
+      favoriteVideos: updatedData,
+      favoritesPaginator: Object.assign(favoritesPaginator, {
+        pageNumber: favoritesPaginator.pageNumber + 1
+      })
     };
   },
   [Types.GET_FAVORITE_MOVIES_FAILURE]: (state) => {
@@ -305,6 +321,16 @@ export default createReducer(INITIAL_STATE, {
       error: null
     };
   },
+  [Types.RESET_FAVORITES_PAGINATOR]: (state) => {
+    return {
+      ...state,
+      favoritesPaginator: {
+        limit: PAGINATOR_LIMIT,
+        pageNumber: 1
+      }
+    };
+  },
+  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }),
   /// search
   [Types.SEARCH_START]: (state) => {
     return {
@@ -318,14 +344,16 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      searchResults: action.data
+      searchResults: action.data,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
@@ -333,22 +361,33 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error,
-      searchResults: []
+      searchResults: [],
+      searchNoResult: true
     };
   },
   [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
-    let newRecentSearch = [];
-    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
-      newRecentSearch = state.recentSearch;
-    } else {
-      newRecentSearch = [action.term, ...state.recentSearch];
-    }
-    return {
-      ...state,
-      recentSearch: newRecentSearch.splice(0, 10)
-    };
+    const { movie } = action;
+    console.log({ movie });
+
+    const x = state.recentSearch.find(({ id }) => id === movie.id);
+
+    if (typeof x !== 'undefined') return { ...state };
+
+    return { ...state, recentSearch: [movie, ...state.recentSearch] };
+
+    // let newRecentSearch = [];
+    // if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+    //   newRecentSearch = state.recentSearch;
+    // } else {
+    //   newRecentSearch = [action.term, ...state.recentSearch];
+    // }
+    // return {
+    //   ...state,
+    //   recentSearch: newRecentSearch.splice(0, 10)
+    // };
+  },
+  [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] }),
+  [Types.RESET]: (state) => {
+    return { ...state, categoryPaginator: { page: 1, limit: IMOVIE_CATEGORY_PAGINATOR_LIMIT } };
   }
-  // [Types.RESET]: (state) => {
-  //   return { ...state, ...INITIAL_STATE, categoryPaginator: { page: 1, limit: 10 } };
-  // }
 });

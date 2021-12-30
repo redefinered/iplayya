@@ -22,23 +22,14 @@ const Home = ({
   completedOnboarding,
   setBottomTabsVisibleAction,
   getMoviesStartAction,
-  resetCategoryPaginatorAction,
-  enableSwipeAction
+  resetCategoryPaginatorAction
 }) => {
   const [showWelcomeDialog, setShowWelcomeDialog] = React.useState(false);
   const [showErrorModal, setShowErrorModal] = React.useState(true);
   const [showHomeGuide, setShowHomeGuide] = React.useState(false);
 
   React.useEffect(() => {
-    /// resets isFetching to false if ever the user closes app while loading
-    /// resets movie screen paginator
-    /// resets error to null
-    // getMoviesStartAction();
-
-    // makes sure main tab navigation is always visible on application mount
     setBottomTabsVisibleAction({ hideTabs: false });
-
-    // enableSwipeAction(true);
   }, []);
 
   React.useEffect(() => {

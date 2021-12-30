@@ -55,7 +55,6 @@ const ItvScreen = ({
   getChannelsByCategoriesAction,
   getChannelsByCategoriesStartAction
 }) => {
-  console.log({ featuredChannels });
   const [selectedCategory, setSelectedCategory] = React.useState('all');
   // const [showSnackBar, setShowSnackBar] = React.useState(false);
   const [showNotificationSnackBar, setShowNotificationSnackBar] = React.useState(false);
@@ -251,9 +250,9 @@ const ItvScreen = ({
     );
   };
 
-  const handleEpgButtonPress = (id) => {
-    navigation.navigate('ItvProgramGuideScreen', { channelId: id });
-  };
+  // const handleEpgButtonPress = (id) => {
+  //   navigation.navigate('ItvProgramGuideScreen', { channelId: id });
+  // };
 
   const renderLisHeader = () => {
     return (
@@ -307,7 +306,7 @@ const ItvScreen = ({
             full
             item={item}
             isCatchUpAvailable={false}
-            onEpgButtonPressed={handleEpgButtonPress}
+            // onEpgButtonPressed={handleEpgButtonPress}
             handleItemPress={handleItemPress}
             handleLongPress={handleItemLongPress}
             addToFavoritesMutation={ADD_TO_FAVORITES}

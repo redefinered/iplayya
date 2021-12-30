@@ -9,10 +9,12 @@ import HeaderBackImage from 'components/header-back-image/header-back-image.comp
 import Icon from 'components/icon/icon.component.js';
 import ItvSearchButton from 'screens/itv/itv-search-button.component';
 import IsportsSearchButton from 'screens/isports/isports-search-button.component';
+import ImovieSearchButton from 'screens/imovie/imovie-search-buttom.component';
 import { useMutation } from '@apollo/client';
 import SnackBar from 'components/snackbar/snackbar.component';
 import { ADD_TO_FAVORITES as ADD_ITV_CHANNEL_TO_FAVORITES } from 'graphql/itv.graphql';
 import { ADD_TO_FAVORITES as ADD_ISPORT_CHANNEL_TO_FAVORITES } from 'graphql/isports.graphql';
+import { ADD_MOVIE_TO_FAVORITES } from 'graphql/movies.graphql';
 
 import HomeScreen from 'screens/home/home.screen';
 
@@ -87,15 +89,15 @@ const Stack = createStackNavigator();
 
 const HomeStack = ({
   setBottomTabsVisibleAction,
-  favorites,
+  getMovieAction,
   isInitialSignIn,
   created,
   ...rest
 }) => {
   const navigation = useNavigation();
-
   const [showError, setShowError] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
+  const [showMovieSuccess, setShowMovieSuccess] = React.useState(false);
   // const [title, setTitle] = React.useState(false);
 
   React.useEffect(() => {
@@ -151,9 +153,28 @@ const HomeStack = ({
     }
   });
 
+  const [addImovieToFavorites] = useMutation(ADD_MOVIE_TO_FAVORITES, {
+    update(cache, { data }) {
+      cache.modify({
+        fields: {
+          favoriteVideos: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addVideoToFavorites)];
+          },
+          video: (_previous, { toReference }) => {
+            return toReference(data.addVideoToFavorites);
+          }
+        }
+      });
+    }
+  });
+
   React.useEffect(() => {
     if (showSuccess) hideSuccessModal();
   }, [showSuccess]);
+
+  React.useEffect(() => {
+    if (showMovieSuccess) hideMovieSuccessModal();
+  }, [showMovieSuccess]);
 
   React.useEffect(() => {
     if (showError) hideErrorModal();
@@ -162,6 +183,12 @@ const HomeStack = ({
   const hideSuccessModal = () => {
     setTimeout(() => {
       setShowSuccess(false);
+    }, 3000);
+  };
+
+  const hideMovieSuccessModal = () => {
+    setTimeout(() => {
+      setShowMovieSuccess(false);
     }, 3000);
   };
 
@@ -181,6 +208,13 @@ const HomeStack = ({
     setShowSuccess(true);
 
     addIsportChannelToFavorites({ variables: { input: { videoId } } });
+  };
+
+  const handleImovieFavPress = (videoId) => {
+    setShowMovieSuccess(true);
+
+    addImovieToFavorites({ variables: { input: { videoId } } });
+    getMovieAction(videoId);
   };
 
   if (isInitialSignIn) {
@@ -391,19 +425,7 @@ const HomeStack = ({
           options={({ navigation }) => ({
             title: 'Favorites',
             animationEnabled: false,
-            headerRight: () => (
-              <View style={{ flexDirection: 'row' }}>
-                <TouchableRipple
-                  borderless={true}
-                  style={{ borderRadius: 44, padding: 8 }}
-                  rippleColor="rgba(0,0,0,0.28)"
-                >
-                  <View style={styles.headerButtonContainer}>
-                    <Icon name="search" size={theme.iconSize(3)} />
-                  </View>
-                </TouchableRipple>
-              </View>
-            )
+            headerRight: () => <ImovieSearchButton />
           })}
           listeners={{
             focus: () => setBottomTabsVisibleAction({ hideTabs: true }),
@@ -438,7 +460,7 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={parseInt(videoId)}
-                    pressAction={rest.addMovieToFavoritesAction}
+                    pressAction={handleImovieFavPress}
                     active={typeof movie === 'undefined' ? false : movie.is_favorite}
                   />
                   <ImovieDownloadButton videoId={videoId} />
@@ -458,11 +480,11 @@ const HomeStack = ({
           options={(props) => {
             const {
               route: {
-                params: { videoId }
+                params: { videoId, seriesdata }
               }
             } = props;
 
-            const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
+            // const isInFavorites = favorites.findIndex(({ id }) => id === videoId);
 
             return {
               title: null,
@@ -470,8 +492,8 @@ const HomeStack = ({
                 <View style={{ flexDirection: 'row' }}>
                   <AddToFavoritesButton
                     sub={parseInt(videoId)}
-                    pressAction={rest.addMovieToFavoritesAction}
-                    active={isInFavorites >= 0 ? true : false}
+                    pressAction={handleImovieFavPress}
+                    active={typeof seriesdata === 'undefined' ? false : seriesdata.is_favorite}
                   />
                   <ImovieDownloadButton videoId={videoId} />
                 </View>
@@ -894,6 +916,13 @@ const HomeStack = ({
         iconName="heart-solid"
         iconColor={theme.iplayya.colors.vibrantpussy}
       />
+
+      <SnackBar
+        visible={showMovieSuccess}
+        message={'Movie is added to your Favorites list'}
+        iconName="heart-solid"
+        iconColor={theme.iplayya.colors.vibrantpussy}
+      />
     </React.Fragment>
   );
 };
@@ -935,7 +964,8 @@ const actions = {
   addMovieToFavoritesAction: MoviesCreators.addMovieToFavorites,
   addTrackToFavoritesAction: ImusicFavoritesCreators.addTrackToFavorites,
   addAlbumToFavoritesAction: ImusicFavoritesCreators.addAlbumToFavorites,
-  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites
+  addIsportChannelToFavoritesAction: IsportsCreators.addToFavorites,
+  getMovieAction: MoviesCreators.getMovie
 };
 
 const mapStateToProps = createStructuredSelector({

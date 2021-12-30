@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, StatusBar } from 'react-native';
 import { Provider as PaperProvider } from 'react-native-paper';
 import App from './App';
 import { name as appName } from './app.json';
@@ -19,6 +19,7 @@ const ApolloWrapped = () => (
 export default function Main() {
   return (
     <ReduxContainer>
+      <StatusBar translucent backgroundColor="transparent" />
       <PaperProvider theme={theme}>
         <ApolloWrapped />
       </PaperProvider>

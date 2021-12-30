@@ -14,9 +14,9 @@ export const GET_MOVIES_BY_CATEGORIES = gql`
     videoByCategory(input: $input) {
       id
       title
-      thumbnail
       category
       is_series
+      rating_imdb
       kinopoisk {
         api_key
         api_link
@@ -73,8 +73,8 @@ export const GET_MOVIE = gql`
 export const ADD_MOVIE_TO_FAVORITES = gql`
   mutation ADD_VIDEO_TO_FAVOURITES($input: videoToFavoritesInput) {
     addVideoToFavorites(input: $input) {
-      status
-      message
+      id
+      is_favorite
     }
   }
 `;
@@ -97,8 +97,8 @@ export const GET_FAVORITE_MOVIES = gql`
 export const REMOVE_FROM_FAVORITES = gql`
   mutation REMOVE_FROM_FAVORITES($input: videoToFavoritesInput) {
     removeVideoToFavorites(input: $input) {
-      status
-      message
+      id
+      is_favorite
     }
   }
 `;
@@ -123,9 +123,17 @@ export const SEARCH = gql`
     videos(input: $input) {
       id
       title
-      is_series
-      thumbnail
       category
+      is_series
+      rating_imdb
+      kinopoisk {
+        api_key
+        api_link
+      }
+      tmdb {
+        api_key
+        api_link
+      }
     }
   }
 `;

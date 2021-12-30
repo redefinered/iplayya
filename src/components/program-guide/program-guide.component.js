@@ -41,7 +41,6 @@ const ProgramGuide = ({
 }) => {
   const theme = useTheme();
   const headerHeight = useHeaderHeight();
-  // const [notifService, setNotifService] = React.useState(null);
   const [programsPageYOffset, setProgramsPageYOffset] = React.useState(null);
   const [selectedDateId, setSelectedDateId] = React.useState('8');
   const [programs, setPrograms] = React.useState([]);
@@ -52,10 +51,11 @@ const ProgramGuide = ({
         channelId,
         date
       }
-    }
+    },
+    /// this needs to be tested as I'm not sure what the impact of it
+    // with the server when a million user is in a channel detail screen
+    pollInterval: 500
   });
-
-  // console.log({ error, loading, data });
 
   React.useEffect(() => {
     if (data) {
@@ -74,10 +74,12 @@ const ProgramGuide = ({
   });
 
   React.useEffect(() => {
+    if (loading) return;
+
     if (selectedDateId === '8') {
       setCurrentProgram(programs[0]);
     }
-  }, [selectedDateId]);
+  }, [selectedDateId, loading, programs]);
 
   const handlePillPress = (id) => {
     /// reset programs
@@ -104,15 +106,8 @@ const ProgramGuide = ({
   };
 
   /// CREATE SCHEDULED NOTIFICATIONS
-  const handleCreateScheduledNotif = ({ parentType, ...rest }) => {
-    // console.log({ parentType, ...rest });
-    notifService.scheduleNotif({
-      id: rest.id,
-      channelId: rest.channelId,
-      channelName: rest.channelName,
-      module: parentType,
-      program: { id: rest.id, parentType, ...rest }
-    });
+  const handleCreateScheduledNotif = (program) => {
+    notifService.scheduleNotif(program);
 
     notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
@@ -121,28 +116,7 @@ const ProgramGuide = ({
 
   /// CANCEL A NOTIFICATION
   const handleCancelScheduledNotif = (id) => {
-    // console.log({ id });
     notifService.cancelNotif(id);
-
-    notifService.getScheduledLocalNotifications((notifications) => {
-      console.log({ notifications });
-    });
-  };
-
-  /// for testing
-  // eslint-disable-next-line no-unused-vars
-  const checkScheduledNotifs = () => {
-    notifService.getScheduledLocalNotifications((notifications) => {
-      console.log({ notifications });
-    });
-  };
-
-  // /// cancel all
-  // eslint-disable-next-line no-unused-vars
-  const cancelAllNotifications = () => {
-    notifService.cancelAll((notifications) => {
-      console.log({ notifications });
-    });
 
     notifService.getScheduledLocalNotifications((notifications) => {
       console.log({ notifications });
@@ -196,9 +170,6 @@ const ProgramGuide = ({
       );
     }
   };
-
-  // return empty componet if no available programs
-  // if (!programs.length) return <View />;
 
   const renderSelectorPills = () => {
     if (error) return;

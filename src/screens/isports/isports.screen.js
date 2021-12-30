@@ -249,9 +249,9 @@ const IsportsScreen = ({
     );
   };
 
-  const handleEpgButtonPress = (id) => {
-    navigation.navigate('ItvProgramGuideScreen', { channelId: id });
-  };
+  // const handleEpgButtonPress = (id) => {
+  //   navigation.navigate('ItvProgramGuideScreen', { channelId: id });
+  // };
 
   const renderLisHeader = () => {
     return (
@@ -307,7 +307,7 @@ const IsportsScreen = ({
             full
             item={item}
             isCatchUpAvailable={false}
-            onEpgButtonPressed={handleEpgButtonPress}
+            // onEpgButtonPressed={handleEpgButtonPress}
             handleItemPress={handleItemPress}
             handleLongPress={handleItemLongPress}
             addToFavoritesMutation={ADD_TO_FAVORITES}
