@@ -75,8 +75,17 @@ const App = ({
   const [isScreenLoad, setIsScreenLoad] = React.useState(true);
 
   React.useEffect(() => {
-    if (!isLoading) return setIsScreenLoad(false);
+    hideLoader(isLoading);
+    // if (!isLoading) return setIsScreenLoad(false);
   }, [isLoading]);
+
+  const hideLoader = (isLoading) => {
+    if (!isLoading) return;
+
+    return new Promise((resolve) => {
+      resolve(setTimeout(() => setIsScreenLoad(false), 3000));
+    });
+  };
 
   React.useEffect(() => {
     /// set the paginator information for imovie screen
