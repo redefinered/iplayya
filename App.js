@@ -118,7 +118,7 @@ const App = ({
   // }, [testMode]);
 
   React.useEffect(() => {
-    if (Platform.OS === 'android') SplashScreen.hide();
+    SplashScreen.hide();
 
     setNotificationServiceAction(notif.current);
 
