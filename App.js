@@ -75,8 +75,22 @@ const App = ({
   const [isScreenLoad, setIsScreenLoad] = React.useState(true);
 
   React.useEffect(() => {
-    if (!isLoading) return setIsScreenLoad(false);
-  }, [isLoading]);
+    hideLoader(isLoading, isLoggedIn);
+    // if (!isLoading) return setIsScreenLoad(false);
+  }, [isLoading, isLoggedIn]);
+
+  const hideLoader = (isLoading, isLoggedIn) => {
+    /// also show loading while not logged in
+    if (!isLoggedIn) return;
+
+    /// show loading while setting provider after login
+    // and after exiting and starting the app while logged in
+    if (!isLoading) return;
+
+    return new Promise((resolve) => {
+      resolve(setTimeout(() => setIsScreenLoad(false), 3000));
+    });
+  };
 
   React.useEffect(() => {
     /// set the paginator information for imovie screen
