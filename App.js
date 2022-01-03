@@ -75,11 +75,16 @@ const App = ({
   const [isScreenLoad, setIsScreenLoad] = React.useState(true);
 
   React.useEffect(() => {
-    hideLoader(isLoading);
+    hideLoader(isLoading, isLoggedIn);
     // if (!isLoading) return setIsScreenLoad(false);
-  }, [isLoading]);
+  }, [isLoading, isLoggedIn]);
 
-  const hideLoader = (isLoading) => {
+  const hideLoader = (isLoading, isLoggedIn) => {
+    /// also show loading while not logged in
+    if (!isLoggedIn) return;
+
+    /// show loading while setting provider after login
+    // and after exiting and starting the app while logged in
     if (!isLoading) return;
 
     return new Promise((resolve) => {
