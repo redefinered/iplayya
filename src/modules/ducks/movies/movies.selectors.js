@@ -202,3 +202,14 @@ export const selectCurrentEpisode = createSelector(
   [moviesState],
   ({ currentEpisode }) => currentEpisode
 );
+
+export const selectFavoritesPaginator = createSelector(
+  [moviesState],
+  ({ favoritesPaginator }) => favoritesPaginator
+);
+
+export const selectIsSearching = createSelector([moviesState], ({ isSearching }) => isSearching);
+export const selectSearchNorResult = createSelector(
+  [moviesState],
+  ({ searchNoResult }) => searchNoResult
+);

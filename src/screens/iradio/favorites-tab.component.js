@@ -18,7 +18,7 @@ import {
 import Spacer from 'components/spacer.component';
 import ContentWrap from 'components/content-wrap.component';
 import RadioButton from 'components/radio-button/radio-button.component';
-import NoFavorites from 'assets/favorite-movies-empty-state.svg';
+import NoFavorites from 'assets/favorites-empty-screen.svg';
 import { selectIsFetching } from 'modules/ducks/iradio-favorites/iradio-favorites.selectors';
 
 const ITEM_HEIGHT = 16;

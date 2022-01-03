@@ -3,8 +3,7 @@
 import 'react-native-gesture-handler';
 
 import React from 'react';
-import { View, Linking, Platform, StatusBar, StyleSheet } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { View, Linking, Platform, StatusBar, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import OnboardingStack from 'navigators/onboarding-stack.navigator';
 import ResetPasswordStack from 'navigators/reset-password-stack.navigator';
@@ -31,12 +30,14 @@ import { selectUpdated, selectProfile } from 'modules/ducks/profile/profile.sele
 import NotifService from 'NotifService';
 import { Button } from 'react-native-paper';
 import { selectError } from 'modules/ducks/user/user.selectors.js';
-import theme from 'common/theme';
+import MovieContextProvider from 'contexts/providers/movie/movie.provider';
+import LinearGradient from 'react-native-linear-gradient';
 
 // eslint-disable-next-line no-unused-vars
 import { resetStore } from 'modules/store';
 import Test from './test.component.js';
 import { selectNotificationService } from 'modules/ducks/notifications/notifications.selectors.js';
+import LottieView from 'lottie-react-native';
 
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
@@ -73,6 +74,11 @@ const App = ({
 
   const [providerError, setProviderError] = React.useState(false);
   const [testMode, setTestMode] = React.useState(false);
+  const [isScreenLoad, setIsScreenLoad] = React.useState(true);
+
+  React.useEffect(() => {
+    if (!isLoading) return setIsScreenLoad(false);
+  }, [isLoading]);
 
   React.useEffect(() => {
     /// set the paginator information for imovie screen
@@ -207,19 +213,19 @@ const App = ({
       </View>
     );
 
-  if (isLoading && isLoggedIn)
+  const renderHomeLoader = () => {
+    if (Platform.OS === 'ios')
+      return <Image source={require('./animation.gif')} style={{ width: 200, height: 200 }} />;
+
     return (
-      <View
-        style={{
-          justifyContent: 'center',
-          backgroundColor: theme.iplayya.colors.goodnight,
-          ...StyleSheet.absoluteFillObject
-        }}
-      >
-        <StatusBar barStyle="light-content" />
-        <ActivityIndicator />
-      </View>
+      <LottieView
+        source={require('./animation.json')}
+        autoPlay
+        loop
+        style={{ width: 200, height: 200 }}
+      />
     );
+  };
 
   if (testMode) return <Test />;
 
@@ -245,7 +251,28 @@ const App = ({
     );
   }
 
-  return <HomeComponent />;
+  if (isScreenLoad) {
+    return (
+      <LinearGradient
+        colors={['#2D1449', '#0D0637']}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          ...StyleSheet.absoluteFillObject
+        }}
+      >
+        <StatusBar barStyle="light-content" />
+        {renderHomeLoader()}
+      </LinearGradient>
+    );
+  }
+
+  return (
+    <MovieContextProvider>
+      <HomeComponent />
+    </MovieContextProvider>
+  );
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -266,7 +293,6 @@ const actions = {
   resetNowPlayingAction: ImusicCreators.resetNowPlaying,
   resetIradioNowPlayingAction: IradioCreators.resetNowPlaying,
   setProviderAction: AppCreators.setProvider,
-  // getProfileAction: ProfileCreators.get,
   setNotificationServiceAction: NotifCreators.setNotificationService,
   onRegisterAction: NotifCreators.onRegister,
   onNotifAction: NotifCreators.onNotif,

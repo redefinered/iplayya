@@ -152,7 +152,7 @@ const ItvSearchScreen = ({
               <ListItemChanel
                 item={item}
                 full
-                showepg={false}
+                // showepg={false}
                 showFavoriteButton={false}
                 isCatchUpAvailable={false}
                 thumbnail={channelplaceholder}
