@@ -529,7 +529,8 @@ const MediaPlayer = ({
   return (
     <React.Fragment>
       <View>
-        <View
+        <Pressable
+          onPress={() => setShowControls(true)}
           style={{
             backgroundColor: 'black',
             ...setFullScreenVideoContainerStyle()
@@ -538,7 +539,7 @@ const MediaPlayer = ({
           {renderPlayer()}
 
           {renderControls()}
-        </View>
+        </Pressable>
 
         <ChromecastOptionsModal
           visible={showChromecastOptions}
