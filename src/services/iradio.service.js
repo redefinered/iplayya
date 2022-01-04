@@ -67,28 +67,45 @@ export const addToFavorites = async (input) => {
   }
 };
 
-export const removeFromFavorites = async (radioId, pageNumber) => {
-  console.log({ pageNumber });
+export const removeFromFavorites = async (input) => {
   try {
+    // eslint-disable-next-line no-unused-vars
+    const { is_favorite, number, __typename, monitoring_status_updated, ...rest } = input;
+
+    const reqInput = {
+      is_favorite: is_favorite || false,
+      number: parseInt(number),
+      monitoring_status_updated: monitoring_status_updated || '0',
+      ...rest
+    };
+
     const { data } = await client.mutate({
       mutation: REMOVE_RADIO_FROM_FAVORITES,
-      variables: { input: { radioId } },
-      refetchQueries: [
-        {
-          query: GET_FAVORITE_RADIOS,
-          variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
-          fetchPolicy: 'network-only'
-        }
-        // {
-        //   query: GET_RADIO_STATIONS,
-        //   variables: { input: { limit: 10, pageNumber, orderBy: 'number', order: 'asc' } },
-        //   fetchPolicy: 'network-only'
-        // }
-      ],
-      awaitRefetchQueries: true
+      variables: { input: reqInput },
+
+      // this updates the favorites list in local cache
+      update(cache, { data }) {
+        cache.modify({
+          fields: {
+            favoriteRadios: (previous = []) => {
+              const normalizedId = cache.identify({
+                id: data.removeRadioToFavorites.id,
+                __typename: 'Radio'
+              });
+              const updatedItems = previous.filter((r) => r.__ref !== normalizedId);
+              return updatedItems;
+            },
+            radios: (previous = [], { toReference }) => {
+              return [...previous, toReference(data.removeRadioToFavorites)];
+            }
+          }
+        });
+      }
     });
+
     return data;
   } catch (error) {
+    console.log({ error });
     throw new Error(error);
   }
 };

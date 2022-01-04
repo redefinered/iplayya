@@ -41,10 +41,10 @@ export function* addToFavoritesRequest(action) {
 }
 
 export function* removeFromFavoritesRequest(action) {
-  const { radios } = action;
   try {
-    yield all(radios.map(({ r, pn }) => call(removeFromFavorites, r, pn)));
-    yield put(Creators.removeFromFavoritesSuccess(radios));
+    const { radios } = action;
+    yield all(radios.map((r) => call(removeFromFavorites, r)));
+    yield put(Creators.removeFromFavoritesSuccess());
   } catch (error) {
     yield put(Creators.removeFromFavoritesFailure(error.message));
   }

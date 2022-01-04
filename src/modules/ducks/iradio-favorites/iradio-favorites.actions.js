@@ -13,7 +13,7 @@ const { Types, Creators } = createActions(
     addToFavoritesFailure: ['error'],
 
     removeFromFavorites: ['radios'],
-    removeFromFavoritesSuccess: ['radios'],
+    removeFromFavoritesSuccess: null,
     removeFromFavoritesFailure: ['error'],
 
     resetPaginator: null,

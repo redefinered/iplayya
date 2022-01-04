@@ -8,6 +8,7 @@ import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
+import { Creators as RadioCreators } from 'modules/ducks/iradio/iradio.actions';
 import { createStructuredSelector } from 'reselect';
 import {
   selectPaginator,
@@ -34,8 +35,11 @@ const FavoritesTab = ({
   setIndex,
   resetPaginatorAction,
   getFavoritesAction,
-  removed
+  removed,
+  getRadioStationsAction
 }) => {
+  const updated = React.useRef(false);
+
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
@@ -49,11 +53,17 @@ const FavoritesTab = ({
 
   React.useEffect(() => {
     if (removed) {
+      resetPaginatorAction();
+
+      updated.current = true;
       setActivateCheckboxes(false);
 
-      const prevPaginator = Object.assign(paginator, { pageNumber: paginator.pageNumber - 1 });
+      // const prevPaginator = Object.assign(paginator, { pageNumber: paginator.pageNumber - 1 });
       // console.log({ prevPaginator });
-      getFavoritesAction(prevPaginator);
+      getFavoritesAction(Object.assign(paginator, { pageNumber: 1 }));
+      getRadioStationsAction({ pageNumber: 1, limit: 100, orderBy: 'number', order: 'asc' });
+    } else {
+      updated.current = false;
     }
   }, [removed]);
 
@@ -106,16 +116,17 @@ const FavoritesTab = ({
 
   const handleRemoveItems = () => {
     if (selectedItems.length) {
-      const { is_favorite, number, monitoring_status_updated, ...rest } = selectedItems;
+      // const { __typename, is_favorite, monitoring_status_updated, ...rest } = selectedItems;
 
-      const reqInput = {
-        is_favorite,
-        number: parseInt(number),
-        monitoring_status_updated: monitoring_status_updated || '0',
-        ...rest
-      };
+      // const reqInput = [
+      //   {
+      //     is_favorite: is_favorite || false,
+      //     monitoring_status_updated: monitoring_status_updated || '0',
+      //     ...rest
+      //   }
+      // ];
 
-      removeFromFavoritesAction(reqInput);
+      removeFromFavoritesAction(selectedItems);
     }
   };
 
@@ -306,7 +317,8 @@ FavoritesTab.propTypes = {
   handleSelectItem: PropTypes.func,
   navigation: PropTypes.object,
   setIndex: PropTypes.func,
-  getFavoritesAction: PropTypes.func
+  getFavoritesAction: PropTypes.func,
+  getRadioStationsAction: PropTypes.func
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -318,6 +330,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const actions = {
+  getRadioStationsAction: RadioCreators.get,
   getFavoritesAction: Creators.getFavorites,
   removeFromFavoritesAction: Creators.removeFromFavorites,
   resetPaginatorAction: Creators.resetPaginator
