@@ -377,7 +377,7 @@ const ChannelDetailScreen = ({
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <ChannelDetailScreen {...props} />
   </ScreenContainer>
 );
