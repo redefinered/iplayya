@@ -466,8 +466,7 @@ const MediaPlayer = ({
     return (
       <VolumeContext.Provider value={{ volume, setVolume }}>
         <Controls
-          visible
-          // visible={showControls}
+          visible={showControls}
           setShowControls={setShowControls}
           playbackInfo={playbackInfo}
           setPlaybackInfo={setPlaybackInfo}

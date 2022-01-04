@@ -9,8 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
-  ScrollView,
-  Dimensions
+  ScrollView
+  // Dimensions
 } from 'react-native';
 import { Text, withTheme } from 'react-native-paper';
 import Logo from 'assets/logo.svg';
@@ -53,6 +53,7 @@ const SignInScreen = ({
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
+  // const [containerStyle, setContainerStyle] = React.useState({ flex: 1 });
   const [error, setError] = React.useState({ username: null, password: null, commonError: null });
 
   React.useEffect(() => {
@@ -112,15 +113,26 @@ const SignInScreen = ({
     signInAction({ username, password });
   };
 
+  // const handleEvent = ({ nativeEvent }) => {
+  //   // if (!layout) return;
+  //   // console.log({ nativeEvent });
+
+  //   setContainerStyle({ height: nativeEvent.layout.height });
+  // };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
+      /// removed because it is conflicting with splash screen extended visibility
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      // behavior="padding"
     >
       <ScrollView
+        // onLayout={handleEvent}
         behavior="height"
         bounces={false}
-        contentContainerStyle={{ height: Dimensions.get('window').height }}
+        // contentContainerStyle={{ height: Dimensions.get('window').height }}
+        contentContainerStyle={{ flex: 1 }}
       >
         <View style={{ flex: 1, justifyContent: 'space-evenly' }}>
           <StatusBar translucent backgroundColor="transparent" />
@@ -129,8 +141,6 @@ const SignInScreen = ({
               flex: 3,
               alignItems: 'center',
               justifyContent: 'center'
-              // marginTop: 100,
-              // marginBottom: 30
             }}
           >
             <Logo />
@@ -143,7 +153,6 @@ const SignInScreen = ({
               autoCapitalize="none"
               focusAction={handleOnFocus}
               clearButtonMode="while-editing"
-              // keyboardType="email-address"
               keyboardType={Platform.OS === 'ios' ? 'email-address' : 'visible-password'}
               autoCompleteType="email"
               error={error.username || loginError || error.commonError}

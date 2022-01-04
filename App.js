@@ -39,6 +39,37 @@ import Test from './test.component.js';
 import { selectNotificationService } from 'modules/ducks/notifications/notifications.selectors.js';
 import LottieView from 'lottie-react-native';
 
+const AppLoader = () => {
+  const renderHomeLoader = () => {
+    if (Platform.OS === 'ios')
+      return <Image source={require('./animation.gif')} style={{ width: 200, height: 200 }} />;
+
+    return (
+      <LottieView
+        source={require('./animation.json')}
+        autoPlay
+        loop
+        style={{ width: 200, height: 200 }}
+      />
+    );
+  };
+
+  return (
+    <LinearGradient
+      colors={['#2D1449', '#0D0637']}
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...StyleSheet.absoluteFillObject
+      }}
+    >
+      <StatusBar barStyle="light-content" />
+      {renderHomeLoader()}
+    </LinearGradient>
+  );
+};
+
 // eslint-disable-next-line no-unused-vars
 const HomeComponent = () => (
   <NavigationContainer>
@@ -77,8 +108,27 @@ const App = ({
   const [isScreenLoad, setIsScreenLoad] = React.useState(true);
 
   React.useEffect(() => {
-    if (!isLoading) return setIsScreenLoad(false);
-  }, [isLoading]);
+    hideLoader(isLoading, isLoggedIn);
+  }, [isLoading, isLoggedIn]);
+
+  const hideLoader = (isLoading, isLoggedIn) => {
+    /// also show loading while not logged in
+    if (!isLoggedIn) return;
+
+    /// show loading while setting provider
+    // and after exiting and starting the app while logged in
+    if (!isLoading) return;
+
+    return new Promise((resolve) => {
+      resolve(setTimeout(() => setIsScreenLoad(false), 3000));
+    });
+  };
+
+  React.useEffect(() => {
+    if (isScreenLoad) {
+      setTimeout(() => setIsScreenLoad(false), 3000);
+    }
+  }, [isScreenLoad]);
 
   React.useEffect(() => {
     /// set the paginator information for imovie screen
@@ -97,16 +147,10 @@ const App = ({
     setProviderError(false);
   }, [userError]);
 
-  // React.useEffect(() => {
-  //   if (testMode) {
-  //     const notif = new NotifService(onRegisterAction, onNotifAction);
-
-  //     setNotif(notif);
-  //   }
-  // }, [testMode]);
-
   React.useEffect(() => {
-    if (Platform.OS === 'android') SplashScreen.hide();
+    SplashScreen.hide();
+
+    setIsScreenLoad(true);
 
     setNotificationServiceAction(notif.current);
 
@@ -140,11 +184,6 @@ const App = ({
       /// set data required to reset password
       // this will redirect the app to reset-password screen
       updatePasswordStartAction({ params: { token, email } });
-
-      /// get profile when updated
-      // if (profileUpdated) {
-      //   getProfileAction();
-      // }
     });
 
     notif.current.cancelAll();
@@ -161,28 +200,6 @@ const App = ({
     const provider = providers.find(({ is_active }) => is_active === true);
     setProviderAction(provider.id);
   }, [isLoggedIn]);
-
-  // React.useEffect(() => {
-  //   if (!dataLoaded) return;
-
-  //   setIsReady(true);
-  // }, [dataLoaded]);
-
-  // if profile is updated get profile to update profile data
-  // React.useEffect(() => {
-  //   if (profileUpdated) {
-  //     getProfileAction();
-  //   }
-  // }, [profileUpdated]);
-
-  // React.useEffect(() => {
-  //   if (isLoggedIn) {
-  //     const { providers } = currentUser;
-  //     if (providers.length) {
-  //       setProviderAction(providers[0].id);
-  //     }
-  //   }
-  // }, [isLoggedIn, currentUser]);
 
   const handleTestNotif = () => {
     setTestMode(false);
@@ -213,20 +230,6 @@ const App = ({
       </View>
     );
 
-  const renderHomeLoader = () => {
-    if (Platform.OS === 'ios')
-      return <Image source={require('./animation.gif')} style={{ width: 200, height: 200 }} />;
-
-    return (
-      <LottieView
-        source={require('./animation.json')}
-        autoPlay
-        loop
-        style={{ width: 200, height: 200 }}
-      />
-    );
-  };
-
   if (testMode) return <Test />;
 
   if (passwordUpdateParams)
@@ -236,12 +239,15 @@ const App = ({
       </NavigationContainer>
     );
 
-  if (!isLoggedIn)
+  if (!isLoggedIn) {
+    if (isScreenLoad) return <AppLoader />;
+
     return (
       <NavigationContainer>
         <OnboardingStack />
       </NavigationContainer>
     );
+  }
 
   if (providerError) {
     return (
@@ -251,22 +257,7 @@ const App = ({
     );
   }
 
-  if (isScreenLoad) {
-    return (
-      <LinearGradient
-        colors={['#2D1449', '#0D0637']}
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          ...StyleSheet.absoluteFillObject
-        }}
-      >
-        <StatusBar barStyle="light-content" />
-        {renderHomeLoader()}
-      </LinearGradient>
-    );
-  }
+  if (isScreenLoad) return <AppLoader />;
 
   return (
     <MovieContextProvider>
