@@ -338,6 +338,7 @@ const VideoControls = ({
     <Pressable
       onPress={handleControlsPress}
       style={{
+        flex: 1,
         backgroundColor: theme.iplayya.colors.black50,
         opacity: controlProps.visible ? 1 : 0,
         ...controlProps.style,
