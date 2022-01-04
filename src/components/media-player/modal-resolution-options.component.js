@@ -13,7 +13,7 @@ const ResolutionsOptionsModal = ({
   handleSelectResolution,
   setShowVideoOptions
 }) => {
-  const [selected, setSelected] = React.useState(null);
+  const [selected, setSelected] = React.useState('auto');
 
   const handleSelect = (s) => {
     handleSelectResolution(s);

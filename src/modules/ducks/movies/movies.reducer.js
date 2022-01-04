@@ -367,7 +367,6 @@ export default createReducer(INITIAL_STATE, {
   },
   [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
     const { movie } = action;
-    console.log({ movie });
 
     const x = state.recentSearch.find(({ id }) => id === movie.id);
 
