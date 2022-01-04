@@ -53,9 +53,6 @@ const MediaPlayer = ({
   // eslint-disable-next-line react/prop-types
   videoLength
 }) => {
-  // const { volume, setVolume } = React.useContext(VolumeContext);
-
-  // console.log({ volume });
   const castSession = useCastSession();
   const client = useRemoteMediaClient();
 
@@ -84,6 +81,7 @@ const MediaPlayer = ({
   // eslint-disable-next-line no-unused-vars
   const [isLandscape, setIsLandscape] = React.useState(false);
   // const [chromeCastSession, setChromeCastSession] = React.useState(null);
+  // console.log({ resolution, resolutions, activeState });
 
   const timer = React.useRef(null);
 
@@ -144,6 +142,12 @@ const MediaPlayer = ({
 
     return () => handleCleanup({ castListener, volumeListener });
   }, []);
+
+  React.useEffect(() => {
+    if (!resolutions.length) return;
+
+    setActiveState(resolutions.find(({ id }) => id === 'auto'));
+  }, [resolutions]);
 
   // const onOrientationChange = ({ window }) => {
   //   const { width, height } = window;
@@ -311,6 +315,7 @@ const MediaPlayer = ({
 
   React.useEffect(() => {
     let r = resolutions.find(({ name }) => name === resolution);
+    // console.log({ r });
     if (typeof r !== 'undefined') return setSource(r.link.split(' ')[1]);
   }, [resolution]);
 
@@ -402,6 +407,8 @@ const MediaPlayer = ({
     setShowVideoOptions(false);
     setResolution(value);
     setActiveState(null);
+
+    setPaused(false);
   };
 
   const renderPlayer = () => {

@@ -134,9 +134,7 @@ const VideoControls = ({
                   alignItems: 'center',
                   height: 50,
                   backgroundColor:
-                    controlProps.activeState === name
-                      ? theme.iplayya.colors.white10
-                      : 'transparent',
+                    controlProps.resolution === name ? theme.iplayya.colors.white10 : 'transparent',
                   paddingHorizontal: 15
                 }}
               >
