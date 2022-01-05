@@ -7,7 +7,7 @@ import { TabView } from 'react-native-tab-view';
 import ScreenContainer from 'components/screen-container.component';
 import RadioStationsTab from './radios-stations-tab.component';
 import FavoritesTab from './favorites-tab.component';
-import NowPlaying from './iradio-nowplaying.component';
+// import NowPlaying from './iradio-nowplaying.component';
 import IradioBottomTabs from './iradio-bottom-tabs.component';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -18,26 +18,35 @@ import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import {
   selectError,
   selectIsFetching,
-  selectPaginator
+  selectPaginator,
+  selectNowPlaying
 } from 'modules/ducks/iradio/iradio.selectors';
 import { createFontFormat } from 'utils';
+import { useIsFocused } from '@react-navigation/native';
+import Spacer from 'components/spacer.component';
 import withLoader from 'components/with-loader.component';
 import withNotifRedirect from 'components/with-notif-redirect.component';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
 const IradioScreen = ({
-  navigation,
+  // navigation,
   startAction,
   error,
   getRadiosAction,
   getFavoritesAction,
   enableSwipeAction,
   setNowPlayingAction,
+  switchInIradioScreenAction,
+  setNowPlayingBackgroundModeAction,
+  nowPlaying,
+  setIradioBottomNavLayoutAction,
   route: { params }
 }) => {
   const [index, setIndex] = React.useState(0);
-  const [nowPlaying, setNowPlaying] = React.useState(null);
+  const [isNowPlaying, setIsNowPlaying] = React.useState(false);
+  const [bottomPadding, setBottomPadding] = React.useState(null);
+  const isFocused = useIsFocused();
 
   React.useEffect(() => {
     enableSwipeAction(false);
@@ -47,21 +56,48 @@ const IradioScreen = ({
   }, []);
 
   React.useEffect(() => {
+    if (nowPlaying === null) {
+      setIsNowPlaying(false);
+    } else {
+      setIsNowPlaying(true);
+    }
+  }, [nowPlaying]);
+
+  React.useEffect(() => {
+    setNowPlayingBackgroundModeAction(false);
+
+    // Unsubscribe
+    return () => {
+      setNowPlayingBackgroundModeAction(true);
+
+      switchInIradioScreenAction(false);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      switchInIradioScreenAction(true);
+    } else {
+      switchInIradioScreenAction(false);
+    }
+  }, [isFocused]);
+
+  React.useEffect(() => {
     if (index === 0) {
-      getRadiosAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
+      getRadiosAction({ pageNumber: 1, limit: 100, orderBy: 'number', order: 'asc' });
     }
 
     if (index === 1) {
       startAction();
-      getFavoritesAction({ pageNumber: 1, limit: 10, orderBy: 'number', order: 'asc' });
+      getFavoritesAction({ pageNumber: 1, limit: 100, orderBy: 'number', order: 'asc' });
     }
   }, [index]);
 
   React.useEffect(() => {
     if (params) {
-      const { cmd, name, number } = params;
-      setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
-      setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
+      const { cmd, name, number, ...rest } = params;
+      // setNowPlaying({ source: cmd, title: name, number: parseInt(number), ...rest });
+      setNowPlayingAction({ number: parseInt(number), url: cmd, title: name, ...rest });
     }
   }, [params]);
 
@@ -72,10 +108,19 @@ const IradioScreen = ({
 
   const handleSelectItem = (item) => {
     // const { source, title, artist, thumbnail } = item;
-    const { cmd, name, number } = item;
+    const { cmd, name, number, ...rest } = item;
 
-    setNowPlaying({ source: cmd, title: name, number: parseInt(number) });
-    setNowPlayingAction({ number: parseInt(number), url: cmd, title: name });
+    // setNowPlaying({ source: cmd, title: name, number: parseInt(number), ...rest });
+    setNowPlayingAction({ number: parseInt(number), url: cmd, title: name, ...rest });
+  };
+
+  const handleBottomTabsLayoutEvent = ({ nativeEvent }) => {
+    const {
+      layout: { height }
+    } = nativeEvent;
+
+    setBottomPadding(height);
+    setIradioBottomNavLayoutAction(height);
   };
 
   const renderScene = ({ route }) => {
@@ -105,9 +150,12 @@ const IradioScreen = ({
         />
       </React.Fragment>
 
-      <View>{nowPlaying && <NowPlaying navigation={navigation} />}</View>
+      <Spacer size={bottomPadding} />
 
-      <IradioBottomTabs />
+      <IradioBottomTabs
+        nowPlaying={isNowPlaying}
+        handleBottomTabsLayoutEvent={handleBottomTabsLayoutEvent}
+      />
     </View>
   );
 };
@@ -170,7 +218,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  paginator: selectPaginator
+  paginator: selectPaginator,
+  nowPlaying: selectNowPlaying
 });
 
 const actions = {
@@ -183,7 +232,10 @@ const actions = {
   getRadiosAction: Creators.get,
   getFavoritesAction: FavoritesCreators.getFavorites,
   enableSwipeAction: NavActionCreators.enableSwipe,
-  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator
+  resetFavoritesPaginatorAction: Creators.resetFavoritesPaginator,
+  switchInIradioScreenAction: Creators.switchInIradioScreen,
+  setNowPlayingBackgroundModeAction: Creators.setNowPlayingBackgroundMode,
+  setIradioBottomNavLayoutAction: Creators.setIradioBottomNavLayout
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withLoader, withNotifRedirect);

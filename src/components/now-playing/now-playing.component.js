@@ -18,6 +18,7 @@ import {
   selectSeekValue,
   selectAlbumId,
   selectIsInImusicScreen,
+  selectIsInAlbumDetailScreen,
   selectImusicBottomNavLayout
 } from 'modules/ducks/music/music.selectors';
 import { connect } from 'react-redux';
@@ -36,7 +37,7 @@ const NowPlaying = ({
   playlist,
   setProgressAction,
   setNowPlayingAction,
-  isBackgroundMode,
+  // isBackgroundMode,
   setNowPlayingLayoutInfoAction,
   updatePlaybackInfoAction,
   paused,
@@ -44,6 +45,7 @@ const NowPlaying = ({
   repeat,
   seekValue,
   isInImusicScreen,
+  isInAlbumDetailScreen,
   imusicBottomNavLayout
 }) => {
   // const rootComponent = React.useRef();
@@ -245,11 +247,14 @@ const NowPlaying = ({
   };
 
   const visibilityStyles = () => {
-    if (!imusicBottomNavLayout) return { bottom: 0 };
+    // if (!imusicBottomNavLayout) return { bottom: 0 };
+    if (isInAlbumDetailScreen) return { bottom: 0 };
 
-    if (isBackgroundMode) return { top: '100%' };
+    if (!isInImusicScreen) {
+      return { opacity: isInAlbumDetailScreen ? 1 : 0, top: '100%' };
+    }
 
-    return { bottom: isInImusicScreen ? imusicBottomNavLayout.height : 0 };
+    return { bottom: isInImusicScreen ? imusicBottomNavLayout : 0 };
   };
 
   const handleOnRootLayout = ({ nativeEvent }) => {
@@ -357,6 +362,7 @@ NowPlaying.propTypes = {
   repeat: PropTypes.object,
   seekValue: PropTypes.number,
   isInImusicScreen: PropTypes.bool,
+  isInAlbumDetailScreen: PropTypes.bool,
   imusicBottomNavLayout: PropTypes.object
 };
 
@@ -378,6 +384,7 @@ const mapStateToProps = createStructuredSelector({
   repeat: selectRepeat,
   seekValue: selectSeekValue,
   isInImusicScreen: selectIsInImusicScreen,
+  isInAlbumDetailScreen: selectIsInAlbumDetailScreen,
   imusicBottomNavLayout: selectImusicBottomNavLayout
 });
 

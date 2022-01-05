@@ -104,3 +104,8 @@ export const selectImusicBottomNavLayout = createSelector(
   [musicState],
   ({ imusicBottomNavLayout }) => imusicBottomNavLayout
 );
+
+export const selectIsInAlbumDetailScreen = createSelector(
+  [musicState],
+  ({ isInAlbumDetailScreen }) => isInAlbumDetailScreen
+);

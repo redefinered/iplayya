@@ -39,7 +39,8 @@ const ImusicScreen = ({
   setNetworkInfoAction,
   resetGenrePaginatorAction,
   setNowPlayingBackgroundModeAction,
-  switchInImusicScreenAction
+  switchInImusicScreenAction,
+  setImusicBottomNavLayoutAction
 }) => {
   const brand = theme.iplayya.colors;
 
@@ -115,6 +116,7 @@ const ImusicScreen = ({
     } = nativeEvent;
 
     setBottomPadding(height);
+    setImusicBottomNavLayoutAction(height);
   };
 
   const renderListFooter = () => {
@@ -186,7 +188,8 @@ const actions = {
   addMovieToFavoritesStartAction: Creators.addMovieToFavoritesStart,
   enableSwipeAction: NavActionCreators.enableSwipe,
   resetGenrePaginatorAction: Creators.resetGenrePaginator,
-  switchInImusicScreenAction: Creators.switchInImusicScreen
+  switchInImusicScreenAction: Creators.switchInImusicScreen,
+  setImusicBottomNavLayoutAction: Creators.setImusicBottomNavLayout
 };
 
 const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
