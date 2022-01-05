@@ -37,7 +37,7 @@ const NowPlaying = ({
   playlist,
   setProgressAction,
   setNowPlayingAction,
-  isBackgroundMode,
+  // isBackgroundMode,
   setNowPlayingLayoutInfoAction,
   updatePlaybackInfoAction,
   paused,
@@ -250,13 +250,9 @@ const NowPlaying = ({
     // if (!imusicBottomNavLayout) return { bottom: 0 };
     if (isInAlbumDetailScreen) return { bottom: 0 };
 
-    if (isBackgroundMode) return { top: '100%' };
-
     if (!isInImusicScreen) {
-      return { opacity: isInAlbumDetailScreen ? 1 : 0 };
+      return { opacity: isInAlbumDetailScreen ? 1 : 0, top: '100%' };
     }
-
-    console.log(imusicBottomNavLayout, isInImusicScreen, isInAlbumDetailScreen);
 
     return { bottom: isInImusicScreen ? imusicBottomNavLayout : 0 };
   };
