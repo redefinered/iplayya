@@ -67,7 +67,7 @@ const MediaPlayer = ({
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
   const [showControls, setShowControls] = React.useState(true);
   const [sliderPosition, setSliderPosition] = React.useState(null);
-  const [volume, setVolume] = React.useState(0);
+  const [volume, setVolume] = React.useState(0.3);
   const [volumeSliderVisible, setVolumeSliderVisible] = React.useState(false);
   const [showCastOptions, setShowCastOptions] = React.useState(false);
   const [showVideoOptions, setShowVideoOptions] = React.useState(false);
@@ -529,7 +529,8 @@ const MediaPlayer = ({
   return (
     <React.Fragment>
       <View>
-        <View
+        <Pressable
+          onPress={() => setShowControls(true)}
           style={{
             backgroundColor: 'black',
             ...setFullScreenVideoContainerStyle()
@@ -538,7 +539,7 @@ const MediaPlayer = ({
           {renderPlayer()}
 
           {renderControls()}
-        </View>
+        </Pressable>
 
         <ChromecastOptionsModal
           visible={showChromecastOptions}

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ButtonIconDefault from 'components/button-icon-default/button-icon-default.component';
@@ -236,6 +236,7 @@ const VideoControls = ({
 
   const setConditionalStyle = () => {
     if (isFullscreen) return styles.containerStyleFullScreen;
+
     return styles.containerStyle;
   };
 
@@ -400,7 +401,7 @@ const VideoControls = ({
 
 const styles = StyleSheet.create({
   containerStyle: {
-    width: Dimensions.get('window').width,
+    width: '100%',
     height: 211,
     padding: 10,
     paddingBottom: 0,
@@ -408,8 +409,9 @@ const styles = StyleSheet.create({
     zIndex: 99
   },
   containerStyleFullScreen: {
-    width: Dimensions.get('window').height,
-    height: Dimensions.get('window').width,
+    flex: 1,
+    width: '100%',
+    height: '100%',
     padding: 10,
     justifyContent: 'space-between',
     zIndex: 99
