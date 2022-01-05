@@ -1,8 +1,9 @@
 import { createReducer } from 'reduxsauce';
 import { Types } from './iradio-favorites.actions';
-import { filterOutRemovedItems } from './iradio-favorites.helpers';
+// import { filterOutRemovedItems } from './iradio-favorites.helpers';
 import uniqBy from 'lodash/unionBy';
 import orderBy from 'lodash/orderBy';
+import { PAGINATOR_LIMIT } from 'common/globals';
 
 const INITIAL_STATE = {
   isFetching: false,
@@ -12,7 +13,7 @@ const INITIAL_STATE = {
   added: false,
   removed: false,
   paginator: {
-    limit: 10,
+    limit: PAGINATOR_LIMIT,
     pageNumber: 1,
     orderBy: 'number',
     order: 'asc'
@@ -27,7 +28,7 @@ export default createReducer(INITIAL_STATE, {
       removed: false,
       favorites: [],
       paginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'
@@ -42,21 +43,27 @@ export default createReducer(INITIAL_STATE, {
     };
   },
   [Types.GET_FAVORITES_SUCCESS]: (state, action) => {
-    const { data, nextPaginator } = action;
+    const { favorites } = action;
+    const { paginator } = state;
+
+    const updatedData = uniqBy(favorites, 'id');
 
     // let updatedData = uniqBy(data, 'id');
-    let updatedData = uniqBy([...data, ...state.favorites], 'id');
+    // let updatedData = uniqBy([...data, ...state.favorites], 'id');
 
-    updatedData = updatedData.map(({ number, ...rest }) => {
-      return { number: parseInt(number), ...rest };
-    });
+    // updatedData = updatedData.map(({ number, ...rest }) => {
+    //   return { number: parseInt(number), ...rest };
+    // });
 
     return {
       ...state,
       isFetching: false,
       error: null,
       favorites: orderBy(updatedData, 'number', 'asc'),
-      paginator: nextPaginator
+      // paginator: nextPaginator
+      paginator: Object.assign(paginator, {
+        pageNumber: paginator.pageNumber + 1
+      })
     };
   },
   [Types.GET_FAVORITES_FAILURE]: (state, action) => {
@@ -100,14 +107,14 @@ export default createReducer(INITIAL_STATE, {
       removed: false
     };
   },
-  [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state, action) => {
-    const favorites = filterOutRemovedItems(state, action);
+  [Types.REMOVE_FROM_FAVORITES_SUCCESS]: (state) => {
+    // const favorites = filterOutRemovedItems(state, action);
     return {
       ...state,
       isFetching: false,
       error: null,
-      removed: true,
-      favorites
+      removed: true
+      // favorites
     };
   },
   [Types.REMOVE_FROM_FAVORITES_FAILURE]: (state, action) => {
@@ -122,7 +129,7 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       paginator: {
-        limit: 10,
+        limit: PAGINATOR_LIMIT,
         pageNumber: 1,
         orderBy: 'number',
         order: 'asc'

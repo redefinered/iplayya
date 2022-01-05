@@ -16,39 +16,23 @@ import {
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as FavoritesCreators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import ContentWrap from 'components/content-wrap.component';
+import { useMutation } from '@apollo/client';
+import { ADD_RADIO_TO_FAVORITES } from 'graphql/radios.graphql';
 
 const ITEM_HEIGHT = 44;
 
 const RadioStationsTab = ({
   getRadioStationsAction,
   radioStations,
-  addToFavoritesAction,
   paginator,
   handleSelectItem,
   isAddingToFavorites,
+  // addToFavoritesAction,
   added,
   resetUpdateIndicatorsAction,
   getFavoritesAction
 }) => {
   const [showSnackBar, setShowSnackBar] = React.useState(false);
-  // const [favorited, setFavorited] = React.useState('');
-  // const [radioStationsData, setRadioStationsData] = React.useState([]);
-
-  // setup radio data
-  // React.useEffect(() => {
-  //   if (radioStations.length) {
-  //     let data = radioStations.map(({ id, name, is_favorite, number, ...rest }) => ({
-  //       id,
-  //       name,
-  //       is_favorite,
-  //       number,
-  //       ...rest
-  //     }));
-  //     setRadioStationsData(data);
-  //   } else {
-  //     setRadioStationsData([]);
-  //   }
-  // }, [radioStations]);
 
   React.useEffect(() => {
     if (added) setShowSnackBar(true);
@@ -64,26 +48,40 @@ const RadioStationsTab = ({
     getRadioStationsAction(paginator);
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const [addToFavorites, { data, loading, error }] = useMutation(ADD_RADIO_TO_FAVORITES, {
+    update(cache, { data }) {
+      cache.modify({
+        fields: {
+          favoriteRadios: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addRadioToFavorites)];
+          },
+          radios: (previous = [], { toReference }) => {
+            return [...previous, toReference(data.addRadioToFavorites)];
+          }
+        }
+      });
+    }
+  });
+
   const handleAddToFavorites = (item) => {
     // eslint-disable-next-line no-unused-vars
-    const { is_favorite, pn, __typename, monitoring_status_updated, ...rest } = item;
+    const { is_favorite, number, __typename, monitoring_status_updated, c, ...rest } = item;
 
     const reqInput = {
       is_favorite,
+      number: parseInt(number),
       monitoring_status_updated: monitoring_status_updated || '0',
       ...rest
     };
-    // console.log({
-    //   is_favorite,
-    //   monitoring_status_updated: monitoring_status_updated || '0',
-    //   ...rest
-    // });
 
     // stop if alreay in favorites
     if (is_favorite) return;
 
+    setShowSnackBar(true);
     // exec add to favorites
-    addToFavoritesAction(reqInput);
+    // addToFavoritesAction(reqInput);
+    addToFavorites({ variables: { input: reqInput } });
   };
 
   const hideSnackBar = () => {
@@ -171,7 +169,7 @@ const RadioStationsTab = ({
       />
       <SnackBar
         visible={showSnackBar}
-        message="Channel is added to your favorites list"
+        message="Station is added to your favorites list"
         iconName="heart-solid"
         iconColor="#FF5050"
       />
@@ -185,7 +183,6 @@ RadioStationsTab.propTypes = {
   isAddingToFavorites: PropTypes.bool,
   getRadioStationsAction: PropTypes.func,
   radioStations: PropTypes.array,
-  addedToFavorites: PropTypes.bool,
   addToFavoritesAction: PropTypes.func,
   getFavoritesAction: PropTypes.func,
   handleSelectItem: PropTypes.func,

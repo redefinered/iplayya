@@ -58,7 +58,7 @@ const MusicPlayerScreen = ({
   const [showUpdateNotification, setShowUpdateNotification] = React.useState(false);
 
   React.useEffect(() => {
-    setNowPlayingBackgroundModeAction(true);
+    // setNowPlayingBackgroundModeAction(true);
 
     updateButtons(nowPlaying);
 

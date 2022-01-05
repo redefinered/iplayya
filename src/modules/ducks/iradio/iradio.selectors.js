@@ -37,6 +37,16 @@ export const selectNowPlayingLayoutInfo = createSelector(
   ({ nowPlayingLayoutInfo }) => nowPlayingLayoutInfo
 );
 
+export const selectIsRadioBackgroundMode = createSelector(
+  [radioState],
+  ({ isRadioBackgroundMode }) => isRadioBackgroundMode
+);
+
+export const selectIsInIradioScreen = createSelector(
+  [radioState],
+  ({ isInIradioScreen }) => isInIradioScreen
+);
+
 export const selectPaused = createSelector([radioState], ({ paused }) => paused);
 
 export const selectSearchResults = createSelector(
@@ -50,3 +60,8 @@ export const selectSearchResultsPaginator = createSelector(
 );
 
 export const selectRecentSearch = createSelector([radioState], ({ recentSearch }) => recentSearch);
+
+export const selectIradioBottomNavLayout = createSelector(
+  [radioState],
+  ({ iradioBottomNavLayout }) => iradioBottomNavLayout
+);

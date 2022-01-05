@@ -22,6 +22,9 @@ const { Types, Creators } = createActions(
     setPaused: ['isPaused'], // boolean,
     resetNowPlaying: null,
     setNowPlayingLayoutInfo: ['layoutInfo'],
+    setNowPlayingBackgroundMode: ['isRadioBackgroundMode'],
+    switchInIradioScreen: ['value'],
+    setIradioBottomNavLayout: ['layout'],
 
     searchStart: null,
     search: ['input', 'shouldIncrement'],

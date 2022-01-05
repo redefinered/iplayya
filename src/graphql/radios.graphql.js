@@ -42,6 +42,11 @@ export const GET_FAVORITE_RADIOS = gql`
       name
       number
       cmd
+      count
+      volume_correction
+      enable_monitoring
+      monitoring_status
+      monitoring_status_updated
       is_favorite
     }
   }
@@ -54,6 +59,11 @@ export const SEARCH = gql`
       name
       number
       cmd
+      count
+      volume_correction
+      enable_monitoring
+      monitoring_status
+      monitoring_status_updated
       is_favorite
     }
   }
