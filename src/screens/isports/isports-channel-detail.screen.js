@@ -400,7 +400,7 @@ const actions = {
   getChannelsByCategoriesAction: Creators.getChannelsByCategories,
   onNotifResetAction: NotificationCreators.onNotifReset,
   setMusicNowPlaying: MusicCreators.setNowPlaying,
-  setRadioNowPlaying: RadioCreators.setNowplaying,
+  setRadioNowPlaying: RadioCreators.setNowPlaying,
   setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
 };
 
