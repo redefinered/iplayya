@@ -7,7 +7,6 @@ import { PAGINATOR_LIMIT, ITV_SEARCH_RESULTS_LIMIT } from 'common/globals';
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
-  genres: [],
   recentSearch: [],
 
   paginator: {
@@ -51,28 +50,6 @@ const INITIAL_STATE = {
 export default createReducer(INITIAL_STATE, {
   [Types.START]: (state) => {
     return { ...state, channel: null };
-  },
-  [Types.GET_GENRES]: (state) => {
-    return {
-      ...state,
-      isFetching: true,
-      error: null
-    };
-  },
-  [Types.GET_GENRES_SUCCESS]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: null,
-      genres: orderBy(action.data, 'number', 'asc')
-    };
-  },
-  [Types.GET_GENRES_FAILURE]: (state, action) => {
-    return {
-      ...state,
-      isFetching: false,
-      error: action.error
-    };
   },
   [Types.GET_CHANNEL]: (state) => {
     return {
