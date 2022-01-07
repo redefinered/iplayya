@@ -83,7 +83,7 @@ ProgramItem.propTypes = {
   theme: PropTypes.object,
   title: PropTypes.string,
   time: PropTypes.string,
-  isCurrentlyPlaying: PropTypes.bool
+  isCurrentlyPlaying: PropTypes.func
 };
 
 const enhance = compose(withTheme);
