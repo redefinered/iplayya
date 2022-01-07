@@ -49,7 +49,6 @@ const ListItemChanel = ({
           flexDirection: 'row',
           height: ITEM_HEIGHT,
           paddingVertical: theme.spacing(1),
-          // marginBottom: theme.spacing(2),
           alignItems: 'center',
           justifyContent: 'space-between',
           backgroundColor: isPressed ? theme.iplayya.colors.black80 : 'transparent'
@@ -61,7 +60,6 @@ const ListItemChanel = ({
             flexDirection: 'row',
             alignItems: 'center',
             paddingHorizontal: 10
-            // paddingVertical: theme.spacing(1)
           }}
         >
           <View
@@ -253,6 +251,12 @@ const Content = ({
     );
   };
 
+  const getTitle = () => {
+    if (number) return `${number}: ${title}`;
+
+    return title;
+  };
+
   return (
     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
       <View
@@ -268,7 +272,9 @@ const Content = ({
             color: theme.iplayya.colors.white80
             // marginBottom: 5
           }}
-        >{`${number}: ${title}`}</Text>
+        >
+          {getTitle()}
+        </Text>
 
         {renderEpgtitle()}
 
