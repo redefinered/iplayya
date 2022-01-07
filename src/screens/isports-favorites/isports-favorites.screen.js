@@ -31,7 +31,7 @@ import withNotifRedirect from 'components/with-notif-redirect.component';
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
-const ItvFavoritesScreen = ({
+const IsportsFavoritesScreen = ({
   theme,
   route,
   isFetching,
@@ -56,7 +56,7 @@ const ItvFavoritesScreen = ({
   const [data, setData] = React.useState(null);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
-  console.log({ data });
+
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
 
@@ -350,7 +350,7 @@ const EmptyState = ({ isFetching, theme, navigation }) => (
 
 const Container = (props) => (
   <ScreenContainer withHeaderPush>
-    <ItvFavoritesScreen {...props} />
+    <IsportsFavoritesScreen {...props} />
   </ScreenContainer>
 );
 

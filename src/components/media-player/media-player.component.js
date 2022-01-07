@@ -19,13 +19,13 @@ import VolumeContext from 'contexts/volume/volume.context';
 const VIDEO_HEIGHT = 211;
 
 const VIDEO_STYLE = {
-  width: Dimensions.get('window').width,
+  width: '100%',
   height: VIDEO_HEIGHT,
   backgroundColor: 'black'
 };
 const VIDEO_STYLE_FULLSCREEN = {
-  width: Dimensions.get('window').height,
-  height: Dimensions.get('window').width
+  width: '100%',
+  height: '100%'
 };
 
 const MediaPlayer = ({
