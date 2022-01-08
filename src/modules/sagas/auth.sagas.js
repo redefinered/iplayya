@@ -14,7 +14,7 @@ export function* registerRequest(action) {
     const {
       register: {
         status,
-        tokens: { access_token, refresh_token }
+        tokens: { access_token }
       }
     } = yield call(register, input);
 
@@ -23,9 +23,6 @@ export function* registerRequest(action) {
 
     /// saves access_token to local storage
     yield AsyncStorage.setItem('access_token', access_token);
-
-    /// saves access_token to local storage
-    yield AsyncStorage.setItem('refresh_token', refresh_token);
 
     const { me: user } = yield call(getProfile);
 

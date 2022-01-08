@@ -58,13 +58,13 @@ const ChromecastButton = ({ onPressAction, stopCastingAction }) => {
 
   return (
     <View style={{ flexDirection: 'row' }}>
-      {castSession && (
+      {/* {castSession && (
         <ButtonIconDefault iconName="close" iconSize={3} pressAction={handleStopCastingPress} />
-      )}
+      )} */}
       <ButtonIconDefault
         iconName={castConnected ? 'cast-connected' : 'cast'}
         iconSize={3}
-        pressAction={handlePressActionPress}
+        pressAction={castSession ? handleStopCastingPress : handlePressActionPress}
       />
       {renderAirplayButton()}
     </View>

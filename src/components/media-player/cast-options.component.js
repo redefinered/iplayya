@@ -6,6 +6,7 @@ import { Text, TouchableRipple } from 'react-native-paper';
 import GoogleCast, { useDevices, useCastDevice } from 'react-native-google-cast';
 import { createFontFormat } from 'utils';
 import theme from 'common/theme';
+import Icon from 'components/icon/icon.component';
 
 const CastOptions = ({ handleHideList }) => {
   const sessionManager = GoogleCast.getSessionManager();
@@ -38,22 +39,38 @@ const CastOptions = ({ handleHideList }) => {
     return (
       <TouchableRipple
         onPress={() => handleSelect(deviceId)}
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          height: 50,
-          // backgroundColor: active === deviceId ? theme.iplayya.colors.white10 : 'transparent',
-          paddingHorizontal: 15
-        }}
+        // style={{
+        //   flexDirection: 'row',
+        //   alignItems: 'center',
+        //   height: 50,
+        //   // backgroundColor: active === deviceId ? theme.iplayya.colors.white10 : 'transparent',
+        //   paddingHorizontal: 15
+        // }}
       >
-        <Text
+        <View
           style={{
-            color: active ? theme.iplayya.colors.vibrantpussy : theme.colors.text,
-            ...createFontFormat(16, 22)
+            flexDirection: 'row',
+            alignItems: 'center',
+            height: 50,
+            // backgroundColor: active === deviceId ? theme.iplayya.colors.white10 : 'transparent',
+            paddingHorizontal: 15
           }}
         >
-          {friendlyName}
-        </Text>
+          <Icon
+            name="device-connect"
+            size={theme.iconSize(3)}
+            color="white"
+            style={{ marginRight: theme.spacing(2) }}
+          />
+          <Text
+            style={{
+              color: active ? theme.iplayya.colors.vibrantpussy : theme.colors.text,
+              ...createFontFormat(16, 22)
+            }}
+          >
+            {friendlyName}
+          </Text>
+        </View>
       </TouchableRipple>
     );
   };
