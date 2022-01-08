@@ -363,7 +363,7 @@ NowPlaying.propTypes = {
   seekValue: PropTypes.number,
   isInImusicScreen: PropTypes.bool,
   isInAlbumDetailScreen: PropTypes.bool,
-  imusicBottomNavLayout: PropTypes.object
+  imusicBottomNavLayout: PropTypes.number
 };
 
 const actions = {
