@@ -7,6 +7,7 @@ import Spacer from 'components/spacer.component';
 import DeviceInfo from 'react-native-device-info';
 import theme from 'common/theme';
 import CastOptions from './cast-options.component';
+import { createFontFormat } from 'utils';
 
 const CastOptionsModal = ({ visible, onCancelPress, handleHideList }) => {
   const handleCancelPress = () => {
@@ -17,6 +18,15 @@ const CastOptionsModal = ({ visible, onCancelPress, handleHideList }) => {
     <Modal animationType="slide" visible={visible} transparent>
       <View style={{ flex: 1, justifyContent: 'flex-end' }}>
         <View style={{ backgroundColor: '#202530', paddingTop: 20 }}>
+          <Text
+            style={{
+              paddingHorizontal: 15,
+              paddingBottom: theme.spacing(2),
+              ...createFontFormat(20, 27)
+            }}
+          >
+            Connect to a device
+          </Text>
           {/* {renderDeviceList()} */}
           <CastOptions handleHideList={handleHideList} />
           <Spacer size={20} />
