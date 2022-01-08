@@ -22,7 +22,7 @@ const INITIAL_STATE = {
   playlist: [],
   shuffle: false,
   nowPlayingLayoutInfo: null,
-  imusicBottomNavLayout: null,
+  imusicBottomNavLayout: 0,
   isBackgroundMode: false,
   isInImusicScreen: false,
   isInAlbumDetailScreen: false,
