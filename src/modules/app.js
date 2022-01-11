@@ -42,7 +42,13 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       error: null,
-      isLoading: true
+      isLoading: true,
+      contentBase: {
+        itvGenres: [],
+        movieCategories: [],
+        isportsGenres: [],
+        musicGenres: []
+      }
     };
   },
   [Types.SET_PROVIDER_SUCCESS]: (state, action) => {

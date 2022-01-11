@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { View, ScrollView, Dimensions, StatusBar, Platform, Modal } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import ContentWrap from 'components/content-wrap.component';
 import MediaPlayer from 'components/media-player/media-player.component';
 import { Text, List } from 'react-native-paper';
@@ -27,9 +27,11 @@ import {
   selectIsFetching as selectDownloading,
   selectDownloadStarted
 } from 'modules/ducks/imovie-downloads/imovie-downloads.selectors';
-import { downloadPath, createFontFormat } from 'utils';
+import { downloadPath, createFontFormat, toDateTime, toTitleCase } from 'utils';
 import SnackBar from 'components/snackbar/snackbar.component';
 import withNotifRedirect from 'components/with-notif-redirect.component';
+import Icon from 'components/icon/icon.component';
+import moment from 'moment';
 
 const MovieDetailScreen = ({
   navigation,
@@ -55,6 +57,7 @@ const MovieDetailScreen = ({
   const [source, setSource] = React.useState('');
   const [showSnackbar, setShowSnackbar] = React.useState(false);
   const [fullscreen, setFullscreen] = React.useState(false);
+  const [showMore, setShowMore] = React.useState(false);
 
   const renderStatusbar = () => {
     if (fullscreen) return <StatusBar hidden />;
@@ -92,6 +95,14 @@ const MovieDetailScreen = ({
     setTimeout(() => {
       setShowSnackbar(false);
     }, 3000);
+  };
+
+  const handleShowMore = () => {
+    if (showMore === false) {
+      setShowMore(true);
+    } else {
+      setShowMore(false);
+    }
   };
 
   React.useEffect(() => {
@@ -140,15 +151,82 @@ const MovieDetailScreen = ({
   if (!movie) return <View />;
 
   const {
+    /// items to exclude in 'read more' section
+    // eslint-disable-next-line no-unused-vars
+    id,
+    // eslint-disable-next-line no-unused-vars
+    __typename,
+    // eslint-disable-next-line no-unused-vars
+    video_urls,
+    // eslint-disable-next-line no-unused-vars
+    is_hd,
+    // eslint-disable-next-line no-unused-vars
+    is_censored,
+    // eslint-disable-next-line no-unused-vars
+    is_favorite,
+    // eslint-disable-next-line no-unused-vars
+    series,
+    // eslint-disable-next-line no-unused-vars
+    ep,
+
     year,
     description,
     rating_mpaa,
     category,
-    director,
     thumbnail,
     is_series,
     ...otherFields
   } = movie;
+
+  const readMoreData = Object.keys(otherFields).map((key) => {
+    if (key === 'director') {
+      return {
+        key,
+        label: 'Director',
+        value: otherFields[key]
+      };
+    }
+
+    if (key === 'time') {
+      const timeToDate = toDateTime(otherFields.time * 60);
+
+      return {
+        key,
+        label: 'Duration',
+        value: `${moment(timeToDate).format('H')}hr ${moment(timeToDate).format('mm')}m`
+      };
+    }
+
+    if (key === 'country') {
+      return {
+        key,
+        label: 'Country of origin',
+        value: otherFields[key]
+      };
+    }
+
+    if (key === 'rating_imdb') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
+      };
+    }
+
+    if (key === 'rating_kinopoisk') {
+      return {
+        key,
+        label: toTitleCase(key.replace('_', ' ')),
+        value: parseFloat(otherFields[key]).toFixed(2)
+      };
+    }
+
+    return {
+      key,
+      label: toTitleCase(key.replace('_', ' ')),
+      value: otherFields[key]
+    };
+  });
 
   const renderMediaPlayer = () => {
     if (!source)
@@ -159,7 +237,8 @@ const MovieDetailScreen = ({
             height: 211,
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: 'black'
+            backgroundColor: 'black',
+            marginBottom: theme.spacing(1)
           }}
         />
       );
@@ -184,11 +263,12 @@ const MovieDetailScreen = ({
   const renderVideoCaption = () => {
     if (!fullscreen)
       return (
-        <ContentWrap>
+        <ContentWrap style={{ marginTop: theme.spacing(2) }}>
           <Text
             style={{
               ...createFontFormat(12, 16),
-              color: theme.iplayya.colors.white50
+              color: theme.iplayya.colors.white50,
+              marginTop: theme.spacing(2)
             }}
           >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
         </ContentWrap>
@@ -203,49 +283,71 @@ const MovieDetailScreen = ({
     return (
       <React.Fragment>
         {/* content */}
-        <ScrollView style={{ height: 300 }}>
+        <ContentWrap>
+          <Text
+            style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}
+          >{`${title} (${year})`}</Text>
+        </ContentWrap>
+        <ScrollView>
           <ContentWrap>
-            {/* <Pressable onPress={() => toggleControlVisible()}>
-            <Text>toggle control</Text>
-          </Pressable> */}
-            <Text style={{ ...createFontFormat(24, 33), paddingVertical: 15 }}>{title}</Text>
-            <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>{description}</Text>
-            <Text style={{ ...createFontFormat(14, 20), marginBottom: 15 }}>
-              <Text style={{ color: theme.iplayya.colors.white50, ...createFontFormat(14, 20) }}>
-                Director{' '}
-              </Text>
-              {director}
+            <Text numberOfLines={showMore ? null : 4} style={{ ...createFontFormat(14, 20) }}>
+              {description}
             </Text>
-            <List.Section>
-              <List.Accordion
-                title="Read more"
-                style={{ paddingLeft: 0, paddingRight: 0, paddingTop: 0 }}
-                titleStyle={{ color: theme.iplayya.colors.strongpussy, marginLeft: -7 }}
-              >
-                {Object.keys(otherFields).map((key) => {
-                  return (
-                    <List.Item
-                      key={key}
-                      titleStyle={{ marginBottom: -10 }}
-                      title={
-                        <Text style={{ ...createFontFormat(14, 20) }}>
-                          <Text
-                            style={{
-                              color: theme.iplayya.colors.white50,
-                              ...createFontFormat(14, 20)
-                            }}
-                          >
-                            {key}{' '}
-                          </Text>
-                          {otherFields[key]}
-                        </Text>
-                      }
-                    />
-                  );
-                })}
-              </List.Accordion>
-            </List.Section>
           </ContentWrap>
+          {showMore ? (
+            <View style={{ marginBottom: theme.spacing(3) }}>
+              {readMoreData.map(({ key, label, value }) => {
+                return (
+                  <List.Item
+                    key={key}
+                    titleStyle={{ marginBottom: theme.spacing(-4) }}
+                    title={
+                      <Text style={{ ...createFontFormat(14, 20) }}>
+                        <Text
+                          style={{
+                            color: theme.iplayya.colors.white50,
+                            ...createFontFormat(14, 20)
+                          }}
+                        >
+                          {label}
+                          {': '}
+                        </Text>
+                        {value}
+                      </Text>
+                    }
+                  />
+                );
+              })}
+            </View>
+          ) : null}
+          <TouchableRipple onPress={handleShowMore} rippleColor={theme.iplayya.colors.white25}>
+            <ContentWrap>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: theme.spacing(2)
+                }}
+              >
+                <Text
+                  style={{
+                    color: theme.iplayya.colors.strongpussy,
+                    ...createFontFormat(14, 20)
+                  }}
+                >
+                  {showMore ? 'Read Less' : 'Read More'}
+                </Text>
+                <Icon
+                  name={showMore ? 'caret-up' : 'caret-down'}
+                  size={theme.iconSize(3)}
+                  style={{
+                    color: theme.iplayya.colors.white80,
+                    marginRight: theme.spacing(1)
+                  }}
+                />
+              </View>
+            </ContentWrap>
+          </TouchableRipple>
         </ScrollView>
 
         {/* loader for download starting */}
@@ -280,7 +382,10 @@ const MovieDetailScreen = ({
         justifyContent: 'center'
       };
 
-    return {};
+    return {
+      marginTop: fullscreen ? 0 : theme.spacing(2),
+      marginBottom: fullscreen ? 0 : theme.spacing(2)
+    };
   };
 
   return (
@@ -293,61 +398,14 @@ const MovieDetailScreen = ({
         {renderVideoCaption()}
       </View>
 
-      {/* Player */}
-      {/* <View>
-        <Pressable
-          onPress={() => handleTogglePlay()}
-          style={{
-            width: '100%',
-            height: 211,
-            marginBottom: 10,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
-          {source !== '' ? (
-            <MediaPlayer
-              isSeries={is_series}
-              paused={paused}
-              source={source}
-              thumbnail={thumbnail}
-              title={title}
-              togglePlay={handleTogglePlay}
-              setPaused={setPaused}
-              loading={loading}
-              videoUrls={videoUrls}
-            />
-          ) : (
-            <View
-              style={{
-                flex: 1,
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'black'
-              }}
-            >
-              <Text>NO SOURCE</Text>
-            </View>
-          )}
-        </Pressable>
-        <ContentWrap>
-          <Text
-            style={{
-              ...createFontFormat(12, 16),
-              color: theme.iplayya.colors.white50
-            }}
-          >{`${year}, 1h 55m | ${rating_mpaa}. ${category}`}</Text>
-        </ContentWrap>
-      </View> */}
-
+      {/* content */}
       {renderScreenContent()}
     </View>
   );
 };
 
 const Container = (props) => (
-  <ScreenContainer withHeaderPush backgroundType="solid">
+  <ScreenContainer withHeaderPush>
     <MovieDetailScreen {...props} />
   </ScreenContainer>
 );
