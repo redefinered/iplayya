@@ -69,6 +69,8 @@ const NowPlaying = ({
   }, [nowPlaying]);
 
   React.useEffect(() => {
+    if (!animation.current) return;
+
     if (!paused) {
       if (animation.current) {
         setSpeed(1);

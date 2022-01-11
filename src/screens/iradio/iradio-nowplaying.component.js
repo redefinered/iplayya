@@ -39,7 +39,7 @@ const NowPlaying = ({
 }) => {
   // const rootComponent = React.useRef();
   const player = React.useRef();
-  const animation = React.useRef();
+  const animation = React.useRef(null);
 
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
@@ -63,6 +63,8 @@ const NowPlaying = ({
   }, [nowPlaying]);
 
   React.useEffect(() => {
+    if (!animation.current) return;
+
     if (!paused) {
       if (animation.current) {
         setSpeed(1);
