@@ -4,8 +4,6 @@ import { View } from 'react-native';
 import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
-import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
-import PausedAnimationPlaceholder from 'assets/paused-animation-placeholder.svg';
 import { createFontFormat } from 'utils';
 import {
   selectNowPlaying,
@@ -19,6 +17,7 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/iradio/iradio.actions';
 import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
+import LottieView from 'lottie-react-native';
 import clone from 'lodash/clone';
 import theme from 'common/theme';
 
@@ -40,9 +39,11 @@ const NowPlaying = ({
 }) => {
   // const rootComponent = React.useRef();
   const player = React.useRef();
+  const animation = React.useRef();
 
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
+  const [speed, setSpeed] = React.useState(0);
 
   React.useEffect(() => {
     if (nowPlaying) {
@@ -60,6 +61,18 @@ const NowPlaying = ({
       setPausedAction(false);
     }
   }, [nowPlaying]);
+
+  React.useEffect(() => {
+    if (!paused) {
+      if (animation.current) {
+        setSpeed(1);
+        animation.current.play();
+      }
+    } else {
+      setSpeed(0);
+      animation.current.pause();
+    }
+  }, [paused, animation.current]);
 
   React.useEffect(() => {
     if (nowPlaying) {
@@ -174,11 +187,13 @@ const NowPlaying = ({
                   justifyContent: 'center'
                 }}
               >
-                {paused ? (
-                  <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-                ) : (
-                  <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-                )}
+                <LottieView
+                  ref={animation}
+                  source={require('../../assets/animation-visualizer.json')}
+                  loop
+                  speed={speed}
+                  style={{ width: 32, height: 32 }}
+                />
 
                 <TouchableRipple
                   style={{

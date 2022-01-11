@@ -5,8 +5,6 @@ import { Text, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import Video from 'react-native-video';
 import MediaProgressVisualizer from './media-progress-visualizer.component';
-import PlayingAnimationPlaceholder from 'assets/animation-placeholder.svg';
-import PausedAnimationPlaceholder from 'assets/paused-animation-placeholder.svg';
 import { createFontFormat } from 'utils';
 import {
   selectNowPlaying,
@@ -25,6 +23,8 @@ import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/music/music.actions';
 import { createStructuredSelector } from 'reselect';
 import DeviceInfo from 'react-native-device-info';
+import LottieView from 'lottie-react-native';
+
 import clone from 'lodash/clone';
 import theme from 'common/theme';
 
@@ -50,12 +50,14 @@ const NowPlaying = ({
 }) => {
   // const rootComponent = React.useRef();
   const player = React.useRef();
+  const animation = React.useRef();
 
   const [buffering, setBuffering] = React.useState(false);
   const [playbackInfo, setPlaybackInfo] = React.useState(null);
 
   // eslint-disable-next-line no-unused-vars
   const [hasNotch, setHasNotch] = React.useState(false);
+  const [speed, setSpeed] = React.useState(0);
 
   React.useEffect(() => {
     /// shows the bottom padding for devices with notch. not yet fully tested
@@ -65,6 +67,18 @@ const NowPlaying = ({
   React.useEffect(() => {
     setPausedAction(false);
   }, [nowPlaying]);
+
+  React.useEffect(() => {
+    if (!paused) {
+      if (animation.current) {
+        setSpeed(1);
+        animation.current.play();
+      }
+    } else {
+      setSpeed(0);
+      animation.current.pause();
+    }
+  }, [paused, animation.current]);
 
   // jumps to seek value specified
   React.useEffect(() => {
@@ -321,11 +335,13 @@ const NowPlaying = ({
                 justifyContent: 'center'
               }}
             >
-              {paused ? (
-                <PausedAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-              ) : (
-                <PlayingAnimationPlaceholder style={{ marginHorizontal: 10 }} />
-              )}
+              <LottieView
+                ref={animation}
+                source={require('../../assets/animation-visualizer.json')}
+                loop
+                speed={speed}
+                style={{ width: 32, height: 32 }}
+              />
 
               <Pressable onPress={() => setPausedAction(!paused)}>
                 <Icon
