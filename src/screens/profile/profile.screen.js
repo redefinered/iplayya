@@ -234,7 +234,10 @@ const ProfileScreen = ({
                 justifyContent: 'center'
               }}
             >
-              <Icon name="camera" size={theme.iconSize(3)} onPress={() => setModalOpen(true)} />
+              <Icon
+                name="camera"
+                size={theme.iconSize(3)} /* onPress={() => setModalOpen(true)} */
+              />
             </Pressable>
           </View>
           <Title
