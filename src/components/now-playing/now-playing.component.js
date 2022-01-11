@@ -289,6 +289,8 @@ const NowPlaying = ({
         onError={handleError}
         onProgress={handleProgress}
         playInBackground
+        playWhenInactive
+        ignoreSilentSwitch="ignore" // allows airplay background playback
       />
     );
   };
