@@ -57,6 +57,10 @@ const ProgramGuide = ({
     pollInterval: 500
   });
 
+  // console.log({ loading, data });
+  // console.log({ channelId, date });
+  // console.log({ error });
+
   React.useEffect(() => {
     if (data) {
       setPrograms(data.getPrograms);
@@ -172,8 +176,6 @@ const ProgramGuide = ({
   };
 
   const renderSelectorPills = () => {
-    if (error) return;
-
     return (
       <View>
         <SelectorPills
@@ -194,6 +196,11 @@ const ProgramGuide = ({
 
       {renderSelectorPills()}
 
+      {error && (
+        <ContentWrap>
+          <Text>No data</Text>
+        </ContentWrap>
+      )}
       <View
         onLayout={(event) => {
           event.target.measure((x, y, width, height, pageX, pageY) => {

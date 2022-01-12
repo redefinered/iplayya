@@ -26,9 +26,7 @@ import {
 } from 'modules/ducks/itv/itv.selectors';
 import { selectItvGenres } from 'modules/app';
 import withNotifRedirect from 'components/with-notif-redirect.component';
-// import SimilarSearch from './similar-search.component';
 
-// const ITEM_HEIGHT = 96;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvSearchScreen = ({
@@ -52,7 +50,7 @@ const ItvSearchScreen = ({
   const [resultPadding, setResultPadding] = React.useState(0);
   const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
   const [data, setData] = React.useState([]);
-  console.log({ recentSearch });
+
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
@@ -121,23 +119,22 @@ const ItvSearchScreen = ({
     [searchResultsPaginator]
   );
 
-  const handleItemPress = ({ id, title }) => {
+  const handleItemPress = ({ id, title }, layout = 1) => {
+    if (layout === 2)
+      return navigation.navigate('ItvScreen', {
+        genreId: genres.find(({ title: genreTitle }) => genreTitle === title).id
+      });
     /// the recent searched item is the one selected by user
     updateRecentSearchAction({ id, title });
 
-    // navigate to chanel details screen with `id` parameter
     navigation.navigate('ItvChannelDetailScreen', { channelId: id });
   };
-
-  // const handleGenrePress = (genreId) => {
-  //   navigation.navigate('ItvScreen', { genreId, openItvGuide: false });
-  // };
 
   const renderItem = ({ item }) => {
     if (item.layout === 2) {
       const { id, title } = item;
       return (
-        <TouchableRipple onPress={() => handleItemPress({ id, title })}>
+        <TouchableRipple onPress={() => handleItemPress({ id, title }, item.layout)}>
           <ContentWrap>
             <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
               {title}
@@ -272,14 +269,6 @@ const ItvSearchScreen = ({
           </ContentWrap>
         )}
       />
-
-      {/* <SectionList
-        IF NEEDS OPTIMIZATION CONVERT SCREEN TO SECTION LIST INSTEAD OF DISPLAYING SEPARATE LISTS PER DATA
-        sections={DATA}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => <Item title={item} />}
-        renderSectionHeader={({ section: { title } }) => <Text style={styles.header}>{title}</Text>}
-      /> */}
     </KeyboardAvoidingView>
   );
 };
