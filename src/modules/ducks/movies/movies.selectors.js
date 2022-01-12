@@ -105,20 +105,6 @@ export const selectUpdatedFavoritesCheck = createSelector(
   ({ updatedFavorites }) => updatedFavorites
 );
 
-// export const selectDownloads = createSelector([moviesState], ({ downloads }) => {
-//   return downloads;
-// });
-
-// export const selectDownloadsData = createSelector(
-//   [moviesState],
-//   ({ downloadsData }) => downloadsData
-// );
-
-// export const selectDownloadsProgress = createSelector(
-//   [moviesState],
-//   ({ downloadsProgress }) => downloadsProgress
-// );
-
 export const selectRemovedFromFavorites = createSelector(
   [moviesState],
   ({ removedFromFavorites }) => removedFromFavorites
@@ -146,13 +132,6 @@ export const selectSeekableDuration = createSelector([moviesState], ({ playbackI
   if (typeof playbackInfo.duration === 'undefined') return 0;
   return Math.floor(playbackInfo.duration);
 });
-
-// export const selectCurrentPosition = createSelector([moviesState], ({ playbackInfo }) => {
-//   if (!playbackInfo) return 0;
-
-//   if (typeof playbackInfo.position === 'undefined') return 0;
-//   return playbackInfo.position;
-// });
 
 export const selectCurrentTime = createSelector([moviesState], ({ playbackInfo }) => {
   if (!playbackInfo) return 0;

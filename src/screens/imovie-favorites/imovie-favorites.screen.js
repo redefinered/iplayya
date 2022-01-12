@@ -82,12 +82,6 @@ const ImovieFavoritesScreen = ({
     }
   };
 
-  // const loadMore = () => {
-  //   fetchMore({
-  //     variables: { input: { pageNumber: pageNumber.current + 1, limit: 2 } }
-  //   }).then();
-  // };
-
   React.useEffect(() => {
     if (data) setListData(uniqBy(data.favoriteVideos, 'id'));
   }, [data]);

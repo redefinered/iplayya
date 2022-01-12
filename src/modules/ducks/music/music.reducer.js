@@ -17,6 +17,8 @@ const INITIAL_STATE = {
   albums: [], // grouped with genres
   album: null,
 
+  recentSearch: [],
+
   paused: false,
   nowPlaying: null,
   playlist: [],
@@ -42,6 +44,19 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
+  [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
+    const { album } = action;
+
+    const x = state.recentSearch.find(({ id }) => id === album.id);
+
+    if (typeof x !== 'undefined') {
+      return { ...state };
+    }
+
+    return { ...state, recentSearch: [album, ...state.recentSearch] };
+  },
+  [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] }),
+
   [Types.SET_PAGINATOR_INFO]: (state, action) => {
     return { ...state, paginatorInfo: setupPaginator(action.genres) };
   },

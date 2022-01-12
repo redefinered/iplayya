@@ -85,39 +85,6 @@ const ImovieScreen = ({
     };
   }, []);
 
-  // React.useEffect(() => {
-  //   if (!movies.length) return;
-  //   if (!downloads) return;
-
-  //   getMovieThumbnails({ downloads, movies, thumbnails });
-  // }, [downloads, movies]);
-
-  // const getMovieThumbnails = ({ movies, downloads, thumbnails }) => {
-  //   if (!downloads) return;
-
-  //   let moviesMap = [];
-  //   let notFetched = [];
-  //   let notFetchedNorDownloaded = [];
-
-  //   for (let i = 0; i < movies.length; i++) {
-  //     const { videos } = movies[i];
-  //     moviesMap = [...moviesMap, ...videos];
-  //   }
-
-  //   /// filter out items whose thumbnails are are not yet fetched
-  //   if (moviesMap.length) {
-  //     notFetched = differenceBy(moviesMap, thumbnails, 'id');
-  //   }
-
-  //   ///
-  //   const downloadsIdsMap = downloads.map((d) => ({ id: d.split()[1] }));
-
-  //   if (notFetched.length)
-  //     notFetchedNorDownloaded = differenceBy(notFetched, downloadsIdsMap, 'id');
-
-  //   getMovieThumbnailsAction(notFetchedNorDownloaded);
-  // };
-
   React.useEffect(() => {
     if (!selected) return;
 
