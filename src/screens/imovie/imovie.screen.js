@@ -28,32 +28,27 @@ import { downloadPath } from 'utils';
 
 import withNotifRedirect from 'components/with-notif-redirect.component';
 import { MovieContext } from 'contexts/providers/movie/movie.provider';
-// import differenceBy from 'lodash/differenceBy';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
 const ImovieScreen = ({
-  resetAction,
+  theme,
+  error,
+  movies,
   isFetching,
   navigation,
-  error,
-  getMoviesAction,
+  resetAction,
   paginatorInfo,
-  // addMovieToFavoritesStartAction,
-  theme,
+  getMoviesAction,
   route: { params },
   categoryPaginator,
-  movies,
   enableSwipeAction,
   setNetworkInfoAction,
   getMoviesStartAction
-  // getMovieThumbnailsAction,
-  // thumbnails
 }) => {
+  console.log({ params });
   const { selected, setSelected, downloads, setDownloads } = React.useContext(MovieContext);
-
   const brand = theme.iplayya.colors;
-
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );

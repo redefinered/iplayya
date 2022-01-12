@@ -225,7 +225,7 @@ const ImovieSearchScreen = ({
       </ContentWrap>
     );
   };
-  // console.log({ categories, categories });
+
   const renderSuggestedSearch = () => {
     // > 0 && term.length <= 3
     if (term.length || !term.length) {
