@@ -39,6 +39,7 @@ const INITIAL_STATE = {
   isSearching: false,
   searchResults: [],
   similarChannel: [],
+  searchNoResult: false,
   searchResultsPaginator: {
     limit: ITV_SEARCH_RESULTS_LIMIT,
     pageNumber: 1,
@@ -303,7 +304,8 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
@@ -322,14 +324,16 @@ export default createReducer(INITIAL_STATE, {
       /// takes current searchResultPaginator and increment it's pageNumber property
       searchResultsPaginator: Object.assign(searchResultsPaginator, {
         pageNumber: searchResultsPaginator.pageNumber + 1
-      })
+      }),
+      searchNoResult: false
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      error: action.error
+      error: action.error,
+      searchNoResult: false
     };
   },
   [Types.UPDATE_RECENT_SEARCH]: (state, action) => {

@@ -104,3 +104,8 @@ export const selectFeaturedChannels = createSelector(
   [iSportsState],
   ({ featuredChannels }) => featuredChannels
 );
+
+export const selectSearchNorResult = createSelector(
+  [iSportsState],
+  ({ searchNoResult }) => searchNoResult
+);

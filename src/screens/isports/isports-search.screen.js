@@ -1,15 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react';
-import {
-  TextInput as FormInput,
-  FlatList,
-  View,
-  Keyboard,
-  Pressable,
-  ScrollView,
-  KeyboardAvoidingView
-} from 'react-native';
+import { TextInput as FormInput, Pressable, SectionList, KeyboardAvoidingView } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ListItemChanel from 'components/list-item-chanel/list-item-chanel.component';
@@ -29,18 +21,19 @@ import {
   selectSearchResults,
   selectSearchResultsPaginator,
   selectRecentSearch,
-  selectIsFetching
+  selectIsFetching,
+  selectSearchNorResult
 } from 'modules/ducks/isports/isports.selectors';
 import { selectIsportsGenres } from 'modules/app';
 import withNotifRedirect from 'components/with-notif-redirect.component';
 
-const ITEM_HEIGHT = 96;
 const channelplaceholder = require('assets/channel-placeholder.png');
 
 const ItvSearchScreen = ({
   theme,
   genres,
   results,
+  noResult,
   navigation,
   isFetching,
   searchAction,
@@ -55,12 +48,41 @@ const ItvSearchScreen = ({
   const [term, setTerm] = React.useState('');
   const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
   const [resultPadding, setResultPadding] = React.useState(0);
+  const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
+  const [data, setData] = React.useState([]);
 
   /// clear previous search result
   React.useEffect(() => {
     searchStartAction();
     resetSearchResultsPaginatorAction();
   }, []);
+
+  React.useEffect(() => {
+    const list = [];
+
+    /// setup data
+    if (recents.length) {
+      if (!term) {
+        list.push({ title: 'Recent Search', data: recents, layout: 2, clearButton: true });
+      }
+    }
+
+    if (results.length)
+      list.push({ title: 'Search Results', data: results, layout: 1, clearButton: false });
+
+    if (genres.length) {
+      if (!results.length) {
+        list.push({
+          title: 'Suggested Search',
+          data: genres.map(({ id, title }) => ({ id, title, layout: 2 })),
+          clearButton: false
+        });
+      }
+    }
+
+    /// set list data
+    setData(list);
+  }, [results, recents, genres, term]);
 
   React.useEffect(() => {
     // do not update the list while searching
@@ -71,6 +93,9 @@ const ItvSearchScreen = ({
   }, [recentSearch]);
 
   const handleChange = (value) => {
+    /// hide empty message when typing
+    setShowEmptyMessage(false);
+
     setTerm(value);
   };
 
@@ -94,159 +119,41 @@ const ItvSearchScreen = ({
     [searchResultsPaginator]
   );
 
-  const handleItemPress = ({ id, title }) => {
+  const handleItemPress = ({ id, title }, layout = 1) => {
+    if (layout === 2)
+      return navigation.navigate('IsportsScreen', {
+        genreId: genres.find(({ title: genreTitle }) => genreTitle === title).id
+      });
     /// the recent searched item is the one selected by user
     updateRecentSearchAction({ id, title });
 
-    // navigate to chanel details screen with `id` parameter
     navigation.navigate('IsportsChannelDetailScreen', { channelId: id });
   };
 
-  const handleGenrePress = (genreId) => {
-    navigation.navigate('IsportsScreen', { genreId, openItvGuide: false });
-  };
-
-  const handleScrollAction = () => {
-    Keyboard.dismiss();
-    // setOnEndReachedCalledDuringMomentum(false);
-    setBottomTabsVisibleAction({ hideTabs: true });
-  };
-
-  const renderListLoader = () => {
-    if (isFetching)
+  const renderItem = ({ item }) => {
+    if (item.layout === 2) {
+      const { id, title } = item;
       return (
-        <View style={{ paddingTop: 0, paddingBottom: 30 }}>
-          <ActivityIndicator size="small" />
-        </View>
-      );
-  };
-
-  const renderResult = () => {
-    if (results.length)
-      return (
-        <React.Fragment>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            ListHeaderComponent={
-              <ContentWrap>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white50,
-                    paddingVertical: theme.spacing(2)
-                  }}
-                >
-                  Search Results
-                </Text>
-              </ContentWrap>
-            }
-            ListFooterComponent={renderListLoader()}
-            onScroll={handleScrollAction}
-            data={results}
-            keyExtractor={(item) => item.id}
-            getItemLayout={(data, index) => {
-              return { length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index };
-            }}
-            renderItem={({ item }) => (
-              <ListItemChanel
-                item={item}
-                full
-                // showepg={false}
-                showFavoriteButton={false}
-                isCatchUpAvailable={false}
-                thumbnail={channelplaceholder}
-                handleItemPress={handleItemPress}
-              />
-            )}
-            // onEndReached={() => handleEndReached()}
-          />
-          <View style={{ height: resultPadding + theme.spacing(5) }} />
-        </React.Fragment>
-      );
-  };
-
-  const renderRecentSearch = () => {
-    /// do not show if searchbar is not in use
-    // if (!isSearching) return;
-
-    // do not show if there is results
-    if (results.length) return;
-
-    // do not show if there is no recent search items
-    if (!recents.length) return;
-
-    return (
-      <ContentWrap>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-        >
-          <Text
-            style={{
-              ...createFontFormat(14, 19),
-              fontWeight: '700',
-              color: theme.iplayya.colors.white50,
-              paddingVertical: theme.spacing(2)
-            }}
-          >
-            Recent Search
-          </Text>
-          <Pressable onPress={clearRecentSearchAction}>
-            <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
-          </Pressable>
-        </View>
-        {recents.map(({ id, title }, index) => (
-          <TouchableRipple key={index} onPress={() => handleItemPress({ id, title })}>
+        <TouchableRipple onPress={() => handleItemPress({ id, title }, item.layout)}>
+          <ContentWrap>
             <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
               {title}
             </Text>
-          </TouchableRipple>
-        ))}
-      </ContentWrap>
-    );
-  };
-
-  const renderSuggestedSearch = () => {
-    if (term.length || !term.length) {
-      /// return if search results is not empty
-      if (results.length) return;
-
-      if (genres.length)
-        return (
-          <React.Fragment>
-            <ContentWrap>
-              <Text
-                style={{
-                  ...createFontFormat(14, 19),
-                  fontWeight: '700',
-                  color: theme.iplayya.colors.white50,
-                  paddingVertical: theme.spacing(2)
-                }}
-              >
-                Suggested Search
-              </Text>
-            </ContentWrap>
-            <View>
-              {genres.map(({ id, title }) => (
-                <ContentWrap key={id}>
-                  <TouchableRipple onPress={() => handleGenrePress(id)}>
-                    <Text
-                      style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}
-                    >
-                      {title}
-                    </Text>
-                  </TouchableRipple>
-                </ContentWrap>
-              ))}
-            </View>
-            <View style={{ height: resultPadding + theme.spacing(5) }} />
-          </React.Fragment>
-        );
+          </ContentWrap>
+        </TouchableRipple>
+      );
     }
+
+    return (
+      <ListItemChanel
+        item={item}
+        full
+        showFavoriteButton={false}
+        isCatchUpAvailable={false}
+        thumbnail={channelplaceholder}
+        handleItemPress={handleItemPress}
+      />
+    );
   };
 
   const handleSeachFocus = () => {
@@ -263,15 +170,38 @@ const ItvSearchScreen = ({
     setResultPadding(layout.height);
   };
 
+  React.useEffect(() => {
+    if (noResult) return setShowEmptyMessage(true);
+
+    /// hide empty message if input is empty
+    if (!term) return setShowEmptyMessage(false);
+
+    setShowEmptyMessage(false);
+  }, [noResult]);
+
+  const renderNoResultText = () => {
+    if (!showEmptyResult) return;
+
+    if (!term) return;
+
+    return (
+      <ContentWrap>
+        <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+          {`There is nothing found for "${term}"`}
+        </Text>
+      </ContentWrap>
+    );
+  };
+
   return (
     <KeyboardAvoidingView behavior="padding">
       <ContentWrap onLayout={handleSearchbarLayout}>
         <TextInput
+          autoFocus
           onFocus={handleSeachFocus}
           multiline={false}
           name="search"
           returnKeyType="search"
-          autoFocus
           handleChangeText={(term) => handleChange(term)}
           value={term}
           autoCapitalize="none"
@@ -304,20 +234,41 @@ const ItvSearchScreen = ({
           }
         />
       </ContentWrap>
-      {/* <View style={{ flex: 1, height: Dimensions.get('window').height }}></View> */}
-      <ScrollView>
-        {renderResult()}
-        {renderRecentSearch()}
-        {renderSuggestedSearch()}
-      </ScrollView>
 
-      {/* <SectionList
-        IF NEEDS OPTIMIZATION CONVERT SCREEN TO SECTION LIST INSTEAD OF DISPLAYING SEPARATE LISTS PER DATA
-        sections={DATA}
-        keyExtractor={(item, index) => item + index}
-        renderItem={({ item }) => <Item title={item} />}
-        renderSectionHeader={({ section: { title } }) => <Text style={styles.header}>{title}</Text>}
-      /> */}
+      {renderNoResultText()}
+
+      <SectionList
+        contentContainerStyle={{ paddingBottom: resultPadding }}
+        sections={data}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
+        stickySectionHeadersEnabled={false}
+        renderSectionHeader={({ section: { title, clearButton } }) => (
+          <ContentWrap
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <Text
+              style={{
+                ...createFontFormat(14, 19),
+                fontWeight: '700',
+                color: theme.iplayya.colors.white50,
+                paddingVertical: theme.spacing(2)
+              }}
+            >
+              {title}
+            </Text>
+            {clearButton && (
+              <Pressable onPress={clearRecentSearchAction}>
+                <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
+              </Pressable>
+            )}
+          </ContentWrap>
+        )}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -341,6 +292,7 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
+  noResult: selectSearchNorResult,
   searchResultsPaginator: selectSearchResultsPaginator,
   recentSearch: selectRecentSearch,
   genres: selectIsportsGenres
