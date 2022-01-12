@@ -347,16 +347,6 @@ export default createReducer(INITIAL_STATE, {
     }
 
     return { ...state, recentSearch: [channel, ...state.recentSearch] };
-    // let newRecentSearch = [];
-    // if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
-    //   newRecentSearch = state.recentSearch;
-    // } else {
-    //   newRecentSearch = [action.term, ...state.recentSearch];
-    // }
-    // return {
-    //   ...state,
-    //   recentSearch: newRecentSearch.splice(0, 10)
-    // };
   },
 
   [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] }),

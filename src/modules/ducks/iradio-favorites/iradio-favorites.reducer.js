@@ -48,13 +48,6 @@ export default createReducer(INITIAL_STATE, {
 
     const updatedData = uniqBy(favorites, 'id');
 
-    // let updatedData = uniqBy(data, 'id');
-    // let updatedData = uniqBy([...data, ...state.favorites], 'id');
-
-    // updatedData = updatedData.map(({ number, ...rest }) => {
-    //   return { number: parseInt(number), ...rest };
-    // });
-
     return {
       ...state,
       isFetching: false,

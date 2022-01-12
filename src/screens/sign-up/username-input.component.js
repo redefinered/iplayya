@@ -19,8 +19,6 @@ const UsernameInput = ({
 }) => {
   // const validate = React.useCallback(debounce(formFields.username) => {}, []);
   const handleChangeText = (value, name) => {
-    // setError('username', 'gago ka ba?');
-    // console.log({ value, name });
     handleChange(value, name);
 
     validateUsername(value);

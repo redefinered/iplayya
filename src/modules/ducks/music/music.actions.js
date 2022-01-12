@@ -23,6 +23,9 @@ const { Types, Creators } = createActions(
     getAlbumDetailsSuccess: ['album'],
     getAlbumDetailsFailure: ['error'],
 
+    updateRecentSearch: ['album'],
+    clearRecentSearch: null,
+
     getAlbumsByGenres: ['input'],
     getAlbumsByGenresSuccess: ['data', 'nextPaginator'],
     getAlbumsByGenresFailure: ['error'],

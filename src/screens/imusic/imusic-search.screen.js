@@ -7,33 +7,37 @@ import {
   FlatList,
   View,
   Keyboard,
-  Dimensions,
   Image,
   TouchableOpacity,
-  SectionList
+  SectionList,
+  Pressable
 } from 'react-native';
 import { Text, withTheme, ActivityIndicator, TouchableRipple } from 'react-native-paper';
 import Icon from 'components/icon/icon.component';
 import ScreenContainer from 'components/screen-container.component';
 import TextInput from 'components/text-input/text-input.component';
 import ContentWrap from 'components/content-wrap.component';
-import withLoader from 'components/with-loader.component';
 import { TextInput as RNPTextInput } from 'react-native-paper';
 import { createFontFormat } from 'utils';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Creators } from 'modules/ducks/imusic-search/imusic-search.actions';
+import { Creators as MusicCreators } from 'modules/ducks/music/music.actions';
 import { Creators as NavCreators } from 'modules/ducks/nav/nav.actions';
 import debounce from 'lodash/debounce';
 import { createStructuredSelector } from 'reselect';
 import {
   selectError,
   selectSearchResults,
-  selectRecentSearch,
   selectIsFetching,
-  selectSimilarGenre
+  selectSimilarGenre,
+  selectSearchNorResult
 } from 'modules/ducks/imusic-search/imusic-search.selectors';
-import { selectAlbums, selectGenres } from 'modules/ducks/music/music.selectors';
+import {
+  selectAlbums,
+  selectGenres,
+  selectRecentSearch
+} from 'modules/ducks/music/music.selectors';
 import { ScrollView } from 'react-native-gesture-handler';
 import uniq from 'lodash/uniq';
 import withNotifRedirect from 'components/with-notif-redirect.component';
@@ -48,14 +52,16 @@ const ImusicSearchScreen = ({
   searchStartAction,
   searchAction,
   results,
+  noResult,
   albums,
   similarGenre,
-  allGenres,
+  // allGenres,
 
   isFetching,
 
   updateRecentSearchAction,
   recentSearch,
+  clearRecentSearchAction,
 
   getSimilarGenreStartAction,
   getSimilarGenreAction,
@@ -63,6 +69,8 @@ const ImusicSearchScreen = ({
   setBottomTabsVisibleAction
 }) => {
   const [term, setTerm] = React.useState('');
+  const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
+  const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
 
   const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
 
@@ -72,6 +80,8 @@ const ImusicSearchScreen = ({
   }, []);
 
   const handleChange = (value) => {
+    setShowEmptyMessage(false);
+
     setTerm(value);
   };
 
@@ -80,10 +90,19 @@ const ImusicSearchScreen = ({
       searchStartAction();
     }
     if (term.length) {
-      if (term.length <= 2) return;
-      search(term);
+      if (term.length >= 2) {
+        search(term);
+      }
     }
   }, [term]);
+
+  React.useEffect(() => {
+    // do not update the list while searching
+    if (isFetching) return;
+
+    /// only display 5 most recent search terms
+    setRecents(recentSearch.slice(0, 5));
+  }, [recentSearch]);
 
   React.useEffect(() => {
     const allGenresD = results.map(({ genre }) => {
@@ -92,7 +111,7 @@ const ImusicSearchScreen = ({
     const newGenre = allGenresD.join(',');
     const ex = newGenre.split(',');
     const exGenre = uniq(ex);
-    const filteredGenre = exGenre.map((genre) => allGenres.find(({ name }) => name === genre));
+    const filteredGenre = exGenre.map(() => albums.find(({ genre }) => genre === genre));
     if (results.length) {
       const ids = filteredGenre.map(({ id }) => {
         return parseInt(id);
@@ -115,24 +134,9 @@ const ImusicSearchScreen = ({
     }
   ];
 
-  const onSubmitEditing = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-      setTerm(term);
-    } else {
-      return;
-    }
-  };
+  const handleItemPress = ({ id, name }) => {
+    updateRecentSearchAction({ id, name });
 
-  const handleRecentSearch = () => {
-    if (term.length) {
-      updateRecentSearchAction(term);
-    } else {
-      return;
-    }
-  };
-
-  const handleItemPress = (id) => {
     navigation.replace('AlbumDetailScreen', { albumId: id });
   };
 
@@ -158,6 +162,22 @@ const ImusicSearchScreen = ({
     // setOnEndReachedCalledDuringMomentum(false);
     setBottomTabsVisibleAction({ hideTabs: true });
   };
+
+  const handleSeachFocus = () => {
+    // reset search state
+    searchStartAction();
+
+    setBottomTabsVisibleAction({ hideTabs: true });
+  };
+
+  React.useEffect(() => {
+    if (noResult) return setShowEmptyMessage(true);
+
+    /// hide empty message if input is empty
+    if (!term) return setShowEmptyMessage(false);
+
+    setShowEmptyMessage(false);
+  }, [noResult]);
 
   const renderThumbnail = ({ cover, name, performer }) => {
     if (!cover) {
@@ -244,7 +264,7 @@ const ImusicSearchScreen = ({
       >
         <TouchableOpacity
           style={{ marginRight: theme.spacing(2) }}
-          onPress={() => handleItemPress(id)}
+          onPress={() => handleItemPress({ id, name })}
         >
           {renderThumbnail({ name, performer, cover })}
         </TouchableOpacity>
@@ -262,55 +282,39 @@ const ImusicSearchScreen = ({
   };
 
   const renderResult = () => {
-    if (error)
-      return (
-        <ContentWrap>
-          <Text
-            style={{
-              ...createFontFormat(14, 19),
-              fontWeight: '700',
-              color: theme.iplayya.colors.white50,
-              paddingVertical: theme.spacing(2)
-            }}
-          >
-            Zero result
-          </Text>
-        </ContentWrap>
-      );
-
-    if (results.length)
-      return (
-        <React.Fragment>
-          <SectionList
-            showsVerticalScrollIndicator={false}
-            getItemLayout={(data, index) => ({
-              length: CARD_DIMENSIONS.HEIGHT,
-              offset: CARD_DIMENSIONS.HEIGHT * index,
-              index
-            })}
-            keyExtractor={(item) => item.id}
-            sections={DATA}
-            onScroll={handleScrollAction}
-            renderItem={renderSection}
-            ListFooterComponent={renderListLoader()}
-            onEndReached={() => handleEndReached()}
-            renderSectionHeader={({ section }) => (
-              <ContentWrap>
-                <Text
-                  style={{
-                    ...createFontFormat(14, 19),
-                    fontWeight: '700',
-                    color: theme.iplayya.colors.white80,
-                    paddingVertical: theme.spacing(2)
-                  }}
-                >
-                  {section.title}
-                </Text>
-              </ContentWrap>
-            )}
-          />
-        </React.Fragment>
-      );
+    if (!results.length) return;
+    return (
+      <React.Fragment>
+        <SectionList
+          showsVerticalScrollIndicator={false}
+          getItemLayout={(data, index) => ({
+            length: CARD_DIMENSIONS.HEIGHT,
+            offset: CARD_DIMENSIONS.HEIGHT * index,
+            index
+          })}
+          keyExtractor={(item) => item.id}
+          sections={DATA}
+          onScroll={handleScrollAction}
+          renderItem={renderSection}
+          ListFooterComponent={renderListLoader()}
+          onEndReached={() => handleEndReached()}
+          renderSectionHeader={({ section }) => (
+            <ContentWrap>
+              <Text
+                style={{
+                  ...createFontFormat(14, 19),
+                  fontWeight: '700',
+                  color: theme.iplayya.colors.white80,
+                  paddingVertical: theme.spacing(2)
+                }}
+              >
+                {section.title}
+              </Text>
+            </ContentWrap>
+          )}
+        />
+      </React.Fragment>
+    );
   };
 
   const renderSection = ({ item }) => {
@@ -332,34 +336,46 @@ const ImusicSearchScreen = ({
   };
 
   const renderRecentSearch = () => {
-    if (term.length || !term.length) {
-      if (results.length) return;
-      return (
-        <React.Fragment>
-          <ContentWrap>
-            <Text
-              style={{
-                ...createFontFormat(14, 19),
-                fontWeight: '700',
-                color: theme.iplayya.colors.white50,
-                paddingVertical: theme.spacing(2)
-              }}
-            >
-              Recent Search
-            </Text>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {recentSearch.map((term, index) => (
-                <TouchableRipple key={index} onPress={() => setTerm(term)}>
-                  <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
-                    {term}
-                  </Text>
-                </TouchableRipple>
-              ))}
-            </ScrollView>
-          </ContentWrap>
-        </React.Fragment>
-      );
-    }
+    // do not show if there is results
+    if (results.length) return;
+
+    // do not show if there is no recent search items
+    if (!recents.length) return;
+
+    return (
+      <ContentWrap>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Text
+            style={{
+              ...createFontFormat(14, 19),
+              fontWeight: '700',
+              color: theme.iplayya.colors.white50,
+              paddingVertical: theme.spacing(2)
+            }}
+          >
+            Recent Search
+          </Text>
+          <Pressable onPress={clearRecentSearchAction}>
+            <Text style={{ color: theme.iplayya.colors.vibrantpussy }}>Clear</Text>
+          </Pressable>
+        </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {recents.map(({ id, name }, index) => (
+            <TouchableRipple key={index} onPress={() => handleItemPress({ id, name })}>
+              <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+                {name}
+              </Text>
+            </TouchableRipple>
+          ))}
+        </ScrollView>
+      </ContentWrap>
+    );
   };
 
   const renderSuggestedSearch = () => {
@@ -400,11 +416,25 @@ const ImusicSearchScreen = ({
     }
   };
 
+  const renderNoResultText = () => {
+    if (!showEmptyResult) return;
+
+    if (!term) return;
+
+    return (
+      <ContentWrap>
+        <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
+          {`There is nothing found for "${term}"`}
+        </Text>
+      </ContentWrap>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ContentWrap>
         <TextInput
-          // onFocus={() => setBottomTabsVisibleAction({ hideTabs: true })}
+          onFocus={handleSeachFocus}
           multiline={false}
           render={(props) => (
             <FormInput
@@ -421,37 +451,29 @@ const ImusicSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
-          onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}
           autoCapitalize="none"
           clearButtonMode="while-editing"
           autoCompleteType="email"
           style={{ backgroundColor: 'rgba(255,255,255,0.1)', height: 0 }}
-          placeholder="Search a channel"
+          placeholder="Search a music"
           left={
             <RNPTextInput.Icon
               name={() => {
                 return isFetching ? (
-                  <Icon
-                    name="search"
-                    size={theme.iconSize(4)}
-                    style={{ marginRight: theme.spacing(-0.3) }}
-                  />
+                  <ActivityIndicator size="small" style={{ marginRight: 5 }} />
                 ) : (
-                  <Icon
-                    name="search"
-                    size={theme.iconSize(4)}
-                    style={{ marginRight: theme.spacing(-0.3) }}
-                  />
+                  <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
                 );
               }}
-              onPress={() => handleRecentSearch()}
             />
           }
         />
       </ContentWrap>
-      <View style={{ flex: 1, height: Dimensions.get('window').height }}>{renderResult()}</View>
+      {renderNoResultText()}
+
+      {renderResult()}
       {renderRecentSearch()}
       {renderSuggestedSearch()}
     </View>
@@ -473,7 +495,8 @@ const styles = StyleSheet.create({
 const actions = {
   searchAction: Creators.search,
   searchStartAction: Creators.searchStart,
-  updateRecentSearchAction: Creators.updateRecentSearch,
+  updateRecentSearchAction: MusicCreators.updateRecentSearch,
+  clearRecentSearchAction: MusicCreators.clearRecentSearch,
   getSimilarGenreAction: Creators.getSimilarGenre,
   getSimilarGenreStartAction: Creators.getSimilarGenreStart,
   setBottomTabsVisibleAction: NavCreators.setBottomTabsVisible
@@ -483,17 +506,13 @@ const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
   results: selectSearchResults,
+  noResult: selectSearchNorResult,
   recentSearch: selectRecentSearch,
   similarGenre: selectSimilarGenre,
   albums: selectAlbums,
   allGenres: selectGenres
 });
 
-const enhance = compose(
-  connect(mapStateToProps, actions),
-  withTheme,
-  withLoader,
-  withNotifRedirect
-);
+const enhance = compose(connect(mapStateToProps, actions), withTheme, withNotifRedirect);
 
 export default enhance(Container);

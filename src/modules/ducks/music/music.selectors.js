@@ -109,3 +109,5 @@ export const selectIsInAlbumDetailScreen = createSelector(
   [musicState],
   ({ isInAlbumDetailScreen }) => isInAlbumDetailScreen
 );
+
+export const selectRecentSearch = createSelector([musicState], ({ recentSearch }) => recentSearch);
