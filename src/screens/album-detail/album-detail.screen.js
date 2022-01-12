@@ -370,9 +370,12 @@ const AlbumDetail = ({
         style={{ marginBottom: theme.spacing(2) }}
         // onLayout={(e) => setShuffleButtonLayout(e.nativeEvent.layout)}
       >
-        <Button mode="contained" onPress={handleShufflePlay}>
-          <Icon name="shuffle" size={theme.iconSize(3)} />
-          <View style={{ width: theme.spacing(1) }} />
+        <Button
+          mode="contained"
+          // icon="shuffle"
+          icon={() => <Icon name="shuffle" size={theme.iconSize(3)} />}
+          onPress={handleShufflePlay}
+        >
           <Text style={{ fontWeight: 'bold' }}>Shuffle Play</Text>
         </Button>
       </ContentWrap>
