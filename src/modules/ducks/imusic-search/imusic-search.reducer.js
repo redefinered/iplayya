@@ -6,7 +6,8 @@ import { Types } from './imusic-search.actions';
 const INITIAL_STATE = {
   isFetching: false,
   error: null,
-  recentSearch: [],
+  isSearching: false,
+  searchNoResult: false,
   searchResults: [],
   similarGenre: [],
   paginator: {
@@ -18,19 +19,20 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
-    let newRecentSearch = [];
-    if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
-      newRecentSearch = state.recentSearch;
-    } else {
-      newRecentSearch = [action.term, ...state.recentSearch];
-    }
-    return {
-      ...state,
-      recentSearch: newRecentSearch.splice(0, 10)
-    };
-  },
+  // [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
+  //   let newRecentSearch = [];
+  //   if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
+  //     newRecentSearch = state.recentSearch;
+  //   } else {
+  //     newRecentSearch = [action.term, ...state.recentSearch];
+  //   }
+  //   return {
+  //     ...state,
+  //     recentSearch: newRecentSearch.splice(0, 10)
+  //   };
+  // },
 
+  [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }),
   /// search
   [Types.SEARCH_START]: (state) => {
     return {
@@ -44,14 +46,16 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       isFetching: true,
-      error: null
+      error: null,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_SUCCESS]: (state, action) => {
     return {
       ...state,
       isFetching: false,
-      searchResults: action.data
+      searchResults: action.data,
+      searchNoResult: false
     };
   },
   [Types.SEARCH_FAILURE]: (state, action) => {
@@ -59,7 +63,8 @@ export default createReducer(INITIAL_STATE, {
       ...state,
       isFetching: false,
       error: action.error,
-      searchResults: []
+      searchResults: [],
+      searchNoResult: true
     };
   },
 

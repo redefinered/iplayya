@@ -7,10 +7,10 @@ const { Types, Creators } = createActions(
     searchSuccess: ['data'],
     searchFailure: ['error'],
 
+    setIsSearching: ['isSearching'],
     //recent search
-    updateRecentSearch: ['term'],
 
-    getSimilarGenreStart: null,
+    getSimilarGenreStart: [],
     getSimilarGenre: ['input'],
     getSimilarGenreSuccess: ['data'],
     getSimilarGenreFailure: ['error'],
