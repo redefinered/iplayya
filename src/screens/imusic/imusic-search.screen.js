@@ -111,9 +111,7 @@ const ImusicSearchScreen = ({
     const newGenre = allGenresD.join(',');
     const ex = newGenre.split(',');
     const exGenre = uniq(ex);
-    console.log(exGenre);
     const filteredGenre = exGenre.map(() => albums.find(({ genre }) => genre === genre));
-    console.log(filteredGenre);
     if (results.length) {
       const ids = filteredGenre.map(({ id }) => {
         return parseInt(id);
@@ -135,23 +133,6 @@ const ImusicSearchScreen = ({
       data: [similarGenre]
     }
   ];
-
-  const onSubmitEditing = () => {
-    if (term.length) {
-      // updateRecentSearchAction(term);
-      setTerm(term);
-    } else {
-      return;
-    }
-  };
-
-  // const handleRecentSearch = () => {
-  //   if (term.length) {
-  //     updateRecentSearchAction(term);
-  //   } else {
-  //     return;
-  //   }
-  // };
 
   const handleItemPress = ({ id, name }) => {
     updateRecentSearchAction({ id, name });
@@ -354,37 +335,6 @@ const ImusicSearchScreen = ({
     );
   };
 
-  // const renderRecentSearch = () => {
-  //   if (term.length || !term.length) {
-  //     if (results.length) return;
-  //     return (
-  //       <React.Fragment>
-  //         <ContentWrap>
-  //           <Text
-  //             style={{
-  //               ...createFontFormat(14, 19),
-  //               fontWeight: '700',
-  //               color: theme.iplayya.colors.white50,
-  //               paddingVertical: theme.spacing(2)
-  //             }}
-  //           >
-  //             Recent Search
-  //           </Text>
-  //           <ScrollView showsVerticalScrollIndicator={false}>
-  //             {recentSearch.map((term, index) => (
-  //               <TouchableRipple key={index} onPress={() => setTerm(term)}>
-  //                 <Text style={{ ...createFontFormat(16, 22), paddingVertical: theme.spacing(2) }}>
-  //                   {term}
-  //                 </Text>
-  //               </TouchableRipple>
-  //             ))}
-  //           </ScrollView>
-  //         </ContentWrap>
-  //       </React.Fragment>
-  //     );
-  //   }
-  // };
-
   const renderRecentSearch = () => {
     // do not show if there is results
     if (results.length) return;
@@ -501,7 +451,6 @@ const ImusicSearchScreen = ({
           name="search"
           returnKeyType="search"
           autoFocus
-          onSubmitEditing={(term) => onSubmitEditing(term)}
           handleChangeText={(term) => handleChange(term)}
           value={term}
           autoCapitalize="none"
@@ -518,13 +467,11 @@ const ImusicSearchScreen = ({
                   <Icon name="search" size={theme.iconSize(4)} style={{ marginRight: 5 }} />
                 );
               }}
-              // onPress={() => handleRecentSearch()}
             />
           }
         />
       </ContentWrap>
       {renderNoResultText()}
-      {/* <View style={{ flex: 1, height: Dimensions.get('window').height }}>{renderResult()}</View> */}
 
       {renderResult()}
       {renderRecentSearch()}

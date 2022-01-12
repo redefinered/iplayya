@@ -95,11 +95,6 @@ const AlbumDetail = ({
       downloadsStartAction();
 
       getAlbumDetailsAction(albumId);
-
-      /// clean up
-      // return () => {
-      //   getAlbumDetailsStartAction();
-      // };
     });
   }, []);
 
@@ -219,32 +214,6 @@ const AlbumDetail = ({
     setSelectedTrack(data);
     setShowActionSheet(true);
   };
-
-  // const handleAddToFacoritesPress = () => {
-  //   if (!selectedTrack) return;
-
-  //   addTrackToFavoritesAction(selectedTrack.id);
-
-  //   hideActionSheet();
-  // };
-
-  // const handleDownloadItem = () => {
-  //   console.log('download item');
-  //   hideActionSheet();
-  // };
-
-  // const actions = [
-  //   {
-  //     icon: 'heart-solid',
-  //     title: 'Add to favorites',
-  //     onPress: handleAddToFacoritesPress
-  //   },
-  //   {
-  //     icon: 'download',
-  //     title: 'Download',
-  //     onPress: handleDownloadItem
-  //   }
-  // ];
 
   const hideUpdateNotification = () => {
     /// reset updated check

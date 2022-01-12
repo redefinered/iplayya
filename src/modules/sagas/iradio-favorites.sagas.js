@@ -2,23 +2,6 @@ import { call, put, takeLatest, all } from 'redux-saga/effects';
 import { Types, Creators } from 'modules/ducks/iradio-favorites/iradio-favorites.actions';
 import { getFavorites, addToFavorites, removeFromFavorites } from 'services/iradio.service';
 
-// export function* getFavoritesRequest(action) {
-//   const { input } = action;
-//   try {
-//     // TODO: input should come from stat, pageNumber should be incremented for every request
-//     const { favoriteRadios: favorites } = yield call(getFavorites, input);
-
-//     const newData = favorites.map((d) => ({ ...d, pn: input.pageNumber }));
-
-//     /// increment paginator pageNumber
-//     Object.assign(input, { pageNumber: input.pageNumber + 1 });
-
-//     yield put(Creators.getFavoritesSuccess(newData, input));
-//   } catch (error) {
-//     yield put(Creators.getFavoritesFailure(error.message));
-//   }
-// }
-
 export function* getFavoritesRequest(action) {
   const { input } = action;
   try {

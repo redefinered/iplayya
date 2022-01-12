@@ -219,73 +219,7 @@ const ImovieSearchScreen = ({
         <View style={{ height: resultPadding + theme.spacing(5) }} />
       </ContentWrap>
     );
-
-    // if (error)
-    //   return (
-    //     <Text
-    //       style={{
-    //         ...createFontFormat(14, 19),
-    //         fontWeight: '700',
-    //         color: theme.iplayya.colors.white50,
-    //         paddingVertical: theme.spacing(2)
-    //       }}
-    //     >
-    //       Zero result
-    //     </Text>
-    //   );
-
-    // if (!downloads) return;
-
-    // if (results.length)
-    //   return (
-    //     <React.Fragment>
-    //       <SectionList
-    //         showsVerticalScrollIndicator={false}
-    //         getItemLayout={(data, index) => ({
-    //           length: CARD_DIMENSIONS.HEIGHT,
-    //           offset: CARD_DIMENSIONS.HEIGHT * index,
-    //           index
-    //         })}
-    //         keyExtractor={(item) => item.id}
-    //         sections={DATA}
-    //         renderItem={renderSection}
-    //         renderSectionHeader={({ section }) => (
-    //           <View>
-    //             <Text
-    //               style={{
-    //                 ...createFontFormat(14, 19),
-    //                 fontWeight: '700',
-    //                 color: theme.iplayya.colors.white80,
-    //                 paddingVertical: theme.spacing(2)
-    //               }}
-    //             >
-    //               {section.title}
-    //             </Text>
-    //           </View>
-    //         )}
-    //       />
-    //     </React.Fragment>
-    //   );
   };
-
-  // const renderSection = ({ item }) => {
-  //   return (
-  //     <React.Fragment>
-  //       <FlatList
-  //         getItemLayout={(data, index) => ({
-  //           length: CARD_DIMENSIONS.HEIGHT,
-  //           offset: CARD_DIMENSIONS.HEIGHT * index,
-  //           index
-  //         })}
-  //         // contentInset={{ top: theme.spacing(2), left: 0, right: 0, bottom: theme.spacing(2) }}
-  //         data={item}
-  //         numColumns={3}
-  //         renderItem={() => <MovieItem {...item} />}
-  //         keyExtractor={(item) => item.id}
-  //       />
-  //     </React.Fragment>
-  //   );
-  // };
 
   const renderRecentSearch = () => {
     // do not show if there is results

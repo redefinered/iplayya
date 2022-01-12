@@ -103,8 +103,6 @@ const FavoritesTab = ({
     }
   }, [selectAll]);
 
-  // console.log({ selectedItems });
-
   const handleSelectAll = () => {
     setSellectAll(!selectAll);
   };
@@ -116,16 +114,6 @@ const FavoritesTab = ({
 
   const handleRemoveItems = () => {
     if (selectedItems.length) {
-      // const { __typename, is_favorite, monitoring_status_updated, ...rest } = selectedItems;
-
-      // const reqInput = [
-      //   {
-      //     is_favorite: is_favorite || false,
-      //     monitoring_status_updated: monitoring_status_updated || '0',
-      //     ...rest
-      //   }
-      // ];
-
       removeFromFavoritesAction(selectedItems);
     }
   };
@@ -141,10 +129,6 @@ const FavoritesTab = ({
 
   const handleEndReached = () => {
     getFavoritesAction(paginator);
-
-    // if (!onEndReachedCalledDuringMomentum) {
-    //   setOnEndReachedCalledDuringMomentum(true);
-    // }
   };
 
   const EmptyState = ({ theme }) => (

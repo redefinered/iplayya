@@ -153,26 +153,6 @@ const IsportsScreen = ({
     });
   }, [channels]);
 
-  // const handleWalkthroughGuideHide = () => {
-  //   setShowWalkthroughGuide(false);
-  // };
-
-  // const hideSnackBar = () => {
-  //   setTimeout(() => {
-  //     setShowSnackBar(false);
-  //     setShowNotificationSnackBar(false);
-  //   }, 3000);
-  // };
-
-  // React.useEffect(() => {
-  //   if (showSnackBar) hideSnackBar();
-  //   if (showNotificationSnackBar) hideSnackBar();
-  // }, [showSnackBar, showNotificationSnackBar]);
-
-  // const handleShowSnackBar = () => {
-  //   setShowSnackBar(true);
-  // };
-
   const handleItemPress = (item) => {
     // navigate to chanel details screen with `id` parameter
     navigation.navigate('IsportsChannelDetailScreen', { channelId: item.id, selectedCategory });

@@ -19,19 +19,6 @@ const INITIAL_STATE = {
 };
 
 export default createReducer(INITIAL_STATE, {
-  // [Types.UPDATE_RECENT_SEARCH]: (state, action) => {
-  //   let newRecentSearch = [];
-  //   if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
-  //     newRecentSearch = state.recentSearch;
-  //   } else {
-  //     newRecentSearch = [action.term, ...state.recentSearch];
-  //   }
-  //   return {
-  //     ...state,
-  //     recentSearch: newRecentSearch.splice(0, 10)
-  //   };
-  // },
-
   [Types.SET_IS_SEARCHING]: (state, action) => ({ ...state, isSearching: action.isSearching }),
   /// search
   [Types.SEARCH_START]: (state) => {

@@ -373,17 +373,6 @@ export default createReducer(INITIAL_STATE, {
     if (typeof x !== 'undefined') return { ...state };
 
     return { ...state, recentSearch: [movie, ...state.recentSearch] };
-
-    // let newRecentSearch = [];
-    // if (state.recentSearch.findIndex((x) => x === action.term) >= 0) {
-    //   newRecentSearch = state.recentSearch;
-    // } else {
-    //   newRecentSearch = [action.term, ...state.recentSearch];
-    // }
-    // return {
-    //   ...state,
-    //   recentSearch: newRecentSearch.splice(0, 10)
-    // };
   },
   [Types.CLEAR_RECENT_SEARCH]: (state) => ({ ...state, recentSearch: [] }),
   [Types.RESET]: (state) => {
