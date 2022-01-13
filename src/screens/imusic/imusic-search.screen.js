@@ -256,7 +256,8 @@ const ImusicSearchScreen = ({
     return (
       <View
         style={{
-          maxWidth: '50%',
+          // flex: 1,
+          marginLeft: theme.spacing(1),
           marginBottom: theme.spacing(2),
           justifyContent: 'space-between'
         }}
@@ -319,19 +320,17 @@ const ImusicSearchScreen = ({
   const renderSection = ({ item }) => {
     return (
       <React.Fragment>
-        <ContentWrap>
-          <FlatList
-            getItemLayout={(data, index) => ({
-              length: CARD_DIMENSIONS.HEIGHT,
-              offset: CARD_DIMENSIONS.HEIGHT * index,
-              index
-            })}
-            data={item}
-            numColumns={3}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
-        </ContentWrap>
+        <FlatList
+          getItemLayout={(data, index) => ({
+            length: CARD_DIMENSIONS.HEIGHT,
+            offset: CARD_DIMENSIONS.HEIGHT * index,
+            index
+          })}
+          data={item}
+          numColumns={3}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
       </React.Fragment>
     );
   };
@@ -473,10 +472,10 @@ const ImusicSearchScreen = ({
         />
       </ContentWrap>
       {renderNoResultText()}
-
       {renderResult()}
+
       {renderRecentSearch()}
-      {renderSuggestedSearch()}
+      <ScrollView>{renderSuggestedSearch()}</ScrollView>
     </View>
   );
 };
