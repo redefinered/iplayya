@@ -72,7 +72,7 @@ const ImusicSearchScreen = ({
   const [recents, setRecents] = React.useState(recentSearch.slice(0, 5));
   const [showEmptyResult, setShowEmptyMessage] = React.useState(false);
 
-  const CARD_DIMENSIONS = { WIDTH: 148, HEIGHT: 148 };
+  const CARD_DIMENSIONS = { WIDTH: 110, HEIGHT: 110 };
 
   /// clear previous search result
   React.useEffect(() => {
@@ -200,7 +200,7 @@ const ImusicSearchScreen = ({
               fontWeight: 'bold',
               fontSize: 14,
               marginBottom: theme.spacing(1),
-              maxWidth: 148
+              maxWidth: 110
             }}
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -210,7 +210,7 @@ const ImusicSearchScreen = ({
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{ fontSize: 12, maxWidth: 148, color: theme.iplayya.colors.white50 }}
+            style={{ fontSize: 12, maxWidth: 110, color: theme.iplayya.colors.white50 }}
           >
             {performer}
           </Text>
@@ -233,7 +233,7 @@ const ImusicSearchScreen = ({
             fontWeight: 'bold',
             fontSize: 14,
             marginBottom: theme.spacing(1),
-            maxWidth: 148
+            maxWidth: 110
           }}
           numberOfLines={1}
           ellipsizeMode="tail"
@@ -243,7 +243,7 @@ const ImusicSearchScreen = ({
         <Text
           numberOfLines={1}
           ellipsizeMode="tail"
-          style={{ fontSize: 12, maxWidth: 148, color: theme.iplayya.colors.white50 }}
+          style={{ fontSize: 12, maxWidth: 110, color: theme.iplayya.colors.white50 }}
         >
           {performer}
         </Text>
@@ -256,14 +256,13 @@ const ImusicSearchScreen = ({
     return (
       <View
         style={{
-          flex: 1,
-          marginLeft: theme.spacing(2),
+          maxWidth: '50%',
           marginBottom: theme.spacing(2),
           justifyContent: 'space-between'
         }}
       >
         <TouchableOpacity
-          style={{ marginRight: theme.spacing(2) }}
+          style={{ marginRight: theme.spacing(3) }}
           onPress={() => handleItemPress({ id, name })}
         >
           {renderThumbnail({ name, performer, cover })}
@@ -320,17 +319,19 @@ const ImusicSearchScreen = ({
   const renderSection = ({ item }) => {
     return (
       <React.Fragment>
-        <FlatList
-          getItemLayout={(data, index) => ({
-            length: CARD_DIMENSIONS.HEIGHT,
-            offset: CARD_DIMENSIONS.HEIGHT * index,
-            index
-          })}
-          data={item}
-          numColumns={2}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+        <ContentWrap>
+          <FlatList
+            getItemLayout={(data, index) => ({
+              length: CARD_DIMENSIONS.HEIGHT,
+              offset: CARD_DIMENSIONS.HEIGHT * index,
+              index
+            })}
+            data={item}
+            numColumns={3}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+          />
+        </ContentWrap>
       </React.Fragment>
     );
   };
