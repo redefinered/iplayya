@@ -4,6 +4,7 @@ export const GET_CATEGORIES = gql`
   query GET_CATEGORIES {
     categories {
       id
+      number
       title
     }
   }

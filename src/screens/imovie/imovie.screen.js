@@ -12,7 +12,7 @@ import { Creators as AppActionCreators } from 'modules/app';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
-import { selectCategoriesOf } from 'modules/app';
+import { selectMovieCategories } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
@@ -25,11 +25,17 @@ import NetInfo from '@react-native-community/netinfo';
 import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath } from 'utils';
+import uniqBy from 'lodash/uniqBy';
+import orderBy from 'lodash/orderBy';
 
 import withNotifRedirect from 'components/with-notif-redirect.component';
 import { MovieContext } from 'contexts/providers/movie/movie.provider';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
+
+const getCategoryInfo = (categories, title) => {
+  return categories.find(({ title: categoryTitle }) => categoryTitle === title);
+};
 
 const ImovieScreen = ({
   theme,
@@ -37,6 +43,7 @@ const ImovieScreen = ({
   movies,
   isFetching,
   navigation,
+  categories,
   resetAction,
   paginatorInfo,
   getMoviesAction,
@@ -46,21 +53,65 @@ const ImovieScreen = ({
   setNetworkInfoAction,
   getMoviesStartAction
 }) => {
-  console.log({ params });
+  const list = React.useRef(null);
+  const { colors } = theme.iplayya;
+
   const { selected, setSelected, downloads, setDownloads } = React.useContext(MovieContext);
-  const brand = theme.iplayya.colors;
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
-  // const [data, setData] = React.useState([]);
-  const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  const [rowIndex, setRowIndex] = React.useState(0);
+  const [rowHeights, setRowHeights] = React.useState([]);
+  const [rowsOffset, setRowsOffset] = React.useState(0);
+  console.log({ rowHeights });
+
+  React.useEffect(() => {
+    // stop if list is null
+    if (!list.current) return;
+
+    // stop if list is not rendered and rowHeights are empty
+    if (!rowHeights.length) return;
+
+    // do not execute while all pill are not yet rendered
+    if (rowHeights.length !== movies.length) return;
+
+    // adds item widths and set it as offset depending on the index of the selected category
+    let offset = 0;
+    for (let i = 0; i < rowIndex; i++) {
+      const el = rowHeights[i];
+
+      if (!el) continue;
+
+      offset = offset + el.h;
+    }
+
+    setRowsOffset(offset);
+  });
+
+  // console.log({ rowHeights, rowIndex, rowsOffset });
+
+  const handleCategoryOnLayout = ({ nativeEvent }, title) => {
+    // console.log({ c, l: nativeEvent.layout });
+
+    const { id, number } = getCategoryInfo(categories, title);
+
+    const h = uniqBy([{ id, number, h: nativeEvent.layout.height + 30 }, ...rowHeights], 'id'); /// 30 is the bottom margin
+    const ordered = orderBy(h, 'number', 'asc');
+
+    setRowHeights(ordered);
+  };
+
+  React.useEffect(() => {
+    console.log({ list });
+    if (list.current) list.current.scrollToOffset({ offset: rowsOffset, animated: false });
+  }, [rowsOffset]);
 
   React.useEffect(() => {
     /// resets the category paginator
     resetAction();
-    // addMovieToFavoritesStartAction();
+
     setSelected(null);
 
     // Subscribe to network changes
@@ -75,8 +126,6 @@ const ImovieScreen = ({
     enableSwipeAction(false);
 
     getInitialContent();
-
-    // getMovieThumbnails(movies);
 
     // Unsubscribe
     return () => {
@@ -94,16 +143,6 @@ const ImovieScreen = ({
 
     navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   }, [selected]);
-
-  React.useEffect(() => {
-    // console.log({ data });
-    if (typeof params !== 'undefined') {
-      const { categoryName } = params;
-
-      return setScrollIndex(movies.findIndex((c) => c.category === categoryName));
-    }
-    setScrollIndex(0);
-  }, [params, movies]);
 
   const getInitialContent = async () => {
     if (!paginatorInfo.length) return;
@@ -174,7 +213,7 @@ const ImovieScreen = ({
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
 
-    return <CategoryScroll category={category} />;
+    return <CategoryScroll handleOnLayout={handleCategoryOnLayout} category={category} />;
   };
 
   const handleEndReached = () => {
@@ -188,9 +227,18 @@ const ImovieScreen = ({
   };
 
   React.useEffect(() => {
+    setRowsOffset(0);
     if (typeof params !== 'undefined') {
+      const i = categories.findIndex(({ title }) => title === params.categoryName);
+
+      if (i >= 0) {
+        setRowIndex(i);
+      }
+
       const { openImoviesGuide } = params;
+
       if (!openImoviesGuide) return;
+
       setShowWalkthroughGuide(true);
     }
   }, [params]);
@@ -208,7 +256,7 @@ const ImovieScreen = ({
           style={{
             width: CARD_DIMENSIONS.WIDTH,
             height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
+            backgroundColor: colors.white10,
             borderRadius: 8,
             justifyContent: 'center',
             marginLeft: theme.spacing(2)
@@ -218,7 +266,7 @@ const ImovieScreen = ({
           style={{
             width: CARD_DIMENSIONS.WIDTH,
             height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
+            backgroundColor: colors.white10,
             borderRadius: 8,
             justifyContent: 'center',
             marginLeft: theme.spacing(2)
@@ -228,7 +276,7 @@ const ImovieScreen = ({
           style={{
             width: CARD_DIMENSIONS.WIDTH,
             height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
+            backgroundColor: colors.white10,
             borderRadius: 8,
             justifyContent: 'center',
             marginLeft: theme.spacing(2)
@@ -243,11 +291,11 @@ const ImovieScreen = ({
 
     return (
       <FlatList
+        ref={list}
         data={movies}
         showsVerticalScrollIndicator={false}
         keyExtractor={(movie) => movie.category}
         renderItem={renderItem}
-        initialScrollIndex={scrollIndex}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
@@ -292,7 +340,7 @@ const mapStateToProps = createStructuredSelector({
   movies: selectMovies,
   paginatorInfo: selectPaginatorInfo,
   categoryPaginator: selectCategoryPaginator,
-  categories: selectCategoriesOf('movies')
+  categories: selectMovieCategories
 });
 
 const actions = {

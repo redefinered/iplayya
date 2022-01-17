@@ -10,7 +10,14 @@ import {
 } from 'modules/ducks/movies/movies.selectors';
 import { connect } from 'react-redux';
 
-const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCategory }) => {
+const CategoryScroll = ({
+  category,
+  movies: { videos },
+  onSelect,
+  paginatorOfCategory,
+  // eslint-disable-next-line react/prop-types
+  handleOnLayout
+}) => {
   if (typeof videos === 'undefined' || videos.length === 0) return <View />;
   let movies = videos.map(({ thumbnail, ...otherProps }) => {
     return {
@@ -19,9 +26,8 @@ const CategoryScroll = ({ category, movies: { videos }, onSelect, paginatorOfCat
     };
   });
 
-  // console.log({ data });
   return (
-    <View style={{ marginBottom: 30 }}>
+    <View onLayout={(e) => handleOnLayout(e, category)} style={{ marginBottom: 30 }}>
       <ContentWrap>
         <Text style={{ fontSize: 16, lineHeight: 22, marginBottom: 15 }}>{category}</Text>
       </ContentWrap>

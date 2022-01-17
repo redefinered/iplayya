@@ -141,6 +141,9 @@ export const selectMusicGenres = createSelector(
   ({ contentBase: { musicGenres } }) => musicGenres
 );
 
+/// not sure if this is the right selector
+// this will extract categories using alias
+// ex: 'movies' is going to filter items that contain 'movies: '
 export const selectCategoriesOf = (type) =>
   createSelector([selectMovieCategories], (categories) => {
     const collection = [];
