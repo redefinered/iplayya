@@ -1,5 +1,11 @@
 /* eslint-disable react/prop-types */
 
+/**
+ * FOR ALL FAVORITES FEATURE IN THE APP:
+ * WE CHANGE GRAPHQL IMPLEMENTATION FROM REDUX TO HOOKS PATTERN
+ * BECAUSE IT BECOMES EASIER TO MANAGE EVENTS AND UPDATE UI ACCORDINGLY
+ */
+
 import React from 'react';
 import { View, Pressable, FlatList, TextInput as FormInput } from 'react-native';
 import { Text, withTheme, TextInput as RNPTextInput, ActivityIndicator } from 'react-native-paper';
@@ -18,7 +24,7 @@ import NoFavorites from 'assets/favorites-empty-screen.svg';
 import AlertModal from 'components/alert-modal/alert-modal.component';
 import {
   selectError,
-  selectFavorites,
+  // selectFavorites,
   selectPaginator,
   selectIsFetching,
   selectIsSearching,
@@ -27,6 +33,9 @@ import {
 } from 'modules/ducks/itv/itv.selectors';
 import { createFontFormat } from 'utils';
 import withNotifRedirect from 'components/with-notif-redirect.component';
+import { useQuery } from '@apollo/client';
+import { GET_FAVORITES } from 'graphql/itv.graphql';
+import uniqBy from 'lodash/uniqBy';
 
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -36,28 +45,66 @@ const ItvFavoritesScreen = ({
   route,
   isFetching,
   paginator,
-  favorites,
+  // favorites,
   navigation,
   isSearching,
   favoritesRemoved,
-  favoritesPaginator,
+  // favoritesPaginator,
   getChannelsAction,
-  getFavoritesAction,
+  // getFavoritesAction,
   resetPaginatorAction,
   removeFromFavoritesAction,
   getChannelsByCategoriesAction,
   resetFavoritesPaginatorAction
 }) => {
   const updated = React.useRef(false);
+  const pageNumber = React.useRef(1);
 
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [data, setData] = React.useState(null);
+  const [favorites, setFavorites] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+  const [allowLoader, setAllowLoader] = React.useState(false);
 
   const [noResult, setNoResult] = React.useState(false);
+
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
+
+  const { loading, data: d, fetchMore } = useQuery(GET_FAVORITES, {
+    variables: { input: { limit: 10, pageNumber: 1 } },
+    pollInterval: 300
+  });
+
+  React.useEffect(() => {
+    if (pageNumber <= 1) {
+      return setAllowLoader(false);
+    }
+
+    setAllowLoader(true);
+  }, [pageNumber.current]);
+
+  React.useEffect(() => {
+    if (d) setFavorites(d.favoriteIptvs);
+  }, [d]);
+
+  const handleEndReached = () => {
+    if (!onEndReachedCalledDuringMomentum) {
+      fetchMore({ variables: { input: { pageNumber: pageNumber.current + 1 } } }).then(
+        ({ data: { favoriteIptvs } }) => {
+          setData(uniqBy([...data, ...favoriteIptvs], 'id'));
+
+          pageNumber.current = pageNumber.current + 1;
+        }
+      );
+
+      setOnEndReachedCalledDuringMomentum(true);
+    }
+  };
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
@@ -97,17 +144,17 @@ const ItvFavoritesScreen = ({
     setData(favorites);
   }, [favorites, searchTerm]);
 
-  React.useEffect(() => {
-    if (isFetching) setData(null);
-  }, [isFetching]);
+  // React.useEffect(() => {
+  //   if (isFetching) setData(null);
+  // }, [isFetching]);
 
   // console.log({ favorites, searchTerm });
 
-  React.useEffect(() => {
-    if (favoritesPaginator.pageNumber === 1) {
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-    }
-  }, [favoritesPaginator]);
+  // React.useEffect(() => {
+  //   if (favoritesPaginator.pageNumber === 1) {
+  //     getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+  //   }
+  // }, [favoritesPaginator]);
 
   React.useEffect(() => {
     if (favoritesRemoved) {
@@ -116,7 +163,7 @@ const ItvFavoritesScreen = ({
       updated.current = true;
       setActivateCheckboxes(false);
 
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+      // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
     } else {
       updated.current = false;
     }
@@ -238,7 +285,9 @@ const ItvFavoritesScreen = ({
   };
 
   const renderLoader = () => {
-    if (isFetching) {
+    if (allowLoader) return;
+
+    if (loading) {
       return (
         <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
           <ActivityIndicator />
@@ -274,6 +323,10 @@ const ItvFavoritesScreen = ({
             handleLongPress={handleLongPress}
           />
         )}
+        ListFooterComponent={renderLoader()}
+        onEndReached={() => handleEndReached()}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
       />
     );
   };
@@ -281,7 +334,7 @@ const ItvFavoritesScreen = ({
   if (data && data.length) {
     return (
       <View style={{ marginTop: theme.spacing(3) }}>
-        {renderLoader()}
+        {/* {renderLoader()} */}
 
         {activateCheckboxes && (
           <ContentWrap>
@@ -344,6 +397,7 @@ const ItvFavoritesScreen = ({
   return <EmptyState isFetching={isFetching} theme={theme} navigation={navigation} />;
 };
 
+// eslint-disable-next-line no-unused-vars
 const EmptyState = ({ isFetching, theme, navigation }) => (
   <View
     style={{
@@ -354,11 +408,11 @@ const EmptyState = ({ isFetching, theme, navigation }) => (
       paddingBottom: 130
     }}
   >
-    {isFetching && (
+    {/* {isFetching && (
       <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
         <ActivityIndicator />
       </View>
-    )}
+    )} */}
     <NoFavorites />
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>
@@ -380,7 +434,7 @@ const Container = (props) => (
 const mapStateToProps = createStructuredSelector({
   error: selectError,
   isFetching: selectIsFetching,
-  favorites: selectFavorites,
+  // favorites: selectFavorites,
   favoritesPaginator: selectFavoritesPaginator,
   favoritesRemoved: selectFavoritesListRemoveUpdated,
   paginator: selectPaginator,

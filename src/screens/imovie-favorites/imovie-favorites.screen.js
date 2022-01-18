@@ -49,7 +49,11 @@ const ImovieFavoritesScreen = ({
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [noResult, setNoResult] = React.useState(false);
-  const [hidePaginatorLoader, setHidePaginatorLoader] = React.useState(false);
+  const [allowLoader, setAllowLoader] = React.useState(false);
+
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
 
   React.useEffect(() => {
     resetRemovedAction();
@@ -57,15 +61,11 @@ const ImovieFavoritesScreen = ({
 
   React.useEffect(() => {
     if (pageNumber <= 1) {
-      return setHidePaginatorLoader(false);
+      return setAllowLoader(false);
     }
 
-    setHidePaginatorLoader(true);
+    setAllowLoader(true);
   }, [pageNumber.current]);
-
-  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-    true
-  );
 
   const { loading, data, fetchMore } = useQuery(GET_FAVORITE_MOVIES, {
     variables: { input: { pageNumber: 1, limit: pageNumber.current * LIMIT } },
@@ -251,7 +251,7 @@ const ImovieFavoritesScreen = ({
   };
 
   const renderLoader = () => {
-    if (hidePaginatorLoader) return;
+    if (allowLoader) return;
 
     if (loading) {
       return (
