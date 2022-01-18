@@ -34,13 +34,9 @@ const LIMIT = 10;
 const ImovieFavoritesScreen = ({
   theme,
   navigation,
-  // favorites,
   removedFromFavorites,
   resetRemovedAction,
   removeFromFavoritesAction,
-  // getFavoritesAction,
-  // favoritesPaginator,
-  // resetFavoritesPaginatorAction,
   isSearching
 }) => {
   const updated = React.useRef(false);
@@ -53,10 +49,19 @@ const ImovieFavoritesScreen = ({
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [noResult, setNoResult] = React.useState(false);
+  const [hidePaginatorLoader, setHidePaginatorLoader] = React.useState(false);
 
   React.useEffect(() => {
     resetRemovedAction();
   });
+
+  React.useEffect(() => {
+    if (pageNumber <= 1) {
+      return setHidePaginatorLoader(false);
+    }
+
+    setHidePaginatorLoader(true);
+  }, [pageNumber.current]);
 
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
@@ -246,6 +251,8 @@ const ImovieFavoritesScreen = ({
   };
 
   const renderLoader = () => {
+    if (hidePaginatorLoader) return;
+
     if (loading) {
       return (
         <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
