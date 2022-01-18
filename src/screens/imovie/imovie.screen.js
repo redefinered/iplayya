@@ -65,7 +65,6 @@ const ImovieScreen = ({
   const [rowIndex, setRowIndex] = React.useState(0);
   const [rowHeights, setRowHeights] = React.useState([]);
   const [rowsOffset, setRowsOffset] = React.useState(0);
-  console.log({ rowHeights });
 
   React.useEffect(() => {
     // stop if list is null
@@ -90,11 +89,7 @@ const ImovieScreen = ({
     setRowsOffset(offset);
   });
 
-  // console.log({ rowHeights, rowIndex, rowsOffset });
-
   const handleCategoryOnLayout = ({ nativeEvent }, title) => {
-    // console.log({ c, l: nativeEvent.layout });
-
     const { id, number } = getCategoryInfo(categories, title);
 
     const h = uniqBy([{ id, number, h: nativeEvent.layout.height + 30 }, ...rowHeights], 'id'); /// 30 is the bottom margin
