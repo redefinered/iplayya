@@ -321,7 +321,7 @@ const AccountScreen = ({
               </View>
             </View>
           </TouchableRipple>
-          <TouchableRipple>
+          {/* <TouchableRipple>
             <View style={{ ...styles.settingItem, padding: theme.spacing(2) }}>
               <View style={styles.iconContainer}>
                 <Icon name="lock" size={theme.iconSize(3)} />
@@ -330,7 +330,7 @@ const AccountScreen = ({
                 <Text style={{ fontSize: 16, lineHeight: 22 }}>Parental Control</Text>
               </View>
             </View>
-          </TouchableRipple>
+          </TouchableRipple> */}
           <TouchableRipple
             rippleColor="rgba(0,0,0,0.28)"
             onPress={() => navigation.navigate('NeedHelpScreen')}

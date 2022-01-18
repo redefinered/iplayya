@@ -1,5 +1,11 @@
 /* eslint-disable react/prop-types */
 
+/**
+ * FOR ALL FAVORITES FEATURE IN THE APP:
+ * WE CHANGE GRAPHQL IMPLEMENTATION FROM REDUX TO HOOKS PATTERN
+ * BECAUSE IT BECOMES EASIER TO MANAGE EVENTS AND UPDATE UI ACCORDINGLY
+ */
+
 import React from 'react';
 import { View, Pressable, FlatList, TextInput as FormInput } from 'react-native';
 import { Text, withTheme, TextInput as RNPTextInput, ActivityIndicator } from 'react-native-paper';
@@ -27,6 +33,9 @@ import {
 } from 'modules/ducks/isports/isports.selectors';
 import { createFontFormat } from 'utils';
 import withNotifRedirect from 'components/with-notif-redirect.component';
+import { useQuery } from '@apollo/client';
+import { GET_FAVORITES } from 'graphql/isports.graphql';
+import uniqBy from 'lodash/uniqBy';
 
 const ITEM_HEIGHT = 84;
 const channelplaceholder = require('assets/channel-placeholder.png');
@@ -36,26 +45,68 @@ const IsportsFavoritesScreen = ({
   route,
   isFetching,
   paginator,
-  favorites,
+  // favorites,
   navigation,
   isSearching,
   favoritesRemoved,
-  favoritesPaginator,
+  // favoritesPaginator,
   getChannelsAction,
-  getFavoritesAction,
+  // getFavoritesAction,
   resetPaginatorAction,
   removeFromFavoritesAction,
   getChannelsByCategoriesAction,
   resetFavoritesPaginatorAction
 }) => {
   const updated = React.useRef(false);
+  const pageNumber = React.useRef(1);
 
   const [activateCheckboxes, setActivateCheckboxes] = React.useState(false);
   const [selectedItems, setSelectedItems] = React.useState([]);
   const [selectAll, setSellectAll] = React.useState(false);
   const [data, setData] = React.useState(null);
+  const [favorites, setFavorites] = React.useState([]);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
+  const [allowLoader, setAllowLoader] = React.useState(false);
+
+  const [noResult, setNoResult] = React.useState(false);
+
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
+
+  const { loading, data: d, fetchMore, error } = useQuery(GET_FAVORITES, {
+    variables: { input: { limit: 10, pageNumber: 1 } },
+    pollInterval: 300
+  });
+
+  React.useEffect(() => {
+    if (pageNumber <= 1) {
+      return setAllowLoader(false);
+    }
+
+    setAllowLoader(true);
+  }, [pageNumber.current]);
+
+  React.useEffect(() => {
+    if (d) setFavorites(d.favoriteIsports);
+  }, [d]);
+
+  const handleEndReached = () => {
+    if (!onEndReachedCalledDuringMomentum) {
+      fetchMore({ variables: { input: { pageNumber: pageNumber.current + 1 } } }).then(
+        ({ data: { favoriteIsports } }) => {
+          setData(uniqBy([...data, ...favoriteIsports], 'id'));
+
+          pageNumber.current = pageNumber.current + 1;
+        }
+      );
+
+      setOnEndReachedCalledDuringMomentum(true);
+    }
+  };
+
+  console.log({ loading, d, error });
 
   React.useEffect(() => {
     resetFavoritesPaginatorAction();
@@ -81,7 +132,13 @@ const IsportsFavoritesScreen = ({
   React.useEffect(() => {
     if (searchTerm) {
       const d = favorites.filter(({ title }) => title.toLowerCase().includes(searchTerm));
-      return setData(d);
+
+      if (!d.length) {
+        setNoResult(true);
+      } else {
+        setNoResult(false);
+        return setData(d);
+      }
     }
 
     if (!favorites.length) return setData([]);
@@ -89,17 +146,17 @@ const IsportsFavoritesScreen = ({
     setData(favorites);
   }, [favorites, searchTerm]);
 
-  React.useEffect(() => {
-    if (isFetching) setData(null);
-  }, [isFetching]);
+  // React.useEffect(() => {
+  //   if (isFetching) setData(null);
+  // }, [isFetching]);
 
-  // console.log({ favorites, searchTerm });
+  // // console.log({ favorites, searchTerm });
 
-  React.useEffect(() => {
-    if (favoritesPaginator.pageNumber === 1) {
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
-    }
-  }, [favoritesPaginator]);
+  // React.useEffect(() => {
+  //   if (favoritesPaginator.pageNumber === 1) {
+  //     getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+  //   }
+  // }, [favoritesPaginator]);
 
   React.useEffect(() => {
     if (favoritesRemoved) {
@@ -108,7 +165,7 @@ const IsportsFavoritesScreen = ({
       updated.current = true;
       setActivateCheckboxes(false);
 
-      getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
+      // getFavoritesAction(Object.assign(favoritesPaginator, { pageNumber: 1 }));
     } else {
       updated.current = false;
     }
@@ -125,7 +182,7 @@ const IsportsFavoritesScreen = ({
         setSelectedItems([item.id, ...selectedItems]);
       }
     } else {
-      navigation.navigate('ItvChannelDetailScreen', {
+      navigation.navigate('IsportsChannelDetailScreen', {
         channelId: item.id,
         selectedCategory: route.params.selectedCategory
       });
@@ -230,13 +287,50 @@ const IsportsFavoritesScreen = ({
   };
 
   const renderLoader = () => {
-    if (isFetching) {
+    if (allowLoader) return;
+
+    if (loading) {
       return (
         <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>
           <ActivityIndicator />
         </View>
       );
     }
+  };
+
+  const renderContent = () => {
+    if (noResult) {
+      return (
+        <ContentWrap>
+          <Text>NO RESULT</Text>
+        </ContentWrap>
+      );
+    }
+
+    return (
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <ListItemChanel
+            full
+            // showepg={false}
+            showFavoriteButton={false}
+            item={item}
+            activateCheckboxes={activateCheckboxes}
+            selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
+            isCatchUpAvailable={false}
+            thumbnail={channelplaceholder}
+            handleItemPress={handleItemPress}
+            handleLongPress={handleLongPress}
+          />
+        )}
+        ListFooterComponent={renderLoader()}
+        onEndReached={() => handleEndReached()}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
+      />
+    );
   };
 
   if (data && data.length) {
@@ -281,24 +375,8 @@ const IsportsFavoritesScreen = ({
 
         {renderSearchBar()}
 
-        <FlatList
-          data={data}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <ListItemChanel
-              full
-              // showepg={false}
-              showFavoriteButton={false}
-              item={item}
-              activateCheckboxes={activateCheckboxes}
-              selected={typeof selectedItems.find((i) => i === item.id) !== 'undefined'}
-              isCatchUpAvailable={false}
-              thumbnail={channelplaceholder}
-              handleItemPress={handleItemPress}
-              handleLongPress={handleLongPress}
-            />
-          )}
-        />
+        {renderContent()}
+
         {showDeleteConfirmation && (
           <AlertModal
             variant="confirmation"
@@ -340,7 +418,7 @@ const EmptyState = ({ isFetching, theme, navigation }) => (
     <Spacer />
     <Text style={{ fontSize: 24 }}>No favorites yet</Text>
     <Spacer size={30} />
-    <Pressable onPress={() => navigation.navigate('ItvScreen', { openItvGuide: false })}>
+    <Pressable onPress={() => navigation.navigate('IsportsScreen', { openIsportsGuide: false })}>
       <Text style={{ color: theme.iplayya.colors.vibrantpussy, ...createFontFormat(14, 19) }}>
         Heart a channel to add in your Favorites list.
       </Text>

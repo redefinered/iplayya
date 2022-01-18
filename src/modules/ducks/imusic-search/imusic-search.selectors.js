@@ -11,14 +11,18 @@ export const selectSearchResults = createSelector(
   ({ searchResults }) => searchResults
 );
 
-export const selectRecentSearch = createSelector(
-  [imusicSearchState],
-  ({ recentSearch }) => recentSearch
-);
-
 export const selectSimilarGenre = createSelector(
   [imusicSearchState],
   ({ similarGenre }) => similarGenre
+);
+
+export const selectIsSearching = createSelector(
+  [imusicSearchState],
+  ({ isSearching }) => isSearching
+);
+export const selectSearchNorResult = createSelector(
+  [imusicSearchState],
+  ({ searchNoResult }) => searchNoResult
 );
 
 export const selectPaginator = createSelector([imusicSearchState], ({ paginator }) => paginator);

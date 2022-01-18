@@ -25,7 +25,7 @@ export function* setProviderRequest(action) {
     // fetch categories and genres here
     const { isportsGenres } = yield call(getIsportsGenres);
     const { iptvGenres } = yield call(getItvGenres);
-    const { categories: movieCategories } = yield call(getMovieCategories);
+    const { categories: videoCategories } = yield call(getMovieCategories);
     const { albumGenres: musicGenres } = yield call(getMusicGenres);
 
     /// filters out isports from itv channels
@@ -35,6 +35,8 @@ export function* setProviderRequest(action) {
       let x = isportsGenres.find(({ id }) => id === genre.id);
       if (typeof x === 'undefined') filteredItvGenres.push(genre);
     }
+
+    const movieCategories = videoCategories.filter(({ title }) => title.includes('Movies: '));
 
     yield put(
       Creators.setProviderSuccess(selectedProvider, {

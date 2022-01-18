@@ -31,7 +31,6 @@ const ImusicDownloadItem = ({
   updateProgressAction,
   isConnected
 }) => {
-  // console.log({ task });
   const [paused, setPaused] = React.useState(false);
   const [isDownloaded, setIsDownloaded] = React.useState(false);
   const [broken, setBroken] = React.useState(false);

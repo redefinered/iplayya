@@ -29,9 +29,6 @@ const MovieItem = ({
 
   const [thumbnail, setThumbnail] = React.useState(null);
 
-  /// last resort is make this true to fetch poster from kino
-  // const [fetchKino, setFetchKino] = React.useState(false);
-
   // eslint-disable-next-line no-unused-vars
   const [imgGetErrorOmdb, setImgGetErrorOmdb] = React.useState(false); /// we can use this error to call the next priority image source
 
@@ -231,8 +228,6 @@ const MovieItem = ({
           }}
         >
           <Image
-            // onLoadStart={() => setLoadingThumbnail(true)}
-            // onLoadEnd={() => setLoadingThumbnail(false)}
             style={{
               width: CARD_DIMENSIONS.WIDTH,
               height: CARD_DIMENSIONS.HEIGHT,

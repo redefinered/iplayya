@@ -2,7 +2,12 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: { flex: 1, justifyContent: 'center' },
-  contentWrap: { backgroundColor: 'white', borderRadius: 24, overflow: 'hidden' },
+  contentWrap: {
+    backgroundColor: 'white',
+    borderRadius: 24,
+    overflow: 'hidden',
+    alignItems: 'center'
+  },
   artwork: { backgroundColor: 'white' },
   content: { paddingHorizontal: 20, paddingVertical: 30 },
   headline: {

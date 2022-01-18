@@ -34,13 +34,9 @@ const LIMIT = 10;
 const ImovieFavoritesScreen = ({
   theme,
   navigation,
-  // favorites,
   removedFromFavorites,
   resetRemovedAction,
   removeFromFavoritesAction,
-  // getFavoritesAction,
-  // favoritesPaginator,
-  // resetFavoritesPaginatorAction,
   isSearching
 }) => {
   const updated = React.useRef(false);
@@ -53,14 +49,23 @@ const ImovieFavoritesScreen = ({
   const [searchTerm, setSearchTerm] = React.useState('');
   const [showDeleteConfirmation, setShowDeleteConfirmation] = React.useState(false);
   const [noResult, setNoResult] = React.useState(false);
+  const [allowLoader, setAllowLoader] = React.useState(false);
+
+  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
+    true
+  );
 
   React.useEffect(() => {
     resetRemovedAction();
   });
 
-  const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
-    true
-  );
+  React.useEffect(() => {
+    if (pageNumber <= 1) {
+      return setAllowLoader(false);
+    }
+
+    setAllowLoader(true);
+  }, [pageNumber.current]);
 
   const { loading, data, fetchMore } = useQuery(GET_FAVORITE_MOVIES, {
     variables: { input: { pageNumber: 1, limit: pageNumber.current * LIMIT } },
@@ -83,12 +88,6 @@ const ImovieFavoritesScreen = ({
       setOnEndReachedCalledDuringMomentum(true);
     }
   };
-
-  // const loadMore = () => {
-  //   fetchMore({
-  //     variables: { input: { pageNumber: pageNumber.current + 1, limit: 2 } }
-  //   }).then();
-  // };
 
   React.useEffect(() => {
     if (data) setListData(uniqBy(data.favoriteVideos, 'id'));
@@ -254,6 +253,8 @@ const ImovieFavoritesScreen = ({
   };
 
   const renderLoader = () => {
+    if (allowLoader) return;
+
     if (loading) {
       return (
         <View style={{ height: ITEM_HEIGHT - theme.spacing(3) }}>

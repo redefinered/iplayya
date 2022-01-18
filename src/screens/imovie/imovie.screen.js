@@ -12,7 +12,7 @@ import { Creators as AppActionCreators } from 'modules/app';
 import { Creators as NavActionCreators } from 'modules/ducks/nav/nav.actions';
 import { Creators } from 'modules/ducks/movies/movies.actions';
 import Icon from 'components/icon/icon.component';
-import { selectCategoriesOf } from 'modules/app';
+import { selectMovieCategories } from 'modules/app';
 import {
   selectError,
   selectIsFetching,
@@ -25,47 +25,88 @@ import NetInfo from '@react-native-community/netinfo';
 import ImovieWalkthrough from 'components/walkthrough-guide/imovie-walkthrough.component';
 import RNFetchBlob from 'rn-fetch-blob';
 import { downloadPath } from 'utils';
+import uniqBy from 'lodash/uniqBy';
+import orderBy from 'lodash/orderBy';
 
 import withNotifRedirect from 'components/with-notif-redirect.component';
 import { MovieContext } from 'contexts/providers/movie/movie.provider';
-// import differenceBy from 'lodash/differenceBy';
 
 const CARD_DIMENSIONS = { WIDTH: 115, HEIGHT: 170 };
 
+const getCategoryInfo = (categories, title) => {
+  return categories.find(({ title: categoryTitle }) => categoryTitle === title);
+};
+
 const ImovieScreen = ({
-  resetAction,
+  theme,
+  error,
+  movies,
   isFetching,
   navigation,
-  error,
-  getMoviesAction,
+  categories,
+  resetAction,
   paginatorInfo,
-  // addMovieToFavoritesStartAction,
-  theme,
+  getMoviesAction,
   route: { params },
   categoryPaginator,
-  movies,
   enableSwipeAction,
   setNetworkInfoAction,
   getMoviesStartAction
-  // getMovieThumbnailsAction,
-  // thumbnails
 }) => {
+  const list = React.useRef(null);
+  const { colors } = theme.iplayya;
+
   const { selected, setSelected, downloads, setDownloads } = React.useContext(MovieContext);
-
-  const brand = theme.iplayya.colors;
-
   const [onEndReachedCalledDuringMomentum, setOnEndReachedCalledDuringMomentum] = React.useState(
     true
   );
-  // const [data, setData] = React.useState([]);
-  const [scrollIndex, setScrollIndex] = React.useState(0);
   const [showBanner, setShowBanner] = React.useState(true);
   const [showWalkthroughGuide, setShowWalkthroughGuide] = React.useState(false);
+  const [rowIndex, setRowIndex] = React.useState(0);
+  const [rowHeights, setRowHeights] = React.useState([]);
+  const [rowsOffset, setRowsOffset] = React.useState(0);
+
+  React.useEffect(() => {
+    // stop if list is null
+    if (!list.current) return;
+
+    // stop if list is not rendered and rowHeights are empty
+    if (!rowHeights.length) return;
+
+    // do not execute while all pill are not yet rendered
+    if (rowHeights.length !== movies.length) return;
+
+    // adds item widths and set it as offset depending on the index of the selected category
+    let offset = 0;
+    for (let i = 0; i < rowIndex; i++) {
+      const el = rowHeights[i];
+
+      if (!el) continue;
+
+      offset = offset + el.h;
+    }
+
+    setRowsOffset(offset);
+  });
+
+  const handleCategoryOnLayout = ({ nativeEvent }, title) => {
+    const { id, number } = getCategoryInfo(categories, title);
+
+    const h = uniqBy([{ id, number, h: nativeEvent.layout.height + 30 }, ...rowHeights], 'id'); /// 30 is the bottom margin
+    const ordered = orderBy(h, 'number', 'asc');
+
+    setRowHeights(ordered);
+  };
+
+  React.useEffect(() => {
+    console.log({ list });
+    if (list.current) list.current.scrollToOffset({ offset: rowsOffset, animated: false });
+  }, [rowsOffset]);
 
   React.useEffect(() => {
     /// resets the category paginator
     resetAction();
-    // addMovieToFavoritesStartAction();
+
     setSelected(null);
 
     // Subscribe to network changes
@@ -81,47 +122,12 @@ const ImovieScreen = ({
 
     getInitialContent();
 
-    // getMovieThumbnails(movies);
-
     // Unsubscribe
     return () => {
       unsubscribeToNav;
       unsubscribe();
     };
   }, []);
-
-  // React.useEffect(() => {
-  //   if (!movies.length) return;
-  //   if (!downloads) return;
-
-  //   getMovieThumbnails({ downloads, movies, thumbnails });
-  // }, [downloads, movies]);
-
-  // const getMovieThumbnails = ({ movies, downloads, thumbnails }) => {
-  //   if (!downloads) return;
-
-  //   let moviesMap = [];
-  //   let notFetched = [];
-  //   let notFetchedNorDownloaded = [];
-
-  //   for (let i = 0; i < movies.length; i++) {
-  //     const { videos } = movies[i];
-  //     moviesMap = [...moviesMap, ...videos];
-  //   }
-
-  //   /// filter out items whose thumbnails are are not yet fetched
-  //   if (moviesMap.length) {
-  //     notFetched = differenceBy(moviesMap, thumbnails, 'id');
-  //   }
-
-  //   ///
-  //   const downloadsIdsMap = downloads.map((d) => ({ id: d.split()[1] }));
-
-  //   if (notFetched.length)
-  //     notFetchedNorDownloaded = differenceBy(notFetched, downloadsIdsMap, 'id');
-
-  //   getMovieThumbnailsAction(notFetchedNorDownloaded);
-  // };
 
   React.useEffect(() => {
     if (!selected) return;
@@ -132,16 +138,6 @@ const ImovieScreen = ({
 
     navigation.navigate('MovieDetailScreen', { videoId }); // set to true temporarily
   }, [selected]);
-
-  React.useEffect(() => {
-    // console.log({ data });
-    if (typeof params !== 'undefined') {
-      const { categoryName } = params;
-
-      return setScrollIndex(movies.findIndex((c) => c.category === categoryName));
-    }
-    setScrollIndex(0);
-  }, [params, movies]);
 
   const getInitialContent = async () => {
     if (!paginatorInfo.length) return;
@@ -212,7 +208,7 @@ const ImovieScreen = ({
   const renderItem = ({ item: { category } }) => {
     if (typeof movies === 'undefined') return;
 
-    return <CategoryScroll category={category} />;
+    return <CategoryScroll handleOnLayout={handleCategoryOnLayout} category={category} />;
   };
 
   const handleEndReached = () => {
@@ -226,9 +222,18 @@ const ImovieScreen = ({
   };
 
   React.useEffect(() => {
+    setRowsOffset(0);
     if (typeof params !== 'undefined') {
+      const i = categories.findIndex(({ title }) => title === params.categoryName);
+
+      if (i >= 0) {
+        setRowIndex(i);
+      }
+
       const { openImoviesGuide } = params;
+
       if (!openImoviesGuide) return;
+
       setShowWalkthroughGuide(true);
     }
   }, [params]);
@@ -246,7 +251,7 @@ const ImovieScreen = ({
           style={{
             width: CARD_DIMENSIONS.WIDTH,
             height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
+            backgroundColor: colors.white10,
             borderRadius: 8,
             justifyContent: 'center',
             marginLeft: theme.spacing(2)
@@ -256,7 +261,7 @@ const ImovieScreen = ({
           style={{
             width: CARD_DIMENSIONS.WIDTH,
             height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
+            backgroundColor: colors.white10,
             borderRadius: 8,
             justifyContent: 'center',
             marginLeft: theme.spacing(2)
@@ -266,7 +271,7 @@ const ImovieScreen = ({
           style={{
             width: CARD_DIMENSIONS.WIDTH,
             height: CARD_DIMENSIONS.HEIGHT,
-            backgroundColor: brand.white10,
+            backgroundColor: colors.white10,
             borderRadius: 8,
             justifyContent: 'center',
             marginLeft: theme.spacing(2)
@@ -281,11 +286,11 @@ const ImovieScreen = ({
 
     return (
       <FlatList
+        ref={list}
         data={movies}
         showsVerticalScrollIndicator={false}
         keyExtractor={(movie) => movie.category}
         renderItem={renderItem}
-        initialScrollIndex={scrollIndex}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
         onMomentumScrollBegin={() => setOnEndReachedCalledDuringMomentum(false)}
@@ -330,7 +335,7 @@ const mapStateToProps = createStructuredSelector({
   movies: selectMovies,
   paginatorInfo: selectPaginatorInfo,
   categoryPaginator: selectCategoryPaginator,
-  categories: selectCategoriesOf('movies')
+  categories: selectMovieCategories
 });
 
 const actions = {

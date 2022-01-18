@@ -202,16 +202,6 @@ const IplayScreen = ({
     setShowStepTwo(false);
   };
 
-  // const renderError = () => {
-  //   if (!error) return;
-
-  //   return (
-  //     <ContentWrap style={{ alignItems: 'center', marginBottom: theme.spacing(2) }}>
-  //       <Text>{error}</Text>
-  //     </ContentWrap>
-  //   );
-  // };
-
   const renderProcess = () => {
     if (!loading) return;
 

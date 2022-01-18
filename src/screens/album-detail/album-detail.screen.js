@@ -95,11 +95,6 @@ const AlbumDetail = ({
       downloadsStartAction();
 
       getAlbumDetailsAction(albumId);
-
-      /// clean up
-      // return () => {
-      //   getAlbumDetailsStartAction();
-      // };
     });
   }, []);
 
@@ -219,32 +214,6 @@ const AlbumDetail = ({
     setSelectedTrack(data);
     setShowActionSheet(true);
   };
-
-  // const handleAddToFacoritesPress = () => {
-  //   if (!selectedTrack) return;
-
-  //   addTrackToFavoritesAction(selectedTrack.id);
-
-  //   hideActionSheet();
-  // };
-
-  // const handleDownloadItem = () => {
-  //   console.log('download item');
-  //   hideActionSheet();
-  // };
-
-  // const actions = [
-  //   {
-  //     icon: 'heart-solid',
-  //     title: 'Add to favorites',
-  //     onPress: handleAddToFacoritesPress
-  //   },
-  //   {
-  //     icon: 'download',
-  //     title: 'Download',
-  //     onPress: handleDownloadItem
-  //   }
-  // ];
 
   const hideUpdateNotification = () => {
     /// reset updated check
@@ -370,9 +339,12 @@ const AlbumDetail = ({
         style={{ marginBottom: theme.spacing(2) }}
         // onLayout={(e) => setShuffleButtonLayout(e.nativeEvent.layout)}
       >
-        <Button mode="contained" onPress={handleShufflePlay}>
-          <Icon name="shuffle" size={theme.iconSize(3)} />
-          <View style={{ width: theme.spacing(1) }} />
+        <Button
+          mode="contained"
+          // icon="shuffle"
+          icon={() => <Icon name="shuffle" size={theme.iconSize(3)} />}
+          onPress={handleShufflePlay}
+        >
           <Text style={{ fontWeight: 'bold' }}>Shuffle Play</Text>
         </Button>
       </ContentWrap>

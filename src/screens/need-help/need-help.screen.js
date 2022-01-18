@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, withTheme, List, TouchableRipple } from 'react-native-paper';
+import { Text, withTheme, TouchableRipple } from 'react-native-paper';
 
 import ScreenContainer from 'components/screen-container.component';
 
@@ -34,7 +34,7 @@ const NeedHelpScreen = ({ theme, enableSwipeAction, navigation }) => {
   return (
     <ScrollView>
       <View style={{ paddingTop: 20 }}>
-        <TouchableRipple rippleColor="rgba(0,0,0,0.28)" onPress={() => console.log('click')}>
+        {/* <TouchableRipple rippleColor="rgba(0,0,0,0.28)" onPress={() => console.log('click')}>
           <View
             style={{
               padding: theme.spacing(2)
@@ -42,7 +42,7 @@ const NeedHelpScreen = ({ theme, enableSwipeAction, navigation }) => {
           >
             <Text style={styles.headerText}>Terms of Use</Text>
           </View>
-        </TouchableRipple>
+        </TouchableRipple> */}
         <TouchableRipple
           rippleColor="rgba(0,0,0,0.28)"
           onPress={() => navigation.navigate('WalkthroughScreen')}
@@ -55,7 +55,7 @@ const NeedHelpScreen = ({ theme, enableSwipeAction, navigation }) => {
             <Text style={styles.headerText}>How to use iPlayya</Text>
           </View>
         </TouchableRipple>
-        <View
+        {/* <View
           style={{
             padding: theme.spacing(2)
           }}
@@ -220,7 +220,7 @@ const NeedHelpScreen = ({ theme, enableSwipeAction, navigation }) => {
               comedere carnem virus.
             </Text>
           </List.Accordion>
-        </View>
+        </View> */}
       </View>
     </ScrollView>
   );

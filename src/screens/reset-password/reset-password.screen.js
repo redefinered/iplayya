@@ -41,12 +41,6 @@ class ResetPasswordScreen extends React.Component {
       password_confirmation: null,
       commonError: null,
       password_validation: null
-      // { key: 'first_name', val: false },
-      // { key: 'last_name', val: false },
-      // { key: 'username', val: false },
-      // { key: 'email', val: false },
-      // { key: 'password', val: false },
-      // { key: 'password_confirmation', val: false }
     }
   };
 
@@ -160,12 +154,6 @@ class ResetPasswordScreen extends React.Component {
 
   render() {
     const { errors, valid, password, password_confirmation, modalVisible } = this.state;
-
-    // let stateError = {};
-
-    // errors.map(({ key, val }) => {
-    //   Object.assign(stateError, { [key]: val });
-    // });
 
     return (
       <React.Fragment>

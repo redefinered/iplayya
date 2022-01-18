@@ -42,7 +42,13 @@ export default createReducer(INITIAL_STATE, {
     return {
       ...state,
       error: null,
-      isLoading: true
+      isLoading: true,
+      contentBase: {
+        itvGenres: [],
+        movieCategories: [],
+        isportsGenres: [],
+        musicGenres: []
+      }
     };
   },
   [Types.SET_PROVIDER_SUCCESS]: (state, action) => {
@@ -135,6 +141,9 @@ export const selectMusicGenres = createSelector(
   ({ contentBase: { musicGenres } }) => musicGenres
 );
 
+/// not sure if this is the right selector
+// this will extract categories using alias
+// ex: 'movies' is going to filter items that contain 'movies: '
 export const selectCategoriesOf = (type) =>
   createSelector([selectMovieCategories], (categories) => {
     const collection = [];

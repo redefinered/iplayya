@@ -18,8 +18,7 @@ const Content = ({ theme, item, selected, activateCheckboxes }) => {
   const [showError, setShowError] = React.useState(false);
   const [showSuccess, setShowSuccess] = React.useState(false);
 
-  // eslint-disable-next-line no-unused-vars
-  const [addToFavorites, { data, loading, error }] = useMutation(ADD_TO_FAVORITES, {
+  const [addToFavorites, { error }] = useMutation(ADD_TO_FAVORITES, {
     update(cache, { data }) {
       cache.modify({
         fields: {

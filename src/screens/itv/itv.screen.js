@@ -157,22 +157,6 @@ const ItvScreen = ({
     setShowWalkthroughGuide(false);
   };
 
-  // const hideSnackBar = () => {
-  //   setTimeout(() => {
-  //     setShowSnackBar(false);
-  //     setShowNotificationSnackBar(false);
-  //   }, 3000);
-  // };
-
-  // React.useEffect(() => {
-  //   if (showSnackBar) hideSnackBar();
-  //   if (showNotificationSnackBar) hideSnackBar();
-  // }, [showSnackBar, showNotificationSnackBar]);
-
-  // const handleShowSnackBar = () => {
-  //   setShowSnackBar(true);
-  // };
-
   const handleItemPress = (item) => {
     // console.log({ item, id: item.id });
     // navigate to chanel details screen with `id` parameter

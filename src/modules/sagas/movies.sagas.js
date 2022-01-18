@@ -7,18 +7,8 @@ import {
   getMoviesByCategories,
   getFavoriteMovies,
   removeFromFavorites,
-  search,
-  getCategories
+  search
 } from 'services/movies.service';
-
-export function* getCategoriesRequest() {
-  try {
-    const { categories } = yield call(getCategories);
-    yield put(Creators.getCategoriesSuccess({ categories }));
-  } catch (error) {
-    yield put(Creators.getCategoriesFailure(error.message));
-  }
-}
 
 export function* getMovieRequest(action) {
   const { videoId } = action;
